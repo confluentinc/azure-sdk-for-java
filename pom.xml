@@ -675,7 +675,7 @@
           <!--<plugin>
             <groupId>org.revapi</groupId>
             <artifactId>revapi-maven-plugin</artifactId>
-            <version>0.14.6</version> &lt;!&ndash; {x-version-update;org.revapi:revapi-maven-plugin;external_dependency} &ndash;&gt;
+            <version>0.14.6</version>
             <configuration>
               <analysisConfigurationFiles>
                 <configurationFile>
