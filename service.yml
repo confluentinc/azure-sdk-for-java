@@ -1,5 +1,6 @@
 name: azure-sdk-for-java
 lang: unknown
+lang_version: unknown
 codeowners:
   enable: true
 semaphore:
