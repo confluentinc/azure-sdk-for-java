@@ -5,156 +5,139 @@
 package com.azure.resourcemanager.authorization.fluent.models;
 
 import com.azure.core.annotation.Fluent;
-import com.azure.core.util.logging.ClientLogger;
-import com.fasterxml.jackson.annotation.JsonAnyGetter;
-import com.fasterxml.jackson.annotation.JsonAnySetter;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import java.util.HashMap;
+import com.azure.json.JsonReader;
+import com.azure.json.JsonToken;
+import com.azure.json.JsonWriter;
+import java.io.IOException;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-/** team. */
+/**
+ * team.
+ */
 @Fluent
 public final class MicrosoftGraphTeamInner extends MicrosoftGraphEntity {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(MicrosoftGraphTeamInner.class);
-
     /*
-     * An optional label. Typically describes the data or business sensitivity
-     * of the team. Must match one of a pre-configured set in the tenant's
-     * directory.
+     * An optional label. Typically describes the data or business sensitivity of the team. Must match one of a
+     * pre-configured set in the tenant's directory.
      */
-    @JsonProperty(value = "classification")
     private String classification;
 
     /*
      * An optional description for the team.
      */
-    @JsonProperty(value = "description")
     private String description;
 
     /*
      * The name of the team.
      */
-    @JsonProperty(value = "displayName")
     private String displayName;
 
     /*
      * teamFunSettings
      */
-    @JsonProperty(value = "funSettings")
     private MicrosoftGraphTeamFunSettings funSettings;
 
     /*
      * teamGuestSettings
      */
-    @JsonProperty(value = "guestSettings")
     private MicrosoftGraphTeamGuestSettings guestSettings;
 
     /*
-     * A unique ID for the team that has been used in a few places such as the
-     * audit log/Office 365 Management Activity API.
+     * A unique ID for the team that has been used in a few places such as the audit log/Office 365 Management Activity
+     * API.
      */
-    @JsonProperty(value = "internalId")
     private String internalId;
 
     /*
      * Whether this team is in read-only mode.
      */
-    @JsonProperty(value = "isArchived")
     private Boolean isArchived;
 
     /*
      * teamMemberSettings
      */
-    @JsonProperty(value = "memberSettings")
     private MicrosoftGraphTeamMemberSettings memberSettings;
 
     /*
      * teamMessagingSettings
      */
-    @JsonProperty(value = "messagingSettings")
     private MicrosoftGraphTeamMessagingSettings messagingSettings;
 
     /*
-     * The specialization property.
+     * teamSpecialization
      */
-    @JsonProperty(value = "specialization")
     private MicrosoftGraphTeamSpecialization specialization;
 
     /*
-     * The visibility property.
+     * teamVisibilityType
      */
-    @JsonProperty(value = "visibility")
     private MicrosoftGraphTeamVisibilityType visibility;
 
     /*
-     * A hyperlink that will go to the team in the Microsoft Teams client. This
-     * is the URL that you get when you right-click a team in the Microsoft
-     * Teams client and select Get link to team. This URL should be treated as
-     * an opaque blob, and not parsed.
+     * A hyperlink that will go to the team in the Microsoft Teams client. This is the URL that you get when you
+     * right-click a team in the Microsoft Teams client and select Get link to team. This URL should be treated as an
+     * opaque blob, and not parsed.
      */
-    @JsonProperty(value = "webUrl")
     private String webUrl;
 
     /*
      * schedule
      */
-    @JsonProperty(value = "schedule")
     private MicrosoftGraphSchedule schedule;
 
     /*
      * The collection of channels & messages associated with the team.
      */
-    @JsonProperty(value = "channels")
     private List<MicrosoftGraphChannel> channels;
 
     /*
-     * Represents an Azure Active Directory object. The directoryObject type is
-     * the base type for many other directory entity types.
+     * Represents an Azure Active Directory object. The directoryObject type is the base type for many other directory
+     * entity types.
      */
-    @JsonProperty(value = "group")
     private MicrosoftGraphGroupInner group;
 
     /*
      * The apps installed in this team.
      */
-    @JsonProperty(value = "installedApps")
     private List<MicrosoftGraphTeamsAppInstallation> installedApps;
 
     /*
      * Members and owners of the team.
      */
-    @JsonProperty(value = "members")
     private List<MicrosoftGraphConversationMember> members;
 
     /*
      * The async operations that ran or are running on this team.
      */
-    @JsonProperty(value = "operations")
     private List<MicrosoftGraphTeamsAsyncOperation> operations;
 
     /*
      * channel
      */
-    @JsonProperty(value = "primaryChannel")
     private MicrosoftGraphChannel primaryChannel;
 
     /*
      * teamsTemplate
      */
-    @JsonProperty(value = "template")
     private MicrosoftGraphTeamsTemplate template;
 
     /*
      * team
      */
-    @JsonIgnore private Map<String, Object> additionalProperties;
+    private Map<String, Object> additionalProperties;
+
+    /**
+     * Creates an instance of MicrosoftGraphTeamInner class.
+     */
+    public MicrosoftGraphTeamInner() {
+    }
 
     /**
      * Get the classification property: An optional label. Typically describes the data or business sensitivity of the
      * team. Must match one of a pre-configured set in the tenant's directory.
-     *
+     * 
      * @return the classification value.
      */
     public String classification() {
@@ -164,7 +147,7 @@ public final class MicrosoftGraphTeamInner extends MicrosoftGraphEntity {
     /**
      * Set the classification property: An optional label. Typically describes the data or business sensitivity of the
      * team. Must match one of a pre-configured set in the tenant's directory.
-     *
+     * 
      * @param classification the classification value to set.
      * @return the MicrosoftGraphTeamInner object itself.
      */
@@ -175,7 +158,7 @@ public final class MicrosoftGraphTeamInner extends MicrosoftGraphEntity {
 
     /**
      * Get the description property: An optional description for the team.
-     *
+     * 
      * @return the description value.
      */
     public String description() {
@@ -184,7 +167,7 @@ public final class MicrosoftGraphTeamInner extends MicrosoftGraphEntity {
 
     /**
      * Set the description property: An optional description for the team.
-     *
+     * 
      * @param description the description value to set.
      * @return the MicrosoftGraphTeamInner object itself.
      */
@@ -195,7 +178,7 @@ public final class MicrosoftGraphTeamInner extends MicrosoftGraphEntity {
 
     /**
      * Get the displayName property: The name of the team.
-     *
+     * 
      * @return the displayName value.
      */
     public String displayName() {
@@ -204,7 +187,7 @@ public final class MicrosoftGraphTeamInner extends MicrosoftGraphEntity {
 
     /**
      * Set the displayName property: The name of the team.
-     *
+     * 
      * @param displayName the displayName value to set.
      * @return the MicrosoftGraphTeamInner object itself.
      */
@@ -215,7 +198,7 @@ public final class MicrosoftGraphTeamInner extends MicrosoftGraphEntity {
 
     /**
      * Get the funSettings property: teamFunSettings.
-     *
+     * 
      * @return the funSettings value.
      */
     public MicrosoftGraphTeamFunSettings funSettings() {
@@ -224,7 +207,7 @@ public final class MicrosoftGraphTeamInner extends MicrosoftGraphEntity {
 
     /**
      * Set the funSettings property: teamFunSettings.
-     *
+     * 
      * @param funSettings the funSettings value to set.
      * @return the MicrosoftGraphTeamInner object itself.
      */
@@ -235,7 +218,7 @@ public final class MicrosoftGraphTeamInner extends MicrosoftGraphEntity {
 
     /**
      * Get the guestSettings property: teamGuestSettings.
-     *
+     * 
      * @return the guestSettings value.
      */
     public MicrosoftGraphTeamGuestSettings guestSettings() {
@@ -244,7 +227,7 @@ public final class MicrosoftGraphTeamInner extends MicrosoftGraphEntity {
 
     /**
      * Set the guestSettings property: teamGuestSettings.
-     *
+     * 
      * @param guestSettings the guestSettings value to set.
      * @return the MicrosoftGraphTeamInner object itself.
      */
@@ -256,7 +239,7 @@ public final class MicrosoftGraphTeamInner extends MicrosoftGraphEntity {
     /**
      * Get the internalId property: A unique ID for the team that has been used in a few places such as the audit
      * log/Office 365 Management Activity API.
-     *
+     * 
      * @return the internalId value.
      */
     public String internalId() {
@@ -266,7 +249,7 @@ public final class MicrosoftGraphTeamInner extends MicrosoftGraphEntity {
     /**
      * Set the internalId property: A unique ID for the team that has been used in a few places such as the audit
      * log/Office 365 Management Activity API.
-     *
+     * 
      * @param internalId the internalId value to set.
      * @return the MicrosoftGraphTeamInner object itself.
      */
@@ -277,7 +260,7 @@ public final class MicrosoftGraphTeamInner extends MicrosoftGraphEntity {
 
     /**
      * Get the isArchived property: Whether this team is in read-only mode.
-     *
+     * 
      * @return the isArchived value.
      */
     public Boolean isArchived() {
@@ -286,7 +269,7 @@ public final class MicrosoftGraphTeamInner extends MicrosoftGraphEntity {
 
     /**
      * Set the isArchived property: Whether this team is in read-only mode.
-     *
+     * 
      * @param isArchived the isArchived value to set.
      * @return the MicrosoftGraphTeamInner object itself.
      */
@@ -297,7 +280,7 @@ public final class MicrosoftGraphTeamInner extends MicrosoftGraphEntity {
 
     /**
      * Get the memberSettings property: teamMemberSettings.
-     *
+     * 
      * @return the memberSettings value.
      */
     public MicrosoftGraphTeamMemberSettings memberSettings() {
@@ -306,7 +289,7 @@ public final class MicrosoftGraphTeamInner extends MicrosoftGraphEntity {
 
     /**
      * Set the memberSettings property: teamMemberSettings.
-     *
+     * 
      * @param memberSettings the memberSettings value to set.
      * @return the MicrosoftGraphTeamInner object itself.
      */
@@ -317,7 +300,7 @@ public final class MicrosoftGraphTeamInner extends MicrosoftGraphEntity {
 
     /**
      * Get the messagingSettings property: teamMessagingSettings.
-     *
+     * 
      * @return the messagingSettings value.
      */
     public MicrosoftGraphTeamMessagingSettings messagingSettings() {
@@ -326,7 +309,7 @@ public final class MicrosoftGraphTeamInner extends MicrosoftGraphEntity {
 
     /**
      * Set the messagingSettings property: teamMessagingSettings.
-     *
+     * 
      * @param messagingSettings the messagingSettings value to set.
      * @return the MicrosoftGraphTeamInner object itself.
      */
@@ -336,8 +319,8 @@ public final class MicrosoftGraphTeamInner extends MicrosoftGraphEntity {
     }
 
     /**
-     * Get the specialization property: The specialization property.
-     *
+     * Get the specialization property: teamSpecialization.
+     * 
      * @return the specialization value.
      */
     public MicrosoftGraphTeamSpecialization specialization() {
@@ -345,8 +328,8 @@ public final class MicrosoftGraphTeamInner extends MicrosoftGraphEntity {
     }
 
     /**
-     * Set the specialization property: The specialization property.
-     *
+     * Set the specialization property: teamSpecialization.
+     * 
      * @param specialization the specialization value to set.
      * @return the MicrosoftGraphTeamInner object itself.
      */
@@ -356,8 +339,8 @@ public final class MicrosoftGraphTeamInner extends MicrosoftGraphEntity {
     }
 
     /**
-     * Get the visibility property: The visibility property.
-     *
+     * Get the visibility property: teamVisibilityType.
+     * 
      * @return the visibility value.
      */
     public MicrosoftGraphTeamVisibilityType visibility() {
@@ -365,8 +348,8 @@ public final class MicrosoftGraphTeamInner extends MicrosoftGraphEntity {
     }
 
     /**
-     * Set the visibility property: The visibility property.
-     *
+     * Set the visibility property: teamVisibilityType.
+     * 
      * @param visibility the visibility value to set.
      * @return the MicrosoftGraphTeamInner object itself.
      */
@@ -379,7 +362,7 @@ public final class MicrosoftGraphTeamInner extends MicrosoftGraphEntity {
      * Get the webUrl property: A hyperlink that will go to the team in the Microsoft Teams client. This is the URL that
      * you get when you right-click a team in the Microsoft Teams client and select Get link to team. This URL should be
      * treated as an opaque blob, and not parsed.
-     *
+     * 
      * @return the webUrl value.
      */
     public String webUrl() {
@@ -390,7 +373,7 @@ public final class MicrosoftGraphTeamInner extends MicrosoftGraphEntity {
      * Set the webUrl property: A hyperlink that will go to the team in the Microsoft Teams client. This is the URL that
      * you get when you right-click a team in the Microsoft Teams client and select Get link to team. This URL should be
      * treated as an opaque blob, and not parsed.
-     *
+     * 
      * @param webUrl the webUrl value to set.
      * @return the MicrosoftGraphTeamInner object itself.
      */
@@ -401,7 +384,7 @@ public final class MicrosoftGraphTeamInner extends MicrosoftGraphEntity {
 
     /**
      * Get the schedule property: schedule.
-     *
+     * 
      * @return the schedule value.
      */
     public MicrosoftGraphSchedule schedule() {
@@ -410,7 +393,7 @@ public final class MicrosoftGraphTeamInner extends MicrosoftGraphEntity {
 
     /**
      * Set the schedule property: schedule.
-     *
+     * 
      * @param schedule the schedule value to set.
      * @return the MicrosoftGraphTeamInner object itself.
      */
@@ -421,7 +404,7 @@ public final class MicrosoftGraphTeamInner extends MicrosoftGraphEntity {
 
     /**
      * Get the channels property: The collection of channels &amp; messages associated with the team.
-     *
+     * 
      * @return the channels value.
      */
     public List<MicrosoftGraphChannel> channels() {
@@ -430,7 +413,7 @@ public final class MicrosoftGraphTeamInner extends MicrosoftGraphEntity {
 
     /**
      * Set the channels property: The collection of channels &amp; messages associated with the team.
-     *
+     * 
      * @param channels the channels value to set.
      * @return the MicrosoftGraphTeamInner object itself.
      */
@@ -442,7 +425,7 @@ public final class MicrosoftGraphTeamInner extends MicrosoftGraphEntity {
     /**
      * Get the group property: Represents an Azure Active Directory object. The directoryObject type is the base type
      * for many other directory entity types.
-     *
+     * 
      * @return the group value.
      */
     public MicrosoftGraphGroupInner group() {
@@ -452,7 +435,7 @@ public final class MicrosoftGraphTeamInner extends MicrosoftGraphEntity {
     /**
      * Set the group property: Represents an Azure Active Directory object. The directoryObject type is the base type
      * for many other directory entity types.
-     *
+     * 
      * @param group the group value to set.
      * @return the MicrosoftGraphTeamInner object itself.
      */
@@ -463,7 +446,7 @@ public final class MicrosoftGraphTeamInner extends MicrosoftGraphEntity {
 
     /**
      * Get the installedApps property: The apps installed in this team.
-     *
+     * 
      * @return the installedApps value.
      */
     public List<MicrosoftGraphTeamsAppInstallation> installedApps() {
@@ -472,7 +455,7 @@ public final class MicrosoftGraphTeamInner extends MicrosoftGraphEntity {
 
     /**
      * Set the installedApps property: The apps installed in this team.
-     *
+     * 
      * @param installedApps the installedApps value to set.
      * @return the MicrosoftGraphTeamInner object itself.
      */
@@ -483,7 +466,7 @@ public final class MicrosoftGraphTeamInner extends MicrosoftGraphEntity {
 
     /**
      * Get the members property: Members and owners of the team.
-     *
+     * 
      * @return the members value.
      */
     public List<MicrosoftGraphConversationMember> members() {
@@ -492,7 +475,7 @@ public final class MicrosoftGraphTeamInner extends MicrosoftGraphEntity {
 
     /**
      * Set the members property: Members and owners of the team.
-     *
+     * 
      * @param members the members value to set.
      * @return the MicrosoftGraphTeamInner object itself.
      */
@@ -503,7 +486,7 @@ public final class MicrosoftGraphTeamInner extends MicrosoftGraphEntity {
 
     /**
      * Get the operations property: The async operations that ran or are running on this team.
-     *
+     * 
      * @return the operations value.
      */
     public List<MicrosoftGraphTeamsAsyncOperation> operations() {
@@ -512,7 +495,7 @@ public final class MicrosoftGraphTeamInner extends MicrosoftGraphEntity {
 
     /**
      * Set the operations property: The async operations that ran or are running on this team.
-     *
+     * 
      * @param operations the operations value to set.
      * @return the MicrosoftGraphTeamInner object itself.
      */
@@ -523,7 +506,7 @@ public final class MicrosoftGraphTeamInner extends MicrosoftGraphEntity {
 
     /**
      * Get the primaryChannel property: channel.
-     *
+     * 
      * @return the primaryChannel value.
      */
     public MicrosoftGraphChannel primaryChannel() {
@@ -532,7 +515,7 @@ public final class MicrosoftGraphTeamInner extends MicrosoftGraphEntity {
 
     /**
      * Set the primaryChannel property: channel.
-     *
+     * 
      * @param primaryChannel the primaryChannel value to set.
      * @return the MicrosoftGraphTeamInner object itself.
      */
@@ -543,7 +526,7 @@ public final class MicrosoftGraphTeamInner extends MicrosoftGraphEntity {
 
     /**
      * Get the template property: teamsTemplate.
-     *
+     * 
      * @return the template value.
      */
     public MicrosoftGraphTeamsTemplate template() {
@@ -552,7 +535,7 @@ public final class MicrosoftGraphTeamInner extends MicrosoftGraphEntity {
 
     /**
      * Set the template property: teamsTemplate.
-     *
+     * 
      * @param template the template value to set.
      * @return the MicrosoftGraphTeamInner object itself.
      */
@@ -563,17 +546,16 @@ public final class MicrosoftGraphTeamInner extends MicrosoftGraphEntity {
 
     /**
      * Get the additionalProperties property: team.
-     *
+     * 
      * @return the additionalProperties value.
      */
-    @JsonAnyGetter
     public Map<String, Object> additionalProperties() {
         return this.additionalProperties;
     }
 
     /**
      * Set the additionalProperties property: team.
-     *
+     * 
      * @param additionalProperties the additionalProperties value to set.
      * @return the MicrosoftGraphTeamInner object itself.
      */
@@ -582,15 +564,9 @@ public final class MicrosoftGraphTeamInner extends MicrosoftGraphEntity {
         return this;
     }
 
-    @JsonAnySetter
-    void withAdditionalProperties(String key, Object value) {
-        if (additionalProperties == null) {
-            additionalProperties = new HashMap<>();
-        }
-        additionalProperties.put(key, value);
-    }
-
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public MicrosoftGraphTeamInner withId(String id) {
         super.withId(id);
@@ -599,7 +575,7 @@ public final class MicrosoftGraphTeamInner extends MicrosoftGraphEntity {
 
     /**
      * Validates the instance.
-     *
+     * 
      * @throws IllegalArgumentException thrown if the instance is not valid.
      */
     @Override
@@ -641,5 +617,126 @@ public final class MicrosoftGraphTeamInner extends MicrosoftGraphEntity {
         if (template() != null) {
             template().validate();
         }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public JsonWriter toJson(JsonWriter jsonWriter) throws IOException {
+        jsonWriter.writeStartObject();
+        jsonWriter.writeStringField("id", id());
+        jsonWriter.writeStringField("classification", this.classification);
+        jsonWriter.writeStringField("description", this.description);
+        jsonWriter.writeStringField("displayName", this.displayName);
+        jsonWriter.writeJsonField("funSettings", this.funSettings);
+        jsonWriter.writeJsonField("guestSettings", this.guestSettings);
+        jsonWriter.writeStringField("internalId", this.internalId);
+        jsonWriter.writeBooleanField("isArchived", this.isArchived);
+        jsonWriter.writeJsonField("memberSettings", this.memberSettings);
+        jsonWriter.writeJsonField("messagingSettings", this.messagingSettings);
+        jsonWriter.writeStringField("specialization",
+            this.specialization == null ? null : this.specialization.toString());
+        jsonWriter.writeStringField("visibility", this.visibility == null ? null : this.visibility.toString());
+        jsonWriter.writeStringField("webUrl", this.webUrl);
+        jsonWriter.writeJsonField("schedule", this.schedule);
+        jsonWriter.writeArrayField("channels", this.channels, (writer, element) -> writer.writeJson(element));
+        jsonWriter.writeJsonField("group", this.group);
+        jsonWriter.writeArrayField("installedApps", this.installedApps, (writer, element) -> writer.writeJson(element));
+        jsonWriter.writeArrayField("members", this.members, (writer, element) -> writer.writeJson(element));
+        jsonWriter.writeArrayField("operations", this.operations, (writer, element) -> writer.writeJson(element));
+        jsonWriter.writeJsonField("primaryChannel", this.primaryChannel);
+        jsonWriter.writeJsonField("template", this.template);
+        if (additionalProperties != null) {
+            for (Map.Entry<String, Object> additionalProperty : additionalProperties.entrySet()) {
+                jsonWriter.writeUntypedField(additionalProperty.getKey(), additionalProperty.getValue());
+            }
+        }
+        return jsonWriter.writeEndObject();
+    }
+
+    /**
+     * Reads an instance of MicrosoftGraphTeamInner from the JsonReader.
+     * 
+     * @param jsonReader The JsonReader being read.
+     * @return An instance of MicrosoftGraphTeamInner if the JsonReader was pointing to an instance of it, or null if it
+     * was pointing to JSON null.
+     * @throws IOException If an error occurs while reading the MicrosoftGraphTeamInner.
+     */
+    public static MicrosoftGraphTeamInner fromJson(JsonReader jsonReader) throws IOException {
+        return jsonReader.readObject(reader -> {
+            MicrosoftGraphTeamInner deserializedMicrosoftGraphTeamInner = new MicrosoftGraphTeamInner();
+            Map<String, Object> additionalProperties = null;
+            while (reader.nextToken() != JsonToken.END_OBJECT) {
+                String fieldName = reader.getFieldName();
+                reader.nextToken();
+
+                if ("id".equals(fieldName)) {
+                    deserializedMicrosoftGraphTeamInner.withId(reader.getString());
+                } else if ("classification".equals(fieldName)) {
+                    deserializedMicrosoftGraphTeamInner.classification = reader.getString();
+                } else if ("description".equals(fieldName)) {
+                    deserializedMicrosoftGraphTeamInner.description = reader.getString();
+                } else if ("displayName".equals(fieldName)) {
+                    deserializedMicrosoftGraphTeamInner.displayName = reader.getString();
+                } else if ("funSettings".equals(fieldName)) {
+                    deserializedMicrosoftGraphTeamInner.funSettings = MicrosoftGraphTeamFunSettings.fromJson(reader);
+                } else if ("guestSettings".equals(fieldName)) {
+                    deserializedMicrosoftGraphTeamInner.guestSettings
+                        = MicrosoftGraphTeamGuestSettings.fromJson(reader);
+                } else if ("internalId".equals(fieldName)) {
+                    deserializedMicrosoftGraphTeamInner.internalId = reader.getString();
+                } else if ("isArchived".equals(fieldName)) {
+                    deserializedMicrosoftGraphTeamInner.isArchived = reader.getNullable(JsonReader::getBoolean);
+                } else if ("memberSettings".equals(fieldName)) {
+                    deserializedMicrosoftGraphTeamInner.memberSettings
+                        = MicrosoftGraphTeamMemberSettings.fromJson(reader);
+                } else if ("messagingSettings".equals(fieldName)) {
+                    deserializedMicrosoftGraphTeamInner.messagingSettings
+                        = MicrosoftGraphTeamMessagingSettings.fromJson(reader);
+                } else if ("specialization".equals(fieldName)) {
+                    deserializedMicrosoftGraphTeamInner.specialization
+                        = MicrosoftGraphTeamSpecialization.fromString(reader.getString());
+                } else if ("visibility".equals(fieldName)) {
+                    deserializedMicrosoftGraphTeamInner.visibility
+                        = MicrosoftGraphTeamVisibilityType.fromString(reader.getString());
+                } else if ("webUrl".equals(fieldName)) {
+                    deserializedMicrosoftGraphTeamInner.webUrl = reader.getString();
+                } else if ("schedule".equals(fieldName)) {
+                    deserializedMicrosoftGraphTeamInner.schedule = MicrosoftGraphSchedule.fromJson(reader);
+                } else if ("channels".equals(fieldName)) {
+                    List<MicrosoftGraphChannel> channels
+                        = reader.readArray(reader1 -> MicrosoftGraphChannel.fromJson(reader1));
+                    deserializedMicrosoftGraphTeamInner.channels = channels;
+                } else if ("group".equals(fieldName)) {
+                    deserializedMicrosoftGraphTeamInner.group = MicrosoftGraphGroupInner.fromJson(reader);
+                } else if ("installedApps".equals(fieldName)) {
+                    List<MicrosoftGraphTeamsAppInstallation> installedApps
+                        = reader.readArray(reader1 -> MicrosoftGraphTeamsAppInstallation.fromJson(reader1));
+                    deserializedMicrosoftGraphTeamInner.installedApps = installedApps;
+                } else if ("members".equals(fieldName)) {
+                    List<MicrosoftGraphConversationMember> members
+                        = reader.readArray(reader1 -> MicrosoftGraphConversationMember.fromJson(reader1));
+                    deserializedMicrosoftGraphTeamInner.members = members;
+                } else if ("operations".equals(fieldName)) {
+                    List<MicrosoftGraphTeamsAsyncOperation> operations
+                        = reader.readArray(reader1 -> MicrosoftGraphTeamsAsyncOperation.fromJson(reader1));
+                    deserializedMicrosoftGraphTeamInner.operations = operations;
+                } else if ("primaryChannel".equals(fieldName)) {
+                    deserializedMicrosoftGraphTeamInner.primaryChannel = MicrosoftGraphChannel.fromJson(reader);
+                } else if ("template".equals(fieldName)) {
+                    deserializedMicrosoftGraphTeamInner.template = MicrosoftGraphTeamsTemplate.fromJson(reader);
+                } else {
+                    if (additionalProperties == null) {
+                        additionalProperties = new LinkedHashMap<>();
+                    }
+
+                    additionalProperties.put(fieldName, reader.readUntyped());
+                }
+            }
+            deserializedMicrosoftGraphTeamInner.additionalProperties = additionalProperties;
+
+            return deserializedMicrosoftGraphTeamInner;
+        });
     }
 }

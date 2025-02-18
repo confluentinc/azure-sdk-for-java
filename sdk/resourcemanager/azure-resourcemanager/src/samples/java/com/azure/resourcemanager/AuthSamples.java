@@ -7,12 +7,14 @@ import com.azure.core.credential.TokenCredential;
 import com.azure.core.http.HttpClient;
 import com.azure.core.http.policy.HttpPipelinePolicy;
 import com.azure.core.http.policy.RetryPolicy;
-import com.azure.core.management.AzureEnvironment;
 import com.azure.core.management.profile.AzureProfile;
+import com.azure.core.models.AzureCloud;
 import com.azure.identity.ClientSecretCredential;
 import com.azure.identity.ClientSecretCredentialBuilder;
 import com.azure.identity.EnvironmentCredential;
 import com.azure.identity.EnvironmentCredentialBuilder;
+import com.azure.identity.ManagedIdentityCredential;
+import com.azure.identity.ManagedIdentityCredentialBuilder;
 
 /**
  * Code samples for the AUTH.md
@@ -31,20 +33,29 @@ public class AuthSamples {
         // END: readme-sample-buildClientSecretCredential
     }
 
+    public void buildManagedIdentityCredential() {
+        // BEGIN: readme-sample-buildManagedIdentityCredential
+        ManagedIdentityCredential managedIdentityCredential = new ManagedIdentityCredentialBuilder()
+            // client ID is optional
+            .clientId("<YOUR_CLIENT_ID>")
+            .build();
+        // END: readme-sample-buildManagedIdentityCredential
+    }
+
     public void buildAzureProfile() {
         // BEGIN: readme-sample-buildAzureProfile
-        // AzureProfile profile = new AzureProfile(AzureEnvironment.AZURE);
-        AzureProfile profile = new AzureProfile("<YOUR_TENANT_ID>", "<YOUR_SUBSCRIPTION_ID>", AzureEnvironment.AZURE);
+        // AzureProfile profile = new AzureProfile(AzureCloud.AZURE_PUBLIC_CLOUD);
+        AzureProfile profile = new AzureProfile("<YOUR_TENANT_ID>", "<YOUR_SUBSCRIPTION_ID>", AzureCloud.AZURE_PUBLIC_CLOUD);
         // END: readme-sample-buildAzureProfile
     }
 
-    public void init() {
-        // BEGIN: readme-sample-init
-        AzureProfile profile = new AzureProfile(AzureEnvironment.AZURE_GERMANY);
+    public void buildEnvironmentCredential() {
+        // BEGIN: readme-sample-buildEnvironmentCredential
+        AzureProfile profile = new AzureProfile(AzureCloud.AZURE_CHINA_CLOUD);
         EnvironmentCredential credential = new EnvironmentCredentialBuilder()
             .authorityHost(profile.getEnvironment().getActiveDirectoryEndpoint())
             .build();
-        // END: readme-sample-init
+        // END: readme-sample-buildEnvironmentCredential
     }
 
     public void authenticate(TokenCredential credential, AzureProfile profile) {

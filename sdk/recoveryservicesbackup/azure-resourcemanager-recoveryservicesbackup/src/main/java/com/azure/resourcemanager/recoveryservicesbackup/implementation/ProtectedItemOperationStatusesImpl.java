@@ -12,59 +12,39 @@ import com.azure.resourcemanager.recoveryservicesbackup.fluent.ProtectedItemOper
 import com.azure.resourcemanager.recoveryservicesbackup.fluent.models.OperationStatusInner;
 import com.azure.resourcemanager.recoveryservicesbackup.models.OperationStatus;
 import com.azure.resourcemanager.recoveryservicesbackup.models.ProtectedItemOperationStatuses;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 public final class ProtectedItemOperationStatusesImpl implements ProtectedItemOperationStatuses {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(ProtectedItemOperationStatusesImpl.class);
+    private static final ClientLogger LOGGER = new ClientLogger(ProtectedItemOperationStatusesImpl.class);
 
     private final ProtectedItemOperationStatusesClient innerClient;
 
     private final com.azure.resourcemanager.recoveryservicesbackup.RecoveryServicesBackupManager serviceManager;
 
-    public ProtectedItemOperationStatusesImpl(
-        ProtectedItemOperationStatusesClient innerClient,
+    public ProtectedItemOperationStatusesImpl(ProtectedItemOperationStatusesClient innerClient,
         com.azure.resourcemanager.recoveryservicesbackup.RecoveryServicesBackupManager serviceManager) {
         this.innerClient = innerClient;
         this.serviceManager = serviceManager;
     }
 
-    public OperationStatus get(
-        String vaultName,
-        String resourceGroupName,
-        String fabricName,
-        String containerName,
-        String protectedItemName,
-        String operationId) {
-        OperationStatusInner inner =
-            this
-                .serviceClient()
-                .get(vaultName, resourceGroupName, fabricName, containerName, protectedItemName, operationId);
+    public Response<OperationStatus> getWithResponse(String vaultName, String resourceGroupName, String fabricName,
+        String containerName, String protectedItemName, String operationId, Context context) {
+        Response<OperationStatusInner> inner = this.serviceClient()
+            .getWithResponse(vaultName, resourceGroupName, fabricName, containerName, protectedItemName, operationId,
+                context);
         if (inner != null) {
-            return new OperationStatusImpl(inner, this.manager());
+            return new SimpleResponse<>(inner.getRequest(), inner.getStatusCode(), inner.getHeaders(),
+                new OperationStatusImpl(inner.getValue(), this.manager()));
         } else {
             return null;
         }
     }
 
-    public Response<OperationStatus> getWithResponse(
-        String vaultName,
-        String resourceGroupName,
-        String fabricName,
-        String containerName,
-        String protectedItemName,
-        String operationId,
-        Context context) {
-        Response<OperationStatusInner> inner =
-            this
-                .serviceClient()
-                .getWithResponse(
-                    vaultName, resourceGroupName, fabricName, containerName, protectedItemName, operationId, context);
+    public OperationStatus get(String vaultName, String resourceGroupName, String fabricName, String containerName,
+        String protectedItemName, String operationId) {
+        OperationStatusInner inner = this.serviceClient()
+            .get(vaultName, resourceGroupName, fabricName, containerName, protectedItemName, operationId);
         if (inner != null) {
-            return new SimpleResponse<>(
-                inner.getRequest(),
-                inner.getStatusCode(),
-                inner.getHeaders(),
-                new OperationStatusImpl(inner.getValue(), this.manager()));
+            return new OperationStatusImpl(inner, this.manager());
         } else {
             return null;
         }

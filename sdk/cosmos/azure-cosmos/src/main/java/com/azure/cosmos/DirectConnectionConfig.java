@@ -3,6 +3,7 @@
 
 package com.azure.cosmos;
 
+import com.azure.cosmos.implementation.Configs;
 import com.azure.cosmos.implementation.ImplementationBridgeHelpers;
 import io.netty.channel.ChannelOption;
 
@@ -19,15 +20,16 @@ import static com.azure.cosmos.implementation.guava25.base.Preconditions.checkNo
  */
 public final class DirectConnectionConfig {
     //  Constants
-    private static final Boolean DEFAULT_CONNECTION_ENDPOINT_REDISCOVERY_ENABLED = false;
+    private static final Boolean DEFAULT_CONNECTION_ENDPOINT_REDISCOVERY_ENABLED = true;
     private static final Duration DEFAULT_IDLE_ENDPOINT_TIMEOUT = Duration.ofHours(1l);
     private static final Duration DEFAULT_CONNECT_TIMEOUT = Duration.ofSeconds(5L);
     private static final Duration DEFAULT_NETWORK_REQUEST_TIMEOUT = Duration.ofSeconds(5L);
-    private static final Duration MIN_NETWORK_REQUEST_TIMEOUT = Duration.ofSeconds(5L);
+    private static final Duration MIN_NETWORK_REQUEST_TIMEOUT = Duration.ofSeconds(1L);
     private static final Duration MAX_NETWORK_REQUEST_TIMEOUT = Duration.ofSeconds(10L);
     private static final int DEFAULT_MAX_CONNECTIONS_PER_ENDPOINT = 130;
     private static final int DEFAULT_MAX_REQUESTS_PER_CONNECTION = 30;
     private static final int DEFAULT_IO_THREAD_COUNT_PER_CORE_FACTOR = 2;
+    private static final int DEFAULT_IO_THREAD_PRIORITY = Thread.NORM_PRIORITY;
 
     private boolean connectionEndpointRediscoveryEnabled;
     private Duration connectTimeout;
@@ -37,6 +39,9 @@ public final class DirectConnectionConfig {
     private int maxConnectionsPerEndpoint;
     private int maxRequestsPerConnection;
     private int ioThreadCountPerCoreFactor;
+    private int ioThreadPriority;
+    private boolean healthCheckTimeoutDetectionEnabled;
+    private int minConnectionPoolSizePerEndpoint;
 
     /**
      * Constructor
@@ -50,6 +55,9 @@ public final class DirectConnectionConfig {
         this.maxRequestsPerConnection = DEFAULT_MAX_REQUESTS_PER_CONNECTION;
         this.networkRequestTimeout = DEFAULT_NETWORK_REQUEST_TIMEOUT;
         this.ioThreadCountPerCoreFactor = DEFAULT_IO_THREAD_COUNT_PER_CORE_FACTOR;
+        this.ioThreadPriority = DEFAULT_IO_THREAD_PRIORITY;
+        this.healthCheckTimeoutDetectionEnabled = Configs.isTcpHealthCheckTimeoutDetectionEnabled();
+        this.minConnectionPoolSizePerEndpoint = Configs.getMinConnectionPoolSizePerEndpoint();
     }
 
     /**
@@ -57,7 +65,7 @@ public final class DirectConnectionConfig {
      * <p>
      * The connection endpoint rediscovery feature is designed to reduce and spread-out latency spikes that may occur during maintenance operations.
      *
-     * By default, connection endpoint rediscovery is disabled.
+     * By default, connection endpoint rediscovery is enabled.
      *
      * @return {@code true} if Direct TCP connection endpoint rediscovery is enabled; {@code false} otherwise.
      */
@@ -70,7 +78,7 @@ public final class DirectConnectionConfig {
      * <p>
      * The connection endpoint rediscovery feature is designed to reduce and spread-out latency spikes that may occur during maintenance operations.
      *
-     * By default, connection endpoint rediscovery is disabled.
+     * By default, connection endpoint rediscovery is enabled.
      *
      * @param connectionEndpointRediscoveryEnabled {@code true} if connection endpoint rediscovery is enabled; {@code
      *                                             false} otherwise.
@@ -255,7 +263,7 @@ public final class DirectConnectionConfig {
      * Sets the network request timeout interval (time to wait for response from network peer).
      *
      * Default value is 5 seconds.
-     * It only allows values &ge;5s and &le;10s. (backend allows requests to take up-to 5 seconds processing time - 5 seconds
+     * It only allows values &ge;1s and &le;10s. (backend allows requests to take up-to 5 seconds processing time - 5 seconds
      * buffer so 10 seconds in total for transport is more than sufficient).
      *
      * Attention! Please adjust this value with caution.
@@ -286,6 +294,33 @@ public final class DirectConnectionConfig {
         return this;
     }
 
+    int getIoThreadPriority() {
+        return ioThreadPriority;
+    }
+
+    DirectConnectionConfig setIoThreadPriority(int ioThreadPriority) {
+        this.ioThreadPriority = ioThreadPriority;
+        return this;
+    }
+
+    DirectConnectionConfig setHealthCheckTimeoutDetectionEnabled(boolean timeoutDetectionEnabled) {
+        this.healthCheckTimeoutDetectionEnabled = timeoutDetectionEnabled;
+        return this;
+    }
+
+    boolean isHealthCheckTimeoutDetectionEnabled() {
+        return this.healthCheckTimeoutDetectionEnabled;
+    }
+
+    DirectConnectionConfig setMinConnectionPoolSizePerEndpoint(int minConnectionPoolSizePerEndpoint) {
+        this.minConnectionPoolSizePerEndpoint = minConnectionPoolSizePerEndpoint;
+        return this;
+    }
+
+    int getMinConnectionPoolSizePerEndpoint() {
+        return this.minConnectionPoolSizePerEndpoint;
+    }
+
     @Override
     public String toString() {
         return "DirectConnectionConfig{" +
@@ -296,14 +331,15 @@ public final class DirectConnectionConfig {
             ", maxRequestsPerConnection=" + maxRequestsPerConnection +
             ", networkRequestTimeout=" + networkRequestTimeout +
             ", ioThreadCountPerCoreFactor=" + ioThreadCountPerCoreFactor +
+            ", ioThreadPriority=" + ioThreadPriority +
+            ", tcpHealthCheckTimeoutDetectionEnabled=" + healthCheckTimeoutDetectionEnabled +
             '}';
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////
     // the following helper/accessor only helps to access this class outside of this package.//
     ///////////////////////////////////////////////////////////////////////////////////////////
-
-    static {
+    static void initialize() {
         ImplementationBridgeHelpers.DirectConnectionConfigHelper.setDirectConnectionConfigAccessor(
             new ImplementationBridgeHelpers.DirectConnectionConfigHelper.DirectConnectionConfigAccessor() {
                 @Override
@@ -316,6 +352,43 @@ public final class DirectConnectionConfig {
                                                                             int ioThreadCountPerCoreFactor) {
                     return config.setIoThreadCountPerCoreFactor(ioThreadCountPerCoreFactor);
                 }
+
+                @Override
+                public int getIoThreadPriority(DirectConnectionConfig config) {
+                    return config.getIoThreadPriority();
+                }
+
+                @Override
+                public DirectConnectionConfig setIoThreadPriority(DirectConnectionConfig config,
+                                                                  int ioThreadPriority) {
+                    return config.setIoThreadPriority(ioThreadPriority);
+                }
+
+                @Override
+                public DirectConnectionConfig setHealthCheckTimeoutDetectionEnabled(
+                    DirectConnectionConfig directConnectionConfig, boolean timeoutDetectionEnabled) {
+
+                    directConnectionConfig.setHealthCheckTimeoutDetectionEnabled(timeoutDetectionEnabled);
+                    return directConnectionConfig;
+                }
+
+                @Override
+                public boolean isHealthCheckTimeoutDetectionEnabled(DirectConnectionConfig directConnectionConfig) {
+                    return directConnectionConfig.isHealthCheckTimeoutDetectionEnabled();
+                }
+
+                @Override
+                public DirectConnectionConfig setMinConnectionPoolSizePerEndpoint(DirectConnectionConfig directConnectionConfig, int minConnectionPoolSizePerEndpoint) {
+                    directConnectionConfig.setMinConnectionPoolSizePerEndpoint(minConnectionPoolSizePerEndpoint);
+                    return directConnectionConfig;
+                }
+
+                @Override
+                public int getMinConnectionPoolSizePerEndpoint(DirectConnectionConfig directConnectionConfig) {
+                    return directConnectionConfig.getMinConnectionPoolSizePerEndpoint();
+                }
             });
     }
+
+    static { initialize(); }
 }

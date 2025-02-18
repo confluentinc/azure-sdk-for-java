@@ -13,41 +13,36 @@ import com.azure.resourcemanager.recoveryservicesbackup.fluent.models.BackupStat
 import com.azure.resourcemanager.recoveryservicesbackup.models.BackupStatus;
 import com.azure.resourcemanager.recoveryservicesbackup.models.BackupStatusRequest;
 import com.azure.resourcemanager.recoveryservicesbackup.models.BackupStatusResponse;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 public final class BackupStatusImpl implements BackupStatus {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(BackupStatusImpl.class);
+    private static final ClientLogger LOGGER = new ClientLogger(BackupStatusImpl.class);
 
     private final BackupStatusClient innerClient;
 
     private final com.azure.resourcemanager.recoveryservicesbackup.RecoveryServicesBackupManager serviceManager;
 
-    public BackupStatusImpl(
-        BackupStatusClient innerClient,
+    public BackupStatusImpl(BackupStatusClient innerClient,
         com.azure.resourcemanager.recoveryservicesbackup.RecoveryServicesBackupManager serviceManager) {
         this.innerClient = innerClient;
         this.serviceManager = serviceManager;
+    }
+
+    public Response<BackupStatusResponse> getWithResponse(String azureRegion, BackupStatusRequest parameters,
+        Context context) {
+        Response<BackupStatusResponseInner> inner
+            = this.serviceClient().getWithResponse(azureRegion, parameters, context);
+        if (inner != null) {
+            return new SimpleResponse<>(inner.getRequest(), inner.getStatusCode(), inner.getHeaders(),
+                new BackupStatusResponseImpl(inner.getValue(), this.manager()));
+        } else {
+            return null;
+        }
     }
 
     public BackupStatusResponse get(String azureRegion, BackupStatusRequest parameters) {
         BackupStatusResponseInner inner = this.serviceClient().get(azureRegion, parameters);
         if (inner != null) {
             return new BackupStatusResponseImpl(inner, this.manager());
-        } else {
-            return null;
-        }
-    }
-
-    public Response<BackupStatusResponse> getWithResponse(
-        String azureRegion, BackupStatusRequest parameters, Context context) {
-        Response<BackupStatusResponseInner> inner =
-            this.serviceClient().getWithResponse(azureRegion, parameters, context);
-        if (inner != null) {
-            return new SimpleResponse<>(
-                inner.getRequest(),
-                inner.getStatusCode(),
-                inner.getHeaders(),
-                new BackupStatusResponseImpl(inner.getValue(), this.manager()));
         } else {
             return null;
         }

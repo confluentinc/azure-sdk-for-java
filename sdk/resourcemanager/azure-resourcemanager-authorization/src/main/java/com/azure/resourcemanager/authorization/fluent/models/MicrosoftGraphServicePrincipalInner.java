@@ -5,355 +5,290 @@
 package com.azure.resourcemanager.authorization.fluent.models;
 
 import com.azure.core.annotation.Fluent;
-import com.azure.core.util.logging.ClientLogger;
-import com.fasterxml.jackson.annotation.JsonAnyGetter;
-import com.fasterxml.jackson.annotation.JsonAnySetter;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.azure.core.util.CoreUtils;
+import com.azure.json.JsonReader;
+import com.azure.json.JsonToken;
+import com.azure.json.JsonWriter;
+import java.io.IOException;
 import java.time.OffsetDateTime;
-import java.util.HashMap;
+import java.time.format.DateTimeFormatter;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.UUID;
 
 /**
+ * servicePrincipal
+ * 
  * Represents an Azure Active Directory object. The directoryObject type is the base type for many other directory
  * entity types.
  */
 @Fluent
 public final class MicrosoftGraphServicePrincipalInner extends MicrosoftGraphDirectoryObjectInner {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(MicrosoftGraphServicePrincipalInner.class);
-
     /*
      * true if the service principal account is enabled; otherwise, false.
      */
-    @JsonProperty(value = "accountEnabled")
     private Boolean accountEnabled;
 
     /*
-     * Defines custom behavior that a consuming service can use to call an app
-     * in specific contexts. For example, applications that can render file
-     * streams may set the addIns property for its 'FileHandler' functionality.
-     * This will let services like Microsoft 365 call the application in the
-     * context of a document the user is working on.
+     * Defines custom behavior that a consuming service can use to call an app in specific contexts. For example,
+     * applications that can render file streams may set the addIns property for its 'FileHandler' functionality. This
+     * will let services like Microsoft 365 call the application in the context of a document the user is working on.
      */
-    @JsonProperty(value = "addIns")
     private List<MicrosoftGraphAddIn> addIns;
 
     /*
-     * Used to retrieve service principals by subscription, identify resource
-     * group and full resource ids for managed identities.
+     * Used to retrieve service principals by subscription, identify resource group and full resource ids for managed
+     * identities.
      */
-    @JsonProperty(value = "alternativeNames")
     private List<String> alternativeNames;
 
     /*
      * The appDescription property.
      */
-    @JsonProperty(value = "appDescription")
     private String appDescription;
 
     /*
      * The display name exposed by the associated application.
      */
-    @JsonProperty(value = "appDisplayName")
     private String appDisplayName;
 
     /*
-     * The unique identifier for the associated application (its appId
-     * property).
+     * The unique identifier for the associated application (its appId property).
      */
-    @JsonProperty(value = "appId")
     private String appId;
 
     /*
-     * Unique identifier of the applicationTemplate that the servicePrincipal
-     * was created from. Read-only.
+     * Unique identifier of the applicationTemplate that the servicePrincipal was created from. Read-only.
      */
-    @JsonProperty(value = "applicationTemplateId")
     private String applicationTemplateId;
 
     /*
-     * Contains the tenant id where the application is registered. This is
-     * applicable only to service principals backed by applications.
+     * Contains the tenant id where the application is registered. This is applicable only to service principals backed
+     * by applications.
      */
-    @JsonProperty(value = "appOwnerOrganizationId")
     private UUID appOwnerOrganizationId;
 
     /*
-     * Specifies whether users or other service principals need to be granted
-     * an app role assignment for this service principal before users can sign
-     * in or apps can get tokens. The default value is false. Not nullable.
+     * Specifies whether users or other service principals need to be granted an app role assignment for this service
+     * principal before users can sign in or apps can get tokens. The default value is false. Not nullable.
      */
-    @JsonProperty(value = "appRoleAssignmentRequired")
     private Boolean appRoleAssignmentRequired;
 
     /*
-     * The roles exposed by the application which this service principal
-     * represents. For more information see the appRoles property definition on
-     * the application entity. Not nullable.
+     * The roles exposed by the application which this service principal represents. For more information see the
+     * appRoles property definition on the application entity. Not nullable.
      */
-    @JsonProperty(value = "appRoles")
     private List<MicrosoftGraphAppRole> appRoles;
 
     /*
      * The description property.
      */
-    @JsonProperty(value = "description")
     private String description;
 
     /*
      * The display name for the service principal.
      */
-    @JsonProperty(value = "displayName")
     private String displayName;
 
     /*
      * Home page or landing page of the application.
      */
-    @JsonProperty(value = "homepage")
     private String homepage;
 
     /*
      * informationalUrl
      */
-    @JsonProperty(value = "info")
     private MicrosoftGraphInformationalUrl info;
 
     /*
-     * The collection of key credentials associated with the service principal.
-     * Not nullable.
+     * The collection of key credentials associated with the service principal. Not nullable.
      */
-    @JsonProperty(value = "keyCredentials")
     private List<MicrosoftGraphKeyCredentialInner> keyCredentials;
 
     /*
-     * Specifies the URL where the service provider redirects the user to Azure
-     * AD to authenticate. Azure AD uses the URL to launch the application from
-     * Microsoft 365 or the Azure AD My Apps. When blank, Azure AD performs
-     * IdP-initiated sign-on for applications configured with SAML-based single
-     * sign-on. The user launches the application from Microsoft 365, the Azure
-     * AD My Apps, or the Azure AD SSO URL.
+     * Specifies the URL where the service provider redirects the user to Azure AD to authenticate. Azure AD uses the
+     * URL to launch the application from Microsoft 365 or the Azure AD My Apps. When blank, Azure AD performs
+     * IdP-initiated sign-on for applications configured with SAML-based single sign-on. The user launches the
+     * application from Microsoft 365, the Azure AD My Apps, or the Azure AD SSO URL.
      */
-    @JsonProperty(value = "loginUrl")
     private String loginUrl;
 
     /*
-     * Specifies the URL that will be used by Microsoft's authorization service
-     * to logout an user using OpenId Connect front-channel, back-channel or
-     * SAML logout protocols.
+     * Specifies the URL that will be used by Microsoft's authorization service to logout an user using OpenId Connect
+     * front-channel, back-channel or SAML logout protocols.
      */
-    @JsonProperty(value = "logoutUrl")
     private String logoutUrl;
 
     /*
      * The notes property.
      */
-    @JsonProperty(value = "notes")
     private String notes;
 
     /*
-     * Specifies the list of email addresses where Azure AD sends a
-     * notification when the active certificate is near the expiration date.
-     * This is only for the certificates used to sign the SAML token issued for
-     * Azure AD Gallery applications.
+     * Specifies the list of email addresses where Azure AD sends a notification when the active certificate is near the
+     * expiration date. This is only for the certificates used to sign the SAML token issued for Azure AD Gallery
+     * applications.
      */
-    @JsonProperty(value = "notificationEmailAddresses")
     private List<String> notificationEmailAddresses;
 
     /*
-     * The delegated permissions exposed by the application. For more
-     * information see the oauth2PermissionScopes property on the application
-     * entity's api property. Not nullable.
+     * The delegated permissions exposed by the application. For more information see the oauth2PermissionScopes
+     * property on the application entity's api property. Not nullable.
      */
-    @JsonProperty(value = "oauth2PermissionScopes")
     private List<MicrosoftGraphPermissionScope> oauth2PermissionScopes;
 
     /*
-     * The collection of password credentials associated with the service
-     * principal. Not nullable.
+     * The collection of password credentials associated with the service principal. Not nullable.
      */
-    @JsonProperty(value = "passwordCredentials")
     private List<MicrosoftGraphPasswordCredentialInner> passwordCredentials;
 
     /*
-     * Specifies the single sign-on mode configured for this application. Azure
-     * AD uses the preferred single sign-on mode to launch the application from
-     * Microsoft 365 or the Azure AD My Apps. The supported values are
-     * password, saml, external, and oidc.
+     * Specifies the single sign-on mode configured for this application. Azure AD uses the preferred single sign-on
+     * mode to launch the application from Microsoft 365 or the Azure AD My Apps. The supported values are password,
+     * saml, external, and oidc.
      */
-    @JsonProperty(value = "preferredSingleSignOnMode")
     private String preferredSingleSignOnMode;
 
     /*
      * The preferredTokenSigningKeyThumbprint property.
      */
-    @JsonProperty(value = "preferredTokenSigningKeyThumbprint")
     private String preferredTokenSigningKeyThumbprint;
 
     /*
-     * The URLs that user tokens are sent to for sign in with the associated
-     * application, or the redirect URIs that OAuth 2.0 authorization codes and
-     * access tokens are sent to for the associated application. Not nullable.
+     * The URLs that user tokens are sent to for sign in with the associated application, or the redirect URIs that
+     * OAuth 2.0 authorization codes and access tokens are sent to for the associated application. Not nullable.
      */
-    @JsonProperty(value = "replyUrls")
     private List<String> replyUrls;
 
     /*
      * samlSingleSignOnSettings
      */
-    @JsonProperty(value = "samlSingleSignOnSettings")
     private MicrosoftGraphSamlSingleSignOnSettings samlSingleSignOnSettings;
 
     /*
-     * Contains the list of identifiersUris, copied over from the associated
-     * application. Additional values can be added to hybrid applications.
-     * These values can be used to identify the permissions exposed by this app
-     * within Azure AD. For example,Client apps can specify a resource URI
-     * which is based on the values of this property to acquire an access
-     * token, which is the URI returned in the 'aud' claim.The any operator is
-     * required for filter expressions on multi-valued properties. Not
-     * nullable.
+     * Contains the list of identifiersUris, copied over from the associated application. Additional values can be added
+     * to hybrid applications. These values can be used to identify the permissions exposed by this app within Azure AD.
+     * For example,Client apps can specify a resource URI which is based on the values of this property to acquire an
+     * access token, which is the URI returned in the 'aud' claim.The any operator is required for filter expressions on
+     * multi-valued properties. Not nullable.
      */
-    @JsonProperty(value = "servicePrincipalNames")
     private List<String> servicePrincipalNames;
 
     /*
-     * Identifies if the service principal represents an application or a
-     * managed identity. This is set by Azure AD internally. For a service
-     * principal that represents an application this is set as Application. For
-     * a service principal that represent a managed identity this is set as
-     * ManagedIdentity.
+     * Identifies if the service principal represents an application or a managed identity. This is set by Azure AD
+     * internally. For a service principal that represents an application this is set as Application. For a service
+     * principal that represent a managed identity this is set as ManagedIdentity.
      */
-    @JsonProperty(value = "servicePrincipalType")
     private String servicePrincipalType;
 
     /*
      * The signInAudience property.
      */
-    @JsonProperty(value = "signInAudience")
     private String signInAudience;
 
     /*
-     * Custom strings that can be used to categorize and identify the service
-     * principal. Not nullable.
+     * Custom strings that can be used to categorize and identify the service principal. Not nullable.
      */
-    @JsonProperty(value = "tags")
     private List<String> tags;
 
     /*
-     * Specifies the keyId of a public key from the keyCredentials collection.
-     * When configured, Azure AD issues tokens for this application encrypted
-     * using the key specified by this property. The application code that
-     * receives the encrypted token must use the matching private key to
-     * decrypt the token before it can be used for the signed-in user.
+     * Specifies the keyId of a public key from the keyCredentials collection. When configured, Azure AD issues tokens
+     * for this application encrypted using the key specified by this property. The application code that receives the
+     * encrypted token must use the matching private key to decrypt the token before it can be used for the signed-in
+     * user.
      */
-    @JsonProperty(value = "tokenEncryptionKeyId")
     private UUID tokenEncryptionKeyId;
 
     /*
-     * Principals (users, groups, and service principals) that are assigned to
-     * this service principal. Read-only.
+     * Principals (users, groups, and service principals) that are assigned to this service principal. Read-only.
      */
-    @JsonProperty(value = "appRoleAssignedTo")
-    private List<MicrosoftGraphAppRoleAssignmentInner> appRoleAssignedTo;
+    private List<MicrosoftGraphAppRoleAssignment> appRoleAssignedTo;
 
     /*
-     * Applications that this service principal is assigned to. Read-only.
-     * Nullable.
+     * Applications that this service principal is assigned to. Read-only. Nullable.
      */
-    @JsonProperty(value = "appRoleAssignments")
-    private List<MicrosoftGraphAppRoleAssignmentInner> appRoleAssignments;
+    private List<MicrosoftGraphAppRoleAssignment> appRoleAssignments;
 
     /*
      * The claimsMappingPolicies assigned to this service principal.
      */
-    @JsonProperty(value = "claimsMappingPolicies")
-    private List<MicrosoftGraphClaimsMappingPolicyInner> claimsMappingPolicies;
+    private List<MicrosoftGraphClaimsMappingPolicy> claimsMappingPolicies;
 
     /*
-     * Directory objects created by this service principal. Read-only.
-     * Nullable.
+     * Directory objects created by this service principal. Read-only. Nullable.
      */
-    @JsonProperty(value = "createdObjects")
     private List<MicrosoftGraphDirectoryObjectInner> createdObjects;
 
     /*
      * The delegatedPermissionClassifications property.
      */
-    @JsonProperty(value = "delegatedPermissionClassifications")
-    private List<MicrosoftGraphDelegatedPermissionClassificationInner> delegatedPermissionClassifications;
+    private List<MicrosoftGraphDelegatedPermissionClassification> delegatedPermissionClassifications;
 
     /*
-     * Endpoints available for discovery. Services like Sharepoint populate
-     * this property with a tenant specific SharePoint endpoints that other
-     * applications can discover and use in their experiences.
+     * Endpoints available for discovery. Services like Sharepoint populate this property with a tenant specific
+     * SharePoint endpoints that other applications can discover and use in their experiences.
      */
-    @JsonProperty(value = "endpoints")
-    private List<MicrosoftGraphEndpointInner> endpoints;
+    private List<MicrosoftGraphEndpoint> endpoints;
 
     /*
      * The homeRealmDiscoveryPolicies assigned to this service principal.
      */
-    @JsonProperty(value = "homeRealmDiscoveryPolicies")
     private List<MicrosoftGraphHomeRealmDiscoveryPolicyInner> homeRealmDiscoveryPolicies;
 
     /*
-     * Roles that this service principal is a member of. HTTP Methods: GET
-     * Read-only. Nullable.
+     * Roles that this service principal is a member of. HTTP Methods: GET Read-only. Nullable.
      */
-    @JsonProperty(value = "memberOf")
     private List<MicrosoftGraphDirectoryObjectInner> memberOf;
 
     /*
-     * Delegated permission grants authorizing this service principal to access
-     * an API on behalf of a signed-in user. Read-only. Nullable.
+     * Delegated permission grants authorizing this service principal to access an API on behalf of a signed-in user.
+     * Read-only. Nullable.
      */
-    @JsonProperty(value = "oauth2PermissionGrants")
-    private List<MicrosoftGraphOAuth2PermissionGrantInner> oauth2PermissionGrants;
+    private List<MicrosoftGraphOAuth2PermissionGrant> oauth2PermissionGrants;
 
     /*
-     * Directory objects that are owned by this service principal. Read-only.
-     * Nullable.
+     * Directory objects that are owned by this service principal. Read-only. Nullable.
      */
-    @JsonProperty(value = "ownedObjects")
     private List<MicrosoftGraphDirectoryObjectInner> ownedObjects;
 
     /*
-     * Directory objects that are owners of this servicePrincipal. The owners
-     * are a set of non-admin users or servicePrincipals who are allowed to
-     * modify this object. Read-only. Nullable.
+     * Directory objects that are owners of this servicePrincipal. The owners are a set of non-admin users or
+     * servicePrincipals who are allowed to modify this object. Read-only. Nullable.
      */
-    @JsonProperty(value = "owners")
     private List<MicrosoftGraphDirectoryObjectInner> owners;
 
     /*
      * The tokenIssuancePolicies assigned to this service principal.
      */
-    @JsonProperty(value = "tokenIssuancePolicies")
-    private List<MicrosoftGraphTokenIssuancePolicyInner> tokenIssuancePolicies;
+    private List<MicrosoftGraphTokenIssuancePolicy> tokenIssuancePolicies;
 
     /*
      * The tokenLifetimePolicies assigned to this service principal.
      */
-    @JsonProperty(value = "tokenLifetimePolicies")
-    private List<MicrosoftGraphTokenLifetimePolicyInner> tokenLifetimePolicies;
+    private List<MicrosoftGraphTokenLifetimePolicy> tokenLifetimePolicies;
 
     /*
      * The transitiveMemberOf property.
      */
-    @JsonProperty(value = "transitiveMemberOf")
     private List<MicrosoftGraphDirectoryObjectInner> transitiveMemberOf;
 
     /*
-     * Represents an Azure Active Directory object. The directoryObject type is
-     * the base type for many other directory entity types.
+     * Represents an Azure Active Directory object. The directoryObject type is the base type for many other directory
+     * entity types.
      */
-    @JsonIgnore private Map<String, Object> additionalProperties;
+    private Map<String, Object> additionalProperties;
+
+    /**
+     * Creates an instance of MicrosoftGraphServicePrincipalInner class.
+     */
+    public MicrosoftGraphServicePrincipalInner() {
+    }
 
     /**
      * Get the accountEnabled property: true if the service principal account is enabled; otherwise, false.
-     *
+     * 
      * @return the accountEnabled value.
      */
     public Boolean accountEnabled() {
@@ -362,7 +297,7 @@ public final class MicrosoftGraphServicePrincipalInner extends MicrosoftGraphDir
 
     /**
      * Set the accountEnabled property: true if the service principal account is enabled; otherwise, false.
-     *
+     * 
      * @param accountEnabled the accountEnabled value to set.
      * @return the MicrosoftGraphServicePrincipalInner object itself.
      */
@@ -376,7 +311,7 @@ public final class MicrosoftGraphServicePrincipalInner extends MicrosoftGraphDir
      * contexts. For example, applications that can render file streams may set the addIns property for its
      * 'FileHandler' functionality. This will let services like Microsoft 365 call the application in the context of a
      * document the user is working on.
-     *
+     * 
      * @return the addIns value.
      */
     public List<MicrosoftGraphAddIn> addIns() {
@@ -388,7 +323,7 @@ public final class MicrosoftGraphServicePrincipalInner extends MicrosoftGraphDir
      * contexts. For example, applications that can render file streams may set the addIns property for its
      * 'FileHandler' functionality. This will let services like Microsoft 365 call the application in the context of a
      * document the user is working on.
-     *
+     * 
      * @param addIns the addIns value to set.
      * @return the MicrosoftGraphServicePrincipalInner object itself.
      */
@@ -400,7 +335,7 @@ public final class MicrosoftGraphServicePrincipalInner extends MicrosoftGraphDir
     /**
      * Get the alternativeNames property: Used to retrieve service principals by subscription, identify resource group
      * and full resource ids for managed identities.
-     *
+     * 
      * @return the alternativeNames value.
      */
     public List<String> alternativeNames() {
@@ -410,7 +345,7 @@ public final class MicrosoftGraphServicePrincipalInner extends MicrosoftGraphDir
     /**
      * Set the alternativeNames property: Used to retrieve service principals by subscription, identify resource group
      * and full resource ids for managed identities.
-     *
+     * 
      * @param alternativeNames the alternativeNames value to set.
      * @return the MicrosoftGraphServicePrincipalInner object itself.
      */
@@ -421,7 +356,7 @@ public final class MicrosoftGraphServicePrincipalInner extends MicrosoftGraphDir
 
     /**
      * Get the appDescription property: The appDescription property.
-     *
+     * 
      * @return the appDescription value.
      */
     public String appDescription() {
@@ -430,7 +365,7 @@ public final class MicrosoftGraphServicePrincipalInner extends MicrosoftGraphDir
 
     /**
      * Set the appDescription property: The appDescription property.
-     *
+     * 
      * @param appDescription the appDescription value to set.
      * @return the MicrosoftGraphServicePrincipalInner object itself.
      */
@@ -441,7 +376,7 @@ public final class MicrosoftGraphServicePrincipalInner extends MicrosoftGraphDir
 
     /**
      * Get the appDisplayName property: The display name exposed by the associated application.
-     *
+     * 
      * @return the appDisplayName value.
      */
     public String appDisplayName() {
@@ -450,7 +385,7 @@ public final class MicrosoftGraphServicePrincipalInner extends MicrosoftGraphDir
 
     /**
      * Set the appDisplayName property: The display name exposed by the associated application.
-     *
+     * 
      * @param appDisplayName the appDisplayName value to set.
      * @return the MicrosoftGraphServicePrincipalInner object itself.
      */
@@ -461,7 +396,7 @@ public final class MicrosoftGraphServicePrincipalInner extends MicrosoftGraphDir
 
     /**
      * Get the appId property: The unique identifier for the associated application (its appId property).
-     *
+     * 
      * @return the appId value.
      */
     public String appId() {
@@ -470,7 +405,7 @@ public final class MicrosoftGraphServicePrincipalInner extends MicrosoftGraphDir
 
     /**
      * Set the appId property: The unique identifier for the associated application (its appId property).
-     *
+     * 
      * @param appId the appId value to set.
      * @return the MicrosoftGraphServicePrincipalInner object itself.
      */
@@ -482,7 +417,7 @@ public final class MicrosoftGraphServicePrincipalInner extends MicrosoftGraphDir
     /**
      * Get the applicationTemplateId property: Unique identifier of the applicationTemplate that the servicePrincipal
      * was created from. Read-only.
-     *
+     * 
      * @return the applicationTemplateId value.
      */
     public String applicationTemplateId() {
@@ -492,7 +427,7 @@ public final class MicrosoftGraphServicePrincipalInner extends MicrosoftGraphDir
     /**
      * Set the applicationTemplateId property: Unique identifier of the applicationTemplate that the servicePrincipal
      * was created from. Read-only.
-     *
+     * 
      * @param applicationTemplateId the applicationTemplateId value to set.
      * @return the MicrosoftGraphServicePrincipalInner object itself.
      */
@@ -504,7 +439,7 @@ public final class MicrosoftGraphServicePrincipalInner extends MicrosoftGraphDir
     /**
      * Get the appOwnerOrganizationId property: Contains the tenant id where the application is registered. This is
      * applicable only to service principals backed by applications.
-     *
+     * 
      * @return the appOwnerOrganizationId value.
      */
     public UUID appOwnerOrganizationId() {
@@ -514,7 +449,7 @@ public final class MicrosoftGraphServicePrincipalInner extends MicrosoftGraphDir
     /**
      * Set the appOwnerOrganizationId property: Contains the tenant id where the application is registered. This is
      * applicable only to service principals backed by applications.
-     *
+     * 
      * @param appOwnerOrganizationId the appOwnerOrganizationId value to set.
      * @return the MicrosoftGraphServicePrincipalInner object itself.
      */
@@ -527,7 +462,7 @@ public final class MicrosoftGraphServicePrincipalInner extends MicrosoftGraphDir
      * Get the appRoleAssignmentRequired property: Specifies whether users or other service principals need to be
      * granted an app role assignment for this service principal before users can sign in or apps can get tokens. The
      * default value is false. Not nullable.
-     *
+     * 
      * @return the appRoleAssignmentRequired value.
      */
     public Boolean appRoleAssignmentRequired() {
@@ -538,7 +473,7 @@ public final class MicrosoftGraphServicePrincipalInner extends MicrosoftGraphDir
      * Set the appRoleAssignmentRequired property: Specifies whether users or other service principals need to be
      * granted an app role assignment for this service principal before users can sign in or apps can get tokens. The
      * default value is false. Not nullable.
-     *
+     * 
      * @param appRoleAssignmentRequired the appRoleAssignmentRequired value to set.
      * @return the MicrosoftGraphServicePrincipalInner object itself.
      */
@@ -550,7 +485,7 @@ public final class MicrosoftGraphServicePrincipalInner extends MicrosoftGraphDir
     /**
      * Get the appRoles property: The roles exposed by the application which this service principal represents. For more
      * information see the appRoles property definition on the application entity. Not nullable.
-     *
+     * 
      * @return the appRoles value.
      */
     public List<MicrosoftGraphAppRole> appRoles() {
@@ -560,7 +495,7 @@ public final class MicrosoftGraphServicePrincipalInner extends MicrosoftGraphDir
     /**
      * Set the appRoles property: The roles exposed by the application which this service principal represents. For more
      * information see the appRoles property definition on the application entity. Not nullable.
-     *
+     * 
      * @param appRoles the appRoles value to set.
      * @return the MicrosoftGraphServicePrincipalInner object itself.
      */
@@ -571,7 +506,7 @@ public final class MicrosoftGraphServicePrincipalInner extends MicrosoftGraphDir
 
     /**
      * Get the description property: The description property.
-     *
+     * 
      * @return the description value.
      */
     public String description() {
@@ -580,7 +515,7 @@ public final class MicrosoftGraphServicePrincipalInner extends MicrosoftGraphDir
 
     /**
      * Set the description property: The description property.
-     *
+     * 
      * @param description the description value to set.
      * @return the MicrosoftGraphServicePrincipalInner object itself.
      */
@@ -591,7 +526,7 @@ public final class MicrosoftGraphServicePrincipalInner extends MicrosoftGraphDir
 
     /**
      * Get the displayName property: The display name for the service principal.
-     *
+     * 
      * @return the displayName value.
      */
     public String displayName() {
@@ -600,7 +535,7 @@ public final class MicrosoftGraphServicePrincipalInner extends MicrosoftGraphDir
 
     /**
      * Set the displayName property: The display name for the service principal.
-     *
+     * 
      * @param displayName the displayName value to set.
      * @return the MicrosoftGraphServicePrincipalInner object itself.
      */
@@ -611,7 +546,7 @@ public final class MicrosoftGraphServicePrincipalInner extends MicrosoftGraphDir
 
     /**
      * Get the homepage property: Home page or landing page of the application.
-     *
+     * 
      * @return the homepage value.
      */
     public String homepage() {
@@ -620,7 +555,7 @@ public final class MicrosoftGraphServicePrincipalInner extends MicrosoftGraphDir
 
     /**
      * Set the homepage property: Home page or landing page of the application.
-     *
+     * 
      * @param homepage the homepage value to set.
      * @return the MicrosoftGraphServicePrincipalInner object itself.
      */
@@ -631,7 +566,7 @@ public final class MicrosoftGraphServicePrincipalInner extends MicrosoftGraphDir
 
     /**
      * Get the info property: informationalUrl.
-     *
+     * 
      * @return the info value.
      */
     public MicrosoftGraphInformationalUrl info() {
@@ -640,7 +575,7 @@ public final class MicrosoftGraphServicePrincipalInner extends MicrosoftGraphDir
 
     /**
      * Set the info property: informationalUrl.
-     *
+     * 
      * @param info the info value to set.
      * @return the MicrosoftGraphServicePrincipalInner object itself.
      */
@@ -652,7 +587,7 @@ public final class MicrosoftGraphServicePrincipalInner extends MicrosoftGraphDir
     /**
      * Get the keyCredentials property: The collection of key credentials associated with the service principal. Not
      * nullable.
-     *
+     * 
      * @return the keyCredentials value.
      */
     public List<MicrosoftGraphKeyCredentialInner> keyCredentials() {
@@ -662,12 +597,12 @@ public final class MicrosoftGraphServicePrincipalInner extends MicrosoftGraphDir
     /**
      * Set the keyCredentials property: The collection of key credentials associated with the service principal. Not
      * nullable.
-     *
+     * 
      * @param keyCredentials the keyCredentials value to set.
      * @return the MicrosoftGraphServicePrincipalInner object itself.
      */
-    public MicrosoftGraphServicePrincipalInner withKeyCredentials(
-        List<MicrosoftGraphKeyCredentialInner> keyCredentials) {
+    public MicrosoftGraphServicePrincipalInner
+        withKeyCredentials(List<MicrosoftGraphKeyCredentialInner> keyCredentials) {
         this.keyCredentials = keyCredentials;
         return this;
     }
@@ -677,7 +612,7 @@ public final class MicrosoftGraphServicePrincipalInner extends MicrosoftGraphDir
      * authenticate. Azure AD uses the URL to launch the application from Microsoft 365 or the Azure AD My Apps. When
      * blank, Azure AD performs IdP-initiated sign-on for applications configured with SAML-based single sign-on. The
      * user launches the application from Microsoft 365, the Azure AD My Apps, or the Azure AD SSO URL.
-     *
+     * 
      * @return the loginUrl value.
      */
     public String loginUrl() {
@@ -689,7 +624,7 @@ public final class MicrosoftGraphServicePrincipalInner extends MicrosoftGraphDir
      * authenticate. Azure AD uses the URL to launch the application from Microsoft 365 or the Azure AD My Apps. When
      * blank, Azure AD performs IdP-initiated sign-on for applications configured with SAML-based single sign-on. The
      * user launches the application from Microsoft 365, the Azure AD My Apps, or the Azure AD SSO URL.
-     *
+     * 
      * @param loginUrl the loginUrl value to set.
      * @return the MicrosoftGraphServicePrincipalInner object itself.
      */
@@ -701,7 +636,7 @@ public final class MicrosoftGraphServicePrincipalInner extends MicrosoftGraphDir
     /**
      * Get the logoutUrl property: Specifies the URL that will be used by Microsoft's authorization service to logout an
      * user using OpenId Connect front-channel, back-channel or SAML logout protocols.
-     *
+     * 
      * @return the logoutUrl value.
      */
     public String logoutUrl() {
@@ -711,7 +646,7 @@ public final class MicrosoftGraphServicePrincipalInner extends MicrosoftGraphDir
     /**
      * Set the logoutUrl property: Specifies the URL that will be used by Microsoft's authorization service to logout an
      * user using OpenId Connect front-channel, back-channel or SAML logout protocols.
-     *
+     * 
      * @param logoutUrl the logoutUrl value to set.
      * @return the MicrosoftGraphServicePrincipalInner object itself.
      */
@@ -722,7 +657,7 @@ public final class MicrosoftGraphServicePrincipalInner extends MicrosoftGraphDir
 
     /**
      * Get the notes property: The notes property.
-     *
+     * 
      * @return the notes value.
      */
     public String notes() {
@@ -731,7 +666,7 @@ public final class MicrosoftGraphServicePrincipalInner extends MicrosoftGraphDir
 
     /**
      * Set the notes property: The notes property.
-     *
+     * 
      * @param notes the notes value to set.
      * @return the MicrosoftGraphServicePrincipalInner object itself.
      */
@@ -744,7 +679,7 @@ public final class MicrosoftGraphServicePrincipalInner extends MicrosoftGraphDir
      * Get the notificationEmailAddresses property: Specifies the list of email addresses where Azure AD sends a
      * notification when the active certificate is near the expiration date. This is only for the certificates used to
      * sign the SAML token issued for Azure AD Gallery applications.
-     *
+     * 
      * @return the notificationEmailAddresses value.
      */
     public List<String> notificationEmailAddresses() {
@@ -755,7 +690,7 @@ public final class MicrosoftGraphServicePrincipalInner extends MicrosoftGraphDir
      * Set the notificationEmailAddresses property: Specifies the list of email addresses where Azure AD sends a
      * notification when the active certificate is near the expiration date. This is only for the certificates used to
      * sign the SAML token issued for Azure AD Gallery applications.
-     *
+     * 
      * @param notificationEmailAddresses the notificationEmailAddresses value to set.
      * @return the MicrosoftGraphServicePrincipalInner object itself.
      */
@@ -767,7 +702,7 @@ public final class MicrosoftGraphServicePrincipalInner extends MicrosoftGraphDir
     /**
      * Get the oauth2PermissionScopes property: The delegated permissions exposed by the application. For more
      * information see the oauth2PermissionScopes property on the application entity's api property. Not nullable.
-     *
+     * 
      * @return the oauth2PermissionScopes value.
      */
     public List<MicrosoftGraphPermissionScope> oauth2PermissionScopes() {
@@ -777,12 +712,12 @@ public final class MicrosoftGraphServicePrincipalInner extends MicrosoftGraphDir
     /**
      * Set the oauth2PermissionScopes property: The delegated permissions exposed by the application. For more
      * information see the oauth2PermissionScopes property on the application entity's api property. Not nullable.
-     *
+     * 
      * @param oauth2PermissionScopes the oauth2PermissionScopes value to set.
      * @return the MicrosoftGraphServicePrincipalInner object itself.
      */
-    public MicrosoftGraphServicePrincipalInner withOauth2PermissionScopes(
-        List<MicrosoftGraphPermissionScope> oauth2PermissionScopes) {
+    public MicrosoftGraphServicePrincipalInner
+        withOauth2PermissionScopes(List<MicrosoftGraphPermissionScope> oauth2PermissionScopes) {
         this.oauth2PermissionScopes = oauth2PermissionScopes;
         return this;
     }
@@ -790,7 +725,7 @@ public final class MicrosoftGraphServicePrincipalInner extends MicrosoftGraphDir
     /**
      * Get the passwordCredentials property: The collection of password credentials associated with the service
      * principal. Not nullable.
-     *
+     * 
      * @return the passwordCredentials value.
      */
     public List<MicrosoftGraphPasswordCredentialInner> passwordCredentials() {
@@ -800,12 +735,12 @@ public final class MicrosoftGraphServicePrincipalInner extends MicrosoftGraphDir
     /**
      * Set the passwordCredentials property: The collection of password credentials associated with the service
      * principal. Not nullable.
-     *
+     * 
      * @param passwordCredentials the passwordCredentials value to set.
      * @return the MicrosoftGraphServicePrincipalInner object itself.
      */
-    public MicrosoftGraphServicePrincipalInner withPasswordCredentials(
-        List<MicrosoftGraphPasswordCredentialInner> passwordCredentials) {
+    public MicrosoftGraphServicePrincipalInner
+        withPasswordCredentials(List<MicrosoftGraphPasswordCredentialInner> passwordCredentials) {
         this.passwordCredentials = passwordCredentials;
         return this;
     }
@@ -814,7 +749,7 @@ public final class MicrosoftGraphServicePrincipalInner extends MicrosoftGraphDir
      * Get the preferredSingleSignOnMode property: Specifies the single sign-on mode configured for this application.
      * Azure AD uses the preferred single sign-on mode to launch the application from Microsoft 365 or the Azure AD My
      * Apps. The supported values are password, saml, external, and oidc.
-     *
+     * 
      * @return the preferredSingleSignOnMode value.
      */
     public String preferredSingleSignOnMode() {
@@ -825,7 +760,7 @@ public final class MicrosoftGraphServicePrincipalInner extends MicrosoftGraphDir
      * Set the preferredSingleSignOnMode property: Specifies the single sign-on mode configured for this application.
      * Azure AD uses the preferred single sign-on mode to launch the application from Microsoft 365 or the Azure AD My
      * Apps. The supported values are password, saml, external, and oidc.
-     *
+     * 
      * @param preferredSingleSignOnMode the preferredSingleSignOnMode value to set.
      * @return the MicrosoftGraphServicePrincipalInner object itself.
      */
@@ -836,7 +771,7 @@ public final class MicrosoftGraphServicePrincipalInner extends MicrosoftGraphDir
 
     /**
      * Get the preferredTokenSigningKeyThumbprint property: The preferredTokenSigningKeyThumbprint property.
-     *
+     * 
      * @return the preferredTokenSigningKeyThumbprint value.
      */
     public String preferredTokenSigningKeyThumbprint() {
@@ -845,12 +780,12 @@ public final class MicrosoftGraphServicePrincipalInner extends MicrosoftGraphDir
 
     /**
      * Set the preferredTokenSigningKeyThumbprint property: The preferredTokenSigningKeyThumbprint property.
-     *
+     * 
      * @param preferredTokenSigningKeyThumbprint the preferredTokenSigningKeyThumbprint value to set.
      * @return the MicrosoftGraphServicePrincipalInner object itself.
      */
-    public MicrosoftGraphServicePrincipalInner withPreferredTokenSigningKeyThumbprint(
-        String preferredTokenSigningKeyThumbprint) {
+    public MicrosoftGraphServicePrincipalInner
+        withPreferredTokenSigningKeyThumbprint(String preferredTokenSigningKeyThumbprint) {
         this.preferredTokenSigningKeyThumbprint = preferredTokenSigningKeyThumbprint;
         return this;
     }
@@ -859,7 +794,7 @@ public final class MicrosoftGraphServicePrincipalInner extends MicrosoftGraphDir
      * Get the replyUrls property: The URLs that user tokens are sent to for sign in with the associated application, or
      * the redirect URIs that OAuth 2.0 authorization codes and access tokens are sent to for the associated
      * application. Not nullable.
-     *
+     * 
      * @return the replyUrls value.
      */
     public List<String> replyUrls() {
@@ -870,7 +805,7 @@ public final class MicrosoftGraphServicePrincipalInner extends MicrosoftGraphDir
      * Set the replyUrls property: The URLs that user tokens are sent to for sign in with the associated application, or
      * the redirect URIs that OAuth 2.0 authorization codes and access tokens are sent to for the associated
      * application. Not nullable.
-     *
+     * 
      * @param replyUrls the replyUrls value to set.
      * @return the MicrosoftGraphServicePrincipalInner object itself.
      */
@@ -881,7 +816,7 @@ public final class MicrosoftGraphServicePrincipalInner extends MicrosoftGraphDir
 
     /**
      * Get the samlSingleSignOnSettings property: samlSingleSignOnSettings.
-     *
+     * 
      * @return the samlSingleSignOnSettings value.
      */
     public MicrosoftGraphSamlSingleSignOnSettings samlSingleSignOnSettings() {
@@ -890,12 +825,12 @@ public final class MicrosoftGraphServicePrincipalInner extends MicrosoftGraphDir
 
     /**
      * Set the samlSingleSignOnSettings property: samlSingleSignOnSettings.
-     *
+     * 
      * @param samlSingleSignOnSettings the samlSingleSignOnSettings value to set.
      * @return the MicrosoftGraphServicePrincipalInner object itself.
      */
-    public MicrosoftGraphServicePrincipalInner withSamlSingleSignOnSettings(
-        MicrosoftGraphSamlSingleSignOnSettings samlSingleSignOnSettings) {
+    public MicrosoftGraphServicePrincipalInner
+        withSamlSingleSignOnSettings(MicrosoftGraphSamlSingleSignOnSettings samlSingleSignOnSettings) {
         this.samlSingleSignOnSettings = samlSingleSignOnSettings;
         return this;
     }
@@ -906,7 +841,7 @@ public final class MicrosoftGraphServicePrincipalInner extends MicrosoftGraphDir
      * permissions exposed by this app within Azure AD. For example,Client apps can specify a resource URI which is
      * based on the values of this property to acquire an access token, which is the URI returned in the 'aud' claim.The
      * any operator is required for filter expressions on multi-valued properties. Not nullable.
-     *
+     * 
      * @return the servicePrincipalNames value.
      */
     public List<String> servicePrincipalNames() {
@@ -919,7 +854,7 @@ public final class MicrosoftGraphServicePrincipalInner extends MicrosoftGraphDir
      * permissions exposed by this app within Azure AD. For example,Client apps can specify a resource URI which is
      * based on the values of this property to acquire an access token, which is the URI returned in the 'aud' claim.The
      * any operator is required for filter expressions on multi-valued properties. Not nullable.
-     *
+     * 
      * @param servicePrincipalNames the servicePrincipalNames value to set.
      * @return the MicrosoftGraphServicePrincipalInner object itself.
      */
@@ -932,7 +867,7 @@ public final class MicrosoftGraphServicePrincipalInner extends MicrosoftGraphDir
      * Get the servicePrincipalType property: Identifies if the service principal represents an application or a managed
      * identity. This is set by Azure AD internally. For a service principal that represents an application this is set
      * as Application. For a service principal that represent a managed identity this is set as ManagedIdentity.
-     *
+     * 
      * @return the servicePrincipalType value.
      */
     public String servicePrincipalType() {
@@ -943,7 +878,7 @@ public final class MicrosoftGraphServicePrincipalInner extends MicrosoftGraphDir
      * Set the servicePrincipalType property: Identifies if the service principal represents an application or a managed
      * identity. This is set by Azure AD internally. For a service principal that represents an application this is set
      * as Application. For a service principal that represent a managed identity this is set as ManagedIdentity.
-     *
+     * 
      * @param servicePrincipalType the servicePrincipalType value to set.
      * @return the MicrosoftGraphServicePrincipalInner object itself.
      */
@@ -954,7 +889,7 @@ public final class MicrosoftGraphServicePrincipalInner extends MicrosoftGraphDir
 
     /**
      * Get the signInAudience property: The signInAudience property.
-     *
+     * 
      * @return the signInAudience value.
      */
     public String signInAudience() {
@@ -963,7 +898,7 @@ public final class MicrosoftGraphServicePrincipalInner extends MicrosoftGraphDir
 
     /**
      * Set the signInAudience property: The signInAudience property.
-     *
+     * 
      * @param signInAudience the signInAudience value to set.
      * @return the MicrosoftGraphServicePrincipalInner object itself.
      */
@@ -975,7 +910,7 @@ public final class MicrosoftGraphServicePrincipalInner extends MicrosoftGraphDir
     /**
      * Get the tags property: Custom strings that can be used to categorize and identify the service principal. Not
      * nullable.
-     *
+     * 
      * @return the tags value.
      */
     public List<String> tags() {
@@ -985,7 +920,7 @@ public final class MicrosoftGraphServicePrincipalInner extends MicrosoftGraphDir
     /**
      * Set the tags property: Custom strings that can be used to categorize and identify the service principal. Not
      * nullable.
-     *
+     * 
      * @param tags the tags value to set.
      * @return the MicrosoftGraphServicePrincipalInner object itself.
      */
@@ -999,7 +934,7 @@ public final class MicrosoftGraphServicePrincipalInner extends MicrosoftGraphDir
      * When configured, Azure AD issues tokens for this application encrypted using the key specified by this property.
      * The application code that receives the encrypted token must use the matching private key to decrypt the token
      * before it can be used for the signed-in user.
-     *
+     * 
      * @return the tokenEncryptionKeyId value.
      */
     public UUID tokenEncryptionKeyId() {
@@ -1011,7 +946,7 @@ public final class MicrosoftGraphServicePrincipalInner extends MicrosoftGraphDir
      * When configured, Azure AD issues tokens for this application encrypted using the key specified by this property.
      * The application code that receives the encrypted token must use the matching private key to decrypt the token
      * before it can be used for the signed-in user.
-     *
+     * 
      * @param tokenEncryptionKeyId the tokenEncryptionKeyId value to set.
      * @return the MicrosoftGraphServicePrincipalInner object itself.
      */
@@ -1023,22 +958,22 @@ public final class MicrosoftGraphServicePrincipalInner extends MicrosoftGraphDir
     /**
      * Get the appRoleAssignedTo property: Principals (users, groups, and service principals) that are assigned to this
      * service principal. Read-only.
-     *
+     * 
      * @return the appRoleAssignedTo value.
      */
-    public List<MicrosoftGraphAppRoleAssignmentInner> appRoleAssignedTo() {
+    public List<MicrosoftGraphAppRoleAssignment> appRoleAssignedTo() {
         return this.appRoleAssignedTo;
     }
 
     /**
      * Set the appRoleAssignedTo property: Principals (users, groups, and service principals) that are assigned to this
      * service principal. Read-only.
-     *
+     * 
      * @param appRoleAssignedTo the appRoleAssignedTo value to set.
      * @return the MicrosoftGraphServicePrincipalInner object itself.
      */
-    public MicrosoftGraphServicePrincipalInner withAppRoleAssignedTo(
-        List<MicrosoftGraphAppRoleAssignmentInner> appRoleAssignedTo) {
+    public MicrosoftGraphServicePrincipalInner
+        withAppRoleAssignedTo(List<MicrosoftGraphAppRoleAssignment> appRoleAssignedTo) {
         this.appRoleAssignedTo = appRoleAssignedTo;
         return this;
     }
@@ -1046,50 +981,50 @@ public final class MicrosoftGraphServicePrincipalInner extends MicrosoftGraphDir
     /**
      * Get the appRoleAssignments property: Applications that this service principal is assigned to. Read-only.
      * Nullable.
-     *
+     * 
      * @return the appRoleAssignments value.
      */
-    public List<MicrosoftGraphAppRoleAssignmentInner> appRoleAssignments() {
+    public List<MicrosoftGraphAppRoleAssignment> appRoleAssignments() {
         return this.appRoleAssignments;
     }
 
     /**
      * Set the appRoleAssignments property: Applications that this service principal is assigned to. Read-only.
      * Nullable.
-     *
+     * 
      * @param appRoleAssignments the appRoleAssignments value to set.
      * @return the MicrosoftGraphServicePrincipalInner object itself.
      */
-    public MicrosoftGraphServicePrincipalInner withAppRoleAssignments(
-        List<MicrosoftGraphAppRoleAssignmentInner> appRoleAssignments) {
+    public MicrosoftGraphServicePrincipalInner
+        withAppRoleAssignments(List<MicrosoftGraphAppRoleAssignment> appRoleAssignments) {
         this.appRoleAssignments = appRoleAssignments;
         return this;
     }
 
     /**
      * Get the claimsMappingPolicies property: The claimsMappingPolicies assigned to this service principal.
-     *
+     * 
      * @return the claimsMappingPolicies value.
      */
-    public List<MicrosoftGraphClaimsMappingPolicyInner> claimsMappingPolicies() {
+    public List<MicrosoftGraphClaimsMappingPolicy> claimsMappingPolicies() {
         return this.claimsMappingPolicies;
     }
 
     /**
      * Set the claimsMappingPolicies property: The claimsMappingPolicies assigned to this service principal.
-     *
+     * 
      * @param claimsMappingPolicies the claimsMappingPolicies value to set.
      * @return the MicrosoftGraphServicePrincipalInner object itself.
      */
-    public MicrosoftGraphServicePrincipalInner withClaimsMappingPolicies(
-        List<MicrosoftGraphClaimsMappingPolicyInner> claimsMappingPolicies) {
+    public MicrosoftGraphServicePrincipalInner
+        withClaimsMappingPolicies(List<MicrosoftGraphClaimsMappingPolicy> claimsMappingPolicies) {
         this.claimsMappingPolicies = claimsMappingPolicies;
         return this;
     }
 
     /**
      * Get the createdObjects property: Directory objects created by this service principal. Read-only. Nullable.
-     *
+     * 
      * @return the createdObjects value.
      */
     public List<MicrosoftGraphDirectoryObjectInner> createdObjects() {
@@ -1098,33 +1033,33 @@ public final class MicrosoftGraphServicePrincipalInner extends MicrosoftGraphDir
 
     /**
      * Set the createdObjects property: Directory objects created by this service principal. Read-only. Nullable.
-     *
+     * 
      * @param createdObjects the createdObjects value to set.
      * @return the MicrosoftGraphServicePrincipalInner object itself.
      */
-    public MicrosoftGraphServicePrincipalInner withCreatedObjects(
-        List<MicrosoftGraphDirectoryObjectInner> createdObjects) {
+    public MicrosoftGraphServicePrincipalInner
+        withCreatedObjects(List<MicrosoftGraphDirectoryObjectInner> createdObjects) {
         this.createdObjects = createdObjects;
         return this;
     }
 
     /**
      * Get the delegatedPermissionClassifications property: The delegatedPermissionClassifications property.
-     *
+     * 
      * @return the delegatedPermissionClassifications value.
      */
-    public List<MicrosoftGraphDelegatedPermissionClassificationInner> delegatedPermissionClassifications() {
+    public List<MicrosoftGraphDelegatedPermissionClassification> delegatedPermissionClassifications() {
         return this.delegatedPermissionClassifications;
     }
 
     /**
      * Set the delegatedPermissionClassifications property: The delegatedPermissionClassifications property.
-     *
+     * 
      * @param delegatedPermissionClassifications the delegatedPermissionClassifications value to set.
      * @return the MicrosoftGraphServicePrincipalInner object itself.
      */
     public MicrosoftGraphServicePrincipalInner withDelegatedPermissionClassifications(
-        List<MicrosoftGraphDelegatedPermissionClassificationInner> delegatedPermissionClassifications) {
+        List<MicrosoftGraphDelegatedPermissionClassification> delegatedPermissionClassifications) {
         this.delegatedPermissionClassifications = delegatedPermissionClassifications;
         return this;
     }
@@ -1132,28 +1067,28 @@ public final class MicrosoftGraphServicePrincipalInner extends MicrosoftGraphDir
     /**
      * Get the endpoints property: Endpoints available for discovery. Services like Sharepoint populate this property
      * with a tenant specific SharePoint endpoints that other applications can discover and use in their experiences.
-     *
+     * 
      * @return the endpoints value.
      */
-    public List<MicrosoftGraphEndpointInner> endpoints() {
+    public List<MicrosoftGraphEndpoint> endpoints() {
         return this.endpoints;
     }
 
     /**
      * Set the endpoints property: Endpoints available for discovery. Services like Sharepoint populate this property
      * with a tenant specific SharePoint endpoints that other applications can discover and use in their experiences.
-     *
+     * 
      * @param endpoints the endpoints value to set.
      * @return the MicrosoftGraphServicePrincipalInner object itself.
      */
-    public MicrosoftGraphServicePrincipalInner withEndpoints(List<MicrosoftGraphEndpointInner> endpoints) {
+    public MicrosoftGraphServicePrincipalInner withEndpoints(List<MicrosoftGraphEndpoint> endpoints) {
         this.endpoints = endpoints;
         return this;
     }
 
     /**
      * Get the homeRealmDiscoveryPolicies property: The homeRealmDiscoveryPolicies assigned to this service principal.
-     *
+     * 
      * @return the homeRealmDiscoveryPolicies value.
      */
     public List<MicrosoftGraphHomeRealmDiscoveryPolicyInner> homeRealmDiscoveryPolicies() {
@@ -1162,12 +1097,12 @@ public final class MicrosoftGraphServicePrincipalInner extends MicrosoftGraphDir
 
     /**
      * Set the homeRealmDiscoveryPolicies property: The homeRealmDiscoveryPolicies assigned to this service principal.
-     *
+     * 
      * @param homeRealmDiscoveryPolicies the homeRealmDiscoveryPolicies value to set.
      * @return the MicrosoftGraphServicePrincipalInner object itself.
      */
-    public MicrosoftGraphServicePrincipalInner withHomeRealmDiscoveryPolicies(
-        List<MicrosoftGraphHomeRealmDiscoveryPolicyInner> homeRealmDiscoveryPolicies) {
+    public MicrosoftGraphServicePrincipalInner
+        withHomeRealmDiscoveryPolicies(List<MicrosoftGraphHomeRealmDiscoveryPolicyInner> homeRealmDiscoveryPolicies) {
         this.homeRealmDiscoveryPolicies = homeRealmDiscoveryPolicies;
         return this;
     }
@@ -1175,7 +1110,7 @@ public final class MicrosoftGraphServicePrincipalInner extends MicrosoftGraphDir
     /**
      * Get the memberOf property: Roles that this service principal is a member of. HTTP Methods: GET Read-only.
      * Nullable.
-     *
+     * 
      * @return the memberOf value.
      */
     public List<MicrosoftGraphDirectoryObjectInner> memberOf() {
@@ -1185,7 +1120,7 @@ public final class MicrosoftGraphServicePrincipalInner extends MicrosoftGraphDir
     /**
      * Set the memberOf property: Roles that this service principal is a member of. HTTP Methods: GET Read-only.
      * Nullable.
-     *
+     * 
      * @param memberOf the memberOf value to set.
      * @return the MicrosoftGraphServicePrincipalInner object itself.
      */
@@ -1197,29 +1132,29 @@ public final class MicrosoftGraphServicePrincipalInner extends MicrosoftGraphDir
     /**
      * Get the oauth2PermissionGrants property: Delegated permission grants authorizing this service principal to access
      * an API on behalf of a signed-in user. Read-only. Nullable.
-     *
+     * 
      * @return the oauth2PermissionGrants value.
      */
-    public List<MicrosoftGraphOAuth2PermissionGrantInner> oauth2PermissionGrants() {
+    public List<MicrosoftGraphOAuth2PermissionGrant> oauth2PermissionGrants() {
         return this.oauth2PermissionGrants;
     }
 
     /**
      * Set the oauth2PermissionGrants property: Delegated permission grants authorizing this service principal to access
      * an API on behalf of a signed-in user. Read-only. Nullable.
-     *
+     * 
      * @param oauth2PermissionGrants the oauth2PermissionGrants value to set.
      * @return the MicrosoftGraphServicePrincipalInner object itself.
      */
-    public MicrosoftGraphServicePrincipalInner withOauth2PermissionGrants(
-        List<MicrosoftGraphOAuth2PermissionGrantInner> oauth2PermissionGrants) {
+    public MicrosoftGraphServicePrincipalInner
+        withOauth2PermissionGrants(List<MicrosoftGraphOAuth2PermissionGrant> oauth2PermissionGrants) {
         this.oauth2PermissionGrants = oauth2PermissionGrants;
         return this;
     }
 
     /**
      * Get the ownedObjects property: Directory objects that are owned by this service principal. Read-only. Nullable.
-     *
+     * 
      * @return the ownedObjects value.
      */
     public List<MicrosoftGraphDirectoryObjectInner> ownedObjects() {
@@ -1228,7 +1163,7 @@ public final class MicrosoftGraphServicePrincipalInner extends MicrosoftGraphDir
 
     /**
      * Set the ownedObjects property: Directory objects that are owned by this service principal. Read-only. Nullable.
-     *
+     * 
      * @param ownedObjects the ownedObjects value to set.
      * @return the MicrosoftGraphServicePrincipalInner object itself.
      */
@@ -1240,7 +1175,7 @@ public final class MicrosoftGraphServicePrincipalInner extends MicrosoftGraphDir
     /**
      * Get the owners property: Directory objects that are owners of this servicePrincipal. The owners are a set of
      * non-admin users or servicePrincipals who are allowed to modify this object. Read-only. Nullable.
-     *
+     * 
      * @return the owners value.
      */
     public List<MicrosoftGraphDirectoryObjectInner> owners() {
@@ -1250,7 +1185,7 @@ public final class MicrosoftGraphServicePrincipalInner extends MicrosoftGraphDir
     /**
      * Set the owners property: Directory objects that are owners of this servicePrincipal. The owners are a set of
      * non-admin users or servicePrincipals who are allowed to modify this object. Read-only. Nullable.
-     *
+     * 
      * @param owners the owners value to set.
      * @return the MicrosoftGraphServicePrincipalInner object itself.
      */
@@ -1261,49 +1196,49 @@ public final class MicrosoftGraphServicePrincipalInner extends MicrosoftGraphDir
 
     /**
      * Get the tokenIssuancePolicies property: The tokenIssuancePolicies assigned to this service principal.
-     *
+     * 
      * @return the tokenIssuancePolicies value.
      */
-    public List<MicrosoftGraphTokenIssuancePolicyInner> tokenIssuancePolicies() {
+    public List<MicrosoftGraphTokenIssuancePolicy> tokenIssuancePolicies() {
         return this.tokenIssuancePolicies;
     }
 
     /**
      * Set the tokenIssuancePolicies property: The tokenIssuancePolicies assigned to this service principal.
-     *
+     * 
      * @param tokenIssuancePolicies the tokenIssuancePolicies value to set.
      * @return the MicrosoftGraphServicePrincipalInner object itself.
      */
-    public MicrosoftGraphServicePrincipalInner withTokenIssuancePolicies(
-        List<MicrosoftGraphTokenIssuancePolicyInner> tokenIssuancePolicies) {
+    public MicrosoftGraphServicePrincipalInner
+        withTokenIssuancePolicies(List<MicrosoftGraphTokenIssuancePolicy> tokenIssuancePolicies) {
         this.tokenIssuancePolicies = tokenIssuancePolicies;
         return this;
     }
 
     /**
      * Get the tokenLifetimePolicies property: The tokenLifetimePolicies assigned to this service principal.
-     *
+     * 
      * @return the tokenLifetimePolicies value.
      */
-    public List<MicrosoftGraphTokenLifetimePolicyInner> tokenLifetimePolicies() {
+    public List<MicrosoftGraphTokenLifetimePolicy> tokenLifetimePolicies() {
         return this.tokenLifetimePolicies;
     }
 
     /**
      * Set the tokenLifetimePolicies property: The tokenLifetimePolicies assigned to this service principal.
-     *
+     * 
      * @param tokenLifetimePolicies the tokenLifetimePolicies value to set.
      * @return the MicrosoftGraphServicePrincipalInner object itself.
      */
-    public MicrosoftGraphServicePrincipalInner withTokenLifetimePolicies(
-        List<MicrosoftGraphTokenLifetimePolicyInner> tokenLifetimePolicies) {
+    public MicrosoftGraphServicePrincipalInner
+        withTokenLifetimePolicies(List<MicrosoftGraphTokenLifetimePolicy> tokenLifetimePolicies) {
         this.tokenLifetimePolicies = tokenLifetimePolicies;
         return this;
     }
 
     /**
      * Get the transitiveMemberOf property: The transitiveMemberOf property.
-     *
+     * 
      * @return the transitiveMemberOf value.
      */
     public List<MicrosoftGraphDirectoryObjectInner> transitiveMemberOf() {
@@ -1312,12 +1247,12 @@ public final class MicrosoftGraphServicePrincipalInner extends MicrosoftGraphDir
 
     /**
      * Set the transitiveMemberOf property: The transitiveMemberOf property.
-     *
+     * 
      * @param transitiveMemberOf the transitiveMemberOf value to set.
      * @return the MicrosoftGraphServicePrincipalInner object itself.
      */
-    public MicrosoftGraphServicePrincipalInner withTransitiveMemberOf(
-        List<MicrosoftGraphDirectoryObjectInner> transitiveMemberOf) {
+    public MicrosoftGraphServicePrincipalInner
+        withTransitiveMemberOf(List<MicrosoftGraphDirectoryObjectInner> transitiveMemberOf) {
         this.transitiveMemberOf = transitiveMemberOf;
         return this;
     }
@@ -1325,10 +1260,9 @@ public final class MicrosoftGraphServicePrincipalInner extends MicrosoftGraphDir
     /**
      * Get the additionalProperties property: Represents an Azure Active Directory object. The directoryObject type is
      * the base type for many other directory entity types.
-     *
+     * 
      * @return the additionalProperties value.
      */
-    @JsonAnyGetter
     public Map<String, Object> additionalProperties() {
         return this.additionalProperties;
     }
@@ -1336,7 +1270,7 @@ public final class MicrosoftGraphServicePrincipalInner extends MicrosoftGraphDir
     /**
      * Set the additionalProperties property: Represents an Azure Active Directory object. The directoryObject type is
      * the base type for many other directory entity types.
-     *
+     * 
      * @param additionalProperties the additionalProperties value to set.
      * @return the MicrosoftGraphServicePrincipalInner object itself.
      */
@@ -1345,22 +1279,18 @@ public final class MicrosoftGraphServicePrincipalInner extends MicrosoftGraphDir
         return this;
     }
 
-    @JsonAnySetter
-    void withAdditionalProperties(String key, Object value) {
-        if (additionalProperties == null) {
-            additionalProperties = new HashMap<>();
-        }
-        additionalProperties.put(key, value);
-    }
-
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public MicrosoftGraphServicePrincipalInner withDeletedDateTime(OffsetDateTime deletedDateTime) {
         super.withDeletedDateTime(deletedDateTime);
         return this;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public MicrosoftGraphServicePrincipalInner withId(String id) {
         super.withId(id);
@@ -1369,7 +1299,7 @@ public final class MicrosoftGraphServicePrincipalInner extends MicrosoftGraphDir
 
     /**
      * Validates the instance.
-     *
+     * 
      * @throws IllegalArgumentException thrown if the instance is not valid.
      */
     @Override
@@ -1438,5 +1368,259 @@ public final class MicrosoftGraphServicePrincipalInner extends MicrosoftGraphDir
         if (transitiveMemberOf() != null) {
             transitiveMemberOf().forEach(e -> e.validate());
         }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public JsonWriter toJson(JsonWriter jsonWriter) throws IOException {
+        jsonWriter.writeStartObject();
+        jsonWriter.writeStringField("id", id());
+        jsonWriter.writeStringField("deletedDateTime",
+            deletedDateTime() == null ? null : DateTimeFormatter.ISO_OFFSET_DATE_TIME.format(deletedDateTime()));
+        jsonWriter.writeBooleanField("accountEnabled", this.accountEnabled);
+        jsonWriter.writeArrayField("addIns", this.addIns, (writer, element) -> writer.writeJson(element));
+        jsonWriter.writeArrayField("alternativeNames", this.alternativeNames,
+            (writer, element) -> writer.writeString(element));
+        jsonWriter.writeStringField("appDescription", this.appDescription);
+        jsonWriter.writeStringField("appDisplayName", this.appDisplayName);
+        jsonWriter.writeStringField("appId", this.appId);
+        jsonWriter.writeStringField("applicationTemplateId", this.applicationTemplateId);
+        jsonWriter.writeStringField("appOwnerOrganizationId", Objects.toString(this.appOwnerOrganizationId, null));
+        jsonWriter.writeBooleanField("appRoleAssignmentRequired", this.appRoleAssignmentRequired);
+        jsonWriter.writeArrayField("appRoles", this.appRoles, (writer, element) -> writer.writeJson(element));
+        jsonWriter.writeStringField("description", this.description);
+        jsonWriter.writeStringField("displayName", this.displayName);
+        jsonWriter.writeStringField("homepage", this.homepage);
+        jsonWriter.writeJsonField("info", this.info);
+        jsonWriter.writeArrayField("keyCredentials", this.keyCredentials,
+            (writer, element) -> writer.writeJson(element));
+        jsonWriter.writeStringField("loginUrl", this.loginUrl);
+        jsonWriter.writeStringField("logoutUrl", this.logoutUrl);
+        jsonWriter.writeStringField("notes", this.notes);
+        jsonWriter.writeArrayField("notificationEmailAddresses", this.notificationEmailAddresses,
+            (writer, element) -> writer.writeString(element));
+        jsonWriter.writeArrayField("oauth2PermissionScopes", this.oauth2PermissionScopes,
+            (writer, element) -> writer.writeJson(element));
+        jsonWriter.writeArrayField("passwordCredentials", this.passwordCredentials,
+            (writer, element) -> writer.writeJson(element));
+        jsonWriter.writeStringField("preferredSingleSignOnMode", this.preferredSingleSignOnMode);
+        jsonWriter.writeStringField("preferredTokenSigningKeyThumbprint", this.preferredTokenSigningKeyThumbprint);
+        jsonWriter.writeArrayField("replyUrls", this.replyUrls, (writer, element) -> writer.writeString(element));
+        jsonWriter.writeJsonField("samlSingleSignOnSettings", this.samlSingleSignOnSettings);
+        jsonWriter.writeArrayField("servicePrincipalNames", this.servicePrincipalNames,
+            (writer, element) -> writer.writeString(element));
+        jsonWriter.writeStringField("servicePrincipalType", this.servicePrincipalType);
+        jsonWriter.writeStringField("signInAudience", this.signInAudience);
+        jsonWriter.writeArrayField("tags", this.tags, (writer, element) -> writer.writeString(element));
+        jsonWriter.writeStringField("tokenEncryptionKeyId", Objects.toString(this.tokenEncryptionKeyId, null));
+        jsonWriter.writeArrayField("appRoleAssignedTo", this.appRoleAssignedTo,
+            (writer, element) -> writer.writeJson(element));
+        jsonWriter.writeArrayField("appRoleAssignments", this.appRoleAssignments,
+            (writer, element) -> writer.writeJson(element));
+        jsonWriter.writeArrayField("claimsMappingPolicies", this.claimsMappingPolicies,
+            (writer, element) -> writer.writeJson(element));
+        jsonWriter.writeArrayField("createdObjects", this.createdObjects,
+            (writer, element) -> writer.writeJson(element));
+        jsonWriter.writeArrayField("delegatedPermissionClassifications", this.delegatedPermissionClassifications,
+            (writer, element) -> writer.writeJson(element));
+        jsonWriter.writeArrayField("endpoints", this.endpoints, (writer, element) -> writer.writeJson(element));
+        jsonWriter.writeArrayField("homeRealmDiscoveryPolicies", this.homeRealmDiscoveryPolicies,
+            (writer, element) -> writer.writeJson(element));
+        jsonWriter.writeArrayField("memberOf", this.memberOf, (writer, element) -> writer.writeJson(element));
+        jsonWriter.writeArrayField("oauth2PermissionGrants", this.oauth2PermissionGrants,
+            (writer, element) -> writer.writeJson(element));
+        jsonWriter.writeArrayField("ownedObjects", this.ownedObjects, (writer, element) -> writer.writeJson(element));
+        jsonWriter.writeArrayField("owners", this.owners, (writer, element) -> writer.writeJson(element));
+        jsonWriter.writeArrayField("tokenIssuancePolicies", this.tokenIssuancePolicies,
+            (writer, element) -> writer.writeJson(element));
+        jsonWriter.writeArrayField("tokenLifetimePolicies", this.tokenLifetimePolicies,
+            (writer, element) -> writer.writeJson(element));
+        jsonWriter.writeArrayField("transitiveMemberOf", this.transitiveMemberOf,
+            (writer, element) -> writer.writeJson(element));
+        if (additionalProperties != null) {
+            for (Map.Entry<String, Object> additionalProperty : additionalProperties.entrySet()) {
+                jsonWriter.writeUntypedField(additionalProperty.getKey(), additionalProperty.getValue());
+            }
+        }
+        return jsonWriter.writeEndObject();
+    }
+
+    /**
+     * Reads an instance of MicrosoftGraphServicePrincipalInner from the JsonReader.
+     * 
+     * @param jsonReader The JsonReader being read.
+     * @return An instance of MicrosoftGraphServicePrincipalInner if the JsonReader was pointing to an instance of it,
+     * or null if it was pointing to JSON null.
+     * @throws IOException If an error occurs while reading the MicrosoftGraphServicePrincipalInner.
+     */
+    public static MicrosoftGraphServicePrincipalInner fromJson(JsonReader jsonReader) throws IOException {
+        return jsonReader.readObject(reader -> {
+            MicrosoftGraphServicePrincipalInner deserializedMicrosoftGraphServicePrincipalInner
+                = new MicrosoftGraphServicePrincipalInner();
+            Map<String, Object> additionalProperties = null;
+            while (reader.nextToken() != JsonToken.END_OBJECT) {
+                String fieldName = reader.getFieldName();
+                reader.nextToken();
+
+                if ("id".equals(fieldName)) {
+                    deserializedMicrosoftGraphServicePrincipalInner.withId(reader.getString());
+                } else if ("deletedDateTime".equals(fieldName)) {
+                    deserializedMicrosoftGraphServicePrincipalInner.withDeletedDateTime(reader
+                        .getNullable(nonNullReader -> CoreUtils.parseBestOffsetDateTime(nonNullReader.getString())));
+                } else if ("accountEnabled".equals(fieldName)) {
+                    deserializedMicrosoftGraphServicePrincipalInner.accountEnabled
+                        = reader.getNullable(JsonReader::getBoolean);
+                } else if ("addIns".equals(fieldName)) {
+                    List<MicrosoftGraphAddIn> addIns
+                        = reader.readArray(reader1 -> MicrosoftGraphAddIn.fromJson(reader1));
+                    deserializedMicrosoftGraphServicePrincipalInner.addIns = addIns;
+                } else if ("alternativeNames".equals(fieldName)) {
+                    List<String> alternativeNames = reader.readArray(reader1 -> reader1.getString());
+                    deserializedMicrosoftGraphServicePrincipalInner.alternativeNames = alternativeNames;
+                } else if ("appDescription".equals(fieldName)) {
+                    deserializedMicrosoftGraphServicePrincipalInner.appDescription = reader.getString();
+                } else if ("appDisplayName".equals(fieldName)) {
+                    deserializedMicrosoftGraphServicePrincipalInner.appDisplayName = reader.getString();
+                } else if ("appId".equals(fieldName)) {
+                    deserializedMicrosoftGraphServicePrincipalInner.appId = reader.getString();
+                } else if ("applicationTemplateId".equals(fieldName)) {
+                    deserializedMicrosoftGraphServicePrincipalInner.applicationTemplateId = reader.getString();
+                } else if ("appOwnerOrganizationId".equals(fieldName)) {
+                    deserializedMicrosoftGraphServicePrincipalInner.appOwnerOrganizationId
+                        = reader.getNullable(nonNullReader -> UUID.fromString(nonNullReader.getString()));
+                } else if ("appRoleAssignmentRequired".equals(fieldName)) {
+                    deserializedMicrosoftGraphServicePrincipalInner.appRoleAssignmentRequired
+                        = reader.getNullable(JsonReader::getBoolean);
+                } else if ("appRoles".equals(fieldName)) {
+                    List<MicrosoftGraphAppRole> appRoles
+                        = reader.readArray(reader1 -> MicrosoftGraphAppRole.fromJson(reader1));
+                    deserializedMicrosoftGraphServicePrincipalInner.appRoles = appRoles;
+                } else if ("description".equals(fieldName)) {
+                    deserializedMicrosoftGraphServicePrincipalInner.description = reader.getString();
+                } else if ("displayName".equals(fieldName)) {
+                    deserializedMicrosoftGraphServicePrincipalInner.displayName = reader.getString();
+                } else if ("homepage".equals(fieldName)) {
+                    deserializedMicrosoftGraphServicePrincipalInner.homepage = reader.getString();
+                } else if ("info".equals(fieldName)) {
+                    deserializedMicrosoftGraphServicePrincipalInner.info
+                        = MicrosoftGraphInformationalUrl.fromJson(reader);
+                } else if ("keyCredentials".equals(fieldName)) {
+                    List<MicrosoftGraphKeyCredentialInner> keyCredentials
+                        = reader.readArray(reader1 -> MicrosoftGraphKeyCredentialInner.fromJson(reader1));
+                    deserializedMicrosoftGraphServicePrincipalInner.keyCredentials = keyCredentials;
+                } else if ("loginUrl".equals(fieldName)) {
+                    deserializedMicrosoftGraphServicePrincipalInner.loginUrl = reader.getString();
+                } else if ("logoutUrl".equals(fieldName)) {
+                    deserializedMicrosoftGraphServicePrincipalInner.logoutUrl = reader.getString();
+                } else if ("notes".equals(fieldName)) {
+                    deserializedMicrosoftGraphServicePrincipalInner.notes = reader.getString();
+                } else if ("notificationEmailAddresses".equals(fieldName)) {
+                    List<String> notificationEmailAddresses = reader.readArray(reader1 -> reader1.getString());
+                    deserializedMicrosoftGraphServicePrincipalInner.notificationEmailAddresses
+                        = notificationEmailAddresses;
+                } else if ("oauth2PermissionScopes".equals(fieldName)) {
+                    List<MicrosoftGraphPermissionScope> oauth2PermissionScopes
+                        = reader.readArray(reader1 -> MicrosoftGraphPermissionScope.fromJson(reader1));
+                    deserializedMicrosoftGraphServicePrincipalInner.oauth2PermissionScopes = oauth2PermissionScopes;
+                } else if ("passwordCredentials".equals(fieldName)) {
+                    List<MicrosoftGraphPasswordCredentialInner> passwordCredentials
+                        = reader.readArray(reader1 -> MicrosoftGraphPasswordCredentialInner.fromJson(reader1));
+                    deserializedMicrosoftGraphServicePrincipalInner.passwordCredentials = passwordCredentials;
+                } else if ("preferredSingleSignOnMode".equals(fieldName)) {
+                    deserializedMicrosoftGraphServicePrincipalInner.preferredSingleSignOnMode = reader.getString();
+                } else if ("preferredTokenSigningKeyThumbprint".equals(fieldName)) {
+                    deserializedMicrosoftGraphServicePrincipalInner.preferredTokenSigningKeyThumbprint
+                        = reader.getString();
+                } else if ("replyUrls".equals(fieldName)) {
+                    List<String> replyUrls = reader.readArray(reader1 -> reader1.getString());
+                    deserializedMicrosoftGraphServicePrincipalInner.replyUrls = replyUrls;
+                } else if ("samlSingleSignOnSettings".equals(fieldName)) {
+                    deserializedMicrosoftGraphServicePrincipalInner.samlSingleSignOnSettings
+                        = MicrosoftGraphSamlSingleSignOnSettings.fromJson(reader);
+                } else if ("servicePrincipalNames".equals(fieldName)) {
+                    List<String> servicePrincipalNames = reader.readArray(reader1 -> reader1.getString());
+                    deserializedMicrosoftGraphServicePrincipalInner.servicePrincipalNames = servicePrincipalNames;
+                } else if ("servicePrincipalType".equals(fieldName)) {
+                    deserializedMicrosoftGraphServicePrincipalInner.servicePrincipalType = reader.getString();
+                } else if ("signInAudience".equals(fieldName)) {
+                    deserializedMicrosoftGraphServicePrincipalInner.signInAudience = reader.getString();
+                } else if ("tags".equals(fieldName)) {
+                    List<String> tags = reader.readArray(reader1 -> reader1.getString());
+                    deserializedMicrosoftGraphServicePrincipalInner.tags = tags;
+                } else if ("tokenEncryptionKeyId".equals(fieldName)) {
+                    deserializedMicrosoftGraphServicePrincipalInner.tokenEncryptionKeyId
+                        = reader.getNullable(nonNullReader -> UUID.fromString(nonNullReader.getString()));
+                } else if ("appRoleAssignedTo".equals(fieldName)) {
+                    List<MicrosoftGraphAppRoleAssignment> appRoleAssignedTo
+                        = reader.readArray(reader1 -> MicrosoftGraphAppRoleAssignment.fromJson(reader1));
+                    deserializedMicrosoftGraphServicePrincipalInner.appRoleAssignedTo = appRoleAssignedTo;
+                } else if ("appRoleAssignments".equals(fieldName)) {
+                    List<MicrosoftGraphAppRoleAssignment> appRoleAssignments
+                        = reader.readArray(reader1 -> MicrosoftGraphAppRoleAssignment.fromJson(reader1));
+                    deserializedMicrosoftGraphServicePrincipalInner.appRoleAssignments = appRoleAssignments;
+                } else if ("claimsMappingPolicies".equals(fieldName)) {
+                    List<MicrosoftGraphClaimsMappingPolicy> claimsMappingPolicies
+                        = reader.readArray(reader1 -> MicrosoftGraphClaimsMappingPolicy.fromJson(reader1));
+                    deserializedMicrosoftGraphServicePrincipalInner.claimsMappingPolicies = claimsMappingPolicies;
+                } else if ("createdObjects".equals(fieldName)) {
+                    List<MicrosoftGraphDirectoryObjectInner> createdObjects
+                        = reader.readArray(reader1 -> MicrosoftGraphDirectoryObjectInner.fromJson(reader1));
+                    deserializedMicrosoftGraphServicePrincipalInner.createdObjects = createdObjects;
+                } else if ("delegatedPermissionClassifications".equals(fieldName)) {
+                    List<MicrosoftGraphDelegatedPermissionClassification> delegatedPermissionClassifications = reader
+                        .readArray(reader1 -> MicrosoftGraphDelegatedPermissionClassification.fromJson(reader1));
+                    deserializedMicrosoftGraphServicePrincipalInner.delegatedPermissionClassifications
+                        = delegatedPermissionClassifications;
+                } else if ("endpoints".equals(fieldName)) {
+                    List<MicrosoftGraphEndpoint> endpoints
+                        = reader.readArray(reader1 -> MicrosoftGraphEndpoint.fromJson(reader1));
+                    deserializedMicrosoftGraphServicePrincipalInner.endpoints = endpoints;
+                } else if ("homeRealmDiscoveryPolicies".equals(fieldName)) {
+                    List<MicrosoftGraphHomeRealmDiscoveryPolicyInner> homeRealmDiscoveryPolicies
+                        = reader.readArray(reader1 -> MicrosoftGraphHomeRealmDiscoveryPolicyInner.fromJson(reader1));
+                    deserializedMicrosoftGraphServicePrincipalInner.homeRealmDiscoveryPolicies
+                        = homeRealmDiscoveryPolicies;
+                } else if ("memberOf".equals(fieldName)) {
+                    List<MicrosoftGraphDirectoryObjectInner> memberOf
+                        = reader.readArray(reader1 -> MicrosoftGraphDirectoryObjectInner.fromJson(reader1));
+                    deserializedMicrosoftGraphServicePrincipalInner.memberOf = memberOf;
+                } else if ("oauth2PermissionGrants".equals(fieldName)) {
+                    List<MicrosoftGraphOAuth2PermissionGrant> oauth2PermissionGrants
+                        = reader.readArray(reader1 -> MicrosoftGraphOAuth2PermissionGrant.fromJson(reader1));
+                    deserializedMicrosoftGraphServicePrincipalInner.oauth2PermissionGrants = oauth2PermissionGrants;
+                } else if ("ownedObjects".equals(fieldName)) {
+                    List<MicrosoftGraphDirectoryObjectInner> ownedObjects
+                        = reader.readArray(reader1 -> MicrosoftGraphDirectoryObjectInner.fromJson(reader1));
+                    deserializedMicrosoftGraphServicePrincipalInner.ownedObjects = ownedObjects;
+                } else if ("owners".equals(fieldName)) {
+                    List<MicrosoftGraphDirectoryObjectInner> owners
+                        = reader.readArray(reader1 -> MicrosoftGraphDirectoryObjectInner.fromJson(reader1));
+                    deserializedMicrosoftGraphServicePrincipalInner.owners = owners;
+                } else if ("tokenIssuancePolicies".equals(fieldName)) {
+                    List<MicrosoftGraphTokenIssuancePolicy> tokenIssuancePolicies
+                        = reader.readArray(reader1 -> MicrosoftGraphTokenIssuancePolicy.fromJson(reader1));
+                    deserializedMicrosoftGraphServicePrincipalInner.tokenIssuancePolicies = tokenIssuancePolicies;
+                } else if ("tokenLifetimePolicies".equals(fieldName)) {
+                    List<MicrosoftGraphTokenLifetimePolicy> tokenLifetimePolicies
+                        = reader.readArray(reader1 -> MicrosoftGraphTokenLifetimePolicy.fromJson(reader1));
+                    deserializedMicrosoftGraphServicePrincipalInner.tokenLifetimePolicies = tokenLifetimePolicies;
+                } else if ("transitiveMemberOf".equals(fieldName)) {
+                    List<MicrosoftGraphDirectoryObjectInner> transitiveMemberOf
+                        = reader.readArray(reader1 -> MicrosoftGraphDirectoryObjectInner.fromJson(reader1));
+                    deserializedMicrosoftGraphServicePrincipalInner.transitiveMemberOf = transitiveMemberOf;
+                } else {
+                    if (additionalProperties == null) {
+                        additionalProperties = new LinkedHashMap<>();
+                    }
+
+                    additionalProperties.put(fieldName, reader.readUntyped());
+                }
+            }
+            deserializedMicrosoftGraphServicePrincipalInner.additionalProperties = additionalProperties;
+
+            return deserializedMicrosoftGraphServicePrincipalInner;
+        });
     }
 }

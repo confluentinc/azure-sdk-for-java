@@ -96,6 +96,10 @@ public final class CustomLocationImpl implements CustomLocation, CustomLocation.
         return this.location();
     }
 
+    public String resourceGroupName() {
+        return resourceGroupName;
+    }
+
     public CustomLocationInner innerModel() {
         return this.innerObject;
     }
@@ -116,20 +120,16 @@ public final class CustomLocationImpl implements CustomLocation, CustomLocation.
     }
 
     public CustomLocation create() {
-        this.innerObject =
-            serviceManager
-                .serviceClient()
-                .getCustomLocations()
-                .createOrUpdate(resourceGroupName, resourceName, this.innerModel(), Context.NONE);
+        this.innerObject = serviceManager.serviceClient()
+            .getCustomLocations()
+            .createOrUpdate(resourceGroupName, resourceName, this.innerModel(), Context.NONE);
         return this;
     }
 
     public CustomLocation create(Context context) {
-        this.innerObject =
-            serviceManager
-                .serviceClient()
-                .getCustomLocations()
-                .createOrUpdate(resourceGroupName, resourceName, this.innerModel(), context);
+        this.innerObject = serviceManager.serviceClient()
+            .getCustomLocations()
+            .createOrUpdate(resourceGroupName, resourceName, this.innerModel(), context);
         return this;
     }
 
@@ -145,51 +145,42 @@ public final class CustomLocationImpl implements CustomLocation, CustomLocation.
     }
 
     public CustomLocation apply() {
-        this.innerObject =
-            serviceManager
-                .serviceClient()
-                .getCustomLocations()
-                .updateWithResponse(resourceGroupName, resourceName, updateParameters, Context.NONE)
-                .getValue();
+        this.innerObject = serviceManager.serviceClient()
+            .getCustomLocations()
+            .updateWithResponse(resourceGroupName, resourceName, updateParameters, Context.NONE)
+            .getValue();
         return this;
     }
 
     public CustomLocation apply(Context context) {
-        this.innerObject =
-            serviceManager
-                .serviceClient()
-                .getCustomLocations()
-                .updateWithResponse(resourceGroupName, resourceName, updateParameters, context)
-                .getValue();
+        this.innerObject = serviceManager.serviceClient()
+            .getCustomLocations()
+            .updateWithResponse(resourceGroupName, resourceName, updateParameters, context)
+            .getValue();
         return this;
     }
 
-    CustomLocationImpl(
-        CustomLocationInner innerObject,
+    CustomLocationImpl(CustomLocationInner innerObject,
         com.azure.resourcemanager.extendedlocation.CustomLocationsManager serviceManager) {
         this.innerObject = innerObject;
         this.serviceManager = serviceManager;
-        this.resourceGroupName = Utils.getValueFromIdByName(innerObject.id(), "resourceGroups");
-        this.resourceName = Utils.getValueFromIdByName(innerObject.id(), "customLocations");
+        this.resourceGroupName = ResourceManagerUtils.getValueFromIdByName(innerObject.id(), "resourceGroups");
+        this.resourceName = ResourceManagerUtils.getValueFromIdByName(innerObject.id(), "customLocations");
     }
 
     public CustomLocation refresh() {
-        this.innerObject =
-            serviceManager
-                .serviceClient()
-                .getCustomLocations()
-                .getByResourceGroupWithResponse(resourceGroupName, resourceName, Context.NONE)
-                .getValue();
+        this.innerObject = serviceManager.serviceClient()
+            .getCustomLocations()
+            .getByResourceGroupWithResponse(resourceGroupName, resourceName, Context.NONE)
+            .getValue();
         return this;
     }
 
     public CustomLocation refresh(Context context) {
-        this.innerObject =
-            serviceManager
-                .serviceClient()
-                .getCustomLocations()
-                .getByResourceGroupWithResponse(resourceGroupName, resourceName, context)
-                .getValue();
+        this.innerObject = serviceManager.serviceClient()
+            .getCustomLocations()
+            .getByResourceGroupWithResponse(resourceGroupName, resourceName, context)
+            .getValue();
         return this;
     }
 

@@ -11,36 +11,38 @@ import com.azure.core.http.rest.PagedIterable;
 import com.azure.core.util.Context;
 import com.azure.resourcemanager.network.fluent.models.AzureFirewallFqdnTagInner;
 
-/** An instance of this class provides access to all the operations defined in AzureFirewallFqdnTagsClient. */
+/**
+ * An instance of this class provides access to all the operations defined in AzureFirewallFqdnTagsClient.
+ */
 public interface AzureFirewallFqdnTagsClient {
     /**
      * Gets all the Azure Firewall FQDN Tags in a subscription.
-     *
+     * 
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return all the Azure Firewall FQDN Tags in a subscription.
+     * @return all the Azure Firewall FQDN Tags in a subscription as paginated response with {@link PagedFlux}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
     PagedFlux<AzureFirewallFqdnTagInner> listAsync();
 
     /**
      * Gets all the Azure Firewall FQDN Tags in a subscription.
-     *
+     * 
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return all the Azure Firewall FQDN Tags in a subscription.
+     * @return all the Azure Firewall FQDN Tags in a subscription as paginated response with {@link PagedIterable}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
     PagedIterable<AzureFirewallFqdnTagInner> list();
 
     /**
      * Gets all the Azure Firewall FQDN Tags in a subscription.
-     *
+     * 
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return all the Azure Firewall FQDN Tags in a subscription.
+     * @return all the Azure Firewall FQDN Tags in a subscription as paginated response with {@link PagedIterable}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
     PagedIterable<AzureFirewallFqdnTagInner> list(Context context);

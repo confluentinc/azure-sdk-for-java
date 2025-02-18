@@ -5,145 +5,190 @@
 package com.azure.resourcemanager.cdn.models;
 
 import com.azure.core.annotation.Fluent;
-import com.azure.core.annotation.JsonFlatten;
-import com.azure.core.util.logging.ClientLogger;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.azure.json.JsonReader;
+import com.azure.json.JsonSerializable;
+import com.azure.json.JsonToken;
+import com.azure.json.JsonWriter;
+import com.azure.resourcemanager.cdn.fluent.models.RuleUpdatePropertiesParameters;
+import java.io.IOException;
 import java.util.List;
 
-/** The domain JSON object required for domain creation or update. */
-@JsonFlatten
+/**
+ * The domain JSON object required for domain creation or update.
+ */
 @Fluent
-public class RuleUpdateParameters {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(RuleUpdateParameters.class);
-
+public final class RuleUpdateParameters implements JsonSerializable<RuleUpdateParameters> {
     /*
-     * The order in which the rules are applied for the endpoint. Possible
-     * values {0,1,2,3,………}. A rule with a lesser order will be applied before
-     * a rule with a greater order. Rule with order 0 is a special rule. It
-     * does not require any condition and actions listed in it will always be
-     * applied.
+     * The JSON object that contains the properties of the rule to update.
      */
-    @JsonProperty(value = "properties.order")
-    private Integer order;
+    private RuleUpdatePropertiesParameters innerProperties;
 
-    /*
-     * A list of conditions that must be matched for the actions to be executed
+    /**
+     * Creates an instance of RuleUpdateParameters class.
      */
-    @JsonProperty(value = "properties.conditions")
-    private List<DeliveryRuleCondition> conditions;
+    public RuleUpdateParameters() {
+    }
 
-    /*
-     * A list of actions that are executed when all the conditions of a rule
-     * are satisfied.
+    /**
+     * Get the innerProperties property: The JSON object that contains the properties of the rule to update.
+     * 
+     * @return the innerProperties value.
      */
-    @JsonProperty(value = "properties.actions")
-    private List<DeliveryRuleAction> actions;
+    private RuleUpdatePropertiesParameters innerProperties() {
+        return this.innerProperties;
+    }
 
-    /*
-     * If this rule is a match should the rules engine continue running the
-     * remaining rules or stop. If not present, defaults to Continue.
+    /**
+     * Get the ruleSetName property: The name of the rule set containing the rule.
+     * 
+     * @return the ruleSetName value.
      */
-    @JsonProperty(value = "properties.matchProcessingBehavior")
-    private MatchProcessingBehavior matchProcessingBehavior;
+    public String ruleSetName() {
+        return this.innerProperties() == null ? null : this.innerProperties().ruleSetName();
+    }
 
     /**
      * Get the order property: The order in which the rules are applied for the endpoint. Possible values {0,1,2,3,………}.
      * A rule with a lesser order will be applied before a rule with a greater order. Rule with order 0 is a special
      * rule. It does not require any condition and actions listed in it will always be applied.
-     *
+     * 
      * @return the order value.
      */
     public Integer order() {
-        return this.order;
+        return this.innerProperties() == null ? null : this.innerProperties().order();
     }
 
     /**
      * Set the order property: The order in which the rules are applied for the endpoint. Possible values {0,1,2,3,………}.
      * A rule with a lesser order will be applied before a rule with a greater order. Rule with order 0 is a special
      * rule. It does not require any condition and actions listed in it will always be applied.
-     *
+     * 
      * @param order the order value to set.
      * @return the RuleUpdateParameters object itself.
      */
     public RuleUpdateParameters withOrder(Integer order) {
-        this.order = order;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new RuleUpdatePropertiesParameters();
+        }
+        this.innerProperties().withOrder(order);
         return this;
     }
 
     /**
      * Get the conditions property: A list of conditions that must be matched for the actions to be executed.
-     *
+     * 
      * @return the conditions value.
      */
     public List<DeliveryRuleCondition> conditions() {
-        return this.conditions;
+        return this.innerProperties() == null ? null : this.innerProperties().conditions();
     }
 
     /**
      * Set the conditions property: A list of conditions that must be matched for the actions to be executed.
-     *
+     * 
      * @param conditions the conditions value to set.
      * @return the RuleUpdateParameters object itself.
      */
     public RuleUpdateParameters withConditions(List<DeliveryRuleCondition> conditions) {
-        this.conditions = conditions;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new RuleUpdatePropertiesParameters();
+        }
+        this.innerProperties().withConditions(conditions);
         return this;
     }
 
     /**
      * Get the actions property: A list of actions that are executed when all the conditions of a rule are satisfied.
-     *
+     * 
      * @return the actions value.
      */
     public List<DeliveryRuleAction> actions() {
-        return this.actions;
+        return this.innerProperties() == null ? null : this.innerProperties().actions();
     }
 
     /**
      * Set the actions property: A list of actions that are executed when all the conditions of a rule are satisfied.
-     *
+     * 
      * @param actions the actions value to set.
      * @return the RuleUpdateParameters object itself.
      */
     public RuleUpdateParameters withActions(List<DeliveryRuleAction> actions) {
-        this.actions = actions;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new RuleUpdatePropertiesParameters();
+        }
+        this.innerProperties().withActions(actions);
         return this;
     }
 
     /**
      * Get the matchProcessingBehavior property: If this rule is a match should the rules engine continue running the
      * remaining rules or stop. If not present, defaults to Continue.
-     *
+     * 
      * @return the matchProcessingBehavior value.
      */
     public MatchProcessingBehavior matchProcessingBehavior() {
-        return this.matchProcessingBehavior;
+        return this.innerProperties() == null ? null : this.innerProperties().matchProcessingBehavior();
     }
 
     /**
      * Set the matchProcessingBehavior property: If this rule is a match should the rules engine continue running the
      * remaining rules or stop. If not present, defaults to Continue.
-     *
+     * 
      * @param matchProcessingBehavior the matchProcessingBehavior value to set.
      * @return the RuleUpdateParameters object itself.
      */
     public RuleUpdateParameters withMatchProcessingBehavior(MatchProcessingBehavior matchProcessingBehavior) {
-        this.matchProcessingBehavior = matchProcessingBehavior;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new RuleUpdatePropertiesParameters();
+        }
+        this.innerProperties().withMatchProcessingBehavior(matchProcessingBehavior);
         return this;
     }
 
     /**
      * Validates the instance.
-     *
+     * 
      * @throws IllegalArgumentException thrown if the instance is not valid.
      */
     public void validate() {
-        if (conditions() != null) {
-            conditions().forEach(e -> e.validate());
+        if (innerProperties() != null) {
+            innerProperties().validate();
         }
-        if (actions() != null) {
-            actions().forEach(e -> e.validate());
-        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public JsonWriter toJson(JsonWriter jsonWriter) throws IOException {
+        jsonWriter.writeStartObject();
+        jsonWriter.writeJsonField("properties", this.innerProperties);
+        return jsonWriter.writeEndObject();
+    }
+
+    /**
+     * Reads an instance of RuleUpdateParameters from the JsonReader.
+     * 
+     * @param jsonReader The JsonReader being read.
+     * @return An instance of RuleUpdateParameters if the JsonReader was pointing to an instance of it, or null if it
+     * was pointing to JSON null.
+     * @throws IOException If an error occurs while reading the RuleUpdateParameters.
+     */
+    public static RuleUpdateParameters fromJson(JsonReader jsonReader) throws IOException {
+        return jsonReader.readObject(reader -> {
+            RuleUpdateParameters deserializedRuleUpdateParameters = new RuleUpdateParameters();
+            while (reader.nextToken() != JsonToken.END_OBJECT) {
+                String fieldName = reader.getFieldName();
+                reader.nextToken();
+
+                if ("properties".equals(fieldName)) {
+                    deserializedRuleUpdateParameters.innerProperties = RuleUpdatePropertiesParameters.fromJson(reader);
+                } else {
+                    reader.skipChildren();
+                }
+            }
+
+            return deserializedRuleUpdateParameters;
+        });
     }
 }

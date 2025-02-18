@@ -3,8 +3,7 @@
 
 package com.azure.cosmos.spark
 
-import com.azure.cosmos.implementation.CosmosClientMetadataCachesSnapshot
-import com.azure.cosmos.spark.diagnostics.LoggerHelper
+import com.azure.cosmos.spark.diagnostics.{DiagnosticsContext, LoggerHelper}
 import org.apache.spark.broadcast.Broadcast
 import org.apache.spark.sql.catalyst.InternalRow
 import org.apache.spark.sql.connector.read.{InputPartition, PartitionReader, PartitionReaderFactory}
@@ -14,8 +13,10 @@ private case class ChangeFeedScanPartitionReaderFactory
 (
   config: Map[String, String],
   readSchema: StructType,
-  cosmosClientStateHandle: Broadcast[CosmosClientMetadataCachesSnapshot],
-  diagnosticsConfig: DiagnosticsConfig
+  diagnosticsOperationContext: DiagnosticsContext,
+  cosmosClientStateHandles: Broadcast[CosmosClientMetadataCachesSnapshots],
+  diagnosticsConfig: DiagnosticsConfig,
+  sparkEnvironmentInfo: String
 ) extends PartitionReaderFactory {
 
   @transient private lazy val log = LoggerHelper.getLogger(diagnosticsConfig, this.getClass)
@@ -24,6 +25,13 @@ private case class ChangeFeedScanPartitionReaderFactory
 
   override def createReader(partition: InputPartition): PartitionReader[InternalRow] = {
     val changeFeedPartition = partition.asInstanceOf[CosmosInputPartition]
-    ChangeFeedPartitionReader(changeFeedPartition, config, readSchema, cosmosClientStateHandle, diagnosticsConfig)
+    ChangeFeedPartitionReader(
+      changeFeedPartition,
+      config,
+      readSchema,
+      diagnosticsOperationContext,
+      cosmosClientStateHandles,
+      diagnosticsConfig,
+      sparkEnvironmentInfo)
   }
 }

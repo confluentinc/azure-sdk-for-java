@@ -20,32 +20,46 @@ import java.nio.ByteBuffer;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-/** An instance of this class provides access to all the operations defined in ExpressRouteGatewaysClient. */
+/**
+ * An instance of this class provides access to all the operations defined in ExpressRouteGatewaysClient.
+ */
 public interface ExpressRouteGatewaysClient
     extends InnerSupportsGet<ExpressRouteGatewayInner>, InnerSupportsDelete<Void> {
     /**
      * Lists ExpressRoute gateways under a given subscription.
-     *
+     * 
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return list of ExpressRoute gateways.
+     * @return list of ExpressRoute gateways along with {@link Response} on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
     Mono<Response<ExpressRouteGatewayListInner>> listBySubscriptionWithResponseAsync();
 
     /**
      * Lists ExpressRoute gateways under a given subscription.
-     *
+     * 
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return list of ExpressRoute gateways.
+     * @return list of ExpressRoute gateways on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
     Mono<ExpressRouteGatewayListInner> listBySubscriptionAsync();
 
     /**
      * Lists ExpressRoute gateways under a given subscription.
-     *
+     * 
+     * @param context The context to associate with this operation.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return list of ExpressRoute gateways along with {@link Response}.
+     */
+    @ServiceMethod(returns = ReturnType.SINGLE)
+    Response<ExpressRouteGatewayListInner> listBySubscriptionWithResponse(Context context);
+
+    /**
+     * Lists ExpressRoute gateways under a given subscription.
+     * 
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
      * @return list of ExpressRoute gateways.
@@ -54,44 +68,45 @@ public interface ExpressRouteGatewaysClient
     ExpressRouteGatewayListInner listBySubscription();
 
     /**
-     * Lists ExpressRoute gateways under a given subscription.
-     *
-     * @param context The context to associate with this operation.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return list of ExpressRoute gateways.
-     */
-    @ServiceMethod(returns = ReturnType.SINGLE)
-    Response<ExpressRouteGatewayListInner> listBySubscriptionWithResponse(Context context);
-
-    /**
      * Lists ExpressRoute gateways in a given resource group.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return list of ExpressRoute gateways.
+     * @return list of ExpressRoute gateways along with {@link Response} on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
     Mono<Response<ExpressRouteGatewayListInner>> listByResourceGroupWithResponseAsync(String resourceGroupName);
 
     /**
      * Lists ExpressRoute gateways in a given resource group.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return list of ExpressRoute gateways.
+     * @return list of ExpressRoute gateways on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
     Mono<ExpressRouteGatewayListInner> listByResourceGroupAsync(String resourceGroupName);
 
     /**
      * Lists ExpressRoute gateways in a given resource group.
-     *
+     * 
+     * @param resourceGroupName The name of the resource group.
+     * @param context The context to associate with this operation.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return list of ExpressRoute gateways along with {@link Response}.
+     */
+    @ServiceMethod(returns = ReturnType.SINGLE)
+    Response<ExpressRouteGatewayListInner> listByResourceGroupWithResponse(String resourceGroupName, Context context);
+
+    /**
+     * Lists ExpressRoute gateways in a given resource group.
+     * 
      * @param resourceGroupName The name of the resource group.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
@@ -102,72 +117,55 @@ public interface ExpressRouteGatewaysClient
     ExpressRouteGatewayListInner listByResourceGroup(String resourceGroupName);
 
     /**
-     * Lists ExpressRoute gateways in a given resource group.
-     *
-     * @param resourceGroupName The name of the resource group.
-     * @param context The context to associate with this operation.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return list of ExpressRoute gateways.
-     */
-    @ServiceMethod(returns = ReturnType.SINGLE)
-    Response<ExpressRouteGatewayListInner> listByResourceGroupWithResponse(String resourceGroupName, Context context);
-
-    /**
      * Creates or updates a ExpressRoute gateway in a specified resource group.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param expressRouteGatewayName The name of the ExpressRoute gateway.
      * @param putExpressRouteGatewayParameters Parameters required in an ExpressRoute gateway PUT operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return expressRoute gateway resource.
+     * @return expressRoute gateway resource along with {@link Response} on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    Mono<Response<Flux<ByteBuffer>>> createOrUpdateWithResponseAsync(
-        String resourceGroupName,
-        String expressRouteGatewayName,
-        ExpressRouteGatewayInner putExpressRouteGatewayParameters);
+    Mono<Response<Flux<ByteBuffer>>> createOrUpdateWithResponseAsync(String resourceGroupName,
+        String expressRouteGatewayName, ExpressRouteGatewayInner putExpressRouteGatewayParameters);
 
     /**
      * Creates or updates a ExpressRoute gateway in a specified resource group.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param expressRouteGatewayName The name of the ExpressRoute gateway.
      * @param putExpressRouteGatewayParameters Parameters required in an ExpressRoute gateway PUT operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return expressRoute gateway resource.
+     * @return the {@link PollerFlux} for polling of expressRoute gateway resource.
      */
     @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
     PollerFlux<PollResult<ExpressRouteGatewayInner>, ExpressRouteGatewayInner> beginCreateOrUpdateAsync(
-        String resourceGroupName,
-        String expressRouteGatewayName,
+        String resourceGroupName, String expressRouteGatewayName,
         ExpressRouteGatewayInner putExpressRouteGatewayParameters);
 
     /**
      * Creates or updates a ExpressRoute gateway in a specified resource group.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param expressRouteGatewayName The name of the ExpressRoute gateway.
      * @param putExpressRouteGatewayParameters Parameters required in an ExpressRoute gateway PUT operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return expressRoute gateway resource.
+     * @return the {@link SyncPoller} for polling of expressRoute gateway resource.
      */
     @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
     SyncPoller<PollResult<ExpressRouteGatewayInner>, ExpressRouteGatewayInner> beginCreateOrUpdate(
-        String resourceGroupName,
-        String expressRouteGatewayName,
+        String resourceGroupName, String expressRouteGatewayName,
         ExpressRouteGatewayInner putExpressRouteGatewayParameters);
 
     /**
      * Creates or updates a ExpressRoute gateway in a specified resource group.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param expressRouteGatewayName The name of the ExpressRoute gateway.
      * @param putExpressRouteGatewayParameters Parameters required in an ExpressRoute gateway PUT operation.
@@ -175,18 +173,31 @@ public interface ExpressRouteGatewaysClient
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return expressRoute gateway resource.
+     * @return the {@link SyncPoller} for polling of expressRoute gateway resource.
      */
     @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
     SyncPoller<PollResult<ExpressRouteGatewayInner>, ExpressRouteGatewayInner> beginCreateOrUpdate(
-        String resourceGroupName,
-        String expressRouteGatewayName,
-        ExpressRouteGatewayInner putExpressRouteGatewayParameters,
-        Context context);
+        String resourceGroupName, String expressRouteGatewayName,
+        ExpressRouteGatewayInner putExpressRouteGatewayParameters, Context context);
 
     /**
      * Creates or updates a ExpressRoute gateway in a specified resource group.
-     *
+     * 
+     * @param resourceGroupName The name of the resource group.
+     * @param expressRouteGatewayName The name of the ExpressRoute gateway.
+     * @param putExpressRouteGatewayParameters Parameters required in an ExpressRoute gateway PUT operation.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return expressRoute gateway resource on successful completion of {@link Mono}.
+     */
+    @ServiceMethod(returns = ReturnType.SINGLE)
+    Mono<ExpressRouteGatewayInner> createOrUpdateAsync(String resourceGroupName, String expressRouteGatewayName,
+        ExpressRouteGatewayInner putExpressRouteGatewayParameters);
+
+    /**
+     * Creates or updates a ExpressRoute gateway in a specified resource group.
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param expressRouteGatewayName The name of the ExpressRoute gateway.
      * @param putExpressRouteGatewayParameters Parameters required in an ExpressRoute gateway PUT operation.
@@ -196,31 +207,12 @@ public interface ExpressRouteGatewaysClient
      * @return expressRoute gateway resource.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    Mono<ExpressRouteGatewayInner> createOrUpdateAsync(
-        String resourceGroupName,
-        String expressRouteGatewayName,
+    ExpressRouteGatewayInner createOrUpdate(String resourceGroupName, String expressRouteGatewayName,
         ExpressRouteGatewayInner putExpressRouteGatewayParameters);
 
     /**
      * Creates or updates a ExpressRoute gateway in a specified resource group.
-     *
-     * @param resourceGroupName The name of the resource group.
-     * @param expressRouteGatewayName The name of the ExpressRoute gateway.
-     * @param putExpressRouteGatewayParameters Parameters required in an ExpressRoute gateway PUT operation.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return expressRoute gateway resource.
-     */
-    @ServiceMethod(returns = ReturnType.SINGLE)
-    ExpressRouteGatewayInner createOrUpdate(
-        String resourceGroupName,
-        String expressRouteGatewayName,
-        ExpressRouteGatewayInner putExpressRouteGatewayParameters);
-
-    /**
-     * Creates or updates a ExpressRoute gateway in a specified resource group.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param expressRouteGatewayName The name of the ExpressRoute gateway.
      * @param putExpressRouteGatewayParameters Parameters required in an ExpressRoute gateway PUT operation.
@@ -231,37 +223,34 @@ public interface ExpressRouteGatewaysClient
      * @return expressRoute gateway resource.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    ExpressRouteGatewayInner createOrUpdate(
-        String resourceGroupName,
-        String expressRouteGatewayName,
-        ExpressRouteGatewayInner putExpressRouteGatewayParameters,
-        Context context);
+    ExpressRouteGatewayInner createOrUpdate(String resourceGroupName, String expressRouteGatewayName,
+        ExpressRouteGatewayInner putExpressRouteGatewayParameters, Context context);
 
     /**
      * Updates express route gateway tags.
-     *
+     * 
      * @param resourceGroupName The resource group name of the ExpressRouteGateway.
      * @param expressRouteGatewayName The name of the gateway.
      * @param expressRouteGatewayParameters Parameters supplied to update a virtual wan express route gateway tags.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return expressRoute gateway resource.
+     * @return expressRoute gateway resource along with {@link Response} on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    Mono<Response<Flux<ByteBuffer>>> updateTagsWithResponseAsync(
-        String resourceGroupName, String expressRouteGatewayName, TagsObject expressRouteGatewayParameters);
+    Mono<Response<Flux<ByteBuffer>>> updateTagsWithResponseAsync(String resourceGroupName,
+        String expressRouteGatewayName, TagsObject expressRouteGatewayParameters);
 
     /**
      * Updates express route gateway tags.
-     *
+     * 
      * @param resourceGroupName The resource group name of the ExpressRouteGateway.
      * @param expressRouteGatewayName The name of the gateway.
      * @param expressRouteGatewayParameters Parameters supplied to update a virtual wan express route gateway tags.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return expressRoute gateway resource.
+     * @return the {@link PollerFlux} for polling of expressRoute gateway resource.
      */
     @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
     PollerFlux<PollResult<ExpressRouteGatewayInner>, ExpressRouteGatewayInner> beginUpdateTagsAsync(
@@ -269,7 +258,53 @@ public interface ExpressRouteGatewaysClient
 
     /**
      * Updates express route gateway tags.
-     *
+     * 
+     * @param resourceGroupName The resource group name of the ExpressRouteGateway.
+     * @param expressRouteGatewayName The name of the gateway.
+     * @param expressRouteGatewayParameters Parameters supplied to update a virtual wan express route gateway tags.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return the {@link SyncPoller} for polling of expressRoute gateway resource.
+     */
+    @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
+    SyncPoller<PollResult<ExpressRouteGatewayInner>, ExpressRouteGatewayInner> beginUpdateTags(String resourceGroupName,
+        String expressRouteGatewayName, TagsObject expressRouteGatewayParameters);
+
+    /**
+     * Updates express route gateway tags.
+     * 
+     * @param resourceGroupName The resource group name of the ExpressRouteGateway.
+     * @param expressRouteGatewayName The name of the gateway.
+     * @param expressRouteGatewayParameters Parameters supplied to update a virtual wan express route gateway tags.
+     * @param context The context to associate with this operation.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return the {@link SyncPoller} for polling of expressRoute gateway resource.
+     */
+    @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
+    SyncPoller<PollResult<ExpressRouteGatewayInner>, ExpressRouteGatewayInner> beginUpdateTags(String resourceGroupName,
+        String expressRouteGatewayName, TagsObject expressRouteGatewayParameters, Context context);
+
+    /**
+     * Updates express route gateway tags.
+     * 
+     * @param resourceGroupName The resource group name of the ExpressRouteGateway.
+     * @param expressRouteGatewayName The name of the gateway.
+     * @param expressRouteGatewayParameters Parameters supplied to update a virtual wan express route gateway tags.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return expressRoute gateway resource on successful completion of {@link Mono}.
+     */
+    @ServiceMethod(returns = ReturnType.SINGLE)
+    Mono<ExpressRouteGatewayInner> updateTagsAsync(String resourceGroupName, String expressRouteGatewayName,
+        TagsObject expressRouteGatewayParameters);
+
+    /**
+     * Updates express route gateway tags.
+     * 
      * @param resourceGroupName The resource group name of the ExpressRouteGateway.
      * @param expressRouteGatewayName The name of the gateway.
      * @param expressRouteGatewayParameters Parameters supplied to update a virtual wan express route gateway tags.
@@ -278,13 +313,13 @@ public interface ExpressRouteGatewaysClient
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
      * @return expressRoute gateway resource.
      */
-    @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
-    SyncPoller<PollResult<ExpressRouteGatewayInner>, ExpressRouteGatewayInner> beginUpdateTags(
-        String resourceGroupName, String expressRouteGatewayName, TagsObject expressRouteGatewayParameters);
+    @ServiceMethod(returns = ReturnType.SINGLE)
+    ExpressRouteGatewayInner updateTags(String resourceGroupName, String expressRouteGatewayName,
+        TagsObject expressRouteGatewayParameters);
 
     /**
      * Updates express route gateway tags.
-     *
+     * 
      * @param resourceGroupName The resource group name of the ExpressRouteGateway.
      * @param expressRouteGatewayName The name of the gateway.
      * @param expressRouteGatewayParameters Parameters supplied to update a virtual wan express route gateway tags.
@@ -294,92 +329,55 @@ public interface ExpressRouteGatewaysClient
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
      * @return expressRoute gateway resource.
      */
-    @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
-    SyncPoller<PollResult<ExpressRouteGatewayInner>, ExpressRouteGatewayInner> beginUpdateTags(
-        String resourceGroupName,
-        String expressRouteGatewayName,
-        TagsObject expressRouteGatewayParameters,
-        Context context);
-
-    /**
-     * Updates express route gateway tags.
-     *
-     * @param resourceGroupName The resource group name of the ExpressRouteGateway.
-     * @param expressRouteGatewayName The name of the gateway.
-     * @param expressRouteGatewayParameters Parameters supplied to update a virtual wan express route gateway tags.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return expressRoute gateway resource.
-     */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    Mono<ExpressRouteGatewayInner> updateTagsAsync(
-        String resourceGroupName, String expressRouteGatewayName, TagsObject expressRouteGatewayParameters);
-
-    /**
-     * Updates express route gateway tags.
-     *
-     * @param resourceGroupName The resource group name of the ExpressRouteGateway.
-     * @param expressRouteGatewayName The name of the gateway.
-     * @param expressRouteGatewayParameters Parameters supplied to update a virtual wan express route gateway tags.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return expressRoute gateway resource.
-     */
-    @ServiceMethod(returns = ReturnType.SINGLE)
-    ExpressRouteGatewayInner updateTags(
-        String resourceGroupName, String expressRouteGatewayName, TagsObject expressRouteGatewayParameters);
-
-    /**
-     * Updates express route gateway tags.
-     *
-     * @param resourceGroupName The resource group name of the ExpressRouteGateway.
-     * @param expressRouteGatewayName The name of the gateway.
-     * @param expressRouteGatewayParameters Parameters supplied to update a virtual wan express route gateway tags.
-     * @param context The context to associate with this operation.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return expressRoute gateway resource.
-     */
-    @ServiceMethod(returns = ReturnType.SINGLE)
-    ExpressRouteGatewayInner updateTags(
-        String resourceGroupName,
-        String expressRouteGatewayName,
-        TagsObject expressRouteGatewayParameters,
-        Context context);
+    ExpressRouteGatewayInner updateTags(String resourceGroupName, String expressRouteGatewayName,
+        TagsObject expressRouteGatewayParameters, Context context);
 
     /**
      * Fetches the details of a ExpressRoute gateway in a resource group.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param expressRouteGatewayName The name of the ExpressRoute gateway.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return expressRoute gateway resource.
+     * @return expressRoute gateway resource along with {@link Response} on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    Mono<Response<ExpressRouteGatewayInner>> getByResourceGroupWithResponseAsync(
-        String resourceGroupName, String expressRouteGatewayName);
+    Mono<Response<ExpressRouteGatewayInner>> getByResourceGroupWithResponseAsync(String resourceGroupName,
+        String expressRouteGatewayName);
 
     /**
      * Fetches the details of a ExpressRoute gateway in a resource group.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param expressRouteGatewayName The name of the ExpressRoute gateway.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return expressRoute gateway resource.
+     * @return expressRoute gateway resource on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
     Mono<ExpressRouteGatewayInner> getByResourceGroupAsync(String resourceGroupName, String expressRouteGatewayName);
 
     /**
      * Fetches the details of a ExpressRoute gateway in a resource group.
-     *
+     * 
+     * @param resourceGroupName The name of the resource group.
+     * @param expressRouteGatewayName The name of the ExpressRoute gateway.
+     * @param context The context to associate with this operation.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return expressRoute gateway resource along with {@link Response}.
+     */
+    @ServiceMethod(returns = ReturnType.SINGLE)
+    Response<ExpressRouteGatewayInner> getByResourceGroupWithResponse(String resourceGroupName,
+        String expressRouteGatewayName, Context context);
+
+    /**
+     * Fetches the details of a ExpressRoute gateway in a resource group.
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param expressRouteGatewayName The name of the ExpressRoute gateway.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
@@ -391,30 +389,15 @@ public interface ExpressRouteGatewaysClient
     ExpressRouteGatewayInner getByResourceGroup(String resourceGroupName, String expressRouteGatewayName);
 
     /**
-     * Fetches the details of a ExpressRoute gateway in a resource group.
-     *
-     * @param resourceGroupName The name of the resource group.
-     * @param expressRouteGatewayName The name of the ExpressRoute gateway.
-     * @param context The context to associate with this operation.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return expressRoute gateway resource.
-     */
-    @ServiceMethod(returns = ReturnType.SINGLE)
-    Response<ExpressRouteGatewayInner> getByResourceGroupWithResponse(
-        String resourceGroupName, String expressRouteGatewayName, Context context);
-
-    /**
      * Deletes the specified ExpressRoute gateway in a resource group. An ExpressRoute gateway resource can only be
      * deleted when there are no connection subresources.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param expressRouteGatewayName The name of the ExpressRoute gateway.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the completion.
+     * @return the {@link Response} on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
     Mono<Response<Flux<ByteBuffer>>> deleteWithResponseAsync(String resourceGroupName, String expressRouteGatewayName);
@@ -422,13 +405,13 @@ public interface ExpressRouteGatewaysClient
     /**
      * Deletes the specified ExpressRoute gateway in a resource group. An ExpressRoute gateway resource can only be
      * deleted when there are no connection subresources.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param expressRouteGatewayName The name of the ExpressRoute gateway.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the completion.
+     * @return the {@link PollerFlux} for polling of long-running operation.
      */
     @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
     PollerFlux<PollResult<Void>, Void> beginDeleteAsync(String resourceGroupName, String expressRouteGatewayName);
@@ -436,13 +419,13 @@ public interface ExpressRouteGatewaysClient
     /**
      * Deletes the specified ExpressRoute gateway in a resource group. An ExpressRoute gateway resource can only be
      * deleted when there are no connection subresources.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param expressRouteGatewayName The name of the ExpressRoute gateway.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the completion.
+     * @return the {@link SyncPoller} for polling of long-running operation.
      */
     @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
     SyncPoller<PollResult<Void>, Void> beginDelete(String resourceGroupName, String expressRouteGatewayName);
@@ -450,29 +433,29 @@ public interface ExpressRouteGatewaysClient
     /**
      * Deletes the specified ExpressRoute gateway in a resource group. An ExpressRoute gateway resource can only be
      * deleted when there are no connection subresources.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param expressRouteGatewayName The name of the ExpressRoute gateway.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the completion.
+     * @return the {@link SyncPoller} for polling of long-running operation.
      */
     @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
-    SyncPoller<PollResult<Void>, Void> beginDelete(
-        String resourceGroupName, String expressRouteGatewayName, Context context);
+    SyncPoller<PollResult<Void>, Void> beginDelete(String resourceGroupName, String expressRouteGatewayName,
+        Context context);
 
     /**
      * Deletes the specified ExpressRoute gateway in a resource group. An ExpressRoute gateway resource can only be
      * deleted when there are no connection subresources.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param expressRouteGatewayName The name of the ExpressRoute gateway.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the completion.
+     * @return A {@link Mono} that completes when a successful response is received.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
     Mono<Void> deleteAsync(String resourceGroupName, String expressRouteGatewayName);
@@ -480,7 +463,7 @@ public interface ExpressRouteGatewaysClient
     /**
      * Deletes the specified ExpressRoute gateway in a resource group. An ExpressRoute gateway resource can only be
      * deleted when there are no connection subresources.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param expressRouteGatewayName The name of the ExpressRoute gateway.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
@@ -493,7 +476,7 @@ public interface ExpressRouteGatewaysClient
     /**
      * Deletes the specified ExpressRoute gateway in a resource group. An ExpressRoute gateway resource can only be
      * deleted when there are no connection subresources.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param expressRouteGatewayName The name of the ExpressRoute gateway.
      * @param context The context to associate with this operation.

@@ -11,29 +11,28 @@ import com.azure.resourcemanager.loganalytics.fluent.UsagesClient;
 import com.azure.resourcemanager.loganalytics.fluent.models.UsageMetricInner;
 import com.azure.resourcemanager.loganalytics.models.UsageMetric;
 import com.azure.resourcemanager.loganalytics.models.Usages;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 public final class UsagesImpl implements Usages {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(UsagesImpl.class);
+    private static final ClientLogger LOGGER = new ClientLogger(UsagesImpl.class);
 
     private final UsagesClient innerClient;
 
     private final com.azure.resourcemanager.loganalytics.LogAnalyticsManager serviceManager;
 
-    public UsagesImpl(
-        UsagesClient innerClient, com.azure.resourcemanager.loganalytics.LogAnalyticsManager serviceManager) {
+    public UsagesImpl(UsagesClient innerClient,
+        com.azure.resourcemanager.loganalytics.LogAnalyticsManager serviceManager) {
         this.innerClient = innerClient;
         this.serviceManager = serviceManager;
     }
 
     public PagedIterable<UsageMetric> list(String resourceGroupName, String workspaceName) {
         PagedIterable<UsageMetricInner> inner = this.serviceClient().list(resourceGroupName, workspaceName);
-        return Utils.mapPage(inner, inner1 -> new UsageMetricImpl(inner1, this.manager()));
+        return ResourceManagerUtils.mapPage(inner, inner1 -> new UsageMetricImpl(inner1, this.manager()));
     }
 
     public PagedIterable<UsageMetric> list(String resourceGroupName, String workspaceName, Context context) {
         PagedIterable<UsageMetricInner> inner = this.serviceClient().list(resourceGroupName, workspaceName, context);
-        return Utils.mapPage(inner, inner1 -> new UsageMetricImpl(inner1, this.manager()));
+        return ResourceManagerUtils.mapPage(inner, inner1 -> new UsageMetricImpl(inner1, this.manager()));
     }
 
     private UsagesClient serviceClient() {

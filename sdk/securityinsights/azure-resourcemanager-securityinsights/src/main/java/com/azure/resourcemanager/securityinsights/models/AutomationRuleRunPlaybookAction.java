@@ -5,47 +5,65 @@
 package com.azure.resourcemanager.securityinsights.models;
 
 import com.azure.core.annotation.Fluent;
-import com.azure.core.util.logging.ClientLogger;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import com.fasterxml.jackson.annotation.JsonTypeName;
+import com.azure.json.JsonReader;
+import com.azure.json.JsonToken;
+import com.azure.json.JsonWriter;
+import java.io.IOException;
 
-/** Describes an automation rule action to run a playbook. */
-@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "actionType")
-@JsonTypeName("RunPlaybook")
+/**
+ * Describes an automation rule action to run a playbook.
+ */
 @Fluent
 public final class AutomationRuleRunPlaybookAction extends AutomationRuleAction {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(AutomationRuleRunPlaybookAction.class);
+    /*
+     * The type of the automation rule action.
+     */
+    private ActionType actionType = ActionType.RUN_PLAYBOOK;
 
     /*
-     * The configuration of the run playbook automation rule action
+     * The actionConfiguration property.
      */
-    @JsonProperty(value = "actionConfiguration", required = true)
-    private AutomationRuleRunPlaybookActionConfiguration actionConfiguration;
+    private PlaybookActionProperties actionConfiguration;
 
     /**
-     * Get the actionConfiguration property: The configuration of the run playbook automation rule action.
-     *
+     * Creates an instance of AutomationRuleRunPlaybookAction class.
+     */
+    public AutomationRuleRunPlaybookAction() {
+    }
+
+    /**
+     * Get the actionType property: The type of the automation rule action.
+     * 
+     * @return the actionType value.
+     */
+    @Override
+    public ActionType actionType() {
+        return this.actionType;
+    }
+
+    /**
+     * Get the actionConfiguration property: The actionConfiguration property.
+     * 
      * @return the actionConfiguration value.
      */
-    public AutomationRuleRunPlaybookActionConfiguration actionConfiguration() {
+    public PlaybookActionProperties actionConfiguration() {
         return this.actionConfiguration;
     }
 
     /**
-     * Set the actionConfiguration property: The configuration of the run playbook automation rule action.
-     *
+     * Set the actionConfiguration property: The actionConfiguration property.
+     * 
      * @param actionConfiguration the actionConfiguration value to set.
      * @return the AutomationRuleRunPlaybookAction object itself.
      */
-    public AutomationRuleRunPlaybookAction withActionConfiguration(
-        AutomationRuleRunPlaybookActionConfiguration actionConfiguration) {
+    public AutomationRuleRunPlaybookAction withActionConfiguration(PlaybookActionProperties actionConfiguration) {
         this.actionConfiguration = actionConfiguration;
         return this;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public AutomationRuleRunPlaybookAction withOrder(int order) {
         super.withOrder(order);
@@ -54,19 +72,58 @@ public final class AutomationRuleRunPlaybookAction extends AutomationRuleAction 
 
     /**
      * Validates the instance.
-     *
+     * 
      * @throws IllegalArgumentException thrown if the instance is not valid.
      */
     @Override
     public void validate() {
-        super.validate();
-        if (actionConfiguration() == null) {
-            throw logger
-                .logExceptionAsError(
-                    new IllegalArgumentException(
-                        "Missing required property actionConfiguration in model AutomationRuleRunPlaybookAction"));
-        } else {
+        if (actionConfiguration() != null) {
             actionConfiguration().validate();
         }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public JsonWriter toJson(JsonWriter jsonWriter) throws IOException {
+        jsonWriter.writeStartObject();
+        jsonWriter.writeIntField("order", order());
+        jsonWriter.writeStringField("actionType", this.actionType == null ? null : this.actionType.toString());
+        jsonWriter.writeJsonField("actionConfiguration", this.actionConfiguration);
+        return jsonWriter.writeEndObject();
+    }
+
+    /**
+     * Reads an instance of AutomationRuleRunPlaybookAction from the JsonReader.
+     * 
+     * @param jsonReader The JsonReader being read.
+     * @return An instance of AutomationRuleRunPlaybookAction if the JsonReader was pointing to an instance of it, or
+     * null if it was pointing to JSON null.
+     * @throws IllegalStateException If the deserialized JSON object was missing any required properties.
+     * @throws IOException If an error occurs while reading the AutomationRuleRunPlaybookAction.
+     */
+    public static AutomationRuleRunPlaybookAction fromJson(JsonReader jsonReader) throws IOException {
+        return jsonReader.readObject(reader -> {
+            AutomationRuleRunPlaybookAction deserializedAutomationRuleRunPlaybookAction
+                = new AutomationRuleRunPlaybookAction();
+            while (reader.nextToken() != JsonToken.END_OBJECT) {
+                String fieldName = reader.getFieldName();
+                reader.nextToken();
+
+                if ("order".equals(fieldName)) {
+                    deserializedAutomationRuleRunPlaybookAction.withOrder(reader.getInt());
+                } else if ("actionType".equals(fieldName)) {
+                    deserializedAutomationRuleRunPlaybookAction.actionType = ActionType.fromString(reader.getString());
+                } else if ("actionConfiguration".equals(fieldName)) {
+                    deserializedAutomationRuleRunPlaybookAction.actionConfiguration
+                        = PlaybookActionProperties.fromJson(reader);
+                } else {
+                    reader.skipChildren();
+                }
+            }
+
+            return deserializedAutomationRuleRunPlaybookAction;
+        });
     }
 }

@@ -5,29 +5,46 @@
 package com.azure.resourcemanager.securityinsights.models;
 
 import com.azure.core.util.ExpandableStringEnum;
-import com.fasterxml.jackson.annotation.JsonCreator;
 import java.util.Collection;
 
-/** Defines values for Source. */
+/**
+ * The source of the watchlist.
+ */
 public final class Source extends ExpandableStringEnum<Source> {
-    /** Static value Local file for Source. */
+    /**
+     * Static value Local file for Source.
+     */
     public static final Source LOCAL_FILE = fromString("Local file");
 
-    /** Static value Remote storage for Source. */
+    /**
+     * Static value Remote storage for Source.
+     */
     public static final Source REMOTE_STORAGE = fromString("Remote storage");
 
     /**
+     * Creates a new instance of Source value.
+     * 
+     * @deprecated Use the {@link #fromString(String)} factory method.
+     */
+    @Deprecated
+    public Source() {
+    }
+
+    /**
      * Creates or finds a Source from its string representation.
-     *
+     * 
      * @param name a name to look for.
      * @return the corresponding Source.
      */
-    @JsonCreator
     public static Source fromString(String name) {
         return fromString(name, Source.class);
     }
 
-    /** @return known Source values. */
+    /**
+     * Gets known Source values.
+     * 
+     * @return known Source values.
+     */
     public static Collection<Source> values() {
         return values(Source.class);
     }

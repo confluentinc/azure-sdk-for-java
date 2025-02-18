@@ -9,6 +9,7 @@ import com.azure.core.amqp.models.AmqpMessageBody;
 import com.azure.core.amqp.models.AmqpMessageHeader;
 import com.azure.core.amqp.models.AmqpMessageId;
 import com.azure.core.amqp.models.AmqpMessageProperties;
+import com.azure.messaging.eventhubs.implementation.MessageUtils;
 import org.apache.qpid.proton.amqp.Symbol;
 import org.apache.qpid.proton.amqp.messaging.ApplicationProperties;
 import org.apache.qpid.proton.amqp.messaging.Data;
@@ -205,8 +206,8 @@ public class MessageUtilsTest {
         assertEquals(expected.getApplicationProperties().size(), applicationProperties.getValue().size());
 
         assertEquals(expected.getApplicationProperties().size(), applicationProperties.getValue().size());
-        expected.getApplicationProperties().forEach(
-            (key, value) -> assertEquals(value, applicationProperties.getValue().get(key)));
+        expected.getApplicationProperties()
+            .forEach((key, value) -> assertEquals(value, applicationProperties.getValue().get(key)));
     }
 
     private void assertDeliveryAnnotations(Message actual) {

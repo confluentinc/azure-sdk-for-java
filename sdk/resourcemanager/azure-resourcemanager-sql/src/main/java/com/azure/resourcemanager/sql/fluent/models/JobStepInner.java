@@ -5,197 +5,276 @@
 package com.azure.resourcemanager.sql.fluent.models;
 
 import com.azure.core.annotation.Fluent;
-import com.azure.core.annotation.JsonFlatten;
 import com.azure.core.management.ProxyResource;
-import com.azure.core.util.logging.ClientLogger;
+import com.azure.json.JsonReader;
+import com.azure.json.JsonToken;
+import com.azure.json.JsonWriter;
 import com.azure.resourcemanager.sql.models.JobStepAction;
 import com.azure.resourcemanager.sql.models.JobStepExecutionOptions;
 import com.azure.resourcemanager.sql.models.JobStepOutput;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import java.io.IOException;
 
-/** A job step. */
-@JsonFlatten
+/**
+ * A job step.
+ */
 @Fluent
-public class JobStepInner extends ProxyResource {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(JobStepInner.class);
+public final class JobStepInner extends ProxyResource {
+    /*
+     * Resource properties.
+     */
+    private JobStepProperties innerProperties;
 
     /*
-     * The job step's index within the job. If not specified when creating the
-     * job step, it will be created as the last step. If not specified when
-     * updating the job step, the step id is not modified.
+     * The type of the resource.
      */
-    @JsonProperty(value = "properties.stepId")
-    private Integer stepId;
+    private String type;
 
     /*
-     * The resource ID of the target group that the job step will be executed
-     * on.
+     * The name of the resource.
      */
-    @JsonProperty(value = "properties.targetGroup")
-    private String targetGroup;
+    private String name;
 
     /*
-     * The resource ID of the job credential that will be used to connect to
-     * the targets.
+     * Fully qualified resource Id for the resource.
      */
-    @JsonProperty(value = "properties.credential")
-    private String credential;
+    private String id;
 
-    /*
-     * The action payload of the job step.
+    /**
+     * Creates an instance of JobStepInner class.
      */
-    @JsonProperty(value = "properties.action")
-    private JobStepAction action;
+    public JobStepInner() {
+    }
 
-    /*
-     * Output destination properties of the job step.
+    /**
+     * Get the innerProperties property: Resource properties.
+     * 
+     * @return the innerProperties value.
      */
-    @JsonProperty(value = "properties.output")
-    private JobStepOutput output;
+    private JobStepProperties innerProperties() {
+        return this.innerProperties;
+    }
 
-    /*
-     * Execution options for the job step.
+    /**
+     * Get the type property: The type of the resource.
+     * 
+     * @return the type value.
      */
-    @JsonProperty(value = "properties.executionOptions")
-    private JobStepExecutionOptions executionOptions;
+    @Override
+    public String type() {
+        return this.type;
+    }
+
+    /**
+     * Get the name property: The name of the resource.
+     * 
+     * @return the name value.
+     */
+    @Override
+    public String name() {
+        return this.name;
+    }
+
+    /**
+     * Get the id property: Fully qualified resource Id for the resource.
+     * 
+     * @return the id value.
+     */
+    @Override
+    public String id() {
+        return this.id;
+    }
 
     /**
      * Get the stepId property: The job step's index within the job. If not specified when creating the job step, it
      * will be created as the last step. If not specified when updating the job step, the step id is not modified.
-     *
+     * 
      * @return the stepId value.
      */
     public Integer stepId() {
-        return this.stepId;
+        return this.innerProperties() == null ? null : this.innerProperties().stepId();
     }
 
     /**
      * Set the stepId property: The job step's index within the job. If not specified when creating the job step, it
      * will be created as the last step. If not specified when updating the job step, the step id is not modified.
-     *
+     * 
      * @param stepId the stepId value to set.
      * @return the JobStepInner object itself.
      */
     public JobStepInner withStepId(Integer stepId) {
-        this.stepId = stepId;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new JobStepProperties();
+        }
+        this.innerProperties().withStepId(stepId);
         return this;
     }
 
     /**
      * Get the targetGroup property: The resource ID of the target group that the job step will be executed on.
-     *
+     * 
      * @return the targetGroup value.
      */
     public String targetGroup() {
-        return this.targetGroup;
+        return this.innerProperties() == null ? null : this.innerProperties().targetGroup();
     }
 
     /**
      * Set the targetGroup property: The resource ID of the target group that the job step will be executed on.
-     *
+     * 
      * @param targetGroup the targetGroup value to set.
      * @return the JobStepInner object itself.
      */
     public JobStepInner withTargetGroup(String targetGroup) {
-        this.targetGroup = targetGroup;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new JobStepProperties();
+        }
+        this.innerProperties().withTargetGroup(targetGroup);
         return this;
     }
 
     /**
      * Get the credential property: The resource ID of the job credential that will be used to connect to the targets.
-     *
+     * 
      * @return the credential value.
      */
     public String credential() {
-        return this.credential;
+        return this.innerProperties() == null ? null : this.innerProperties().credential();
     }
 
     /**
      * Set the credential property: The resource ID of the job credential that will be used to connect to the targets.
-     *
+     * 
      * @param credential the credential value to set.
      * @return the JobStepInner object itself.
      */
     public JobStepInner withCredential(String credential) {
-        this.credential = credential;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new JobStepProperties();
+        }
+        this.innerProperties().withCredential(credential);
         return this;
     }
 
     /**
      * Get the action property: The action payload of the job step.
-     *
+     * 
      * @return the action value.
      */
     public JobStepAction action() {
-        return this.action;
+        return this.innerProperties() == null ? null : this.innerProperties().action();
     }
 
     /**
      * Set the action property: The action payload of the job step.
-     *
+     * 
      * @param action the action value to set.
      * @return the JobStepInner object itself.
      */
     public JobStepInner withAction(JobStepAction action) {
-        this.action = action;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new JobStepProperties();
+        }
+        this.innerProperties().withAction(action);
         return this;
     }
 
     /**
      * Get the output property: Output destination properties of the job step.
-     *
+     * 
      * @return the output value.
      */
     public JobStepOutput output() {
-        return this.output;
+        return this.innerProperties() == null ? null : this.innerProperties().output();
     }
 
     /**
      * Set the output property: Output destination properties of the job step.
-     *
+     * 
      * @param output the output value to set.
      * @return the JobStepInner object itself.
      */
     public JobStepInner withOutput(JobStepOutput output) {
-        this.output = output;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new JobStepProperties();
+        }
+        this.innerProperties().withOutput(output);
         return this;
     }
 
     /**
      * Get the executionOptions property: Execution options for the job step.
-     *
+     * 
      * @return the executionOptions value.
      */
     public JobStepExecutionOptions executionOptions() {
-        return this.executionOptions;
+        return this.innerProperties() == null ? null : this.innerProperties().executionOptions();
     }
 
     /**
      * Set the executionOptions property: Execution options for the job step.
-     *
+     * 
      * @param executionOptions the executionOptions value to set.
      * @return the JobStepInner object itself.
      */
     public JobStepInner withExecutionOptions(JobStepExecutionOptions executionOptions) {
-        this.executionOptions = executionOptions;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new JobStepProperties();
+        }
+        this.innerProperties().withExecutionOptions(executionOptions);
         return this;
     }
 
     /**
      * Validates the instance.
-     *
+     * 
      * @throws IllegalArgumentException thrown if the instance is not valid.
      */
     public void validate() {
-        if (action() != null) {
-            action().validate();
+        if (innerProperties() != null) {
+            innerProperties().validate();
         }
-        if (output() != null) {
-            output().validate();
-        }
-        if (executionOptions() != null) {
-            executionOptions().validate();
-        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public JsonWriter toJson(JsonWriter jsonWriter) throws IOException {
+        jsonWriter.writeStartObject();
+        jsonWriter.writeJsonField("properties", this.innerProperties);
+        return jsonWriter.writeEndObject();
+    }
+
+    /**
+     * Reads an instance of JobStepInner from the JsonReader.
+     * 
+     * @param jsonReader The JsonReader being read.
+     * @return An instance of JobStepInner if the JsonReader was pointing to an instance of it, or null if it was
+     * pointing to JSON null.
+     * @throws IllegalStateException If the deserialized JSON object was missing any required properties.
+     * @throws IOException If an error occurs while reading the JobStepInner.
+     */
+    public static JobStepInner fromJson(JsonReader jsonReader) throws IOException {
+        return jsonReader.readObject(reader -> {
+            JobStepInner deserializedJobStepInner = new JobStepInner();
+            while (reader.nextToken() != JsonToken.END_OBJECT) {
+                String fieldName = reader.getFieldName();
+                reader.nextToken();
+
+                if ("id".equals(fieldName)) {
+                    deserializedJobStepInner.id = reader.getString();
+                } else if ("name".equals(fieldName)) {
+                    deserializedJobStepInner.name = reader.getString();
+                } else if ("type".equals(fieldName)) {
+                    deserializedJobStepInner.type = reader.getString();
+                } else if ("properties".equals(fieldName)) {
+                    deserializedJobStepInner.innerProperties = JobStepProperties.fromJson(reader);
+                } else {
+                    reader.skipChildren();
+                }
+            }
+
+            return deserializedJobStepInner;
+        });
     }
 }

@@ -20,10 +20,12 @@ import com.azure.resourcemanager.monitor.models.AutoscaleSettings;
 import com.azure.resourcemanager.monitor.models.DiagnosticSettings;
 import com.azure.resourcemanager.monitor.models.MetricDefinitions;
 import com.azure.resourcemanager.resources.fluentcore.arm.AzureConfigurable;
-import com.azure.resourcemanager.resources.fluentcore.arm.implementation.AzureConfigurableImpl;
 import com.azure.resourcemanager.resources.fluentcore.arm.Manager;
 import com.azure.core.management.profile.AzureProfile;
+import com.azure.resourcemanager.resources.fluentcore.arm.implementation.AzureConfigurableImpl;
 import com.azure.resourcemanager.resources.fluentcore.utils.HttpPipelineProvider;
+
+import java.util.Objects;
 
 /** Entry point to Azure Monitor. */
 public final class MonitorManager extends Manager<MonitorClient> {
@@ -43,6 +45,7 @@ public final class MonitorManager extends Manager<MonitorClient> {
     public static Configurable configure() {
         return new MonitorManager.ConfigurableImpl();
     }
+
     /**
      * Creates an instance of MonitorManager that exposes Monitor API entry points.
      *
@@ -50,18 +53,22 @@ public final class MonitorManager extends Manager<MonitorClient> {
      * @param profile the profile to use
      * @return the MonitorManager
      */
-    public static MonitorManager authenticate(
-        TokenCredential credential, AzureProfile profile) {
+    public static MonitorManager authenticate(TokenCredential credential, AzureProfile profile) {
+        Objects.requireNonNull(credential, "'credential' cannot be null.");
+        Objects.requireNonNull(profile, "'profile' cannot be null.");
         return authenticate(HttpPipelineProvider.buildHttpPipeline(credential, profile), profile);
     }
+
     /**
      * Creates an instance of MonitorManager that exposes Monitor API entry points.
      *
-     * @param httpPipeline the HttpPipeline to be used for API calls.
+     * @param httpPipeline the {@link HttpPipeline} configured with Azure authentication credential.
      * @param profile the profile to use
      * @return the MonitorManager
      */
-    private static MonitorManager authenticate(HttpPipeline httpPipeline, AzureProfile profile) {
+    public static MonitorManager authenticate(HttpPipeline httpPipeline, AzureProfile profile) {
+        Objects.requireNonNull(httpPipeline, "'httpPipeline' cannot be null.");
+        Objects.requireNonNull(profile, "'profile' cannot be null.");
         return new MonitorManager(httpPipeline, profile);
     }
 
@@ -77,7 +84,11 @@ public final class MonitorManager extends Manager<MonitorClient> {
         MonitorManager authenticate(TokenCredential credential, AzureProfile profile);
     }
 
-    /** @return the Azure Activity Logs API entry point */
+    /**
+     * Gets the Azure Activity Logs API entry point.
+     *
+     * @return the Azure Activity Logs API entry point
+     */
     public ActivityLogs activityLogs() {
         if (this.activityLogs == null) {
             this.activityLogs = new ActivityLogsImpl(this);
@@ -85,7 +96,11 @@ public final class MonitorManager extends Manager<MonitorClient> {
         return this.activityLogs;
     }
 
-    /** @return the Azure Metric Definitions API entry point */
+    /**
+     * Gets the Azure Metric Definitions API entry point.
+     *
+     * @return the Azure Metric Definitions API entry point
+     */
     public MetricDefinitions metricDefinitions() {
         if (this.metricDefinitions == null) {
             this.metricDefinitions = new MetricDefinitionsImpl(this);
@@ -93,7 +108,11 @@ public final class MonitorManager extends Manager<MonitorClient> {
         return this.metricDefinitions;
     }
 
-    /** @return the Azure Diagnostic Settings API entry point */
+    /**
+     * Gets the Azure Diagnostic Settings API entry point.
+     *
+     * @return the Azure Diagnostic Settings API entry point
+     */
     public DiagnosticSettings diagnosticSettings() {
         if (this.diagnosticSettings == null) {
             this.diagnosticSettings = new DiagnosticSettingsImpl(this);
@@ -101,7 +120,11 @@ public final class MonitorManager extends Manager<MonitorClient> {
         return this.diagnosticSettings;
     }
 
-    /** @return the Azure Action Groups API entry point */
+    /**
+     * Gets the Azure Action Groups API entry point.
+     *
+     * @return the Azure Action Groups API entry point
+     */
     public ActionGroups actionGroups() {
         if (this.actionGroups == null) {
             this.actionGroups = new ActionGroupsImpl(this);
@@ -109,7 +132,11 @@ public final class MonitorManager extends Manager<MonitorClient> {
         return this.actionGroups;
     }
 
-    /** @return the Azure AlertRules API entry point */
+    /**
+     * Gets the Azure AlertRules API entry point.
+     *
+     * @return the Azure AlertRules API entry point
+     */
     public AlertRules alertRules() {
         if (this.alerts == null) {
             this.alerts = new AlertRulesImpl(this);
@@ -117,7 +144,11 @@ public final class MonitorManager extends Manager<MonitorClient> {
         return this.alerts;
     }
 
-    /** @return the Azure AutoscaleSettings API entry point */
+    /**
+     * Gets the Azure AutoscaleSettings API entry point.
+     *
+     * @return the Azure AutoscaleSettings API entry point
+     */
     public AutoscaleSettings autoscaleSettings() {
         if (this.autoscaleSettings == null) {
             this.autoscaleSettings = new AutoscaleSettingsImpl(this);
@@ -133,11 +164,8 @@ public final class MonitorManager extends Manager<MonitorClient> {
     }
 
     private MonitorManager(HttpPipeline httpPipeline, AzureProfile profile) {
-        super(
-            httpPipeline,
-            profile,
-            new MonitorClientBuilder()
-                .pipeline(httpPipeline)
+        super(httpPipeline, profile,
+            new MonitorClientBuilder().pipeline(httpPipeline)
                 .endpoint(profile.getEnvironment().getResourceManagerEndpoint())
                 .subscriptionId(profile.getSubscriptionId())
                 .buildClient());

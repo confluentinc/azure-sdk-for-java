@@ -3,16 +3,17 @@
 
 package com.azure.cosmos.implementation.routing;
 
-import com.azure.cosmos.BridgeInternal;
 import com.azure.cosmos.implementation.JsonSerializable;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import java.io.Serializable;
 import java.util.Comparator;
 
-@JsonIgnoreProperties({ "empty", "singleValue", "hashMap" })
+@JsonIgnoreProperties({ "empty", "singleValue", "map", "propertyBag" })
+@JsonPropertyOrder({ "min", "max", "isMinInclusive", "isMaxInclusive" })
 public final class Range<T extends Comparable<T>> extends JsonSerializable {
     private static final String MIN_PROPERTY = "min";
     private static final String MAX_PROPERTY = "max";
@@ -82,7 +83,7 @@ public final class Range<T extends Comparable<T>> extends JsonSerializable {
 
     public void setMin(T min) {
         this.minValue = min;
-        BridgeInternal.setProperty(this, Range.MIN_PROPERTY, min);
+        this.set(Range.MIN_PROPERTY, min);
     }
 
     @SuppressWarnings("unchecked")
@@ -96,7 +97,7 @@ public final class Range<T extends Comparable<T>> extends JsonSerializable {
 
     public void setMax(T max) {
         this.maxValue = max;
-        BridgeInternal.setProperty(this, Range.MAX_PROPERTY, max);
+        this.set(Range.MAX_PROPERTY, max);
     }
 
     @JsonProperty("isMinInclusive")
@@ -107,9 +108,9 @@ public final class Range<T extends Comparable<T>> extends JsonSerializable {
 
     public void setMinInclusive(boolean isMinInclusive) {
         if (isMinInclusive) {
-            BridgeInternal.remove(this, Range.IS_MIN_INCLUSIVE_PROPERTY);
+            this.remove(Range.IS_MIN_INCLUSIVE_PROPERTY);
         } else {
-            BridgeInternal.setProperty(this, Range.IS_MIN_INCLUSIVE_PROPERTY, false);
+            this.set(Range.IS_MIN_INCLUSIVE_PROPERTY, false);
         }
     }
 
@@ -120,9 +121,9 @@ public final class Range<T extends Comparable<T>> extends JsonSerializable {
 
     public void setMaxInclusive(boolean isMaxInclusive) {
         if (isMaxInclusive) {
-            BridgeInternal.setProperty(this, Range.IS_MAX_INCLUSIVE_PROPERTY, true);
+            this.set(Range.IS_MAX_INCLUSIVE_PROPERTY, true);
         } else {
-            BridgeInternal.remove(this, Range.IS_MAX_INCLUSIVE_PROPERTY);
+            this.remove(Range.IS_MAX_INCLUSIVE_PROPERTY);
         }
     }
 

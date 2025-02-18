@@ -14,27 +14,70 @@ import com.azure.resourcemanager.resources.fluentcore.model.Refreshable;
 import com.azure.resourcemanager.resources.fluentcore.model.Updatable;
 import reactor.core.publisher.Mono;
 
+import java.time.Duration;
+
 /** An immutable client-side representation of an Azure managed snapshot. */
 @Fluent
 public interface Snapshot
     extends GroupableResource<ComputeManager, SnapshotInner>, Refreshable<Snapshot>, Updatable<Snapshot.Update> {
-    /** @return the snapshot SKU type. */
+    /**
+     * Gets the snapshot SKU type.
+     *
+     * @return the snapshot SKU type.
+     */
     SnapshotSkuType skuType();
 
-    /** @return whether a snapshot is incremental */
+    /**
+     * Checks whether a snapshot id incremental.
+     *
+     * @return whether a snapshot is incremental
+     */
     boolean incremental();
 
-    /** @return the snapshot creation method */
+    /**
+     * Gets the snapshot creation method.
+     *
+     * @return the snapshot creation method
+     */
     DiskCreateOption creationMethod();
 
-    /** @return disk size in GB */
+    /**
+     * Gets disk size in GB.
+     *
+     * @return disk size in GB
+     */
     int sizeInGB();
 
-    /** @return the type of operating system in the snapshot */
+    /**
+     * Gets the type of operating system in the snapshot.
+     *
+     * @return the type of operating system in the snapshot
+     */
     OperatingSystemTypes osType();
 
-    /** @return the details of the source from which snapshot is created */
+    /**
+     * Gets the details of the source from which snapshot is created.
+     *
+     * @return the details of the source from which snapshot is created
+     */
     CreationSource source();
+
+    /**
+     * Gets the percentage complete for the background copy when a resource is created via the CopyStart operation.
+     * <p>For latest progress,{@link Snapshot#refresh()} or {@link Snapshot#refreshAsync()} should be called prior to this method.</p>
+     *
+     * @return the percentage complete, ranging from 0 to 100, or null if {@link Snapshot#creationMethod()} is not {@link DiskCreateOption#COPY_START}
+     */
+    Float copyCompletionPercent();
+
+    /**
+     * Gets the error details if the background copy of a resource created via the CopyStart operation fails.
+     * <p>For latest progress,{@link Snapshot#refresh()} or {@link Snapshot#refreshAsync()} should be called
+     * prior to this method. </p>
+     *
+     * @return the error details
+     */
+    CopyCompletionError copyCompletionError();
 
     /**
      * Grants access to the snapshot.
@@ -62,18 +105,40 @@ public interface Snapshot
      */
     Mono<Void> revokeAccessAsync();
 
+    /**
+     * Await CopyStart completion indefinitely unless errors are encountered.
+     */
+    void awaitCopyStartCompletion();
+
+    /**
+     * Await CopyStart completion for a specified timeout.
+     *
+     * @param maxWaitTime max timeout to wait for completion
+     * @return true if CopyStart complete successfully, false if timeout
+     * @throws com.azure.core.management.exception.ManagementException if exceptions are encountered
+     */
+    Boolean awaitCopyStartCompletion(Duration maxWaitTime);
+
+    /**
+     * Checks whether the snapshot can be accessed from public network.
+     *
+     * @return whether the snapshot can be accessed from public network.
+     */
+    PublicNetworkAccess publicNetworkAccess();
+
+    /**
+     * Await CopyStart completion in async manner.
+     *
+     * @return a representation of the deferred computation of this call
+     */
+    Mono<Void> awaitCopyStartCompletionAsync();
+
     /** The entirety of the managed snapshot definition. */
-    interface Definition
-        extends DefinitionStages.Blank,
-            DefinitionStages.WithGroup,
-            DefinitionStages.WithSnapshotSource,
-            DefinitionStages.WithWindowsSnapshotSource,
-            DefinitionStages.WithLinuxSnapshotSource,
-            DefinitionStages.WithDataSnapshotSource,
-            DefinitionStages.WithDataSnapshotFromVhd,
-            DefinitionStages.WithDataSnapshotFromDisk,
-            DefinitionStages.WithDataSnapshotFromSnapshot,
-            DefinitionStages.WithCreate {
+    interface Definition extends DefinitionStages.Blank, DefinitionStages.WithGroup,
+        DefinitionStages.WithSnapshotSource, DefinitionStages.WithWindowsSnapshotSource,
+        DefinitionStages.WithLinuxSnapshotSource, DefinitionStages.WithDataSnapshotSource,
+        DefinitionStages.WithDataSnapshotFromVhd, DefinitionStages.WithDataSnapshotFromDisk,
+        DefinitionStages.WithDataSnapshotFromSnapshot, DefinitionStages.WithCreate {
     }
 
     /** Grouping of managed snapshot definition stages. */
@@ -258,6 +323,24 @@ public interface Snapshot
             WithCreate withDataFromSnapshot(Snapshot snapshot);
         }
 
+        /** The stage of the managed snapshot definition allowing to set creationOption to CopyStart. */
+        interface WithCopyStart {
+            /**
+             * Specifies CopyStart for CreateOption.
+             * <p>CopyStart can be used when source and target regions are different as well as when they are the same.
+             * There are important scenarios (copying across zones, copying from main region to edge location and other way around)
+             * where it is necessary to use CopyStart within the same region. </p>
+             * <p>Note: For now, CopyStart is only supported for creating an incremental snapshot from an incremental snapshot.</p>
+             * <p>Before you can use the copied snapshot for future use (e.g. create disk), you should wait for the CopyStart
+             * completion by calling {@link Snapshot#awaitCopyStartCompletion()} or {@link Snapshot#awaitCopyStartCompletion(Duration)}
+             * to wait synchronously, or {@link Snapshot#awaitCopyStartCompletionAsync()} to wait asynchronously.</p>
+             *
+             * @see DiskCreateOption
+             * @return the next stage of the definition
+             */
+            WithCreate withCopyStart();
+        }
+
         /** The stage of the managed disk definition allowing to choose a source operating system image. */
         interface WithOSSnapshotFromImage {
             /**
@@ -285,6 +368,7 @@ public interface Snapshot
              */
             WithCreate fromImage(VirtualMachineCustomImage image);
         }
+
         /** The stage of the managed disk definition allowing to choose source data disk image. */
         interface WithDataSnapshotFromImage {
             /**
@@ -348,16 +432,23 @@ public interface Snapshot
             WithCreate withSku(SnapshotSkuType sku);
         }
 
+        /** The stage of snapshot definition allowing to configure network access settings. */
+        interface WithPublicNetworkAccess {
+            /**
+             * Disables public network access for the snapshot.
+             *
+             * @return the next stage of the definition
+             */
+            WithCreate disablePublicNetworkAccess();
+        }
+
         /**
          * The stage of the definition which contains all the minimum required inputs for the resource to be created,
          * but also allows for any other optional settings to be specified.
          */
         interface WithCreate
-            extends Creatable<Snapshot>,
-                Resource.DefinitionWithTags<Snapshot.DefinitionStages.WithCreate>,
-                WithSize,
-                WithSku,
-                WithIncremental {
+            extends Creatable<Snapshot>, Resource.DefinitionWithTags<Snapshot.DefinitionStages.WithCreate>, WithSize,
+            WithSku, WithIncremental, WithCopyStart, WithPublicNetworkAccess {
         }
     }
 
@@ -384,13 +475,27 @@ public interface Snapshot
              */
             Update withOSType(OperatingSystemTypes osType);
         }
+
+        /** The stage of snapshot update allowing to configure network access settings. */
+        interface WithPublicNetworkAccess {
+            /**
+             * Enables public network access for the snapshot.
+             *
+             * @return the next stage of the update
+             */
+            Update enablePublicNetworkAccess();
+
+            /**
+             * Disables public network access for the snapshot.
+             *
+             * @return the next stage of the update
+             */
+            Update disablePublicNetworkAccess();
+        }
     }
 
     /** The template for an update operation, containing all the settings that can be modified. */
-    interface Update
-        extends Appliable<Snapshot>,
-            Resource.UpdateWithTags<Snapshot.Update>,
-            UpdateStages.WithSku,
-            UpdateStages.WithOSSettings {
+    interface Update extends Appliable<Snapshot>, Resource.UpdateWithTags<Snapshot.Update>, UpdateStages.WithSku,
+        UpdateStages.WithOSSettings, UpdateStages.WithPublicNetworkAccess {
     }
 }

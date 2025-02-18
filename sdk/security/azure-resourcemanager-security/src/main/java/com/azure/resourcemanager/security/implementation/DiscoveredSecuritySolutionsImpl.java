@@ -13,17 +13,15 @@ import com.azure.resourcemanager.security.fluent.DiscoveredSecuritySolutionsClie
 import com.azure.resourcemanager.security.fluent.models.DiscoveredSecuritySolutionInner;
 import com.azure.resourcemanager.security.models.DiscoveredSecuritySolution;
 import com.azure.resourcemanager.security.models.DiscoveredSecuritySolutions;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 public final class DiscoveredSecuritySolutionsImpl implements DiscoveredSecuritySolutions {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(DiscoveredSecuritySolutionsImpl.class);
+    private static final ClientLogger LOGGER = new ClientLogger(DiscoveredSecuritySolutionsImpl.class);
 
     private final DiscoveredSecuritySolutionsClient innerClient;
 
     private final com.azure.resourcemanager.security.SecurityManager serviceManager;
 
-    public DiscoveredSecuritySolutionsImpl(
-        DiscoveredSecuritySolutionsClient innerClient,
+    public DiscoveredSecuritySolutionsImpl(DiscoveredSecuritySolutionsClient innerClient,
         com.azure.resourcemanager.security.SecurityManager serviceManager) {
         this.innerClient = innerClient;
         this.serviceManager = serviceManager;
@@ -31,48 +29,47 @@ public final class DiscoveredSecuritySolutionsImpl implements DiscoveredSecurity
 
     public PagedIterable<DiscoveredSecuritySolution> list() {
         PagedIterable<DiscoveredSecuritySolutionInner> inner = this.serviceClient().list();
-        return Utils.mapPage(inner, inner1 -> new DiscoveredSecuritySolutionImpl(inner1, this.manager()));
+        return ResourceManagerUtils.mapPage(inner,
+            inner1 -> new DiscoveredSecuritySolutionImpl(inner1, this.manager()));
     }
 
     public PagedIterable<DiscoveredSecuritySolution> list(Context context) {
         PagedIterable<DiscoveredSecuritySolutionInner> inner = this.serviceClient().list(context);
-        return Utils.mapPage(inner, inner1 -> new DiscoveredSecuritySolutionImpl(inner1, this.manager()));
+        return ResourceManagerUtils.mapPage(inner,
+            inner1 -> new DiscoveredSecuritySolutionImpl(inner1, this.manager()));
     }
 
     public PagedIterable<DiscoveredSecuritySolution> listByHomeRegion(String ascLocation) {
         PagedIterable<DiscoveredSecuritySolutionInner> inner = this.serviceClient().listByHomeRegion(ascLocation);
-        return Utils.mapPage(inner, inner1 -> new DiscoveredSecuritySolutionImpl(inner1, this.manager()));
+        return ResourceManagerUtils.mapPage(inner,
+            inner1 -> new DiscoveredSecuritySolutionImpl(inner1, this.manager()));
     }
 
     public PagedIterable<DiscoveredSecuritySolution> listByHomeRegion(String ascLocation, Context context) {
-        PagedIterable<DiscoveredSecuritySolutionInner> inner =
-            this.serviceClient().listByHomeRegion(ascLocation, context);
-        return Utils.mapPage(inner, inner1 -> new DiscoveredSecuritySolutionImpl(inner1, this.manager()));
+        PagedIterable<DiscoveredSecuritySolutionInner> inner
+            = this.serviceClient().listByHomeRegion(ascLocation, context);
+        return ResourceManagerUtils.mapPage(inner,
+            inner1 -> new DiscoveredSecuritySolutionImpl(inner1, this.manager()));
     }
 
-    public DiscoveredSecuritySolution get(
-        String resourceGroupName, String ascLocation, String discoveredSecuritySolutionName) {
-        DiscoveredSecuritySolutionInner inner =
-            this.serviceClient().get(resourceGroupName, ascLocation, discoveredSecuritySolutionName);
+    public Response<DiscoveredSecuritySolution> getWithResponse(String resourceGroupName, String ascLocation,
+        String discoveredSecuritySolutionName, Context context) {
+        Response<DiscoveredSecuritySolutionInner> inner = this.serviceClient()
+            .getWithResponse(resourceGroupName, ascLocation, discoveredSecuritySolutionName, context);
         if (inner != null) {
-            return new DiscoveredSecuritySolutionImpl(inner, this.manager());
+            return new SimpleResponse<>(inner.getRequest(), inner.getStatusCode(), inner.getHeaders(),
+                new DiscoveredSecuritySolutionImpl(inner.getValue(), this.manager()));
         } else {
             return null;
         }
     }
 
-    public Response<DiscoveredSecuritySolution> getWithResponse(
-        String resourceGroupName, String ascLocation, String discoveredSecuritySolutionName, Context context) {
-        Response<DiscoveredSecuritySolutionInner> inner =
-            this
-                .serviceClient()
-                .getWithResponse(resourceGroupName, ascLocation, discoveredSecuritySolutionName, context);
+    public DiscoveredSecuritySolution get(String resourceGroupName, String ascLocation,
+        String discoveredSecuritySolutionName) {
+        DiscoveredSecuritySolutionInner inner
+            = this.serviceClient().get(resourceGroupName, ascLocation, discoveredSecuritySolutionName);
         if (inner != null) {
-            return new SimpleResponse<>(
-                inner.getRequest(),
-                inner.getStatusCode(),
-                inner.getHeaders(),
-                new DiscoveredSecuritySolutionImpl(inner.getValue(), this.manager()));
+            return new DiscoveredSecuritySolutionImpl(inner, this.manager());
         } else {
             return null;
         }

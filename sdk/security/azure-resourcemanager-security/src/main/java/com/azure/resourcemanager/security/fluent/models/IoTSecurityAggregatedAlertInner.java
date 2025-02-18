@@ -5,229 +5,65 @@
 package com.azure.resourcemanager.security.fluent.models;
 
 import com.azure.core.annotation.Fluent;
-import com.azure.core.annotation.JsonFlatten;
 import com.azure.core.management.ProxyResource;
-import com.azure.core.util.logging.ClientLogger;
+import com.azure.json.JsonReader;
+import com.azure.json.JsonToken;
+import com.azure.json.JsonWriter;
 import com.azure.resourcemanager.security.models.IoTSecurityAggregatedAlertPropertiesTopDevicesListItem;
 import com.azure.resourcemanager.security.models.ReportedSeverity;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import java.io.IOException;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 
-/** Security Solution Aggregated Alert information. */
-@JsonFlatten
+/**
+ * Security Solution Aggregated Alert information.
+ */
 @Fluent
-public class IoTSecurityAggregatedAlertInner extends ProxyResource {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(IoTSecurityAggregatedAlertInner.class);
-
+public final class IoTSecurityAggregatedAlertInner extends ProxyResource {
     /*
-     * Name of the alert type.
+     * IoT Security solution aggregated alert details.
      */
-    @JsonProperty(value = "properties.alertType", access = JsonProperty.Access.WRITE_ONLY)
-    private String alertType;
-
-    /*
-     * Display name of the alert type.
-     */
-    @JsonProperty(value = "properties.alertDisplayName", access = JsonProperty.Access.WRITE_ONLY)
-    private String alertDisplayName;
-
-    /*
-     * Date of detection.
-     */
-    @JsonProperty(value = "properties.aggregatedDateUtc", access = JsonProperty.Access.WRITE_ONLY)
-    private LocalDate aggregatedDateUtc;
-
-    /*
-     * Name of the organization that raised the alert.
-     */
-    @JsonProperty(value = "properties.vendorName", access = JsonProperty.Access.WRITE_ONLY)
-    private String vendorName;
-
-    /*
-     * Assessed alert severity.
-     */
-    @JsonProperty(value = "properties.reportedSeverity", access = JsonProperty.Access.WRITE_ONLY)
-    private ReportedSeverity reportedSeverity;
-
-    /*
-     * Recommended steps for remediation.
-     */
-    @JsonProperty(value = "properties.remediationSteps", access = JsonProperty.Access.WRITE_ONLY)
-    private String remediationSteps;
-
-    /*
-     * Description of the suspected vulnerability and meaning.
-     */
-    @JsonProperty(value = "properties.description", access = JsonProperty.Access.WRITE_ONLY)
-    private String description;
-
-    /*
-     * Number of alerts occurrences within the aggregated time window.
-     */
-    @JsonProperty(value = "properties.count", access = JsonProperty.Access.WRITE_ONLY)
-    private Long count;
-
-    /*
-     * Azure resource ID of the resource that received the alerts.
-     */
-    @JsonProperty(value = "properties.effectedResourceType", access = JsonProperty.Access.WRITE_ONLY)
-    private String effectedResourceType;
-
-    /*
-     * The type of the alerted resource (Azure, Non-Azure).
-     */
-    @JsonProperty(value = "properties.systemSource", access = JsonProperty.Access.WRITE_ONLY)
-    private String systemSource;
-
-    /*
-     * IoT Security solution alert response.
-     */
-    @JsonProperty(value = "properties.actionTaken", access = JsonProperty.Access.WRITE_ONLY)
-    private String actionTaken;
-
-    /*
-     * Log analytics query for getting the list of affected devices/alerts.
-     */
-    @JsonProperty(value = "properties.logAnalyticsQuery", access = JsonProperty.Access.WRITE_ONLY)
-    private String logAnalyticsQuery;
-
-    /*
-     * 10 devices with the highest number of occurrences of this alert type, on
-     * this day.
-     */
-    @JsonProperty(value = "properties.topDevicesList", access = JsonProperty.Access.WRITE_ONLY)
-    private List<IoTSecurityAggregatedAlertPropertiesTopDevicesListItem> topDevicesList;
+    private IoTSecurityAggregatedAlertProperties innerProperties;
 
     /*
      * Resource tags
      */
-    @JsonProperty(value = "tags")
     private Map<String, String> tags;
 
-    /**
-     * Get the alertType property: Name of the alert type.
-     *
-     * @return the alertType value.
+    /*
+     * The type of the resource.
      */
-    public String alertType() {
-        return this.alertType;
+    private String type;
+
+    /*
+     * The name of the resource.
+     */
+    private String name;
+
+    /*
+     * Fully qualified resource Id for the resource.
+     */
+    private String id;
+
+    /**
+     * Creates an instance of IoTSecurityAggregatedAlertInner class.
+     */
+    public IoTSecurityAggregatedAlertInner() {
     }
 
     /**
-     * Get the alertDisplayName property: Display name of the alert type.
-     *
-     * @return the alertDisplayName value.
+     * Get the innerProperties property: IoT Security solution aggregated alert details.
+     * 
+     * @return the innerProperties value.
      */
-    public String alertDisplayName() {
-        return this.alertDisplayName;
-    }
-
-    /**
-     * Get the aggregatedDateUtc property: Date of detection.
-     *
-     * @return the aggregatedDateUtc value.
-     */
-    public LocalDate aggregatedDateUtc() {
-        return this.aggregatedDateUtc;
-    }
-
-    /**
-     * Get the vendorName property: Name of the organization that raised the alert.
-     *
-     * @return the vendorName value.
-     */
-    public String vendorName() {
-        return this.vendorName;
-    }
-
-    /**
-     * Get the reportedSeverity property: Assessed alert severity.
-     *
-     * @return the reportedSeverity value.
-     */
-    public ReportedSeverity reportedSeverity() {
-        return this.reportedSeverity;
-    }
-
-    /**
-     * Get the remediationSteps property: Recommended steps for remediation.
-     *
-     * @return the remediationSteps value.
-     */
-    public String remediationSteps() {
-        return this.remediationSteps;
-    }
-
-    /**
-     * Get the description property: Description of the suspected vulnerability and meaning.
-     *
-     * @return the description value.
-     */
-    public String description() {
-        return this.description;
-    }
-
-    /**
-     * Get the count property: Number of alerts occurrences within the aggregated time window.
-     *
-     * @return the count value.
-     */
-    public Long count() {
-        return this.count;
-    }
-
-    /**
-     * Get the effectedResourceType property: Azure resource ID of the resource that received the alerts.
-     *
-     * @return the effectedResourceType value.
-     */
-    public String effectedResourceType() {
-        return this.effectedResourceType;
-    }
-
-    /**
-     * Get the systemSource property: The type of the alerted resource (Azure, Non-Azure).
-     *
-     * @return the systemSource value.
-     */
-    public String systemSource() {
-        return this.systemSource;
-    }
-
-    /**
-     * Get the actionTaken property: IoT Security solution alert response.
-     *
-     * @return the actionTaken value.
-     */
-    public String actionTaken() {
-        return this.actionTaken;
-    }
-
-    /**
-     * Get the logAnalyticsQuery property: Log analytics query for getting the list of affected devices/alerts.
-     *
-     * @return the logAnalyticsQuery value.
-     */
-    public String logAnalyticsQuery() {
-        return this.logAnalyticsQuery;
-    }
-
-    /**
-     * Get the topDevicesList property: 10 devices with the highest number of occurrences of this alert type, on this
-     * day.
-     *
-     * @return the topDevicesList value.
-     */
-    public List<IoTSecurityAggregatedAlertPropertiesTopDevicesListItem> topDevicesList() {
-        return this.topDevicesList;
+    private IoTSecurityAggregatedAlertProperties innerProperties() {
+        return this.innerProperties;
     }
 
     /**
      * Get the tags property: Resource tags.
-     *
+     * 
      * @return the tags value.
      */
     public Map<String, String> tags() {
@@ -236,7 +72,7 @@ public class IoTSecurityAggregatedAlertInner extends ProxyResource {
 
     /**
      * Set the tags property: Resource tags.
-     *
+     * 
      * @param tags the tags value to set.
      * @return the IoTSecurityAggregatedAlertInner object itself.
      */
@@ -246,13 +82,210 @@ public class IoTSecurityAggregatedAlertInner extends ProxyResource {
     }
 
     /**
+     * Get the type property: The type of the resource.
+     * 
+     * @return the type value.
+     */
+    @Override
+    public String type() {
+        return this.type;
+    }
+
+    /**
+     * Get the name property: The name of the resource.
+     * 
+     * @return the name value.
+     */
+    @Override
+    public String name() {
+        return this.name;
+    }
+
+    /**
+     * Get the id property: Fully qualified resource Id for the resource.
+     * 
+     * @return the id value.
+     */
+    @Override
+    public String id() {
+        return this.id;
+    }
+
+    /**
+     * Get the alertType property: Name of the alert type.
+     * 
+     * @return the alertType value.
+     */
+    public String alertType() {
+        return this.innerProperties() == null ? null : this.innerProperties().alertType();
+    }
+
+    /**
+     * Get the alertDisplayName property: Display name of the alert type.
+     * 
+     * @return the alertDisplayName value.
+     */
+    public String alertDisplayName() {
+        return this.innerProperties() == null ? null : this.innerProperties().alertDisplayName();
+    }
+
+    /**
+     * Get the aggregatedDateUtc property: Date of detection.
+     * 
+     * @return the aggregatedDateUtc value.
+     */
+    public LocalDate aggregatedDateUtc() {
+        return this.innerProperties() == null ? null : this.innerProperties().aggregatedDateUtc();
+    }
+
+    /**
+     * Get the vendorName property: Name of the organization that raised the alert.
+     * 
+     * @return the vendorName value.
+     */
+    public String vendorName() {
+        return this.innerProperties() == null ? null : this.innerProperties().vendorName();
+    }
+
+    /**
+     * Get the reportedSeverity property: Assessed alert severity.
+     * 
+     * @return the reportedSeverity value.
+     */
+    public ReportedSeverity reportedSeverity() {
+        return this.innerProperties() == null ? null : this.innerProperties().reportedSeverity();
+    }
+
+    /**
+     * Get the remediationSteps property: Recommended steps for remediation.
+     * 
+     * @return the remediationSteps value.
+     */
+    public String remediationSteps() {
+        return this.innerProperties() == null ? null : this.innerProperties().remediationSteps();
+    }
+
+    /**
+     * Get the description property: Description of the suspected vulnerability and meaning.
+     * 
+     * @return the description value.
+     */
+    public String description() {
+        return this.innerProperties() == null ? null : this.innerProperties().description();
+    }
+
+    /**
+     * Get the count property: Number of alerts occurrences within the aggregated time window.
+     * 
+     * @return the count value.
+     */
+    public Long count() {
+        return this.innerProperties() == null ? null : this.innerProperties().count();
+    }
+
+    /**
+     * Get the effectedResourceType property: Azure resource ID of the resource that received the alerts.
+     * 
+     * @return the effectedResourceType value.
+     */
+    public String effectedResourceType() {
+        return this.innerProperties() == null ? null : this.innerProperties().effectedResourceType();
+    }
+
+    /**
+     * Get the systemSource property: The type of the alerted resource (Azure, Non-Azure).
+     * 
+     * @return the systemSource value.
+     */
+    public String systemSource() {
+        return this.innerProperties() == null ? null : this.innerProperties().systemSource();
+    }
+
+    /**
+     * Get the actionTaken property: IoT Security solution alert response.
+     * 
+     * @return the actionTaken value.
+     */
+    public String actionTaken() {
+        return this.innerProperties() == null ? null : this.innerProperties().actionTaken();
+    }
+
+    /**
+     * Get the logAnalyticsQuery property: Log analytics query for getting the list of affected devices/alerts.
+     * 
+     * @return the logAnalyticsQuery value.
+     */
+    public String logAnalyticsQuery() {
+        return this.innerProperties() == null ? null : this.innerProperties().logAnalyticsQuery();
+    }
+
+    /**
+     * Get the topDevicesList property: 10 devices with the highest number of occurrences of this alert type, on this
+     * day.
+     * 
+     * @return the topDevicesList value.
+     */
+    public List<IoTSecurityAggregatedAlertPropertiesTopDevicesListItem> topDevicesList() {
+        return this.innerProperties() == null ? null : this.innerProperties().topDevicesList();
+    }
+
+    /**
      * Validates the instance.
-     *
+     * 
      * @throws IllegalArgumentException thrown if the instance is not valid.
      */
     public void validate() {
-        if (topDevicesList() != null) {
-            topDevicesList().forEach(e -> e.validate());
+        if (innerProperties() != null) {
+            innerProperties().validate();
         }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public JsonWriter toJson(JsonWriter jsonWriter) throws IOException {
+        jsonWriter.writeStartObject();
+        jsonWriter.writeJsonField("properties", this.innerProperties);
+        jsonWriter.writeMapField("tags", this.tags, (writer, element) -> writer.writeString(element));
+        return jsonWriter.writeEndObject();
+    }
+
+    /**
+     * Reads an instance of IoTSecurityAggregatedAlertInner from the JsonReader.
+     * 
+     * @param jsonReader The JsonReader being read.
+     * @return An instance of IoTSecurityAggregatedAlertInner if the JsonReader was pointing to an instance of it, or
+     * null if it was pointing to JSON null.
+     * @throws IllegalStateException If the deserialized JSON object was missing any required properties.
+     * @throws IOException If an error occurs while reading the IoTSecurityAggregatedAlertInner.
+     */
+    public static IoTSecurityAggregatedAlertInner fromJson(JsonReader jsonReader) throws IOException {
+        return jsonReader.readObject(reader -> {
+            IoTSecurityAggregatedAlertInner deserializedIoTSecurityAggregatedAlertInner
+                = new IoTSecurityAggregatedAlertInner();
+            while (reader.nextToken() != JsonToken.END_OBJECT) {
+                String fieldName = reader.getFieldName();
+                reader.nextToken();
+
+                if ("id".equals(fieldName)) {
+                    deserializedIoTSecurityAggregatedAlertInner.id = reader.getString();
+                } else if ("name".equals(fieldName)) {
+                    deserializedIoTSecurityAggregatedAlertInner.name = reader.getString();
+                } else if ("type".equals(fieldName)) {
+                    deserializedIoTSecurityAggregatedAlertInner.type = reader.getString();
+                } else if ("properties".equals(fieldName)) {
+                    deserializedIoTSecurityAggregatedAlertInner.innerProperties
+                        = IoTSecurityAggregatedAlertProperties.fromJson(reader);
+                } else if ("tags".equals(fieldName)) {
+                    Map<String, String> tags = reader.readMap(reader1 -> reader1.getString());
+                    deserializedIoTSecurityAggregatedAlertInner.tags = tags;
+                } else {
+                    reader.skipChildren();
+                }
+            }
+
+            return deserializedIoTSecurityAggregatedAlertInner;
+        });
     }
 }

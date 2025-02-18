@@ -12,26 +12,36 @@ import com.azure.resourcemanager.recoveryservicesbackup.fluent.ProtectionContain
 import com.azure.resourcemanager.recoveryservicesbackup.fluent.models.ProtectionContainerResourceInner;
 import com.azure.resourcemanager.recoveryservicesbackup.models.ProtectionContainerResource;
 import com.azure.resourcemanager.recoveryservicesbackup.models.ProtectionContainers;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 public final class ProtectionContainersImpl implements ProtectionContainers {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(ProtectionContainersImpl.class);
+    private static final ClientLogger LOGGER = new ClientLogger(ProtectionContainersImpl.class);
 
     private final ProtectionContainersClient innerClient;
 
     private final com.azure.resourcemanager.recoveryservicesbackup.RecoveryServicesBackupManager serviceManager;
 
-    public ProtectionContainersImpl(
-        ProtectionContainersClient innerClient,
+    public ProtectionContainersImpl(ProtectionContainersClient innerClient,
         com.azure.resourcemanager.recoveryservicesbackup.RecoveryServicesBackupManager serviceManager) {
         this.innerClient = innerClient;
         this.serviceManager = serviceManager;
     }
 
-    public ProtectionContainerResource get(
-        String vaultName, String resourceGroupName, String fabricName, String containerName) {
-        ProtectionContainerResourceInner inner =
-            this.serviceClient().get(vaultName, resourceGroupName, fabricName, containerName);
+    public Response<ProtectionContainerResource> getWithResponse(String vaultName, String resourceGroupName,
+        String fabricName, String containerName, Context context) {
+        Response<ProtectionContainerResourceInner> inner
+            = this.serviceClient().getWithResponse(vaultName, resourceGroupName, fabricName, containerName, context);
+        if (inner != null) {
+            return new SimpleResponse<>(inner.getRequest(), inner.getStatusCode(), inner.getHeaders(),
+                new ProtectionContainerResourceImpl(inner.getValue(), this.manager()));
+        } else {
+            return null;
+        }
+    }
+
+    public ProtectionContainerResource get(String vaultName, String resourceGroupName, String fabricName,
+        String containerName) {
+        ProtectionContainerResourceInner inner
+            = this.serviceClient().get(vaultName, resourceGroupName, fabricName, containerName);
         if (inner != null) {
             return new ProtectionContainerResourceImpl(inner, this.manager());
         } else {
@@ -39,125 +49,79 @@ public final class ProtectionContainersImpl implements ProtectionContainers {
         }
     }
 
-    public Response<ProtectionContainerResource> getWithResponse(
-        String vaultName, String resourceGroupName, String fabricName, String containerName, Context context) {
-        Response<ProtectionContainerResourceInner> inner =
-            this.serviceClient().getWithResponse(vaultName, resourceGroupName, fabricName, containerName, context);
-        if (inner != null) {
-            return new SimpleResponse<>(
-                inner.getRequest(),
-                inner.getStatusCode(),
-                inner.getHeaders(),
-                new ProtectionContainerResourceImpl(inner.getValue(), this.manager()));
-        } else {
-            return null;
-        }
+    public Response<Void> unregisterWithResponse(String vaultName, String resourceGroupName, String fabricName,
+        String containerName, Context context) {
+        return this.serviceClient()
+            .unregisterWithResponse(vaultName, resourceGroupName, fabricName, containerName, context);
     }
 
     public void unregister(String vaultName, String resourceGroupName, String fabricName, String containerName) {
         this.serviceClient().unregister(vaultName, resourceGroupName, fabricName, containerName);
     }
 
-    public Response<Void> unregisterWithResponse(
-        String vaultName, String resourceGroupName, String fabricName, String containerName, Context context) {
-        return this
-            .serviceClient()
-            .unregisterWithResponse(vaultName, resourceGroupName, fabricName, containerName, context);
+    public Response<Void> inquireWithResponse(String vaultName, String resourceGroupName, String fabricName,
+        String containerName, String filter, Context context) {
+        return this.serviceClient()
+            .inquireWithResponse(vaultName, resourceGroupName, fabricName, containerName, filter, context);
     }
 
     public void inquire(String vaultName, String resourceGroupName, String fabricName, String containerName) {
         this.serviceClient().inquire(vaultName, resourceGroupName, fabricName, containerName);
     }
 
-    public Response<Void> inquireWithResponse(
-        String vaultName,
-        String resourceGroupName,
-        String fabricName,
-        String containerName,
-        String filter,
-        Context context) {
-        return this
-            .serviceClient()
-            .inquireWithResponse(vaultName, resourceGroupName, fabricName, containerName, filter, context);
+    public Response<Void> refreshWithResponse(String vaultName, String resourceGroupName, String fabricName,
+        String filter, Context context) {
+        return this.serviceClient().refreshWithResponse(vaultName, resourceGroupName, fabricName, filter, context);
     }
 
     public void refresh(String vaultName, String resourceGroupName, String fabricName) {
         this.serviceClient().refresh(vaultName, resourceGroupName, fabricName);
     }
 
-    public Response<Void> refreshWithResponse(
-        String vaultName, String resourceGroupName, String fabricName, String filter, Context context) {
-        return this.serviceClient().refreshWithResponse(vaultName, resourceGroupName, fabricName, filter, context);
-    }
-
     public ProtectionContainerResource getById(String id) {
-        String vaultName = Utils.getValueFromIdByName(id, "vaults");
+        String vaultName = ResourceManagerUtils.getValueFromIdByName(id, "vaults");
         if (vaultName == null) {
-            throw logger
-                .logExceptionAsError(
-                    new IllegalArgumentException(
-                        String.format("The resource ID '%s' is not valid. Missing path segment 'vaults'.", id)));
+            throw LOGGER.logExceptionAsError(new IllegalArgumentException(
+                String.format("The resource ID '%s' is not valid. Missing path segment 'vaults'.", id)));
         }
-        String resourceGroupName = Utils.getValueFromIdByName(id, "resourceGroups");
+        String resourceGroupName = ResourceManagerUtils.getValueFromIdByName(id, "resourceGroups");
         if (resourceGroupName == null) {
-            throw logger
-                .logExceptionAsError(
-                    new IllegalArgumentException(
-                        String
-                            .format("The resource ID '%s' is not valid. Missing path segment 'resourceGroups'.", id)));
+            throw LOGGER.logExceptionAsError(new IllegalArgumentException(
+                String.format("The resource ID '%s' is not valid. Missing path segment 'resourceGroups'.", id)));
         }
-        String fabricName = Utils.getValueFromIdByName(id, "backupFabrics");
+        String fabricName = ResourceManagerUtils.getValueFromIdByName(id, "backupFabrics");
         if (fabricName == null) {
-            throw logger
-                .logExceptionAsError(
-                    new IllegalArgumentException(
-                        String.format("The resource ID '%s' is not valid. Missing path segment 'backupFabrics'.", id)));
+            throw LOGGER.logExceptionAsError(new IllegalArgumentException(
+                String.format("The resource ID '%s' is not valid. Missing path segment 'backupFabrics'.", id)));
         }
-        String containerName = Utils.getValueFromIdByName(id, "protectionContainers");
+        String containerName = ResourceManagerUtils.getValueFromIdByName(id, "protectionContainers");
         if (containerName == null) {
-            throw logger
-                .logExceptionAsError(
-                    new IllegalArgumentException(
-                        String
-                            .format(
-                                "The resource ID '%s' is not valid. Missing path segment 'protectionContainers'.",
-                                id)));
+            throw LOGGER.logExceptionAsError(new IllegalArgumentException(
+                String.format("The resource ID '%s' is not valid. Missing path segment 'protectionContainers'.", id)));
         }
         return this.getWithResponse(vaultName, resourceGroupName, fabricName, containerName, Context.NONE).getValue();
     }
 
     public Response<ProtectionContainerResource> getByIdWithResponse(String id, Context context) {
-        String vaultName = Utils.getValueFromIdByName(id, "vaults");
+        String vaultName = ResourceManagerUtils.getValueFromIdByName(id, "vaults");
         if (vaultName == null) {
-            throw logger
-                .logExceptionAsError(
-                    new IllegalArgumentException(
-                        String.format("The resource ID '%s' is not valid. Missing path segment 'vaults'.", id)));
+            throw LOGGER.logExceptionAsError(new IllegalArgumentException(
+                String.format("The resource ID '%s' is not valid. Missing path segment 'vaults'.", id)));
         }
-        String resourceGroupName = Utils.getValueFromIdByName(id, "resourceGroups");
+        String resourceGroupName = ResourceManagerUtils.getValueFromIdByName(id, "resourceGroups");
         if (resourceGroupName == null) {
-            throw logger
-                .logExceptionAsError(
-                    new IllegalArgumentException(
-                        String
-                            .format("The resource ID '%s' is not valid. Missing path segment 'resourceGroups'.", id)));
+            throw LOGGER.logExceptionAsError(new IllegalArgumentException(
+                String.format("The resource ID '%s' is not valid. Missing path segment 'resourceGroups'.", id)));
         }
-        String fabricName = Utils.getValueFromIdByName(id, "backupFabrics");
+        String fabricName = ResourceManagerUtils.getValueFromIdByName(id, "backupFabrics");
         if (fabricName == null) {
-            throw logger
-                .logExceptionAsError(
-                    new IllegalArgumentException(
-                        String.format("The resource ID '%s' is not valid. Missing path segment 'backupFabrics'.", id)));
+            throw LOGGER.logExceptionAsError(new IllegalArgumentException(
+                String.format("The resource ID '%s' is not valid. Missing path segment 'backupFabrics'.", id)));
         }
-        String containerName = Utils.getValueFromIdByName(id, "protectionContainers");
+        String containerName = ResourceManagerUtils.getValueFromIdByName(id, "protectionContainers");
         if (containerName == null) {
-            throw logger
-                .logExceptionAsError(
-                    new IllegalArgumentException(
-                        String
-                            .format(
-                                "The resource ID '%s' is not valid. Missing path segment 'protectionContainers'.",
-                                id)));
+            throw LOGGER.logExceptionAsError(new IllegalArgumentException(
+                String.format("The resource ID '%s' is not valid. Missing path segment 'protectionContainers'.", id)));
         }
         return this.getWithResponse(vaultName, resourceGroupName, fabricName, containerName, context);
     }

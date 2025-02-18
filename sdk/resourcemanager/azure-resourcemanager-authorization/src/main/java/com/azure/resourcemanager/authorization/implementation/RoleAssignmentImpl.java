@@ -3,7 +3,6 @@
 
 package com.azure.resourcemanager.authorization.implementation;
 
-import com.azure.core.management.exception.ManagementException;
 import com.azure.core.util.logging.ClientLogger;
 import com.azure.resourcemanager.authorization.AuthorizationManager;
 import com.azure.resourcemanager.authorization.models.ActiveDirectoryGroup;
@@ -16,14 +15,7 @@ import com.azure.resourcemanager.authorization.fluent.models.RoleAssignmentInner
 import com.azure.resourcemanager.resources.models.ResourceGroup;
 import com.azure.resourcemanager.resources.fluentcore.arm.models.Resource;
 import com.azure.resourcemanager.resources.fluentcore.model.implementation.CreatableImpl;
-import com.azure.resourcemanager.resources.fluentcore.utils.ResourceManagerUtils;
-import reactor.core.Exceptions;
-import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
-import reactor.util.retry.Retry;
-
-import java.time.Duration;
-import java.util.Locale;
 
 /** Implementation for ServicePrincipal and its parent interfaces. */
 class RoleAssignmentImpl extends CreatableImpl<RoleAssignment, RoleAssignmentInner, RoleAssignmentImpl>
@@ -37,6 +29,7 @@ class RoleAssignmentImpl extends CreatableImpl<RoleAssignment, RoleAssignmentInn
     private String roleDefinitionId;
     private String roleName;
     private String scope;
+    private String description;
     private final ClientLogger logger = new ClientLogger(RoleAssignmentImpl.class);
 
     RoleAssignmentImpl(String name, RoleAssignmentInner innerObject, AuthorizationManager manager) {
@@ -67,57 +60,24 @@ class RoleAssignmentImpl extends CreatableImpl<RoleAssignment, RoleAssignmentInn
         if (roleDefinitionId != null) {
             roleDefinitionIdObservable = Mono.just(roleDefinitionId);
         } else if (roleName != null) {
-            roleDefinitionIdObservable =
-                manager()
-                    .roleDefinitions()
-                    .getByScopeAndRoleNameAsync(scope(), roleName)
-                    .map(roleDefinition -> roleDefinition.id());
+            roleDefinitionIdObservable = manager().roleDefinitions()
+                .getByScopeAndRoleNameAsync(scope(), roleName)
+                .map(roleDefinition -> roleDefinition.id());
         } else {
             throw logger.logExceptionAsError(new IllegalArgumentException(
                 "Please pass a non-null value for either role name or role definition ID"));
         }
 
         return Mono
-            .zip(
-                objectIdObservable,
-                roleDefinitionIdObservable,
-                (objectId, roleDefinitionId) ->
-                    new RoleAssignmentCreateParameters()
-                        .withPrincipalId(objectId)
-                        .withRoleDefinitionId(roleDefinitionId))
-            .flatMap(
-                roleAssignmentPropertiesInner ->
-                    manager()
-                        .roleServiceClient()
-                        .getRoleAssignments()
-                        .createAsync(scope(), name(), roleAssignmentPropertiesInner)
-                        .retryWhen(Retry.withThrowable(
-                            throwableFlux ->
-                                throwableFlux
-                                    .zipWith(
-                                        Flux.range(1, 30),
-                                        (throwable, integer) -> {
-                                            if (throwable instanceof ManagementException) {
-                                                ManagementException managementException =
-                                                    (ManagementException) throwable;
-                                                String exceptionMessage =
-                                                    managementException.getMessage().toLowerCase(Locale.ROOT);
-                                                if (exceptionMessage.contains("principalnotfound")
-                                                    || exceptionMessage.contains("does not exist in the directory")) {
-                                                    /*
-                                                     * ref:
-                                                     * https://github.com/Azure/azure-cli/blob/dev/src/command_modules/azure-cli-role/azure/cli/command_modules/role/custom.py#L1048-L1065
-                                                     */
-                                                    return integer;
-                                                } else {
-                                                    throw logger.logExceptionAsError(Exceptions.propagate(throwable));
-                                                }
-                                            } else {
-                                                throw logger.logExceptionAsError(Exceptions.propagate(throwable));
-                                            }
-                                        })
-                                    .flatMap(i -> Mono.delay(ResourceManagerUtils.InternalRuntimeContext
-                                        .getDelayDuration(Duration.ofSeconds(i)))))))
+            .zip(objectIdObservable, roleDefinitionIdObservable,
+                (objectId, roleDefinitionId) -> new RoleAssignmentCreateParameters().withPrincipalId(objectId)
+                    .withRoleDefinitionId(roleDefinitionId)
+                    .withDescription(description))
+            .flatMap(roleAssignmentPropertiesInner -> manager().roleServiceClient()
+                .getRoleAssignments()
+                .createAsync(scope(), name(), roleAssignmentPropertiesInner)
+                // if the service principal is newly created (also apply to the case that MSI is new), wait for eventual consistency from AAD
+                .retryWhen(RetryUtils.backoffRetryFor400PrincipalNotFound()))
             .map(innerToFluentMap(this));
     }
 
@@ -144,6 +104,11 @@ class RoleAssignmentImpl extends CreatableImpl<RoleAssignment, RoleAssignmentInn
     @Override
     public String condition() {
         return innerModel().condition();
+    }
+
+    @Override
+    public String description() {
+        return innerModel().description();
     }
 
     @Override
@@ -213,6 +178,12 @@ class RoleAssignmentImpl extends CreatableImpl<RoleAssignment, RoleAssignmentInn
     @Override
     public RoleAssignmentImpl withSubscriptionScope(String subscriptionId) {
         return withScope("/subscriptions/" + subscriptionId);
+    }
+
+    @Override
+    public RoleAssignmentImpl withDescription(String description) {
+        this.description = description;
+        return this;
     }
 
     @Override

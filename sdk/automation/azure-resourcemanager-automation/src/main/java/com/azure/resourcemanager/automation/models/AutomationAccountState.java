@@ -5,32 +5,51 @@
 package com.azure.resourcemanager.automation.models;
 
 import com.azure.core.util.ExpandableStringEnum;
-import com.fasterxml.jackson.annotation.JsonCreator;
 import java.util.Collection;
 
-/** Defines values for AutomationAccountState. */
+/**
+ * Gets status of account.
+ */
 public final class AutomationAccountState extends ExpandableStringEnum<AutomationAccountState> {
-    /** Static value Ok for AutomationAccountState. */
+    /**
+     * Static value Ok for AutomationAccountState.
+     */
     public static final AutomationAccountState OK = fromString("Ok");
 
-    /** Static value Unavailable for AutomationAccountState. */
+    /**
+     * Static value Unavailable for AutomationAccountState.
+     */
     public static final AutomationAccountState UNAVAILABLE = fromString("Unavailable");
 
-    /** Static value Suspended for AutomationAccountState. */
+    /**
+     * Static value Suspended for AutomationAccountState.
+     */
     public static final AutomationAccountState SUSPENDED = fromString("Suspended");
 
     /**
+     * Creates a new instance of AutomationAccountState value.
+     * 
+     * @deprecated Use the {@link #fromString(String)} factory method.
+     */
+    @Deprecated
+    public AutomationAccountState() {
+    }
+
+    /**
      * Creates or finds a AutomationAccountState from its string representation.
-     *
+     * 
      * @param name a name to look for.
      * @return the corresponding AutomationAccountState.
      */
-    @JsonCreator
     public static AutomationAccountState fromString(String name) {
         return fromString(name, AutomationAccountState.class);
     }
 
-    /** @return known AutomationAccountState values. */
+    /**
+     * Gets known AutomationAccountState values.
+     * 
+     * @return known AutomationAccountState values.
+     */
     public static Collection<AutomationAccountState> values() {
         return values(AutomationAccountState.class);
     }

@@ -8,54 +8,74 @@ import com.azure.core.http.rest.PagedIterable;
 import com.azure.core.http.rest.Response;
 import com.azure.core.util.Context;
 
-/** Resource collection API of VirtualMachineImageTemplates. */
+/**
+ * Resource collection API of VirtualMachineImageTemplates.
+ */
 public interface VirtualMachineImageTemplates {
     /**
      * Gets information about the VM image templates associated with the subscription.
-     *
+     * 
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return information about the VM image templates associated with the subscription.
+     * @return information about the VM image templates associated with the subscription as paginated response with
+     * {@link PagedIterable}.
      */
     PagedIterable<ImageTemplate> list();
 
     /**
      * Gets information about the VM image templates associated with the subscription.
-     *
+     * 
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return information about the VM image templates associated with the subscription.
+     * @return information about the VM image templates associated with the subscription as paginated response with
+     * {@link PagedIterable}.
      */
     PagedIterable<ImageTemplate> list(Context context);
 
     /**
      * Gets information about the VM image templates associated with the specified resource group.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return information about the VM image templates associated with the specified resource group.
+     * @return information about the VM image templates associated with the specified resource group as paginated
+     * response with {@link PagedIterable}.
      */
     PagedIterable<ImageTemplate> listByResourceGroup(String resourceGroupName);
 
     /**
      * Gets information about the VM image templates associated with the specified resource group.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return information about the VM image templates associated with the specified resource group.
+     * @return information about the VM image templates associated with the specified resource group as paginated
+     * response with {@link PagedIterable}.
      */
     PagedIterable<ImageTemplate> listByResourceGroup(String resourceGroupName, Context context);
 
     /**
      * Get information about a virtual machine image template.
-     *
+     * 
+     * @param resourceGroupName The name of the resource group.
+     * @param imageTemplateName The name of the image Template.
+     * @param context The context to associate with this operation.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return information about a virtual machine image template along with {@link Response}.
+     */
+    Response<ImageTemplate> getByResourceGroupWithResponse(String resourceGroupName, String imageTemplateName,
+        Context context);
+
+    /**
+     * Get information about a virtual machine image template.
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param imageTemplateName The name of the image Template.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
@@ -66,22 +86,8 @@ public interface VirtualMachineImageTemplates {
     ImageTemplate getByResourceGroup(String resourceGroupName, String imageTemplateName);
 
     /**
-     * Get information about a virtual machine image template.
-     *
-     * @param resourceGroupName The name of the resource group.
-     * @param imageTemplateName The name of the image Template.
-     * @param context The context to associate with this operation.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return information about a virtual machine image template.
-     */
-    Response<ImageTemplate> getByResourceGroupWithResponse(
-        String resourceGroupName, String imageTemplateName, Context context);
-
-    /**
      * Delete a virtual machine image template.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param imageTemplateName The name of the image Template.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
@@ -92,7 +98,7 @@ public interface VirtualMachineImageTemplates {
 
     /**
      * Delete a virtual machine image template.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param imageTemplateName The name of the image Template.
      * @param context The context to associate with this operation.
@@ -104,7 +110,7 @@ public interface VirtualMachineImageTemplates {
 
     /**
      * Create artifacts from a existing image template.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param imageTemplateName The name of the image Template.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
@@ -115,7 +121,7 @@ public interface VirtualMachineImageTemplates {
 
     /**
      * Create artifacts from a existing image template.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param imageTemplateName The name of the image Template.
      * @param context The context to associate with this operation.
@@ -127,7 +133,7 @@ public interface VirtualMachineImageTemplates {
 
     /**
      * Cancel the long running image build based on the image template.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param imageTemplateName The name of the image Template.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
@@ -138,7 +144,7 @@ public interface VirtualMachineImageTemplates {
 
     /**
      * Cancel the long running image build based on the image template.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param imageTemplateName The name of the image Template.
      * @param context The context to associate with this operation.
@@ -150,32 +156,47 @@ public interface VirtualMachineImageTemplates {
 
     /**
      * List all run outputs for the specified Image Template resource.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param imageTemplateName The name of the image Template.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the result of List run outputs operation.
+     * @return the result of List run outputs operation as paginated response with {@link PagedIterable}.
      */
     PagedIterable<RunOutput> listRunOutputs(String resourceGroupName, String imageTemplateName);
 
     /**
      * List all run outputs for the specified Image Template resource.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param imageTemplateName The name of the image Template.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the result of List run outputs operation.
+     * @return the result of List run outputs operation as paginated response with {@link PagedIterable}.
      */
     PagedIterable<RunOutput> listRunOutputs(String resourceGroupName, String imageTemplateName, Context context);
 
     /**
      * Get the specified run output for the specified image template resource.
-     *
+     * 
+     * @param resourceGroupName The name of the resource group.
+     * @param imageTemplateName The name of the image Template.
+     * @param runOutputName The name of the run output.
+     * @param context The context to associate with this operation.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return the specified run output for the specified image template resource along with {@link Response}.
+     */
+    Response<RunOutput> getRunOutputWithResponse(String resourceGroupName, String imageTemplateName,
+        String runOutputName, Context context);
+
+    /**
+     * Get the specified run output for the specified image template resource.
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param imageTemplateName The name of the image Template.
      * @param runOutputName The name of the run output.
@@ -187,46 +208,31 @@ public interface VirtualMachineImageTemplates {
     RunOutput getRunOutput(String resourceGroupName, String imageTemplateName, String runOutputName);
 
     /**
-     * Get the specified run output for the specified image template resource.
-     *
-     * @param resourceGroupName The name of the resource group.
-     * @param imageTemplateName The name of the image Template.
-     * @param runOutputName The name of the run output.
-     * @param context The context to associate with this operation.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the specified run output for the specified image template resource.
-     */
-    Response<RunOutput> getRunOutputWithResponse(
-        String resourceGroupName, String imageTemplateName, String runOutputName, Context context);
-
-    /**
      * Get information about a virtual machine image template.
-     *
+     * 
      * @param id the resource ID.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return information about a virtual machine image template.
+     * @return information about a virtual machine image template along with {@link Response}.
      */
     ImageTemplate getById(String id);
 
     /**
      * Get information about a virtual machine image template.
-     *
+     * 
      * @param id the resource ID.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return information about a virtual machine image template.
+     * @return information about a virtual machine image template along with {@link Response}.
      */
     Response<ImageTemplate> getByIdWithResponse(String id, Context context);
 
     /**
      * Delete a virtual machine image template.
-     *
+     * 
      * @param id the resource ID.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
@@ -236,7 +242,7 @@ public interface VirtualMachineImageTemplates {
 
     /**
      * Delete a virtual machine image template.
-     *
+     * 
      * @param id the resource ID.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
@@ -247,7 +253,7 @@ public interface VirtualMachineImageTemplates {
 
     /**
      * Begins definition for a new ImageTemplate resource.
-     *
+     * 
      * @param name resource name.
      * @return the first stage of the new ImageTemplate definition.
      */

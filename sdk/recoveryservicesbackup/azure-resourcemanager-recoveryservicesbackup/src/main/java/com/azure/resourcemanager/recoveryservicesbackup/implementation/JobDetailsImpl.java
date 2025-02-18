@@ -12,41 +12,36 @@ import com.azure.resourcemanager.recoveryservicesbackup.fluent.JobDetailsClient;
 import com.azure.resourcemanager.recoveryservicesbackup.fluent.models.JobResourceInner;
 import com.azure.resourcemanager.recoveryservicesbackup.models.JobDetails;
 import com.azure.resourcemanager.recoveryservicesbackup.models.JobResource;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 public final class JobDetailsImpl implements JobDetails {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(JobDetailsImpl.class);
+    private static final ClientLogger LOGGER = new ClientLogger(JobDetailsImpl.class);
 
     private final JobDetailsClient innerClient;
 
     private final com.azure.resourcemanager.recoveryservicesbackup.RecoveryServicesBackupManager serviceManager;
 
-    public JobDetailsImpl(
-        JobDetailsClient innerClient,
+    public JobDetailsImpl(JobDetailsClient innerClient,
         com.azure.resourcemanager.recoveryservicesbackup.RecoveryServicesBackupManager serviceManager) {
         this.innerClient = innerClient;
         this.serviceManager = serviceManager;
+    }
+
+    public Response<JobResource> getWithResponse(String vaultName, String resourceGroupName, String jobName,
+        Context context) {
+        Response<JobResourceInner> inner
+            = this.serviceClient().getWithResponse(vaultName, resourceGroupName, jobName, context);
+        if (inner != null) {
+            return new SimpleResponse<>(inner.getRequest(), inner.getStatusCode(), inner.getHeaders(),
+                new JobResourceImpl(inner.getValue(), this.manager()));
+        } else {
+            return null;
+        }
     }
 
     public JobResource get(String vaultName, String resourceGroupName, String jobName) {
         JobResourceInner inner = this.serviceClient().get(vaultName, resourceGroupName, jobName);
         if (inner != null) {
             return new JobResourceImpl(inner, this.manager());
-        } else {
-            return null;
-        }
-    }
-
-    public Response<JobResource> getWithResponse(
-        String vaultName, String resourceGroupName, String jobName, Context context) {
-        Response<JobResourceInner> inner =
-            this.serviceClient().getWithResponse(vaultName, resourceGroupName, jobName, context);
-        if (inner != null) {
-            return new SimpleResponse<>(
-                inner.getRequest(),
-                inner.getStatusCode(),
-                inner.getHeaders(),
-                new JobResourceImpl(inner.getValue(), this.manager()));
         } else {
             return null;
         }

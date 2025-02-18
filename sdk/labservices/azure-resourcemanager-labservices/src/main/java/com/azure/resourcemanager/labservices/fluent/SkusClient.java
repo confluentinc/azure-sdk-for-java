@@ -10,27 +10,33 @@ import com.azure.core.http.rest.PagedIterable;
 import com.azure.core.util.Context;
 import com.azure.resourcemanager.labservices.fluent.models.LabServicesSkuInner;
 
-/** An instance of this class provides access to all the operations defined in SkusClient. */
+/**
+ * An instance of this class provides access to all the operations defined in SkusClient.
+ */
 public interface SkusClient {
     /**
-     * Returns a list of all the Azure Lab Services resource SKUs.
-     *
+     * Gets the Azure Lab Services resource SKUs.
+     * 
+     * Returns a list of Azure Lab Services resource SKUs.
+     * 
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return paged list of lab services skus.
+     * @return paged list of lab services skus as paginated response with {@link PagedIterable}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
     PagedIterable<LabServicesSkuInner> list();
 
     /**
-     * Returns a list of all the Azure Lab Services resource SKUs.
-     *
+     * Gets the Azure Lab Services resource SKUs.
+     * 
+     * Returns a list of Azure Lab Services resource SKUs.
+     * 
      * @param filter The filter to apply to the operation.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return paged list of lab services skus.
+     * @return paged list of lab services skus as paginated response with {@link PagedIterable}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
     PagedIterable<LabServicesSkuInner> list(String filter, Context context);

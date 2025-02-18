@@ -15,26 +15,36 @@ import com.azure.resourcemanager.synapse.models.GetSsisObjectMetadataRequest;
 import com.azure.resourcemanager.synapse.models.IntegrationRuntimeObjectMetadatas;
 import com.azure.resourcemanager.synapse.models.SsisObjectMetadataListResponse;
 import com.azure.resourcemanager.synapse.models.SsisObjectMetadataStatusResponse;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 public final class IntegrationRuntimeObjectMetadatasImpl implements IntegrationRuntimeObjectMetadatas {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(IntegrationRuntimeObjectMetadatasImpl.class);
+    private static final ClientLogger LOGGER = new ClientLogger(IntegrationRuntimeObjectMetadatasImpl.class);
 
     private final IntegrationRuntimeObjectMetadatasClient innerClient;
 
     private final com.azure.resourcemanager.synapse.SynapseManager serviceManager;
 
-    public IntegrationRuntimeObjectMetadatasImpl(
-        IntegrationRuntimeObjectMetadatasClient innerClient,
+    public IntegrationRuntimeObjectMetadatasImpl(IntegrationRuntimeObjectMetadatasClient innerClient,
         com.azure.resourcemanager.synapse.SynapseManager serviceManager) {
         this.innerClient = innerClient;
         this.serviceManager = serviceManager;
     }
 
-    public SsisObjectMetadataListResponse list(
-        String resourceGroupName, String workspaceName, String integrationRuntimeName) {
-        SsisObjectMetadataListResponseInner inner =
-            this.serviceClient().list(resourceGroupName, workspaceName, integrationRuntimeName);
+    public Response<SsisObjectMetadataListResponse> listWithResponse(String resourceGroupName, String workspaceName,
+        String integrationRuntimeName, GetSsisObjectMetadataRequest getMetadataRequest, Context context) {
+        Response<SsisObjectMetadataListResponseInner> inner = this.serviceClient()
+            .listWithResponse(resourceGroupName, workspaceName, integrationRuntimeName, getMetadataRequest, context);
+        if (inner != null) {
+            return new SimpleResponse<>(inner.getRequest(), inner.getStatusCode(), inner.getHeaders(),
+                new SsisObjectMetadataListResponseImpl(inner.getValue(), this.manager()));
+        } else {
+            return null;
+        }
+    }
+
+    public SsisObjectMetadataListResponse list(String resourceGroupName, String workspaceName,
+        String integrationRuntimeName) {
+        SsisObjectMetadataListResponseInner inner
+            = this.serviceClient().list(resourceGroupName, workspaceName, integrationRuntimeName);
         if (inner != null) {
             return new SsisObjectMetadataListResponseImpl(inner, this.manager());
         } else {
@@ -42,32 +52,10 @@ public final class IntegrationRuntimeObjectMetadatasImpl implements IntegrationR
         }
     }
 
-    public Response<SsisObjectMetadataListResponse> listWithResponse(
-        String resourceGroupName,
-        String workspaceName,
-        String integrationRuntimeName,
-        GetSsisObjectMetadataRequest getMetadataRequest,
-        Context context) {
-        Response<SsisObjectMetadataListResponseInner> inner =
-            this
-                .serviceClient()
-                .listWithResponse(
-                    resourceGroupName, workspaceName, integrationRuntimeName, getMetadataRequest, context);
-        if (inner != null) {
-            return new SimpleResponse<>(
-                inner.getRequest(),
-                inner.getStatusCode(),
-                inner.getHeaders(),
-                new SsisObjectMetadataListResponseImpl(inner.getValue(), this.manager()));
-        } else {
-            return null;
-        }
-    }
-
-    public SsisObjectMetadataStatusResponse refresh(
-        String resourceGroupName, String workspaceName, String integrationRuntimeName) {
-        SsisObjectMetadataStatusResponseInner inner =
-            this.serviceClient().refresh(resourceGroupName, workspaceName, integrationRuntimeName);
+    public SsisObjectMetadataStatusResponse refresh(String resourceGroupName, String workspaceName,
+        String integrationRuntimeName) {
+        SsisObjectMetadataStatusResponseInner inner
+            = this.serviceClient().refresh(resourceGroupName, workspaceName, integrationRuntimeName);
         if (inner != null) {
             return new SsisObjectMetadataStatusResponseImpl(inner, this.manager());
         } else {
@@ -75,10 +63,10 @@ public final class IntegrationRuntimeObjectMetadatasImpl implements IntegrationR
         }
     }
 
-    public SsisObjectMetadataStatusResponse refresh(
-        String resourceGroupName, String workspaceName, String integrationRuntimeName, Context context) {
-        SsisObjectMetadataStatusResponseInner inner =
-            this.serviceClient().refresh(resourceGroupName, workspaceName, integrationRuntimeName, context);
+    public SsisObjectMetadataStatusResponse refresh(String resourceGroupName, String workspaceName,
+        String integrationRuntimeName, Context context) {
+        SsisObjectMetadataStatusResponseInner inner
+            = this.serviceClient().refresh(resourceGroupName, workspaceName, integrationRuntimeName, context);
         if (inner != null) {
             return new SsisObjectMetadataStatusResponseImpl(inner, this.manager());
         } else {

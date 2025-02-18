@@ -12,41 +12,36 @@ import com.azure.resourcemanager.healthcareapis.fluent.OperationResultsClient;
 import com.azure.resourcemanager.healthcareapis.fluent.models.OperationResultsDescriptionInner;
 import com.azure.resourcemanager.healthcareapis.models.OperationResults;
 import com.azure.resourcemanager.healthcareapis.models.OperationResultsDescription;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 public final class OperationResultsImpl implements OperationResults {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(OperationResultsImpl.class);
+    private static final ClientLogger LOGGER = new ClientLogger(OperationResultsImpl.class);
 
     private final OperationResultsClient innerClient;
 
     private final com.azure.resourcemanager.healthcareapis.HealthcareApisManager serviceManager;
 
-    public OperationResultsImpl(
-        OperationResultsClient innerClient,
+    public OperationResultsImpl(OperationResultsClient innerClient,
         com.azure.resourcemanager.healthcareapis.HealthcareApisManager serviceManager) {
         this.innerClient = innerClient;
         this.serviceManager = serviceManager;
+    }
+
+    public Response<OperationResultsDescription> getWithResponse(String locationName, String operationResultId,
+        Context context) {
+        Response<OperationResultsDescriptionInner> inner
+            = this.serviceClient().getWithResponse(locationName, operationResultId, context);
+        if (inner != null) {
+            return new SimpleResponse<>(inner.getRequest(), inner.getStatusCode(), inner.getHeaders(),
+                new OperationResultsDescriptionImpl(inner.getValue(), this.manager()));
+        } else {
+            return null;
+        }
     }
 
     public OperationResultsDescription get(String locationName, String operationResultId) {
         OperationResultsDescriptionInner inner = this.serviceClient().get(locationName, operationResultId);
         if (inner != null) {
             return new OperationResultsDescriptionImpl(inner, this.manager());
-        } else {
-            return null;
-        }
-    }
-
-    public Response<OperationResultsDescription> getWithResponse(
-        String locationName, String operationResultId, Context context) {
-        Response<OperationResultsDescriptionInner> inner =
-            this.serviceClient().getWithResponse(locationName, operationResultId, context);
-        if (inner != null) {
-            return new SimpleResponse<>(
-                inner.getRequest(),
-                inner.getStatusCode(),
-                inner.getHeaders(),
-                new OperationResultsDescriptionImpl(inner.getValue(), this.manager()));
         } else {
             return null;
         }

@@ -3,9 +3,6 @@
 
 package com.azure.monitor.query.models;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonValue;
-
 /** Defines values for AggregationType. */
 public enum AggregationType {
     /** Enum value None. */
@@ -27,10 +24,10 @@ public enum AggregationType {
     TOTAL("Total");
 
     /** The actual serialized value for a AggregationType instance. */
-    private final String value;
+    private final String name;
 
-    AggregationType(String value) {
-        this.value = value;
+    AggregationType(String name) {
+        this.name = name;
     }
 
     /**
@@ -39,7 +36,6 @@ public enum AggregationType {
      * @param value the serialized value to parse.
      * @return the parsed AggregationType object, or null if unable to parse.
      */
-    @JsonCreator
     public static AggregationType fromString(String value) {
         AggregationType[] items = AggregationType.values();
         for (AggregationType item : items) {
@@ -50,9 +46,8 @@ public enum AggregationType {
         return null;
     }
 
-    @JsonValue
     @Override
     public String toString() {
-        return this.value;
+        return this.name;
     }
 }

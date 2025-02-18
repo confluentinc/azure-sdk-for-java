@@ -5,37 +5,46 @@
 package com.azure.resourcemanager.loganalytics.models;
 
 import com.azure.core.annotation.Fluent;
-import com.azure.core.util.logging.ClientLogger;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.azure.json.JsonReader;
+import com.azure.json.JsonSerializable;
+import com.azure.json.JsonToken;
+import com.azure.json.JsonWriter;
+import java.io.IOException;
 
-/** The key vault properties. */
+/**
+ * The key vault properties.
+ */
 @Fluent
-public final class KeyVaultProperties {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(KeyVaultProperties.class);
-
+public final class KeyVaultProperties implements JsonSerializable<KeyVaultProperties> {
     /*
-     * The Key Vault uri which holds they key associated with the Log Analytics
-     * cluster.
+     * The Key Vault uri which holds they key associated with the Log Analytics cluster.
      */
-    @JsonProperty(value = "keyVaultUri")
     private String keyVaultUri;
 
     /*
      * The name of the key associated with the Log Analytics cluster.
      */
-    @JsonProperty(value = "keyName")
     private String keyName;
 
     /*
      * The version of the key associated with the Log Analytics cluster.
      */
-    @JsonProperty(value = "keyVersion")
     private String keyVersion;
+
+    /*
+     * Selected key minimum required size.
+     */
+    private Integer keyRsaSize;
+
+    /**
+     * Creates an instance of KeyVaultProperties class.
+     */
+    public KeyVaultProperties() {
+    }
 
     /**
      * Get the keyVaultUri property: The Key Vault uri which holds they key associated with the Log Analytics cluster.
-     *
+     * 
      * @return the keyVaultUri value.
      */
     public String keyVaultUri() {
@@ -44,7 +53,7 @@ public final class KeyVaultProperties {
 
     /**
      * Set the keyVaultUri property: The Key Vault uri which holds they key associated with the Log Analytics cluster.
-     *
+     * 
      * @param keyVaultUri the keyVaultUri value to set.
      * @return the KeyVaultProperties object itself.
      */
@@ -55,7 +64,7 @@ public final class KeyVaultProperties {
 
     /**
      * Get the keyName property: The name of the key associated with the Log Analytics cluster.
-     *
+     * 
      * @return the keyName value.
      */
     public String keyName() {
@@ -64,7 +73,7 @@ public final class KeyVaultProperties {
 
     /**
      * Set the keyName property: The name of the key associated with the Log Analytics cluster.
-     *
+     * 
      * @param keyName the keyName value to set.
      * @return the KeyVaultProperties object itself.
      */
@@ -75,7 +84,7 @@ public final class KeyVaultProperties {
 
     /**
      * Get the keyVersion property: The version of the key associated with the Log Analytics cluster.
-     *
+     * 
      * @return the keyVersion value.
      */
     public String keyVersion() {
@@ -84,7 +93,7 @@ public final class KeyVaultProperties {
 
     /**
      * Set the keyVersion property: The version of the key associated with the Log Analytics cluster.
-     *
+     * 
      * @param keyVersion the keyVersion value to set.
      * @return the KeyVaultProperties object itself.
      */
@@ -94,10 +103,75 @@ public final class KeyVaultProperties {
     }
 
     /**
+     * Get the keyRsaSize property: Selected key minimum required size.
+     * 
+     * @return the keyRsaSize value.
+     */
+    public Integer keyRsaSize() {
+        return this.keyRsaSize;
+    }
+
+    /**
+     * Set the keyRsaSize property: Selected key minimum required size.
+     * 
+     * @param keyRsaSize the keyRsaSize value to set.
+     * @return the KeyVaultProperties object itself.
+     */
+    public KeyVaultProperties withKeyRsaSize(Integer keyRsaSize) {
+        this.keyRsaSize = keyRsaSize;
+        return this;
+    }
+
+    /**
      * Validates the instance.
-     *
+     * 
      * @throws IllegalArgumentException thrown if the instance is not valid.
      */
     public void validate() {
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public JsonWriter toJson(JsonWriter jsonWriter) throws IOException {
+        jsonWriter.writeStartObject();
+        jsonWriter.writeStringField("keyVaultUri", this.keyVaultUri);
+        jsonWriter.writeStringField("keyName", this.keyName);
+        jsonWriter.writeStringField("keyVersion", this.keyVersion);
+        jsonWriter.writeNumberField("keyRsaSize", this.keyRsaSize);
+        return jsonWriter.writeEndObject();
+    }
+
+    /**
+     * Reads an instance of KeyVaultProperties from the JsonReader.
+     * 
+     * @param jsonReader The JsonReader being read.
+     * @return An instance of KeyVaultProperties if the JsonReader was pointing to an instance of it, or null if it was
+     * pointing to JSON null.
+     * @throws IOException If an error occurs while reading the KeyVaultProperties.
+     */
+    public static KeyVaultProperties fromJson(JsonReader jsonReader) throws IOException {
+        return jsonReader.readObject(reader -> {
+            KeyVaultProperties deserializedKeyVaultProperties = new KeyVaultProperties();
+            while (reader.nextToken() != JsonToken.END_OBJECT) {
+                String fieldName = reader.getFieldName();
+                reader.nextToken();
+
+                if ("keyVaultUri".equals(fieldName)) {
+                    deserializedKeyVaultProperties.keyVaultUri = reader.getString();
+                } else if ("keyName".equals(fieldName)) {
+                    deserializedKeyVaultProperties.keyName = reader.getString();
+                } else if ("keyVersion".equals(fieldName)) {
+                    deserializedKeyVaultProperties.keyVersion = reader.getString();
+                } else if ("keyRsaSize".equals(fieldName)) {
+                    deserializedKeyVaultProperties.keyRsaSize = reader.getNullable(JsonReader::getInt);
+                } else {
+                    reader.skipChildren();
+                }
+            }
+
+            return deserializedKeyVaultProperties;
+        });
     }
 }

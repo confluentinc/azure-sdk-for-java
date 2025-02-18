@@ -4,20 +4,25 @@
 package com.azure.cosmos.implementation.batch;
 
 import com.azure.cosmos.BridgeInternal;
+import com.azure.cosmos.CosmosAsyncClient;
 import com.azure.cosmos.CosmosAsyncContainer;
 import com.azure.cosmos.CosmosBridgeInternal;
+import com.azure.cosmos.CosmosEndToEndOperationLatencyPolicyConfig;
 import com.azure.cosmos.CosmosException;
+import com.azure.cosmos.CosmosItemSerializer;
 import com.azure.cosmos.ThrottlingRetryOptions;
 import com.azure.cosmos.implementation.AsyncDocumentClient;
-import com.azure.cosmos.implementation.CosmosDaemonThreadFactory;
+import com.azure.cosmos.implementation.CosmosBulkExecutionOptionsImpl;
 import com.azure.cosmos.implementation.CosmosSchedulers;
+import com.azure.cosmos.implementation.HttpConstants;
 import com.azure.cosmos.implementation.ImplementationBridgeHelpers;
+import com.azure.cosmos.implementation.OperationType;
 import com.azure.cosmos.implementation.RequestOptions;
+import com.azure.cosmos.implementation.ResourceType;
 import com.azure.cosmos.implementation.apachecommons.lang.tuple.Pair;
 import com.azure.cosmos.implementation.spark.OperationContextAndListenerTuple;
 import com.azure.cosmos.models.CosmosBatchOperationResult;
 import com.azure.cosmos.models.CosmosBatchResponse;
-import com.azure.cosmos.models.CosmosBulkExecutionOptions;
 import com.azure.cosmos.models.CosmosBulkItemResponse;
 import com.azure.cosmos.models.CosmosBulkOperationResponse;
 import com.azure.cosmos.models.CosmosItemOperation;
@@ -25,6 +30,7 @@ import com.azure.cosmos.models.CosmosItemOperationType;
 import com.azure.cosmos.models.ModelBridgeInternal;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import reactor.core.Disposable;
 import reactor.core.Exceptions;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.FluxProcessor;
@@ -34,21 +40,23 @@ import reactor.core.publisher.Mono;
 import reactor.core.publisher.SignalType;
 import reactor.core.publisher.Sinks;
 import reactor.core.publisher.UnicastProcessor;
+import reactor.core.scheduler.Scheduler;
 import reactor.util.function.Tuple2;
 
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.concurrent.atomic.AtomicReference;
 
+import static com.azure.core.util.FluxUtil.withContext;
 import static com.azure.cosmos.implementation.guava25.base.Preconditions.checkNotNull;
 
 /**
@@ -72,12 +80,17 @@ import static com.azure.cosmos.implementation.guava25.base.Preconditions.checkNo
  *
  *    For our use case, Sinks.many().unicast() will work.
  */
-public final class BulkExecutor<TContext> {
+public final class BulkExecutor<TContext> implements Disposable {
 
     private final static Logger logger = LoggerFactory.getLogger(BulkExecutor.class);
     private final static AtomicLong instanceCount = new AtomicLong(0);
+    private static final ImplementationBridgeHelpers.CosmosAsyncClientHelper.CosmosAsyncClientAccessor clientAccessor =
+        ImplementationBridgeHelpers.CosmosAsyncClientHelper.getCosmosAsyncClientAccessor();
+    private static final ImplementationBridgeHelpers.CosmosBatchResponseHelper.CosmosBatchResponseAccessor cosmosBatchResponseAccessor =
+        ImplementationBridgeHelpers.CosmosBatchResponseHelper.getCosmosBatchResponseAccessor();
 
     private final CosmosAsyncContainer container;
+    private final int maxMicroBatchPayloadSizeInBytes;
     private final AsyncDocumentClient docClientWrapper;
     private final String operationContextText;
     private final OperationContextAndListenerTuple operationListener;
@@ -86,78 +99,203 @@ public final class BulkExecutor<TContext> {
 
     // Options for bulk execution.
     private final Long maxMicroBatchIntervalInMs;
+
     private final TContext batchContext;
     private final ConcurrentMap<String, PartitionScopeThresholds> partitionScopeThresholds;
-    private final CosmosBulkExecutionOptions cosmosBulkExecutionOptions;
+    private final CosmosBulkExecutionOptionsImpl cosmosBulkExecutionOptions;
 
     // Handle gone error:
     private final AtomicBoolean mainSourceCompleted;
+    private final AtomicBoolean isDisposed = new AtomicBoolean(false);
+    private final AtomicBoolean isShutdown = new AtomicBoolean(false);
     private final AtomicInteger totalCount;
-    private final Sinks.EmitFailureHandler serializedEmitFailureHandler;
+    private final static Sinks.EmitFailureHandler serializedEmitFailureHandler = new SerializedEmitFailureHandler();
+    private final static Sinks.EmitFailureHandler serializedCompleteEmitFailureHandler =
+        new SerializedCompleteEmitFailureHandler();
     private final Sinks.Many<CosmosItemOperation> mainSink;
     private final List<FluxSink<CosmosItemOperation>> groupSinks;
-    private final ScheduledExecutorService executorService;
-    private ScheduledFuture<?> scheduledFutureForFlush;
+    private final CosmosAsyncClient cosmosClient;
+    private final String bulkSpanName;
+    private final AtomicReference<Disposable> scheduledFutureForFlush;
+    private final String identifier = "BulkExecutor-" + instanceCount.incrementAndGet();
+    private final BulkExecutorDiagnosticsTracker diagnosticsTracker;
+    private final CosmosItemSerializer effectiveItemSerializer;
+    private final Scheduler executionScheduler;
 
+    @SuppressWarnings({"unchecked"})
     public BulkExecutor(CosmosAsyncContainer container,
                         Flux<CosmosItemOperation> inputOperations,
-                        CosmosBulkExecutionOptions cosmosBulkOptions) {
+                        CosmosBulkExecutionOptionsImpl cosmosBulkOptions) {
 
         checkNotNull(container, "expected non-null container");
         checkNotNull(inputOperations, "expected non-null inputOperations");
         checkNotNull(cosmosBulkOptions, "expected non-null bulkOptions");
 
+        this.maxMicroBatchPayloadSizeInBytes = cosmosBulkOptions.getMaxMicroBatchPayloadSizeInBytes();
         this.cosmosBulkExecutionOptions = cosmosBulkOptions;
         this.container = container;
+        this.bulkSpanName = "nonTransactionalBatch." + this.container.getId();
         this.inputOperations = inputOperations;
         this.docClientWrapper = CosmosBridgeInternal.getAsyncDocumentClient(container.getDatabase());
+        this.cosmosClient = ImplementationBridgeHelpers
+            .CosmosAsyncDatabaseHelper
+            .getCosmosAsyncDatabaseAccessor()
+            .getCosmosAsyncClient(container.getDatabase());
+        this.effectiveItemSerializer = this.docClientWrapper.getEffectiveItemSerializer(cosmosBulkOptions.getCustomItemSerializer());
+
         this.throttlingRetryOptions = docClientWrapper.getConnectionPolicy().getThrottlingRetryOptions();
 
         // Fill the option first, to make the BulkProcessingOptions immutable, as if accessed directly, we might get
         // different values when a new group is created.
-        maxMicroBatchIntervalInMs = ImplementationBridgeHelpers.CosmosBulkExecutionOptionsHelper
-            .getCosmosBulkExecutionOptionsAccessor()
-            .getMaxMicroBatchInterval(cosmosBulkExecutionOptions)
-            .toMillis();
-        batchContext = ImplementationBridgeHelpers.CosmosBulkExecutionOptionsHelper
-            .getCosmosBulkExecutionOptionsAccessor()
-            .getLegacyBatchScopedContext(cosmosBulkExecutionOptions);
+        maxMicroBatchIntervalInMs = cosmosBulkExecutionOptions.getMaxMicroBatchInterval().toMillis();
+        batchContext = (TContext) cosmosBulkExecutionOptions.getLegacyBatchScopedContext();
         this.partitionScopeThresholds = ImplementationBridgeHelpers.CosmosBulkExecutionThresholdsStateHelper
             .getBulkExecutionThresholdsAccessor()
             .getPartitionScopeThresholds(cosmosBulkExecutionOptions.getThresholdsState());
-        operationListener = ImplementationBridgeHelpers.CosmosBulkExecutionOptionsHelper
-            .getCosmosBulkExecutionOptionsAccessor()
-            .getOperationContext(cosmosBulkExecutionOptions);
+        operationListener = cosmosBulkExecutionOptions.getOperationContextAndListenerTuple();
         if (operationListener != null &&
             operationListener.getOperationContext() != null) {
-            operationContextText = operationListener.getOperationContext().toString();
+            operationContextText = identifier + "[" + operationListener.getOperationContext().toString() + "]";
         } else {
-            operationContextText = "n/a";
+            operationContextText = identifier +"[n/a]";
         }
+
+        this.diagnosticsTracker = cosmosBulkExecutionOptions.getDiagnosticsTracker();
 
         // Initialize sink for handling gone error.
         mainSourceCompleted = new AtomicBoolean(false);
         totalCount = new AtomicInteger(0);
-        serializedEmitFailureHandler = new SerializedEmitFailureHandler();
         mainSink =  Sinks.many().unicast().onBackpressureBuffer();
         groupSinks = new CopyOnWriteArrayList<>();
 
-        // The evaluation whether a micro batch should be flushed to the backend happens whenever
-        // a new ItemOperation arrives. If the batch size is exceeded or the oldest buffered ItemOperation
-        // exceeds the MicroBatchInterval or the total serialized length exceeds, the micro batch gets flushed to the backend.
-        // To make sure we flush the buffers at least every maxMicroBatchIntervalInMs we start a timer
-        // that will trigger artificial ItemOperations that are only used to flush the buffers (and will be
-        // filtered out before sending requests to the backend)
-        this.executorService = Executors.newSingleThreadScheduledExecutor(
-                new CosmosDaemonThreadFactory("BulkExecutor-" + instanceCount.incrementAndGet()));
-        this.scheduledFutureForFlush = this.executorService.scheduleWithFixedDelay(
-            this::onFlush,
+        this.scheduledFutureForFlush = new AtomicReference<>(CosmosSchedulers
+            .BULK_EXECUTOR_FLUSH_BOUNDED_ELASTIC
+            .schedulePeriodically(
+                this::onFlush,
+                this.maxMicroBatchIntervalInMs,
+                this.maxMicroBatchIntervalInMs,
+                TimeUnit.MILLISECONDS));
+
+        Scheduler schedulerSnapshotFromOptions = cosmosBulkOptions.getSchedulerOverride();
+        this.executionScheduler = schedulerSnapshotFromOptions != null
+            ? schedulerSnapshotFromOptions
+            : CosmosSchedulers.BULK_EXECUTOR_BOUNDED_ELASTIC;
+
+        logger.debug("Instantiated BulkExecutor, Context: {}",
+            this.operationContextText);
+    }
+
+    @Override
+    public void dispose() {
+        if (this.isDisposed.compareAndSet(false, true)) {
+            long totalCountSnapshot = totalCount.get();
+            if (totalCountSnapshot == 0) {
+                completeAllSinks();
+            } else {
+                this.shutdown();
+            }
+        }
+    }
+
+    @Override
+    public boolean isDisposed() {
+        return this.isDisposed.get();
+    }
+
+    private void cancelFlushTask(boolean initializeAggressiveFlush) {
+        long flushIntervalAfterDrainingIncomingFlux = Math.min(
             this.maxMicroBatchIntervalInMs,
-            this.maxMicroBatchIntervalInMs,
-            TimeUnit.MILLISECONDS);
+            BatchRequestResponseConstants
+                .DEFAULT_MAX_MICRO_BATCH_INTERVAL_AFTER_DRAINING_INCOMING_FLUX_IN_MILLISECONDS);
+
+        Disposable newFlushTask = initializeAggressiveFlush
+            ? CosmosSchedulers
+                .BULK_EXECUTOR_FLUSH_BOUNDED_ELASTIC
+                .schedulePeriodically(
+                    this::onFlush,
+                    flushIntervalAfterDrainingIncomingFlux,
+                    flushIntervalAfterDrainingIncomingFlux,
+                    TimeUnit.MILLISECONDS)
+            : null;
+
+        Disposable scheduledFutureSnapshot = this.scheduledFutureForFlush.getAndSet(newFlushTask);
+
+        if (scheduledFutureSnapshot != null) {
+            try {
+                scheduledFutureSnapshot.dispose();
+                logDebugOrWarning("Cancelled all future scheduled tasks {}, Context: {}", getThreadInfo(), this.operationContextText);
+            } catch (Exception e) {
+                logger.warn("Failed to cancel scheduled tasks{}, Context: {}", getThreadInfo(), this.operationContextText, e);
+            }
+        }
+    }
+
+    private void logInfoOrWarning(String msg, Object... args) {
+        if (this.diagnosticsTracker == null || !this.diagnosticsTracker.verboseLoggingAfterReEnqueueingRetriesEnabled()) {
+            logger.info(msg, args);
+        } else {
+            logger.warn(msg, args);
+        }
+    }
+
+    private void logTraceOrWarning(String msg, Object... args) {
+        if (this.diagnosticsTracker == null || !this.diagnosticsTracker.verboseLoggingAfterReEnqueueingRetriesEnabled()) {
+            logger.trace(msg, args);
+        } else {
+            logger.warn(msg, args);
+        }
+    }
+
+    private void logDebugOrWarning(String msg, Object... args) {
+        if (this.diagnosticsTracker == null || !this.diagnosticsTracker.verboseLoggingAfterReEnqueueingRetriesEnabled()) {
+            logger.debug(msg, args);
+        } else {
+            logger.warn(msg, args);
+        }
+    }
+
+    private void shutdown() {
+        if (this.isShutdown.compareAndSet(false, true)) {
+            logDebugOrWarning("Shutting down, Context: {}", this.operationContextText);
+
+            groupSinks.forEach(FluxSink::complete);
+            logger.debug("All group sinks completed, Context: {}", this.operationContextText);
+
+            this.cancelFlushTask(false);
+        }
     }
 
     public Flux<CosmosBulkOperationResponse<TContext>> execute() {
+        return this
+            .executeCore()
+            .doFinally((SignalType signal) -> {
+                if (signal == SignalType.ON_COMPLETE) {
+                    logDebugOrWarning("BulkExecutor.execute flux completed - # left items {}, Context: {}, {}",
+                        this.totalCount.get(),
+                        this.operationContextText,
+                        getThreadInfo());
+                } else {
+                    int itemsLeftSnapshot = this.totalCount.get();
+                    if (itemsLeftSnapshot > 0) {
+                        logInfoOrWarning("BulkExecutor.execute flux terminated - Signal: {} - # left items {}, Context: {}, {}",
+                            signal,
+                            itemsLeftSnapshot,
+                            this.operationContextText,
+                            getThreadInfo());
+                    } else {
+                        logDebugOrWarning("BulkExecutor.execute flux terminated - Signal: {} - # left items {}, Context: {}, {}",
+                            signal,
+                            itemsLeftSnapshot,
+                            this.operationContextText,
+                            getThreadInfo());
+                    }
+                }
+
+                this.dispose();
+            });
+    }
+
+    private Flux<CosmosBulkOperationResponse<TContext>> executeCore() {
 
         // The groupBy below is running into a hang if the flatMap above is
         // not allowing at least a concurrency of the number of unique values
@@ -171,31 +309,35 @@ public final class BulkExecutor<TContext> {
         // Spark partition will only target a subset of Cosmos partitions. This will improve the efficiency
         // and mean fewer than #of Partitions concurrency will be needed for
         // large containers. (with hundreds of physical partitions)
-        Integer nullableMaxConcurrentCosmosPartitions = ImplementationBridgeHelpers.CosmosBulkExecutionOptionsHelper
-            .getCosmosBulkExecutionOptionsAccessor()
-            .getMaxConcurrentCosmosPartitions(cosmosBulkExecutionOptions);
+        Integer nullableMaxConcurrentCosmosPartitions = cosmosBulkExecutionOptions.getMaxConcurrentCosmosPartitions();
         Mono<Integer> maxConcurrentCosmosPartitionsMono = nullableMaxConcurrentCosmosPartitions != null ?
             Mono.just(Math.max(256, nullableMaxConcurrentCosmosPartitions)) :
-            this.container.getFeedRanges().map(ranges -> Math.max(256, ranges.size() * 2));
+            ImplementationBridgeHelpers
+                .CosmosAsyncContainerHelper
+                .getCosmosAsyncContainerAccessor()
+                .getFeedRanges(this.container, false).map(ranges -> Math.max(256, ranges.size() * 2));
 
         return
             maxConcurrentCosmosPartitionsMono
-            .subscribeOn(CosmosSchedulers.BULK_EXECUTOR_BOUNDED_ELASTIC)
+            .subscribeOn(this.executionScheduler)
             .flatMapMany(maxConcurrentCosmosPartitions -> {
 
-                logger.debug("BulkExecutor.execute with MaxConcurrentPartitions: {}, Context: {}",
+                logDebugOrWarning("BulkExecutor.execute with MaxConcurrentPartitions: {}, Context: {}",
                     maxConcurrentCosmosPartitions,
                     this.operationContextText);
 
                 return this.inputOperations
-                    .publishOn(CosmosSchedulers.BULK_EXECUTOR_BOUNDED_ELASTIC)
-                    .onErrorContinue((throwable, o) ->
-                        logger.error("Skipping an error operation while processing {}. Cause: {}, Context: {}",
-                            o,
+                    .publishOn(this.executionScheduler)
+                    .onErrorMap(throwable -> {
+                        logger.warn("{}: Error observed when processing inputOperations. Cause: {}, Context: {}",
+                            getThreadInfo(),
                             throwable.getMessage(),
-                            this.operationContextText))
-                    .doOnNext((CosmosItemOperation cosmosItemOperation) -> {
+                            this.operationContextText,
+                            throwable);
 
+                        return throwable;
+                    })
+                    .doOnNext((CosmosItemOperation cosmosItemOperation) -> {
                         // Set the retry policy before starting execution. Should only happens once.
                         BulkExecutorUtil.setRetryPolicyForBulk(
                             docClientWrapper,
@@ -219,7 +361,7 @@ public final class BulkExecutor<TContext> {
                         mainSourceCompleted.set(true);
 
                         long totalCountSnapshot = totalCount.get();
-                        logger.debug("Main source completed - # left items {}, Context: {}",
+                        logDebugOrWarning("Main source completed - # left items {}, Context: {}",
                             totalCountSnapshot,
                             this.operationContextText);
                         if (totalCountSnapshot == 0) {
@@ -229,33 +371,14 @@ public final class BulkExecutor<TContext> {
 
                             completeAllSinks();
                         } else {
-                            ScheduledFuture<?> scheduledFutureSnapshot = this.scheduledFutureForFlush;
-
-                            if (scheduledFutureSnapshot != null) {
-                                try {
-                                    scheduledFutureSnapshot.cancel(true);
-                                    logger.debug("Cancelled all future scheduled tasks {}", getThreadInfo());
-                                } catch (Exception e) {
-                                    logger.warn("Failed to cancel scheduled tasks{}", getThreadInfo(), e);
-                                }
-                            }
-
+                            this.cancelFlushTask(true);
                             this.onFlush();
 
-                            long flushIntervalAfterDrainingIncomingFlux = Math.min(
-                                this.maxMicroBatchIntervalInMs,
-                                BatchRequestResponseConstants
-                                    .DEFAULT_MAX_MICRO_BATCH_INTERVAL_AFTER_DRAINING_INCOMING_FLUX_IN_MILLISECONDS);
-
-                            this.scheduledFutureForFlush = this.executorService.scheduleWithFixedDelay(
-                                this::onFlush,
-                                flushIntervalAfterDrainingIncomingFlux,
-                                flushIntervalAfterDrainingIncomingFlux,
-                                TimeUnit.MILLISECONDS);
+                            logDebugOrWarning("Scheduled new flush operation {}, Context: {}", getThreadInfo(), this.operationContextText);
                         }
                     })
                     .mergeWith(mainSink.asFlux())
-                    .subscribeOn(CosmosSchedulers.BULK_EXECUTOR_BOUNDED_ELASTIC)
+                    .subscribeOn(this.executionScheduler)
                     .flatMap(
                         operation -> {
                             logger.trace("Before Resolve PkRangeId, {}, Context: {} {}",
@@ -284,7 +407,7 @@ public final class BulkExecutor<TContext> {
                     .flatMap(
                         this::executePartitionedGroup,
                         maxConcurrentCosmosPartitions)
-                    .subscribeOn(CosmosSchedulers.BULK_EXECUTOR_BOUNDED_ELASTIC)
+                    .subscribeOn(this.executionScheduler)
                     .doOnNext(requestAndResponse -> {
 
                         int totalCountAfterDecrement = totalCount.decrementAndGet();
@@ -292,14 +415,20 @@ public final class BulkExecutor<TContext> {
                         if (totalCountAfterDecrement == 0 && mainSourceCompletedSnapshot) {
                             // It is possible that count is zero but there are more elements in the source.
                             // Count 0 also signifies that there are no pending elements in any sink.
-                            logger.debug("All work completed, {}, TotalCount: {}, Context: {} {}",
+                            logDebugOrWarning("All work completed, {}, TotalCount: {}, Context: {} {}",
                                 getItemOperationDiagnostics(requestAndResponse.getOperation()),
                                 totalCountAfterDecrement,
                                 this.operationContextText,
                                 getThreadInfo());
                             completeAllSinks();
                         } else {
-                            logger.debug(
+                            if (totalCountAfterDecrement == 0) {
+                                logDebugOrWarning(
+                                    "No Work left - but mainSource not yet completed, Context: {} {}",
+                                    this.operationContextText,
+                                    getThreadInfo());
+                            }
+                            logTraceOrWarning(
                                 "Work left - TotalCount after decrement: {}, main sink completed {}, {}, Context: {} {}",
                                 totalCountAfterDecrement,
                                 mainSourceCompletedSnapshot,
@@ -314,10 +443,10 @@ public final class BulkExecutor<TContext> {
                         if (totalCountSnapshot == 0 && mainSourceCompletedSnapshot) {
                             // It is possible that count is zero but there are more elements in the source.
                             // Count 0 also signifies that there are no pending elements in any sink.
-                            logger.debug("DoOnComplete: All work completed, Context: {}", this.operationContextText);
+                            logDebugOrWarning("DoOnComplete: All work completed, Context: {}", this.operationContextText);
                             completeAllSinks();
                         } else {
-                            logger.debug(
+                            logDebugOrWarning(
                                 "DoOnComplete: Work left - TotalCount after decrement: {}, main sink completed {}, Context: {} {}",
                                 totalCountSnapshot,
                                 mainSourceCompletedSnapshot,
@@ -346,7 +475,7 @@ public final class BulkExecutor<TContext> {
             .mergeWith(groupFluxProcessor)
             .onBackpressureBuffer()
             .timestamp()
-            .subscribeOn(CosmosSchedulers.BULK_EXECUTOR_BOUNDED_ELASTIC)
+            .subscribeOn(this.executionScheduler)
             .bufferUntil(timeStampItemOperationTuple -> {
                 long timestamp = timeStampItemOperationTuple.getT1();
                 CosmosItemOperation itemOperation = timeStampItemOperationTuple.getT2();
@@ -386,9 +515,9 @@ public final class BulkExecutor<TContext> {
 
                 if (batchSize >= thresholds.getTargetMicroBatchSizeSnapshot() ||
                     age >= this.maxMicroBatchIntervalInMs ||
-                    totalSerializedLength >= BatchRequestResponseConstants.MAX_DIRECT_MODE_BATCH_REQUEST_BODY_SIZE_IN_BYTES) {
+                    totalSerializedLength >= this.maxMicroBatchPayloadSizeInBytes) {
 
-                    logger.debug(
+                    logDebugOrWarning(
                         "BufferUntil - Flushing PKRange {} due to BatchSize ({}), payload size ({}) or age ({}), " +
                             "Triggering {}, Context: {} {}",
                         thresholds.getPartitionKeyRangeId(),
@@ -419,7 +548,7 @@ public final class BulkExecutor<TContext> {
                         operations.add(itemOperation);
                     }
 
-                    logger.debug(
+                    logDebugOrWarning(
                         "Flushing PKRange {} micro batch with {} operations,  Context: {} {}",
                         thresholds.getPartitionKeyRangeId(),
                         operations.size(),
@@ -428,16 +557,14 @@ public final class BulkExecutor<TContext> {
 
                     return executeOperations(operations, thresholds, groupSink);
                 },
-                ImplementationBridgeHelpers.CosmosBulkExecutionOptionsHelper
-                    .getCosmosBulkExecutionOptionsAccessor()
-                    .getMaxMicroBatchConcurrency(this.cosmosBulkExecutionOptions));
+                this.cosmosBulkExecutionOptions.getMaxMicroBatchConcurrency());
     }
 
     private int calculateTotalSerializedLength(AtomicInteger currentTotalSerializedLength, CosmosItemOperation item) {
         if (item instanceof CosmosItemOperationBase) {
             return currentTotalSerializedLength.accumulateAndGet(
-                ((CosmosItemOperationBase) item).getSerializedLength(),
-                (currentValue, incremental) -> currentValue + incremental);
+                ((CosmosItemOperationBase) item).getSerializedLength(this.effectiveItemSerializer),
+                Integer::sum);
         }
 
         return currentTotalSerializedLength.get();
@@ -455,13 +582,13 @@ public final class BulkExecutor<TContext> {
 
         String pkRange = thresholds.getPartitionKeyRangeId();
         ServerOperationBatchRequest serverOperationBatchRequest =
-            BulkExecutorUtil.createBatchRequest(operations, pkRange);
+            BulkExecutorUtil.createBatchRequest(operations, pkRange, this.maxMicroBatchPayloadSizeInBytes, this.effectiveItemSerializer);
         if (serverOperationBatchRequest.getBatchPendingOperations().size() > 0) {
             serverOperationBatchRequest.getBatchPendingOperations().forEach(groupSink::next);
         }
 
         return Flux.just(serverOperationBatchRequest.getBatchRequest())
-            .publishOn(CosmosSchedulers.BULK_EXECUTOR_BOUNDED_ELASTIC)
+            .publishOn(this.executionScheduler)
             .flatMap((PartitionKeyRangeServerBatchRequest serverRequest) ->
                 this.executePartitionKeyRangeServerBatchRequest(serverRequest, groupSink, thresholds));
     }
@@ -471,14 +598,32 @@ public final class BulkExecutor<TContext> {
         FluxSink<CosmosItemOperation> groupSink,
         PartitionScopeThresholds thresholds) {
 
-        return this.executeBatchRequest(serverRequest)
-            .subscribeOn(CosmosSchedulers.BULK_EXECUTOR_BOUNDED_ELASTIC)
-            .flatMapMany(response ->
-                Flux
+        String batchTrackingId = UUID.randomUUID().toString();
+        logTraceOrWarning(
+            "Executing batch of PKRangeId %s - batch TrackingId: %s",
+            serverRequest.getPartitionKeyRangeId(),
+            batchTrackingId);
+
+        return this.executeBatchRequest(serverRequest, thresholds)
+            .subscribeOn(this.executionScheduler)
+            .flatMapMany(response -> {
+
+                logTraceOrWarning(
+                    "Response for batch of PKRangeId %s - status code %s, ActivityId: %s, batch TrackingId %s",
+                    serverRequest.getPartitionKeyRangeId(),
+                    response.getStatusCode(),
+                    response.getActivityId(),
+                    batchTrackingId);
+                if (diagnosticsTracker != null && response.getDiagnostics() != null) {
+                    diagnosticsTracker.trackDiagnostics(response.getDiagnostics().getDiagnosticsContext());
+                }
+
+                return Flux
                     .fromIterable(response.getResults())
-                    .publishOn(CosmosSchedulers.BULK_EXECUTOR_BOUNDED_ELASTIC)
+                    .publishOn(this.executionScheduler)
                     .flatMap((CosmosBatchOperationResult result) ->
-                    handleTransactionalBatchOperationResult(response, result, groupSink, thresholds)))
+                    handleTransactionalBatchOperationResult(response, result, groupSink, thresholds));
+            })
             .onErrorResume((Throwable throwable) -> {
 
                 if (!(throwable instanceof Exception)) {
@@ -489,7 +634,7 @@ public final class BulkExecutor<TContext> {
 
                 return Flux
                     .fromIterable(serverRequest.getOperations())
-                    .publishOn(CosmosSchedulers.BULK_EXECUTOR_BOUNDED_ELASTIC)
+                    .publishOn(this.executionScheduler)
                     .flatMap((CosmosItemOperation itemOperation) ->
                         handleTransactionalBatchExecutionException(itemOperation, exception, groupSink, thresholds));
             });
@@ -507,7 +652,7 @@ public final class BulkExecutor<TContext> {
         CosmosItemOperation itemOperation = operationResult.getOperation();
         TContext actualContext = this.getActualContext(itemOperation);
 
-        logger.debug(
+        logDebugOrWarning(
             "HandleTransactionalBatchOperationResult - PKRange {}, Response Status Code {}, " +
                 "Operation Status Code, {}, {}, Context: {} {}",
             thresholds.getPartitionKeyRangeId(),
@@ -525,7 +670,7 @@ public final class BulkExecutor<TContext> {
                 return itemBulkOperation.getRetryPolicy().shouldRetry(operationResult).flatMap(
                     result -> {
                         if (result.shouldRetry) {
-                            logger.debug(
+                            logDebugOrWarning(
                                 "HandleTransactionalBatchOperationResult - enqueue retry, PKRange {}, Response " +
                                     "Status Code {}, Operation Status Code, {}, {}, Context: {} {}",
                                 thresholds.getPartitionKeyRangeId(),
@@ -536,15 +681,30 @@ public final class BulkExecutor<TContext> {
                                 getThreadInfo());
                             return this.enqueueForRetry(result.backOffTime, groupSink, itemOperation, thresholds);
                         } else {
-                            logger.error(
-                                "HandleTransactionalBatchOperationResult - Fail, PKRange {}, Response Status " +
-                                    "Code {}, Operation Status Code {}, {}, Context: {} {}",
-                                thresholds.getPartitionKeyRangeId(),
-                                response.getStatusCode(),
-                                operationResult.getStatusCode(),
-                                getItemOperationDiagnostics(itemOperation),
-                                this.operationContextText,
-                                getThreadInfo());
+                            // reduce log noise level for commonly expected/normal status codes
+                            if (response.getStatusCode() == HttpConstants.StatusCodes.CONFLICT ||
+                                response.getStatusCode() == HttpConstants.StatusCodes.PRECONDITION_FAILED) {
+
+                                logDebugOrWarning(
+                                    "HandleTransactionalBatchOperationResult - Fail, PKRange {}, Response Status " +
+                                        "Code {}, Operation Status Code {}, {}, Context: {} {}",
+                                    thresholds.getPartitionKeyRangeId(),
+                                    response.getStatusCode(),
+                                    operationResult.getStatusCode(),
+                                    getItemOperationDiagnostics(itemOperation),
+                                    this.operationContextText,
+                                    getThreadInfo());
+                            } else {
+                                logger.error(
+                                    "HandleTransactionalBatchOperationResult - Fail, PKRange {}, Response Status " +
+                                        "Code {}, Operation Status Code {}, {}, Context: {} {}",
+                                    thresholds.getPartitionKeyRangeId(),
+                                    response.getStatusCode(),
+                                    operationResult.getStatusCode(),
+                                    getItemOperationDiagnostics(itemOperation),
+                                    this.operationContextText,
+                                    getThreadInfo());
+                            }
                             return Mono.just(ModelBridgeInternal.createCosmosBulkOperationResponse(
                                 itemOperation, cosmosBulkItemResponse, actualContext));
                         }
@@ -587,7 +747,7 @@ public final class BulkExecutor<TContext> {
         FluxSink<CosmosItemOperation> groupSink,
         PartitionScopeThresholds thresholds) {
 
-        logger.debug(
+        logDebugOrWarning(
             "HandleTransactionalBatchExecutionException, PKRange {}, Error: {}, {}, Context: {} {}",
             thresholds.getPartitionKeyRangeId(),
             exception,
@@ -603,10 +763,10 @@ public final class BulkExecutor<TContext> {
             // add it in the mainSink.
 
             return itemBulkOperation.getRetryPolicy()
-                .shouldRetryForGone(cosmosException.getStatusCode(), cosmosException.getSubStatusCode())
+                .shouldRetryForGone(cosmosException.getStatusCode(), cosmosException.getSubStatusCode(), itemBulkOperation, cosmosException)
                 .flatMap(shouldRetryGone -> {
                     if (shouldRetryGone) {
-                        logger.debug(
+                        logDebugOrWarning(
                             "HandleTransactionalBatchExecutionException - Retry due to split, PKRange {}, Error: " +
                                 "{}, {}, Context: {} {}",
                             thresholds.getPartitionKeyRangeId(),
@@ -618,7 +778,7 @@ public final class BulkExecutor<TContext> {
                         mainSink.emitNext(itemOperation, serializedEmitFailureHandler);
                         return Mono.empty();
                     } else {
-                        logger.debug(
+                        logDebugOrWarning(
                             "HandleTransactionalBatchExecutionException - Retry other, PKRange {}, Error: " +
                                 "{}, {}, Context: {} {}",
                             thresholds.getPartitionKeyRangeId(),
@@ -680,8 +840,28 @@ public final class BulkExecutor<TContext> {
         });
     }
 
-    private Mono<CosmosBatchResponse> executeBatchRequest(PartitionKeyRangeServerBatchRequest serverRequest) {
+    private Mono<CosmosBatchResponse> executeBatchRequest(
+        PartitionKeyRangeServerBatchRequest serverRequest,
+        PartitionScopeThresholds partitionScopeThresholds) {
+
         RequestOptions options = new RequestOptions();
+        options.setThroughputControlGroupName(cosmosBulkExecutionOptions.getThroughputControlGroupName());
+        options.setExcludedRegions(cosmosBulkExecutionOptions.getExcludedRegions());
+        options.setKeywordIdentifiers(cosmosBulkExecutionOptions.getKeywordIdentifiers());
+
+        CosmosEndToEndOperationLatencyPolicyConfig e2eLatencyPolicySnapshot =
+            cosmosBulkExecutionOptions.getCosmosEndToEndLatencyPolicyConfig();
+        if (e2eLatencyPolicySnapshot != null) {
+            options.setCosmosEndToEndLatencyPolicyConfig(e2eLatencyPolicySnapshot);
+        }
+
+        //  This logic is to handle custom bulk options which can be passed through encryption or through some other project
+        Map<String, String> customOptions = cosmosBulkExecutionOptions.getHeaders();
+        if (customOptions != null && !customOptions.isEmpty()) {
+            for(Map.Entry<String, String> entry : customOptions.entrySet()) {
+                options.setHeader(entry.getKey(), entry.getValue());
+            }
+        }
         options.setOperationContextAndListenerTuple(operationListener);
 
         // The request options here are used for the BulkRequest exchanged with the service
@@ -701,7 +881,7 @@ public final class BulkExecutor<TContext> {
                     if (itemBulkOperation.getOperationType() == CosmosItemOperationType.READ ||
                         (itemBulkOperation.getRequestOptions() != null &&
                             itemBulkOperation.getRequestOptions().isContentResponseOnWriteEnabled() != null &&
-                            itemBulkOperation.getRequestOptions().isContentResponseOnWriteEnabled().booleanValue())) {
+                            itemBulkOperation.getRequestOptions().isContentResponseOnWriteEnabled())) {
 
                         options.setContentResponseOnWriteEnabled(true);
                         break;
@@ -710,33 +890,57 @@ public final class BulkExecutor<TContext> {
             }
         }
 
-        return this.docClientWrapper.executeBatchRequest(
-            BridgeInternal.getLink(this.container), serverRequest, options, false);
+        return withContext(context -> {
+            final Mono<CosmosBatchResponse> responseMono = this.docClientWrapper.executeBatchRequest(
+                BridgeInternal.getLink(this.container), serverRequest, options, false)
+                .flatMap(cosmosBatchResponse -> {
+
+                    cosmosBatchResponseAccessor.setGlobalOpCount(
+                        cosmosBatchResponse, partitionScopeThresholds.getTotalOperationCountSnapshot());
+
+                    PartitionScopeThresholds.CurrentIntervalThresholds currentIntervalThresholdsSnapshot
+                        = partitionScopeThresholds.getCurrentThresholds();
+
+                    cosmosBatchResponseAccessor.setOpCountPerEvaluation(
+                        cosmosBatchResponse, currentIntervalThresholdsSnapshot.currentOperationCount.get());
+                    cosmosBatchResponseAccessor.setRetriedOpCountPerEvaluation(
+                        cosmosBatchResponse, currentIntervalThresholdsSnapshot.currentRetriedOperationCount.get());
+                    cosmosBatchResponseAccessor.setTargetMaxMicroBatchSize(
+                        cosmosBatchResponse, partitionScopeThresholds.getTargetMicroBatchSizeSnapshot());
+
+                    return Mono.just(cosmosBatchResponse);
+                });
+
+            return clientAccessor.getDiagnosticsProvider(this.cosmosClient)
+                .traceEnabledBatchResponsePublisher(
+                    responseMono,
+                    context,
+                    this.bulkSpanName,
+                    this.container.getDatabase().getId(),
+                    this.container.getId(),
+                    this.cosmosClient,
+                    options.getConsistencyLevel(),
+                    OperationType.Batch,
+                    ResourceType.Document,
+                    options,
+                    this.cosmosBulkExecutionOptions.getMaxMicroBatchSize());
+        });
     }
 
     private void completeAllSinks() {
-        logger.info("Closing all sinks, Context: {}", this.operationContextText);
+        logInfoOrWarning("Closing all sinks, Context: {}", this.operationContextText);
 
-        executorService.shutdown();
         logger.debug("Executor service shut down, Context: {}", this.operationContextText);
-        mainSink.tryEmitComplete();
-        logger.debug("Main sink completed, Context: {}", this.operationContextText);
-        groupSinks.forEach(FluxSink::complete);
-        logger.debug("All group sinks completed, Context: {}", this.operationContextText);
+        mainSink.emitComplete(serializedCompleteEmitFailureHandler);
 
-        try {
-            this.executorService.shutdown();
-            logger.debug("Shutting down the executor service");
-        } catch (Exception e) {
-            logger.warn("Failed to shut down the executor service", e);
-        }
+        this.shutdown();
     }
 
     private void onFlush() {
         try {
             this.groupSinks.forEach(sink -> sink.next(FlushBuffersItemOperation.singleton()));
         } catch(Throwable t) {
-            logger.error("Callback invocation 'onFlush' failed.", t);
+            logger.error("Callback invocation 'onFlush' failed. Context: {}", this.operationContextText,  t);
         }
     }
 
@@ -746,17 +950,13 @@ public final class BulkExecutor<TContext> {
             return "ItemOperation[Type: Flush]";
         }
 
-        StringBuilder sb = new StringBuilder();
-        sb
-            .append("ItemOperation[Type: ")
-            .append(operation.getOperationType().toString())
-            .append(", PK: ")
-            .append(operation.getPartitionKeyValue() != null ? operation.getPartitionKeyValue().toString() : "n/a")
-            .append(", id: ")
-            .append(operation.getId())
-            .append("]");
-
-        return sb.toString();
+        return "ItemOperation[Type: "
+            + operation.getOperationType().toString()
+            + ", PK: "
+            + (operation.getPartitionKeyValue() != null ? operation.getPartitionKeyValue().toString() : "n/a")
+            + ", id: "
+            + operation.getId()
+            + "]";
     }
 
     private static String getThreadInfo() {
@@ -777,7 +977,7 @@ public final class BulkExecutor<TContext> {
         return sb.toString();
     }
 
-    private class SerializedEmitFailureHandler implements Sinks.EmitFailureHandler {
+    private static class SerializedEmitFailureHandler implements Sinks.EmitFailureHandler {
 
         @Override
         public boolean onEmitFailure(SignalType signalType, Sinks.EmitResult emitResult) {
@@ -788,6 +988,26 @@ public final class BulkExecutor<TContext> {
             }
 
             logger.error("SerializedEmitFailureHandler.onEmitFailure - Signal:{}, Result: {}", signalType, emitResult);
+            return false;
+        }
+    }
+
+    private static class SerializedCompleteEmitFailureHandler implements Sinks.EmitFailureHandler {
+
+        @Override
+        public boolean onEmitFailure(SignalType signalType, Sinks.EmitResult emitResult) {
+            if (emitResult.equals(Sinks.EmitResult.FAIL_NON_SERIALIZED)) {
+                logger.debug("SerializedCompleteEmitFailureHandler.onEmitFailure - Signal:{}, Result: {}", signalType, emitResult);
+
+                return true;
+            }
+
+            if (emitResult == Sinks.EmitResult.FAIL_CANCELLED || emitResult == Sinks.EmitResult.FAIL_TERMINATED) {
+                logger.debug("SerializedCompleteEmitFailureHandler.onEmitFailure - Main sink already completed, Signal:{}, Result: {}", signalType, emitResult);
+                return false;
+            }
+
+            logger.error("SerializedCompleteEmitFailureHandler.onEmitFailure - Signal:{}, Result: {}", signalType, emitResult);
             return false;
         }
     }

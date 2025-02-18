@@ -4,24 +4,33 @@
 
 package com.azure.resourcemanager.compute.models;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonValue;
-
-/** Defines values for UpgradeState. */
+/**
+ * Code indicating the current status of the upgrade.
+ */
 public enum UpgradeState {
-    /** Enum value RollingForward. */
+    /**
+     * Enum value RollingForward.
+     */
     ROLLING_FORWARD("RollingForward"),
 
-    /** Enum value Cancelled. */
+    /**
+     * Enum value Cancelled.
+     */
     CANCELLED("Cancelled"),
 
-    /** Enum value Completed. */
+    /**
+     * Enum value Completed.
+     */
     COMPLETED("Completed"),
 
-    /** Enum value Faulted. */
+    /**
+     * Enum value Faulted.
+     */
     FAULTED("Faulted");
 
-    /** The actual serialized value for a UpgradeState instance. */
+    /**
+     * The actual serialized value for a UpgradeState instance.
+     */
     private final String value;
 
     UpgradeState(String value) {
@@ -30,12 +39,14 @@ public enum UpgradeState {
 
     /**
      * Parses a serialized value to a UpgradeState instance.
-     *
+     * 
      * @param value the serialized value to parse.
      * @return the parsed UpgradeState object, or null if unable to parse.
      */
-    @JsonCreator
     public static UpgradeState fromString(String value) {
+        if (value == null) {
+            return null;
+        }
         UpgradeState[] items = UpgradeState.values();
         for (UpgradeState item : items) {
             if (item.toString().equalsIgnoreCase(value)) {
@@ -45,7 +56,9 @@ public enum UpgradeState {
         return null;
     }
 
-    @JsonValue
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String toString() {
         return this.value;

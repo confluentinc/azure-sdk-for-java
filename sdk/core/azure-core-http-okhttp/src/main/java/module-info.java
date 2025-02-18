@@ -6,11 +6,11 @@ module com.azure.core.http.okhttp {
 
     requires okhttp3;
     requires okio;
+    requires kotlin.stdlib;
 
     exports com.azure.core.http.okhttp;
 
-    provides com.azure.core.http.HttpClientProvider
-        with com.azure.core.http.okhttp.OkHttpAsyncClientProvider;
+    provides com.azure.core.http.HttpClientProvider with com.azure.core.http.okhttp.OkHttpAsyncClientProvider;
 
     uses com.azure.core.http.HttpClientProvider;
 }

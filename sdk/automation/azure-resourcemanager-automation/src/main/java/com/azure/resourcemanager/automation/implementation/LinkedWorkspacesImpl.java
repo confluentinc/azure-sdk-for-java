@@ -12,40 +12,36 @@ import com.azure.resourcemanager.automation.fluent.LinkedWorkspacesClient;
 import com.azure.resourcemanager.automation.fluent.models.LinkedWorkspaceInner;
 import com.azure.resourcemanager.automation.models.LinkedWorkspace;
 import com.azure.resourcemanager.automation.models.LinkedWorkspaces;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 public final class LinkedWorkspacesImpl implements LinkedWorkspaces {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(LinkedWorkspacesImpl.class);
+    private static final ClientLogger LOGGER = new ClientLogger(LinkedWorkspacesImpl.class);
 
     private final LinkedWorkspacesClient innerClient;
 
     private final com.azure.resourcemanager.automation.AutomationManager serviceManager;
 
-    public LinkedWorkspacesImpl(
-        LinkedWorkspacesClient innerClient, com.azure.resourcemanager.automation.AutomationManager serviceManager) {
+    public LinkedWorkspacesImpl(LinkedWorkspacesClient innerClient,
+        com.azure.resourcemanager.automation.AutomationManager serviceManager) {
         this.innerClient = innerClient;
         this.serviceManager = serviceManager;
+    }
+
+    public Response<LinkedWorkspace> getWithResponse(String resourceGroupName, String automationAccountName,
+        Context context) {
+        Response<LinkedWorkspaceInner> inner
+            = this.serviceClient().getWithResponse(resourceGroupName, automationAccountName, context);
+        if (inner != null) {
+            return new SimpleResponse<>(inner.getRequest(), inner.getStatusCode(), inner.getHeaders(),
+                new LinkedWorkspaceImpl(inner.getValue(), this.manager()));
+        } else {
+            return null;
+        }
     }
 
     public LinkedWorkspace get(String resourceGroupName, String automationAccountName) {
         LinkedWorkspaceInner inner = this.serviceClient().get(resourceGroupName, automationAccountName);
         if (inner != null) {
             return new LinkedWorkspaceImpl(inner, this.manager());
-        } else {
-            return null;
-        }
-    }
-
-    public Response<LinkedWorkspace> getWithResponse(
-        String resourceGroupName, String automationAccountName, Context context) {
-        Response<LinkedWorkspaceInner> inner =
-            this.serviceClient().getWithResponse(resourceGroupName, automationAccountName, context);
-        if (inner != null) {
-            return new SimpleResponse<>(
-                inner.getRequest(),
-                inner.getStatusCode(),
-                inner.getHeaders(),
-                new LinkedWorkspaceImpl(inner.getValue(), this.manager()));
         } else {
             return null;
         }

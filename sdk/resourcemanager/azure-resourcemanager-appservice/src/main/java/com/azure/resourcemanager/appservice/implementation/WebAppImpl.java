@@ -3,8 +3,18 @@
 
 package com.azure.resourcemanager.appservice.implementation;
 
+import com.azure.core.http.HttpResponse;
+import com.azure.core.management.exception.ManagementException;
+import com.azure.core.management.serializer.SerializerFactory;
+import com.azure.core.util.serializer.SerializerAdapter;
+import com.azure.core.util.serializer.SerializerEncoding;
 import com.azure.resourcemanager.appservice.AppServiceManager;
+import com.azure.resourcemanager.appservice.fluent.models.SiteConfigResourceInner;
+import com.azure.resourcemanager.appservice.fluent.models.SiteInner;
+import com.azure.resourcemanager.appservice.fluent.models.SiteLogsConfigInner;
+import com.azure.resourcemanager.appservice.fluent.models.StringDictionaryInner;
 import com.azure.resourcemanager.appservice.models.AppServicePlan;
+import com.azure.resourcemanager.appservice.models.CsmDeploymentStatus;
 import com.azure.resourcemanager.appservice.models.DeployOptions;
 import com.azure.resourcemanager.appservice.models.DeployType;
 import com.azure.resourcemanager.appservice.models.DeploymentSlots;
@@ -14,38 +24,26 @@ import com.azure.resourcemanager.appservice.models.PricingTier;
 import com.azure.resourcemanager.appservice.models.RuntimeStack;
 import com.azure.resourcemanager.appservice.models.WebApp;
 import com.azure.resourcemanager.appservice.models.WebAppRuntimeStack;
-import com.azure.resourcemanager.appservice.fluent.models.SiteConfigResourceInner;
-import com.azure.resourcemanager.appservice.fluent.models.SiteInner;
-import com.azure.resourcemanager.appservice.fluent.models.SiteLogsConfigInner;
-import com.azure.resourcemanager.appservice.fluent.models.StringDictionaryInner;
 import com.azure.resourcemanager.resources.fluentcore.model.Creatable;
 import com.azure.resourcemanager.resources.fluentcore.model.Indexable;
+import reactor.core.publisher.Mono;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Objects;
 
-import reactor.core.publisher.Mono;
-
 /** The implementation for WebApp. */
 class WebAppImpl extends AppServiceBaseImpl<WebApp, WebAppImpl, WebApp.DefinitionStages.WithCreate, WebApp.Update>
-    implements WebApp,
-        WebApp.Definition,
-        WebApp.DefinitionStages.ExistingWindowsPlanWithGroup,
-        WebApp.DefinitionStages.ExistingLinuxPlanWithGroup,
-        WebApp.Update,
-        WebApp.UpdateStages.WithCredentials,
-        WebApp.UpdateStages.WithStartUpCommand {
+    implements WebApp, WebApp.Definition, WebApp.DefinitionStages.ExistingWindowsPlanWithGroup,
+    WebApp.DefinitionStages.ExistingLinuxPlanWithGroup, WebApp.Update, WebApp.UpdateStages.WithCredentials,
+    WebApp.UpdateStages.WithStartUpCommand {
 
     private DeploymentSlots deploymentSlots;
     private WebAppRuntimeStack runtimeStackOnWindowsOSToUpdate;
 
-    WebAppImpl(
-        String name,
-        SiteInner innerObject,
-        SiteConfigResourceInner siteConfig,
-        SiteLogsConfigInner logConfig,
+    WebAppImpl(String name, SiteInner innerObject, SiteConfigResourceInner siteConfig, SiteLogsConfigInner logConfig,
         AppServiceManager manager) {
         super(name, innerObject, siteConfig, logConfig, manager);
     }
@@ -248,30 +246,23 @@ class WebAppImpl extends AppServiceBaseImpl<WebApp, WebAppImpl, WebApp.Definitio
     Mono<Indexable> submitMetadata() {
         Mono<Indexable> observable = super.submitMetadata();
         if (runtimeStackOnWindowsOSToUpdate != null) {
-            observable =
-                observable
-                    // list metadata
-                    .then(listMetadata())
-                    // merge with change, then update
-                    .switchIfEmpty(Mono.just(new StringDictionaryInner()))
-                    .flatMap(
-                        stringDictionaryInner -> {
-                            if (stringDictionaryInner.properties() == null) {
-                                stringDictionaryInner.withProperties(new HashMap<String, String>());
-                            }
-                            stringDictionaryInner
-                                .properties()
-                                .put("CURRENT_STACK", runtimeStackOnWindowsOSToUpdate.runtime());
-                            return updateMetadata(stringDictionaryInner);
-                        })
-                    // clean up
-                    .then(
-                        Mono
-                            .fromCallable(
-                                () -> {
-                                    runtimeStackOnWindowsOSToUpdate = null;
-                                    return WebAppImpl.this;
-                                }));
+            observable = observable
+                // list metadata
+                .then(listMetadata())
+                // merge with change, then update
+                .switchIfEmpty(Mono.just(new StringDictionaryInner()))
+                .flatMap(stringDictionaryInner -> {
+                    if (stringDictionaryInner.properties() == null) {
+                        stringDictionaryInner.withProperties(new HashMap<String, String>());
+                    }
+                    stringDictionaryInner.properties().put("CURRENT_STACK", runtimeStackOnWindowsOSToUpdate.runtime());
+                    return updateMetadata(stringDictionaryInner);
+                })
+                // clean up
+                .then(Mono.fromCallable(() -> {
+                    runtimeStackOnWindowsOSToUpdate = null;
+                    return WebAppImpl.this;
+                }));
         }
         return observable;
     }
@@ -307,8 +298,8 @@ class WebAppImpl extends AppServiceBaseImpl<WebApp, WebAppImpl, WebApp.Definitio
             deployOptions = new DeployOptions();
         }
         try {
-            return kuduClient.deployAsync(type, file,
-                deployOptions.path(), deployOptions.restartSite(), deployOptions.cleanDeployment());
+            return kuduClient.deployAsync(type, file, deployOptions.path(), deployOptions.restartSite(),
+                deployOptions.cleanDeployment());
         } catch (IOException e) {
             return Mono.error(e);
         }
@@ -336,8 +327,8 @@ class WebAppImpl extends AppServiceBaseImpl<WebApp, WebAppImpl, WebApp.Definitio
         if (deployOptions == null) {
             deployOptions = new DeployOptions();
         }
-        return kuduClient.deployAsync(type, file, length,
-            deployOptions.path(), deployOptions.restartSite(), deployOptions.cleanDeployment());
+        return kuduClient.deployAsync(type, file, length, deployOptions.path(), deployOptions.restartSite(),
+            deployOptions.cleanDeployment());
     }
 
     @Override
@@ -353,11 +344,38 @@ class WebAppImpl extends AppServiceBaseImpl<WebApp, WebAppImpl, WebApp.Definitio
             deployOptions = new DeployOptions();
         }
         try {
-            return kuduClient.pushDeployAsync(type, file,
-                deployOptions.path(), deployOptions.restartSite(), deployOptions.cleanDeployment(),
-                deployOptions.trackDeployment());
+            return kuduClient.pushDeployAsync(type, file, deployOptions.path(), deployOptions.restartSite(),
+                deployOptions.cleanDeployment(), deployOptions.trackDeployment());
         } catch (IOException e) {
             return Mono.error(e);
         }
+    }
+
+    @Override
+    public CsmDeploymentStatus getDeploymentStatus(String deploymentId) {
+        return getDeploymentStatusAsync(deploymentId).block();
+    }
+
+    @Override
+    public Mono<CsmDeploymentStatus> getDeploymentStatusAsync(String deploymentId) {
+        // "GET" LRO is not supported in azure-core
+        SerializerAdapter serializerAdapter = SerializerFactory.createDefaultManagementSerializerAdapter();
+        return this.manager()
+            .serviceClient()
+            .getWebApps()
+            .getProductionSiteDeploymentStatusWithResponseAsync(this.resourceGroupName(), this.name(), deploymentId)
+            .flatMap(fluxResponse -> {
+                HttpResponse response = new HttpFluxBBResponse(fluxResponse);
+                return response.getBodyAsString().flatMap(bodyString -> {
+                    CsmDeploymentStatus status;
+                    try {
+                        status = serializerAdapter.deserialize(bodyString, CsmDeploymentStatus.class,
+                            SerializerEncoding.JSON);
+                    } catch (IOException e) {
+                        return Mono.error(new ManagementException("Deserialize failed for response body.", response));
+                    }
+                    return Mono.justOrEmpty(status);
+                }).doFinally(ignored -> response.close());
+            });
     }
 }

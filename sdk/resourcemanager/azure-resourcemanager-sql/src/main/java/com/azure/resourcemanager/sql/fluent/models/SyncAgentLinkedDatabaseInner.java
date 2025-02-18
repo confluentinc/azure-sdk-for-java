@@ -5,114 +5,189 @@
 package com.azure.resourcemanager.sql.fluent.models;
 
 import com.azure.core.annotation.Immutable;
-import com.azure.core.annotation.JsonFlatten;
 import com.azure.core.management.ProxyResource;
-import com.azure.core.util.logging.ClientLogger;
+import com.azure.json.JsonReader;
+import com.azure.json.JsonToken;
+import com.azure.json.JsonWriter;
 import com.azure.resourcemanager.sql.models.SyncMemberDbType;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import java.io.IOException;
 
-/** An Azure SQL Database sync agent linked database. */
-@JsonFlatten
+/**
+ * An Azure SQL Database sync agent linked database.
+ */
 @Immutable
-public class SyncAgentLinkedDatabaseInner extends ProxyResource {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(SyncAgentLinkedDatabaseInner.class);
+public final class SyncAgentLinkedDatabaseInner extends ProxyResource {
+    /*
+     * Resource properties.
+     */
+    private SyncAgentLinkedDatabaseProperties innerProperties;
 
     /*
-     * Type of the sync agent linked database.
+     * The type of the resource.
      */
-    @JsonProperty(value = "properties.databaseType", access = JsonProperty.Access.WRITE_ONLY)
-    private SyncMemberDbType databaseType;
+    private String type;
 
     /*
-     * Id of the sync agent linked database.
+     * The name of the resource.
      */
-    @JsonProperty(value = "properties.databaseId", access = JsonProperty.Access.WRITE_ONLY)
-    private String databaseId;
+    private String name;
 
     /*
-     * Description of the sync agent linked database.
+     * Fully qualified resource Id for the resource.
      */
-    @JsonProperty(value = "properties.description", access = JsonProperty.Access.WRITE_ONLY)
-    private String description;
+    private String id;
 
-    /*
-     * Server name of the sync agent linked database.
+    /**
+     * Creates an instance of SyncAgentLinkedDatabaseInner class.
      */
-    @JsonProperty(value = "properties.serverName", access = JsonProperty.Access.WRITE_ONLY)
-    private String serverName;
+    public SyncAgentLinkedDatabaseInner() {
+    }
 
-    /*
-     * Database name of the sync agent linked database.
+    /**
+     * Get the innerProperties property: Resource properties.
+     * 
+     * @return the innerProperties value.
      */
-    @JsonProperty(value = "properties.databaseName", access = JsonProperty.Access.WRITE_ONLY)
-    private String databaseName;
+    private SyncAgentLinkedDatabaseProperties innerProperties() {
+        return this.innerProperties;
+    }
 
-    /*
-     * User name of the sync agent linked database.
+    /**
+     * Get the type property: The type of the resource.
+     * 
+     * @return the type value.
      */
-    @JsonProperty(value = "properties.userName", access = JsonProperty.Access.WRITE_ONLY)
-    private String username;
+    @Override
+    public String type() {
+        return this.type;
+    }
+
+    /**
+     * Get the name property: The name of the resource.
+     * 
+     * @return the name value.
+     */
+    @Override
+    public String name() {
+        return this.name;
+    }
+
+    /**
+     * Get the id property: Fully qualified resource Id for the resource.
+     * 
+     * @return the id value.
+     */
+    @Override
+    public String id() {
+        return this.id;
+    }
 
     /**
      * Get the databaseType property: Type of the sync agent linked database.
-     *
+     * 
      * @return the databaseType value.
      */
     public SyncMemberDbType databaseType() {
-        return this.databaseType;
+        return this.innerProperties() == null ? null : this.innerProperties().databaseType();
     }
 
     /**
      * Get the databaseId property: Id of the sync agent linked database.
-     *
+     * 
      * @return the databaseId value.
      */
     public String databaseId() {
-        return this.databaseId;
+        return this.innerProperties() == null ? null : this.innerProperties().databaseId();
     }
 
     /**
      * Get the description property: Description of the sync agent linked database.
-     *
+     * 
      * @return the description value.
      */
     public String description() {
-        return this.description;
+        return this.innerProperties() == null ? null : this.innerProperties().description();
     }
 
     /**
      * Get the serverName property: Server name of the sync agent linked database.
-     *
+     * 
      * @return the serverName value.
      */
     public String serverName() {
-        return this.serverName;
+        return this.innerProperties() == null ? null : this.innerProperties().serverName();
     }
 
     /**
      * Get the databaseName property: Database name of the sync agent linked database.
-     *
+     * 
      * @return the databaseName value.
      */
     public String databaseName() {
-        return this.databaseName;
+        return this.innerProperties() == null ? null : this.innerProperties().databaseName();
     }
 
     /**
      * Get the username property: User name of the sync agent linked database.
-     *
+     * 
      * @return the username value.
      */
     public String username() {
-        return this.username;
+        return this.innerProperties() == null ? null : this.innerProperties().username();
     }
 
     /**
      * Validates the instance.
-     *
+     * 
      * @throws IllegalArgumentException thrown if the instance is not valid.
      */
     public void validate() {
+        if (innerProperties() != null) {
+            innerProperties().validate();
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public JsonWriter toJson(JsonWriter jsonWriter) throws IOException {
+        jsonWriter.writeStartObject();
+        jsonWriter.writeJsonField("properties", this.innerProperties);
+        return jsonWriter.writeEndObject();
+    }
+
+    /**
+     * Reads an instance of SyncAgentLinkedDatabaseInner from the JsonReader.
+     * 
+     * @param jsonReader The JsonReader being read.
+     * @return An instance of SyncAgentLinkedDatabaseInner if the JsonReader was pointing to an instance of it, or null
+     * if it was pointing to JSON null.
+     * @throws IllegalStateException If the deserialized JSON object was missing any required properties.
+     * @throws IOException If an error occurs while reading the SyncAgentLinkedDatabaseInner.
+     */
+    public static SyncAgentLinkedDatabaseInner fromJson(JsonReader jsonReader) throws IOException {
+        return jsonReader.readObject(reader -> {
+            SyncAgentLinkedDatabaseInner deserializedSyncAgentLinkedDatabaseInner = new SyncAgentLinkedDatabaseInner();
+            while (reader.nextToken() != JsonToken.END_OBJECT) {
+                String fieldName = reader.getFieldName();
+                reader.nextToken();
+
+                if ("id".equals(fieldName)) {
+                    deserializedSyncAgentLinkedDatabaseInner.id = reader.getString();
+                } else if ("name".equals(fieldName)) {
+                    deserializedSyncAgentLinkedDatabaseInner.name = reader.getString();
+                } else if ("type".equals(fieldName)) {
+                    deserializedSyncAgentLinkedDatabaseInner.type = reader.getString();
+                } else if ("properties".equals(fieldName)) {
+                    deserializedSyncAgentLinkedDatabaseInner.innerProperties
+                        = SyncAgentLinkedDatabaseProperties.fromJson(reader);
+                } else {
+                    reader.skipChildren();
+                }
+            }
+
+            return deserializedSyncAgentLinkedDatabaseInner;
+        });
     }
 }

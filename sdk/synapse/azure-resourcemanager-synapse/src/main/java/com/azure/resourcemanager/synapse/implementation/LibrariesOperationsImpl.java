@@ -11,32 +11,31 @@ import com.azure.resourcemanager.synapse.fluent.LibrariesOperationsClient;
 import com.azure.resourcemanager.synapse.fluent.models.LibraryResourceInner;
 import com.azure.resourcemanager.synapse.models.LibrariesOperations;
 import com.azure.resourcemanager.synapse.models.LibraryResource;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 public final class LibrariesOperationsImpl implements LibrariesOperations {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(LibrariesOperationsImpl.class);
+    private static final ClientLogger LOGGER = new ClientLogger(LibrariesOperationsImpl.class);
 
     private final LibrariesOperationsClient innerClient;
 
     private final com.azure.resourcemanager.synapse.SynapseManager serviceManager;
 
-    public LibrariesOperationsImpl(
-        LibrariesOperationsClient innerClient, com.azure.resourcemanager.synapse.SynapseManager serviceManager) {
+    public LibrariesOperationsImpl(LibrariesOperationsClient innerClient,
+        com.azure.resourcemanager.synapse.SynapseManager serviceManager) {
         this.innerClient = innerClient;
         this.serviceManager = serviceManager;
     }
 
     public PagedIterable<LibraryResource> listByWorkspace(String resourceGroupName, String workspaceName) {
-        PagedIterable<LibraryResourceInner> inner =
-            this.serviceClient().listByWorkspace(resourceGroupName, workspaceName);
-        return Utils.mapPage(inner, inner1 -> new LibraryResourceImpl(inner1, this.manager()));
+        PagedIterable<LibraryResourceInner> inner
+            = this.serviceClient().listByWorkspace(resourceGroupName, workspaceName);
+        return ResourceManagerUtils.mapPage(inner, inner1 -> new LibraryResourceImpl(inner1, this.manager()));
     }
 
-    public PagedIterable<LibraryResource> listByWorkspace(
-        String resourceGroupName, String workspaceName, Context context) {
-        PagedIterable<LibraryResourceInner> inner =
-            this.serviceClient().listByWorkspace(resourceGroupName, workspaceName, context);
-        return Utils.mapPage(inner, inner1 -> new LibraryResourceImpl(inner1, this.manager()));
+    public PagedIterable<LibraryResource> listByWorkspace(String resourceGroupName, String workspaceName,
+        Context context) {
+        PagedIterable<LibraryResourceInner> inner
+            = this.serviceClient().listByWorkspace(resourceGroupName, workspaceName, context);
+        return ResourceManagerUtils.mapPage(inner, inner1 -> new LibraryResourceImpl(inner1, this.manager()));
     }
 
     private LibrariesOperationsClient serviceClient() {

@@ -8,15 +8,18 @@ import com.azure.core.credential.TokenCredential;
 import com.azure.core.http.HttpClient;
 import com.azure.core.http.HttpPipeline;
 import com.azure.core.http.HttpPipelineBuilder;
+import com.azure.core.http.HttpPipelinePosition;
 import com.azure.core.http.policy.AddDatePolicy;
+import com.azure.core.http.policy.AddHeadersFromContextPolicy;
+import com.azure.core.http.policy.BearerTokenAuthenticationPolicy;
 import com.azure.core.http.policy.HttpLogOptions;
 import com.azure.core.http.policy.HttpLoggingPolicy;
 import com.azure.core.http.policy.HttpPipelinePolicy;
 import com.azure.core.http.policy.HttpPolicyProviders;
 import com.azure.core.http.policy.RequestIdPolicy;
+import com.azure.core.http.policy.RetryOptions;
 import com.azure.core.http.policy.RetryPolicy;
 import com.azure.core.http.policy.UserAgentPolicy;
-import com.azure.core.management.http.policy.ArmChallengeAuthenticationPolicy;
 import com.azure.core.management.profile.AzureProfile;
 import com.azure.core.util.Configuration;
 import com.azure.core.util.logging.ClientLogger;
@@ -25,42 +28,53 @@ import com.azure.resourcemanager.kusto.implementation.AttachedDatabaseConfigurat
 import com.azure.resourcemanager.kusto.implementation.ClusterPrincipalAssignmentsImpl;
 import com.azure.resourcemanager.kusto.implementation.ClustersImpl;
 import com.azure.resourcemanager.kusto.implementation.DataConnectionsImpl;
+import com.azure.resourcemanager.kusto.implementation.DatabaseOperationsImpl;
 import com.azure.resourcemanager.kusto.implementation.DatabasePrincipalAssignmentsImpl;
 import com.azure.resourcemanager.kusto.implementation.DatabasesImpl;
 import com.azure.resourcemanager.kusto.implementation.KustoManagementClientBuilder;
 import com.azure.resourcemanager.kusto.implementation.ManagedPrivateEndpointsImpl;
 import com.azure.resourcemanager.kusto.implementation.OperationsImpl;
 import com.azure.resourcemanager.kusto.implementation.OperationsResultsImpl;
+import com.azure.resourcemanager.kusto.implementation.OperationsResultsLocationsImpl;
 import com.azure.resourcemanager.kusto.implementation.PrivateEndpointConnectionsImpl;
 import com.azure.resourcemanager.kusto.implementation.PrivateLinkResourcesImpl;
+import com.azure.resourcemanager.kusto.implementation.SandboxCustomImagesImpl;
 import com.azure.resourcemanager.kusto.implementation.ScriptsImpl;
+import com.azure.resourcemanager.kusto.implementation.SkusImpl;
 import com.azure.resourcemanager.kusto.models.AttachedDatabaseConfigurations;
 import com.azure.resourcemanager.kusto.models.ClusterPrincipalAssignments;
 import com.azure.resourcemanager.kusto.models.Clusters;
 import com.azure.resourcemanager.kusto.models.DataConnections;
+import com.azure.resourcemanager.kusto.models.DatabaseOperations;
 import com.azure.resourcemanager.kusto.models.DatabasePrincipalAssignments;
 import com.azure.resourcemanager.kusto.models.Databases;
 import com.azure.resourcemanager.kusto.models.ManagedPrivateEndpoints;
 import com.azure.resourcemanager.kusto.models.Operations;
 import com.azure.resourcemanager.kusto.models.OperationsResults;
+import com.azure.resourcemanager.kusto.models.OperationsResultsLocations;
 import com.azure.resourcemanager.kusto.models.PrivateEndpointConnections;
 import com.azure.resourcemanager.kusto.models.PrivateLinkResources;
+import com.azure.resourcemanager.kusto.models.SandboxCustomImages;
 import com.azure.resourcemanager.kusto.models.Scripts;
+import com.azure.resourcemanager.kusto.models.Skus;
 import java.time.Duration;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
- * Entry point to KustoManager. The Azure Kusto management API provides a RESTful set of web services that interact with
- * Azure Kusto services to manage your clusters and databases. The API enables you to create, update, and delete
- * clusters and databases.
+ * Entry point to KustoManager.
+ * The Azure Kusto management API provides a RESTful set of web services that interact with Azure Kusto services to
+ * manage your clusters and databases. The API enables you to create, update, and delete clusters and databases.
  */
 public final class KustoManager {
     private Clusters clusters;
 
     private ClusterPrincipalAssignments clusterPrincipalAssignments;
+
+    private Skus skus;
 
     private Databases databases;
 
@@ -68,9 +82,13 @@ public final class KustoManager {
 
     private ManagedPrivateEndpoints managedPrivateEndpoints;
 
+    private DatabaseOperations databaseOperations;
+
     private DatabasePrincipalAssignments databasePrincipalAssignments;
 
     private Scripts scripts;
+
+    private SandboxCustomImages sandboxCustomImages;
 
     private PrivateEndpointConnections privateEndpointConnections;
 
@@ -82,23 +100,23 @@ public final class KustoManager {
 
     private OperationsResults operationsResults;
 
+    private OperationsResultsLocations operationsResultsLocations;
+
     private final KustoManagementClient clientObject;
 
     private KustoManager(HttpPipeline httpPipeline, AzureProfile profile, Duration defaultPollInterval) {
         Objects.requireNonNull(httpPipeline, "'httpPipeline' cannot be null.");
         Objects.requireNonNull(profile, "'profile' cannot be null.");
-        this.clientObject =
-            new KustoManagementClientBuilder()
-                .pipeline(httpPipeline)
-                .endpoint(profile.getEnvironment().getResourceManagerEndpoint())
-                .subscriptionId(profile.getSubscriptionId())
-                .defaultPollInterval(defaultPollInterval)
-                .buildClient();
+        this.clientObject = new KustoManagementClientBuilder().pipeline(httpPipeline)
+            .endpoint(profile.getEnvironment().getResourceManagerEndpoint())
+            .subscriptionId(profile.getSubscriptionId())
+            .defaultPollInterval(defaultPollInterval)
+            .buildClient();
     }
 
     /**
      * Creates an instance of Kusto service API entry point.
-     *
+     * 
      * @param credential the credential to use.
      * @param profile the Azure profile for client.
      * @return the Kusto service API instance.
@@ -110,23 +128,39 @@ public final class KustoManager {
     }
 
     /**
+     * Creates an instance of Kusto service API entry point.
+     * 
+     * @param httpPipeline the {@link HttpPipeline} configured with Azure authentication credential.
+     * @param profile the Azure profile for client.
+     * @return the Kusto service API instance.
+     */
+    public static KustoManager authenticate(HttpPipeline httpPipeline, AzureProfile profile) {
+        Objects.requireNonNull(httpPipeline, "'httpPipeline' cannot be null.");
+        Objects.requireNonNull(profile, "'profile' cannot be null.");
+        return new KustoManager(httpPipeline, profile, null);
+    }
+
+    /**
      * Gets a Configurable instance that can be used to create KustoManager with optional configuration.
-     *
+     * 
      * @return the Configurable instance allowing configurations.
      */
     public static Configurable configure() {
         return new KustoManager.Configurable();
     }
 
-    /** The Configurable allowing configurations to be set. */
+    /**
+     * The Configurable allowing configurations to be set.
+     */
     public static final class Configurable {
-        private final ClientLogger logger = new ClientLogger(Configurable.class);
+        private static final ClientLogger LOGGER = new ClientLogger(Configurable.class);
 
         private HttpClient httpClient;
         private HttpLogOptions httpLogOptions;
         private final List<HttpPipelinePolicy> policies = new ArrayList<>();
         private final List<String> scopes = new ArrayList<>();
         private RetryPolicy retryPolicy;
+        private RetryOptions retryOptions;
         private Duration defaultPollInterval;
 
         private Configurable() {
@@ -188,15 +222,30 @@ public final class KustoManager {
         }
 
         /**
+         * Sets the retry options for the HTTP pipeline retry policy.
+         * <p>
+         * This setting has no effect, if retry policy is set via {@link #withRetryPolicy(RetryPolicy)}.
+         *
+         * @param retryOptions the retry options for the HTTP pipeline retry policy.
+         * @return the configurable object itself.
+         */
+        public Configurable withRetryOptions(RetryOptions retryOptions) {
+            this.retryOptions = Objects.requireNonNull(retryOptions, "'retryOptions' cannot be null.");
+            return this;
+        }
+
+        /**
          * Sets the default poll interval, used when service does not provide "Retry-After" header.
          *
          * @param defaultPollInterval the default poll interval.
          * @return the configurable object itself.
          */
         public Configurable withDefaultPollInterval(Duration defaultPollInterval) {
-            this.defaultPollInterval = Objects.requireNonNull(defaultPollInterval, "'retryPolicy' cannot be null.");
+            this.defaultPollInterval
+                = Objects.requireNonNull(defaultPollInterval, "'defaultPollInterval' cannot be null.");
             if (this.defaultPollInterval.isNegative()) {
-                throw logger.logExceptionAsError(new IllegalArgumentException("'httpPipeline' cannot be negative"));
+                throw LOGGER
+                    .logExceptionAsError(new IllegalArgumentException("'defaultPollInterval' cannot be negative"));
             }
             return this;
         }
@@ -213,15 +262,13 @@ public final class KustoManager {
             Objects.requireNonNull(profile, "'profile' cannot be null.");
 
             StringBuilder userAgentBuilder = new StringBuilder();
-            userAgentBuilder
-                .append("azsdk-java")
+            userAgentBuilder.append("azsdk-java")
                 .append("-")
                 .append("com.azure.resourcemanager.kusto")
                 .append("/")
-                .append("1.0.0-beta.3");
+                .append("1.2.0");
             if (!Configuration.getGlobalConfiguration().get("AZURE_TELEMETRY_DISABLED", false)) {
-                userAgentBuilder
-                    .append(" (")
+                userAgentBuilder.append(" (")
                     .append(Configuration.getGlobalConfiguration().get("java.version"))
                     .append("; ")
                     .append(Configuration.getGlobalConfiguration().get("os.name"))
@@ -236,28 +283,40 @@ public final class KustoManager {
                 scopes.add(profile.getEnvironment().getManagementEndpoint() + "/.default");
             }
             if (retryPolicy == null) {
-                retryPolicy = new RetryPolicy("Retry-After", ChronoUnit.SECONDS);
+                if (retryOptions != null) {
+                    retryPolicy = new RetryPolicy(retryOptions);
+                } else {
+                    retryPolicy = new RetryPolicy("Retry-After", ChronoUnit.SECONDS);
+                }
             }
             List<HttpPipelinePolicy> policies = new ArrayList<>();
             policies.add(new UserAgentPolicy(userAgentBuilder.toString()));
+            policies.add(new AddHeadersFromContextPolicy());
             policies.add(new RequestIdPolicy());
+            policies.addAll(this.policies.stream()
+                .filter(p -> p.getPipelinePosition() == HttpPipelinePosition.PER_CALL)
+                .collect(Collectors.toList()));
             HttpPolicyProviders.addBeforeRetryPolicies(policies);
             policies.add(retryPolicy);
             policies.add(new AddDatePolicy());
-            policies.add(new ArmChallengeAuthenticationPolicy(credential, scopes.toArray(new String[0])));
-            policies.addAll(this.policies);
+            policies.add(new BearerTokenAuthenticationPolicy(credential, scopes.toArray(new String[0])));
+            policies.addAll(this.policies.stream()
+                .filter(p -> p.getPipelinePosition() == HttpPipelinePosition.PER_RETRY)
+                .collect(Collectors.toList()));
             HttpPolicyProviders.addAfterRetryPolicies(policies);
             policies.add(new HttpLoggingPolicy(httpLogOptions));
-            HttpPipeline httpPipeline =
-                new HttpPipelineBuilder()
-                    .httpClient(httpClient)
-                    .policies(policies.toArray(new HttpPipelinePolicy[0]))
-                    .build();
+            HttpPipeline httpPipeline = new HttpPipelineBuilder().httpClient(httpClient)
+                .policies(policies.toArray(new HttpPipelinePolicy[0]))
+                .build();
             return new KustoManager(httpPipeline, profile, defaultPollInterval);
         }
     }
 
-    /** @return Resource collection API of Clusters. */
+    /**
+     * Gets the resource collection API of Clusters. It manages Cluster.
+     * 
+     * @return Resource collection API of Clusters.
+     */
     public Clusters clusters() {
         if (this.clusters == null) {
             this.clusters = new ClustersImpl(clientObject.getClusters(), this);
@@ -265,16 +324,36 @@ public final class KustoManager {
         return clusters;
     }
 
-    /** @return Resource collection API of ClusterPrincipalAssignments. */
+    /**
+     * Gets the resource collection API of ClusterPrincipalAssignments. It manages ClusterPrincipalAssignment.
+     * 
+     * @return Resource collection API of ClusterPrincipalAssignments.
+     */
     public ClusterPrincipalAssignments clusterPrincipalAssignments() {
         if (this.clusterPrincipalAssignments == null) {
-            this.clusterPrincipalAssignments =
-                new ClusterPrincipalAssignmentsImpl(clientObject.getClusterPrincipalAssignments(), this);
+            this.clusterPrincipalAssignments
+                = new ClusterPrincipalAssignmentsImpl(clientObject.getClusterPrincipalAssignments(), this);
         }
         return clusterPrincipalAssignments;
     }
 
-    /** @return Resource collection API of Databases. */
+    /**
+     * Gets the resource collection API of Skus.
+     * 
+     * @return Resource collection API of Skus.
+     */
+    public Skus skus() {
+        if (this.skus == null) {
+            this.skus = new SkusImpl(clientObject.getSkus(), this);
+        }
+        return skus;
+    }
+
+    /**
+     * Gets the resource collection API of Databases.
+     * 
+     * @return Resource collection API of Databases.
+     */
     public Databases databases() {
         if (this.databases == null) {
             this.databases = new DatabasesImpl(clientObject.getDatabases(), this);
@@ -282,34 +361,62 @@ public final class KustoManager {
         return databases;
     }
 
-    /** @return Resource collection API of AttachedDatabaseConfigurations. */
+    /**
+     * Gets the resource collection API of AttachedDatabaseConfigurations. It manages AttachedDatabaseConfiguration.
+     * 
+     * @return Resource collection API of AttachedDatabaseConfigurations.
+     */
     public AttachedDatabaseConfigurations attachedDatabaseConfigurations() {
         if (this.attachedDatabaseConfigurations == null) {
-            this.attachedDatabaseConfigurations =
-                new AttachedDatabaseConfigurationsImpl(clientObject.getAttachedDatabaseConfigurations(), this);
+            this.attachedDatabaseConfigurations
+                = new AttachedDatabaseConfigurationsImpl(clientObject.getAttachedDatabaseConfigurations(), this);
         }
         return attachedDatabaseConfigurations;
     }
 
-    /** @return Resource collection API of ManagedPrivateEndpoints. */
+    /**
+     * Gets the resource collection API of ManagedPrivateEndpoints. It manages ManagedPrivateEndpoint.
+     * 
+     * @return Resource collection API of ManagedPrivateEndpoints.
+     */
     public ManagedPrivateEndpoints managedPrivateEndpoints() {
         if (this.managedPrivateEndpoints == null) {
-            this.managedPrivateEndpoints =
-                new ManagedPrivateEndpointsImpl(clientObject.getManagedPrivateEndpoints(), this);
+            this.managedPrivateEndpoints
+                = new ManagedPrivateEndpointsImpl(clientObject.getManagedPrivateEndpoints(), this);
         }
         return managedPrivateEndpoints;
     }
 
-    /** @return Resource collection API of DatabasePrincipalAssignments. */
+    /**
+     * Gets the resource collection API of DatabaseOperations.
+     * 
+     * @return Resource collection API of DatabaseOperations.
+     */
+    public DatabaseOperations databaseOperations() {
+        if (this.databaseOperations == null) {
+            this.databaseOperations = new DatabaseOperationsImpl(clientObject.getDatabaseOperations(), this);
+        }
+        return databaseOperations;
+    }
+
+    /**
+     * Gets the resource collection API of DatabasePrincipalAssignments. It manages DatabasePrincipalAssignment.
+     * 
+     * @return Resource collection API of DatabasePrincipalAssignments.
+     */
     public DatabasePrincipalAssignments databasePrincipalAssignments() {
         if (this.databasePrincipalAssignments == null) {
-            this.databasePrincipalAssignments =
-                new DatabasePrincipalAssignmentsImpl(clientObject.getDatabasePrincipalAssignments(), this);
+            this.databasePrincipalAssignments
+                = new DatabasePrincipalAssignmentsImpl(clientObject.getDatabasePrincipalAssignments(), this);
         }
         return databasePrincipalAssignments;
     }
 
-    /** @return Resource collection API of Scripts. */
+    /**
+     * Gets the resource collection API of Scripts. It manages Script.
+     * 
+     * @return Resource collection API of Scripts.
+     */
     public Scripts scripts() {
         if (this.scripts == null) {
             this.scripts = new ScriptsImpl(clientObject.getScripts(), this);
@@ -317,16 +424,36 @@ public final class KustoManager {
         return scripts;
     }
 
-    /** @return Resource collection API of PrivateEndpointConnections. */
+    /**
+     * Gets the resource collection API of SandboxCustomImages. It manages SandboxCustomImage.
+     * 
+     * @return Resource collection API of SandboxCustomImages.
+     */
+    public SandboxCustomImages sandboxCustomImages() {
+        if (this.sandboxCustomImages == null) {
+            this.sandboxCustomImages = new SandboxCustomImagesImpl(clientObject.getSandboxCustomImages(), this);
+        }
+        return sandboxCustomImages;
+    }
+
+    /**
+     * Gets the resource collection API of PrivateEndpointConnections. It manages PrivateEndpointConnection.
+     * 
+     * @return Resource collection API of PrivateEndpointConnections.
+     */
     public PrivateEndpointConnections privateEndpointConnections() {
         if (this.privateEndpointConnections == null) {
-            this.privateEndpointConnections =
-                new PrivateEndpointConnectionsImpl(clientObject.getPrivateEndpointConnections(), this);
+            this.privateEndpointConnections
+                = new PrivateEndpointConnectionsImpl(clientObject.getPrivateEndpointConnections(), this);
         }
         return privateEndpointConnections;
     }
 
-    /** @return Resource collection API of PrivateLinkResources. */
+    /**
+     * Gets the resource collection API of PrivateLinkResources.
+     * 
+     * @return Resource collection API of PrivateLinkResources.
+     */
     public PrivateLinkResources privateLinkResources() {
         if (this.privateLinkResources == null) {
             this.privateLinkResources = new PrivateLinkResourcesImpl(clientObject.getPrivateLinkResources(), this);
@@ -334,7 +461,11 @@ public final class KustoManager {
         return privateLinkResources;
     }
 
-    /** @return Resource collection API of DataConnections. */
+    /**
+     * Gets the resource collection API of DataConnections.
+     * 
+     * @return Resource collection API of DataConnections.
+     */
     public DataConnections dataConnections() {
         if (this.dataConnections == null) {
             this.dataConnections = new DataConnectionsImpl(clientObject.getDataConnections(), this);
@@ -342,7 +473,11 @@ public final class KustoManager {
         return dataConnections;
     }
 
-    /** @return Resource collection API of Operations. */
+    /**
+     * Gets the resource collection API of Operations.
+     * 
+     * @return Resource collection API of Operations.
+     */
     public Operations operations() {
         if (this.operations == null) {
             this.operations = new OperationsImpl(clientObject.getOperations(), this);
@@ -350,7 +485,11 @@ public final class KustoManager {
         return operations;
     }
 
-    /** @return Resource collection API of OperationsResults. */
+    /**
+     * Gets the resource collection API of OperationsResults.
+     * 
+     * @return Resource collection API of OperationsResults.
+     */
     public OperationsResults operationsResults() {
         if (this.operationsResults == null) {
             this.operationsResults = new OperationsResultsImpl(clientObject.getOperationsResults(), this);
@@ -359,8 +498,23 @@ public final class KustoManager {
     }
 
     /**
-     * @return Wrapped service client KustoManagementClient providing direct access to the underlying auto-generated API
-     *     implementation, based on Azure REST API.
+     * Gets the resource collection API of OperationsResultsLocations.
+     * 
+     * @return Resource collection API of OperationsResultsLocations.
+     */
+    public OperationsResultsLocations operationsResultsLocations() {
+        if (this.operationsResultsLocations == null) {
+            this.operationsResultsLocations
+                = new OperationsResultsLocationsImpl(clientObject.getOperationsResultsLocations(), this);
+        }
+        return operationsResultsLocations;
+    }
+
+    /**
+     * Gets wrapped service client KustoManagementClient providing direct access to the underlying auto-generated API
+     * implementation, based on Azure REST API.
+     * 
+     * @return Wrapped service client KustoManagementClient.
      */
     public KustoManagementClient serviceClient() {
         return this.clientObject;

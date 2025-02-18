@@ -12,38 +12,34 @@ import com.azure.resourcemanager.storagecache.fluent.AscOperationsClient;
 import com.azure.resourcemanager.storagecache.fluent.models.AscOperationInner;
 import com.azure.resourcemanager.storagecache.models.AscOperation;
 import com.azure.resourcemanager.storagecache.models.AscOperations;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 public final class AscOperationsImpl implements AscOperations {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(AscOperationsImpl.class);
+    private static final ClientLogger LOGGER = new ClientLogger(AscOperationsImpl.class);
 
     private final AscOperationsClient innerClient;
 
     private final com.azure.resourcemanager.storagecache.StorageCacheManager serviceManager;
 
-    public AscOperationsImpl(
-        AscOperationsClient innerClient, com.azure.resourcemanager.storagecache.StorageCacheManager serviceManager) {
+    public AscOperationsImpl(AscOperationsClient innerClient,
+        com.azure.resourcemanager.storagecache.StorageCacheManager serviceManager) {
         this.innerClient = innerClient;
         this.serviceManager = serviceManager;
+    }
+
+    public Response<AscOperation> getWithResponse(String location, String operationId, Context context) {
+        Response<AscOperationInner> inner = this.serviceClient().getWithResponse(location, operationId, context);
+        if (inner != null) {
+            return new SimpleResponse<>(inner.getRequest(), inner.getStatusCode(), inner.getHeaders(),
+                new AscOperationImpl(inner.getValue(), this.manager()));
+        } else {
+            return null;
+        }
     }
 
     public AscOperation get(String location, String operationId) {
         AscOperationInner inner = this.serviceClient().get(location, operationId);
         if (inner != null) {
             return new AscOperationImpl(inner, this.manager());
-        } else {
-            return null;
-        }
-    }
-
-    public Response<AscOperation> getWithResponse(String location, String operationId, Context context) {
-        Response<AscOperationInner> inner = this.serviceClient().getWithResponse(location, operationId, context);
-        if (inner != null) {
-            return new SimpleResponse<>(
-                inner.getRequest(),
-                inner.getStatusCode(),
-                inner.getHeaders(),
-                new AscOperationImpl(inner.getValue(), this.manager()));
         } else {
             return null;
         }

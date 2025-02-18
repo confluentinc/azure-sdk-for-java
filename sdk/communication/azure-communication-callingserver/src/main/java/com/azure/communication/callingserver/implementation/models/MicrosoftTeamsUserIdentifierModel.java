@@ -5,35 +5,34 @@
 package com.azure.communication.callingserver.implementation.models;
 
 import com.azure.core.annotation.Fluent;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.azure.json.JsonReader;
+import com.azure.json.JsonSerializable;
+import com.azure.json.JsonToken;
+import com.azure.json.JsonWriter;
 
-/** A Microsoft Teams user. */
+import java.io.IOException;
+import java.util.Objects;
+
+/** The MicrosoftTeamsUserIdentifierModel model. */
 @Fluent
-public final class MicrosoftTeamsUserIdentifierModel {
+public final class MicrosoftTeamsUserIdentifierModel implements JsonSerializable<MicrosoftTeamsUserIdentifierModel> {
     /*
-     * The Id of the Microsoft Teams user. If not anonymous, this is the AAD
-     * object Id of the user.
+     * The userId property.
      */
-    @JsonProperty(value = "userId", required = true)
     private String userId;
 
     /*
-     * True if the Microsoft Teams user is anonymous. By default false if
-     * missing.
+     * The isAnonymous property.
      */
-    @JsonProperty(value = "isAnonymous")
     private Boolean isAnonymous;
 
     /*
-     * The cloud that the Microsoft Teams user belongs to. By default 'public'
-     * if missing.
+     * The cloud property.
      */
-    @JsonProperty(value = "cloud")
     private CommunicationCloudEnvironmentModel cloud;
 
     /**
-     * Get the userId property: The Id of the Microsoft Teams user. If not anonymous, this is the AAD object Id of the
-     * user.
+     * Get the userId property: The userId property.
      *
      * @return the userId value.
      */
@@ -42,8 +41,7 @@ public final class MicrosoftTeamsUserIdentifierModel {
     }
 
     /**
-     * Set the userId property: The Id of the Microsoft Teams user. If not anonymous, this is the AAD object Id of the
-     * user.
+     * Set the userId property: The userId property.
      *
      * @param userId the userId value to set.
      * @return the MicrosoftTeamsUserIdentifierModel object itself.
@@ -54,7 +52,7 @@ public final class MicrosoftTeamsUserIdentifierModel {
     }
 
     /**
-     * Get the isAnonymous property: True if the Microsoft Teams user is anonymous. By default false if missing.
+     * Get the isAnonymous property: The isAnonymous property.
      *
      * @return the isAnonymous value.
      */
@@ -63,7 +61,7 @@ public final class MicrosoftTeamsUserIdentifierModel {
     }
 
     /**
-     * Set the isAnonymous property: True if the Microsoft Teams user is anonymous. By default false if missing.
+     * Set the isAnonymous property: The isAnonymous property.
      *
      * @param isAnonymous the isAnonymous value to set.
      * @return the MicrosoftTeamsUserIdentifierModel object itself.
@@ -74,7 +72,7 @@ public final class MicrosoftTeamsUserIdentifierModel {
     }
 
     /**
-     * Get the cloud property: The cloud that the Microsoft Teams user belongs to. By default 'public' if missing.
+     * Get the cloud property: The cloud property.
      *
      * @return the cloud value.
      */
@@ -83,7 +81,7 @@ public final class MicrosoftTeamsUserIdentifierModel {
     }
 
     /**
-     * Set the cloud property: The cloud that the Microsoft Teams user belongs to. By default 'public' if missing.
+     * Set the cloud property: The cloud property.
      *
      * @param cloud the cloud value to set.
      * @return the MicrosoftTeamsUserIdentifierModel object itself.
@@ -91,5 +89,45 @@ public final class MicrosoftTeamsUserIdentifierModel {
     public MicrosoftTeamsUserIdentifierModel setCloud(CommunicationCloudEnvironmentModel cloud) {
         this.cloud = cloud;
         return this;
+    }
+
+    @Override
+    public JsonWriter toJson(JsonWriter jsonWriter) throws IOException {
+        return jsonWriter.writeStartObject()
+            .writeStringField("userId", userId)
+            .writeBooleanField("isAnonymous", isAnonymous)
+            .writeStringField("cloud", Objects.toString(cloud, null))
+            .writeEndObject();
+    }
+
+    /**
+     * Reads an instance of {@link MicrosoftTeamsUserIdentifierModel} from the {@link JsonReader}.
+     *
+     * @param jsonReader The {@link JsonReader} to read from.
+     * @return An instance of {@link MicrosoftTeamsUserIdentifierModel}, or null if the {@link JsonReader} was pointing
+     * to {@link JsonToken#NULL}.
+     * @throws IOException If an error occurs while reading the {@link JsonReader}.
+     */
+    public static MicrosoftTeamsUserIdentifierModel fromJson(JsonReader jsonReader) throws IOException {
+        return jsonReader.readObject(reader -> {
+            MicrosoftTeamsUserIdentifierModel model = new MicrosoftTeamsUserIdentifierModel();
+
+            while (jsonReader.nextToken() != JsonToken.END_OBJECT) {
+                String fieldName = reader.getFieldName();
+                reader.nextToken();
+
+                if ("userId".equals(fieldName)) {
+                    model.userId = reader.getString();
+                } else if ("isAnonymous".equals(fieldName)) {
+                    model.isAnonymous = reader.getNullable(JsonReader::getBoolean);
+                } else if ("cloud".equals(fieldName)) {
+                    model.cloud = CommunicationCloudEnvironmentModel.fromString(reader.getString());
+                } else {
+                    reader.skipChildren();
+                }
+            }
+
+            return model;
+        });
     }
 }

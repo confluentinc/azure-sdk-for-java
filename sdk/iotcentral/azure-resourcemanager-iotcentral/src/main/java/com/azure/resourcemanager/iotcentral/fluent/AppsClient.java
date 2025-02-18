@@ -17,11 +17,27 @@ import com.azure.resourcemanager.iotcentral.fluent.models.AppTemplateInner;
 import com.azure.resourcemanager.iotcentral.models.AppPatch;
 import com.azure.resourcemanager.iotcentral.models.OperationInputs;
 
-/** An instance of this class provides access to all the operations defined in AppsClient. */
+/**
+ * An instance of this class provides access to all the operations defined in AppsClient.
+ */
 public interface AppsClient {
     /**
      * Get the metadata of an IoT Central application.
-     *
+     * 
+     * @param resourceGroupName The name of the resource group that contains the IoT Central application.
+     * @param resourceName The ARM resource name of the IoT Central application.
+     * @param context The context to associate with this operation.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return the metadata of an IoT Central application along with {@link Response}.
+     */
+    @ServiceMethod(returns = ReturnType.SINGLE)
+    Response<AppInner> getByResourceGroupWithResponse(String resourceGroupName, String resourceName, Context context);
+
+    /**
+     * Get the metadata of an IoT Central application.
+     * 
      * @param resourceGroupName The name of the resource group that contains the IoT Central application.
      * @param resourceName The ARM resource name of the IoT Central application.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
@@ -33,41 +49,27 @@ public interface AppsClient {
     AppInner getByResourceGroup(String resourceGroupName, String resourceName);
 
     /**
-     * Get the metadata of an IoT Central application.
-     *
-     * @param resourceGroupName The name of the resource group that contains the IoT Central application.
-     * @param resourceName The ARM resource name of the IoT Central application.
-     * @param context The context to associate with this operation.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the metadata of an IoT Central application.
-     */
-    @ServiceMethod(returns = ReturnType.SINGLE)
-    Response<AppInner> getByResourceGroupWithResponse(String resourceGroupName, String resourceName, Context context);
-
-    /**
      * Create or update the metadata of an IoT Central application. The usual pattern to modify a property is to
      * retrieve the IoT Central application metadata and security metadata, and then combine them with the modified
      * values in a new body to update the IoT Central application.
-     *
+     * 
      * @param resourceGroupName The name of the resource group that contains the IoT Central application.
      * @param resourceName The ARM resource name of the IoT Central application.
      * @param app The IoT Central application metadata and security metadata.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the IoT Central application.
+     * @return the {@link SyncPoller} for polling of the IoT Central application.
      */
     @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
-    SyncPoller<PollResult<AppInner>, AppInner> beginCreateOrUpdate(
-        String resourceGroupName, String resourceName, AppInner app);
+    SyncPoller<PollResult<AppInner>, AppInner> beginCreateOrUpdate(String resourceGroupName, String resourceName,
+        AppInner app);
 
     /**
      * Create or update the metadata of an IoT Central application. The usual pattern to modify a property is to
      * retrieve the IoT Central application metadata and security metadata, and then combine them with the modified
      * values in a new body to update the IoT Central application.
-     *
+     * 
      * @param resourceGroupName The name of the resource group that contains the IoT Central application.
      * @param resourceName The ARM resource name of the IoT Central application.
      * @param app The IoT Central application metadata and security metadata.
@@ -75,17 +77,17 @@ public interface AppsClient {
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the IoT Central application.
+     * @return the {@link SyncPoller} for polling of the IoT Central application.
      */
     @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
-    SyncPoller<PollResult<AppInner>, AppInner> beginCreateOrUpdate(
-        String resourceGroupName, String resourceName, AppInner app, Context context);
+    SyncPoller<PollResult<AppInner>, AppInner> beginCreateOrUpdate(String resourceGroupName, String resourceName,
+        AppInner app, Context context);
 
     /**
      * Create or update the metadata of an IoT Central application. The usual pattern to modify a property is to
      * retrieve the IoT Central application metadata and security metadata, and then combine them with the modified
      * values in a new body to update the IoT Central application.
-     *
+     * 
      * @param resourceGroupName The name of the resource group that contains the IoT Central application.
      * @param resourceName The ARM resource name of the IoT Central application.
      * @param app The IoT Central application metadata and security metadata.
@@ -101,7 +103,7 @@ public interface AppsClient {
      * Create or update the metadata of an IoT Central application. The usual pattern to modify a property is to
      * retrieve the IoT Central application metadata and security metadata, and then combine them with the modified
      * values in a new body to update the IoT Central application.
-     *
+     * 
      * @param resourceGroupName The name of the resource group that contains the IoT Central application.
      * @param resourceName The ARM resource name of the IoT Central application.
      * @param app The IoT Central application metadata and security metadata.
@@ -116,22 +118,21 @@ public interface AppsClient {
 
     /**
      * Update the metadata of an IoT Central application.
-     *
+     * 
      * @param resourceGroupName The name of the resource group that contains the IoT Central application.
      * @param resourceName The ARM resource name of the IoT Central application.
      * @param appPatch The IoT Central application metadata and security metadata.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the IoT Central application.
+     * @return the {@link SyncPoller} for polling of long-running operation.
      */
     @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
-    SyncPoller<PollResult<AppInner>, AppInner> beginUpdate(
-        String resourceGroupName, String resourceName, AppPatch appPatch);
+    SyncPoller<PollResult<Void>, Void> beginUpdate(String resourceGroupName, String resourceName, AppPatch appPatch);
 
     /**
      * Update the metadata of an IoT Central application.
-     *
+     * 
      * @param resourceGroupName The name of the resource group that contains the IoT Central application.
      * @param resourceName The ARM resource name of the IoT Central application.
      * @param appPatch The IoT Central application metadata and security metadata.
@@ -139,29 +140,28 @@ public interface AppsClient {
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the IoT Central application.
+     * @return the {@link SyncPoller} for polling of long-running operation.
      */
     @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
-    SyncPoller<PollResult<AppInner>, AppInner> beginUpdate(
-        String resourceGroupName, String resourceName, AppPatch appPatch, Context context);
+    SyncPoller<PollResult<Void>, Void> beginUpdate(String resourceGroupName, String resourceName, AppPatch appPatch,
+        Context context);
 
     /**
      * Update the metadata of an IoT Central application.
-     *
+     * 
      * @param resourceGroupName The name of the resource group that contains the IoT Central application.
      * @param resourceName The ARM resource name of the IoT Central application.
      * @param appPatch The IoT Central application metadata and security metadata.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the IoT Central application.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    AppInner update(String resourceGroupName, String resourceName, AppPatch appPatch);
+    void update(String resourceGroupName, String resourceName, AppPatch appPatch);
 
     /**
      * Update the metadata of an IoT Central application.
-     *
+     * 
      * @param resourceGroupName The name of the resource group that contains the IoT Central application.
      * @param resourceName The ARM resource name of the IoT Central application.
      * @param appPatch The IoT Central application metadata and security metadata.
@@ -169,41 +169,40 @@ public interface AppsClient {
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the IoT Central application.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    AppInner update(String resourceGroupName, String resourceName, AppPatch appPatch, Context context);
+    void update(String resourceGroupName, String resourceName, AppPatch appPatch, Context context);
 
     /**
      * Delete an IoT Central application.
-     *
+     * 
      * @param resourceGroupName The name of the resource group that contains the IoT Central application.
      * @param resourceName The ARM resource name of the IoT Central application.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the completion.
+     * @return the {@link SyncPoller} for polling of long-running operation.
      */
     @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
     SyncPoller<PollResult<Void>, Void> beginDelete(String resourceGroupName, String resourceName);
 
     /**
      * Delete an IoT Central application.
-     *
+     * 
      * @param resourceGroupName The name of the resource group that contains the IoT Central application.
      * @param resourceName The ARM resource name of the IoT Central application.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the completion.
+     * @return the {@link SyncPoller} for polling of long-running operation.
      */
     @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
     SyncPoller<PollResult<Void>, Void> beginDelete(String resourceGroupName, String resourceName, Context context);
 
     /**
      * Delete an IoT Central application.
-     *
+     * 
      * @param resourceGroupName The name of the resource group that contains the IoT Central application.
      * @param resourceName The ARM resource name of the IoT Central application.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
@@ -215,7 +214,7 @@ public interface AppsClient {
 
     /**
      * Delete an IoT Central application.
-     *
+     * 
      * @param resourceGroupName The name of the resource group that contains the IoT Central application.
      * @param resourceName The ARM resource name of the IoT Central application.
      * @param context The context to associate with this operation.
@@ -228,56 +227,72 @@ public interface AppsClient {
 
     /**
      * Get all IoT Central Applications in a subscription.
-     *
+     * 
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return all IoT Central Applications in a subscription.
+     * @return all IoT Central Applications in a subscription as paginated response with {@link PagedIterable}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
     PagedIterable<AppInner> list();
 
     /**
      * Get all IoT Central Applications in a subscription.
-     *
+     * 
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return all IoT Central Applications in a subscription.
+     * @return all IoT Central Applications in a subscription as paginated response with {@link PagedIterable}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
     PagedIterable<AppInner> list(Context context);
 
     /**
      * Get all the IoT Central Applications in a resource group.
-     *
+     * 
      * @param resourceGroupName The name of the resource group that contains the IoT Central application.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return all the IoT Central Applications in a resource group.
+     * @return all the IoT Central Applications in a resource group as paginated response with {@link PagedIterable}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
     PagedIterable<AppInner> listByResourceGroup(String resourceGroupName);
 
     /**
      * Get all the IoT Central Applications in a resource group.
-     *
+     * 
      * @param resourceGroupName The name of the resource group that contains the IoT Central application.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return all the IoT Central Applications in a resource group.
+     * @return all the IoT Central Applications in a resource group as paginated response with {@link PagedIterable}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
     PagedIterable<AppInner> listByResourceGroup(String resourceGroupName, Context context);
 
     /**
      * Check if an IoT Central application name is available.
-     *
+     * 
      * @param operationInputs Set the name parameter in the OperationInputs structure to the name of the IoT Central
-     *     application to check.
+     * application to check.
+     * @param context The context to associate with this operation.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return the properties indicating whether a given IoT Central application name or subdomain is available along
+     * with {@link Response}.
+     */
+    @ServiceMethod(returns = ReturnType.SINGLE)
+    Response<AppAvailabilityInfoInner> checkNameAvailabilityWithResponse(OperationInputs operationInputs,
+        Context context);
+
+    /**
+     * Check if an IoT Central application name is available.
+     * 
+     * @param operationInputs Set the name parameter in the OperationInputs structure to the name of the IoT Central
+     * application to check.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
@@ -287,25 +302,26 @@ public interface AppsClient {
     AppAvailabilityInfoInner checkNameAvailability(OperationInputs operationInputs);
 
     /**
-     * Check if an IoT Central application name is available.
-     *
-     * @param operationInputs Set the name parameter in the OperationInputs structure to the name of the IoT Central
-     *     application to check.
+     * Check if an IoT Central application subdomain is available.
+     * 
+     * @param operationInputs Set the name parameter in the OperationInputs structure to the subdomain of the IoT
+     * Central application to check.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the properties indicating whether a given IoT Central application name or subdomain is available.
+     * @return the properties indicating whether a given IoT Central application name or subdomain is available along
+     * with {@link Response}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    Response<AppAvailabilityInfoInner> checkNameAvailabilityWithResponse(
-        OperationInputs operationInputs, Context context);
+    Response<AppAvailabilityInfoInner> checkSubdomainAvailabilityWithResponse(OperationInputs operationInputs,
+        Context context);
 
     /**
      * Check if an IoT Central application subdomain is available.
-     *
+     * 
      * @param operationInputs Set the name parameter in the OperationInputs structure to the subdomain of the IoT
-     *     Central application to check.
+     * Central application to check.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
@@ -315,38 +331,23 @@ public interface AppsClient {
     AppAvailabilityInfoInner checkSubdomainAvailability(OperationInputs operationInputs);
 
     /**
-     * Check if an IoT Central application subdomain is available.
-     *
-     * @param operationInputs Set the name parameter in the OperationInputs structure to the subdomain of the IoT
-     *     Central application to check.
-     * @param context The context to associate with this operation.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the properties indicating whether a given IoT Central application name or subdomain is available.
-     */
-    @ServiceMethod(returns = ReturnType.SINGLE)
-    Response<AppAvailabilityInfoInner> checkSubdomainAvailabilityWithResponse(
-        OperationInputs operationInputs, Context context);
-
-    /**
      * Get all available application templates.
-     *
+     * 
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return all available application templates.
+     * @return all available application templates as paginated response with {@link PagedIterable}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
     PagedIterable<AppTemplateInner> listTemplates();
 
     /**
      * Get all available application templates.
-     *
+     * 
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return all available application templates.
+     * @return all available application templates as paginated response with {@link PagedIterable}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
     PagedIterable<AppTemplateInner> listTemplates(Context context);

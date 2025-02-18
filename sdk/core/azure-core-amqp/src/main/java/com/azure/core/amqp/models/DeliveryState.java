@@ -10,10 +10,12 @@ import java.util.Collection;
 /**
  * States for a message delivery.
  *
- * @see <a href="http://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-messaging-v1.0-os.html#section-delivery-state">Delivery
- *     state</a>
- * @see <a href="http://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-transactions-v1.0-os.html#section-txn-work">Transactional
- *     work</a>
+ * @see <a href=
+ * "http://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-messaging-v1.0-os.html#section-delivery-state">Delivery
+ * state</a>
+ * @see <a href=
+ * "http://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-transactions-v1.0-os.html#section-txn-work">Transactional
+ * work</a>
  */
 public final class DeliveryState extends ExpandableStringEnum<DeliveryState> {
     /**
@@ -40,6 +42,18 @@ public final class DeliveryState extends ExpandableStringEnum<DeliveryState> {
      * Indicates that this delivery is part of a transaction.
      */
     public static final DeliveryState TRANSACTIONAL = fromString("TRANSACTIONAL", DeliveryState.class);
+
+    /**
+     * Creates a new instance of {@link DeliveryState} without a {@link #toString()} value.
+     * <p>
+     * This constructor shouldn't be called as it will produce a {@link DeliveryState} which doesn't have a String
+     * enum value.
+     *
+     * @deprecated Use one of the constants or the {@link #fromString(String, Class)} factory method.
+     */
+    @Deprecated
+    public DeliveryState() {
+    }
 
     /**
      * Gets the corresponding delivery state from its string representation.

@@ -4,24 +4,33 @@
 
 package com.azure.resourcemanager.batch.models;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonValue;
-
-/** Defines values for ComputeNodeDeallocationOption. */
+/**
+ * Determines what to do with a node and its running task(s) after it has been selected for deallocation.
+ */
 public enum ComputeNodeDeallocationOption {
-    /** Enum value Requeue. */
+    /**
+     * Enum value Requeue.
+     */
     REQUEUE("Requeue"),
 
-    /** Enum value Terminate. */
+    /**
+     * Enum value Terminate.
+     */
     TERMINATE("Terminate"),
 
-    /** Enum value TaskCompletion. */
+    /**
+     * Enum value TaskCompletion.
+     */
     TASK_COMPLETION("TaskCompletion"),
 
-    /** Enum value RetainedData. */
+    /**
+     * Enum value RetainedData.
+     */
     RETAINED_DATA("RetainedData");
 
-    /** The actual serialized value for a ComputeNodeDeallocationOption instance. */
+    /**
+     * The actual serialized value for a ComputeNodeDeallocationOption instance.
+     */
     private final String value;
 
     ComputeNodeDeallocationOption(String value) {
@@ -30,12 +39,14 @@ public enum ComputeNodeDeallocationOption {
 
     /**
      * Parses a serialized value to a ComputeNodeDeallocationOption instance.
-     *
+     * 
      * @param value the serialized value to parse.
      * @return the parsed ComputeNodeDeallocationOption object, or null if unable to parse.
      */
-    @JsonCreator
     public static ComputeNodeDeallocationOption fromString(String value) {
+        if (value == null) {
+            return null;
+        }
         ComputeNodeDeallocationOption[] items = ComputeNodeDeallocationOption.values();
         for (ComputeNodeDeallocationOption item : items) {
             if (item.toString().equalsIgnoreCase(value)) {
@@ -45,7 +56,9 @@ public enum ComputeNodeDeallocationOption {
         return null;
     }
 
-    @JsonValue
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String toString() {
         return this.value;

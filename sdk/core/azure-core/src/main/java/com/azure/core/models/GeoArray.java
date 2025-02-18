@@ -15,14 +15,18 @@ import java.util.function.Predicate;
 import java.util.function.UnaryOperator;
 
 /**
- * A read-only list of geometry coordinates.
+ * <p>Represents a read-only list of geometry coordinates.</p>
+ *
+ * <p>This class encapsulates a list of geometry coordinates and provides methods to access these coordinates.
+ * The coordinates can be of any type {@code T}.</p>
  *
  * @param <T> The type of geometry coordinates.
  */
 @Immutable
 final class GeoArray<T> extends AbstractList<T> {
     private static final String NO_MUTATION_MESSAGE = "GeoArray cannot be mutated.";
-    private final ClientLogger logger = new ClientLogger(GeoArray.class);
+    // GeoArray is a commonly used model, use a static logger.
+    private static final ClientLogger LOGGER = new ClientLogger(GeoArray.class);
 
     private final Object container;
 
@@ -44,7 +48,7 @@ final class GeoArray<T> extends AbstractList<T> {
         } else if (container instanceof GeoPolygonCollection) {
             return (T) ((GeoPolygonCollection) container).getPolygons().get(index).getCoordinates();
         } else {
-            throw logger.logExceptionAsError(new IllegalStateException());
+            throw LOGGER.logExceptionAsError(new IllegalStateException());
         }
     }
 
@@ -61,7 +65,7 @@ final class GeoArray<T> extends AbstractList<T> {
         } else if (container instanceof GeoPolygonCollection) {
             return ((GeoPolygonCollection) container).getPolygons().size();
         } else {
-            throw logger.logExceptionAsError(new IllegalStateException());
+            throw LOGGER.logExceptionAsError(new IllegalStateException());
         }
     }
 
@@ -74,7 +78,7 @@ final class GeoArray<T> extends AbstractList<T> {
      */
     @Override
     public boolean remove(Object o) {
-        throw logger.logExceptionAsError(new UnsupportedOperationException(NO_MUTATION_MESSAGE));
+        throw LOGGER.logExceptionAsError(new UnsupportedOperationException(NO_MUTATION_MESSAGE));
     }
 
     /**
@@ -86,7 +90,7 @@ final class GeoArray<T> extends AbstractList<T> {
      */
     @Override
     public boolean removeAll(Collection<?> c) {
-        throw logger.logExceptionAsError(new UnsupportedOperationException(NO_MUTATION_MESSAGE));
+        throw LOGGER.logExceptionAsError(new UnsupportedOperationException(NO_MUTATION_MESSAGE));
     }
 
     /**
@@ -98,7 +102,7 @@ final class GeoArray<T> extends AbstractList<T> {
      */
     @Override
     public boolean retainAll(Collection<?> c) {
-        throw logger.logExceptionAsError(new UnsupportedOperationException(NO_MUTATION_MESSAGE));
+        throw LOGGER.logExceptionAsError(new UnsupportedOperationException(NO_MUTATION_MESSAGE));
     }
 
     /**
@@ -109,7 +113,7 @@ final class GeoArray<T> extends AbstractList<T> {
      */
     @Override
     public void replaceAll(UnaryOperator<T> operator) {
-        throw logger.logExceptionAsError(new UnsupportedOperationException(NO_MUTATION_MESSAGE));
+        throw LOGGER.logExceptionAsError(new UnsupportedOperationException(NO_MUTATION_MESSAGE));
     }
 
     /**
@@ -120,7 +124,7 @@ final class GeoArray<T> extends AbstractList<T> {
      */
     @Override
     public void sort(Comparator<? super T> c) {
-        throw logger.logExceptionAsError(new UnsupportedOperationException(NO_MUTATION_MESSAGE));
+        throw LOGGER.logExceptionAsError(new UnsupportedOperationException(NO_MUTATION_MESSAGE));
     }
 
     /**
@@ -132,7 +136,7 @@ final class GeoArray<T> extends AbstractList<T> {
      */
     @Override
     public boolean removeIf(Predicate<? super T> filter) {
-        throw logger.logExceptionAsError(new UnsupportedOperationException(NO_MUTATION_MESSAGE));
+        throw LOGGER.logExceptionAsError(new UnsupportedOperationException(NO_MUTATION_MESSAGE));
     }
 
     /**
@@ -145,7 +149,7 @@ final class GeoArray<T> extends AbstractList<T> {
      */
     @Override
     public List<T> subList(int fromIndex, int toIndex) {
-        throw logger.logExceptionAsError(new UnsupportedOperationException("GeoArray does not support sub lists."));
+        throw LOGGER.logExceptionAsError(new UnsupportedOperationException("GeoArray does not support sub lists."));
     }
 
     @Override

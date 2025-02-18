@@ -13,10 +13,9 @@ import com.azure.resourcemanager.synapse.fluent.KeysClient;
 import com.azure.resourcemanager.synapse.fluent.models.KeyInner;
 import com.azure.resourcemanager.synapse.models.Key;
 import com.azure.resourcemanager.synapse.models.Keys;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 public final class KeysImpl implements Keys {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(KeysImpl.class);
+    private static final ClientLogger LOGGER = new ClientLogger(KeysImpl.class);
 
     private final KeysClient innerClient;
 
@@ -29,12 +28,24 @@ public final class KeysImpl implements Keys {
 
     public PagedIterable<Key> listByWorkspace(String resourceGroupName, String workspaceName) {
         PagedIterable<KeyInner> inner = this.serviceClient().listByWorkspace(resourceGroupName, workspaceName);
-        return Utils.mapPage(inner, inner1 -> new KeyImpl(inner1, this.manager()));
+        return ResourceManagerUtils.mapPage(inner, inner1 -> new KeyImpl(inner1, this.manager()));
     }
 
     public PagedIterable<Key> listByWorkspace(String resourceGroupName, String workspaceName, Context context) {
         PagedIterable<KeyInner> inner = this.serviceClient().listByWorkspace(resourceGroupName, workspaceName, context);
-        return Utils.mapPage(inner, inner1 -> new KeyImpl(inner1, this.manager()));
+        return ResourceManagerUtils.mapPage(inner, inner1 -> new KeyImpl(inner1, this.manager()));
+    }
+
+    public Response<Key> getWithResponse(String resourceGroupName, String workspaceName, String keyName,
+        Context context) {
+        Response<KeyInner> inner
+            = this.serviceClient().getWithResponse(resourceGroupName, workspaceName, keyName, context);
+        if (inner != null) {
+            return new SimpleResponse<>(inner.getRequest(), inner.getStatusCode(), inner.getHeaders(),
+                new KeyImpl(inner.getValue(), this.manager()));
+        } else {
+            return null;
+        }
     }
 
     public Key get(String resourceGroupName, String workspaceName, String keyName) {
@@ -46,15 +57,12 @@ public final class KeysImpl implements Keys {
         }
     }
 
-    public Response<Key> getWithResponse(
-        String resourceGroupName, String workspaceName, String keyName, Context context) {
-        Response<KeyInner> inner =
-            this.serviceClient().getWithResponse(resourceGroupName, workspaceName, keyName, context);
+    public Response<Key> deleteWithResponse(String resourceGroupName, String workspaceName, String keyName,
+        Context context) {
+        Response<KeyInner> inner
+            = this.serviceClient().deleteWithResponse(resourceGroupName, workspaceName, keyName, context);
         if (inner != null) {
-            return new SimpleResponse<>(
-                inner.getRequest(),
-                inner.getStatusCode(),
-                inner.getHeaders(),
+            return new SimpleResponse<>(inner.getRequest(), inner.getStatusCode(), inner.getHeaders(),
                 new KeyImpl(inner.getValue(), this.manager()));
         } else {
             return null;
@@ -70,121 +78,78 @@ public final class KeysImpl implements Keys {
         }
     }
 
-    public Response<Key> deleteWithResponse(
-        String resourceGroupName, String workspaceName, String keyName, Context context) {
-        Response<KeyInner> inner =
-            this.serviceClient().deleteWithResponse(resourceGroupName, workspaceName, keyName, context);
-        if (inner != null) {
-            return new SimpleResponse<>(
-                inner.getRequest(),
-                inner.getStatusCode(),
-                inner.getHeaders(),
-                new KeyImpl(inner.getValue(), this.manager()));
-        } else {
-            return null;
-        }
-    }
-
     public Key getById(String id) {
-        String resourceGroupName = Utils.getValueFromIdByName(id, "resourceGroups");
+        String resourceGroupName = ResourceManagerUtils.getValueFromIdByName(id, "resourceGroups");
         if (resourceGroupName == null) {
-            throw logger
-                .logExceptionAsError(
-                    new IllegalArgumentException(
-                        String
-                            .format("The resource ID '%s' is not valid. Missing path segment 'resourceGroups'.", id)));
+            throw LOGGER.logExceptionAsError(new IllegalArgumentException(
+                String.format("The resource ID '%s' is not valid. Missing path segment 'resourceGroups'.", id)));
         }
-        String workspaceName = Utils.getValueFromIdByName(id, "workspaces");
+        String workspaceName = ResourceManagerUtils.getValueFromIdByName(id, "workspaces");
         if (workspaceName == null) {
-            throw logger
-                .logExceptionAsError(
-                    new IllegalArgumentException(
-                        String.format("The resource ID '%s' is not valid. Missing path segment 'workspaces'.", id)));
+            throw LOGGER.logExceptionAsError(new IllegalArgumentException(
+                String.format("The resource ID '%s' is not valid. Missing path segment 'workspaces'.", id)));
         }
-        String keyName = Utils.getValueFromIdByName(id, "keys");
+        String keyName = ResourceManagerUtils.getValueFromIdByName(id, "keys");
         if (keyName == null) {
-            throw logger
-                .logExceptionAsError(
-                    new IllegalArgumentException(
-                        String.format("The resource ID '%s' is not valid. Missing path segment 'keys'.", id)));
+            throw LOGGER.logExceptionAsError(new IllegalArgumentException(
+                String.format("The resource ID '%s' is not valid. Missing path segment 'keys'.", id)));
         }
         return this.getWithResponse(resourceGroupName, workspaceName, keyName, Context.NONE).getValue();
     }
 
     public Response<Key> getByIdWithResponse(String id, Context context) {
-        String resourceGroupName = Utils.getValueFromIdByName(id, "resourceGroups");
+        String resourceGroupName = ResourceManagerUtils.getValueFromIdByName(id, "resourceGroups");
         if (resourceGroupName == null) {
-            throw logger
-                .logExceptionAsError(
-                    new IllegalArgumentException(
-                        String
-                            .format("The resource ID '%s' is not valid. Missing path segment 'resourceGroups'.", id)));
+            throw LOGGER.logExceptionAsError(new IllegalArgumentException(
+                String.format("The resource ID '%s' is not valid. Missing path segment 'resourceGroups'.", id)));
         }
-        String workspaceName = Utils.getValueFromIdByName(id, "workspaces");
+        String workspaceName = ResourceManagerUtils.getValueFromIdByName(id, "workspaces");
         if (workspaceName == null) {
-            throw logger
-                .logExceptionAsError(
-                    new IllegalArgumentException(
-                        String.format("The resource ID '%s' is not valid. Missing path segment 'workspaces'.", id)));
+            throw LOGGER.logExceptionAsError(new IllegalArgumentException(
+                String.format("The resource ID '%s' is not valid. Missing path segment 'workspaces'.", id)));
         }
-        String keyName = Utils.getValueFromIdByName(id, "keys");
+        String keyName = ResourceManagerUtils.getValueFromIdByName(id, "keys");
         if (keyName == null) {
-            throw logger
-                .logExceptionAsError(
-                    new IllegalArgumentException(
-                        String.format("The resource ID '%s' is not valid. Missing path segment 'keys'.", id)));
+            throw LOGGER.logExceptionAsError(new IllegalArgumentException(
+                String.format("The resource ID '%s' is not valid. Missing path segment 'keys'.", id)));
         }
         return this.getWithResponse(resourceGroupName, workspaceName, keyName, context);
     }
 
     public Key deleteById(String id) {
-        String resourceGroupName = Utils.getValueFromIdByName(id, "resourceGroups");
+        String resourceGroupName = ResourceManagerUtils.getValueFromIdByName(id, "resourceGroups");
         if (resourceGroupName == null) {
-            throw logger
-                .logExceptionAsError(
-                    new IllegalArgumentException(
-                        String
-                            .format("The resource ID '%s' is not valid. Missing path segment 'resourceGroups'.", id)));
+            throw LOGGER.logExceptionAsError(new IllegalArgumentException(
+                String.format("The resource ID '%s' is not valid. Missing path segment 'resourceGroups'.", id)));
         }
-        String workspaceName = Utils.getValueFromIdByName(id, "workspaces");
+        String workspaceName = ResourceManagerUtils.getValueFromIdByName(id, "workspaces");
         if (workspaceName == null) {
-            throw logger
-                .logExceptionAsError(
-                    new IllegalArgumentException(
-                        String.format("The resource ID '%s' is not valid. Missing path segment 'workspaces'.", id)));
+            throw LOGGER.logExceptionAsError(new IllegalArgumentException(
+                String.format("The resource ID '%s' is not valid. Missing path segment 'workspaces'.", id)));
         }
-        String keyName = Utils.getValueFromIdByName(id, "keys");
+        String keyName = ResourceManagerUtils.getValueFromIdByName(id, "keys");
         if (keyName == null) {
-            throw logger
-                .logExceptionAsError(
-                    new IllegalArgumentException(
-                        String.format("The resource ID '%s' is not valid. Missing path segment 'keys'.", id)));
+            throw LOGGER.logExceptionAsError(new IllegalArgumentException(
+                String.format("The resource ID '%s' is not valid. Missing path segment 'keys'.", id)));
         }
         return this.deleteWithResponse(resourceGroupName, workspaceName, keyName, Context.NONE).getValue();
     }
 
     public Response<Key> deleteByIdWithResponse(String id, Context context) {
-        String resourceGroupName = Utils.getValueFromIdByName(id, "resourceGroups");
+        String resourceGroupName = ResourceManagerUtils.getValueFromIdByName(id, "resourceGroups");
         if (resourceGroupName == null) {
-            throw logger
-                .logExceptionAsError(
-                    new IllegalArgumentException(
-                        String
-                            .format("The resource ID '%s' is not valid. Missing path segment 'resourceGroups'.", id)));
+            throw LOGGER.logExceptionAsError(new IllegalArgumentException(
+                String.format("The resource ID '%s' is not valid. Missing path segment 'resourceGroups'.", id)));
         }
-        String workspaceName = Utils.getValueFromIdByName(id, "workspaces");
+        String workspaceName = ResourceManagerUtils.getValueFromIdByName(id, "workspaces");
         if (workspaceName == null) {
-            throw logger
-                .logExceptionAsError(
-                    new IllegalArgumentException(
-                        String.format("The resource ID '%s' is not valid. Missing path segment 'workspaces'.", id)));
+            throw LOGGER.logExceptionAsError(new IllegalArgumentException(
+                String.format("The resource ID '%s' is not valid. Missing path segment 'workspaces'.", id)));
         }
-        String keyName = Utils.getValueFromIdByName(id, "keys");
+        String keyName = ResourceManagerUtils.getValueFromIdByName(id, "keys");
         if (keyName == null) {
-            throw logger
-                .logExceptionAsError(
-                    new IllegalArgumentException(
-                        String.format("The resource ID '%s' is not valid. Missing path segment 'keys'.", id)));
+            throw LOGGER.logExceptionAsError(new IllegalArgumentException(
+                String.format("The resource ID '%s' is not valid. Missing path segment 'keys'.", id)));
         }
         return this.deleteWithResponse(resourceGroupName, workspaceName, keyName, context);
     }

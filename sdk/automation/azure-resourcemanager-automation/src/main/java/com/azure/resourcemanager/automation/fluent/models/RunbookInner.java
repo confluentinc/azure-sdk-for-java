@@ -5,125 +5,68 @@
 package com.azure.resourcemanager.automation.fluent.models;
 
 import com.azure.core.annotation.Fluent;
-import com.azure.core.annotation.JsonFlatten;
 import com.azure.core.management.Resource;
-import com.azure.core.util.logging.ClientLogger;
+import com.azure.json.JsonReader;
+import com.azure.json.JsonToken;
+import com.azure.json.JsonWriter;
 import com.azure.resourcemanager.automation.models.ContentLink;
 import com.azure.resourcemanager.automation.models.RunbookParameter;
 import com.azure.resourcemanager.automation.models.RunbookProvisioningState;
 import com.azure.resourcemanager.automation.models.RunbookState;
 import com.azure.resourcemanager.automation.models.RunbookTypeEnum;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import java.io.IOException;
 import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Map;
 
-/** Definition of the runbook type. */
-@JsonFlatten
+/**
+ * Definition of the runbook type.
+ */
 @Fluent
-public class RunbookInner extends Resource {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(RunbookInner.class);
+public final class RunbookInner extends Resource {
+    /*
+     * Gets or sets the runbook properties.
+     */
+    private RunbookPropertiesInner innerProperties;
 
     /*
      * Gets or sets the etag of the resource.
      */
-    @JsonProperty(value = "etag")
     private String etag;
 
     /*
-     * Gets or sets the type of the runbook.
+     * The type of the resource.
      */
-    @JsonProperty(value = "properties.runbookType")
-    private RunbookTypeEnum runbookType;
+    private String type;
 
     /*
-     * Gets or sets the published runbook content link.
+     * The name of the resource.
      */
-    @JsonProperty(value = "properties.publishContentLink")
-    private ContentLink publishContentLink;
+    private String name;
 
     /*
-     * Gets or sets the state of the runbook.
+     * Fully qualified resource Id for the resource.
      */
-    @JsonProperty(value = "properties.state")
-    private RunbookState state;
+    private String id;
 
-    /*
-     * Gets or sets verbose log option.
+    /**
+     * Creates an instance of RunbookInner class.
      */
-    @JsonProperty(value = "properties.logVerbose")
-    private Boolean logVerbose;
+    public RunbookInner() {
+    }
 
-    /*
-     * Gets or sets progress log option.
+    /**
+     * Get the innerProperties property: Gets or sets the runbook properties.
+     * 
+     * @return the innerProperties value.
      */
-    @JsonProperty(value = "properties.logProgress")
-    private Boolean logProgress;
-
-    /*
-     * Gets or sets the option to log activity trace of the runbook.
-     */
-    @JsonProperty(value = "properties.logActivityTrace")
-    private Integer logActivityTrace;
-
-    /*
-     * Gets or sets the job count of the runbook.
-     */
-    @JsonProperty(value = "properties.jobCount")
-    private Integer jobCount;
-
-    /*
-     * Gets or sets the runbook parameters.
-     */
-    @JsonProperty(value = "properties.parameters")
-    private Map<String, RunbookParameter> parameters;
-
-    /*
-     * Gets or sets the runbook output types.
-     */
-    @JsonProperty(value = "properties.outputTypes")
-    private List<String> outputTypes;
-
-    /*
-     * Gets or sets the draft runbook properties.
-     */
-    @JsonProperty(value = "properties.draft")
-    private RunbookDraftInner draft;
-
-    /*
-     * Gets or sets the provisioning state of the runbook.
-     */
-    @JsonProperty(value = "properties.provisioningState")
-    private RunbookProvisioningState provisioningState;
-
-    /*
-     * Gets or sets the last modified by.
-     */
-    @JsonProperty(value = "properties.lastModifiedBy")
-    private String lastModifiedBy;
-
-    /*
-     * Gets or sets the creation time.
-     */
-    @JsonProperty(value = "properties.creationTime")
-    private OffsetDateTime creationTime;
-
-    /*
-     * Gets or sets the last modified time.
-     */
-    @JsonProperty(value = "properties.lastModifiedTime")
-    private OffsetDateTime lastModifiedTime;
-
-    /*
-     * Gets or sets the description.
-     */
-    @JsonProperty(value = "properties.description")
-    private String description;
+    private RunbookPropertiesInner innerProperties() {
+        return this.innerProperties;
+    }
 
     /**
      * Get the etag property: Gets or sets the etag of the resource.
-     *
+     * 
      * @return the etag value.
      */
     public String etag() {
@@ -132,7 +75,7 @@ public class RunbookInner extends Resource {
 
     /**
      * Set the etag property: Gets or sets the etag of the resource.
-     *
+     * 
      * @param etag the etag value to set.
      * @return the RunbookInner object itself.
      */
@@ -142,313 +85,47 @@ public class RunbookInner extends Resource {
     }
 
     /**
-     * Get the runbookType property: Gets or sets the type of the runbook.
-     *
-     * @return the runbookType value.
+     * Get the type property: The type of the resource.
+     * 
+     * @return the type value.
      */
-    public RunbookTypeEnum runbookType() {
-        return this.runbookType;
+    @Override
+    public String type() {
+        return this.type;
     }
 
     /**
-     * Set the runbookType property: Gets or sets the type of the runbook.
-     *
-     * @param runbookType the runbookType value to set.
-     * @return the RunbookInner object itself.
+     * Get the name property: The name of the resource.
+     * 
+     * @return the name value.
      */
-    public RunbookInner withRunbookType(RunbookTypeEnum runbookType) {
-        this.runbookType = runbookType;
-        return this;
+    @Override
+    public String name() {
+        return this.name;
     }
 
     /**
-     * Get the publishContentLink property: Gets or sets the published runbook content link.
-     *
-     * @return the publishContentLink value.
+     * Get the id property: Fully qualified resource Id for the resource.
+     * 
+     * @return the id value.
      */
-    public ContentLink publishContentLink() {
-        return this.publishContentLink;
+    @Override
+    public String id() {
+        return this.id;
     }
 
     /**
-     * Set the publishContentLink property: Gets or sets the published runbook content link.
-     *
-     * @param publishContentLink the publishContentLink value to set.
-     * @return the RunbookInner object itself.
+     * {@inheritDoc}
      */
-    public RunbookInner withPublishContentLink(ContentLink publishContentLink) {
-        this.publishContentLink = publishContentLink;
-        return this;
-    }
-
-    /**
-     * Get the state property: Gets or sets the state of the runbook.
-     *
-     * @return the state value.
-     */
-    public RunbookState state() {
-        return this.state;
-    }
-
-    /**
-     * Set the state property: Gets or sets the state of the runbook.
-     *
-     * @param state the state value to set.
-     * @return the RunbookInner object itself.
-     */
-    public RunbookInner withState(RunbookState state) {
-        this.state = state;
-        return this;
-    }
-
-    /**
-     * Get the logVerbose property: Gets or sets verbose log option.
-     *
-     * @return the logVerbose value.
-     */
-    public Boolean logVerbose() {
-        return this.logVerbose;
-    }
-
-    /**
-     * Set the logVerbose property: Gets or sets verbose log option.
-     *
-     * @param logVerbose the logVerbose value to set.
-     * @return the RunbookInner object itself.
-     */
-    public RunbookInner withLogVerbose(Boolean logVerbose) {
-        this.logVerbose = logVerbose;
-        return this;
-    }
-
-    /**
-     * Get the logProgress property: Gets or sets progress log option.
-     *
-     * @return the logProgress value.
-     */
-    public Boolean logProgress() {
-        return this.logProgress;
-    }
-
-    /**
-     * Set the logProgress property: Gets or sets progress log option.
-     *
-     * @param logProgress the logProgress value to set.
-     * @return the RunbookInner object itself.
-     */
-    public RunbookInner withLogProgress(Boolean logProgress) {
-        this.logProgress = logProgress;
-        return this;
-    }
-
-    /**
-     * Get the logActivityTrace property: Gets or sets the option to log activity trace of the runbook.
-     *
-     * @return the logActivityTrace value.
-     */
-    public Integer logActivityTrace() {
-        return this.logActivityTrace;
-    }
-
-    /**
-     * Set the logActivityTrace property: Gets or sets the option to log activity trace of the runbook.
-     *
-     * @param logActivityTrace the logActivityTrace value to set.
-     * @return the RunbookInner object itself.
-     */
-    public RunbookInner withLogActivityTrace(Integer logActivityTrace) {
-        this.logActivityTrace = logActivityTrace;
-        return this;
-    }
-
-    /**
-     * Get the jobCount property: Gets or sets the job count of the runbook.
-     *
-     * @return the jobCount value.
-     */
-    public Integer jobCount() {
-        return this.jobCount;
-    }
-
-    /**
-     * Set the jobCount property: Gets or sets the job count of the runbook.
-     *
-     * @param jobCount the jobCount value to set.
-     * @return the RunbookInner object itself.
-     */
-    public RunbookInner withJobCount(Integer jobCount) {
-        this.jobCount = jobCount;
-        return this;
-    }
-
-    /**
-     * Get the parameters property: Gets or sets the runbook parameters.
-     *
-     * @return the parameters value.
-     */
-    public Map<String, RunbookParameter> parameters() {
-        return this.parameters;
-    }
-
-    /**
-     * Set the parameters property: Gets or sets the runbook parameters.
-     *
-     * @param parameters the parameters value to set.
-     * @return the RunbookInner object itself.
-     */
-    public RunbookInner withParameters(Map<String, RunbookParameter> parameters) {
-        this.parameters = parameters;
-        return this;
-    }
-
-    /**
-     * Get the outputTypes property: Gets or sets the runbook output types.
-     *
-     * @return the outputTypes value.
-     */
-    public List<String> outputTypes() {
-        return this.outputTypes;
-    }
-
-    /**
-     * Set the outputTypes property: Gets or sets the runbook output types.
-     *
-     * @param outputTypes the outputTypes value to set.
-     * @return the RunbookInner object itself.
-     */
-    public RunbookInner withOutputTypes(List<String> outputTypes) {
-        this.outputTypes = outputTypes;
-        return this;
-    }
-
-    /**
-     * Get the draft property: Gets or sets the draft runbook properties.
-     *
-     * @return the draft value.
-     */
-    public RunbookDraftInner draft() {
-        return this.draft;
-    }
-
-    /**
-     * Set the draft property: Gets or sets the draft runbook properties.
-     *
-     * @param draft the draft value to set.
-     * @return the RunbookInner object itself.
-     */
-    public RunbookInner withDraft(RunbookDraftInner draft) {
-        this.draft = draft;
-        return this;
-    }
-
-    /**
-     * Get the provisioningState property: Gets or sets the provisioning state of the runbook.
-     *
-     * @return the provisioningState value.
-     */
-    public RunbookProvisioningState provisioningState() {
-        return this.provisioningState;
-    }
-
-    /**
-     * Set the provisioningState property: Gets or sets the provisioning state of the runbook.
-     *
-     * @param provisioningState the provisioningState value to set.
-     * @return the RunbookInner object itself.
-     */
-    public RunbookInner withProvisioningState(RunbookProvisioningState provisioningState) {
-        this.provisioningState = provisioningState;
-        return this;
-    }
-
-    /**
-     * Get the lastModifiedBy property: Gets or sets the last modified by.
-     *
-     * @return the lastModifiedBy value.
-     */
-    public String lastModifiedBy() {
-        return this.lastModifiedBy;
-    }
-
-    /**
-     * Set the lastModifiedBy property: Gets or sets the last modified by.
-     *
-     * @param lastModifiedBy the lastModifiedBy value to set.
-     * @return the RunbookInner object itself.
-     */
-    public RunbookInner withLastModifiedBy(String lastModifiedBy) {
-        this.lastModifiedBy = lastModifiedBy;
-        return this;
-    }
-
-    /**
-     * Get the creationTime property: Gets or sets the creation time.
-     *
-     * @return the creationTime value.
-     */
-    public OffsetDateTime creationTime() {
-        return this.creationTime;
-    }
-
-    /**
-     * Set the creationTime property: Gets or sets the creation time.
-     *
-     * @param creationTime the creationTime value to set.
-     * @return the RunbookInner object itself.
-     */
-    public RunbookInner withCreationTime(OffsetDateTime creationTime) {
-        this.creationTime = creationTime;
-        return this;
-    }
-
-    /**
-     * Get the lastModifiedTime property: Gets or sets the last modified time.
-     *
-     * @return the lastModifiedTime value.
-     */
-    public OffsetDateTime lastModifiedTime() {
-        return this.lastModifiedTime;
-    }
-
-    /**
-     * Set the lastModifiedTime property: Gets or sets the last modified time.
-     *
-     * @param lastModifiedTime the lastModifiedTime value to set.
-     * @return the RunbookInner object itself.
-     */
-    public RunbookInner withLastModifiedTime(OffsetDateTime lastModifiedTime) {
-        this.lastModifiedTime = lastModifiedTime;
-        return this;
-    }
-
-    /**
-     * Get the description property: Gets or sets the description.
-     *
-     * @return the description value.
-     */
-    public String description() {
-        return this.description;
-    }
-
-    /**
-     * Set the description property: Gets or sets the description.
-     *
-     * @param description the description value to set.
-     * @return the RunbookInner object itself.
-     */
-    public RunbookInner withDescription(String description) {
-        this.description = description;
-        return this;
-    }
-
-    /** {@inheritDoc} */
     @Override
     public RunbookInner withLocation(String location) {
         super.withLocation(location);
         return this;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public RunbookInner withTags(Map<String, String> tags) {
         super.withTags(tags);
@@ -456,26 +133,411 @@ public class RunbookInner extends Resource {
     }
 
     /**
+     * Get the runbookType property: Gets or sets the type of the runbook.
+     * 
+     * @return the runbookType value.
+     */
+    public RunbookTypeEnum runbookType() {
+        return this.innerProperties() == null ? null : this.innerProperties().runbookType();
+    }
+
+    /**
+     * Set the runbookType property: Gets or sets the type of the runbook.
+     * 
+     * @param runbookType the runbookType value to set.
+     * @return the RunbookInner object itself.
+     */
+    public RunbookInner withRunbookType(RunbookTypeEnum runbookType) {
+        if (this.innerProperties() == null) {
+            this.innerProperties = new RunbookPropertiesInner();
+        }
+        this.innerProperties().withRunbookType(runbookType);
+        return this;
+    }
+
+    /**
+     * Get the publishContentLink property: Gets or sets the published runbook content link.
+     * 
+     * @return the publishContentLink value.
+     */
+    public ContentLink publishContentLink() {
+        return this.innerProperties() == null ? null : this.innerProperties().publishContentLink();
+    }
+
+    /**
+     * Set the publishContentLink property: Gets or sets the published runbook content link.
+     * 
+     * @param publishContentLink the publishContentLink value to set.
+     * @return the RunbookInner object itself.
+     */
+    public RunbookInner withPublishContentLink(ContentLink publishContentLink) {
+        if (this.innerProperties() == null) {
+            this.innerProperties = new RunbookPropertiesInner();
+        }
+        this.innerProperties().withPublishContentLink(publishContentLink);
+        return this;
+    }
+
+    /**
+     * Get the state property: Gets or sets the state of the runbook.
+     * 
+     * @return the state value.
+     */
+    public RunbookState state() {
+        return this.innerProperties() == null ? null : this.innerProperties().state();
+    }
+
+    /**
+     * Set the state property: Gets or sets the state of the runbook.
+     * 
+     * @param state the state value to set.
+     * @return the RunbookInner object itself.
+     */
+    public RunbookInner withState(RunbookState state) {
+        if (this.innerProperties() == null) {
+            this.innerProperties = new RunbookPropertiesInner();
+        }
+        this.innerProperties().withState(state);
+        return this;
+    }
+
+    /**
+     * Get the logVerbose property: Gets or sets verbose log option.
+     * 
+     * @return the logVerbose value.
+     */
+    public Boolean logVerbose() {
+        return this.innerProperties() == null ? null : this.innerProperties().logVerbose();
+    }
+
+    /**
+     * Set the logVerbose property: Gets or sets verbose log option.
+     * 
+     * @param logVerbose the logVerbose value to set.
+     * @return the RunbookInner object itself.
+     */
+    public RunbookInner withLogVerbose(Boolean logVerbose) {
+        if (this.innerProperties() == null) {
+            this.innerProperties = new RunbookPropertiesInner();
+        }
+        this.innerProperties().withLogVerbose(logVerbose);
+        return this;
+    }
+
+    /**
+     * Get the logProgress property: Gets or sets progress log option.
+     * 
+     * @return the logProgress value.
+     */
+    public Boolean logProgress() {
+        return this.innerProperties() == null ? null : this.innerProperties().logProgress();
+    }
+
+    /**
+     * Set the logProgress property: Gets or sets progress log option.
+     * 
+     * @param logProgress the logProgress value to set.
+     * @return the RunbookInner object itself.
+     */
+    public RunbookInner withLogProgress(Boolean logProgress) {
+        if (this.innerProperties() == null) {
+            this.innerProperties = new RunbookPropertiesInner();
+        }
+        this.innerProperties().withLogProgress(logProgress);
+        return this;
+    }
+
+    /**
+     * Get the logActivityTrace property: Gets or sets the option to log activity trace of the runbook.
+     * 
+     * @return the logActivityTrace value.
+     */
+    public Integer logActivityTrace() {
+        return this.innerProperties() == null ? null : this.innerProperties().logActivityTrace();
+    }
+
+    /**
+     * Set the logActivityTrace property: Gets or sets the option to log activity trace of the runbook.
+     * 
+     * @param logActivityTrace the logActivityTrace value to set.
+     * @return the RunbookInner object itself.
+     */
+    public RunbookInner withLogActivityTrace(Integer logActivityTrace) {
+        if (this.innerProperties() == null) {
+            this.innerProperties = new RunbookPropertiesInner();
+        }
+        this.innerProperties().withLogActivityTrace(logActivityTrace);
+        return this;
+    }
+
+    /**
+     * Get the jobCount property: Gets or sets the job count of the runbook.
+     * 
+     * @return the jobCount value.
+     */
+    public Integer jobCount() {
+        return this.innerProperties() == null ? null : this.innerProperties().jobCount();
+    }
+
+    /**
+     * Set the jobCount property: Gets or sets the job count of the runbook.
+     * 
+     * @param jobCount the jobCount value to set.
+     * @return the RunbookInner object itself.
+     */
+    public RunbookInner withJobCount(Integer jobCount) {
+        if (this.innerProperties() == null) {
+            this.innerProperties = new RunbookPropertiesInner();
+        }
+        this.innerProperties().withJobCount(jobCount);
+        return this;
+    }
+
+    /**
+     * Get the parameters property: Gets or sets the runbook parameters.
+     * 
+     * @return the parameters value.
+     */
+    public Map<String, RunbookParameter> parameters() {
+        return this.innerProperties() == null ? null : this.innerProperties().parameters();
+    }
+
+    /**
+     * Set the parameters property: Gets or sets the runbook parameters.
+     * 
+     * @param parameters the parameters value to set.
+     * @return the RunbookInner object itself.
+     */
+    public RunbookInner withParameters(Map<String, RunbookParameter> parameters) {
+        if (this.innerProperties() == null) {
+            this.innerProperties = new RunbookPropertiesInner();
+        }
+        this.innerProperties().withParameters(parameters);
+        return this;
+    }
+
+    /**
+     * Get the outputTypes property: Gets or sets the runbook output types.
+     * 
+     * @return the outputTypes value.
+     */
+    public List<String> outputTypes() {
+        return this.innerProperties() == null ? null : this.innerProperties().outputTypes();
+    }
+
+    /**
+     * Set the outputTypes property: Gets or sets the runbook output types.
+     * 
+     * @param outputTypes the outputTypes value to set.
+     * @return the RunbookInner object itself.
+     */
+    public RunbookInner withOutputTypes(List<String> outputTypes) {
+        if (this.innerProperties() == null) {
+            this.innerProperties = new RunbookPropertiesInner();
+        }
+        this.innerProperties().withOutputTypes(outputTypes);
+        return this;
+    }
+
+    /**
+     * Get the draft property: Gets or sets the draft runbook properties.
+     * 
+     * @return the draft value.
+     */
+    public RunbookDraftInner draft() {
+        return this.innerProperties() == null ? null : this.innerProperties().draft();
+    }
+
+    /**
+     * Set the draft property: Gets or sets the draft runbook properties.
+     * 
+     * @param draft the draft value to set.
+     * @return the RunbookInner object itself.
+     */
+    public RunbookInner withDraft(RunbookDraftInner draft) {
+        if (this.innerProperties() == null) {
+            this.innerProperties = new RunbookPropertiesInner();
+        }
+        this.innerProperties().withDraft(draft);
+        return this;
+    }
+
+    /**
+     * Get the provisioningState property: Gets or sets the provisioning state of the runbook.
+     * 
+     * @return the provisioningState value.
+     */
+    public RunbookProvisioningState provisioningState() {
+        return this.innerProperties() == null ? null : this.innerProperties().provisioningState();
+    }
+
+    /**
+     * Set the provisioningState property: Gets or sets the provisioning state of the runbook.
+     * 
+     * @param provisioningState the provisioningState value to set.
+     * @return the RunbookInner object itself.
+     */
+    public RunbookInner withProvisioningState(RunbookProvisioningState provisioningState) {
+        if (this.innerProperties() == null) {
+            this.innerProperties = new RunbookPropertiesInner();
+        }
+        this.innerProperties().withProvisioningState(provisioningState);
+        return this;
+    }
+
+    /**
+     * Get the lastModifiedBy property: Gets or sets the last modified by.
+     * 
+     * @return the lastModifiedBy value.
+     */
+    public String lastModifiedBy() {
+        return this.innerProperties() == null ? null : this.innerProperties().lastModifiedBy();
+    }
+
+    /**
+     * Set the lastModifiedBy property: Gets or sets the last modified by.
+     * 
+     * @param lastModifiedBy the lastModifiedBy value to set.
+     * @return the RunbookInner object itself.
+     */
+    public RunbookInner withLastModifiedBy(String lastModifiedBy) {
+        if (this.innerProperties() == null) {
+            this.innerProperties = new RunbookPropertiesInner();
+        }
+        this.innerProperties().withLastModifiedBy(lastModifiedBy);
+        return this;
+    }
+
+    /**
+     * Get the creationTime property: Gets or sets the creation time.
+     * 
+     * @return the creationTime value.
+     */
+    public OffsetDateTime creationTime() {
+        return this.innerProperties() == null ? null : this.innerProperties().creationTime();
+    }
+
+    /**
+     * Set the creationTime property: Gets or sets the creation time.
+     * 
+     * @param creationTime the creationTime value to set.
+     * @return the RunbookInner object itself.
+     */
+    public RunbookInner withCreationTime(OffsetDateTime creationTime) {
+        if (this.innerProperties() == null) {
+            this.innerProperties = new RunbookPropertiesInner();
+        }
+        this.innerProperties().withCreationTime(creationTime);
+        return this;
+    }
+
+    /**
+     * Get the lastModifiedTime property: Gets or sets the last modified time.
+     * 
+     * @return the lastModifiedTime value.
+     */
+    public OffsetDateTime lastModifiedTime() {
+        return this.innerProperties() == null ? null : this.innerProperties().lastModifiedTime();
+    }
+
+    /**
+     * Set the lastModifiedTime property: Gets or sets the last modified time.
+     * 
+     * @param lastModifiedTime the lastModifiedTime value to set.
+     * @return the RunbookInner object itself.
+     */
+    public RunbookInner withLastModifiedTime(OffsetDateTime lastModifiedTime) {
+        if (this.innerProperties() == null) {
+            this.innerProperties = new RunbookPropertiesInner();
+        }
+        this.innerProperties().withLastModifiedTime(lastModifiedTime);
+        return this;
+    }
+
+    /**
+     * Get the description property: Gets or sets the description.
+     * 
+     * @return the description value.
+     */
+    public String description() {
+        return this.innerProperties() == null ? null : this.innerProperties().description();
+    }
+
+    /**
+     * Set the description property: Gets or sets the description.
+     * 
+     * @param description the description value to set.
+     * @return the RunbookInner object itself.
+     */
+    public RunbookInner withDescription(String description) {
+        if (this.innerProperties() == null) {
+            this.innerProperties = new RunbookPropertiesInner();
+        }
+        this.innerProperties().withDescription(description);
+        return this;
+    }
+
+    /**
      * Validates the instance.
-     *
+     * 
      * @throws IllegalArgumentException thrown if the instance is not valid.
      */
     public void validate() {
-        if (publishContentLink() != null) {
-            publishContentLink().validate();
+        if (innerProperties() != null) {
+            innerProperties().validate();
         }
-        if (parameters() != null) {
-            parameters()
-                .values()
-                .forEach(
-                    e -> {
-                        if (e != null) {
-                            e.validate();
-                        }
-                    });
-        }
-        if (draft() != null) {
-            draft().validate();
-        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public JsonWriter toJson(JsonWriter jsonWriter) throws IOException {
+        jsonWriter.writeStartObject();
+        jsonWriter.writeStringField("location", location());
+        jsonWriter.writeMapField("tags", tags(), (writer, element) -> writer.writeString(element));
+        jsonWriter.writeJsonField("properties", this.innerProperties);
+        jsonWriter.writeStringField("etag", this.etag);
+        return jsonWriter.writeEndObject();
+    }
+
+    /**
+     * Reads an instance of RunbookInner from the JsonReader.
+     * 
+     * @param jsonReader The JsonReader being read.
+     * @return An instance of RunbookInner if the JsonReader was pointing to an instance of it, or null if it was
+     * pointing to JSON null.
+     * @throws IllegalStateException If the deserialized JSON object was missing any required properties.
+     * @throws IOException If an error occurs while reading the RunbookInner.
+     */
+    public static RunbookInner fromJson(JsonReader jsonReader) throws IOException {
+        return jsonReader.readObject(reader -> {
+            RunbookInner deserializedRunbookInner = new RunbookInner();
+            while (reader.nextToken() != JsonToken.END_OBJECT) {
+                String fieldName = reader.getFieldName();
+                reader.nextToken();
+
+                if ("id".equals(fieldName)) {
+                    deserializedRunbookInner.id = reader.getString();
+                } else if ("name".equals(fieldName)) {
+                    deserializedRunbookInner.name = reader.getString();
+                } else if ("type".equals(fieldName)) {
+                    deserializedRunbookInner.type = reader.getString();
+                } else if ("location".equals(fieldName)) {
+                    deserializedRunbookInner.withLocation(reader.getString());
+                } else if ("tags".equals(fieldName)) {
+                    Map<String, String> tags = reader.readMap(reader1 -> reader1.getString());
+                    deserializedRunbookInner.withTags(tags);
+                } else if ("properties".equals(fieldName)) {
+                    deserializedRunbookInner.innerProperties = RunbookPropertiesInner.fromJson(reader);
+                } else if ("etag".equals(fieldName)) {
+                    deserializedRunbookInner.etag = reader.getString();
+                } else {
+                    reader.skipChildren();
+                }
+            }
+
+            return deserializedRunbookInner;
+        });
     }
 }

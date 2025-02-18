@@ -16,27 +16,16 @@ import com.azure.resourcemanager.netapp.fluent.models.BackupStatusInner;
 import com.azure.resourcemanager.netapp.fluent.models.RestoreStatusInner;
 import com.azure.resourcemanager.netapp.models.BackupPatch;
 
-/** An instance of this class provides access to all the operations defined in BackupsClient. */
+/**
+ * An instance of this class provides access to all the operations defined in BackupsClient.
+ */
 public interface BackupsClient {
     /**
-     * Get the status of the backup for a volume.
-     *
-     * @param resourceGroupName The name of the resource group.
-     * @param accountName The name of the NetApp account.
-     * @param poolName The name of the capacity pool.
-     * @param volumeName The name of the volume.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the status of the backup for a volume.
-     */
-    @ServiceMethod(returns = ReturnType.SINGLE)
-    BackupStatusInner getStatus(String resourceGroupName, String accountName, String poolName, String volumeName);
-
-    /**
-     * Get the status of the backup for a volume.
-     *
-     * @param resourceGroupName The name of the resource group.
+     * Get the latest backup status of a volume
+     * 
+     * Get the latest status of the backup for a volume.
+     * 
+     * @param resourceGroupName The name of the resource group. The name is case insensitive.
      * @param accountName The name of the NetApp account.
      * @param poolName The name of the capacity pool.
      * @param volumeName The name of the volume.
@@ -44,32 +33,35 @@ public interface BackupsClient {
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the status of the backup for a volume.
+     * @return the latest status of the backup for a volume along with {@link Response}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    Response<BackupStatusInner> getStatusWithResponse(
-        String resourceGroupName, String accountName, String poolName, String volumeName, Context context);
+    Response<BackupStatusInner> getLatestStatusWithResponse(String resourceGroupName, String accountName,
+        String poolName, String volumeName, Context context);
 
     /**
-     * Get the status of the restore for a volume.
-     *
-     * @param resourceGroupName The name of the resource group.
+     * Get the latest backup status of a volume
+     * 
+     * Get the latest status of the backup for a volume.
+     * 
+     * @param resourceGroupName The name of the resource group. The name is case insensitive.
      * @param accountName The name of the NetApp account.
      * @param poolName The name of the capacity pool.
      * @param volumeName The name of the volume.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the status of the restore for a volume.
+     * @return the latest status of the backup for a volume.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    RestoreStatusInner getVolumeRestoreStatus(
-        String resourceGroupName, String accountName, String poolName, String volumeName);
+    BackupStatusInner getLatestStatus(String resourceGroupName, String accountName, String poolName, String volumeName);
 
     /**
-     * Get the status of the restore for a volume.
-     *
-     * @param resourceGroupName The name of the resource group.
+     * Get the latest restore status of a volume
+     * 
+     * Get the latest status of the restore for a volume.
+     * 
+     * @param resourceGroupName The name of the resource group. The name is case insensitive.
      * @param accountName The name of the NetApp account.
      * @param poolName The name of the capacity pool.
      * @param volumeName The name of the volume.
@@ -77,355 +69,316 @@ public interface BackupsClient {
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the status of the restore for a volume.
+     * @return the latest status of the restore for a volume along with {@link Response}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    Response<RestoreStatusInner> getVolumeRestoreStatusWithResponse(
-        String resourceGroupName, String accountName, String poolName, String volumeName, Context context);
+    Response<RestoreStatusInner> getVolumeLatestRestoreStatusWithResponse(String resourceGroupName, String accountName,
+        String poolName, String volumeName, Context context);
 
     /**
-     * List all backups for a volume.
-     *
-     * @param resourceGroupName The name of the resource group.
+     * Get the latest restore status of a volume
+     * 
+     * Get the latest status of the restore for a volume.
+     * 
+     * @param resourceGroupName The name of the resource group. The name is case insensitive.
      * @param accountName The name of the NetApp account.
      * @param poolName The name of the capacity pool.
      * @param volumeName The name of the volume.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return list of Backups.
+     * @return the latest status of the restore for a volume.
+     */
+    @ServiceMethod(returns = ReturnType.SINGLE)
+    RestoreStatusInner getVolumeLatestRestoreStatus(String resourceGroupName, String accountName, String poolName,
+        String volumeName);
+
+    /**
+     * List Backups
+     * 
+     * List all backups Under a Backup Vault.
+     * 
+     * @param resourceGroupName The name of the resource group. The name is case insensitive.
+     * @param accountName The name of the NetApp account.
+     * @param backupVaultName The name of the Backup Vault.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return list of Backups as paginated response with {@link PagedIterable}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
-    PagedIterable<BackupInner> list(String resourceGroupName, String accountName, String poolName, String volumeName);
+    PagedIterable<BackupInner> listByVault(String resourceGroupName, String accountName, String backupVaultName);
 
     /**
-     * List all backups for a volume.
-     *
-     * @param resourceGroupName The name of the resource group.
+     * List Backups
+     * 
+     * List all backups Under a Backup Vault.
+     * 
+     * @param resourceGroupName The name of the resource group. The name is case insensitive.
      * @param accountName The name of the NetApp account.
-     * @param poolName The name of the capacity pool.
-     * @param volumeName The name of the volume.
+     * @param backupVaultName The name of the Backup Vault.
+     * @param filter An option to specify the VolumeResourceId. If present, then only returns the backups under the
+     * specified volume.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return list of Backups.
+     * @return list of Backups as paginated response with {@link PagedIterable}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
-    PagedIterable<BackupInner> list(
-        String resourceGroupName, String accountName, String poolName, String volumeName, Context context);
+    PagedIterable<BackupInner> listByVault(String resourceGroupName, String accountName, String backupVaultName,
+        String filter, Context context);
 
     /**
-     * Gets the specified backup of the volume.
-     *
-     * @param resourceGroupName The name of the resource group.
+     * Describe the Backup under Backup Vault
+     * 
+     * Get the specified Backup under Backup Vault.
+     * 
+     * @param resourceGroupName The name of the resource group. The name is case insensitive.
      * @param accountName The name of the NetApp account.
-     * @param poolName The name of the capacity pool.
-     * @param volumeName The name of the volume.
-     * @param backupName The name of the backup.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the specified backup of the volume.
-     */
-    @ServiceMethod(returns = ReturnType.SINGLE)
-    BackupInner get(
-        String resourceGroupName, String accountName, String poolName, String volumeName, String backupName);
-
-    /**
-     * Gets the specified backup of the volume.
-     *
-     * @param resourceGroupName The name of the resource group.
-     * @param accountName The name of the NetApp account.
-     * @param poolName The name of the capacity pool.
-     * @param volumeName The name of the volume.
+     * @param backupVaultName The name of the Backup Vault.
      * @param backupName The name of the backup.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the specified backup of the volume.
+     * @return the specified Backup under Backup Vault along with {@link Response}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    Response<BackupInner> getWithResponse(
-        String resourceGroupName,
-        String accountName,
-        String poolName,
-        String volumeName,
-        String backupName,
-        Context context);
+    Response<BackupInner> getWithResponse(String resourceGroupName, String accountName, String backupVaultName,
+        String backupName, Context context);
 
     /**
-     * Create a backup for the volume.
-     *
-     * @param resourceGroupName The name of the resource group.
+     * Describe the Backup under Backup Vault
+     * 
+     * Get the specified Backup under Backup Vault.
+     * 
+     * @param resourceGroupName The name of the resource group. The name is case insensitive.
      * @param accountName The name of the NetApp account.
-     * @param poolName The name of the capacity pool.
-     * @param volumeName The name of the volume.
+     * @param backupVaultName The name of the Backup Vault.
+     * @param backupName The name of the backup.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return the specified Backup under Backup Vault.
+     */
+    @ServiceMethod(returns = ReturnType.SINGLE)
+    BackupInner get(String resourceGroupName, String accountName, String backupVaultName, String backupName);
+
+    /**
+     * Create a backup
+     * 
+     * Create a backup under the Backup Vault.
+     * 
+     * @param resourceGroupName The name of the resource group. The name is case insensitive.
+     * @param accountName The name of the NetApp account.
+     * @param backupVaultName The name of the Backup Vault.
      * @param backupName The name of the backup.
      * @param body Backup object supplied in the body of the operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return backup of a Volume.
+     * @return the {@link SyncPoller} for polling of backup under a Backup Vault.
      */
     @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
-    SyncPoller<PollResult<BackupInner>, BackupInner> beginCreate(
-        String resourceGroupName,
-        String accountName,
-        String poolName,
-        String volumeName,
-        String backupName,
+    SyncPoller<PollResult<BackupInner>, BackupInner> beginCreate(String resourceGroupName, String accountName,
+        String backupVaultName, String backupName, BackupInner body);
+
+    /**
+     * Create a backup
+     * 
+     * Create a backup under the Backup Vault.
+     * 
+     * @param resourceGroupName The name of the resource group. The name is case insensitive.
+     * @param accountName The name of the NetApp account.
+     * @param backupVaultName The name of the Backup Vault.
+     * @param backupName The name of the backup.
+     * @param body Backup object supplied in the body of the operation.
+     * @param context The context to associate with this operation.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return the {@link SyncPoller} for polling of backup under a Backup Vault.
+     */
+    @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
+    SyncPoller<PollResult<BackupInner>, BackupInner> beginCreate(String resourceGroupName, String accountName,
+        String backupVaultName, String backupName, BackupInner body, Context context);
+
+    /**
+     * Create a backup
+     * 
+     * Create a backup under the Backup Vault.
+     * 
+     * @param resourceGroupName The name of the resource group. The name is case insensitive.
+     * @param accountName The name of the NetApp account.
+     * @param backupVaultName The name of the Backup Vault.
+     * @param backupName The name of the backup.
+     * @param body Backup object supplied in the body of the operation.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return backup under a Backup Vault.
+     */
+    @ServiceMethod(returns = ReturnType.SINGLE)
+    BackupInner create(String resourceGroupName, String accountName, String backupVaultName, String backupName,
         BackupInner body);
 
     /**
-     * Create a backup for the volume.
-     *
-     * @param resourceGroupName The name of the resource group.
+     * Create a backup
+     * 
+     * Create a backup under the Backup Vault.
+     * 
+     * @param resourceGroupName The name of the resource group. The name is case insensitive.
      * @param accountName The name of the NetApp account.
-     * @param poolName The name of the capacity pool.
-     * @param volumeName The name of the volume.
+     * @param backupVaultName The name of the Backup Vault.
      * @param backupName The name of the backup.
      * @param body Backup object supplied in the body of the operation.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return backup of a Volume.
+     * @return backup under a Backup Vault.
+     */
+    @ServiceMethod(returns = ReturnType.SINGLE)
+    BackupInner create(String resourceGroupName, String accountName, String backupVaultName, String backupName,
+        BackupInner body, Context context);
+
+    /**
+     * Patch a backup
+     * 
+     * Patch a Backup under the Backup Vault.
+     * 
+     * @param resourceGroupName The name of the resource group. The name is case insensitive.
+     * @param accountName The name of the NetApp account.
+     * @param backupVaultName The name of the Backup Vault.
+     * @param backupName The name of the backup.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return the {@link SyncPoller} for polling of backup under a Backup Vault.
      */
     @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
-    SyncPoller<PollResult<BackupInner>, BackupInner> beginCreate(
-        String resourceGroupName,
-        String accountName,
-        String poolName,
-        String volumeName,
-        String backupName,
-        BackupInner body,
-        Context context);
+    SyncPoller<PollResult<BackupInner>, BackupInner> beginUpdate(String resourceGroupName, String accountName,
+        String backupVaultName, String backupName);
 
     /**
-     * Create a backup for the volume.
-     *
-     * @param resourceGroupName The name of the resource group.
+     * Patch a backup
+     * 
+     * Patch a Backup under the Backup Vault.
+     * 
+     * @param resourceGroupName The name of the resource group. The name is case insensitive.
      * @param accountName The name of the NetApp account.
-     * @param poolName The name of the capacity pool.
-     * @param volumeName The name of the volume.
-     * @param backupName The name of the backup.
-     * @param body Backup object supplied in the body of the operation.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return backup of a Volume.
-     */
-    @ServiceMethod(returns = ReturnType.SINGLE)
-    BackupInner create(
-        String resourceGroupName,
-        String accountName,
-        String poolName,
-        String volumeName,
-        String backupName,
-        BackupInner body);
-
-    /**
-     * Create a backup for the volume.
-     *
-     * @param resourceGroupName The name of the resource group.
-     * @param accountName The name of the NetApp account.
-     * @param poolName The name of the capacity pool.
-     * @param volumeName The name of the volume.
+     * @param backupVaultName The name of the Backup Vault.
      * @param backupName The name of the backup.
      * @param body Backup object supplied in the body of the operation.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return backup of a Volume.
-     */
-    @ServiceMethod(returns = ReturnType.SINGLE)
-    BackupInner create(
-        String resourceGroupName,
-        String accountName,
-        String poolName,
-        String volumeName,
-        String backupName,
-        BackupInner body,
-        Context context);
-
-    /**
-     * Patch a backup for the volume.
-     *
-     * @param resourceGroupName The name of the resource group.
-     * @param accountName The name of the NetApp account.
-     * @param poolName The name of the capacity pool.
-     * @param volumeName The name of the volume.
-     * @param backupName The name of the backup.
-     * @param body Backup object supplied in the body of the operation.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return backup of a Volume.
+     * @return the {@link SyncPoller} for polling of backup under a Backup Vault.
      */
     @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
-    SyncPoller<PollResult<BackupInner>, BackupInner> beginUpdate(
-        String resourceGroupName,
-        String accountName,
-        String poolName,
-        String volumeName,
-        String backupName,
-        BackupPatch body);
+    SyncPoller<PollResult<BackupInner>, BackupInner> beginUpdate(String resourceGroupName, String accountName,
+        String backupVaultName, String backupName, BackupPatch body, Context context);
 
     /**
-     * Patch a backup for the volume.
-     *
-     * @param resourceGroupName The name of the resource group.
+     * Patch a backup
+     * 
+     * Patch a Backup under the Backup Vault.
+     * 
+     * @param resourceGroupName The name of the resource group. The name is case insensitive.
      * @param accountName The name of the NetApp account.
-     * @param poolName The name of the capacity pool.
-     * @param volumeName The name of the volume.
+     * @param backupVaultName The name of the Backup Vault.
+     * @param backupName The name of the backup.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return backup under a Backup Vault.
+     */
+    @ServiceMethod(returns = ReturnType.SINGLE)
+    BackupInner update(String resourceGroupName, String accountName, String backupVaultName, String backupName);
+
+    /**
+     * Patch a backup
+     * 
+     * Patch a Backup under the Backup Vault.
+     * 
+     * @param resourceGroupName The name of the resource group. The name is case insensitive.
+     * @param accountName The name of the NetApp account.
+     * @param backupVaultName The name of the Backup Vault.
      * @param backupName The name of the backup.
      * @param body Backup object supplied in the body of the operation.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return backup of a Volume.
+     * @return backup under a Backup Vault.
+     */
+    @ServiceMethod(returns = ReturnType.SINGLE)
+    BackupInner update(String resourceGroupName, String accountName, String backupVaultName, String backupName,
+        BackupPatch body, Context context);
+
+    /**
+     * Delete backup
+     * 
+     * Delete a Backup under the Backup Vault.
+     * 
+     * @param resourceGroupName The name of the resource group. The name is case insensitive.
+     * @param accountName The name of the NetApp account.
+     * @param backupVaultName The name of the Backup Vault.
+     * @param backupName The name of the backup.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return the {@link SyncPoller} for polling of long-running operation.
      */
     @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
-    SyncPoller<PollResult<BackupInner>, BackupInner> beginUpdate(
-        String resourceGroupName,
-        String accountName,
-        String poolName,
-        String volumeName,
-        String backupName,
-        BackupPatch body,
-        Context context);
+    SyncPoller<PollResult<Void>, Void> beginDelete(String resourceGroupName, String accountName, String backupVaultName,
+        String backupName);
 
     /**
-     * Patch a backup for the volume.
-     *
-     * @param resourceGroupName The name of the resource group.
+     * Delete backup
+     * 
+     * Delete a Backup under the Backup Vault.
+     * 
+     * @param resourceGroupName The name of the resource group. The name is case insensitive.
      * @param accountName The name of the NetApp account.
-     * @param poolName The name of the capacity pool.
-     * @param volumeName The name of the volume.
-     * @param backupName The name of the backup.
-     * @param body Backup object supplied in the body of the operation.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return backup of a Volume.
-     */
-    @ServiceMethod(returns = ReturnType.SINGLE)
-    BackupInner update(
-        String resourceGroupName,
-        String accountName,
-        String poolName,
-        String volumeName,
-        String backupName,
-        BackupPatch body);
-
-    /**
-     * Patch a backup for the volume.
-     *
-     * @param resourceGroupName The name of the resource group.
-     * @param accountName The name of the NetApp account.
-     * @param poolName The name of the capacity pool.
-     * @param volumeName The name of the volume.
-     * @param backupName The name of the backup.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return backup of a Volume.
-     */
-    @ServiceMethod(returns = ReturnType.SINGLE)
-    BackupInner update(
-        String resourceGroupName, String accountName, String poolName, String volumeName, String backupName);
-
-    /**
-     * Patch a backup for the volume.
-     *
-     * @param resourceGroupName The name of the resource group.
-     * @param accountName The name of the NetApp account.
-     * @param poolName The name of the capacity pool.
-     * @param volumeName The name of the volume.
-     * @param backupName The name of the backup.
-     * @param body Backup object supplied in the body of the operation.
-     * @param context The context to associate with this operation.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return backup of a Volume.
-     */
-    @ServiceMethod(returns = ReturnType.SINGLE)
-    BackupInner update(
-        String resourceGroupName,
-        String accountName,
-        String poolName,
-        String volumeName,
-        String backupName,
-        BackupPatch body,
-        Context context);
-
-    /**
-     * Delete a backup of the volume.
-     *
-     * @param resourceGroupName The name of the resource group.
-     * @param accountName The name of the NetApp account.
-     * @param poolName The name of the capacity pool.
-     * @param volumeName The name of the volume.
-     * @param backupName The name of the backup.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the completion.
-     */
-    @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
-    SyncPoller<PollResult<Void>, Void> beginDelete(
-        String resourceGroupName, String accountName, String poolName, String volumeName, String backupName);
-
-    /**
-     * Delete a backup of the volume.
-     *
-     * @param resourceGroupName The name of the resource group.
-     * @param accountName The name of the NetApp account.
-     * @param poolName The name of the capacity pool.
-     * @param volumeName The name of the volume.
+     * @param backupVaultName The name of the Backup Vault.
      * @param backupName The name of the backup.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the completion.
+     * @return the {@link SyncPoller} for polling of long-running operation.
      */
     @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
-    SyncPoller<PollResult<Void>, Void> beginDelete(
-        String resourceGroupName,
-        String accountName,
-        String poolName,
-        String volumeName,
-        String backupName,
-        Context context);
+    SyncPoller<PollResult<Void>, Void> beginDelete(String resourceGroupName, String accountName, String backupVaultName,
+        String backupName, Context context);
 
     /**
-     * Delete a backup of the volume.
-     *
-     * @param resourceGroupName The name of the resource group.
+     * Delete backup
+     * 
+     * Delete a Backup under the Backup Vault.
+     * 
+     * @param resourceGroupName The name of the resource group. The name is case insensitive.
      * @param accountName The name of the NetApp account.
-     * @param poolName The name of the capacity pool.
-     * @param volumeName The name of the volume.
+     * @param backupVaultName The name of the Backup Vault.
      * @param backupName The name of the backup.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    void delete(String resourceGroupName, String accountName, String poolName, String volumeName, String backupName);
+    void delete(String resourceGroupName, String accountName, String backupVaultName, String backupName);
 
     /**
-     * Delete a backup of the volume.
-     *
-     * @param resourceGroupName The name of the resource group.
+     * Delete backup
+     * 
+     * Delete a Backup under the Backup Vault.
+     * 
+     * @param resourceGroupName The name of the resource group. The name is case insensitive.
      * @param accountName The name of the NetApp account.
-     * @param poolName The name of the capacity pool.
-     * @param volumeName The name of the volume.
+     * @param backupVaultName The name of the Backup Vault.
      * @param backupName The name of the backup.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
@@ -433,11 +386,6 @@ public interface BackupsClient {
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    void delete(
-        String resourceGroupName,
-        String accountName,
-        String poolName,
-        String volumeName,
-        String backupName,
+    void delete(String resourceGroupName, String accountName, String backupVaultName, String backupName,
         Context context);
 }

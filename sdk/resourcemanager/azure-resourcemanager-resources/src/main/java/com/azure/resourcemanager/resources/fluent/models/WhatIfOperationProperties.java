@@ -5,26 +5,44 @@
 package com.azure.resourcemanager.resources.fluent.models;
 
 import com.azure.core.annotation.Fluent;
-import com.azure.core.util.logging.ClientLogger;
+import com.azure.json.JsonReader;
+import com.azure.json.JsonSerializable;
+import com.azure.json.JsonToken;
+import com.azure.json.JsonWriter;
+import com.azure.resourcemanager.resources.models.DeploymentDiagnosticsDefinition;
 import com.azure.resourcemanager.resources.models.WhatIfChange;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import java.io.IOException;
 import java.util.List;
 
-/** Deployment operation properties. */
+/**
+ * Deployment operation properties.
+ */
 @Fluent
-public final class WhatIfOperationProperties {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(WhatIfOperationProperties.class);
+public final class WhatIfOperationProperties implements JsonSerializable<WhatIfOperationProperties> {
+    /*
+     * List of resource changes predicted by What-If operation.
+     */
+    private List<WhatIfChange> changes;
 
     /*
      * List of resource changes predicted by What-If operation.
      */
-    @JsonProperty(value = "changes")
-    private List<WhatIfChange> changes;
+    private List<WhatIfChange> potentialChanges;
+
+    /*
+     * List of resource diagnostics detected by What-If operation.
+     */
+    private List<DeploymentDiagnosticsDefinition> diagnostics;
+
+    /**
+     * Creates an instance of WhatIfOperationProperties class.
+     */
+    public WhatIfOperationProperties() {
+    }
 
     /**
      * Get the changes property: List of resource changes predicted by What-If operation.
-     *
+     * 
      * @return the changes value.
      */
     public List<WhatIfChange> changes() {
@@ -33,7 +51,7 @@ public final class WhatIfOperationProperties {
 
     /**
      * Set the changes property: List of resource changes predicted by What-If operation.
-     *
+     * 
      * @param changes the changes value to set.
      * @return the WhatIfOperationProperties object itself.
      */
@@ -43,13 +61,94 @@ public final class WhatIfOperationProperties {
     }
 
     /**
+     * Get the potentialChanges property: List of resource changes predicted by What-If operation.
+     * 
+     * @return the potentialChanges value.
+     */
+    public List<WhatIfChange> potentialChanges() {
+        return this.potentialChanges;
+    }
+
+    /**
+     * Set the potentialChanges property: List of resource changes predicted by What-If operation.
+     * 
+     * @param potentialChanges the potentialChanges value to set.
+     * @return the WhatIfOperationProperties object itself.
+     */
+    public WhatIfOperationProperties withPotentialChanges(List<WhatIfChange> potentialChanges) {
+        this.potentialChanges = potentialChanges;
+        return this;
+    }
+
+    /**
+     * Get the diagnostics property: List of resource diagnostics detected by What-If operation.
+     * 
+     * @return the diagnostics value.
+     */
+    public List<DeploymentDiagnosticsDefinition> diagnostics() {
+        return this.diagnostics;
+    }
+
+    /**
      * Validates the instance.
-     *
+     * 
      * @throws IllegalArgumentException thrown if the instance is not valid.
      */
     public void validate() {
         if (changes() != null) {
             changes().forEach(e -> e.validate());
         }
+        if (potentialChanges() != null) {
+            potentialChanges().forEach(e -> e.validate());
+        }
+        if (diagnostics() != null) {
+            diagnostics().forEach(e -> e.validate());
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public JsonWriter toJson(JsonWriter jsonWriter) throws IOException {
+        jsonWriter.writeStartObject();
+        jsonWriter.writeArrayField("changes", this.changes, (writer, element) -> writer.writeJson(element));
+        jsonWriter.writeArrayField("potentialChanges", this.potentialChanges,
+            (writer, element) -> writer.writeJson(element));
+        return jsonWriter.writeEndObject();
+    }
+
+    /**
+     * Reads an instance of WhatIfOperationProperties from the JsonReader.
+     * 
+     * @param jsonReader The JsonReader being read.
+     * @return An instance of WhatIfOperationProperties if the JsonReader was pointing to an instance of it, or null if
+     * it was pointing to JSON null.
+     * @throws IOException If an error occurs while reading the WhatIfOperationProperties.
+     */
+    public static WhatIfOperationProperties fromJson(JsonReader jsonReader) throws IOException {
+        return jsonReader.readObject(reader -> {
+            WhatIfOperationProperties deserializedWhatIfOperationProperties = new WhatIfOperationProperties();
+            while (reader.nextToken() != JsonToken.END_OBJECT) {
+                String fieldName = reader.getFieldName();
+                reader.nextToken();
+
+                if ("changes".equals(fieldName)) {
+                    List<WhatIfChange> changes = reader.readArray(reader1 -> WhatIfChange.fromJson(reader1));
+                    deserializedWhatIfOperationProperties.changes = changes;
+                } else if ("potentialChanges".equals(fieldName)) {
+                    List<WhatIfChange> potentialChanges = reader.readArray(reader1 -> WhatIfChange.fromJson(reader1));
+                    deserializedWhatIfOperationProperties.potentialChanges = potentialChanges;
+                } else if ("diagnostics".equals(fieldName)) {
+                    List<DeploymentDiagnosticsDefinition> diagnostics
+                        = reader.readArray(reader1 -> DeploymentDiagnosticsDefinition.fromJson(reader1));
+                    deserializedWhatIfOperationProperties.diagnostics = diagnostics;
+                } else {
+                    reader.skipChildren();
+                }
+            }
+
+            return deserializedWhatIfOperationProperties;
+        });
     }
 }

@@ -10,30 +10,36 @@ import com.azure.core.http.rest.PagedIterable;
 import com.azure.core.util.Context;
 import com.azure.resourcemanager.labservices.fluent.models.UsageInner;
 
-/** An instance of this class provides access to all the operations defined in UsagesClient. */
+/**
+ * An instance of this class provides access to all the operations defined in UsagesClient.
+ */
 public interface UsagesClient {
     /**
+     * Gets the list of usages.
+     * 
      * Returns list of usage per SKU family for the specified subscription in the specified region.
-     *
+     * 
      * @param location The location name.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return list of Core Usages.
+     * @return list of Core Usages as paginated response with {@link PagedIterable}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
     PagedIterable<UsageInner> listByLocation(String location);
 
     /**
+     * Gets the list of usages.
+     * 
      * Returns list of usage per SKU family for the specified subscription in the specified region.
-     *
+     * 
      * @param location The location name.
      * @param filter The filter to apply to the operation.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return list of Core Usages.
+     * @return list of Core Usages as paginated response with {@link PagedIterable}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
     PagedIterable<UsageInner> listByLocation(String location, String filter, Context context);

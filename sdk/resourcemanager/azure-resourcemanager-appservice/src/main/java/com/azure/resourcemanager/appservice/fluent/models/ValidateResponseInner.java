@@ -5,31 +5,37 @@
 package com.azure.resourcemanager.appservice.fluent.models;
 
 import com.azure.core.annotation.Fluent;
-import com.azure.core.util.logging.ClientLogger;
+import com.azure.json.JsonReader;
+import com.azure.json.JsonSerializable;
+import com.azure.json.JsonToken;
+import com.azure.json.JsonWriter;
 import com.azure.resourcemanager.appservice.models.ValidateResponseError;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import java.io.IOException;
 
-/** Describes the result of resource validation. */
+/**
+ * Describes the result of resource validation.
+ */
 @Fluent
-public final class ValidateResponseInner {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(ValidateResponseInner.class);
-
+public final class ValidateResponseInner implements JsonSerializable<ValidateResponseInner> {
     /*
      * Result of validation.
      */
-    @JsonProperty(value = "status")
     private String status;
 
     /*
      * Error details for the case when validation fails.
      */
-    @JsonProperty(value = "error")
     private ValidateResponseError error;
 
     /**
+     * Creates an instance of ValidateResponseInner class.
+     */
+    public ValidateResponseInner() {
+    }
+
+    /**
      * Get the status property: Result of validation.
-     *
+     * 
      * @return the status value.
      */
     public String status() {
@@ -38,7 +44,7 @@ public final class ValidateResponseInner {
 
     /**
      * Set the status property: Result of validation.
-     *
+     * 
      * @param status the status value to set.
      * @return the ValidateResponseInner object itself.
      */
@@ -49,7 +55,7 @@ public final class ValidateResponseInner {
 
     /**
      * Get the error property: Error details for the case when validation fails.
-     *
+     * 
      * @return the error value.
      */
     public ValidateResponseError error() {
@@ -58,7 +64,7 @@ public final class ValidateResponseInner {
 
     /**
      * Set the error property: Error details for the case when validation fails.
-     *
+     * 
      * @param error the error value to set.
      * @return the ValidateResponseInner object itself.
      */
@@ -69,12 +75,51 @@ public final class ValidateResponseInner {
 
     /**
      * Validates the instance.
-     *
+     * 
      * @throws IllegalArgumentException thrown if the instance is not valid.
      */
     public void validate() {
         if (error() != null) {
             error().validate();
         }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public JsonWriter toJson(JsonWriter jsonWriter) throws IOException {
+        jsonWriter.writeStartObject();
+        jsonWriter.writeStringField("status", this.status);
+        jsonWriter.writeJsonField("error", this.error);
+        return jsonWriter.writeEndObject();
+    }
+
+    /**
+     * Reads an instance of ValidateResponseInner from the JsonReader.
+     * 
+     * @param jsonReader The JsonReader being read.
+     * @return An instance of ValidateResponseInner if the JsonReader was pointing to an instance of it, or null if it
+     * was pointing to JSON null.
+     * @throws IOException If an error occurs while reading the ValidateResponseInner.
+     */
+    public static ValidateResponseInner fromJson(JsonReader jsonReader) throws IOException {
+        return jsonReader.readObject(reader -> {
+            ValidateResponseInner deserializedValidateResponseInner = new ValidateResponseInner();
+            while (reader.nextToken() != JsonToken.END_OBJECT) {
+                String fieldName = reader.getFieldName();
+                reader.nextToken();
+
+                if ("status".equals(fieldName)) {
+                    deserializedValidateResponseInner.status = reader.getString();
+                } else if ("error".equals(fieldName)) {
+                    deserializedValidateResponseInner.error = ValidateResponseError.fromJson(reader);
+                } else {
+                    reader.skipChildren();
+                }
+            }
+
+            return deserializedValidateResponseInner;
+        });
     }
 }

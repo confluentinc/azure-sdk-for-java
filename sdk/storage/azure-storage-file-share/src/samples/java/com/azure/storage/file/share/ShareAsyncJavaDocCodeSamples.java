@@ -4,14 +4,17 @@ package com.azure.storage.file.share;
 
 import com.azure.core.util.Context;
 import com.azure.storage.common.StorageSharedKeyCredential;
+import com.azure.storage.file.share.models.FilePermissionFormat;
 import com.azure.storage.file.share.models.ShareAccessPolicy;
 import com.azure.storage.file.share.models.ShareAccessTier;
 import com.azure.storage.file.share.models.ShareFileHttpHeaders;
+import com.azure.storage.file.share.models.ShareFilePermission;
 import com.azure.storage.file.share.models.ShareRequestConditions;
 import com.azure.storage.file.share.models.ShareSignedIdentifier;
 import com.azure.storage.file.share.models.NtfsFileAttributes;
 import com.azure.storage.file.share.options.ShareCreateOptions;
 import com.azure.storage.file.share.options.ShareDeleteOptions;
+import com.azure.storage.file.share.options.ShareDirectoryCreateOptions;
 import com.azure.storage.file.share.options.ShareGetAccessPolicyOptions;
 import com.azure.storage.file.share.options.ShareGetPropertiesOptions;
 import com.azure.storage.file.share.options.ShareGetStatisticsOptions;
@@ -20,6 +23,7 @@ import com.azure.storage.file.share.options.ShareSetPropertiesOptions;
 import com.azure.storage.file.share.options.ShareSetMetadataOptions;
 import com.azure.storage.file.share.sas.ShareSasPermission;
 import com.azure.storage.file.share.sas.ShareServiceSasSignatureValues;
+import reactor.core.publisher.Mono;
 
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
@@ -646,7 +650,8 @@ public class ShareAsyncJavaDocCodeSamples {
     }
 
     /**
-     * Generates a code sample for using {@link ShareAsyncClient#createPermission(String)}
+     * Generates a code sample for using {@link ShareAsyncClient#createPermission(String)} and
+     * {@link ShareAsyncClient#createPermission(ShareFilePermission)}
      */
     public void createPermissionAsync() {
         ShareAsyncClient shareAsyncClient = createAsyncClientWithSASToken();
@@ -654,10 +659,18 @@ public class ShareAsyncJavaDocCodeSamples {
         shareAsyncClient.createPermission("filePermission").subscribe(
             response -> System.out.printf("The file permission key is %s", response));
         // END: com.azure.storage.file.share.ShareAsyncClient.createPermission#string
+
+        // BEGIN: com.azure.storage.file.share.ShareAsyncClient.createPermission#ShareFilePermission
+        ShareFilePermission permission = new ShareFilePermission().setPermission("filePermission")
+            .setPermissionFormat(FilePermissionFormat.BINARY);
+        shareAsyncClient.createPermission(permission).subscribe(
+            response -> System.out.printf("The file permission key is %s", response));
+        // END: com.azure.storage.file.share.ShareAsyncClient.createPermission#ShareFilePermission
     }
 
     /**
-     * Generates a code sample for using {@link ShareAsyncClient#createPermissionWithResponse(String)}
+     * Generates a code sample for using {@link ShareAsyncClient#createPermissionWithResponse(String)} and
+     * {@link ShareAsyncClient#createPermissionWithResponse(ShareFilePermission)}
      */
     public void createPermissionWithResponse() {
         ShareAsyncClient shareAsyncClient = createAsyncClientWithSASToken();
@@ -665,10 +678,18 @@ public class ShareAsyncJavaDocCodeSamples {
         shareAsyncClient.createPermissionWithResponse("filePermission").subscribe(
             response -> System.out.printf("The file permission key is %s", response.getValue()));
         // END: com.azure.storage.file.share.ShareAsyncClient.createPermissionWithResponse#string
+
+        // BEGIN: com.azure.storage.file.share.ShareAsyncClient.createPermissionWithResponse#ShareFilePermission
+        ShareFilePermission permission = new ShareFilePermission().setPermission("filePermission")
+            .setPermissionFormat(FilePermissionFormat.BINARY);
+        shareAsyncClient.createPermissionWithResponse(permission).subscribe(
+            response -> System.out.printf("The file permission key is %s", response.getValue()));
+        // END: com.azure.storage.file.share.ShareAsyncClient.createPermissionWithResponse#ShareFilePermission
     }
 
     /**
-     * Generates a code sample for using {@link ShareAsyncClient#getPermission(String)}
+     * Generates a code sample for using {@link ShareAsyncClient#getPermission(String)} and
+     * {@link ShareAsyncClient#getPermission(String, FilePermissionFormat)}
      */
     public void getPermissionAsync() {
         ShareAsyncClient shareAsyncClient = createAsyncClientWithSASToken();
@@ -676,10 +697,17 @@ public class ShareAsyncJavaDocCodeSamples {
         shareAsyncClient.getPermission("filePermissionKey").subscribe(
             response -> System.out.printf("The file permission is %s", response));
         // END: com.azure.storage.file.share.ShareAsyncClient.getPermission#string
+
+        // BEGIN: com.azure.storage.file.share.ShareAsyncClient.getPermission#string-FilePermissionFormat
+        FilePermissionFormat filePermissionFormat = FilePermissionFormat.BINARY;
+        shareAsyncClient.getPermission("filePermissionKey", filePermissionFormat).subscribe(
+            response -> System.out.printf("The file permission is %s", response));
+        // END: com.azure.storage.file.share.ShareAsyncClient.getPermission#string-FilePermissionFormat
     }
 
     /**
-     * Generates a code sample for using {@link ShareAsyncClient#getPermissionWithResponse(String)}
+     * Generates a code sample for using {@link ShareAsyncClient#getPermissionWithResponse(String)} and
+     * {@link ShareAsyncClient#getPermissionWithResponse(String, FilePermissionFormat)}
      */
     public void getPermissionWithResponse() {
         ShareAsyncClient shareAsyncClient = createAsyncClientWithSASToken();
@@ -687,6 +715,12 @@ public class ShareAsyncJavaDocCodeSamples {
         shareAsyncClient.getPermissionWithResponse("filePermissionKey").subscribe(
             response -> System.out.printf("The file permission is %s", response.getValue()));
         // END: com.azure.storage.file.share.ShareAsyncClient.getPermissionWithResponse#string
+
+        // BEGIN: com.azure.storage.file.share.ShareAsyncClient.getPermissionWithResponse#string-FilePermissionFormat
+        FilePermissionFormat filePermissionFormat = FilePermissionFormat.BINARY;
+        shareAsyncClient.getPermissionWithResponse("filePermissionKey", filePermissionFormat).subscribe(
+            response -> System.out.printf("The file permission is %s", response.getValue()));
+        // END: com.azure.storage.file.share.ShareAsyncClient.getPermissionWithResponse#string-FilePermissionFormat
     }
 
     /**
@@ -772,5 +806,143 @@ public class ShareAsyncJavaDocCodeSamples {
         // Client must be authenticated via StorageSharedKeyCredential
         shareAsyncClient.generateSas(values, new Context("key", "value"));
         // END: com.azure.storage.file.share.ShareAsyncClient.generateSas#ShareServiceSasSignatureValues-Context
+    }
+
+    /**
+     * Generates a code sample for using {@link ShareAsyncClient#createIfNotExists()} and
+     * {@link ShareAsyncClient#createIfNotExistsWithResponse(ShareCreateOptions)}
+     */
+    public void createIfNotExistsCodeSnippets() {
+        ShareAsyncClient shareAsyncClient = createAsyncClientWithSASToken();
+        // BEGIN: com.azure.storage.file.share.ShareAsyncClient.createIfNotExists
+        shareAsyncClient.createIfNotExists().subscribe(response ->
+            System.out.printf("Created at %s%n", response.getLastModified()));
+        // END: com.azure.storage.file.share.ShareAsyncClient.createIfNotExists
+
+        // BEGIN: com.azure.storage.file.share.ShareAsyncClient.createIfNotExistsWithResponse#ShareCreateOptions
+        shareAsyncClient.createIfNotExistsWithResponse(new ShareCreateOptions()
+            .setMetadata(Collections.singletonMap("share", "metadata")).setQuotaInGb(1)
+            .setAccessTier(ShareAccessTier.HOT)).subscribe(response -> {
+                if (response.getStatusCode() == 409) {
+                    System.out.println("Already exists.");
+                } else {
+                    System.out.println("successfully created.");
+                }
+            });
+        // END: com.azure.storage.file.share.ShareAsyncClient.createIfNotExistsWithResponse#ShareCreateOptions
+    }
+
+    /**
+     * Generates a code sample for using {@link ShareAsyncClient#deleteIfExists()} and
+     * {@link ShareAsyncClient#deleteIfExistsWithResponse(ShareDeleteOptions)}
+     */
+    public void deleteIfExistsCodeSnippets() {
+        ShareAsyncClient shareAsyncClient = createAsyncClientWithSASToken();
+        // BEGIN: com.azure.storage.file.share.ShareAsyncClient.deleteIfExists
+        shareAsyncClient.deleteIfExists().subscribe(deleted -> {
+            if (deleted) {
+                System.out.println("Successfully deleted.");
+            } else {
+                System.out.println("Does not exist.");
+            }
+        });
+        // END: com.azure.storage.file.share.ShareAsyncClient.deleteIfExists
+
+        // BEGIN: com.azure.storage.file.share.ShareAsyncClient.deleteIfExistsWithResponse#ShareDeleteOptions
+        shareAsyncClient.deleteIfExistsWithResponse(new ShareDeleteOptions()
+            .setRequestConditions(new ShareRequestConditions().setLeaseId(leaseId))).subscribe(response -> {
+                if (response.getStatusCode() == 404) {
+                    System.out.println("Does not exist.");
+                } else {
+                    System.out.println("successfully deleted.");
+                }
+            });
+        // END: com.azure.storage.file.share.ShareAsyncClient.deleteIfExistsWithResponse#ShareDeleteOptions
+    }
+
+    /**
+     * Generates a code sample for using {@link ShareAsyncClient#createDirectoryIfNotExists(String)} and
+     * {@link ShareAsyncClient#createDirectoryIfNotExistsWithResponse(String, ShareDirectoryCreateOptions)}
+     */
+    public void createDirectoryIfNotExistsCodeSnippets() {
+        ShareAsyncClient shareAsyncClient = createAsyncClientWithSASToken();
+        // BEGIN: com.azure.storage.file.share.ShareAsyncClient.createDirectoryIfNotExists#string
+        shareAsyncClient.createDirectoryIfNotExists("mydirectory")
+            .switchIfEmpty(Mono.<ShareDirectoryAsyncClient>empty()
+                .doOnSuccess(x -> System.out.println("Already exists.")))
+            .subscribe(response -> System.out.println("Create completed."));
+        // END: com.azure.storage.file.share.ShareAsyncClient.createDirectoryIfNotExists#string
+
+        // BEGIN: com.azure.storage.file.share.ShareAsyncClient.createDirectoryIfNotExistsWithResponse#String-ShareDirectoryCreateOptions
+        FileSmbProperties smbProperties = new FileSmbProperties();
+        String filePermission = "filePermission";
+        Map<String, String> metadata = Collections.singletonMap("directory", "metadata");
+        ShareDirectoryCreateOptions options = new ShareDirectoryCreateOptions().setSmbProperties(smbProperties)
+            .setFilePermission(filePermission).setMetadata(metadata);
+
+        shareAsyncClient.createDirectoryIfNotExistsWithResponse("documents", options).subscribe(response -> {
+            if (response.getStatusCode() == 409) {
+                System.out.println("Already exists.");
+            } else {
+                System.out.println("successfully created.");
+            }
+        });
+        // END: com.azure.storage.file.share.ShareAsyncClient.createDirectoryIfNotExistsWithResponse#String-ShareDirectoryCreateOptions
+    }
+
+    /**
+     * Generates a code sample for using {@link ShareAsyncClient#deleteDirectoryIfExists(String)} and
+     * {@link ShareAsyncClient#deleteDirectoryIfExistsWithResponse(String)}
+     */
+    public void deleteDirectoryIfExistsCodeSnippets() {
+        ShareAsyncClient shareAsyncClient = createAsyncClientWithSASToken();
+        // BEGIN: com.azure.storage.file.share.ShareAsyncClient.deleteDirectoryIfExists#string
+        shareAsyncClient.deleteDirectoryIfExists("mydirectory").subscribe(deleted -> {
+            if (deleted) {
+                System.out.println("Successfully deleted.");
+            } else {
+                System.out.println("Does not exist.");
+            }
+        });
+        // END: com.azure.storage.file.share.ShareAsyncClient.deleteDirectoryIfExists#string
+
+        // BEGIN: com.azure.storage.file.share.ShareAsyncClient.deleteDirectoryIfExistsWithResponse#string
+        shareAsyncClient.deleteDirectoryIfExistsWithResponse("mydirectory").subscribe(response -> {
+            if (response.getStatusCode() == 404) {
+                System.out.println("Does not exist.");
+            } else {
+                System.out.println("successfully deleted.");
+            }
+        });
+        // END: com.azure.storage.file.share.ShareAsyncClient.deleteDirectoryIfExistsWithResponse#string
+    }
+
+    /**
+     * Generates a code sample for using {@link ShareAsyncClient#deleteFileIfExists(String)} and
+     * {@link ShareAsyncClient#deleteFileIfExistsWithResponse(String, ShareRequestConditions)}
+     */
+    public void deleteFileIfExistsCodeSnippets() {
+        ShareAsyncClient shareAsyncClient = createAsyncClientWithSASToken();
+        // BEGIN: com.azure.storage.file.share.ShareAsyncClient.deleteFileIfExists#string
+        shareAsyncClient.deleteFileIfExists("myfile").subscribe(deleted -> {
+            if (deleted) {
+                System.out.println("Successfully deleted.");
+            } else {
+                System.out.println("Does not exist.");
+            }
+        });
+        // END: com.azure.storage.file.share.ShareAsyncClient.deleteFileIfExists#string
+
+        // BEGIN: com.azure.storage.file.share.ShareAsyncClient.deleteFileIfExistsWithResponse#string-ShareRequestConditions
+        ShareRequestConditions requestConditions = new ShareRequestConditions().setLeaseId(leaseId);
+
+        shareAsyncClient.deleteFileIfExistsWithResponse("myfile", requestConditions).subscribe(response -> {
+            if (response.getStatusCode() == 404) {
+                System.out.println("Does not exist.");
+            } else {
+                System.out.println("successfully deleted.");
+            }
+        });
+        // END: com.azure.storage.file.share.ShareAsyncClient.deleteFileIfExistsWithResponse#string-ShareRequestConditions
     }
 }

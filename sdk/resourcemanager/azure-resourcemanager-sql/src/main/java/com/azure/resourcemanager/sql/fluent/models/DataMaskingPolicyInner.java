@@ -5,62 +5,57 @@
 package com.azure.resourcemanager.sql.fluent.models;
 
 import com.azure.core.annotation.Fluent;
-import com.azure.core.annotation.JsonFlatten;
 import com.azure.core.management.ProxyResource;
-import com.azure.core.util.logging.ClientLogger;
+import com.azure.json.JsonReader;
+import com.azure.json.JsonToken;
+import com.azure.json.JsonWriter;
 import com.azure.resourcemanager.sql.models.DataMaskingState;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import java.io.IOException;
 
-/** Represents a database data masking policy. */
-@JsonFlatten
+/**
+ * A database data masking policy.
+ */
 @Fluent
-public class DataMaskingPolicyInner extends ProxyResource {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(DataMaskingPolicyInner.class);
-
+public final class DataMaskingPolicyInner extends ProxyResource {
     /*
      * The location of the data masking policy.
      */
-    @JsonProperty(value = "location", access = JsonProperty.Access.WRITE_ONLY)
     private String location;
 
     /*
-     * The kind of data masking policy. Metadata, used for Azure portal.
+     * The kind of Data Masking Policy. Metadata, used for Azure portal.
      */
-    @JsonProperty(value = "kind", access = JsonProperty.Access.WRITE_ONLY)
     private String kind;
 
     /*
-     * The state of the data masking policy.
+     * Resource properties.
      */
-    @JsonProperty(value = "properties.dataMaskingState")
-    private DataMaskingState dataMaskingState;
+    private DataMaskingPolicyProperties innerProperties;
 
     /*
-     * The list of the exempt principals. Specifies the semicolon-separated
-     * list of database users for which the data masking policy does not apply.
-     * The specified users receive data results without masking for all of the
-     * database queries.
+     * The type of the resource.
      */
-    @JsonProperty(value = "properties.exemptPrincipals")
-    private String exemptPrincipals;
+    private String type;
 
     /*
-     * The list of the application principals. This is a legacy parameter and
-     * is no longer used.
+     * The name of the resource.
      */
-    @JsonProperty(value = "properties.applicationPrincipals", access = JsonProperty.Access.WRITE_ONLY)
-    private String applicationPrincipals;
+    private String name;
 
     /*
-     * The masking level. This is a legacy parameter and is no longer used.
+     * Fully qualified resource Id for the resource.
      */
-    @JsonProperty(value = "properties.maskingLevel", access = JsonProperty.Access.WRITE_ONLY)
-    private String maskingLevel;
+    private String id;
+
+    /**
+     * Creates an instance of DataMaskingPolicyInner class.
+     */
+    public DataMaskingPolicyInner() {
+    }
 
     /**
      * Get the location property: The location of the data masking policy.
-     *
+     * 
      * @return the location value.
      */
     public String location() {
@@ -68,8 +63,8 @@ public class DataMaskingPolicyInner extends ProxyResource {
     }
 
     /**
-     * Get the kind property: The kind of data masking policy. Metadata, used for Azure portal.
-     *
+     * Get the kind property: The kind of Data Masking Policy. Metadata, used for Azure portal.
+     * 
      * @return the kind value.
      */
     public String kind() {
@@ -77,22 +72,64 @@ public class DataMaskingPolicyInner extends ProxyResource {
     }
 
     /**
+     * Get the innerProperties property: Resource properties.
+     * 
+     * @return the innerProperties value.
+     */
+    private DataMaskingPolicyProperties innerProperties() {
+        return this.innerProperties;
+    }
+
+    /**
+     * Get the type property: The type of the resource.
+     * 
+     * @return the type value.
+     */
+    @Override
+    public String type() {
+        return this.type;
+    }
+
+    /**
+     * Get the name property: The name of the resource.
+     * 
+     * @return the name value.
+     */
+    @Override
+    public String name() {
+        return this.name;
+    }
+
+    /**
+     * Get the id property: Fully qualified resource Id for the resource.
+     * 
+     * @return the id value.
+     */
+    @Override
+    public String id() {
+        return this.id;
+    }
+
+    /**
      * Get the dataMaskingState property: The state of the data masking policy.
-     *
+     * 
      * @return the dataMaskingState value.
      */
     public DataMaskingState dataMaskingState() {
-        return this.dataMaskingState;
+        return this.innerProperties() == null ? null : this.innerProperties().dataMaskingState();
     }
 
     /**
      * Set the dataMaskingState property: The state of the data masking policy.
-     *
+     * 
      * @param dataMaskingState the dataMaskingState value to set.
      * @return the DataMaskingPolicyInner object itself.
      */
     public DataMaskingPolicyInner withDataMaskingState(DataMaskingState dataMaskingState) {
-        this.dataMaskingState = dataMaskingState;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new DataMaskingPolicyProperties();
+        }
+        this.innerProperties().withDataMaskingState(dataMaskingState);
         return this;
     }
 
@@ -100,50 +137,103 @@ public class DataMaskingPolicyInner extends ProxyResource {
      * Get the exemptPrincipals property: The list of the exempt principals. Specifies the semicolon-separated list of
      * database users for which the data masking policy does not apply. The specified users receive data results without
      * masking for all of the database queries.
-     *
+     * 
      * @return the exemptPrincipals value.
      */
     public String exemptPrincipals() {
-        return this.exemptPrincipals;
+        return this.innerProperties() == null ? null : this.innerProperties().exemptPrincipals();
     }
 
     /**
      * Set the exemptPrincipals property: The list of the exempt principals. Specifies the semicolon-separated list of
      * database users for which the data masking policy does not apply. The specified users receive data results without
      * masking for all of the database queries.
-     *
+     * 
      * @param exemptPrincipals the exemptPrincipals value to set.
      * @return the DataMaskingPolicyInner object itself.
      */
     public DataMaskingPolicyInner withExemptPrincipals(String exemptPrincipals) {
-        this.exemptPrincipals = exemptPrincipals;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new DataMaskingPolicyProperties();
+        }
+        this.innerProperties().withExemptPrincipals(exemptPrincipals);
         return this;
     }
 
     /**
      * Get the applicationPrincipals property: The list of the application principals. This is a legacy parameter and is
      * no longer used.
-     *
+     * 
      * @return the applicationPrincipals value.
      */
     public String applicationPrincipals() {
-        return this.applicationPrincipals;
+        return this.innerProperties() == null ? null : this.innerProperties().applicationPrincipals();
     }
 
     /**
      * Get the maskingLevel property: The masking level. This is a legacy parameter and is no longer used.
-     *
+     * 
      * @return the maskingLevel value.
      */
     public String maskingLevel() {
-        return this.maskingLevel;
+        return this.innerProperties() == null ? null : this.innerProperties().maskingLevel();
     }
 
     /**
      * Validates the instance.
-     *
+     * 
      * @throws IllegalArgumentException thrown if the instance is not valid.
      */
     public void validate() {
+        if (innerProperties() != null) {
+            innerProperties().validate();
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public JsonWriter toJson(JsonWriter jsonWriter) throws IOException {
+        jsonWriter.writeStartObject();
+        jsonWriter.writeJsonField("properties", this.innerProperties);
+        return jsonWriter.writeEndObject();
+    }
+
+    /**
+     * Reads an instance of DataMaskingPolicyInner from the JsonReader.
+     * 
+     * @param jsonReader The JsonReader being read.
+     * @return An instance of DataMaskingPolicyInner if the JsonReader was pointing to an instance of it, or null if it
+     * was pointing to JSON null.
+     * @throws IllegalStateException If the deserialized JSON object was missing any required properties.
+     * @throws IOException If an error occurs while reading the DataMaskingPolicyInner.
+     */
+    public static DataMaskingPolicyInner fromJson(JsonReader jsonReader) throws IOException {
+        return jsonReader.readObject(reader -> {
+            DataMaskingPolicyInner deserializedDataMaskingPolicyInner = new DataMaskingPolicyInner();
+            while (reader.nextToken() != JsonToken.END_OBJECT) {
+                String fieldName = reader.getFieldName();
+                reader.nextToken();
+
+                if ("id".equals(fieldName)) {
+                    deserializedDataMaskingPolicyInner.id = reader.getString();
+                } else if ("name".equals(fieldName)) {
+                    deserializedDataMaskingPolicyInner.name = reader.getString();
+                } else if ("type".equals(fieldName)) {
+                    deserializedDataMaskingPolicyInner.type = reader.getString();
+                } else if ("location".equals(fieldName)) {
+                    deserializedDataMaskingPolicyInner.location = reader.getString();
+                } else if ("kind".equals(fieldName)) {
+                    deserializedDataMaskingPolicyInner.kind = reader.getString();
+                } else if ("properties".equals(fieldName)) {
+                    deserializedDataMaskingPolicyInner.innerProperties = DataMaskingPolicyProperties.fromJson(reader);
+                } else {
+                    reader.skipChildren();
+                }
+            }
+
+            return deserializedDataMaskingPolicyInner;
+        });
     }
 }

@@ -7,11 +7,27 @@ package com.azure.resourcemanager.recoveryservicesbackup.models;
 import com.azure.core.http.rest.Response;
 import com.azure.core.util.Context;
 
-/** Resource collection API of BackupResourceEncryptionConfigs. */
+/**
+ * Resource collection API of BackupResourceEncryptionConfigs.
+ */
 public interface BackupResourceEncryptionConfigs {
     /**
      * Fetches Vault Encryption config.
-     *
+     * 
+     * @param vaultName The name of the recovery services vault.
+     * @param resourceGroupName The name of the resource group where the recovery services vault is present.
+     * @param context The context to associate with this operation.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return the response body along with {@link Response}.
+     */
+    Response<BackupResourceEncryptionConfigExtendedResource> getWithResponse(String vaultName, String resourceGroupName,
+        Context context);
+
+    /**
+     * Fetches Vault Encryption config.
+     * 
      * @param vaultName The name of the recovery services vault.
      * @param resourceGroupName The name of the resource group where the recovery services vault is present.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
@@ -22,22 +38,23 @@ public interface BackupResourceEncryptionConfigs {
     BackupResourceEncryptionConfigExtendedResource get(String vaultName, String resourceGroupName);
 
     /**
-     * Fetches Vault Encryption config.
-     *
+     * Updates Vault encryption config.
+     * 
      * @param vaultName The name of the recovery services vault.
      * @param resourceGroupName The name of the resource group where the recovery services vault is present.
+     * @param parameters Vault encryption input config request.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the response.
+     * @return the {@link Response}.
      */
-    Response<BackupResourceEncryptionConfigExtendedResource> getWithResponse(
-        String vaultName, String resourceGroupName, Context context);
+    Response<Void> updateWithResponse(String vaultName, String resourceGroupName,
+        BackupResourceEncryptionConfigResource parameters, Context context);
 
     /**
      * Updates Vault encryption config.
-     *
+     * 
      * @param vaultName The name of the recovery services vault.
      * @param resourceGroupName The name of the resource group where the recovery services vault is present.
      * @param parameters Vault encryption input config request.
@@ -46,19 +63,4 @@ public interface BackupResourceEncryptionConfigs {
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
      */
     void update(String vaultName, String resourceGroupName, BackupResourceEncryptionConfigResource parameters);
-
-    /**
-     * Updates Vault encryption config.
-     *
-     * @param vaultName The name of the recovery services vault.
-     * @param resourceGroupName The name of the resource group where the recovery services vault is present.
-     * @param parameters Vault encryption input config request.
-     * @param context The context to associate with this operation.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the response.
-     */
-    Response<Void> updateWithResponse(
-        String vaultName, String resourceGroupName, BackupResourceEncryptionConfigResource parameters, Context context);
 }

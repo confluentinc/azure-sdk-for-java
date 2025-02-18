@@ -16,8 +16,12 @@ import com.azure.resourcemanager.storagecache.models.CacheIdentity;
 import com.azure.resourcemanager.storagecache.models.CacheNetworkSettings;
 import com.azure.resourcemanager.storagecache.models.CacheSecuritySettings;
 import com.azure.resourcemanager.storagecache.models.CacheSku;
+import com.azure.resourcemanager.storagecache.models.CacheUpgradeSettings;
 import com.azure.resourcemanager.storagecache.models.CacheUpgradeStatus;
+import com.azure.resourcemanager.storagecache.models.PrimingJob;
+import com.azure.resourcemanager.storagecache.models.PrimingJobIdParameter;
 import com.azure.resourcemanager.storagecache.models.ProvisioningStateType;
+import com.azure.resourcemanager.storagecache.models.StorageTargetSpaceAllocation;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -93,6 +97,10 @@ public final class CacheImpl implements Cache, Cache.Definition, Cache.Update {
         return this.innerModel().upgradeStatus();
     }
 
+    public CacheUpgradeSettings upgradeSettings() {
+        return this.innerModel().upgradeSettings();
+    }
+
     public CacheNetworkSettings networkSettings() {
         return this.innerModel().networkSettings();
     }
@@ -109,12 +117,43 @@ public final class CacheImpl implements Cache, Cache.Definition, Cache.Update {
         return this.innerModel().directoryServicesSettings();
     }
 
+    public List<String> zones() {
+        List<String> inner = this.innerModel().zones();
+        if (inner != null) {
+            return Collections.unmodifiableList(inner);
+        } else {
+            return Collections.emptyList();
+        }
+    }
+
+    public List<PrimingJob> primingJobs() {
+        List<PrimingJob> inner = this.innerModel().primingJobs();
+        if (inner != null) {
+            return Collections.unmodifiableList(inner);
+        } else {
+            return Collections.emptyList();
+        }
+    }
+
+    public List<StorageTargetSpaceAllocation> spaceAllocation() {
+        List<StorageTargetSpaceAllocation> inner = this.innerModel().spaceAllocation();
+        if (inner != null) {
+            return Collections.unmodifiableList(inner);
+        } else {
+            return Collections.emptyList();
+        }
+    }
+
     public Region region() {
         return Region.fromName(this.regionName());
     }
 
     public String regionName() {
         return this.location();
+    }
+
+    public String resourceGroupName() {
+        return resourceGroupName;
     }
 
     public CacheInner innerModel() {
@@ -135,20 +174,16 @@ public final class CacheImpl implements Cache, Cache.Definition, Cache.Update {
     }
 
     public Cache create() {
-        this.innerObject =
-            serviceManager
-                .serviceClient()
-                .getCaches()
-                .createOrUpdate(resourceGroupName, cacheName, this.innerModel(), Context.NONE);
+        this.innerObject = serviceManager.serviceClient()
+            .getCaches()
+            .createOrUpdate(resourceGroupName, cacheName, this.innerModel(), Context.NONE);
         return this;
     }
 
     public Cache create(Context context) {
-        this.innerObject =
-            serviceManager
-                .serviceClient()
-                .getCaches()
-                .createOrUpdate(resourceGroupName, cacheName, this.innerModel(), context);
+        this.innerObject = serviceManager.serviceClient()
+            .getCaches()
+            .createOrUpdate(resourceGroupName, cacheName, this.innerModel(), context);
         return this;
     }
 
@@ -163,49 +198,39 @@ public final class CacheImpl implements Cache, Cache.Definition, Cache.Update {
     }
 
     public Cache apply() {
-        this.innerObject =
-            serviceManager
-                .serviceClient()
-                .getCaches()
-                .updateWithResponse(resourceGroupName, cacheName, this.innerModel(), Context.NONE)
-                .getValue();
+        this.innerObject = serviceManager.serviceClient()
+            .getCaches()
+            .update(resourceGroupName, cacheName, this.innerModel(), Context.NONE);
         return this;
     }
 
     public Cache apply(Context context) {
-        this.innerObject =
-            serviceManager
-                .serviceClient()
-                .getCaches()
-                .updateWithResponse(resourceGroupName, cacheName, this.innerModel(), context)
-                .getValue();
+        this.innerObject = serviceManager.serviceClient()
+            .getCaches()
+            .update(resourceGroupName, cacheName, this.innerModel(), context);
         return this;
     }
 
     CacheImpl(CacheInner innerObject, com.azure.resourcemanager.storagecache.StorageCacheManager serviceManager) {
         this.innerObject = innerObject;
         this.serviceManager = serviceManager;
-        this.resourceGroupName = Utils.getValueFromIdByName(innerObject.id(), "resourcegroups");
-        this.cacheName = Utils.getValueFromIdByName(innerObject.id(), "caches");
+        this.resourceGroupName = ResourceManagerUtils.getValueFromIdByName(innerObject.id(), "resourcegroups");
+        this.cacheName = ResourceManagerUtils.getValueFromIdByName(innerObject.id(), "caches");
     }
 
     public Cache refresh() {
-        this.innerObject =
-            serviceManager
-                .serviceClient()
-                .getCaches()
-                .getByResourceGroupWithResponse(resourceGroupName, cacheName, Context.NONE)
-                .getValue();
+        this.innerObject = serviceManager.serviceClient()
+            .getCaches()
+            .getByResourceGroupWithResponse(resourceGroupName, cacheName, Context.NONE)
+            .getValue();
         return this;
     }
 
     public Cache refresh(Context context) {
-        this.innerObject =
-            serviceManager
-                .serviceClient()
-                .getCaches()
-                .getByResourceGroupWithResponse(resourceGroupName, cacheName, context)
-                .getValue();
+        this.innerObject = serviceManager.serviceClient()
+            .getCaches()
+            .getByResourceGroupWithResponse(resourceGroupName, cacheName, context)
+            .getValue();
         return this;
     }
 
@@ -239,6 +264,38 @@ public final class CacheImpl implements Cache, Cache.Definition, Cache.Update {
 
     public void stop(Context context) {
         serviceManager.caches().stop(resourceGroupName, cacheName, context);
+    }
+
+    public void startPrimingJob() {
+        serviceManager.caches().startPrimingJob(resourceGroupName, cacheName);
+    }
+
+    public void startPrimingJob(PrimingJob primingjob, Context context) {
+        serviceManager.caches().startPrimingJob(resourceGroupName, cacheName, primingjob, context);
+    }
+
+    public void stopPrimingJob() {
+        serviceManager.caches().stopPrimingJob(resourceGroupName, cacheName);
+    }
+
+    public void stopPrimingJob(PrimingJobIdParameter primingJobId, Context context) {
+        serviceManager.caches().stopPrimingJob(resourceGroupName, cacheName, primingJobId, context);
+    }
+
+    public void pausePrimingJob() {
+        serviceManager.caches().pausePrimingJob(resourceGroupName, cacheName);
+    }
+
+    public void pausePrimingJob(PrimingJobIdParameter primingJobId, Context context) {
+        serviceManager.caches().pausePrimingJob(resourceGroupName, cacheName, primingJobId, context);
+    }
+
+    public void resumePrimingJob() {
+        serviceManager.caches().resumePrimingJob(resourceGroupName, cacheName);
+    }
+
+    public void resumePrimingJob(PrimingJobIdParameter primingJobId, Context context) {
+        serviceManager.caches().resumePrimingJob(resourceGroupName, cacheName, primingJobId, context);
     }
 
     public void upgradeFirmware() {
@@ -284,6 +341,11 @@ public final class CacheImpl implements Cache, Cache.Definition, Cache.Update {
         return this;
     }
 
+    public CacheImpl withUpgradeSettings(CacheUpgradeSettings upgradeSettings) {
+        this.innerModel().withUpgradeSettings(upgradeSettings);
+        return this;
+    }
+
     public CacheImpl withNetworkSettings(CacheNetworkSettings networkSettings) {
         this.innerModel().withNetworkSettings(networkSettings);
         return this;
@@ -301,6 +363,11 @@ public final class CacheImpl implements Cache, Cache.Definition, Cache.Update {
 
     public CacheImpl withDirectoryServicesSettings(CacheDirectorySettings directoryServicesSettings) {
         this.innerModel().withDirectoryServicesSettings(directoryServicesSettings);
+        return this;
+    }
+
+    public CacheImpl withZones(List<String> zones) {
+        this.innerModel().withZones(zones);
         return this;
     }
 }

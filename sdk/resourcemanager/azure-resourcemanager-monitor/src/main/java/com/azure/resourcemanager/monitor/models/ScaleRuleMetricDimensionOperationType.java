@@ -5,30 +5,48 @@
 package com.azure.resourcemanager.monitor.models;
 
 import com.azure.core.util.ExpandableStringEnum;
-import com.fasterxml.jackson.annotation.JsonCreator;
 import java.util.Collection;
 
-/** Defines values for ScaleRuleMetricDimensionOperationType. */
+/**
+ * the dimension operator. Only 'Equals' and 'NotEquals' are supported. 'Equals' being equal to any of the values.
+ * 'NotEquals' being not equal to all of the values.
+ */
 public final class ScaleRuleMetricDimensionOperationType
     extends ExpandableStringEnum<ScaleRuleMetricDimensionOperationType> {
-    /** Static value Equals for ScaleRuleMetricDimensionOperationType. */
+    /**
+     * Static value Equals for ScaleRuleMetricDimensionOperationType.
+     */
     public static final ScaleRuleMetricDimensionOperationType EQUALS = fromString("Equals");
 
-    /** Static value NotEquals for ScaleRuleMetricDimensionOperationType. */
+    /**
+     * Static value NotEquals for ScaleRuleMetricDimensionOperationType.
+     */
     public static final ScaleRuleMetricDimensionOperationType NOT_EQUALS = fromString("NotEquals");
 
     /**
+     * Creates a new instance of ScaleRuleMetricDimensionOperationType value.
+     * 
+     * @deprecated Use the {@link #fromString(String)} factory method.
+     */
+    @Deprecated
+    public ScaleRuleMetricDimensionOperationType() {
+    }
+
+    /**
      * Creates or finds a ScaleRuleMetricDimensionOperationType from its string representation.
-     *
+     * 
      * @param name a name to look for.
      * @return the corresponding ScaleRuleMetricDimensionOperationType.
      */
-    @JsonCreator
     public static ScaleRuleMetricDimensionOperationType fromString(String name) {
         return fromString(name, ScaleRuleMetricDimensionOperationType.class);
     }
 
-    /** @return known ScaleRuleMetricDimensionOperationType values. */
+    /**
+     * Gets known ScaleRuleMetricDimensionOperationType values.
+     * 
+     * @return known ScaleRuleMetricDimensionOperationType values.
+     */
     public static Collection<ScaleRuleMetricDimensionOperationType> values() {
         return values(ScaleRuleMetricDimensionOperationType.class);
     }

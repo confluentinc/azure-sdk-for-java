@@ -5,7 +5,7 @@ package com.azure.messaging.servicebus.administration.models;
 
 import com.azure.core.annotation.Fluent;
 import com.azure.core.util.logging.ClientLogger;
-import com.azure.messaging.servicebus.implementation.models.AuthorizationRuleImpl;
+import com.azure.messaging.servicebus.administration.implementation.models.AuthorizationRuleImpl;
 
 import java.security.SecureRandom;
 import java.time.OffsetDateTime;
@@ -27,11 +27,11 @@ public final class SharedAccessAuthorizationRule implements AuthorizationRule {
      */
     private static final String FIXED_CLAIM_TYPE = "SharedAccessKey";
     private static final SecureRandom SECURE_RANDOM = new SecureRandom();
+    private static final ClientLogger LOGGER = new ClientLogger(SharedAccessAuthorizationRule.class);
 
     private final List<AccessRights> accessRights;
     private final OffsetDateTime createdAt;
     private final String keyName;
-    private final ClientLogger logger = new ClientLogger(SharedAccessAuthorizationRule.class);
     private final OffsetDateTime modifiedAt;
 
     private String primaryKey;
@@ -84,18 +84,16 @@ public final class SharedAccessAuthorizationRule implements AuthorizationRule {
         this.keyName = Objects.requireNonNull(keyName, "'keyName' cannot be null.");
         this.primaryKey = Objects.requireNonNull(primaryKey, "'primaryKey' cannot be null.");
         this.secondaryKey = Objects.requireNonNull(secondaryKey, "'secondaryKey' cannot be null.");
-        this.accessRights = new ArrayList<>(Objects.requireNonNull(accessRights,
-            "'accessRights' cannot be null."));
+        this.accessRights = new ArrayList<>(Objects.requireNonNull(accessRights, "'accessRights' cannot be null."));
         this.createdAt = null;
         this.modifiedAt = null;
 
         if (keyName.isEmpty()) {
-            throw logger.logExceptionAsError(new IllegalArgumentException("'keyName' cannot be an empty string."));
+            throw LOGGER.logExceptionAsError(new IllegalArgumentException("'keyName' cannot be an empty string."));
         } else if (primaryKey.isEmpty()) {
-            throw logger.logExceptionAsError(new IllegalArgumentException("'primaryKey' cannot be an empty string."));
+            throw LOGGER.logExceptionAsError(new IllegalArgumentException("'primaryKey' cannot be an empty string."));
         } else if (secondaryKey.isEmpty()) {
-            throw logger.logExceptionAsError(new IllegalArgumentException(
-                "'secondaryKey' cannot be an empty string."));
+            throw LOGGER.logExceptionAsError(new IllegalArgumentException("'secondaryKey' cannot be an empty string."));
         }
     }
 
@@ -180,9 +178,9 @@ public final class SharedAccessAuthorizationRule implements AuthorizationRule {
      */
     public SharedAccessAuthorizationRule setPrimaryKey(String primaryKey) {
         if (Objects.isNull(primaryKey)) {
-            throw logger.logExceptionAsError(new NullPointerException("'primaryKey' cannot be null."));
+            throw LOGGER.logExceptionAsError(new NullPointerException("'primaryKey' cannot be null."));
         } else if (primaryKey.isEmpty()) {
-            throw logger.logExceptionAsError(new IllegalArgumentException("'primaryKey' cannot be an empty string."));
+            throw LOGGER.logExceptionAsError(new IllegalArgumentException("'primaryKey' cannot be an empty string."));
         }
         this.primaryKey = primaryKey;
         return this;
@@ -207,9 +205,9 @@ public final class SharedAccessAuthorizationRule implements AuthorizationRule {
      */
     public SharedAccessAuthorizationRule setSecondaryKey(String secondaryKey) {
         if (Objects.isNull(secondaryKey)) {
-            throw logger.logExceptionAsError(new NullPointerException("'primaryKey' cannot be null."));
+            throw LOGGER.logExceptionAsError(new NullPointerException("'primaryKey' cannot be null."));
         } else if (secondaryKey.isEmpty()) {
-            throw logger.logExceptionAsError(new IllegalArgumentException("'primaryKey' cannot be an empty string."));
+            throw LOGGER.logExceptionAsError(new IllegalArgumentException("'primaryKey' cannot be an empty string."));
         }
         this.secondaryKey = secondaryKey;
         return this;

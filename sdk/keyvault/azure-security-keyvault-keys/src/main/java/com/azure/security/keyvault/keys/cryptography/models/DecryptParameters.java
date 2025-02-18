@@ -40,7 +40,9 @@ public final class DecryptParameters {
      * Factory method to create an instance of {@link DecryptParameters} with the given parameters for
      * {@link EncryptionAlgorithm#A128CBC}.
      *
-     * @param ciphertext The content to be decrypted.
+     * @param ciphertext The content to be decrypted. Microsoft recommends you not use CBC without first ensuring the
+     * integrity of the ciphertext using an HMAC, for example. See
+     * https://docs.microsoft.com/dotnet/standard/security/vulnerabilities-cbc-mode for more information.
      * @param iv Initialization vector for the decryption operation.
      *
      * @return The {@link DecryptParameters}.
@@ -53,7 +55,9 @@ public final class DecryptParameters {
      * Factory method to create an instance of {@link DecryptParameters} with the given parameters for
      * {@link EncryptionAlgorithm#A128CBCPAD}.
      *
-     * @param ciphertext The content to be decrypted.
+     * @param ciphertext The content to be decrypted. Microsoft recommends you not use CBC without first ensuring the
+     * integrity of the ciphertext using an HMAC, for example. See
+     * https://docs.microsoft.com/dotnet/standard/security/vulnerabilities-cbc-mode for more information.
      * @param iv Initialization vector for the decryption operation.
      *
      * @return The {@link DecryptParameters}.
@@ -88,7 +92,7 @@ public final class DecryptParameters {
      * @return The {@link DecryptParameters}.
      */
     public static DecryptParameters createA128GcmParameters(byte[] ciphertext, byte[] iv, byte[] authenticationTag,
-                                                            byte[] additionalAuthenticatedData) {
+        byte[] additionalAuthenticatedData) {
         return new DecryptParameters(EncryptionAlgorithm.A128GCM, ciphertext, iv, authenticationTag,
             additionalAuthenticatedData);
     }
@@ -97,7 +101,9 @@ public final class DecryptParameters {
      * Factory method to create an instance of {@link DecryptParameters} with the given parameters for
      * {@link EncryptionAlgorithm#A192CBC}.
      *
-     * @param ciphertext The content to be decrypted.
+     * @param ciphertext The content to be decrypted. Microsoft recommends you not use CBC without first ensuring the
+     * integrity of the ciphertext using an HMAC, for example. See
+     * https://docs.microsoft.com/dotnet/standard/security/vulnerabilities-cbc-mode for more information.
      * @param iv Initialization vector for the decryption operation.
      *
      * @return The {@link DecryptParameters}.
@@ -110,7 +116,9 @@ public final class DecryptParameters {
      * Factory method to create an instance of {@link DecryptParameters} with the given parameters for
      * {@link EncryptionAlgorithm#A192CBCPAD}.
      *
-     * @param ciphertext The content to be decrypted.
+     * @param ciphertext The content to be decrypted. Microsoft recommends you not use CBC without first ensuring the
+     * integrity of the ciphertext using an HMAC, for example. See
+     * https://docs.microsoft.com/dotnet/standard/security/vulnerabilities-cbc-mode for more information.
      * @param iv Initialization vector for the decryption operation.
      *
      * @return The {@link DecryptParameters}.
@@ -145,7 +153,7 @@ public final class DecryptParameters {
      * @return The {@link DecryptParameters}.
      */
     public static DecryptParameters createA192GcmParameters(byte[] ciphertext, byte[] iv, byte[] authenticationTag,
-                                                            byte[] additionalAuthenticatedData) {
+        byte[] additionalAuthenticatedData) {
         return new DecryptParameters(EncryptionAlgorithm.A192GCM, ciphertext, iv, authenticationTag,
             additionalAuthenticatedData);
     }
@@ -154,7 +162,9 @@ public final class DecryptParameters {
      * Factory method to create an instance of {@link DecryptParameters} with the given parameters for
      * {@link EncryptionAlgorithm#A256CBC}.
      *
-     * @param ciphertext The content to be decrypted.
+     * @param ciphertext The content to be decrypted. Microsoft recommends you not use CBC without first ensuring the
+     * integrity of the ciphertext using an HMAC, for example. See
+     * https://docs.microsoft.com/dotnet/standard/security/vulnerabilities-cbc-mode for more information.
      * @param iv Initialization vector for the decryption operation.
      *
      * @return The {@link DecryptParameters}.
@@ -167,7 +177,9 @@ public final class DecryptParameters {
      * Factory method to create an instance of {@link DecryptParameters} with the given parameters for
      * {@link EncryptionAlgorithm#A256CBCPAD}.
      *
-     * @param ciphertext The content to be decrypted.
+     * @param ciphertext The content to be decrypted. Microsoft recommends you not use CBC without first ensuring the
+     * integrity of the ciphertext using an HMAC, for example. See
+     * https://docs.microsoft.com/dotnet/standard/security/vulnerabilities-cbc-mode for more information.
      * @param iv Initialization vector for the decryption operation.
      *
      * @return The {@link DecryptParameters}.
@@ -202,7 +214,7 @@ public final class DecryptParameters {
      * @return The {@link DecryptParameters}.
      */
     public static DecryptParameters createA256GcmParameters(byte[] ciphertext, byte[] iv, byte[] authenticationTag,
-                                                            byte[] additionalAuthenticatedData) {
+        byte[] additionalAuthenticatedData) {
         return new DecryptParameters(EncryptionAlgorithm.A256GCM, ciphertext, iv, authenticationTag,
             additionalAuthenticatedData);
     }
@@ -216,8 +228,7 @@ public final class DecryptParameters {
      * @return The {@link DecryptParameters}.
      */
     public static DecryptParameters createRsa15Parameters(byte[] ciphertext) {
-        return new DecryptParameters(EncryptionAlgorithm.RSA1_5, ciphertext, null, null,
-            null);
+        return new DecryptParameters(EncryptionAlgorithm.RSA1_5, ciphertext, null, null, null);
     }
 
     /**
@@ -229,8 +240,7 @@ public final class DecryptParameters {
      * @return The {@link DecryptParameters}.
      */
     public static DecryptParameters createRsaOaepParameters(byte[] ciphertext) {
-        return new DecryptParameters(EncryptionAlgorithm.RSA_OAEP, ciphertext, null, null,
-            null);
+        return new DecryptParameters(EncryptionAlgorithm.RSA_OAEP, ciphertext, null, null, null);
     }
 
     /**
@@ -242,8 +252,7 @@ public final class DecryptParameters {
      * @return The {@link DecryptParameters}.
      */
     public static DecryptParameters createRsaOaep256Parameters(byte[] ciphertext) {
-        return new DecryptParameters(EncryptionAlgorithm.RSA_OAEP_256, ciphertext, null, null,
-            null);
+        return new DecryptParameters(EncryptionAlgorithm.RSA_OAEP_256, ciphertext, null, null, null);
     }
 
     /**
@@ -256,11 +265,12 @@ public final class DecryptParameters {
      * @param additionalAuthenticatedData Additional data to authenticate when using authenticated crypto algorithms.
      */
     DecryptParameters(EncryptionAlgorithm algorithm, byte[] ciphertext, byte[] iv, byte[] authenticationTag,
-                      byte[] additionalAuthenticatedData) {
+        byte[] additionalAuthenticatedData) {
         Objects.requireNonNull(algorithm, "Encryption algorithm cannot be null.");
         Objects.requireNonNull(ciphertext, "Cipher text content to be decrypted cannot be null.");
 
-        if (algorithm == EncryptionAlgorithm.A128GCM || algorithm == EncryptionAlgorithm.A192GCM
+        if (algorithm == EncryptionAlgorithm.A128GCM
+            || algorithm == EncryptionAlgorithm.A192GCM
             || algorithm == EncryptionAlgorithm.A256GCM) {
 
             Objects.requireNonNull(authenticationTag, "Authentication tag cannot be null for GCM decryption.");

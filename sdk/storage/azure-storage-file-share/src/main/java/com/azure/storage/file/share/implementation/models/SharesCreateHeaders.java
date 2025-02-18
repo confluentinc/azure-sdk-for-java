@@ -5,48 +5,185 @@
 package com.azure.storage.file.share.implementation.models;
 
 import com.azure.core.annotation.Fluent;
+import com.azure.core.http.HttpHeaderName;
+import com.azure.core.http.HttpHeaders;
 import com.azure.core.util.DateTimeRfc1123;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
 import java.time.OffsetDateTime;
 
-/** The SharesCreateHeaders model. */
-@JacksonXmlRootElement(localName = "null")
+/**
+ * The SharesCreateHeaders model.
+ */
 @Fluent
 public final class SharesCreateHeaders {
     /*
+     * The x-ms-share-provisioned-bandwidth-mibps property.
+     */
+    private Long xMsShareProvisionedBandwidthMibps;
+
+    /*
+     * The x-ms-share-provisioned-iops property.
+     */
+    private Long xMsShareProvisionedIops;
+
+    /*
+     * The x-ms-share-included-burst-iops property.
+     */
+    private Long xMsShareIncludedBurstIops;
+
+    /*
      * The x-ms-version property.
      */
-    @JsonProperty(value = "x-ms-version")
     private String xMsVersion;
+
+    /*
+     * The x-ms-share-quota property.
+     */
+    private Long xMsShareQuota;
 
     /*
      * The ETag property.
      */
-    @JsonProperty(value = "ETag")
     private String eTag;
 
     /*
      * The Last-Modified property.
      */
-    @JsonProperty(value = "Last-Modified")
     private DateTimeRfc1123 lastModified;
+
+    /*
+     * The x-ms-share-max-burst-credits-for-iops property.
+     */
+    private Long xMsShareMaxBurstCreditsForIops;
 
     /*
      * The x-ms-request-id property.
      */
-    @JsonProperty(value = "x-ms-request-id")
     private String xMsRequestId;
 
     /*
      * The Date property.
      */
-    @JsonProperty(value = "Date")
-    private DateTimeRfc1123 dateProperty;
+    private DateTimeRfc1123 date;
+
+    private static final HttpHeaderName X_MS_SHARE_PROVISIONED_BANDWIDTH_MIBPS
+        = HttpHeaderName.fromString("x-ms-share-provisioned-bandwidth-mibps");
+
+    private static final HttpHeaderName X_MS_SHARE_PROVISIONED_IOPS
+        = HttpHeaderName.fromString("x-ms-share-provisioned-iops");
+
+    private static final HttpHeaderName X_MS_SHARE_INCLUDED_BURST_IOPS
+        = HttpHeaderName.fromString("x-ms-share-included-burst-iops");
+
+    private static final HttpHeaderName X_MS_VERSION = HttpHeaderName.fromString("x-ms-version");
+
+    private static final HttpHeaderName X_MS_SHARE_QUOTA = HttpHeaderName.fromString("x-ms-share-quota");
+
+    private static final HttpHeaderName X_MS_SHARE_MAX_BURST_CREDITS_FOR_IOPS
+        = HttpHeaderName.fromString("x-ms-share-max-burst-credits-for-iops");
+
+    // HttpHeaders containing the raw property values.
+    /**
+     * Creates an instance of SharesCreateHeaders class.
+     * 
+     * @param rawHeaders The raw HttpHeaders that will be used to create the property values.
+     */
+    public SharesCreateHeaders(HttpHeaders rawHeaders) {
+        String xMsShareProvisionedBandwidthMibps = rawHeaders.getValue(X_MS_SHARE_PROVISIONED_BANDWIDTH_MIBPS);
+        if (xMsShareProvisionedBandwidthMibps != null) {
+            this.xMsShareProvisionedBandwidthMibps = Long.parseLong(xMsShareProvisionedBandwidthMibps);
+        }
+        String xMsShareProvisionedIops = rawHeaders.getValue(X_MS_SHARE_PROVISIONED_IOPS);
+        if (xMsShareProvisionedIops != null) {
+            this.xMsShareProvisionedIops = Long.parseLong(xMsShareProvisionedIops);
+        }
+        String xMsShareIncludedBurstIops = rawHeaders.getValue(X_MS_SHARE_INCLUDED_BURST_IOPS);
+        if (xMsShareIncludedBurstIops != null) {
+            this.xMsShareIncludedBurstIops = Long.parseLong(xMsShareIncludedBurstIops);
+        }
+        this.xMsVersion = rawHeaders.getValue(X_MS_VERSION);
+        String xMsShareQuota = rawHeaders.getValue(X_MS_SHARE_QUOTA);
+        if (xMsShareQuota != null) {
+            this.xMsShareQuota = Long.parseLong(xMsShareQuota);
+        }
+        this.eTag = rawHeaders.getValue(HttpHeaderName.ETAG);
+        String lastModified = rawHeaders.getValue(HttpHeaderName.LAST_MODIFIED);
+        if (lastModified != null) {
+            this.lastModified = new DateTimeRfc1123(lastModified);
+        }
+        String xMsShareMaxBurstCreditsForIops = rawHeaders.getValue(X_MS_SHARE_MAX_BURST_CREDITS_FOR_IOPS);
+        if (xMsShareMaxBurstCreditsForIops != null) {
+            this.xMsShareMaxBurstCreditsForIops = Long.parseLong(xMsShareMaxBurstCreditsForIops);
+        }
+        this.xMsRequestId = rawHeaders.getValue(HttpHeaderName.X_MS_REQUEST_ID);
+        String date = rawHeaders.getValue(HttpHeaderName.DATE);
+        if (date != null) {
+            this.date = new DateTimeRfc1123(date);
+        }
+    }
+
+    /**
+     * Get the xMsShareProvisionedBandwidthMibps property: The x-ms-share-provisioned-bandwidth-mibps property.
+     * 
+     * @return the xMsShareProvisionedBandwidthMibps value.
+     */
+    public Long getXMsShareProvisionedBandwidthMibps() {
+        return this.xMsShareProvisionedBandwidthMibps;
+    }
+
+    /**
+     * Set the xMsShareProvisionedBandwidthMibps property: The x-ms-share-provisioned-bandwidth-mibps property.
+     * 
+     * @param xMsShareProvisionedBandwidthMibps the xMsShareProvisionedBandwidthMibps value to set.
+     * @return the SharesCreateHeaders object itself.
+     */
+    public SharesCreateHeaders setXMsShareProvisionedBandwidthMibps(Long xMsShareProvisionedBandwidthMibps) {
+        this.xMsShareProvisionedBandwidthMibps = xMsShareProvisionedBandwidthMibps;
+        return this;
+    }
+
+    /**
+     * Get the xMsShareProvisionedIops property: The x-ms-share-provisioned-iops property.
+     * 
+     * @return the xMsShareProvisionedIops value.
+     */
+    public Long getXMsShareProvisionedIops() {
+        return this.xMsShareProvisionedIops;
+    }
+
+    /**
+     * Set the xMsShareProvisionedIops property: The x-ms-share-provisioned-iops property.
+     * 
+     * @param xMsShareProvisionedIops the xMsShareProvisionedIops value to set.
+     * @return the SharesCreateHeaders object itself.
+     */
+    public SharesCreateHeaders setXMsShareProvisionedIops(Long xMsShareProvisionedIops) {
+        this.xMsShareProvisionedIops = xMsShareProvisionedIops;
+        return this;
+    }
+
+    /**
+     * Get the xMsShareIncludedBurstIops property: The x-ms-share-included-burst-iops property.
+     * 
+     * @return the xMsShareIncludedBurstIops value.
+     */
+    public Long getXMsShareIncludedBurstIops() {
+        return this.xMsShareIncludedBurstIops;
+    }
+
+    /**
+     * Set the xMsShareIncludedBurstIops property: The x-ms-share-included-burst-iops property.
+     * 
+     * @param xMsShareIncludedBurstIops the xMsShareIncludedBurstIops value to set.
+     * @return the SharesCreateHeaders object itself.
+     */
+    public SharesCreateHeaders setXMsShareIncludedBurstIops(Long xMsShareIncludedBurstIops) {
+        this.xMsShareIncludedBurstIops = xMsShareIncludedBurstIops;
+        return this;
+    }
 
     /**
      * Get the xMsVersion property: The x-ms-version property.
-     *
+     * 
      * @return the xMsVersion value.
      */
     public String getXMsVersion() {
@@ -55,7 +192,7 @@ public final class SharesCreateHeaders {
 
     /**
      * Set the xMsVersion property: The x-ms-version property.
-     *
+     * 
      * @param xMsVersion the xMsVersion value to set.
      * @return the SharesCreateHeaders object itself.
      */
@@ -65,8 +202,28 @@ public final class SharesCreateHeaders {
     }
 
     /**
+     * Get the xMsShareQuota property: The x-ms-share-quota property.
+     * 
+     * @return the xMsShareQuota value.
+     */
+    public Long getXMsShareQuota() {
+        return this.xMsShareQuota;
+    }
+
+    /**
+     * Set the xMsShareQuota property: The x-ms-share-quota property.
+     * 
+     * @param xMsShareQuota the xMsShareQuota value to set.
+     * @return the SharesCreateHeaders object itself.
+     */
+    public SharesCreateHeaders setXMsShareQuota(Long xMsShareQuota) {
+        this.xMsShareQuota = xMsShareQuota;
+        return this;
+    }
+
+    /**
      * Get the eTag property: The ETag property.
-     *
+     * 
      * @return the eTag value.
      */
     public String getETag() {
@@ -75,7 +232,7 @@ public final class SharesCreateHeaders {
 
     /**
      * Set the eTag property: The ETag property.
-     *
+     * 
      * @param eTag the eTag value to set.
      * @return the SharesCreateHeaders object itself.
      */
@@ -86,7 +243,7 @@ public final class SharesCreateHeaders {
 
     /**
      * Get the lastModified property: The Last-Modified property.
-     *
+     * 
      * @return the lastModified value.
      */
     public OffsetDateTime getLastModified() {
@@ -98,7 +255,7 @@ public final class SharesCreateHeaders {
 
     /**
      * Set the lastModified property: The Last-Modified property.
-     *
+     * 
      * @param lastModified the lastModified value to set.
      * @return the SharesCreateHeaders object itself.
      */
@@ -112,8 +269,28 @@ public final class SharesCreateHeaders {
     }
 
     /**
+     * Get the xMsShareMaxBurstCreditsForIops property: The x-ms-share-max-burst-credits-for-iops property.
+     * 
+     * @return the xMsShareMaxBurstCreditsForIops value.
+     */
+    public Long getXMsShareMaxBurstCreditsForIops() {
+        return this.xMsShareMaxBurstCreditsForIops;
+    }
+
+    /**
+     * Set the xMsShareMaxBurstCreditsForIops property: The x-ms-share-max-burst-credits-for-iops property.
+     * 
+     * @param xMsShareMaxBurstCreditsForIops the xMsShareMaxBurstCreditsForIops value to set.
+     * @return the SharesCreateHeaders object itself.
+     */
+    public SharesCreateHeaders setXMsShareMaxBurstCreditsForIops(Long xMsShareMaxBurstCreditsForIops) {
+        this.xMsShareMaxBurstCreditsForIops = xMsShareMaxBurstCreditsForIops;
+        return this;
+    }
+
+    /**
      * Get the xMsRequestId property: The x-ms-request-id property.
-     *
+     * 
      * @return the xMsRequestId value.
      */
     public String getXMsRequestId() {
@@ -122,7 +299,7 @@ public final class SharesCreateHeaders {
 
     /**
      * Set the xMsRequestId property: The x-ms-request-id property.
-     *
+     * 
      * @param xMsRequestId the xMsRequestId value to set.
      * @return the SharesCreateHeaders object itself.
      */
@@ -132,28 +309,28 @@ public final class SharesCreateHeaders {
     }
 
     /**
-     * Get the dateProperty property: The Date property.
-     *
-     * @return the dateProperty value.
+     * Get the date property: The Date property.
+     * 
+     * @return the date value.
      */
-    public OffsetDateTime getDateProperty() {
-        if (this.dateProperty == null) {
+    public OffsetDateTime getDate() {
+        if (this.date == null) {
             return null;
         }
-        return this.dateProperty.getDateTime();
+        return this.date.getDateTime();
     }
 
     /**
-     * Set the dateProperty property: The Date property.
-     *
-     * @param dateProperty the dateProperty value to set.
+     * Set the date property: The Date property.
+     * 
+     * @param date the date value to set.
      * @return the SharesCreateHeaders object itself.
      */
-    public SharesCreateHeaders setDateProperty(OffsetDateTime dateProperty) {
-        if (dateProperty == null) {
-            this.dateProperty = null;
+    public SharesCreateHeaders setDate(OffsetDateTime date) {
+        if (date == null) {
+            this.date = null;
         } else {
-            this.dateProperty = new DateTimeRfc1123(dateProperty);
+            this.date = new DateTimeRfc1123(date);
         }
         return this;
     }

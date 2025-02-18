@@ -5,126 +5,209 @@
 package com.azure.resourcemanager.automation.fluent.models;
 
 import com.azure.core.annotation.Fluent;
-import com.azure.core.annotation.JsonFlatten;
 import com.azure.core.management.ProxyResource;
-import com.azure.core.util.logging.ClientLogger;
+import com.azure.json.JsonReader;
+import com.azure.json.JsonToken;
+import com.azure.json.JsonWriter;
 import com.azure.resourcemanager.automation.models.ConnectionTypeAssociationProperty;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import java.io.IOException;
 import java.time.OffsetDateTime;
 import java.util.Map;
 
-/** Definition of the connection. */
-@JsonFlatten
+/**
+ * Definition of the connection.
+ */
 @Fluent
-public class ConnectionInner extends ProxyResource {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(ConnectionInner.class);
+public final class ConnectionInner extends ProxyResource {
+    /*
+     * Gets or sets the properties of the connection.
+     */
+    private ConnectionProperties innerProperties;
 
     /*
-     * Gets or sets the connectionType of the connection.
+     * The type of the resource.
      */
-    @JsonProperty(value = "properties.connectionType")
-    private ConnectionTypeAssociationProperty connectionType;
+    private String type;
 
     /*
-     * Gets the field definition values of the connection.
+     * The name of the resource.
      */
-    @JsonProperty(value = "properties.fieldDefinitionValues", access = JsonProperty.Access.WRITE_ONLY)
-    private Map<String, String> fieldDefinitionValues;
+    private String name;
 
     /*
-     * Gets the creation time.
+     * Fully qualified resource Id for the resource.
      */
-    @JsonProperty(value = "properties.creationTime", access = JsonProperty.Access.WRITE_ONLY)
-    private OffsetDateTime creationTime;
+    private String id;
 
-    /*
-     * Gets the last modified time.
+    /**
+     * Creates an instance of ConnectionInner class.
      */
-    @JsonProperty(value = "properties.lastModifiedTime", access = JsonProperty.Access.WRITE_ONLY)
-    private OffsetDateTime lastModifiedTime;
+    public ConnectionInner() {
+    }
 
-    /*
-     * Gets or sets the description.
+    /**
+     * Get the innerProperties property: Gets or sets the properties of the connection.
+     * 
+     * @return the innerProperties value.
      */
-    @JsonProperty(value = "properties.description")
-    private String description;
+    private ConnectionProperties innerProperties() {
+        return this.innerProperties;
+    }
+
+    /**
+     * Get the type property: The type of the resource.
+     * 
+     * @return the type value.
+     */
+    @Override
+    public String type() {
+        return this.type;
+    }
+
+    /**
+     * Get the name property: The name of the resource.
+     * 
+     * @return the name value.
+     */
+    @Override
+    public String name() {
+        return this.name;
+    }
+
+    /**
+     * Get the id property: Fully qualified resource Id for the resource.
+     * 
+     * @return the id value.
+     */
+    @Override
+    public String id() {
+        return this.id;
+    }
 
     /**
      * Get the connectionType property: Gets or sets the connectionType of the connection.
-     *
+     * 
      * @return the connectionType value.
      */
     public ConnectionTypeAssociationProperty connectionType() {
-        return this.connectionType;
+        return this.innerProperties() == null ? null : this.innerProperties().connectionType();
     }
 
     /**
      * Set the connectionType property: Gets or sets the connectionType of the connection.
-     *
+     * 
      * @param connectionType the connectionType value to set.
      * @return the ConnectionInner object itself.
      */
     public ConnectionInner withConnectionType(ConnectionTypeAssociationProperty connectionType) {
-        this.connectionType = connectionType;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new ConnectionProperties();
+        }
+        this.innerProperties().withConnectionType(connectionType);
         return this;
     }
 
     /**
      * Get the fieldDefinitionValues property: Gets the field definition values of the connection.
-     *
+     * 
      * @return the fieldDefinitionValues value.
      */
     public Map<String, String> fieldDefinitionValues() {
-        return this.fieldDefinitionValues;
+        return this.innerProperties() == null ? null : this.innerProperties().fieldDefinitionValues();
     }
 
     /**
      * Get the creationTime property: Gets the creation time.
-     *
+     * 
      * @return the creationTime value.
      */
     public OffsetDateTime creationTime() {
-        return this.creationTime;
+        return this.innerProperties() == null ? null : this.innerProperties().creationTime();
     }
 
     /**
      * Get the lastModifiedTime property: Gets the last modified time.
-     *
+     * 
      * @return the lastModifiedTime value.
      */
     public OffsetDateTime lastModifiedTime() {
-        return this.lastModifiedTime;
+        return this.innerProperties() == null ? null : this.innerProperties().lastModifiedTime();
     }
 
     /**
      * Get the description property: Gets or sets the description.
-     *
+     * 
      * @return the description value.
      */
     public String description() {
-        return this.description;
+        return this.innerProperties() == null ? null : this.innerProperties().description();
     }
 
     /**
      * Set the description property: Gets or sets the description.
-     *
+     * 
      * @param description the description value to set.
      * @return the ConnectionInner object itself.
      */
     public ConnectionInner withDescription(String description) {
-        this.description = description;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new ConnectionProperties();
+        }
+        this.innerProperties().withDescription(description);
         return this;
     }
 
     /**
      * Validates the instance.
-     *
+     * 
      * @throws IllegalArgumentException thrown if the instance is not valid.
      */
     public void validate() {
-        if (connectionType() != null) {
-            connectionType().validate();
+        if (innerProperties() != null) {
+            innerProperties().validate();
         }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public JsonWriter toJson(JsonWriter jsonWriter) throws IOException {
+        jsonWriter.writeStartObject();
+        jsonWriter.writeJsonField("properties", this.innerProperties);
+        return jsonWriter.writeEndObject();
+    }
+
+    /**
+     * Reads an instance of ConnectionInner from the JsonReader.
+     * 
+     * @param jsonReader The JsonReader being read.
+     * @return An instance of ConnectionInner if the JsonReader was pointing to an instance of it, or null if it was
+     * pointing to JSON null.
+     * @throws IllegalStateException If the deserialized JSON object was missing any required properties.
+     * @throws IOException If an error occurs while reading the ConnectionInner.
+     */
+    public static ConnectionInner fromJson(JsonReader jsonReader) throws IOException {
+        return jsonReader.readObject(reader -> {
+            ConnectionInner deserializedConnectionInner = new ConnectionInner();
+            while (reader.nextToken() != JsonToken.END_OBJECT) {
+                String fieldName = reader.getFieldName();
+                reader.nextToken();
+
+                if ("id".equals(fieldName)) {
+                    deserializedConnectionInner.id = reader.getString();
+                } else if ("name".equals(fieldName)) {
+                    deserializedConnectionInner.name = reader.getString();
+                } else if ("type".equals(fieldName)) {
+                    deserializedConnectionInner.type = reader.getString();
+                } else if ("properties".equals(fieldName)) {
+                    deserializedConnectionInner.innerProperties = ConnectionProperties.fromJson(reader);
+                } else {
+                    reader.skipChildren();
+                }
+            }
+
+            return deserializedConnectionInner;
+        });
     }
 }

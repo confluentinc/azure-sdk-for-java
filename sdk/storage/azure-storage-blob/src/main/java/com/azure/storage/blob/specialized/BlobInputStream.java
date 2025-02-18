@@ -2,12 +2,13 @@
 // Licensed under the MIT License.
 package com.azure.storage.blob.specialized;
 
-import com.azure.core.util.FluxUtil;
+import com.azure.core.util.Context;
 import com.azure.storage.blob.models.BlobProperties;
 import com.azure.storage.blob.models.BlobRange;
 import com.azure.storage.blob.models.BlobRequestConditions;
 import com.azure.storage.blob.models.BlobStorageException;
 import com.azure.storage.common.StorageInputStream;
+import com.azure.storage.common.implementation.Constants;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -19,7 +20,7 @@ public final class BlobInputStream extends StorageInputStream {
     /**
      * Holds the reference to the blob this stream is associated with.
      */
-    private final BlobAsyncClientBase blobClient;
+    private final BlobClientBase blobClient;
 
     /**
      * Holds the {@link BlobRequestConditions} object that represents the access conditions for the blob.
@@ -30,6 +31,11 @@ public final class BlobInputStream extends StorageInputStream {
      * Holds the {@link BlobProperties} object that represents the blob's properties.
      */
     private final BlobProperties properties;
+
+    /**
+     * The context.
+     */
+    private final Context context;
 
     /**
      * Initializes a new instance of the BlobInputStream class. Note that if {@code blobRangeOffset} is not {@code 0} or
@@ -43,16 +49,20 @@ public final class BlobInputStream extends StorageInputStream {
      * @param initialBuffer The result of the initial download.
      * @param accessCondition An {@link BlobRequestConditions} object which represents the access conditions for the
      * blob.
+     * @param context The {@link Context}
      * @throws BlobStorageException An exception representing any error which occurred during the operation.
      */
-    BlobInputStream(final BlobAsyncClientBase blobClient, long blobRangeOffset, Long blobRangeLength, int chunkSize,
-        final ByteBuffer initialBuffer, final BlobRequestConditions accessCondition,
-        final BlobProperties blobProperties) throws BlobStorageException {
-        super(blobRangeOffset, blobRangeLength, chunkSize, blobProperties.getBlobSize(), initialBuffer);
+    BlobInputStream(BlobClientBase blobClient, long blobRangeOffset, Long blobRangeLength, int chunkSize,
+        ByteBuffer initialBuffer, BlobRequestConditions accessCondition, BlobProperties blobProperties, Context context)
+        throws BlobStorageException {
+
+        super(blobRangeOffset, blobRangeLength, chunkSize, adjustBlobLength(blobProperties.getBlobSize(), context),
+            initialBuffer);
 
         this.blobClient = blobClient;
         this.accessCondition = accessCondition;
         this.properties = blobProperties;
+        this.context = context;
     }
 
     /**
@@ -65,10 +75,11 @@ public final class BlobInputStream extends StorageInputStream {
     @Override
     protected synchronized ByteBuffer dispatchRead(final int readLength, final long offset) throws IOException {
         try {
-            ByteBuffer currentBuffer = this.blobClient.downloadWithResponse(
-                new BlobRange(offset, (long) readLength), null, this.accessCondition, false)
-                .flatMap(response -> FluxUtil.collectBytesInByteBufferStream(response.getValue()).map(ByteBuffer::wrap))
-                .block();
+            ByteBuffer currentBuffer = this.blobClient
+                .downloadContentWithResponse(null, accessCondition, new BlobRange(offset, (long) readLength), false,
+                    null, context)
+                .getValue()
+                .toByteBuffer();
 
             this.bufferSize = readLength;
             this.bufferStartOffset = offset;
@@ -88,6 +99,16 @@ public final class BlobInputStream extends StorageInputStream {
      */
     public BlobProperties getProperties() {
         return this.properties;
+    }
+
+    /**
+     * Allows for encrypted blobs to use BlobInputStream correctly by using the non-encrypted blob length
+     */
+    private static long adjustBlobLength(long initialLength, Context context) {
+        if (context != null && context.getData(Constants.ADJUSTED_BLOB_LENGTH_KEY).isPresent()) {
+            return (long) context.getData(Constants.ADJUSTED_BLOB_LENGTH_KEY).get();
+        }
+        return initialLength;
     }
 
 }

@@ -20,6 +20,7 @@ import com.azure.resourcemanager.batch.models.BatchAccountRegenerateKeyParameter
 import com.azure.resourcemanager.batch.models.BatchAccountUpdateParameters;
 import com.azure.resourcemanager.batch.models.EncryptionProperties;
 import com.azure.resourcemanager.batch.models.KeyVaultReference;
+import com.azure.resourcemanager.batch.models.NetworkProfile;
 import com.azure.resourcemanager.batch.models.PoolAllocationMode;
 import com.azure.resourcemanager.batch.models.PrivateEndpointConnection;
 import com.azure.resourcemanager.batch.models.ProvisioningState;
@@ -68,6 +69,10 @@ public final class BatchAccountImpl implements BatchAccount, BatchAccount.Defini
         return this.innerModel().accountEndpoint();
     }
 
+    public String nodeManagementEndpoint() {
+        return this.innerModel().nodeManagementEndpoint();
+    }
+
     public ProvisioningState provisioningState() {
         return this.innerModel().provisioningState();
     }
@@ -84,15 +89,16 @@ public final class BatchAccountImpl implements BatchAccount, BatchAccount.Defini
         return this.innerModel().publicNetworkAccess();
     }
 
+    public NetworkProfile networkProfile() {
+        return this.innerModel().networkProfile();
+    }
+
     public List<PrivateEndpointConnection> privateEndpointConnections() {
         List<PrivateEndpointConnectionInner> inner = this.innerModel().privateEndpointConnections();
         if (inner != null) {
-            return Collections
-                .unmodifiableList(
-                    inner
-                        .stream()
-                        .map(inner1 -> new PrivateEndpointConnectionImpl(inner1, this.manager()))
-                        .collect(Collectors.toList()));
+            return Collections.unmodifiableList(inner.stream()
+                .map(inner1 -> new PrivateEndpointConnectionImpl(inner1, this.manager()))
+                .collect(Collectors.toList()));
         } else {
             return Collections.emptyList();
         }
@@ -152,6 +158,10 @@ public final class BatchAccountImpl implements BatchAccount, BatchAccount.Defini
         return this.location();
     }
 
+    public String resourceGroupName() {
+        return resourceGroupName;
+    }
+
     public BatchAccountInner innerModel() {
         return this.innerObject;
     }
@@ -174,20 +184,16 @@ public final class BatchAccountImpl implements BatchAccount, BatchAccount.Defini
     }
 
     public BatchAccount create() {
-        this.innerObject =
-            serviceManager
-                .serviceClient()
-                .getBatchAccounts()
-                .create(resourceGroupName, accountName, createParameters, Context.NONE);
+        this.innerObject = serviceManager.serviceClient()
+            .getBatchAccounts()
+            .create(resourceGroupName, accountName, createParameters, Context.NONE);
         return this;
     }
 
     public BatchAccount create(Context context) {
-        this.innerObject =
-            serviceManager
-                .serviceClient()
-                .getBatchAccounts()
-                .create(resourceGroupName, accountName, createParameters, context);
+        this.innerObject = serviceManager.serviceClient()
+            .getBatchAccounts()
+            .create(resourceGroupName, accountName, createParameters, context);
         return this;
     }
 
@@ -204,79 +210,69 @@ public final class BatchAccountImpl implements BatchAccount, BatchAccount.Defini
     }
 
     public BatchAccount apply() {
-        this.innerObject =
-            serviceManager
-                .serviceClient()
-                .getBatchAccounts()
-                .updateWithResponse(resourceGroupName, accountName, updateParameters, Context.NONE)
-                .getValue();
+        this.innerObject = serviceManager.serviceClient()
+            .getBatchAccounts()
+            .updateWithResponse(resourceGroupName, accountName, updateParameters, Context.NONE)
+            .getValue();
         return this;
     }
 
     public BatchAccount apply(Context context) {
-        this.innerObject =
-            serviceManager
-                .serviceClient()
-                .getBatchAccounts()
-                .updateWithResponse(resourceGroupName, accountName, updateParameters, context)
-                .getValue();
+        this.innerObject = serviceManager.serviceClient()
+            .getBatchAccounts()
+            .updateWithResponse(resourceGroupName, accountName, updateParameters, context)
+            .getValue();
         return this;
     }
 
     BatchAccountImpl(BatchAccountInner innerObject, com.azure.resourcemanager.batch.BatchManager serviceManager) {
         this.innerObject = innerObject;
         this.serviceManager = serviceManager;
-        this.resourceGroupName = Utils.getValueFromIdByName(innerObject.id(), "resourceGroups");
-        this.accountName = Utils.getValueFromIdByName(innerObject.id(), "batchAccounts");
+        this.resourceGroupName = ResourceManagerUtils.getValueFromIdByName(innerObject.id(), "resourceGroups");
+        this.accountName = ResourceManagerUtils.getValueFromIdByName(innerObject.id(), "batchAccounts");
     }
 
     public BatchAccount refresh() {
-        this.innerObject =
-            serviceManager
-                .serviceClient()
-                .getBatchAccounts()
-                .getByResourceGroupWithResponse(resourceGroupName, accountName, Context.NONE)
-                .getValue();
+        this.innerObject = serviceManager.serviceClient()
+            .getBatchAccounts()
+            .getByResourceGroupWithResponse(resourceGroupName, accountName, Context.NONE)
+            .getValue();
         return this;
     }
 
     public BatchAccount refresh(Context context) {
-        this.innerObject =
-            serviceManager
-                .serviceClient()
-                .getBatchAccounts()
-                .getByResourceGroupWithResponse(resourceGroupName, accountName, context)
-                .getValue();
+        this.innerObject = serviceManager.serviceClient()
+            .getBatchAccounts()
+            .getByResourceGroupWithResponse(resourceGroupName, accountName, context)
+            .getValue();
         return this;
+    }
+
+    public Response<Void> synchronizeAutoStorageKeysWithResponse(Context context) {
+        return serviceManager.batchAccounts()
+            .synchronizeAutoStorageKeysWithResponse(resourceGroupName, accountName, context);
     }
 
     public void synchronizeAutoStorageKeys() {
         serviceManager.batchAccounts().synchronizeAutoStorageKeys(resourceGroupName, accountName);
     }
 
-    public Response<Void> synchronizeAutoStorageKeysWithResponse(Context context) {
-        return serviceManager
-            .batchAccounts()
-            .synchronizeAutoStorageKeysWithResponse(resourceGroupName, accountName, context);
+    public Response<BatchAccountKeys> regenerateKeyWithResponse(BatchAccountRegenerateKeyParameters parameters,
+        Context context) {
+        return serviceManager.batchAccounts()
+            .regenerateKeyWithResponse(resourceGroupName, accountName, parameters, context);
     }
 
     public BatchAccountKeys regenerateKey(BatchAccountRegenerateKeyParameters parameters) {
         return serviceManager.batchAccounts().regenerateKey(resourceGroupName, accountName, parameters);
     }
 
-    public Response<BatchAccountKeys> regenerateKeyWithResponse(
-        BatchAccountRegenerateKeyParameters parameters, Context context) {
-        return serviceManager
-            .batchAccounts()
-            .regenerateKeyWithResponse(resourceGroupName, accountName, parameters, context);
+    public Response<BatchAccountKeys> getKeysWithResponse(Context context) {
+        return serviceManager.batchAccounts().getKeysWithResponse(resourceGroupName, accountName, context);
     }
 
     public BatchAccountKeys getKeys() {
         return serviceManager.batchAccounts().getKeys(resourceGroupName, accountName);
-    }
-
-    public Response<BatchAccountKeys> getKeysWithResponse(Context context) {
-        return serviceManager.batchAccounts().getKeysWithResponse(resourceGroupName, accountName, context);
     }
 
     public BatchAccountImpl withRegion(Region location) {
@@ -330,8 +326,23 @@ public final class BatchAccountImpl implements BatchAccount, BatchAccount.Defini
     }
 
     public BatchAccountImpl withPublicNetworkAccess(PublicNetworkAccessType publicNetworkAccess) {
-        this.createParameters.withPublicNetworkAccess(publicNetworkAccess);
-        return this;
+        if (isInCreateMode()) {
+            this.createParameters.withPublicNetworkAccess(publicNetworkAccess);
+            return this;
+        } else {
+            this.updateParameters.withPublicNetworkAccess(publicNetworkAccess);
+            return this;
+        }
+    }
+
+    public BatchAccountImpl withNetworkProfile(NetworkProfile networkProfile) {
+        if (isInCreateMode()) {
+            this.createParameters.withNetworkProfile(networkProfile);
+            return this;
+        } else {
+            this.updateParameters.withNetworkProfile(networkProfile);
+            return this;
+        }
     }
 
     public BatchAccountImpl withEncryption(EncryptionProperties encryption) {

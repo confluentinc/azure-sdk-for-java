@@ -25,34 +25,36 @@ import com.azure.core.management.exception.ManagementException;
 import com.azure.core.management.polling.PollResult;
 import com.azure.core.util.Context;
 import com.azure.core.util.FluxUtil;
-import com.azure.core.util.logging.ClientLogger;
 import com.azure.core.util.polling.PollerFlux;
 import com.azure.core.util.polling.SyncPoller;
 import com.azure.resourcemanager.appplatform.fluent.MonitoringSettingsClient;
 import com.azure.resourcemanager.appplatform.fluent.models.MonitoringSettingResourceInner;
-import com.azure.resourcemanager.appplatform.models.MonitoringSettingProperties;
 import java.nio.ByteBuffer;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-/** An instance of this class provides access to all the operations defined in MonitoringSettingsClient. */
+/**
+ * An instance of this class provides access to all the operations defined in MonitoringSettingsClient.
+ */
 public final class MonitoringSettingsClientImpl implements MonitoringSettingsClient {
-    private final ClientLogger logger = new ClientLogger(MonitoringSettingsClientImpl.class);
-
-    /** The proxy service used to perform REST calls. */
+    /**
+     * The proxy service used to perform REST calls.
+     */
     private final MonitoringSettingsService service;
 
-    /** The service client containing this operation class. */
+    /**
+     * The service client containing this operation class.
+     */
     private final AppPlatformManagementClientImpl client;
 
     /**
      * Initializes an instance of MonitoringSettingsClientImpl.
-     *
+     * 
      * @param client the instance of the service client containing this operation class.
      */
     MonitoringSettingsClientImpl(AppPlatformManagementClientImpl client) {
-        this.service =
-            RestProxy.create(MonitoringSettingsService.class, client.getHttpPipeline(), client.getSerializerAdapter());
+        this.service = RestProxy.create(MonitoringSettingsService.class, client.getHttpPipeline(),
+            client.getSerializerAdapter());
         this.client = client;
     }
 
@@ -62,80 +64,59 @@ public final class MonitoringSettingsClientImpl implements MonitoringSettingsCli
      */
     @Host("{$host}")
     @ServiceInterface(name = "AppPlatformManagemen")
-    private interface MonitoringSettingsService {
-        @Headers({"Content-Type: application/json"})
-        @Get(
-            "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AppPlatform/Spring"
-                + "/{serviceName}/monitoringSettings/default")
-        @ExpectedResponses({200})
+    public interface MonitoringSettingsService {
+        @Headers({ "Content-Type: application/json" })
+        @Get("/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AppPlatform/Spring/{serviceName}/monitoringSettings/default")
+        @ExpectedResponses({ 200 })
         @UnexpectedResponseExceptionType(ManagementException.class)
-        Mono<Response<MonitoringSettingResourceInner>> get(
-            @HostParam("$host") String endpoint,
-            @QueryParam("api-version") String apiVersion,
-            @PathParam("subscriptionId") String subscriptionId,
-            @PathParam("resourceGroupName") String resourceGroupName,
-            @PathParam("serviceName") String serviceName,
-            @HeaderParam("Accept") String accept,
-            Context context);
+        Mono<Response<MonitoringSettingResourceInner>> get(@HostParam("$host") String endpoint,
+            @QueryParam("api-version") String apiVersion, @PathParam("subscriptionId") String subscriptionId,
+            @PathParam("resourceGroupName") String resourceGroupName, @PathParam("serviceName") String serviceName,
+            @HeaderParam("Accept") String accept, Context context);
 
-        @Headers({"Content-Type: application/json"})
-        @Put(
-            "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AppPlatform/Spring"
-                + "/{serviceName}/monitoringSettings/default")
-        @ExpectedResponses({200, 202})
+        @Headers({ "Content-Type: application/json" })
+        @Put("/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AppPlatform/Spring/{serviceName}/monitoringSettings/default")
+        @ExpectedResponses({ 200, 202 })
         @UnexpectedResponseExceptionType(ManagementException.class)
-        Mono<Response<Flux<ByteBuffer>>> updatePut(
-            @HostParam("$host") String endpoint,
-            @QueryParam("api-version") String apiVersion,
-            @PathParam("subscriptionId") String subscriptionId,
-            @PathParam("resourceGroupName") String resourceGroupName,
-            @PathParam("serviceName") String serviceName,
+        Mono<Response<Flux<ByteBuffer>>> updatePut(@HostParam("$host") String endpoint,
+            @QueryParam("api-version") String apiVersion, @PathParam("subscriptionId") String subscriptionId,
+            @PathParam("resourceGroupName") String resourceGroupName, @PathParam("serviceName") String serviceName,
             @BodyParam("application/json") MonitoringSettingResourceInner monitoringSettingResource,
-            @HeaderParam("Accept") String accept,
-            Context context);
+            @HeaderParam("Accept") String accept, Context context);
 
-        @Headers({"Content-Type: application/json"})
-        @Patch(
-            "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AppPlatform/Spring"
-                + "/{serviceName}/monitoringSettings/default")
-        @ExpectedResponses({200, 202})
+        @Headers({ "Content-Type: application/json" })
+        @Patch("/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AppPlatform/Spring/{serviceName}/monitoringSettings/default")
+        @ExpectedResponses({ 200, 202 })
         @UnexpectedResponseExceptionType(ManagementException.class)
-        Mono<Response<Flux<ByteBuffer>>> updatePatch(
-            @HostParam("$host") String endpoint,
-            @QueryParam("api-version") String apiVersion,
-            @PathParam("subscriptionId") String subscriptionId,
-            @PathParam("resourceGroupName") String resourceGroupName,
-            @PathParam("serviceName") String serviceName,
+        Mono<Response<Flux<ByteBuffer>>> updatePatch(@HostParam("$host") String endpoint,
+            @QueryParam("api-version") String apiVersion, @PathParam("subscriptionId") String subscriptionId,
+            @PathParam("resourceGroupName") String resourceGroupName, @PathParam("serviceName") String serviceName,
             @BodyParam("application/json") MonitoringSettingResourceInner monitoringSettingResource,
-            @HeaderParam("Accept") String accept,
-            Context context);
+            @HeaderParam("Accept") String accept, Context context);
     }
 
     /**
      * Get the Monitoring Setting and its properties.
-     *
+     * 
      * @param resourceGroupName The name of the resource group that contains the resource. You can obtain this value
-     *     from the Azure Resource Manager API or the portal.
+     * from the Azure Resource Manager API or the portal.
      * @param serviceName The name of the Service resource.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the Monitoring Setting and its properties.
+     * @return the Monitoring Setting and its properties along with {@link Response} on successful completion of
+     * {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    public Mono<Response<MonitoringSettingResourceInner>> getWithResponseAsync(
-        String resourceGroupName, String serviceName) {
+    public Mono<Response<MonitoringSettingResourceInner>> getWithResponseAsync(String resourceGroupName,
+        String serviceName) {
         if (this.client.getEndpoint() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getEndpoint() is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
         }
         if (this.client.getSubscriptionId() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getSubscriptionId() is required and cannot be null."));
+            return Mono.error(new IllegalArgumentException(
+                "Parameter this.client.getSubscriptionId() is required and cannot be null."));
         }
         if (resourceGroupName == null) {
             return Mono
@@ -146,46 +127,34 @@ public final class MonitoringSettingsClientImpl implements MonitoringSettingsCli
         }
         final String accept = "application/json";
         return FluxUtil
-            .withContext(
-                context ->
-                    service
-                        .get(
-                            this.client.getEndpoint(),
-                            this.client.getApiVersion(),
-                            this.client.getSubscriptionId(),
-                            resourceGroupName,
-                            serviceName,
-                            accept,
-                            context))
-            .subscriberContext(context -> context.putAll(FluxUtil.toReactorContext(this.client.getContext())));
+            .withContext(context -> service.get(this.client.getEndpoint(), this.client.getApiVersion(),
+                this.client.getSubscriptionId(), resourceGroupName, serviceName, accept, context))
+            .contextWrite(context -> context.putAll(FluxUtil.toReactorContext(this.client.getContext()).readOnly()));
     }
 
     /**
      * Get the Monitoring Setting and its properties.
-     *
+     * 
      * @param resourceGroupName The name of the resource group that contains the resource. You can obtain this value
-     *     from the Azure Resource Manager API or the portal.
+     * from the Azure Resource Manager API or the portal.
      * @param serviceName The name of the Service resource.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the Monitoring Setting and its properties.
+     * @return the Monitoring Setting and its properties along with {@link Response} on successful completion of
+     * {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    private Mono<Response<MonitoringSettingResourceInner>> getWithResponseAsync(
-        String resourceGroupName, String serviceName, Context context) {
+    private Mono<Response<MonitoringSettingResourceInner>> getWithResponseAsync(String resourceGroupName,
+        String serviceName, Context context) {
         if (this.client.getEndpoint() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getEndpoint() is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
         }
         if (this.client.getSubscriptionId() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getSubscriptionId() is required and cannot be null."));
+            return Mono.error(new IllegalArgumentException(
+                "Parameter this.client.getSubscriptionId() is required and cannot be null."));
         }
         if (resourceGroupName == null) {
             return Mono
@@ -196,46 +165,49 @@ public final class MonitoringSettingsClientImpl implements MonitoringSettingsCli
         }
         final String accept = "application/json";
         context = this.client.mergeContext(context);
-        return service
-            .get(
-                this.client.getEndpoint(),
-                this.client.getApiVersion(),
-                this.client.getSubscriptionId(),
-                resourceGroupName,
-                serviceName,
-                accept,
-                context);
+        return service.get(this.client.getEndpoint(), this.client.getApiVersion(), this.client.getSubscriptionId(),
+            resourceGroupName, serviceName, accept, context);
     }
 
     /**
      * Get the Monitoring Setting and its properties.
-     *
+     * 
      * @param resourceGroupName The name of the resource group that contains the resource. You can obtain this value
-     *     from the Azure Resource Manager API or the portal.
+     * from the Azure Resource Manager API or the portal.
      * @param serviceName The name of the Service resource.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the Monitoring Setting and its properties.
+     * @return the Monitoring Setting and its properties on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
     public Mono<MonitoringSettingResourceInner> getAsync(String resourceGroupName, String serviceName) {
-        return getWithResponseAsync(resourceGroupName, serviceName)
-            .flatMap(
-                (Response<MonitoringSettingResourceInner> res) -> {
-                    if (res.getValue() != null) {
-                        return Mono.just(res.getValue());
-                    } else {
-                        return Mono.empty();
-                    }
-                });
+        return getWithResponseAsync(resourceGroupName, serviceName).flatMap(res -> Mono.justOrEmpty(res.getValue()));
     }
 
     /**
      * Get the Monitoring Setting and its properties.
-     *
+     * 
      * @param resourceGroupName The name of the resource group that contains the resource. You can obtain this value
-     *     from the Azure Resource Manager API or the portal.
+     * from the Azure Resource Manager API or the portal.
+     * @param serviceName The name of the Service resource.
+     * @param context The context to associate with this operation.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return the Monitoring Setting and its properties along with {@link Response}.
+     */
+    @ServiceMethod(returns = ReturnType.SINGLE)
+    public Response<MonitoringSettingResourceInner> getWithResponse(String resourceGroupName, String serviceName,
+        Context context) {
+        return getWithResponseAsync(resourceGroupName, serviceName, context).block();
+    }
+
+    /**
+     * Get the Monitoring Setting and its properties.
+     * 
+     * @param resourceGroupName The name of the resource group that contains the resource. You can obtain this value
+     * from the Azure Resource Manager API or the portal.
      * @param serviceName The name of the Service resource.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
@@ -244,53 +216,31 @@ public final class MonitoringSettingsClientImpl implements MonitoringSettingsCli
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
     public MonitoringSettingResourceInner get(String resourceGroupName, String serviceName) {
-        return getAsync(resourceGroupName, serviceName).block();
-    }
-
-    /**
-     * Get the Monitoring Setting and its properties.
-     *
-     * @param resourceGroupName The name of the resource group that contains the resource. You can obtain this value
-     *     from the Azure Resource Manager API or the portal.
-     * @param serviceName The name of the Service resource.
-     * @param context The context to associate with this operation.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the Monitoring Setting and its properties.
-     */
-    @ServiceMethod(returns = ReturnType.SINGLE)
-    public Response<MonitoringSettingResourceInner> getWithResponse(
-        String resourceGroupName, String serviceName, Context context) {
-        return getWithResponseAsync(resourceGroupName, serviceName, context).block();
+        return getWithResponse(resourceGroupName, serviceName, Context.NONE).getValue();
     }
 
     /**
      * Update the Monitoring Setting.
-     *
+     * 
      * @param resourceGroupName The name of the resource group that contains the resource. You can obtain this value
-     *     from the Azure Resource Manager API or the portal.
+     * from the Azure Resource Manager API or the portal.
      * @param serviceName The name of the Service resource.
-     * @param properties Properties of the Monitoring Setting resource.
+     * @param monitoringSettingResource Parameters for the update operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return monitoring Setting resource.
+     * @return monitoring Setting resource along with {@link Response} on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    public Mono<Response<Flux<ByteBuffer>>> updatePutWithResponseAsync(
-        String resourceGroupName, String serviceName, MonitoringSettingProperties properties) {
+    public Mono<Response<Flux<ByteBuffer>>> updatePutWithResponseAsync(String resourceGroupName, String serviceName,
+        MonitoringSettingResourceInner monitoringSettingResource) {
         if (this.client.getEndpoint() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getEndpoint() is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
         }
         if (this.client.getSubscriptionId() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getSubscriptionId() is required and cannot be null."));
+            return Mono.error(new IllegalArgumentException(
+                "Parameter this.client.getSubscriptionId() is required and cannot be null."));
         }
         if (resourceGroupName == null) {
             return Mono
@@ -299,55 +249,43 @@ public final class MonitoringSettingsClientImpl implements MonitoringSettingsCli
         if (serviceName == null) {
             return Mono.error(new IllegalArgumentException("Parameter serviceName is required and cannot be null."));
         }
-        if (properties != null) {
-            properties.validate();
+        if (monitoringSettingResource == null) {
+            return Mono.error(
+                new IllegalArgumentException("Parameter monitoringSettingResource is required and cannot be null."));
+        } else {
+            monitoringSettingResource.validate();
         }
         final String accept = "application/json";
-        MonitoringSettingResourceInner monitoringSettingResource = new MonitoringSettingResourceInner();
-        monitoringSettingResource.withProperties(properties);
         return FluxUtil
-            .withContext(
-                context ->
-                    service
-                        .updatePut(
-                            this.client.getEndpoint(),
-                            this.client.getApiVersion(),
-                            this.client.getSubscriptionId(),
-                            resourceGroupName,
-                            serviceName,
-                            monitoringSettingResource,
-                            accept,
-                            context))
-            .subscriberContext(context -> context.putAll(FluxUtil.toReactorContext(this.client.getContext())));
+            .withContext(context -> service.updatePut(this.client.getEndpoint(), this.client.getApiVersion(),
+                this.client.getSubscriptionId(), resourceGroupName, serviceName, monitoringSettingResource, accept,
+                context))
+            .contextWrite(context -> context.putAll(FluxUtil.toReactorContext(this.client.getContext()).readOnly()));
     }
 
     /**
      * Update the Monitoring Setting.
-     *
+     * 
      * @param resourceGroupName The name of the resource group that contains the resource. You can obtain this value
-     *     from the Azure Resource Manager API or the portal.
+     * from the Azure Resource Manager API or the portal.
      * @param serviceName The name of the Service resource.
-     * @param properties Properties of the Monitoring Setting resource.
+     * @param monitoringSettingResource Parameters for the update operation.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return monitoring Setting resource.
+     * @return monitoring Setting resource along with {@link Response} on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    private Mono<Response<Flux<ByteBuffer>>> updatePutWithResponseAsync(
-        String resourceGroupName, String serviceName, MonitoringSettingProperties properties, Context context) {
+    private Mono<Response<Flux<ByteBuffer>>> updatePutWithResponseAsync(String resourceGroupName, String serviceName,
+        MonitoringSettingResourceInner monitoringSettingResource, Context context) {
         if (this.client.getEndpoint() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getEndpoint() is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
         }
         if (this.client.getSubscriptionId() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getSubscriptionId() is required and cannot be null."));
+            return Mono.error(new IllegalArgumentException(
+                "Parameter this.client.getSubscriptionId() is required and cannot be null."));
         }
         if (resourceGroupName == null) {
             return Mono
@@ -356,163 +294,169 @@ public final class MonitoringSettingsClientImpl implements MonitoringSettingsCli
         if (serviceName == null) {
             return Mono.error(new IllegalArgumentException("Parameter serviceName is required and cannot be null."));
         }
-        if (properties != null) {
-            properties.validate();
+        if (monitoringSettingResource == null) {
+            return Mono.error(
+                new IllegalArgumentException("Parameter monitoringSettingResource is required and cannot be null."));
+        } else {
+            monitoringSettingResource.validate();
         }
         final String accept = "application/json";
-        MonitoringSettingResourceInner monitoringSettingResource = new MonitoringSettingResourceInner();
-        monitoringSettingResource.withProperties(properties);
         context = this.client.mergeContext(context);
-        return service
-            .updatePut(
-                this.client.getEndpoint(),
-                this.client.getApiVersion(),
-                this.client.getSubscriptionId(),
-                resourceGroupName,
-                serviceName,
-                monitoringSettingResource,
-                accept,
-                context);
+        return service.updatePut(this.client.getEndpoint(), this.client.getApiVersion(),
+            this.client.getSubscriptionId(), resourceGroupName, serviceName, monitoringSettingResource, accept,
+            context);
     }
 
     /**
      * Update the Monitoring Setting.
-     *
+     * 
      * @param resourceGroupName The name of the resource group that contains the resource. You can obtain this value
-     *     from the Azure Resource Manager API or the portal.
+     * from the Azure Resource Manager API or the portal.
      * @param serviceName The name of the Service resource.
-     * @param properties Properties of the Monitoring Setting resource.
+     * @param monitoringSettingResource Parameters for the update operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return monitoring Setting resource.
+     * @return the {@link PollerFlux} for polling of monitoring Setting resource.
      */
-    @ServiceMethod(returns = ReturnType.SINGLE)
+    @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
     public PollerFlux<PollResult<MonitoringSettingResourceInner>, MonitoringSettingResourceInner> beginUpdatePutAsync(
-        String resourceGroupName, String serviceName, MonitoringSettingProperties properties) {
-        Mono<Response<Flux<ByteBuffer>>> mono = updatePutWithResponseAsync(resourceGroupName, serviceName, properties);
-        return this
-            .client
-            .<MonitoringSettingResourceInner, MonitoringSettingResourceInner>getLroResult(
-                mono,
-                this.client.getHttpPipeline(),
-                MonitoringSettingResourceInner.class,
-                MonitoringSettingResourceInner.class,
-                this.client.getContext());
+        String resourceGroupName, String serviceName, MonitoringSettingResourceInner monitoringSettingResource) {
+        Mono<Response<Flux<ByteBuffer>>> mono
+            = updatePutWithResponseAsync(resourceGroupName, serviceName, monitoringSettingResource);
+        return this.client.<MonitoringSettingResourceInner, MonitoringSettingResourceInner>getLroResult(mono,
+            this.client.getHttpPipeline(), MonitoringSettingResourceInner.class, MonitoringSettingResourceInner.class,
+            this.client.getContext());
     }
 
     /**
      * Update the Monitoring Setting.
-     *
+     * 
      * @param resourceGroupName The name of the resource group that contains the resource. You can obtain this value
-     *     from the Azure Resource Manager API or the portal.
+     * from the Azure Resource Manager API or the portal.
      * @param serviceName The name of the Service resource.
-     * @param properties Properties of the Monitoring Setting resource.
+     * @param monitoringSettingResource Parameters for the update operation.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return monitoring Setting resource.
+     * @return the {@link PollerFlux} for polling of monitoring Setting resource.
      */
-    @ServiceMethod(returns = ReturnType.SINGLE)
+    @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
     private PollerFlux<PollResult<MonitoringSettingResourceInner>, MonitoringSettingResourceInner> beginUpdatePutAsync(
-        String resourceGroupName, String serviceName, MonitoringSettingProperties properties, Context context) {
+        String resourceGroupName, String serviceName, MonitoringSettingResourceInner monitoringSettingResource,
+        Context context) {
         context = this.client.mergeContext(context);
-        Mono<Response<Flux<ByteBuffer>>> mono =
-            updatePutWithResponseAsync(resourceGroupName, serviceName, properties, context);
-        return this
-            .client
-            .<MonitoringSettingResourceInner, MonitoringSettingResourceInner>getLroResult(
-                mono,
-                this.client.getHttpPipeline(),
-                MonitoringSettingResourceInner.class,
-                MonitoringSettingResourceInner.class,
-                context);
+        Mono<Response<Flux<ByteBuffer>>> mono
+            = updatePutWithResponseAsync(resourceGroupName, serviceName, monitoringSettingResource, context);
+        return this.client.<MonitoringSettingResourceInner, MonitoringSettingResourceInner>getLroResult(mono,
+            this.client.getHttpPipeline(), MonitoringSettingResourceInner.class, MonitoringSettingResourceInner.class,
+            context);
     }
 
     /**
      * Update the Monitoring Setting.
-     *
+     * 
      * @param resourceGroupName The name of the resource group that contains the resource. You can obtain this value
-     *     from the Azure Resource Manager API or the portal.
+     * from the Azure Resource Manager API or the portal.
      * @param serviceName The name of the Service resource.
-     * @param properties Properties of the Monitoring Setting resource.
+     * @param monitoringSettingResource Parameters for the update operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return monitoring Setting resource.
+     * @return the {@link SyncPoller} for polling of monitoring Setting resource.
      */
-    @ServiceMethod(returns = ReturnType.SINGLE)
+    @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
     public SyncPoller<PollResult<MonitoringSettingResourceInner>, MonitoringSettingResourceInner> beginUpdatePut(
-        String resourceGroupName, String serviceName, MonitoringSettingProperties properties) {
-        return beginUpdatePutAsync(resourceGroupName, serviceName, properties).getSyncPoller();
+        String resourceGroupName, String serviceName, MonitoringSettingResourceInner monitoringSettingResource) {
+        return this.beginUpdatePutAsync(resourceGroupName, serviceName, monitoringSettingResource).getSyncPoller();
     }
 
     /**
      * Update the Monitoring Setting.
-     *
+     * 
      * @param resourceGroupName The name of the resource group that contains the resource. You can obtain this value
-     *     from the Azure Resource Manager API or the portal.
+     * from the Azure Resource Manager API or the portal.
      * @param serviceName The name of the Service resource.
-     * @param properties Properties of the Monitoring Setting resource.
+     * @param monitoringSettingResource Parameters for the update operation.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return monitoring Setting resource.
+     * @return the {@link SyncPoller} for polling of monitoring Setting resource.
      */
-    @ServiceMethod(returns = ReturnType.SINGLE)
+    @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
     public SyncPoller<PollResult<MonitoringSettingResourceInner>, MonitoringSettingResourceInner> beginUpdatePut(
-        String resourceGroupName, String serviceName, MonitoringSettingProperties properties, Context context) {
-        return beginUpdatePutAsync(resourceGroupName, serviceName, properties, context).getSyncPoller();
+        String resourceGroupName, String serviceName, MonitoringSettingResourceInner monitoringSettingResource,
+        Context context) {
+        return this.beginUpdatePutAsync(resourceGroupName, serviceName, monitoringSettingResource, context)
+            .getSyncPoller();
     }
 
     /**
      * Update the Monitoring Setting.
-     *
+     * 
      * @param resourceGroupName The name of the resource group that contains the resource. You can obtain this value
-     *     from the Azure Resource Manager API or the portal.
+     * from the Azure Resource Manager API or the portal.
      * @param serviceName The name of the Service resource.
-     * @param properties Properties of the Monitoring Setting resource.
+     * @param monitoringSettingResource Parameters for the update operation.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return monitoring Setting resource on successful completion of {@link Mono}.
+     */
+    @ServiceMethod(returns = ReturnType.SINGLE)
+    public Mono<MonitoringSettingResourceInner> updatePutAsync(String resourceGroupName, String serviceName,
+        MonitoringSettingResourceInner monitoringSettingResource) {
+        return beginUpdatePutAsync(resourceGroupName, serviceName, monitoringSettingResource).last()
+            .flatMap(this.client::getLroFinalResultOrError);
+    }
+
+    /**
+     * Update the Monitoring Setting.
+     * 
+     * @param resourceGroupName The name of the resource group that contains the resource. You can obtain this value
+     * from the Azure Resource Manager API or the portal.
+     * @param serviceName The name of the Service resource.
+     * @param monitoringSettingResource Parameters for the update operation.
+     * @param context The context to associate with this operation.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return monitoring Setting resource on successful completion of {@link Mono}.
+     */
+    @ServiceMethod(returns = ReturnType.SINGLE)
+    private Mono<MonitoringSettingResourceInner> updatePutAsync(String resourceGroupName, String serviceName,
+        MonitoringSettingResourceInner monitoringSettingResource, Context context) {
+        return beginUpdatePutAsync(resourceGroupName, serviceName, monitoringSettingResource, context).last()
+            .flatMap(this.client::getLroFinalResultOrError);
+    }
+
+    /**
+     * Update the Monitoring Setting.
+     * 
+     * @param resourceGroupName The name of the resource group that contains the resource. You can obtain this value
+     * from the Azure Resource Manager API or the portal.
+     * @param serviceName The name of the Service resource.
+     * @param monitoringSettingResource Parameters for the update operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
      * @return monitoring Setting resource.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    public Mono<MonitoringSettingResourceInner> updatePutAsync(
-        String resourceGroupName, String serviceName, MonitoringSettingProperties properties) {
-        return beginUpdatePutAsync(resourceGroupName, serviceName, properties)
-            .last()
-            .flatMap(this.client::getLroFinalResultOrError);
+    public MonitoringSettingResourceInner updatePut(String resourceGroupName, String serviceName,
+        MonitoringSettingResourceInner monitoringSettingResource) {
+        return updatePutAsync(resourceGroupName, serviceName, monitoringSettingResource).block();
     }
 
     /**
      * Update the Monitoring Setting.
-     *
+     * 
      * @param resourceGroupName The name of the resource group that contains the resource. You can obtain this value
-     *     from the Azure Resource Manager API or the portal.
+     * from the Azure Resource Manager API or the portal.
      * @param serviceName The name of the Service resource.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return monitoring Setting resource.
-     */
-    @ServiceMethod(returns = ReturnType.SINGLE)
-    public Mono<MonitoringSettingResourceInner> updatePutAsync(String resourceGroupName, String serviceName) {
-        final MonitoringSettingProperties properties = null;
-        return beginUpdatePutAsync(resourceGroupName, serviceName, properties)
-            .last()
-            .flatMap(this.client::getLroFinalResultOrError);
-    }
-
-    /**
-     * Update the Monitoring Setting.
-     *
-     * @param resourceGroupName The name of the resource group that contains the resource. You can obtain this value
-     *     from the Azure Resource Manager API or the portal.
-     * @param serviceName The name of the Service resource.
-     * @param properties Properties of the Monitoring Setting resource.
+     * @param monitoringSettingResource Parameters for the update operation.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
@@ -520,93 +464,33 @@ public final class MonitoringSettingsClientImpl implements MonitoringSettingsCli
      * @return monitoring Setting resource.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    private Mono<MonitoringSettingResourceInner> updatePutAsync(
-        String resourceGroupName, String serviceName, MonitoringSettingProperties properties, Context context) {
-        return beginUpdatePutAsync(resourceGroupName, serviceName, properties, context)
-            .last()
-            .flatMap(this.client::getLroFinalResultOrError);
+    public MonitoringSettingResourceInner updatePut(String resourceGroupName, String serviceName,
+        MonitoringSettingResourceInner monitoringSettingResource, Context context) {
+        return updatePutAsync(resourceGroupName, serviceName, monitoringSettingResource, context).block();
     }
 
     /**
      * Update the Monitoring Setting.
-     *
+     * 
      * @param resourceGroupName The name of the resource group that contains the resource. You can obtain this value
-     *     from the Azure Resource Manager API or the portal.
+     * from the Azure Resource Manager API or the portal.
      * @param serviceName The name of the Service resource.
-     * @param properties Properties of the Monitoring Setting resource.
+     * @param monitoringSettingResource Parameters for the update operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return monitoring Setting resource.
+     * @return monitoring Setting resource along with {@link Response} on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    public MonitoringSettingResourceInner updatePut(
-        String resourceGroupName, String serviceName, MonitoringSettingProperties properties) {
-        return updatePutAsync(resourceGroupName, serviceName, properties).block();
-    }
-
-    /**
-     * Update the Monitoring Setting.
-     *
-     * @param resourceGroupName The name of the resource group that contains the resource. You can obtain this value
-     *     from the Azure Resource Manager API or the portal.
-     * @param serviceName The name of the Service resource.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return monitoring Setting resource.
-     */
-    @ServiceMethod(returns = ReturnType.SINGLE)
-    public MonitoringSettingResourceInner updatePut(String resourceGroupName, String serviceName) {
-        final MonitoringSettingProperties properties = null;
-        return updatePutAsync(resourceGroupName, serviceName, properties).block();
-    }
-
-    /**
-     * Update the Monitoring Setting.
-     *
-     * @param resourceGroupName The name of the resource group that contains the resource. You can obtain this value
-     *     from the Azure Resource Manager API or the portal.
-     * @param serviceName The name of the Service resource.
-     * @param properties Properties of the Monitoring Setting resource.
-     * @param context The context to associate with this operation.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return monitoring Setting resource.
-     */
-    @ServiceMethod(returns = ReturnType.SINGLE)
-    public MonitoringSettingResourceInner updatePut(
-        String resourceGroupName, String serviceName, MonitoringSettingProperties properties, Context context) {
-        return updatePutAsync(resourceGroupName, serviceName, properties, context).block();
-    }
-
-    /**
-     * Update the Monitoring Setting.
-     *
-     * @param resourceGroupName The name of the resource group that contains the resource. You can obtain this value
-     *     from the Azure Resource Manager API or the portal.
-     * @param serviceName The name of the Service resource.
-     * @param properties Properties of the Monitoring Setting resource.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return monitoring Setting resource.
-     */
-    @ServiceMethod(returns = ReturnType.SINGLE)
-    public Mono<Response<Flux<ByteBuffer>>> updatePatchWithResponseAsync(
-        String resourceGroupName, String serviceName, MonitoringSettingProperties properties) {
+    public Mono<Response<Flux<ByteBuffer>>> updatePatchWithResponseAsync(String resourceGroupName, String serviceName,
+        MonitoringSettingResourceInner monitoringSettingResource) {
         if (this.client.getEndpoint() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getEndpoint() is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
         }
         if (this.client.getSubscriptionId() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getSubscriptionId() is required and cannot be null."));
+            return Mono.error(new IllegalArgumentException(
+                "Parameter this.client.getSubscriptionId() is required and cannot be null."));
         }
         if (resourceGroupName == null) {
             return Mono
@@ -615,55 +499,43 @@ public final class MonitoringSettingsClientImpl implements MonitoringSettingsCli
         if (serviceName == null) {
             return Mono.error(new IllegalArgumentException("Parameter serviceName is required and cannot be null."));
         }
-        if (properties != null) {
-            properties.validate();
+        if (monitoringSettingResource == null) {
+            return Mono.error(
+                new IllegalArgumentException("Parameter monitoringSettingResource is required and cannot be null."));
+        } else {
+            monitoringSettingResource.validate();
         }
         final String accept = "application/json";
-        MonitoringSettingResourceInner monitoringSettingResource = new MonitoringSettingResourceInner();
-        monitoringSettingResource.withProperties(properties);
         return FluxUtil
-            .withContext(
-                context ->
-                    service
-                        .updatePatch(
-                            this.client.getEndpoint(),
-                            this.client.getApiVersion(),
-                            this.client.getSubscriptionId(),
-                            resourceGroupName,
-                            serviceName,
-                            monitoringSettingResource,
-                            accept,
-                            context))
-            .subscriberContext(context -> context.putAll(FluxUtil.toReactorContext(this.client.getContext())));
+            .withContext(context -> service.updatePatch(this.client.getEndpoint(), this.client.getApiVersion(),
+                this.client.getSubscriptionId(), resourceGroupName, serviceName, monitoringSettingResource, accept,
+                context))
+            .contextWrite(context -> context.putAll(FluxUtil.toReactorContext(this.client.getContext()).readOnly()));
     }
 
     /**
      * Update the Monitoring Setting.
-     *
+     * 
      * @param resourceGroupName The name of the resource group that contains the resource. You can obtain this value
-     *     from the Azure Resource Manager API or the portal.
+     * from the Azure Resource Manager API or the portal.
      * @param serviceName The name of the Service resource.
-     * @param properties Properties of the Monitoring Setting resource.
+     * @param monitoringSettingResource Parameters for the update operation.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return monitoring Setting resource.
+     * @return monitoring Setting resource along with {@link Response} on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    private Mono<Response<Flux<ByteBuffer>>> updatePatchWithResponseAsync(
-        String resourceGroupName, String serviceName, MonitoringSettingProperties properties, Context context) {
+    private Mono<Response<Flux<ByteBuffer>>> updatePatchWithResponseAsync(String resourceGroupName, String serviceName,
+        MonitoringSettingResourceInner monitoringSettingResource, Context context) {
         if (this.client.getEndpoint() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getEndpoint() is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
         }
         if (this.client.getSubscriptionId() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getSubscriptionId() is required and cannot be null."));
+            return Mono.error(new IllegalArgumentException(
+                "Parameter this.client.getSubscriptionId() is required and cannot be null."));
         }
         if (resourceGroupName == null) {
             return Mono
@@ -672,165 +544,169 @@ public final class MonitoringSettingsClientImpl implements MonitoringSettingsCli
         if (serviceName == null) {
             return Mono.error(new IllegalArgumentException("Parameter serviceName is required and cannot be null."));
         }
-        if (properties != null) {
-            properties.validate();
+        if (monitoringSettingResource == null) {
+            return Mono.error(
+                new IllegalArgumentException("Parameter monitoringSettingResource is required and cannot be null."));
+        } else {
+            monitoringSettingResource.validate();
         }
         final String accept = "application/json";
-        MonitoringSettingResourceInner monitoringSettingResource = new MonitoringSettingResourceInner();
-        monitoringSettingResource.withProperties(properties);
         context = this.client.mergeContext(context);
-        return service
-            .updatePatch(
-                this.client.getEndpoint(),
-                this.client.getApiVersion(),
-                this.client.getSubscriptionId(),
-                resourceGroupName,
-                serviceName,
-                monitoringSettingResource,
-                accept,
-                context);
+        return service.updatePatch(this.client.getEndpoint(), this.client.getApiVersion(),
+            this.client.getSubscriptionId(), resourceGroupName, serviceName, monitoringSettingResource, accept,
+            context);
     }
 
     /**
      * Update the Monitoring Setting.
-     *
+     * 
      * @param resourceGroupName The name of the resource group that contains the resource. You can obtain this value
-     *     from the Azure Resource Manager API or the portal.
+     * from the Azure Resource Manager API or the portal.
      * @param serviceName The name of the Service resource.
-     * @param properties Properties of the Monitoring Setting resource.
+     * @param monitoringSettingResource Parameters for the update operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return monitoring Setting resource.
+     * @return the {@link PollerFlux} for polling of monitoring Setting resource.
      */
-    @ServiceMethod(returns = ReturnType.SINGLE)
+    @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
     public PollerFlux<PollResult<MonitoringSettingResourceInner>, MonitoringSettingResourceInner> beginUpdatePatchAsync(
-        String resourceGroupName, String serviceName, MonitoringSettingProperties properties) {
-        Mono<Response<Flux<ByteBuffer>>> mono =
-            updatePatchWithResponseAsync(resourceGroupName, serviceName, properties);
-        return this
-            .client
-            .<MonitoringSettingResourceInner, MonitoringSettingResourceInner>getLroResult(
-                mono,
-                this.client.getHttpPipeline(),
-                MonitoringSettingResourceInner.class,
-                MonitoringSettingResourceInner.class,
-                this.client.getContext());
+        String resourceGroupName, String serviceName, MonitoringSettingResourceInner monitoringSettingResource) {
+        Mono<Response<Flux<ByteBuffer>>> mono
+            = updatePatchWithResponseAsync(resourceGroupName, serviceName, monitoringSettingResource);
+        return this.client.<MonitoringSettingResourceInner, MonitoringSettingResourceInner>getLroResult(mono,
+            this.client.getHttpPipeline(), MonitoringSettingResourceInner.class, MonitoringSettingResourceInner.class,
+            this.client.getContext());
     }
 
     /**
      * Update the Monitoring Setting.
-     *
+     * 
      * @param resourceGroupName The name of the resource group that contains the resource. You can obtain this value
-     *     from the Azure Resource Manager API or the portal.
+     * from the Azure Resource Manager API or the portal.
      * @param serviceName The name of the Service resource.
-     * @param properties Properties of the Monitoring Setting resource.
+     * @param monitoringSettingResource Parameters for the update operation.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return monitoring Setting resource.
+     * @return the {@link PollerFlux} for polling of monitoring Setting resource.
      */
-    @ServiceMethod(returns = ReturnType.SINGLE)
+    @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
     private PollerFlux<PollResult<MonitoringSettingResourceInner>, MonitoringSettingResourceInner>
-        beginUpdatePatchAsync(
-            String resourceGroupName, String serviceName, MonitoringSettingProperties properties, Context context) {
+        beginUpdatePatchAsync(String resourceGroupName, String serviceName,
+            MonitoringSettingResourceInner monitoringSettingResource, Context context) {
         context = this.client.mergeContext(context);
-        Mono<Response<Flux<ByteBuffer>>> mono =
-            updatePatchWithResponseAsync(resourceGroupName, serviceName, properties, context);
-        return this
-            .client
-            .<MonitoringSettingResourceInner, MonitoringSettingResourceInner>getLroResult(
-                mono,
-                this.client.getHttpPipeline(),
-                MonitoringSettingResourceInner.class,
-                MonitoringSettingResourceInner.class,
-                context);
+        Mono<Response<Flux<ByteBuffer>>> mono
+            = updatePatchWithResponseAsync(resourceGroupName, serviceName, monitoringSettingResource, context);
+        return this.client.<MonitoringSettingResourceInner, MonitoringSettingResourceInner>getLroResult(mono,
+            this.client.getHttpPipeline(), MonitoringSettingResourceInner.class, MonitoringSettingResourceInner.class,
+            context);
     }
 
     /**
      * Update the Monitoring Setting.
-     *
+     * 
      * @param resourceGroupName The name of the resource group that contains the resource. You can obtain this value
-     *     from the Azure Resource Manager API or the portal.
+     * from the Azure Resource Manager API or the portal.
      * @param serviceName The name of the Service resource.
-     * @param properties Properties of the Monitoring Setting resource.
+     * @param monitoringSettingResource Parameters for the update operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return monitoring Setting resource.
+     * @return the {@link SyncPoller} for polling of monitoring Setting resource.
      */
-    @ServiceMethod(returns = ReturnType.SINGLE)
+    @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
     public SyncPoller<PollResult<MonitoringSettingResourceInner>, MonitoringSettingResourceInner> beginUpdatePatch(
-        String resourceGroupName, String serviceName, MonitoringSettingProperties properties) {
-        return beginUpdatePatchAsync(resourceGroupName, serviceName, properties).getSyncPoller();
+        String resourceGroupName, String serviceName, MonitoringSettingResourceInner monitoringSettingResource) {
+        return this.beginUpdatePatchAsync(resourceGroupName, serviceName, monitoringSettingResource).getSyncPoller();
     }
 
     /**
      * Update the Monitoring Setting.
-     *
+     * 
      * @param resourceGroupName The name of the resource group that contains the resource. You can obtain this value
-     *     from the Azure Resource Manager API or the portal.
+     * from the Azure Resource Manager API or the portal.
      * @param serviceName The name of the Service resource.
-     * @param properties Properties of the Monitoring Setting resource.
+     * @param monitoringSettingResource Parameters for the update operation.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return monitoring Setting resource.
+     * @return the {@link SyncPoller} for polling of monitoring Setting resource.
      */
-    @ServiceMethod(returns = ReturnType.SINGLE)
+    @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
     public SyncPoller<PollResult<MonitoringSettingResourceInner>, MonitoringSettingResourceInner> beginUpdatePatch(
-        String resourceGroupName, String serviceName, MonitoringSettingProperties properties, Context context) {
-        return beginUpdatePatchAsync(resourceGroupName, serviceName, properties, context).getSyncPoller();
+        String resourceGroupName, String serviceName, MonitoringSettingResourceInner monitoringSettingResource,
+        Context context) {
+        return this.beginUpdatePatchAsync(resourceGroupName, serviceName, monitoringSettingResource, context)
+            .getSyncPoller();
     }
 
     /**
      * Update the Monitoring Setting.
-     *
+     * 
      * @param resourceGroupName The name of the resource group that contains the resource. You can obtain this value
-     *     from the Azure Resource Manager API or the portal.
+     * from the Azure Resource Manager API or the portal.
      * @param serviceName The name of the Service resource.
-     * @param properties Properties of the Monitoring Setting resource.
+     * @param monitoringSettingResource Parameters for the update operation.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return monitoring Setting resource on successful completion of {@link Mono}.
+     */
+    @ServiceMethod(returns = ReturnType.SINGLE)
+    public Mono<MonitoringSettingResourceInner> updatePatchAsync(String resourceGroupName, String serviceName,
+        MonitoringSettingResourceInner monitoringSettingResource) {
+        return beginUpdatePatchAsync(resourceGroupName, serviceName, monitoringSettingResource).last()
+            .flatMap(this.client::getLroFinalResultOrError);
+    }
+
+    /**
+     * Update the Monitoring Setting.
+     * 
+     * @param resourceGroupName The name of the resource group that contains the resource. You can obtain this value
+     * from the Azure Resource Manager API or the portal.
+     * @param serviceName The name of the Service resource.
+     * @param monitoringSettingResource Parameters for the update operation.
+     * @param context The context to associate with this operation.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return monitoring Setting resource on successful completion of {@link Mono}.
+     */
+    @ServiceMethod(returns = ReturnType.SINGLE)
+    private Mono<MonitoringSettingResourceInner> updatePatchAsync(String resourceGroupName, String serviceName,
+        MonitoringSettingResourceInner monitoringSettingResource, Context context) {
+        return beginUpdatePatchAsync(resourceGroupName, serviceName, monitoringSettingResource, context).last()
+            .flatMap(this.client::getLroFinalResultOrError);
+    }
+
+    /**
+     * Update the Monitoring Setting.
+     * 
+     * @param resourceGroupName The name of the resource group that contains the resource. You can obtain this value
+     * from the Azure Resource Manager API or the portal.
+     * @param serviceName The name of the Service resource.
+     * @param monitoringSettingResource Parameters for the update operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
      * @return monitoring Setting resource.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    public Mono<MonitoringSettingResourceInner> updatePatchAsync(
-        String resourceGroupName, String serviceName, MonitoringSettingProperties properties) {
-        return beginUpdatePatchAsync(resourceGroupName, serviceName, properties)
-            .last()
-            .flatMap(this.client::getLroFinalResultOrError);
+    public MonitoringSettingResourceInner updatePatch(String resourceGroupName, String serviceName,
+        MonitoringSettingResourceInner monitoringSettingResource) {
+        return updatePatchAsync(resourceGroupName, serviceName, monitoringSettingResource).block();
     }
 
     /**
      * Update the Monitoring Setting.
-     *
+     * 
      * @param resourceGroupName The name of the resource group that contains the resource. You can obtain this value
-     *     from the Azure Resource Manager API or the portal.
+     * from the Azure Resource Manager API or the portal.
      * @param serviceName The name of the Service resource.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return monitoring Setting resource.
-     */
-    @ServiceMethod(returns = ReturnType.SINGLE)
-    public Mono<MonitoringSettingResourceInner> updatePatchAsync(String resourceGroupName, String serviceName) {
-        final MonitoringSettingProperties properties = null;
-        return beginUpdatePatchAsync(resourceGroupName, serviceName, properties)
-            .last()
-            .flatMap(this.client::getLroFinalResultOrError);
-    }
-
-    /**
-     * Update the Monitoring Setting.
-     *
-     * @param resourceGroupName The name of the resource group that contains the resource. You can obtain this value
-     *     from the Azure Resource Manager API or the portal.
-     * @param serviceName The name of the Service resource.
-     * @param properties Properties of the Monitoring Setting resource.
+     * @param monitoringSettingResource Parameters for the update operation.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
@@ -838,64 +714,8 @@ public final class MonitoringSettingsClientImpl implements MonitoringSettingsCli
      * @return monitoring Setting resource.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    private Mono<MonitoringSettingResourceInner> updatePatchAsync(
-        String resourceGroupName, String serviceName, MonitoringSettingProperties properties, Context context) {
-        return beginUpdatePatchAsync(resourceGroupName, serviceName, properties, context)
-            .last()
-            .flatMap(this.client::getLroFinalResultOrError);
-    }
-
-    /**
-     * Update the Monitoring Setting.
-     *
-     * @param resourceGroupName The name of the resource group that contains the resource. You can obtain this value
-     *     from the Azure Resource Manager API or the portal.
-     * @param serviceName The name of the Service resource.
-     * @param properties Properties of the Monitoring Setting resource.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return monitoring Setting resource.
-     */
-    @ServiceMethod(returns = ReturnType.SINGLE)
-    public MonitoringSettingResourceInner updatePatch(
-        String resourceGroupName, String serviceName, MonitoringSettingProperties properties) {
-        return updatePatchAsync(resourceGroupName, serviceName, properties).block();
-    }
-
-    /**
-     * Update the Monitoring Setting.
-     *
-     * @param resourceGroupName The name of the resource group that contains the resource. You can obtain this value
-     *     from the Azure Resource Manager API or the portal.
-     * @param serviceName The name of the Service resource.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return monitoring Setting resource.
-     */
-    @ServiceMethod(returns = ReturnType.SINGLE)
-    public MonitoringSettingResourceInner updatePatch(String resourceGroupName, String serviceName) {
-        final MonitoringSettingProperties properties = null;
-        return updatePatchAsync(resourceGroupName, serviceName, properties).block();
-    }
-
-    /**
-     * Update the Monitoring Setting.
-     *
-     * @param resourceGroupName The name of the resource group that contains the resource. You can obtain this value
-     *     from the Azure Resource Manager API or the portal.
-     * @param serviceName The name of the Service resource.
-     * @param properties Properties of the Monitoring Setting resource.
-     * @param context The context to associate with this operation.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return monitoring Setting resource.
-     */
-    @ServiceMethod(returns = ReturnType.SINGLE)
-    public MonitoringSettingResourceInner updatePatch(
-        String resourceGroupName, String serviceName, MonitoringSettingProperties properties, Context context) {
-        return updatePatchAsync(resourceGroupName, serviceName, properties, context).block();
+    public MonitoringSettingResourceInner updatePatch(String resourceGroupName, String serviceName,
+        MonitoringSettingResourceInner monitoringSettingResource, Context context) {
+        return updatePatchAsync(resourceGroupName, serviceName, monitoringSettingResource, context).block();
     }
 }

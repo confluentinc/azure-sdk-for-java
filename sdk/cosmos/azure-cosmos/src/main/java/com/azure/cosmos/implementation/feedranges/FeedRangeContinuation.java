@@ -5,12 +5,10 @@ package com.azure.cosmos.implementation.feedranges;
 
 import com.azure.cosmos.implementation.GoneException;
 import com.azure.cosmos.implementation.JsonSerializable;
-import com.azure.cosmos.implementation.Resource;
 import com.azure.cosmos.implementation.RxDocumentClientImpl;
 import com.azure.cosmos.implementation.ShouldRetryResult;
 import com.azure.cosmos.implementation.Strings;
 import com.azure.cosmos.implementation.query.CompositeContinuationToken;
-import com.azure.cosmos.implementation.routing.PartitionKeyInternalHelper;
 import com.azure.cosmos.implementation.routing.Range;
 import com.azure.cosmos.models.FeedResponse;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
@@ -21,7 +19,7 @@ import reactor.core.publisher.Mono;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
+import java.util.Queue;
 
 import static com.azure.cosmos.implementation.guava25.base.Preconditions.checkNotNull;
 
@@ -56,13 +54,15 @@ public abstract class FeedRangeContinuation extends JsonSerializable {
 
     public abstract int getContinuationTokenCount();
 
-    public abstract void replaceContinuation(String continuationToken);
+    public abstract void replaceContinuation(String continuationToken, boolean shouldMoveToNextTokenOnETagReplace);
 
     public abstract boolean isDone();
 
     public abstract void validateContainer(String containerRid);
 
     public abstract CompositeContinuationToken[] getCurrentContinuationTokens();
+
+    public abstract Queue<CompositeContinuationToken> getCompositeContinuationTokens();
 
     public void populatePropertyBag() {
         super.populatePropertyBag();
@@ -133,10 +133,13 @@ public abstract class FeedRangeContinuation extends JsonSerializable {
             continuationTokens);
     }
 
-    public abstract <T extends Resource> ShouldRetryResult handleChangeFeedNotModified(
+    public abstract <T> ShouldRetryResult handleChangeFeedNotModified(
         FeedResponse<T> responseMessage);
 
-    public abstract Mono<ShouldRetryResult> handleSplit(
+    public abstract <T> boolean hasFetchedAllChanges(
+        FeedResponse<T> responseMessage, Long endLSN);
+
+    public abstract Mono<ShouldRetryResult> handleFeedRangeGone(
         RxDocumentClientImpl client,
         GoneException goneException);
 }

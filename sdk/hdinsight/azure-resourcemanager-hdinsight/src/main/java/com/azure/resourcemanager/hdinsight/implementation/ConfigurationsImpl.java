@@ -12,21 +12,32 @@ import com.azure.resourcemanager.hdinsight.fluent.ConfigurationsClient;
 import com.azure.resourcemanager.hdinsight.fluent.models.ClusterConfigurationsInner;
 import com.azure.resourcemanager.hdinsight.models.ClusterConfigurations;
 import com.azure.resourcemanager.hdinsight.models.Configurations;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.util.Collections;
 import java.util.Map;
 
 public final class ConfigurationsImpl implements Configurations {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(ConfigurationsImpl.class);
+    private static final ClientLogger LOGGER = new ClientLogger(ConfigurationsImpl.class);
 
     private final ConfigurationsClient innerClient;
 
     private final com.azure.resourcemanager.hdinsight.HDInsightManager serviceManager;
 
-    public ConfigurationsImpl(
-        ConfigurationsClient innerClient, com.azure.resourcemanager.hdinsight.HDInsightManager serviceManager) {
+    public ConfigurationsImpl(ConfigurationsClient innerClient,
+        com.azure.resourcemanager.hdinsight.HDInsightManager serviceManager) {
         this.innerClient = innerClient;
         this.serviceManager = serviceManager;
+    }
+
+    public Response<ClusterConfigurations> listWithResponse(String resourceGroupName, String clusterName,
+        Context context) {
+        Response<ClusterConfigurationsInner> inner
+            = this.serviceClient().listWithResponse(resourceGroupName, clusterName, context);
+        if (inner != null) {
+            return new SimpleResponse<>(inner.getRequest(), inner.getStatusCode(), inner.getHeaders(),
+                new ClusterConfigurationsImpl(inner.getValue(), this.manager()));
+        } else {
+            return null;
+        }
     }
 
     public ClusterConfigurations list(String resourceGroupName, String clusterName) {
@@ -38,33 +49,19 @@ public final class ConfigurationsImpl implements Configurations {
         }
     }
 
-    public Response<ClusterConfigurations> listWithResponse(
-        String resourceGroupName, String clusterName, Context context) {
-        Response<ClusterConfigurationsInner> inner =
-            this.serviceClient().listWithResponse(resourceGroupName, clusterName, context);
-        if (inner != null) {
-            return new SimpleResponse<>(
-                inner.getRequest(),
-                inner.getStatusCode(),
-                inner.getHeaders(),
-                new ClusterConfigurationsImpl(inner.getValue(), this.manager()));
-        } else {
-            return null;
-        }
-    }
-
-    public void update(
-        String resourceGroupName, String clusterName, String configurationName, Map<String, String> parameters) {
+    public void update(String resourceGroupName, String clusterName, String configurationName,
+        Map<String, String> parameters) {
         this.serviceClient().update(resourceGroupName, clusterName, configurationName, parameters);
     }
 
-    public void update(
-        String resourceGroupName,
-        String clusterName,
-        String configurationName,
-        Map<String, String> parameters,
-        Context context) {
+    public void update(String resourceGroupName, String clusterName, String configurationName,
+        Map<String, String> parameters, Context context) {
         this.serviceClient().update(resourceGroupName, clusterName, configurationName, parameters, context);
+    }
+
+    public Response<Map<String, String>> getWithResponse(String resourceGroupName, String clusterName,
+        String configurationName, Context context) {
+        return this.serviceClient().getWithResponse(resourceGroupName, clusterName, configurationName, context);
     }
 
     public Map<String, String> get(String resourceGroupName, String clusterName, String configurationName) {
@@ -74,11 +71,6 @@ public final class ConfigurationsImpl implements Configurations {
         } else {
             return Collections.emptyMap();
         }
-    }
-
-    public Response<Map<String, String>> getWithResponse(
-        String resourceGroupName, String clusterName, String configurationName, Context context) {
-        return this.serviceClient().getWithResponse(resourceGroupName, clusterName, configurationName, context);
     }
 
     private ConfigurationsClient serviceClient() {

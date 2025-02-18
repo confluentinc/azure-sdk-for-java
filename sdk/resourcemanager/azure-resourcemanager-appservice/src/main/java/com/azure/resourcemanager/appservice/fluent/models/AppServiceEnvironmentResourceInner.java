@@ -6,46 +6,72 @@ package com.azure.resourcemanager.appservice.fluent.models;
 
 import com.azure.core.annotation.Fluent;
 import com.azure.core.management.Resource;
-import com.azure.core.util.logging.ClientLogger;
+import com.azure.json.JsonReader;
+import com.azure.json.JsonToken;
+import com.azure.json.JsonWriter;
 import com.azure.resourcemanager.appservice.models.HostingEnvironmentStatus;
 import com.azure.resourcemanager.appservice.models.LoadBalancingMode;
 import com.azure.resourcemanager.appservice.models.NameValuePair;
 import com.azure.resourcemanager.appservice.models.ProvisioningState;
+import com.azure.resourcemanager.appservice.models.UpgradeAvailability;
+import com.azure.resourcemanager.appservice.models.UpgradePreference;
 import com.azure.resourcemanager.appservice.models.VirtualNetworkProfile;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
-/** App Service Environment ARM resource. */
+/**
+ * App Service Environment ARM resource.
+ */
 @Fluent
 public final class AppServiceEnvironmentResourceInner extends Resource {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(AppServiceEnvironmentResourceInner.class);
-
     /*
      * Core resource properties
      */
-    @JsonProperty(value = "properties")
-    private AppServiceEnvironment innerProperties;
+    private AppServiceEnvironmentInner innerProperties;
 
     /*
-     * Kind of resource.
+     * Kind of resource. If the resource is an app, you can refer to
+     * https://github.com/Azure/app-service-linux-docs/blob/master/Things_You_Should_Know/kind_property.md#app-service-
+     * resource-kind-reference for details supported values for kind.
      */
-    @JsonProperty(value = "kind")
     private String kind;
+
+    /*
+     * The type of the resource.
+     */
+    private String type;
+
+    /*
+     * The name of the resource.
+     */
+    private String name;
+
+    /*
+     * Fully qualified resource Id for the resource.
+     */
+    private String id;
+
+    /**
+     * Creates an instance of AppServiceEnvironmentResourceInner class.
+     */
+    public AppServiceEnvironmentResourceInner() {
+    }
 
     /**
      * Get the innerProperties property: Core resource properties.
-     *
+     * 
      * @return the innerProperties value.
      */
-    private AppServiceEnvironment innerProperties() {
+    private AppServiceEnvironmentInner innerProperties() {
         return this.innerProperties;
     }
 
     /**
-     * Get the kind property: Kind of resource.
-     *
+     * Get the kind property: Kind of resource. If the resource is an app, you can refer to
+     * https://github.com/Azure/app-service-linux-docs/blob/master/Things_You_Should_Know/kind_property.md#app-service-resource-kind-reference
+     * for details supported values for kind.
+     * 
      * @return the kind value.
      */
     public String kind() {
@@ -53,8 +79,10 @@ public final class AppServiceEnvironmentResourceInner extends Resource {
     }
 
     /**
-     * Set the kind property: Kind of resource.
-     *
+     * Set the kind property: Kind of resource. If the resource is an app, you can refer to
+     * https://github.com/Azure/app-service-linux-docs/blob/master/Things_You_Should_Know/kind_property.md#app-service-resource-kind-reference
+     * for details supported values for kind.
+     * 
      * @param kind the kind value to set.
      * @return the AppServiceEnvironmentResourceInner object itself.
      */
@@ -63,14 +91,48 @@ public final class AppServiceEnvironmentResourceInner extends Resource {
         return this;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * Get the type property: The type of the resource.
+     * 
+     * @return the type value.
+     */
+    @Override
+    public String type() {
+        return this.type;
+    }
+
+    /**
+     * Get the name property: The name of the resource.
+     * 
+     * @return the name value.
+     */
+    @Override
+    public String name() {
+        return this.name;
+    }
+
+    /**
+     * Get the id property: Fully qualified resource Id for the resource.
+     * 
+     * @return the id value.
+     */
+    @Override
+    public String id() {
+        return this.id;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public AppServiceEnvironmentResourceInner withLocation(String location) {
         super.withLocation(location);
         return this;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public AppServiceEnvironmentResourceInner withTags(Map<String, String> tags) {
         super.withTags(tags);
@@ -79,7 +141,7 @@ public final class AppServiceEnvironmentResourceInner extends Resource {
 
     /**
      * Get the provisioningState property: Provisioning state of the App Service Environment.
-     *
+     * 
      * @return the provisioningState value.
      */
     public ProvisioningState provisioningState() {
@@ -88,7 +150,7 @@ public final class AppServiceEnvironmentResourceInner extends Resource {
 
     /**
      * Get the status property: Current status of the App Service Environment.
-     *
+     * 
      * @return the status value.
      */
     public HostingEnvironmentStatus status() {
@@ -97,7 +159,7 @@ public final class AppServiceEnvironmentResourceInner extends Resource {
 
     /**
      * Get the virtualNetwork property: Description of the Virtual Network.
-     *
+     * 
      * @return the virtualNetwork value.
      */
     public VirtualNetworkProfile virtualNetwork() {
@@ -106,13 +168,13 @@ public final class AppServiceEnvironmentResourceInner extends Resource {
 
     /**
      * Set the virtualNetwork property: Description of the Virtual Network.
-     *
+     * 
      * @param virtualNetwork the virtualNetwork value to set.
      * @return the AppServiceEnvironmentResourceInner object itself.
      */
     public AppServiceEnvironmentResourceInner withVirtualNetwork(VirtualNetworkProfile virtualNetwork) {
         if (this.innerProperties() == null) {
-            this.innerProperties = new AppServiceEnvironment();
+            this.innerProperties = new AppServiceEnvironmentInner();
         }
         this.innerProperties().withVirtualNetwork(virtualNetwork);
         return this;
@@ -121,7 +183,7 @@ public final class AppServiceEnvironmentResourceInner extends Resource {
     /**
      * Get the internalLoadBalancingMode property: Specifies which endpoints to serve internally in the Virtual Network
      * for the App Service Environment.
-     *
+     * 
      * @return the internalLoadBalancingMode value.
      */
     public LoadBalancingMode internalLoadBalancingMode() {
@@ -131,14 +193,14 @@ public final class AppServiceEnvironmentResourceInner extends Resource {
     /**
      * Set the internalLoadBalancingMode property: Specifies which endpoints to serve internally in the Virtual Network
      * for the App Service Environment.
-     *
+     * 
      * @param internalLoadBalancingMode the internalLoadBalancingMode value to set.
      * @return the AppServiceEnvironmentResourceInner object itself.
      */
-    public AppServiceEnvironmentResourceInner withInternalLoadBalancingMode(
-        LoadBalancingMode internalLoadBalancingMode) {
+    public AppServiceEnvironmentResourceInner
+        withInternalLoadBalancingMode(LoadBalancingMode internalLoadBalancingMode) {
         if (this.innerProperties() == null) {
-            this.innerProperties = new AppServiceEnvironment();
+            this.innerProperties = new AppServiceEnvironmentInner();
         }
         this.innerProperties().withInternalLoadBalancingMode(internalLoadBalancingMode);
         return this;
@@ -146,7 +208,7 @@ public final class AppServiceEnvironmentResourceInner extends Resource {
 
     /**
      * Get the multiSize property: Front-end VM size, e.g. "Medium", "Large".
-     *
+     * 
      * @return the multiSize value.
      */
     public String multiSize() {
@@ -155,13 +217,13 @@ public final class AppServiceEnvironmentResourceInner extends Resource {
 
     /**
      * Set the multiSize property: Front-end VM size, e.g. "Medium", "Large".
-     *
+     * 
      * @param multiSize the multiSize value to set.
      * @return the AppServiceEnvironmentResourceInner object itself.
      */
     public AppServiceEnvironmentResourceInner withMultiSize(String multiSize) {
         if (this.innerProperties() == null) {
-            this.innerProperties = new AppServiceEnvironment();
+            this.innerProperties = new AppServiceEnvironmentInner();
         }
         this.innerProperties().withMultiSize(multiSize);
         return this;
@@ -169,7 +231,7 @@ public final class AppServiceEnvironmentResourceInner extends Resource {
 
     /**
      * Get the multiRoleCount property: Number of front-end instances.
-     *
+     * 
      * @return the multiRoleCount value.
      */
     public Integer multiRoleCount() {
@@ -178,7 +240,7 @@ public final class AppServiceEnvironmentResourceInner extends Resource {
 
     /**
      * Get the ipsslAddressCount property: Number of IP SSL addresses reserved for the App Service Environment.
-     *
+     * 
      * @return the ipsslAddressCount value.
      */
     public Integer ipsslAddressCount() {
@@ -187,13 +249,13 @@ public final class AppServiceEnvironmentResourceInner extends Resource {
 
     /**
      * Set the ipsslAddressCount property: Number of IP SSL addresses reserved for the App Service Environment.
-     *
+     * 
      * @param ipsslAddressCount the ipsslAddressCount value to set.
      * @return the AppServiceEnvironmentResourceInner object itself.
      */
     public AppServiceEnvironmentResourceInner withIpsslAddressCount(Integer ipsslAddressCount) {
         if (this.innerProperties() == null) {
-            this.innerProperties = new AppServiceEnvironment();
+            this.innerProperties = new AppServiceEnvironmentInner();
         }
         this.innerProperties().withIpsslAddressCount(ipsslAddressCount);
         return this;
@@ -201,7 +263,7 @@ public final class AppServiceEnvironmentResourceInner extends Resource {
 
     /**
      * Get the dnsSuffix property: DNS suffix of the App Service Environment.
-     *
+     * 
      * @return the dnsSuffix value.
      */
     public String dnsSuffix() {
@@ -210,13 +272,13 @@ public final class AppServiceEnvironmentResourceInner extends Resource {
 
     /**
      * Set the dnsSuffix property: DNS suffix of the App Service Environment.
-     *
+     * 
      * @param dnsSuffix the dnsSuffix value to set.
      * @return the AppServiceEnvironmentResourceInner object itself.
      */
     public AppServiceEnvironmentResourceInner withDnsSuffix(String dnsSuffix) {
         if (this.innerProperties() == null) {
-            this.innerProperties = new AppServiceEnvironment();
+            this.innerProperties = new AppServiceEnvironmentInner();
         }
         this.innerProperties().withDnsSuffix(dnsSuffix);
         return this;
@@ -224,7 +286,7 @@ public final class AppServiceEnvironmentResourceInner extends Resource {
 
     /**
      * Get the maximumNumberOfMachines property: Maximum number of VMs in the App Service Environment.
-     *
+     * 
      * @return the maximumNumberOfMachines value.
      */
     public Integer maximumNumberOfMachines() {
@@ -233,7 +295,7 @@ public final class AppServiceEnvironmentResourceInner extends Resource {
 
     /**
      * Get the frontEndScaleFactor property: Scale factor for front-ends.
-     *
+     * 
      * @return the frontEndScaleFactor value.
      */
     public Integer frontEndScaleFactor() {
@@ -242,13 +304,13 @@ public final class AppServiceEnvironmentResourceInner extends Resource {
 
     /**
      * Set the frontEndScaleFactor property: Scale factor for front-ends.
-     *
+     * 
      * @param frontEndScaleFactor the frontEndScaleFactor value to set.
      * @return the AppServiceEnvironmentResourceInner object itself.
      */
     public AppServiceEnvironmentResourceInner withFrontEndScaleFactor(Integer frontEndScaleFactor) {
         if (this.innerProperties() == null) {
-            this.innerProperties = new AppServiceEnvironment();
+            this.innerProperties = new AppServiceEnvironmentInner();
         }
         this.innerProperties().withFrontEndScaleFactor(frontEndScaleFactor);
         return this;
@@ -257,8 +319,9 @@ public final class AppServiceEnvironmentResourceInner extends Resource {
     /**
      * Get the suspended property: &lt;code&gt;true&lt;/code&gt; if the App Service Environment is suspended; otherwise,
      * &lt;code&gt;false&lt;/code&gt;. The environment can be suspended, e.g. when the management endpoint is no longer
-     * available (most likely because NSG blocked the incoming traffic).
-     *
+     * available
+     * (most likely because NSG blocked the incoming traffic).
+     * 
      * @return the suspended value.
      */
     public Boolean suspended() {
@@ -267,7 +330,7 @@ public final class AppServiceEnvironmentResourceInner extends Resource {
 
     /**
      * Get the clusterSettings property: Custom settings for changing the behavior of the App Service Environment.
-     *
+     * 
      * @return the clusterSettings value.
      */
     public List<NameValuePair> clusterSettings() {
@@ -276,13 +339,13 @@ public final class AppServiceEnvironmentResourceInner extends Resource {
 
     /**
      * Set the clusterSettings property: Custom settings for changing the behavior of the App Service Environment.
-     *
+     * 
      * @param clusterSettings the clusterSettings value to set.
      * @return the AppServiceEnvironmentResourceInner object itself.
      */
     public AppServiceEnvironmentResourceInner withClusterSettings(List<NameValuePair> clusterSettings) {
         if (this.innerProperties() == null) {
-            this.innerProperties = new AppServiceEnvironment();
+            this.innerProperties = new AppServiceEnvironmentInner();
         }
         this.innerProperties().withClusterSettings(clusterSettings);
         return this;
@@ -290,7 +353,7 @@ public final class AppServiceEnvironmentResourceInner extends Resource {
 
     /**
      * Get the userWhitelistedIpRanges property: User added ip ranges to whitelist on ASE db.
-     *
+     * 
      * @return the userWhitelistedIpRanges value.
      */
     public List<String> userWhitelistedIpRanges() {
@@ -299,13 +362,13 @@ public final class AppServiceEnvironmentResourceInner extends Resource {
 
     /**
      * Set the userWhitelistedIpRanges property: User added ip ranges to whitelist on ASE db.
-     *
+     * 
      * @param userWhitelistedIpRanges the userWhitelistedIpRanges value to set.
      * @return the AppServiceEnvironmentResourceInner object itself.
      */
     public AppServiceEnvironmentResourceInner withUserWhitelistedIpRanges(List<String> userWhitelistedIpRanges) {
         if (this.innerProperties() == null) {
-            this.innerProperties = new AppServiceEnvironment();
+            this.innerProperties = new AppServiceEnvironmentInner();
         }
         this.innerProperties().withUserWhitelistedIpRanges(userWhitelistedIpRanges);
         return this;
@@ -313,7 +376,7 @@ public final class AppServiceEnvironmentResourceInner extends Resource {
 
     /**
      * Get the hasLinuxWorkers property: Flag that displays whether an ASE has linux workers or not.
-     *
+     * 
      * @return the hasLinuxWorkers value.
      */
     public Boolean hasLinuxWorkers() {
@@ -321,8 +384,31 @@ public final class AppServiceEnvironmentResourceInner extends Resource {
     }
 
     /**
+     * Get the upgradePreference property: Upgrade Preference.
+     * 
+     * @return the upgradePreference value.
+     */
+    public UpgradePreference upgradePreference() {
+        return this.innerProperties() == null ? null : this.innerProperties().upgradePreference();
+    }
+
+    /**
+     * Set the upgradePreference property: Upgrade Preference.
+     * 
+     * @param upgradePreference the upgradePreference value to set.
+     * @return the AppServiceEnvironmentResourceInner object itself.
+     */
+    public AppServiceEnvironmentResourceInner withUpgradePreference(UpgradePreference upgradePreference) {
+        if (this.innerProperties() == null) {
+            this.innerProperties = new AppServiceEnvironmentInner();
+        }
+        this.innerProperties().withUpgradePreference(upgradePreference);
+        return this;
+    }
+
+    /**
      * Get the dedicatedHostCount property: Dedicated Host Count.
-     *
+     * 
      * @return the dedicatedHostCount value.
      */
     public Integer dedicatedHostCount() {
@@ -331,13 +417,13 @@ public final class AppServiceEnvironmentResourceInner extends Resource {
 
     /**
      * Set the dedicatedHostCount property: Dedicated Host Count.
-     *
+     * 
      * @param dedicatedHostCount the dedicatedHostCount value to set.
      * @return the AppServiceEnvironmentResourceInner object itself.
      */
     public AppServiceEnvironmentResourceInner withDedicatedHostCount(Integer dedicatedHostCount) {
         if (this.innerProperties() == null) {
-            this.innerProperties = new AppServiceEnvironment();
+            this.innerProperties = new AppServiceEnvironmentInner();
         }
         this.innerProperties().withDedicatedHostCount(dedicatedHostCount);
         return this;
@@ -345,7 +431,7 @@ public final class AppServiceEnvironmentResourceInner extends Resource {
 
     /**
      * Get the zoneRedundant property: Whether or not this App Service Environment is zone-redundant.
-     *
+     * 
      * @return the zoneRedundant value.
      */
     public Boolean zoneRedundant() {
@@ -354,26 +440,138 @@ public final class AppServiceEnvironmentResourceInner extends Resource {
 
     /**
      * Set the zoneRedundant property: Whether or not this App Service Environment is zone-redundant.
-     *
+     * 
      * @param zoneRedundant the zoneRedundant value to set.
      * @return the AppServiceEnvironmentResourceInner object itself.
      */
     public AppServiceEnvironmentResourceInner withZoneRedundant(Boolean zoneRedundant) {
         if (this.innerProperties() == null) {
-            this.innerProperties = new AppServiceEnvironment();
+            this.innerProperties = new AppServiceEnvironmentInner();
         }
         this.innerProperties().withZoneRedundant(zoneRedundant);
         return this;
     }
 
     /**
+     * Get the customDnsSuffixConfiguration property: Full view of the custom domain suffix configuration for ASEv3.
+     * 
+     * @return the customDnsSuffixConfiguration value.
+     */
+    public CustomDnsSuffixConfigurationInner customDnsSuffixConfiguration() {
+        return this.innerProperties() == null ? null : this.innerProperties().customDnsSuffixConfiguration();
+    }
+
+    /**
+     * Set the customDnsSuffixConfiguration property: Full view of the custom domain suffix configuration for ASEv3.
+     * 
+     * @param customDnsSuffixConfiguration the customDnsSuffixConfiguration value to set.
+     * @return the AppServiceEnvironmentResourceInner object itself.
+     */
+    public AppServiceEnvironmentResourceInner
+        withCustomDnsSuffixConfiguration(CustomDnsSuffixConfigurationInner customDnsSuffixConfiguration) {
+        if (this.innerProperties() == null) {
+            this.innerProperties = new AppServiceEnvironmentInner();
+        }
+        this.innerProperties().withCustomDnsSuffixConfiguration(customDnsSuffixConfiguration);
+        return this;
+    }
+
+    /**
+     * Get the networkingConfiguration property: Full view of networking configuration for an ASE.
+     * 
+     * @return the networkingConfiguration value.
+     */
+    public AseV3NetworkingConfigurationInner networkingConfiguration() {
+        return this.innerProperties() == null ? null : this.innerProperties().networkingConfiguration();
+    }
+
+    /**
+     * Set the networkingConfiguration property: Full view of networking configuration for an ASE.
+     * 
+     * @param networkingConfiguration the networkingConfiguration value to set.
+     * @return the AppServiceEnvironmentResourceInner object itself.
+     */
+    public AppServiceEnvironmentResourceInner
+        withNetworkingConfiguration(AseV3NetworkingConfigurationInner networkingConfiguration) {
+        if (this.innerProperties() == null) {
+            this.innerProperties = new AppServiceEnvironmentInner();
+        }
+        this.innerProperties().withNetworkingConfiguration(networkingConfiguration);
+        return this;
+    }
+
+    /**
+     * Get the upgradeAvailability property: Whether an upgrade is available for this App Service Environment.
+     * 
+     * @return the upgradeAvailability value.
+     */
+    public UpgradeAvailability upgradeAvailability() {
+        return this.innerProperties() == null ? null : this.innerProperties().upgradeAvailability();
+    }
+
+    /**
      * Validates the instance.
-     *
+     * 
      * @throws IllegalArgumentException thrown if the instance is not valid.
      */
     public void validate() {
         if (innerProperties() != null) {
             innerProperties().validate();
         }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public JsonWriter toJson(JsonWriter jsonWriter) throws IOException {
+        jsonWriter.writeStartObject();
+        jsonWriter.writeStringField("location", location());
+        jsonWriter.writeMapField("tags", tags(), (writer, element) -> writer.writeString(element));
+        jsonWriter.writeJsonField("properties", this.innerProperties);
+        jsonWriter.writeStringField("kind", this.kind);
+        return jsonWriter.writeEndObject();
+    }
+
+    /**
+     * Reads an instance of AppServiceEnvironmentResourceInner from the JsonReader.
+     * 
+     * @param jsonReader The JsonReader being read.
+     * @return An instance of AppServiceEnvironmentResourceInner if the JsonReader was pointing to an instance of it, or
+     * null if it was pointing to JSON null.
+     * @throws IllegalStateException If the deserialized JSON object was missing any required properties.
+     * @throws IOException If an error occurs while reading the AppServiceEnvironmentResourceInner.
+     */
+    public static AppServiceEnvironmentResourceInner fromJson(JsonReader jsonReader) throws IOException {
+        return jsonReader.readObject(reader -> {
+            AppServiceEnvironmentResourceInner deserializedAppServiceEnvironmentResourceInner
+                = new AppServiceEnvironmentResourceInner();
+            while (reader.nextToken() != JsonToken.END_OBJECT) {
+                String fieldName = reader.getFieldName();
+                reader.nextToken();
+
+                if ("id".equals(fieldName)) {
+                    deserializedAppServiceEnvironmentResourceInner.id = reader.getString();
+                } else if ("name".equals(fieldName)) {
+                    deserializedAppServiceEnvironmentResourceInner.name = reader.getString();
+                } else if ("type".equals(fieldName)) {
+                    deserializedAppServiceEnvironmentResourceInner.type = reader.getString();
+                } else if ("location".equals(fieldName)) {
+                    deserializedAppServiceEnvironmentResourceInner.withLocation(reader.getString());
+                } else if ("tags".equals(fieldName)) {
+                    Map<String, String> tags = reader.readMap(reader1 -> reader1.getString());
+                    deserializedAppServiceEnvironmentResourceInner.withTags(tags);
+                } else if ("properties".equals(fieldName)) {
+                    deserializedAppServiceEnvironmentResourceInner.innerProperties
+                        = AppServiceEnvironmentInner.fromJson(reader);
+                } else if ("kind".equals(fieldName)) {
+                    deserializedAppServiceEnvironmentResourceInner.kind = reader.getString();
+                } else {
+                    reader.skipChildren();
+                }
+            }
+
+            return deserializedAppServiceEnvironmentResourceInner;
+        });
     }
 }

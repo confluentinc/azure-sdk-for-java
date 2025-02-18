@@ -5,102 +5,68 @@
 package com.azure.resourcemanager.security.fluent.models;
 
 import com.azure.core.annotation.Fluent;
-import com.azure.core.annotation.JsonFlatten;
 import com.azure.core.management.ProxyResource;
 import com.azure.core.util.logging.ClientLogger;
+import com.azure.json.JsonReader;
+import com.azure.json.JsonToken;
+import com.azure.json.JsonWriter;
 import com.azure.resourcemanager.security.models.JitNetworkAccessPolicyVirtualMachine;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import java.io.IOException;
 import java.util.List;
 
-/** The JitNetworkAccessPolicy model. */
-@JsonFlatten
+/**
+ * The JitNetworkAccessPolicy model.
+ */
 @Fluent
-public class JitNetworkAccessPolicyInner extends ProxyResource {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(JitNetworkAccessPolicyInner.class);
-
+public final class JitNetworkAccessPolicyInner extends ProxyResource {
     /*
-     * Configurations for Microsoft.Compute/virtualMachines resource type.
+     * The properties property.
      */
-    @JsonProperty(value = "properties.virtualMachines", required = true)
-    private List<JitNetworkAccessPolicyVirtualMachine> virtualMachines;
-
-    /*
-     * The requests property.
-     */
-    @JsonProperty(value = "properties.requests")
-    private List<JitNetworkAccessRequestInner> requests;
-
-    /*
-     * Gets the provisioning state of the Just-in-Time policy.
-     */
-    @JsonProperty(value = "properties.provisioningState", access = JsonProperty.Access.WRITE_ONLY)
-    private String provisioningState;
+    private JitNetworkAccessPolicyProperties innerProperties = new JitNetworkAccessPolicyProperties();
 
     /*
      * Kind of the resource
      */
-    @JsonProperty(value = "kind")
     private String kind;
 
     /*
      * Location where the resource is stored
      */
-    @JsonProperty(value = "location", access = JsonProperty.Access.WRITE_ONLY)
     private String location;
 
-    /**
-     * Get the virtualMachines property: Configurations for Microsoft.Compute/virtualMachines resource type.
-     *
-     * @return the virtualMachines value.
+    /*
+     * The type of the resource.
      */
-    public List<JitNetworkAccessPolicyVirtualMachine> virtualMachines() {
-        return this.virtualMachines;
+    private String type;
+
+    /*
+     * The name of the resource.
+     */
+    private String name;
+
+    /*
+     * Fully qualified resource Id for the resource.
+     */
+    private String id;
+
+    /**
+     * Creates an instance of JitNetworkAccessPolicyInner class.
+     */
+    public JitNetworkAccessPolicyInner() {
     }
 
     /**
-     * Set the virtualMachines property: Configurations for Microsoft.Compute/virtualMachines resource type.
-     *
-     * @param virtualMachines the virtualMachines value to set.
-     * @return the JitNetworkAccessPolicyInner object itself.
+     * Get the innerProperties property: The properties property.
+     * 
+     * @return the innerProperties value.
      */
-    public JitNetworkAccessPolicyInner withVirtualMachines(List<JitNetworkAccessPolicyVirtualMachine> virtualMachines) {
-        this.virtualMachines = virtualMachines;
-        return this;
-    }
-
-    /**
-     * Get the requests property: The requests property.
-     *
-     * @return the requests value.
-     */
-    public List<JitNetworkAccessRequestInner> requests() {
-        return this.requests;
-    }
-
-    /**
-     * Set the requests property: The requests property.
-     *
-     * @param requests the requests value to set.
-     * @return the JitNetworkAccessPolicyInner object itself.
-     */
-    public JitNetworkAccessPolicyInner withRequests(List<JitNetworkAccessRequestInner> requests) {
-        this.requests = requests;
-        return this;
-    }
-
-    /**
-     * Get the provisioningState property: Gets the provisioning state of the Just-in-Time policy.
-     *
-     * @return the provisioningState value.
-     */
-    public String provisioningState() {
-        return this.provisioningState;
+    private JitNetworkAccessPolicyProperties innerProperties() {
+        return this.innerProperties;
     }
 
     /**
      * Get the kind property: Kind of the resource.
-     *
+     * 
      * @return the kind value.
      */
     public String kind() {
@@ -109,7 +75,7 @@ public class JitNetworkAccessPolicyInner extends ProxyResource {
 
     /**
      * Set the kind property: Kind of the resource.
-     *
+     * 
      * @param kind the kind value to set.
      * @return the JitNetworkAccessPolicyInner object itself.
      */
@@ -120,7 +86,7 @@ public class JitNetworkAccessPolicyInner extends ProxyResource {
 
     /**
      * Get the location property: Location where the resource is stored.
-     *
+     * 
      * @return the location value.
      */
     public String location() {
@@ -128,21 +94,153 @@ public class JitNetworkAccessPolicyInner extends ProxyResource {
     }
 
     /**
+     * Get the type property: The type of the resource.
+     * 
+     * @return the type value.
+     */
+    @Override
+    public String type() {
+        return this.type;
+    }
+
+    /**
+     * Get the name property: The name of the resource.
+     * 
+     * @return the name value.
+     */
+    @Override
+    public String name() {
+        return this.name;
+    }
+
+    /**
+     * Get the id property: Fully qualified resource Id for the resource.
+     * 
+     * @return the id value.
+     */
+    @Override
+    public String id() {
+        return this.id;
+    }
+
+    /**
+     * Get the virtualMachines property: Configurations for Microsoft.Compute/virtualMachines resource type.
+     * 
+     * @return the virtualMachines value.
+     */
+    public List<JitNetworkAccessPolicyVirtualMachine> virtualMachines() {
+        return this.innerProperties() == null ? null : this.innerProperties().virtualMachines();
+    }
+
+    /**
+     * Set the virtualMachines property: Configurations for Microsoft.Compute/virtualMachines resource type.
+     * 
+     * @param virtualMachines the virtualMachines value to set.
+     * @return the JitNetworkAccessPolicyInner object itself.
+     */
+    public JitNetworkAccessPolicyInner withVirtualMachines(List<JitNetworkAccessPolicyVirtualMachine> virtualMachines) {
+        if (this.innerProperties() == null) {
+            this.innerProperties = new JitNetworkAccessPolicyProperties();
+        }
+        this.innerProperties().withVirtualMachines(virtualMachines);
+        return this;
+    }
+
+    /**
+     * Get the requests property: The requests property.
+     * 
+     * @return the requests value.
+     */
+    public List<JitNetworkAccessRequestInner> requests() {
+        return this.innerProperties() == null ? null : this.innerProperties().requests();
+    }
+
+    /**
+     * Set the requests property: The requests property.
+     * 
+     * @param requests the requests value to set.
+     * @return the JitNetworkAccessPolicyInner object itself.
+     */
+    public JitNetworkAccessPolicyInner withRequests(List<JitNetworkAccessRequestInner> requests) {
+        if (this.innerProperties() == null) {
+            this.innerProperties = new JitNetworkAccessPolicyProperties();
+        }
+        this.innerProperties().withRequests(requests);
+        return this;
+    }
+
+    /**
+     * Get the provisioningState property: Gets the provisioning state of the Just-in-Time policy.
+     * 
+     * @return the provisioningState value.
+     */
+    public String provisioningState() {
+        return this.innerProperties() == null ? null : this.innerProperties().provisioningState();
+    }
+
+    /**
      * Validates the instance.
-     *
+     * 
      * @throws IllegalArgumentException thrown if the instance is not valid.
      */
     public void validate() {
-        if (virtualMachines() == null) {
-            throw logger
-                .logExceptionAsError(
-                    new IllegalArgumentException(
-                        "Missing required property virtualMachines in model JitNetworkAccessPolicyInner"));
+        if (innerProperties() == null) {
+            throw LOGGER.atError()
+                .log(new IllegalArgumentException(
+                    "Missing required property innerProperties in model JitNetworkAccessPolicyInner"));
         } else {
-            virtualMachines().forEach(e -> e.validate());
+            innerProperties().validate();
         }
-        if (requests() != null) {
-            requests().forEach(e -> e.validate());
-        }
+    }
+
+    private static final ClientLogger LOGGER = new ClientLogger(JitNetworkAccessPolicyInner.class);
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public JsonWriter toJson(JsonWriter jsonWriter) throws IOException {
+        jsonWriter.writeStartObject();
+        jsonWriter.writeJsonField("properties", this.innerProperties);
+        jsonWriter.writeStringField("kind", this.kind);
+        return jsonWriter.writeEndObject();
+    }
+
+    /**
+     * Reads an instance of JitNetworkAccessPolicyInner from the JsonReader.
+     * 
+     * @param jsonReader The JsonReader being read.
+     * @return An instance of JitNetworkAccessPolicyInner if the JsonReader was pointing to an instance of it, or null
+     * if it was pointing to JSON null.
+     * @throws IllegalStateException If the deserialized JSON object was missing any required properties.
+     * @throws IOException If an error occurs while reading the JitNetworkAccessPolicyInner.
+     */
+    public static JitNetworkAccessPolicyInner fromJson(JsonReader jsonReader) throws IOException {
+        return jsonReader.readObject(reader -> {
+            JitNetworkAccessPolicyInner deserializedJitNetworkAccessPolicyInner = new JitNetworkAccessPolicyInner();
+            while (reader.nextToken() != JsonToken.END_OBJECT) {
+                String fieldName = reader.getFieldName();
+                reader.nextToken();
+
+                if ("id".equals(fieldName)) {
+                    deserializedJitNetworkAccessPolicyInner.id = reader.getString();
+                } else if ("name".equals(fieldName)) {
+                    deserializedJitNetworkAccessPolicyInner.name = reader.getString();
+                } else if ("type".equals(fieldName)) {
+                    deserializedJitNetworkAccessPolicyInner.type = reader.getString();
+                } else if ("properties".equals(fieldName)) {
+                    deserializedJitNetworkAccessPolicyInner.innerProperties
+                        = JitNetworkAccessPolicyProperties.fromJson(reader);
+                } else if ("kind".equals(fieldName)) {
+                    deserializedJitNetworkAccessPolicyInner.kind = reader.getString();
+                } else if ("location".equals(fieldName)) {
+                    deserializedJitNetworkAccessPolicyInner.location = reader.getString();
+                } else {
+                    reader.skipChildren();
+                }
+            }
+
+            return deserializedJitNetworkAccessPolicyInner;
+        });
     }
 }

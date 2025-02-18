@@ -5,35 +5,57 @@
 package com.azure.resourcemanager.storage.models;
 
 import com.azure.core.util.ExpandableStringEnum;
-import com.fasterxml.jackson.annotation.JsonCreator;
 import java.util.Collection;
 
-/** Defines values for SignedResource. */
+/**
+ * The signed services accessible with the service SAS. Possible values include: Blob (b), Container (c), File (f),
+ * Share (s).
+ */
 public final class SignedResource extends ExpandableStringEnum<SignedResource> {
-    /** Static value b for SignedResource. */
+    /**
+     * Static value b for SignedResource.
+     */
     public static final SignedResource B = fromString("b");
 
-    /** Static value c for SignedResource. */
+    /**
+     * Static value c for SignedResource.
+     */
     public static final SignedResource C = fromString("c");
 
-    /** Static value f for SignedResource. */
+    /**
+     * Static value f for SignedResource.
+     */
     public static final SignedResource F = fromString("f");
 
-    /** Static value s for SignedResource. */
+    /**
+     * Static value s for SignedResource.
+     */
     public static final SignedResource S = fromString("s");
 
     /**
+     * Creates a new instance of SignedResource value.
+     * 
+     * @deprecated Use the {@link #fromString(String)} factory method.
+     */
+    @Deprecated
+    public SignedResource() {
+    }
+
+    /**
      * Creates or finds a SignedResource from its string representation.
-     *
+     * 
      * @param name a name to look for.
      * @return the corresponding SignedResource.
      */
-    @JsonCreator
     public static SignedResource fromString(String name) {
         return fromString(name, SignedResource.class);
     }
 
-    /** @return known SignedResource values. */
+    /**
+     * Gets known SignedResource values.
+     * 
+     * @return known SignedResource values.
+     */
     public static Collection<SignedResource> values() {
         return values(SignedResource.class);
     }

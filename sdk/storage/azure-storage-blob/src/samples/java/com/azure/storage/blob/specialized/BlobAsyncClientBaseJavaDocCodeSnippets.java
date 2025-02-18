@@ -7,8 +7,9 @@ import com.azure.core.http.RequestConditions;
 import com.azure.core.util.BinaryData;
 import com.azure.core.util.Context;
 import com.azure.core.util.polling.PollerFlux;
+import com.azure.storage.blob.BlobAsyncClient;
+import com.azure.storage.blob.BlobClientBuilder;
 import com.azure.storage.blob.BlobServiceClientBuilder;
-import com.azure.storage.blob.BlobServiceVersion;
 import com.azure.storage.blob.models.AccessTier;
 import com.azure.storage.blob.models.BlobBeginCopySourceRequestConditions;
 import com.azure.storage.blob.models.BlobImmutabilityPolicy;
@@ -56,8 +57,8 @@ import java.util.function.Consumer;
  */
 @SuppressWarnings("unused")
 public class BlobAsyncClientBaseJavaDocCodeSnippets {
-    private BlobAsyncClientBase client = new BlobAsyncClientBase(null, null, BlobServiceVersion.getLatest(),
-        null, null, null, null, null, null, null);
+    private BlobAsyncClient client = new BlobClientBuilder().endpoint("https://storageaccount.blob.core.windows.net")
+        .containerName("containerName").blobName("blobName").sasToken("sasToken").buildAsyncClient();
     private String leaseId = "leaseId";
     private String tags = "tags";
     private String copyId = "copyId";
@@ -793,5 +794,31 @@ public class BlobAsyncClientBaseJavaDocCodeSnippets {
         client.setLegalHoldWithResponse(true).subscribe(response ->
             System.out.println("Legal hold status: " + response.getValue().hasLegalHold()));
         // END: com.azure.storage.blob.specialized.BlobAsyncClientBase.setLegalHoldWithResponse#boolean
+    }
+
+    /**
+     * Code snippets for {@link BlobAsyncClientBase#deleteIfExists()} and
+     * {@link BlobAsyncClientBase#deleteIfExistsWithResponse(DeleteSnapshotsOptionType, BlobRequestConditions)}
+     */
+    public void deleteIfExistsCodeSnippets() {
+        // BEGIN: com.azure.storage.blob.specialized.BlobAsyncClientBase.deleteIfExists
+        client.deleteIfExists().subscribe(deleted -> {
+            if (deleted) {
+                System.out.println("Successfully deleted.");
+            } else {
+                System.out.println("Does not exist.");
+            }
+        });
+        // END: com.azure.storage.blob.specialized.BlobAsyncClientBase.deleteIfExists
+
+        // BEGIN: com.azure.storage.blob.specialized.BlobAsyncClientBase.deleteIfExistsWithResponse#DeleteSnapshotsOptionType-BlobRequestConditions
+        client.deleteIfExistsWithResponse(DeleteSnapshotsOptionType.INCLUDE, null).subscribe(response -> {
+            if (response.getStatusCode() == 404) {
+                System.out.println("Does not exist.");
+            } else {
+                System.out.println("successfully deleted.");
+            }
+        });
+        // END: com.azure.storage.blob.specialized.BlobAsyncClientBase.deleteIfExistsWithResponse#DeleteSnapshotsOptionType-BlobRequestConditions
     }
 }

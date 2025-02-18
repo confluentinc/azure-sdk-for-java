@@ -5,360 +5,352 @@
 package com.azure.resourcemanager.cdn.models;
 
 import com.azure.core.annotation.Fluent;
-import com.azure.core.annotation.JsonFlatten;
-import com.azure.core.util.logging.ClientLogger;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.azure.json.JsonReader;
+import com.azure.json.JsonSerializable;
+import com.azure.json.JsonToken;
+import com.azure.json.JsonWriter;
+import com.azure.resourcemanager.cdn.fluent.models.RouteUpdatePropertiesParameters;
+import java.io.IOException;
 import java.util.List;
 
-/** The domain JSON object required for domain creation or update. */
-@JsonFlatten
+/**
+ * The domain JSON object required for domain creation or update.
+ */
 @Fluent
-public class RouteUpdateParameters {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(RouteUpdateParameters.class);
-
+public final class RouteUpdateParameters implements JsonSerializable<RouteUpdateParameters> {
     /*
-     * Domains referenced by this endpoint.
+     * The JSON object that contains the properties of the domain to create.
      */
-    @JsonProperty(value = "properties.customDomains")
-    private List<ResourceReference> customDomains;
+    private RouteUpdatePropertiesParameters innerProperties;
 
-    /*
-     * A reference to the origin group.
+    /**
+     * Creates an instance of RouteUpdateParameters class.
      */
-    @JsonProperty(value = "properties.originGroup")
-    private ResourceReference originGroup;
+    public RouteUpdateParameters() {
+    }
 
-    /*
-     * A directory path on the origin that AzureFrontDoor can use to retrieve
-     * content from, e.g. contoso.cloudapp.net/originpath.
+    /**
+     * Get the innerProperties property: The JSON object that contains the properties of the domain to create.
+     * 
+     * @return the innerProperties value.
      */
-    @JsonProperty(value = "properties.originPath")
-    private String originPath;
+    private RouteUpdatePropertiesParameters innerProperties() {
+        return this.innerProperties;
+    }
 
-    /*
-     * rule sets referenced by this endpoint.
+    /**
+     * Get the endpointName property: The name of the endpoint which holds the route.
+     * 
+     * @return the endpointName value.
      */
-    @JsonProperty(value = "properties.ruleSets")
-    private List<ResourceReference> ruleSets;
-
-    /*
-     * List of supported protocols for this route.
-     */
-    @JsonProperty(value = "properties.supportedProtocols")
-    private List<AfdEndpointProtocols> supportedProtocols;
-
-    /*
-     * The route patterns of the rule.
-     */
-    @JsonProperty(value = "properties.patternsToMatch")
-    private List<String> patternsToMatch;
-
-    /*
-     * compression settings.
-     */
-    @JsonProperty(value = "properties.compressionSettings")
-    private Object compressionSettings;
-
-    /*
-     * Defines how CDN caches requests that include query strings. You can
-     * ignore any query strings when caching, bypass caching to prevent
-     * requests that contain query strings from being cached, or cache every
-     * request with a unique URL.
-     */
-    @JsonProperty(value = "properties.queryStringCachingBehavior")
-    private AfdQueryStringCachingBehavior queryStringCachingBehavior;
-
-    /*
-     * Protocol this rule will use when forwarding traffic to backends.
-     */
-    @JsonProperty(value = "properties.forwardingProtocol")
-    private ForwardingProtocol forwardingProtocol;
-
-    /*
-     * whether this route will be linked to the default endpoint domain.
-     */
-    @JsonProperty(value = "properties.linkToDefaultDomain")
-    private LinkToDefaultDomain linkToDefaultDomain;
-
-    /*
-     * Whether to automatically redirect HTTP traffic to HTTPS traffic. Note
-     * that this is a easy way to set up this rule and it will be the first
-     * rule that gets executed.
-     */
-    @JsonProperty(value = "properties.httpsRedirect")
-    private HttpsRedirect httpsRedirect;
-
-    /*
-     * Whether to enable use of this rule. Permitted values are 'Enabled' or
-     * 'Disabled'
-     */
-    @JsonProperty(value = "properties.enabledState")
-    private EnabledState enabledState;
+    public String endpointName() {
+        return this.innerProperties() == null ? null : this.innerProperties().endpointName();
+    }
 
     /**
      * Get the customDomains property: Domains referenced by this endpoint.
-     *
+     * 
      * @return the customDomains value.
      */
-    public List<ResourceReference> customDomains() {
-        return this.customDomains;
+    public List<ActivatedResourceReference> customDomains() {
+        return this.innerProperties() == null ? null : this.innerProperties().customDomains();
     }
 
     /**
      * Set the customDomains property: Domains referenced by this endpoint.
-     *
+     * 
      * @param customDomains the customDomains value to set.
      * @return the RouteUpdateParameters object itself.
      */
-    public RouteUpdateParameters withCustomDomains(List<ResourceReference> customDomains) {
-        this.customDomains = customDomains;
+    public RouteUpdateParameters withCustomDomains(List<ActivatedResourceReference> customDomains) {
+        if (this.innerProperties() == null) {
+            this.innerProperties = new RouteUpdatePropertiesParameters();
+        }
+        this.innerProperties().withCustomDomains(customDomains);
         return this;
     }
 
     /**
      * Get the originGroup property: A reference to the origin group.
-     *
+     * 
      * @return the originGroup value.
      */
     public ResourceReference originGroup() {
-        return this.originGroup;
+        return this.innerProperties() == null ? null : this.innerProperties().originGroup();
     }
 
     /**
      * Set the originGroup property: A reference to the origin group.
-     *
+     * 
      * @param originGroup the originGroup value to set.
      * @return the RouteUpdateParameters object itself.
      */
     public RouteUpdateParameters withOriginGroup(ResourceReference originGroup) {
-        this.originGroup = originGroup;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new RouteUpdatePropertiesParameters();
+        }
+        this.innerProperties().withOriginGroup(originGroup);
         return this;
     }
 
     /**
      * Get the originPath property: A directory path on the origin that AzureFrontDoor can use to retrieve content from,
      * e.g. contoso.cloudapp.net/originpath.
-     *
+     * 
      * @return the originPath value.
      */
     public String originPath() {
-        return this.originPath;
+        return this.innerProperties() == null ? null : this.innerProperties().originPath();
     }
 
     /**
      * Set the originPath property: A directory path on the origin that AzureFrontDoor can use to retrieve content from,
      * e.g. contoso.cloudapp.net/originpath.
-     *
+     * 
      * @param originPath the originPath value to set.
      * @return the RouteUpdateParameters object itself.
      */
     public RouteUpdateParameters withOriginPath(String originPath) {
-        this.originPath = originPath;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new RouteUpdatePropertiesParameters();
+        }
+        this.innerProperties().withOriginPath(originPath);
         return this;
     }
 
     /**
      * Get the ruleSets property: rule sets referenced by this endpoint.
-     *
+     * 
      * @return the ruleSets value.
      */
     public List<ResourceReference> ruleSets() {
-        return this.ruleSets;
+        return this.innerProperties() == null ? null : this.innerProperties().ruleSets();
     }
 
     /**
      * Set the ruleSets property: rule sets referenced by this endpoint.
-     *
+     * 
      * @param ruleSets the ruleSets value to set.
      * @return the RouteUpdateParameters object itself.
      */
     public RouteUpdateParameters withRuleSets(List<ResourceReference> ruleSets) {
-        this.ruleSets = ruleSets;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new RouteUpdatePropertiesParameters();
+        }
+        this.innerProperties().withRuleSets(ruleSets);
         return this;
     }
 
     /**
      * Get the supportedProtocols property: List of supported protocols for this route.
-     *
+     * 
      * @return the supportedProtocols value.
      */
     public List<AfdEndpointProtocols> supportedProtocols() {
-        return this.supportedProtocols;
+        return this.innerProperties() == null ? null : this.innerProperties().supportedProtocols();
     }
 
     /**
      * Set the supportedProtocols property: List of supported protocols for this route.
-     *
+     * 
      * @param supportedProtocols the supportedProtocols value to set.
      * @return the RouteUpdateParameters object itself.
      */
     public RouteUpdateParameters withSupportedProtocols(List<AfdEndpointProtocols> supportedProtocols) {
-        this.supportedProtocols = supportedProtocols;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new RouteUpdatePropertiesParameters();
+        }
+        this.innerProperties().withSupportedProtocols(supportedProtocols);
         return this;
     }
 
     /**
      * Get the patternsToMatch property: The route patterns of the rule.
-     *
+     * 
      * @return the patternsToMatch value.
      */
     public List<String> patternsToMatch() {
-        return this.patternsToMatch;
+        return this.innerProperties() == null ? null : this.innerProperties().patternsToMatch();
     }
 
     /**
      * Set the patternsToMatch property: The route patterns of the rule.
-     *
+     * 
      * @param patternsToMatch the patternsToMatch value to set.
      * @return the RouteUpdateParameters object itself.
      */
     public RouteUpdateParameters withPatternsToMatch(List<String> patternsToMatch) {
-        this.patternsToMatch = patternsToMatch;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new RouteUpdatePropertiesParameters();
+        }
+        this.innerProperties().withPatternsToMatch(patternsToMatch);
         return this;
     }
 
     /**
-     * Get the compressionSettings property: compression settings.
-     *
-     * @return the compressionSettings value.
+     * Get the cacheConfiguration property: The caching configuration for this route. To disable caching, do not provide
+     * a cacheConfiguration object.
+     * 
+     * @return the cacheConfiguration value.
      */
-    public Object compressionSettings() {
-        return this.compressionSettings;
+    public AfdRouteCacheConfiguration cacheConfiguration() {
+        return this.innerProperties() == null ? null : this.innerProperties().cacheConfiguration();
     }
 
     /**
-     * Set the compressionSettings property: compression settings.
-     *
-     * @param compressionSettings the compressionSettings value to set.
+     * Set the cacheConfiguration property: The caching configuration for this route. To disable caching, do not provide
+     * a cacheConfiguration object.
+     * 
+     * @param cacheConfiguration the cacheConfiguration value to set.
      * @return the RouteUpdateParameters object itself.
      */
-    public RouteUpdateParameters withCompressionSettings(Object compressionSettings) {
-        this.compressionSettings = compressionSettings;
-        return this;
-    }
-
-    /**
-     * Get the queryStringCachingBehavior property: Defines how CDN caches requests that include query strings. You can
-     * ignore any query strings when caching, bypass caching to prevent requests that contain query strings from being
-     * cached, or cache every request with a unique URL.
-     *
-     * @return the queryStringCachingBehavior value.
-     */
-    public AfdQueryStringCachingBehavior queryStringCachingBehavior() {
-        return this.queryStringCachingBehavior;
-    }
-
-    /**
-     * Set the queryStringCachingBehavior property: Defines how CDN caches requests that include query strings. You can
-     * ignore any query strings when caching, bypass caching to prevent requests that contain query strings from being
-     * cached, or cache every request with a unique URL.
-     *
-     * @param queryStringCachingBehavior the queryStringCachingBehavior value to set.
-     * @return the RouteUpdateParameters object itself.
-     */
-    public RouteUpdateParameters withQueryStringCachingBehavior(
-        AfdQueryStringCachingBehavior queryStringCachingBehavior) {
-        this.queryStringCachingBehavior = queryStringCachingBehavior;
+    public RouteUpdateParameters withCacheConfiguration(AfdRouteCacheConfiguration cacheConfiguration) {
+        if (this.innerProperties() == null) {
+            this.innerProperties = new RouteUpdatePropertiesParameters();
+        }
+        this.innerProperties().withCacheConfiguration(cacheConfiguration);
         return this;
     }
 
     /**
      * Get the forwardingProtocol property: Protocol this rule will use when forwarding traffic to backends.
-     *
+     * 
      * @return the forwardingProtocol value.
      */
     public ForwardingProtocol forwardingProtocol() {
-        return this.forwardingProtocol;
+        return this.innerProperties() == null ? null : this.innerProperties().forwardingProtocol();
     }
 
     /**
      * Set the forwardingProtocol property: Protocol this rule will use when forwarding traffic to backends.
-     *
+     * 
      * @param forwardingProtocol the forwardingProtocol value to set.
      * @return the RouteUpdateParameters object itself.
      */
     public RouteUpdateParameters withForwardingProtocol(ForwardingProtocol forwardingProtocol) {
-        this.forwardingProtocol = forwardingProtocol;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new RouteUpdatePropertiesParameters();
+        }
+        this.innerProperties().withForwardingProtocol(forwardingProtocol);
         return this;
     }
 
     /**
      * Get the linkToDefaultDomain property: whether this route will be linked to the default endpoint domain.
-     *
+     * 
      * @return the linkToDefaultDomain value.
      */
     public LinkToDefaultDomain linkToDefaultDomain() {
-        return this.linkToDefaultDomain;
+        return this.innerProperties() == null ? null : this.innerProperties().linkToDefaultDomain();
     }
 
     /**
      * Set the linkToDefaultDomain property: whether this route will be linked to the default endpoint domain.
-     *
+     * 
      * @param linkToDefaultDomain the linkToDefaultDomain value to set.
      * @return the RouteUpdateParameters object itself.
      */
     public RouteUpdateParameters withLinkToDefaultDomain(LinkToDefaultDomain linkToDefaultDomain) {
-        this.linkToDefaultDomain = linkToDefaultDomain;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new RouteUpdatePropertiesParameters();
+        }
+        this.innerProperties().withLinkToDefaultDomain(linkToDefaultDomain);
         return this;
     }
 
     /**
      * Get the httpsRedirect property: Whether to automatically redirect HTTP traffic to HTTPS traffic. Note that this
      * is a easy way to set up this rule and it will be the first rule that gets executed.
-     *
+     * 
      * @return the httpsRedirect value.
      */
     public HttpsRedirect httpsRedirect() {
-        return this.httpsRedirect;
+        return this.innerProperties() == null ? null : this.innerProperties().httpsRedirect();
     }
 
     /**
      * Set the httpsRedirect property: Whether to automatically redirect HTTP traffic to HTTPS traffic. Note that this
      * is a easy way to set up this rule and it will be the first rule that gets executed.
-     *
+     * 
      * @param httpsRedirect the httpsRedirect value to set.
      * @return the RouteUpdateParameters object itself.
      */
     public RouteUpdateParameters withHttpsRedirect(HttpsRedirect httpsRedirect) {
-        this.httpsRedirect = httpsRedirect;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new RouteUpdatePropertiesParameters();
+        }
+        this.innerProperties().withHttpsRedirect(httpsRedirect);
         return this;
     }
 
     /**
      * Get the enabledState property: Whether to enable use of this rule. Permitted values are 'Enabled' or 'Disabled'.
-     *
+     * 
      * @return the enabledState value.
      */
     public EnabledState enabledState() {
-        return this.enabledState;
+        return this.innerProperties() == null ? null : this.innerProperties().enabledState();
     }
 
     /**
      * Set the enabledState property: Whether to enable use of this rule. Permitted values are 'Enabled' or 'Disabled'.
-     *
+     * 
      * @param enabledState the enabledState value to set.
      * @return the RouteUpdateParameters object itself.
      */
     public RouteUpdateParameters withEnabledState(EnabledState enabledState) {
-        this.enabledState = enabledState;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new RouteUpdatePropertiesParameters();
+        }
+        this.innerProperties().withEnabledState(enabledState);
         return this;
     }
 
     /**
      * Validates the instance.
-     *
+     * 
      * @throws IllegalArgumentException thrown if the instance is not valid.
      */
     public void validate() {
-        if (customDomains() != null) {
-            customDomains().forEach(e -> e.validate());
+        if (innerProperties() != null) {
+            innerProperties().validate();
         }
-        if (originGroup() != null) {
-            originGroup().validate();
-        }
-        if (ruleSets() != null) {
-            ruleSets().forEach(e -> e.validate());
-        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public JsonWriter toJson(JsonWriter jsonWriter) throws IOException {
+        jsonWriter.writeStartObject();
+        jsonWriter.writeJsonField("properties", this.innerProperties);
+        return jsonWriter.writeEndObject();
+    }
+
+    /**
+     * Reads an instance of RouteUpdateParameters from the JsonReader.
+     * 
+     * @param jsonReader The JsonReader being read.
+     * @return An instance of RouteUpdateParameters if the JsonReader was pointing to an instance of it, or null if it
+     * was pointing to JSON null.
+     * @throws IOException If an error occurs while reading the RouteUpdateParameters.
+     */
+    public static RouteUpdateParameters fromJson(JsonReader jsonReader) throws IOException {
+        return jsonReader.readObject(reader -> {
+            RouteUpdateParameters deserializedRouteUpdateParameters = new RouteUpdateParameters();
+            while (reader.nextToken() != JsonToken.END_OBJECT) {
+                String fieldName = reader.getFieldName();
+                reader.nextToken();
+
+                if ("properties".equals(fieldName)) {
+                    deserializedRouteUpdateParameters.innerProperties
+                        = RouteUpdatePropertiesParameters.fromJson(reader);
+                } else {
+                    reader.skipChildren();
+                }
+            }
+
+            return deserializedRouteUpdateParameters;
+        });
     }
 }

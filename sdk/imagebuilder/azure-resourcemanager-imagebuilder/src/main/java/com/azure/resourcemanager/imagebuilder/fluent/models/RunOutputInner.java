@@ -5,38 +5,53 @@
 package com.azure.resourcemanager.imagebuilder.fluent.models;
 
 import com.azure.core.annotation.Fluent;
-import com.azure.core.management.SubResource;
-import com.azure.core.util.logging.ClientLogger;
+import com.azure.core.management.ProxyResource;
+import com.azure.core.management.SystemData;
+import com.azure.json.JsonReader;
+import com.azure.json.JsonToken;
+import com.azure.json.JsonWriter;
 import com.azure.resourcemanager.imagebuilder.models.ProvisioningState;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import java.io.IOException;
 
-/** Represents an output that was created by running an image template. */
+/**
+ * Represents an output that was created by running an image template.
+ */
 @Fluent
-public final class RunOutputInner extends SubResource {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(RunOutputInner.class);
-
+public final class RunOutputInner extends ProxyResource {
     /*
      * The properties of the run output
      */
-    @JsonProperty(value = "properties")
     private RunOutputProperties innerProperties;
 
     /*
-     * Resource name
+     * Azure Resource Manager metadata containing createdBy and modifiedBy information.
      */
-    @JsonProperty(value = "name", required = true)
+    private SystemData systemData;
+
+    /*
+     * The type of the resource.
+     */
+    private String type;
+
+    /*
+     * The name of the resource.
+     */
     private String name;
 
     /*
-     * Resource type
+     * Fully qualified resource Id for the resource.
      */
-    @JsonProperty(value = "type", access = JsonProperty.Access.WRITE_ONLY)
-    private String type;
+    private String id;
+
+    /**
+     * Creates an instance of RunOutputInner class.
+     */
+    public RunOutputInner() {
+    }
 
     /**
      * Get the innerProperties property: The properties of the run output.
-     *
+     * 
      * @return the innerProperties value.
      */
     private RunOutputProperties innerProperties() {
@@ -44,44 +59,47 @@ public final class RunOutputInner extends SubResource {
     }
 
     /**
-     * Get the name property: Resource name.
-     *
+     * Get the systemData property: Azure Resource Manager metadata containing createdBy and modifiedBy information.
+     * 
+     * @return the systemData value.
+     */
+    public SystemData systemData() {
+        return this.systemData;
+    }
+
+    /**
+     * Get the type property: The type of the resource.
+     * 
+     * @return the type value.
+     */
+    @Override
+    public String type() {
+        return this.type;
+    }
+
+    /**
+     * Get the name property: The name of the resource.
+     * 
      * @return the name value.
      */
+    @Override
     public String name() {
         return this.name;
     }
 
     /**
-     * Set the name property: Resource name.
-     *
-     * @param name the name value to set.
-     * @return the RunOutputInner object itself.
+     * Get the id property: Fully qualified resource Id for the resource.
+     * 
+     * @return the id value.
      */
-    public RunOutputInner withName(String name) {
-        this.name = name;
-        return this;
-    }
-
-    /**
-     * Get the type property: Resource type.
-     *
-     * @return the type value.
-     */
-    public String type() {
-        return this.type;
-    }
-
-    /** {@inheritDoc} */
     @Override
-    public RunOutputInner withId(String id) {
-        super.withId(id);
-        return this;
+    public String id() {
+        return this.id;
     }
 
     /**
      * Get the artifactId property: The resource id of the artifact.
-     *
+     * 
      * @return the artifactId value.
      */
     public String artifactId() {
@@ -90,7 +108,7 @@ public final class RunOutputInner extends SubResource {
 
     /**
      * Set the artifactId property: The resource id of the artifact.
-     *
+     * 
      * @param artifactId the artifactId value to set.
      * @return the RunOutputInner object itself.
      */
@@ -104,7 +122,7 @@ public final class RunOutputInner extends SubResource {
 
     /**
      * Get the artifactUri property: The location URI of the artifact.
-     *
+     * 
      * @return the artifactUri value.
      */
     public String artifactUri() {
@@ -113,7 +131,7 @@ public final class RunOutputInner extends SubResource {
 
     /**
      * Set the artifactUri property: The location URI of the artifact.
-     *
+     * 
      * @param artifactUri the artifactUri value to set.
      * @return the RunOutputInner object itself.
      */
@@ -127,7 +145,7 @@ public final class RunOutputInner extends SubResource {
 
     /**
      * Get the provisioningState property: Provisioning state of the resource.
-     *
+     * 
      * @return the provisioningState value.
      */
     public ProvisioningState provisioningState() {
@@ -136,17 +154,57 @@ public final class RunOutputInner extends SubResource {
 
     /**
      * Validates the instance.
-     *
+     * 
      * @throws IllegalArgumentException thrown if the instance is not valid.
      */
     public void validate() {
         if (innerProperties() != null) {
             innerProperties().validate();
         }
-        if (name() == null) {
-            throw logger
-                .logExceptionAsError(
-                    new IllegalArgumentException("Missing required property name in model RunOutputInner"));
-        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public JsonWriter toJson(JsonWriter jsonWriter) throws IOException {
+        jsonWriter.writeStartObject();
+        jsonWriter.writeJsonField("properties", this.innerProperties);
+        return jsonWriter.writeEndObject();
+    }
+
+    /**
+     * Reads an instance of RunOutputInner from the JsonReader.
+     * 
+     * @param jsonReader The JsonReader being read.
+     * @return An instance of RunOutputInner if the JsonReader was pointing to an instance of it, or null if it was
+     * pointing to JSON null.
+     * @throws IllegalStateException If the deserialized JSON object was missing any required properties.
+     * @throws IOException If an error occurs while reading the RunOutputInner.
+     */
+    public static RunOutputInner fromJson(JsonReader jsonReader) throws IOException {
+        return jsonReader.readObject(reader -> {
+            RunOutputInner deserializedRunOutputInner = new RunOutputInner();
+            while (reader.nextToken() != JsonToken.END_OBJECT) {
+                String fieldName = reader.getFieldName();
+                reader.nextToken();
+
+                if ("id".equals(fieldName)) {
+                    deserializedRunOutputInner.id = reader.getString();
+                } else if ("name".equals(fieldName)) {
+                    deserializedRunOutputInner.name = reader.getString();
+                } else if ("type".equals(fieldName)) {
+                    deserializedRunOutputInner.type = reader.getString();
+                } else if ("properties".equals(fieldName)) {
+                    deserializedRunOutputInner.innerProperties = RunOutputProperties.fromJson(reader);
+                } else if ("systemData".equals(fieldName)) {
+                    deserializedRunOutputInner.systemData = SystemData.fromJson(reader);
+                } else {
+                    reader.skipChildren();
+                }
+            }
+
+            return deserializedRunOutputInner;
+        });
     }
 }

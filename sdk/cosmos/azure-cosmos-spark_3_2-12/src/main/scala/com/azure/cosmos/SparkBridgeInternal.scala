@@ -3,18 +3,28 @@
 
 package com.azure.cosmos
 
-import com.azure.cosmos.implementation.SparkBridgeImplementationInternal
-import com.azure.cosmos.implementation.SparkBridgeImplementationInternal.rangeToNormalizedRange
+import com.azure.cosmos.implementation.{DocumentCollection, ImplementationBridgeHelpers, PartitionKeyRange, SparkBridgeImplementationInternal}
 import com.azure.cosmos.implementation.feedranges.FeedRangeEpkImpl
 import com.azure.cosmos.implementation.routing.Range
-import com.azure.cosmos.models.FeedRange
+import com.azure.cosmos.models.{CosmosContainerProperties, CosmosQueryRequestOptions, FeedRange, ModelBridgeInternal}
 import com.azure.cosmos.spark.NormalizedRange
+
+import java.time.Duration
+import scala.collection.mutable.ArrayBuffer
 
 // scalastyle:off underscore.import
 import scala.collection.JavaConverters._
 // scalastyle:on underscore.import
 
 private[cosmos] object SparkBridgeInternal {
+  private val containerPropertiesAccessor = ImplementationBridgeHelpers
+    .CosmosContainerPropertiesHelper
+    .getCosmosContainerPropertiesAccessor
+
+  //scalastyle:off null
+  val defaultQueryRequestOptions: CosmosQueryRequestOptions = null
+  //scalastyle:on null
+
   def trySplitFeedRange
   (
     container: CosmosAsyncContainer,
@@ -38,14 +48,49 @@ private[cosmos] object SparkBridgeInternal {
     s"${database.getClient.getServiceEndpoint}|${database.getId}|${container.getId}"
   }
 
-  private[cosmos] def getNormalizedEffectiveRange
+  private[cosmos] def getPartitionKeyRanges
   (
-    container: CosmosAsyncContainer,
-    feedRange: FeedRange
-  ) : NormalizedRange = {
+    container: CosmosAsyncContainer
+  ): List[PartitionKeyRange] = {
+    val pkRanges = new ArrayBuffer[PartitionKeyRange]()
 
-    SparkBridgeImplementationInternal
-      .rangeToNormalizedRange(
-        container.getNormalizedEffectiveRange(feedRange).block)
+    container
+      .getDatabase
+      .getDocClientWrapper
+      .readPartitionKeyRanges(container.getLink, defaultQueryRequestOptions)
+      .collectList
+      .block()
+      .forEach(feedResponse => feedResponse.getResults.forEach(pkRange => pkRanges += pkRange))
+
+    pkRanges.toList
+  }
+
+  private[cosmos] def clearCollectionCache(container: CosmosAsyncContainer, obsoleteRid: String): Unit = {
+    val clientWrapper = container.getDatabase.getDocClientWrapper
+
+    val link = container.getLinkWithoutTrailingSlash;
+
+    val obsoleteValue = new DocumentCollection
+    obsoleteValue.setResourceId(obsoleteRid)
+
+    clientWrapper
+      .getCollectionCache()
+      .resolveByNameAsync(null, link, null, obsoleteValue)
+      .block()
+  }
+
+  def getContainerPropertiesFromCollectionCache(container: CosmosAsyncContainer): CosmosContainerProperties = {
+    val documentCollectionHolder = container
+      .getDatabase
+      .getDocClientWrapper
+      .getCollectionCache
+      .resolveByNameAsync(null, container.getLinkWithoutTrailingSlash, null)
+      .block()
+
+    if (documentCollectionHolder != null) {
+      containerPropertiesAccessor.create(documentCollectionHolder)
+    } else {
+      container.read().block().getProperties
+    }
   }
 }

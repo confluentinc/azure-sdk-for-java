@@ -6,34 +6,61 @@ package com.azure.resourcemanager.netapp.fluent.models;
 
 import com.azure.core.annotation.Fluent;
 import com.azure.core.management.Resource;
+import com.azure.core.management.SystemData;
 import com.azure.core.util.logging.ClientLogger;
+import com.azure.json.JsonReader;
+import com.azure.json.JsonToken;
+import com.azure.json.JsonWriter;
 import com.azure.resourcemanager.netapp.models.EncryptionType;
 import com.azure.resourcemanager.netapp.models.QosType;
 import com.azure.resourcemanager.netapp.models.ServiceLevel;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import java.io.IOException;
 import java.util.Map;
 
-/** Capacity pool resource. */
+/**
+ * Capacity pool resource.
+ */
 @Fluent
 public final class CapacityPoolInner extends Resource {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(CapacityPoolInner.class);
-
     /*
      * A unique read-only string that changes whenever the resource is updated.
      */
-    @JsonProperty(value = "etag", access = JsonProperty.Access.WRITE_ONLY)
     private String etag;
 
     /*
      * Capacity pool properties
      */
-    @JsonProperty(value = "properties", required = true)
     private PoolProperties innerProperties = new PoolProperties();
+
+    /*
+     * Azure Resource Manager metadata containing createdBy and modifiedBy information.
+     */
+    private SystemData systemData;
+
+    /*
+     * The type of the resource.
+     */
+    private String type;
+
+    /*
+     * The name of the resource.
+     */
+    private String name;
+
+    /*
+     * Fully qualified resource Id for the resource.
+     */
+    private String id;
+
+    /**
+     * Creates an instance of CapacityPoolInner class.
+     */
+    public CapacityPoolInner() {
+    }
 
     /**
      * Get the etag property: A unique read-only string that changes whenever the resource is updated.
-     *
+     * 
      * @return the etag value.
      */
     public String etag() {
@@ -42,21 +69,64 @@ public final class CapacityPoolInner extends Resource {
 
     /**
      * Get the innerProperties property: Capacity pool properties.
-     *
+     * 
      * @return the innerProperties value.
      */
     private PoolProperties innerProperties() {
         return this.innerProperties;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * Get the systemData property: Azure Resource Manager metadata containing createdBy and modifiedBy information.
+     * 
+     * @return the systemData value.
+     */
+    public SystemData systemData() {
+        return this.systemData;
+    }
+
+    /**
+     * Get the type property: The type of the resource.
+     * 
+     * @return the type value.
+     */
+    @Override
+    public String type() {
+        return this.type;
+    }
+
+    /**
+     * Get the name property: The name of the resource.
+     * 
+     * @return the name value.
+     */
+    @Override
+    public String name() {
+        return this.name;
+    }
+
+    /**
+     * Get the id property: Fully qualified resource Id for the resource.
+     * 
+     * @return the id value.
+     */
+    @Override
+    public String id() {
+        return this.id;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public CapacityPoolInner withLocation(String location) {
         super.withLocation(location);
         return this;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public CapacityPoolInner withTags(Map<String, String> tags) {
         super.withTags(tags);
@@ -64,8 +134,8 @@ public final class CapacityPoolInner extends Resource {
     }
 
     /**
-     * Get the poolId property: poolId UUID v4 used to identify the Pool.
-     *
+     * Get the poolId property: UUID v4 used to identify the Pool.
+     * 
      * @return the poolId value.
      */
     public String poolId() {
@@ -73,9 +143,9 @@ public final class CapacityPoolInner extends Resource {
     }
 
     /**
-     * Get the size property: size Provisioned size of the pool (in bytes). Allowed values are in 4TiB chunks (value
-     * must be multiply of 4398046511104).
-     *
+     * Get the size property: Provisioned size of the pool (in bytes). Allowed values are in 1TiB chunks (value must be
+     * multiple of 1099511627776).
+     * 
      * @return the size value.
      */
     public long size() {
@@ -83,9 +153,9 @@ public final class CapacityPoolInner extends Resource {
     }
 
     /**
-     * Set the size property: size Provisioned size of the pool (in bytes). Allowed values are in 4TiB chunks (value
-     * must be multiply of 4398046511104).
-     *
+     * Set the size property: Provisioned size of the pool (in bytes). Allowed values are in 1TiB chunks (value must be
+     * multiple of 1099511627776).
+     * 
      * @param size the size value to set.
      * @return the CapacityPoolInner object itself.
      */
@@ -98,8 +168,8 @@ public final class CapacityPoolInner extends Resource {
     }
 
     /**
-     * Get the serviceLevel property: serviceLevel The service level of the file system.
-     *
+     * Get the serviceLevel property: The service level of the file system.
+     * 
      * @return the serviceLevel value.
      */
     public ServiceLevel serviceLevel() {
@@ -107,8 +177,8 @@ public final class CapacityPoolInner extends Resource {
     }
 
     /**
-     * Set the serviceLevel property: serviceLevel The service level of the file system.
-     *
+     * Set the serviceLevel property: The service level of the file system.
+     * 
      * @param serviceLevel the serviceLevel value to set.
      * @return the CapacityPoolInner object itself.
      */
@@ -122,7 +192,7 @@ public final class CapacityPoolInner extends Resource {
 
     /**
      * Get the provisioningState property: Azure lifecycle management.
-     *
+     * 
      * @return the provisioningState value.
      */
     public String provisioningState() {
@@ -130,8 +200,8 @@ public final class CapacityPoolInner extends Resource {
     }
 
     /**
-     * Get the totalThroughputMibps property: Total throughput of pool in Mibps.
-     *
+     * Get the totalThroughputMibps property: Total throughput of pool in MiB/s.
+     * 
      * @return the totalThroughputMibps value.
      */
     public Float totalThroughputMibps() {
@@ -139,8 +209,8 @@ public final class CapacityPoolInner extends Resource {
     }
 
     /**
-     * Get the utilizedThroughputMibps property: Utilized throughput of pool in Mibps.
-     *
+     * Get the utilizedThroughputMibps property: Utilized throughput of pool in MiB/s.
+     * 
      * @return the utilizedThroughputMibps value.
      */
     public Float utilizedThroughputMibps() {
@@ -148,8 +218,33 @@ public final class CapacityPoolInner extends Resource {
     }
 
     /**
+     * Get the customThroughputMibps property: Maximum throughput in MiB/s that can be achieved by this pool and this
+     * will be accepted as input only for manual qosType pool with Flexible service level.
+     * 
+     * @return the customThroughputMibps value.
+     */
+    public Float customThroughputMibps() {
+        return this.innerProperties() == null ? null : this.innerProperties().customThroughputMibps();
+    }
+
+    /**
+     * Set the customThroughputMibps property: Maximum throughput in MiB/s that can be achieved by this pool and this
+     * will be accepted as input only for manual qosType pool with Flexible service level.
+     * 
+     * @param customThroughputMibps the customThroughputMibps value to set.
+     * @return the CapacityPoolInner object itself.
+     */
+    public CapacityPoolInner withCustomThroughputMibps(Float customThroughputMibps) {
+        if (this.innerProperties() == null) {
+            this.innerProperties = new PoolProperties();
+        }
+        this.innerProperties().withCustomThroughputMibps(customThroughputMibps);
+        return this;
+    }
+
+    /**
      * Get the qosType property: The qos type of the pool.
-     *
+     * 
      * @return the qosType value.
      */
     public QosType qosType() {
@@ -158,7 +253,7 @@ public final class CapacityPoolInner extends Resource {
 
     /**
      * Set the qosType property: The qos type of the pool.
-     *
+     * 
      * @param qosType the qosType value to set.
      * @return the CapacityPoolInner object itself.
      */
@@ -172,7 +267,7 @@ public final class CapacityPoolInner extends Resource {
 
     /**
      * Get the coolAccess property: If enabled (true) the pool can contain cool Access enabled volumes.
-     *
+     * 
      * @return the coolAccess value.
      */
     public Boolean coolAccess() {
@@ -181,7 +276,7 @@ public final class CapacityPoolInner extends Resource {
 
     /**
      * Set the coolAccess property: If enabled (true) the pool can contain cool Access enabled volumes.
-     *
+     * 
      * @param coolAccess the coolAccess value to set.
      * @return the CapacityPoolInner object itself.
      */
@@ -194,9 +289,9 @@ public final class CapacityPoolInner extends Resource {
     }
 
     /**
-     * Get the encryptionType property: encryptionType Encryption type of the capacity pool, set encryption type for
-     * data at rest for this pool and all volumes in it. This value can only be set when creating new pool.
-     *
+     * Get the encryptionType property: Encryption type of the capacity pool, set encryption type for data at rest for
+     * this pool and all volumes in it. This value can only be set when creating new pool.
+     * 
      * @return the encryptionType value.
      */
     public EncryptionType encryptionType() {
@@ -204,9 +299,9 @@ public final class CapacityPoolInner extends Resource {
     }
 
     /**
-     * Set the encryptionType property: encryptionType Encryption type of the capacity pool, set encryption type for
-     * data at rest for this pool and all volumes in it. This value can only be set when creating new pool.
-     *
+     * Set the encryptionType property: Encryption type of the capacity pool, set encryption type for data at rest for
+     * this pool and all volumes in it. This value can only be set when creating new pool.
+     * 
      * @param encryptionType the encryptionType value to set.
      * @return the CapacityPoolInner object itself.
      */
@@ -220,17 +315,72 @@ public final class CapacityPoolInner extends Resource {
 
     /**
      * Validates the instance.
-     *
+     * 
      * @throws IllegalArgumentException thrown if the instance is not valid.
      */
     public void validate() {
         if (innerProperties() == null) {
-            throw logger
-                .logExceptionAsError(
-                    new IllegalArgumentException(
-                        "Missing required property innerProperties in model CapacityPoolInner"));
+            throw LOGGER.atError()
+                .log(new IllegalArgumentException(
+                    "Missing required property innerProperties in model CapacityPoolInner"));
         } else {
             innerProperties().validate();
         }
+    }
+
+    private static final ClientLogger LOGGER = new ClientLogger(CapacityPoolInner.class);
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public JsonWriter toJson(JsonWriter jsonWriter) throws IOException {
+        jsonWriter.writeStartObject();
+        jsonWriter.writeStringField("location", location());
+        jsonWriter.writeMapField("tags", tags(), (writer, element) -> writer.writeString(element));
+        jsonWriter.writeJsonField("properties", this.innerProperties);
+        return jsonWriter.writeEndObject();
+    }
+
+    /**
+     * Reads an instance of CapacityPoolInner from the JsonReader.
+     * 
+     * @param jsonReader The JsonReader being read.
+     * @return An instance of CapacityPoolInner if the JsonReader was pointing to an instance of it, or null if it was
+     * pointing to JSON null.
+     * @throws IllegalStateException If the deserialized JSON object was missing any required properties.
+     * @throws IOException If an error occurs while reading the CapacityPoolInner.
+     */
+    public static CapacityPoolInner fromJson(JsonReader jsonReader) throws IOException {
+        return jsonReader.readObject(reader -> {
+            CapacityPoolInner deserializedCapacityPoolInner = new CapacityPoolInner();
+            while (reader.nextToken() != JsonToken.END_OBJECT) {
+                String fieldName = reader.getFieldName();
+                reader.nextToken();
+
+                if ("id".equals(fieldName)) {
+                    deserializedCapacityPoolInner.id = reader.getString();
+                } else if ("name".equals(fieldName)) {
+                    deserializedCapacityPoolInner.name = reader.getString();
+                } else if ("type".equals(fieldName)) {
+                    deserializedCapacityPoolInner.type = reader.getString();
+                } else if ("location".equals(fieldName)) {
+                    deserializedCapacityPoolInner.withLocation(reader.getString());
+                } else if ("tags".equals(fieldName)) {
+                    Map<String, String> tags = reader.readMap(reader1 -> reader1.getString());
+                    deserializedCapacityPoolInner.withTags(tags);
+                } else if ("properties".equals(fieldName)) {
+                    deserializedCapacityPoolInner.innerProperties = PoolProperties.fromJson(reader);
+                } else if ("etag".equals(fieldName)) {
+                    deserializedCapacityPoolInner.etag = reader.getString();
+                } else if ("systemData".equals(fieldName)) {
+                    deserializedCapacityPoolInner.systemData = SystemData.fromJson(reader);
+                } else {
+                    reader.skipChildren();
+                }
+            }
+
+            return deserializedCapacityPoolInner;
+        });
     }
 }

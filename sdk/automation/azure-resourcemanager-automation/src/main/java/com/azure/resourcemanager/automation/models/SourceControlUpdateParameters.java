@@ -5,181 +5,222 @@
 package com.azure.resourcemanager.automation.models;
 
 import com.azure.core.annotation.Fluent;
-import com.azure.core.annotation.JsonFlatten;
-import com.azure.core.util.logging.ClientLogger;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.azure.json.JsonReader;
+import com.azure.json.JsonSerializable;
+import com.azure.json.JsonToken;
+import com.azure.json.JsonWriter;
+import com.azure.resourcemanager.automation.fluent.models.SourceControlUpdateProperties;
+import java.io.IOException;
 
-/** The parameters supplied to the update source control operation. */
-@JsonFlatten
+/**
+ * The parameters supplied to the update source control operation.
+ */
 @Fluent
-public class SourceControlUpdateParameters {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(SourceControlUpdateParameters.class);
-
+public final class SourceControlUpdateParameters implements JsonSerializable<SourceControlUpdateParameters> {
     /*
-     * The repo branch of the source control.
+     * The value of the source control.
      */
-    @JsonProperty(value = "properties.branch")
-    private String branch;
+    private SourceControlUpdateProperties innerProperties;
 
-    /*
-     * The folder path of the source control. Path must be relative.
+    /**
+     * Creates an instance of SourceControlUpdateParameters class.
      */
-    @JsonProperty(value = "properties.folderPath")
-    private String folderPath;
+    public SourceControlUpdateParameters() {
+    }
 
-    /*
-     * The auto sync of the source control. Default is false.
+    /**
+     * Get the innerProperties property: The value of the source control.
+     * 
+     * @return the innerProperties value.
      */
-    @JsonProperty(value = "properties.autoSync")
-    private Boolean autoSync;
-
-    /*
-     * The auto publish of the source control. Default is true.
-     */
-    @JsonProperty(value = "properties.publishRunbook")
-    private Boolean publishRunbook;
-
-    /*
-     * The authorization token for the repo of the source control.
-     */
-    @JsonProperty(value = "properties.securityToken")
-    private SourceControlSecurityTokenProperties securityToken;
-
-    /*
-     * The user description of the source control.
-     */
-    @JsonProperty(value = "properties.description")
-    private String description;
+    private SourceControlUpdateProperties innerProperties() {
+        return this.innerProperties;
+    }
 
     /**
      * Get the branch property: The repo branch of the source control.
-     *
+     * 
      * @return the branch value.
      */
     public String branch() {
-        return this.branch;
+        return this.innerProperties() == null ? null : this.innerProperties().branch();
     }
 
     /**
      * Set the branch property: The repo branch of the source control.
-     *
+     * 
      * @param branch the branch value to set.
      * @return the SourceControlUpdateParameters object itself.
      */
     public SourceControlUpdateParameters withBranch(String branch) {
-        this.branch = branch;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new SourceControlUpdateProperties();
+        }
+        this.innerProperties().withBranch(branch);
         return this;
     }
 
     /**
      * Get the folderPath property: The folder path of the source control. Path must be relative.
-     *
+     * 
      * @return the folderPath value.
      */
     public String folderPath() {
-        return this.folderPath;
+        return this.innerProperties() == null ? null : this.innerProperties().folderPath();
     }
 
     /**
      * Set the folderPath property: The folder path of the source control. Path must be relative.
-     *
+     * 
      * @param folderPath the folderPath value to set.
      * @return the SourceControlUpdateParameters object itself.
      */
     public SourceControlUpdateParameters withFolderPath(String folderPath) {
-        this.folderPath = folderPath;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new SourceControlUpdateProperties();
+        }
+        this.innerProperties().withFolderPath(folderPath);
         return this;
     }
 
     /**
      * Get the autoSync property: The auto sync of the source control. Default is false.
-     *
+     * 
      * @return the autoSync value.
      */
     public Boolean autoSync() {
-        return this.autoSync;
+        return this.innerProperties() == null ? null : this.innerProperties().autoSync();
     }
 
     /**
      * Set the autoSync property: The auto sync of the source control. Default is false.
-     *
+     * 
      * @param autoSync the autoSync value to set.
      * @return the SourceControlUpdateParameters object itself.
      */
     public SourceControlUpdateParameters withAutoSync(Boolean autoSync) {
-        this.autoSync = autoSync;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new SourceControlUpdateProperties();
+        }
+        this.innerProperties().withAutoSync(autoSync);
         return this;
     }
 
     /**
      * Get the publishRunbook property: The auto publish of the source control. Default is true.
-     *
+     * 
      * @return the publishRunbook value.
      */
     public Boolean publishRunbook() {
-        return this.publishRunbook;
+        return this.innerProperties() == null ? null : this.innerProperties().publishRunbook();
     }
 
     /**
      * Set the publishRunbook property: The auto publish of the source control. Default is true.
-     *
+     * 
      * @param publishRunbook the publishRunbook value to set.
      * @return the SourceControlUpdateParameters object itself.
      */
     public SourceControlUpdateParameters withPublishRunbook(Boolean publishRunbook) {
-        this.publishRunbook = publishRunbook;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new SourceControlUpdateProperties();
+        }
+        this.innerProperties().withPublishRunbook(publishRunbook);
         return this;
     }
 
     /**
      * Get the securityToken property: The authorization token for the repo of the source control.
-     *
+     * 
      * @return the securityToken value.
      */
     public SourceControlSecurityTokenProperties securityToken() {
-        return this.securityToken;
+        return this.innerProperties() == null ? null : this.innerProperties().securityToken();
     }
 
     /**
      * Set the securityToken property: The authorization token for the repo of the source control.
-     *
+     * 
      * @param securityToken the securityToken value to set.
      * @return the SourceControlUpdateParameters object itself.
      */
     public SourceControlUpdateParameters withSecurityToken(SourceControlSecurityTokenProperties securityToken) {
-        this.securityToken = securityToken;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new SourceControlUpdateProperties();
+        }
+        this.innerProperties().withSecurityToken(securityToken);
         return this;
     }
 
     /**
      * Get the description property: The user description of the source control.
-     *
+     * 
      * @return the description value.
      */
     public String description() {
-        return this.description;
+        return this.innerProperties() == null ? null : this.innerProperties().description();
     }
 
     /**
      * Set the description property: The user description of the source control.
-     *
+     * 
      * @param description the description value to set.
      * @return the SourceControlUpdateParameters object itself.
      */
     public SourceControlUpdateParameters withDescription(String description) {
-        this.description = description;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new SourceControlUpdateProperties();
+        }
+        this.innerProperties().withDescription(description);
         return this;
     }
 
     /**
      * Validates the instance.
-     *
+     * 
      * @throws IllegalArgumentException thrown if the instance is not valid.
      */
     public void validate() {
-        if (securityToken() != null) {
-            securityToken().validate();
+        if (innerProperties() != null) {
+            innerProperties().validate();
         }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public JsonWriter toJson(JsonWriter jsonWriter) throws IOException {
+        jsonWriter.writeStartObject();
+        jsonWriter.writeJsonField("properties", this.innerProperties);
+        return jsonWriter.writeEndObject();
+    }
+
+    /**
+     * Reads an instance of SourceControlUpdateParameters from the JsonReader.
+     * 
+     * @param jsonReader The JsonReader being read.
+     * @return An instance of SourceControlUpdateParameters if the JsonReader was pointing to an instance of it, or null
+     * if it was pointing to JSON null.
+     * @throws IOException If an error occurs while reading the SourceControlUpdateParameters.
+     */
+    public static SourceControlUpdateParameters fromJson(JsonReader jsonReader) throws IOException {
+        return jsonReader.readObject(reader -> {
+            SourceControlUpdateParameters deserializedSourceControlUpdateParameters
+                = new SourceControlUpdateParameters();
+            while (reader.nextToken() != JsonToken.END_OBJECT) {
+                String fieldName = reader.getFieldName();
+                reader.nextToken();
+
+                if ("properties".equals(fieldName)) {
+                    deserializedSourceControlUpdateParameters.innerProperties
+                        = SourceControlUpdateProperties.fromJson(reader);
+                } else {
+                    reader.skipChildren();
+                }
+            }
+
+            return deserializedSourceControlUpdateParameters;
+        });
     }
 }

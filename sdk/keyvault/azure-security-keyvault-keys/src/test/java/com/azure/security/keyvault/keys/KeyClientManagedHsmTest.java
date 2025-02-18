@@ -8,8 +8,8 @@ import com.azure.core.test.TestMode;
 import com.azure.core.util.Configuration;
 import com.azure.security.keyvault.keys.models.KeyType;
 import com.azure.security.keyvault.keys.models.KeyVaultKey;
-import com.azure.security.keyvault.keys.models.RandomBytes;
 import org.junit.jupiter.api.Assumptions;
+import org.junit.jupiter.api.condition.EnabledIf;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
@@ -19,17 +19,16 @@ import static com.azure.security.keyvault.keys.cryptography.TestHelper.DISPLAY_N
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+@EnabledIf("shouldRunHsmTest")
 public class KeyClientManagedHsmTest extends KeyClientTest implements KeyClientManagedHsmTestBase {
     public KeyClientManagedHsmTest() {
         this.isHsmEnabled = Configuration.getGlobalConfiguration().get("AZURE_MANAGEDHSM_ENDPOINT") != null;
-        this.runManagedHsmTest = isHsmEnabled || getTestMode() == TestMode.PLAYBACK;
+        this.runManagedHsmTest = shouldRunHsmTest();
     }
 
-    @Override
-    protected void beforeTest() {
-        Assumptions.assumeTrue(runManagedHsmTest);
-
-        super.beforeTest();
+    public static boolean shouldRunHsmTest() {
+        return Configuration.getGlobalConfiguration().get("AZURE_MANAGEDHSM_ENDPOINT") != null
+            || TEST_MODE == TestMode.PLAYBACK;
     }
 
     /**
@@ -39,8 +38,7 @@ public class KeyClientManagedHsmTest extends KeyClientTest implements KeyClientM
     @ParameterizedTest(name = DISPLAY_NAME_WITH_ARGUMENTS)
     @MethodSource("getTestParameters")
     public void createRsaKey(HttpClient httpClient, KeyServiceVersion serviceVersion) {
-        createKeyClient(httpClient, serviceVersion);
-        createRsaKeyRunner((expected) -> assertKeyEquals(expected, client.createRsaKey(expected)));
+        super.createRsaKey(httpClient, serviceVersion);
     }
 
     /**
@@ -51,13 +49,13 @@ public class KeyClientManagedHsmTest extends KeyClientTest implements KeyClientM
     @MethodSource("getTestParameters")
     public void createRsaKeyWithPublicExponent(HttpClient httpClient, KeyServiceVersion serviceVersion) {
         createKeyClient(httpClient, serviceVersion);
-        createRsaKeyWithPublicExponentRunner((createRsaKeyOptions) -> {
-            KeyVaultKey rsaKey = client.createRsaKey(createRsaKeyOptions);
 
-            assertKeyEquals(createRsaKeyOptions, rsaKey);
-            assertEquals(BigInteger.valueOf(createRsaKeyOptions.getPublicExponent()),
-                toBigInteger(rsaKey.getKey().getE()));
-            assertEquals(createRsaKeyOptions.getKeySize(), rsaKey.getKey().getN().length * 8);
+        createRsaKeyWithPublicExponentRunner((keyToCreate) -> {
+            KeyVaultKey rsaKey = keyClient.createRsaKey(keyToCreate);
+
+            assertKeyEquals(keyToCreate, rsaKey);
+            assertEquals(BigInteger.valueOf(keyToCreate.getPublicExponent()), toBigInteger(rsaKey.getKey().getE()));
+            assertEquals(keyToCreate.getKeySize(), rsaKey.getKey().getN().length * 8);
         });
     }
 
@@ -68,14 +66,15 @@ public class KeyClientManagedHsmTest extends KeyClientTest implements KeyClientM
     @MethodSource("getTestParameters")
     public void createOctKeyWithDefaultSize(HttpClient httpClient, KeyServiceVersion serviceVersion) {
         createKeyClient(httpClient, serviceVersion);
-        createOctKeyRunner(null, (createOctKeyOptions) -> {
-            KeyVaultKey octKey = client.createOctKey(createOctKeyOptions);
 
-            assertEquals(createOctKeyOptions.getName(), octKey.getName());
+        createOctKeyRunner(null, (keyToCreate) -> {
+            KeyVaultKey octKey = keyClient.createOctKey(keyToCreate);
+
+            assertEquals(keyToCreate.getName(), octKey.getName());
             assertEquals(KeyType.OCT_HSM, octKey.getKey().getKeyType());
-            assertEquals(createOctKeyOptions.getExpiresOn(), octKey.getProperties().getExpiresOn());
-            assertEquals(createOctKeyOptions.getNotBefore(), octKey.getProperties().getNotBefore());
-            assertEquals(createOctKeyOptions.getTags(), octKey.getProperties().getTags());
+            assertEquals(keyToCreate.getExpiresOn(), octKey.getProperties().getExpiresOn());
+            assertEquals(keyToCreate.getNotBefore(), octKey.getProperties().getNotBefore());
+            assertEquals(keyToCreate.getTags(), octKey.getProperties().getTags());
         });
     }
 
@@ -86,14 +85,15 @@ public class KeyClientManagedHsmTest extends KeyClientTest implements KeyClientM
     @MethodSource("getTestParameters")
     public void createOctKeyWithValidSize(HttpClient httpClient, KeyServiceVersion serviceVersion) {
         createKeyClient(httpClient, serviceVersion);
-        createOctKeyRunner(256, (createOctKeyOptions) -> {
-            KeyVaultKey octKey = client.createOctKey(createOctKeyOptions);
 
-            assertEquals(createOctKeyOptions.getName(), octKey.getName());
+        createOctKeyRunner(256, (keyToCreate) -> {
+            KeyVaultKey octKey = keyClient.createOctKey(keyToCreate);
+
+            assertEquals(keyToCreate.getName(), octKey.getName());
             assertEquals(KeyType.OCT_HSM, octKey.getKey().getKeyType());
-            assertEquals(createOctKeyOptions.getExpiresOn(), octKey.getProperties().getExpiresOn());
-            assertEquals(createOctKeyOptions.getNotBefore(), octKey.getProperties().getNotBefore());
-            assertEquals(createOctKeyOptions.getTags(), octKey.getProperties().getTags());
+            assertEquals(keyToCreate.getExpiresOn(), octKey.getProperties().getExpiresOn());
+            assertEquals(keyToCreate.getNotBefore(), octKey.getProperties().getNotBefore());
+            assertEquals(keyToCreate.getTags(), octKey.getProperties().getTags());
         });
     }
 
@@ -104,8 +104,9 @@ public class KeyClientManagedHsmTest extends KeyClientTest implements KeyClientM
     @MethodSource("getTestParameters")
     public void createOctKeyWithInvalidSize(HttpClient httpClient, KeyServiceVersion serviceVersion) {
         createKeyClient(httpClient, serviceVersion);
-        createOctKeyRunner(64, (createOctKeyOptions) ->
-            assertThrows(ResourceModifiedException.class, () -> client.createOctKey(createOctKeyOptions)));
+
+        createOctKeyRunner(64,
+            (keyToCreate) -> assertThrows(ResourceModifiedException.class, () -> keyClient.createOctKey(keyToCreate)));
     }
 
     /**
@@ -115,10 +116,11 @@ public class KeyClientManagedHsmTest extends KeyClientTest implements KeyClientM
     @MethodSource("getTestParameters")
     public void getRandomBytes(HttpClient httpClient, KeyServiceVersion serviceVersion) {
         createKeyClient(httpClient, serviceVersion);
-        getRandomBytesRunner((count) -> {
-            RandomBytes randomBytes = client.getRandomBytes(count);
 
-            assertEquals(count, randomBytes.getBytes().length);
+        getRandomBytesRunner((count) -> {
+            byte[] randomBytes = keyClient.getRandomBytes(count);
+
+            assertEquals(count, randomBytes.length);
         });
     }
 
@@ -129,6 +131,10 @@ public class KeyClientManagedHsmTest extends KeyClientTest implements KeyClientM
     @ParameterizedTest(name = DISPLAY_NAME_WITH_ARGUMENTS)
     @MethodSource("getTestParameters")
     public void releaseKey(HttpClient httpClient, KeyServiceVersion serviceVersion) {
+        // Ignoring test until the service rolls out a fix for an issue with the "version" parameter of a release
+        // policy.
+        Assumptions.assumeTrue(serviceVersion != KeyServiceVersion.V7_4);
+
         super.releaseKey(httpClient, serviceVersion);
     }
 }

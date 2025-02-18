@@ -5,270 +5,201 @@
 package com.azure.ai.formrecognizer.implementation.models;
 
 import com.azure.core.annotation.Fluent;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.azure.json.JsonReader;
+import com.azure.json.JsonSerializable;
+import com.azure.json.JsonToken;
+import com.azure.json.JsonWriter;
+import java.io.IOException;
 import java.util.List;
 
-/** Document analysis result. */
+/**
+ * Analyze operation result.
+ */
 @Fluent
-public final class AnalyzeResult {
+public final class AnalyzeResult implements JsonSerializable<AnalyzeResult> {
     /*
-     * API version used to produce this result.
+     * Version of schema used for this result.
      */
-    @JsonProperty(value = "apiVersion", required = true)
-    private ApiVersion apiVersion;
+    private String version;
 
     /*
-     * Model ID used to produce this result.
+     * Text extracted from the input.
      */
-    @JsonProperty(value = "modelId", required = true)
-    private String modelId;
+    private List<ReadResult> readResults;
 
     /*
-     * Method used to compute string offset and length.
+     * Page-level information extracted from the input.
      */
-    @JsonProperty(value = "stringIndexType", required = true)
-    private StringIndexType stringIndexType;
+    private List<PageResult> pageResults;
 
     /*
-     * Concatenate string representation of all textual and visual elements in
-     * reading order.
+     * Document-level information extracted from the input.
      */
-    @JsonProperty(value = "content", required = true)
-    private String content;
+    private List<DocumentResult> documentResults;
 
     /*
-     * Analyzed pages.
+     * List of errors reported during the analyze operation.
      */
-    @JsonProperty(value = "pages", required = true)
-    private List<DocumentPage> pages;
-
-    /*
-     * Extracted tables.
-     */
-    @JsonProperty(value = "tables")
-    private List<DocumentTable> tables;
-
-    /*
-     * Extracted key-value pairs.
-     */
-    @JsonProperty(value = "keyValuePairs")
-    private List<DocumentKeyValuePair> keyValuePairs;
-
-    /*
-     * Extracted entities.
-     */
-    @JsonProperty(value = "entities")
-    private List<DocumentEntity> entities;
-
-    /*
-     * Extracted font styles.
-     */
-    @JsonProperty(value = "styles")
-    private List<DocumentStyle> styles;
-
-    /*
-     * Extracted documents.
-     */
-    @JsonProperty(value = "documents")
-    private List<Document> documents;
+    private List<ErrorInformation> errors;
 
     /**
-     * Get the apiVersion property: API version used to produce this result.
-     *
-     * @return the apiVersion value.
+     * Creates an instance of AnalyzeResult class.
      */
-    public ApiVersion getApiVersion() {
-        return this.apiVersion;
+    public AnalyzeResult() {
     }
 
     /**
-     * Set the apiVersion property: API version used to produce this result.
-     *
-     * @param apiVersion the apiVersion value to set.
+     * Get the version property: Version of schema used for this result.
+     * 
+     * @return the version value.
+     */
+    public String getVersion() {
+        return this.version;
+    }
+
+    /**
+     * Set the version property: Version of schema used for this result.
+     * 
+     * @param version the version value to set.
      * @return the AnalyzeResult object itself.
      */
-    public AnalyzeResult setApiVersion(ApiVersion apiVersion) {
-        this.apiVersion = apiVersion;
+    public AnalyzeResult setVersion(String version) {
+        this.version = version;
         return this;
     }
 
     /**
-     * Get the modelId property: Model ID used to produce this result.
-     *
-     * @return the modelId value.
+     * Get the readResults property: Text extracted from the input.
+     * 
+     * @return the readResults value.
      */
-    public String getModelId() {
-        return this.modelId;
+    public List<ReadResult> getReadResults() {
+        return this.readResults;
     }
 
     /**
-     * Set the modelId property: Model ID used to produce this result.
-     *
-     * @param modelId the modelId value to set.
+     * Set the readResults property: Text extracted from the input.
+     * 
+     * @param readResults the readResults value to set.
      * @return the AnalyzeResult object itself.
      */
-    public AnalyzeResult setModelId(String modelId) {
-        this.modelId = modelId;
+    public AnalyzeResult setReadResults(List<ReadResult> readResults) {
+        this.readResults = readResults;
         return this;
     }
 
     /**
-     * Get the stringIndexType property: Method used to compute string offset and length.
-     *
-     * @return the stringIndexType value.
+     * Get the pageResults property: Page-level information extracted from the input.
+     * 
+     * @return the pageResults value.
      */
-    public StringIndexType getStringIndexType() {
-        return this.stringIndexType;
+    public List<PageResult> getPageResults() {
+        return this.pageResults;
     }
 
     /**
-     * Set the stringIndexType property: Method used to compute string offset and length.
-     *
-     * @param stringIndexType the stringIndexType value to set.
+     * Set the pageResults property: Page-level information extracted from the input.
+     * 
+     * @param pageResults the pageResults value to set.
      * @return the AnalyzeResult object itself.
      */
-    public AnalyzeResult setStringIndexType(StringIndexType stringIndexType) {
-        this.stringIndexType = stringIndexType;
+    public AnalyzeResult setPageResults(List<PageResult> pageResults) {
+        this.pageResults = pageResults;
         return this;
     }
 
     /**
-     * Get the content property: Concatenate string representation of all textual and visual elements in reading order.
-     *
-     * @return the content value.
+     * Get the documentResults property: Document-level information extracted from the input.
+     * 
+     * @return the documentResults value.
      */
-    public String getContent() {
-        return this.content;
+    public List<DocumentResult> getDocumentResults() {
+        return this.documentResults;
     }
 
     /**
-     * Set the content property: Concatenate string representation of all textual and visual elements in reading order.
-     *
-     * @param content the content value to set.
+     * Set the documentResults property: Document-level information extracted from the input.
+     * 
+     * @param documentResults the documentResults value to set.
      * @return the AnalyzeResult object itself.
      */
-    public AnalyzeResult setContent(String content) {
-        this.content = content;
+    public AnalyzeResult setDocumentResults(List<DocumentResult> documentResults) {
+        this.documentResults = documentResults;
         return this;
     }
 
     /**
-     * Get the pages property: Analyzed pages.
-     *
-     * @return the pages value.
+     * Get the errors property: List of errors reported during the analyze operation.
+     * 
+     * @return the errors value.
      */
-    public List<DocumentPage> getPages() {
-        return this.pages;
+    public List<ErrorInformation> getErrors() {
+        return this.errors;
     }
 
     /**
-     * Set the pages property: Analyzed pages.
-     *
-     * @param pages the pages value to set.
+     * Set the errors property: List of errors reported during the analyze operation.
+     * 
+     * @param errors the errors value to set.
      * @return the AnalyzeResult object itself.
      */
-    public AnalyzeResult setPages(List<DocumentPage> pages) {
-        this.pages = pages;
+    public AnalyzeResult setErrors(List<ErrorInformation> errors) {
+        this.errors = errors;
         return this;
     }
 
     /**
-     * Get the tables property: Extracted tables.
-     *
-     * @return the tables value.
+     * {@inheritDoc}
      */
-    public List<DocumentTable> getTables() {
-        return this.tables;
+    @Override
+    public JsonWriter toJson(JsonWriter jsonWriter) throws IOException {
+        jsonWriter.writeStartObject();
+        jsonWriter.writeStringField("version", this.version);
+        jsonWriter.writeArrayField("readResults", this.readResults, (writer, element) -> writer.writeJson(element));
+        jsonWriter.writeArrayField("pageResults", this.pageResults, (writer, element) -> writer.writeJson(element));
+        jsonWriter.writeArrayField("documentResults", this.documentResults,
+            (writer, element) -> writer.writeJson(element));
+        jsonWriter.writeArrayField("errors", this.errors, (writer, element) -> writer.writeJson(element));
+        return jsonWriter.writeEndObject();
     }
 
     /**
-     * Set the tables property: Extracted tables.
-     *
-     * @param tables the tables value to set.
-     * @return the AnalyzeResult object itself.
+     * Reads an instance of AnalyzeResult from the JsonReader.
+     * 
+     * @param jsonReader The JsonReader being read.
+     * @return An instance of AnalyzeResult if the JsonReader was pointing to an instance of it, or null if it was
+     * pointing to JSON null.
+     * @throws IllegalStateException If the deserialized JSON object was missing any required properties.
+     * @throws IOException If an error occurs while reading the AnalyzeResult.
      */
-    public AnalyzeResult setTables(List<DocumentTable> tables) {
-        this.tables = tables;
-        return this;
-    }
+    public static AnalyzeResult fromJson(JsonReader jsonReader) throws IOException {
+        return jsonReader.readObject(reader -> {
+            AnalyzeResult deserializedAnalyzeResult = new AnalyzeResult();
+            while (reader.nextToken() != JsonToken.END_OBJECT) {
+                String fieldName = reader.getFieldName();
+                reader.nextToken();
 
-    /**
-     * Get the keyValuePairs property: Extracted key-value pairs.
-     *
-     * @return the keyValuePairs value.
-     */
-    public List<DocumentKeyValuePair> getKeyValuePairs() {
-        return this.keyValuePairs;
-    }
+                if ("version".equals(fieldName)) {
+                    deserializedAnalyzeResult.version = reader.getString();
+                } else if ("readResults".equals(fieldName)) {
+                    List<ReadResult> readResults = reader.readArray(reader1 -> ReadResult.fromJson(reader1));
+                    deserializedAnalyzeResult.readResults = readResults;
+                } else if ("pageResults".equals(fieldName)) {
+                    List<PageResult> pageResults = reader.readArray(reader1 -> PageResult.fromJson(reader1));
+                    deserializedAnalyzeResult.pageResults = pageResults;
+                } else if ("documentResults".equals(fieldName)) {
+                    List<DocumentResult> documentResults
+                        = reader.readArray(reader1 -> DocumentResult.fromJson(reader1));
+                    deserializedAnalyzeResult.documentResults = documentResults;
+                } else if ("errors".equals(fieldName)) {
+                    List<ErrorInformation> errors = reader.readArray(reader1 -> ErrorInformation.fromJson(reader1));
+                    deserializedAnalyzeResult.errors = errors;
+                } else {
+                    reader.skipChildren();
+                }
+            }
 
-    /**
-     * Set the keyValuePairs property: Extracted key-value pairs.
-     *
-     * @param keyValuePairs the keyValuePairs value to set.
-     * @return the AnalyzeResult object itself.
-     */
-    public AnalyzeResult setKeyValuePairs(List<DocumentKeyValuePair> keyValuePairs) {
-        this.keyValuePairs = keyValuePairs;
-        return this;
-    }
-
-    /**
-     * Get the entities property: Extracted entities.
-     *
-     * @return the entities value.
-     */
-    public List<DocumentEntity> getEntities() {
-        return this.entities;
-    }
-
-    /**
-     * Set the entities property: Extracted entities.
-     *
-     * @param entities the entities value to set.
-     * @return the AnalyzeResult object itself.
-     */
-    public AnalyzeResult setEntities(List<DocumentEntity> entities) {
-        this.entities = entities;
-        return this;
-    }
-
-    /**
-     * Get the styles property: Extracted font styles.
-     *
-     * @return the styles value.
-     */
-    public List<DocumentStyle> getStyles() {
-        return this.styles;
-    }
-
-    /**
-     * Set the styles property: Extracted font styles.
-     *
-     * @param styles the styles value to set.
-     * @return the AnalyzeResult object itself.
-     */
-    public AnalyzeResult setStyles(List<DocumentStyle> styles) {
-        this.styles = styles;
-        return this;
-    }
-
-    /**
-     * Get the documents property: Extracted documents.
-     *
-     * @return the documents value.
-     */
-    public List<Document> getDocuments() {
-        return this.documents;
-    }
-
-    /**
-     * Set the documents property: Extracted documents.
-     *
-     * @param documents the documents value to set.
-     * @return the AnalyzeResult object itself.
-     */
-    public AnalyzeResult setDocuments(List<Document> documents) {
-        this.documents = documents;
-        return this;
+            return deserializedAnalyzeResult;
+        });
     }
 }

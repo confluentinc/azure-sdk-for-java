@@ -5,34 +5,38 @@
 package com.azure.resourcemanager.signalr.models;
 
 import com.azure.core.annotation.Fluent;
-import com.azure.core.util.logging.ClientLogger;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.azure.json.JsonReader;
+import com.azure.json.JsonSerializable;
+import com.azure.json.JsonToken;
+import com.azure.json.JsonWriter;
+import java.io.IOException;
 import java.util.List;
 
-/** Network ACL. */
+/**
+ * Network ACL.
+ */
 @Fluent
-public class NetworkAcl {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(NetworkAcl.class);
-
+public class NetworkAcl implements JsonSerializable<NetworkAcl> {
     /*
-     * Allowed request types. The value can be one or more of:
-     * ClientConnection, ServerConnection, RESTAPI.
+     * Allowed request types. The value can be one or more of: ClientConnection, ServerConnection, RESTAPI.
      */
-    @JsonProperty(value = "allow")
     private List<SignalRRequestType> allow;
 
     /*
-     * Denied request types. The value can be one or more of: ClientConnection,
-     * ServerConnection, RESTAPI.
+     * Denied request types. The value can be one or more of: ClientConnection, ServerConnection, RESTAPI.
      */
-    @JsonProperty(value = "deny")
     private List<SignalRRequestType> deny;
+
+    /**
+     * Creates an instance of NetworkAcl class.
+     */
+    public NetworkAcl() {
+    }
 
     /**
      * Get the allow property: Allowed request types. The value can be one or more of: ClientConnection,
      * ServerConnection, RESTAPI.
-     *
+     * 
      * @return the allow value.
      */
     public List<SignalRRequestType> allow() {
@@ -42,7 +46,7 @@ public class NetworkAcl {
     /**
      * Set the allow property: Allowed request types. The value can be one or more of: ClientConnection,
      * ServerConnection, RESTAPI.
-     *
+     * 
      * @param allow the allow value to set.
      * @return the NetworkAcl object itself.
      */
@@ -54,7 +58,7 @@ public class NetworkAcl {
     /**
      * Get the deny property: Denied request types. The value can be one or more of: ClientConnection, ServerConnection,
      * RESTAPI.
-     *
+     * 
      * @return the deny value.
      */
     public List<SignalRRequestType> deny() {
@@ -64,7 +68,7 @@ public class NetworkAcl {
     /**
      * Set the deny property: Denied request types. The value can be one or more of: ClientConnection, ServerConnection,
      * RESTAPI.
-     *
+     * 
      * @param deny the deny value to set.
      * @return the NetworkAcl object itself.
      */
@@ -75,9 +79,54 @@ public class NetworkAcl {
 
     /**
      * Validates the instance.
-     *
+     * 
      * @throws IllegalArgumentException thrown if the instance is not valid.
      */
     public void validate() {
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public JsonWriter toJson(JsonWriter jsonWriter) throws IOException {
+        jsonWriter.writeStartObject();
+        jsonWriter.writeArrayField("allow", this.allow,
+            (writer, element) -> writer.writeString(element == null ? null : element.toString()));
+        jsonWriter.writeArrayField("deny", this.deny,
+            (writer, element) -> writer.writeString(element == null ? null : element.toString()));
+        return jsonWriter.writeEndObject();
+    }
+
+    /**
+     * Reads an instance of NetworkAcl from the JsonReader.
+     * 
+     * @param jsonReader The JsonReader being read.
+     * @return An instance of NetworkAcl if the JsonReader was pointing to an instance of it, or null if it was pointing
+     * to JSON null.
+     * @throws IOException If an error occurs while reading the NetworkAcl.
+     */
+    public static NetworkAcl fromJson(JsonReader jsonReader) throws IOException {
+        return jsonReader.readObject(reader -> {
+            NetworkAcl deserializedNetworkAcl = new NetworkAcl();
+            while (reader.nextToken() != JsonToken.END_OBJECT) {
+                String fieldName = reader.getFieldName();
+                reader.nextToken();
+
+                if ("allow".equals(fieldName)) {
+                    List<SignalRRequestType> allow
+                        = reader.readArray(reader1 -> SignalRRequestType.fromString(reader1.getString()));
+                    deserializedNetworkAcl.allow = allow;
+                } else if ("deny".equals(fieldName)) {
+                    List<SignalRRequestType> deny
+                        = reader.readArray(reader1 -> SignalRRequestType.fromString(reader1.getString()));
+                    deserializedNetworkAcl.deny = deny;
+                } else {
+                    reader.skipChildren();
+                }
+            }
+
+            return deserializedNetworkAcl;
+        });
     }
 }

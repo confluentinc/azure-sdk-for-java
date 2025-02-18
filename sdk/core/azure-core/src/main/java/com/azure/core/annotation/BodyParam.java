@@ -12,12 +12,15 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 /**
  * Annotation to annotate a parameter to send to a REST endpoint as HTTP Request content.
  *
- * <p>If the parameter type extends <code>InputStream</code>, this payload is streamed to server through
+ * <p>
+ * If the parameter type extends <code>InputStream</code>, this payload is streamed to server through
  * "application/octet-stream". Otherwise, the body is serialized first and sent as "application/json" or
  * "application/xml", based on the serializer.
  * </p>
  *
- * <p><strong>Example 1: Put JSON</strong></p>
+ * <p>
+ * <strong>Example 1: Put JSON</strong>
+ * </p>
  *
  * <!-- src_embed com.azure.core.annotation.BodyParam.class1 -->
  * <pre>
@@ -30,7 +33,9 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
  * </pre>
  * <!-- end com.azure.core.annotation.BodyParam.class1 -->
  *
- * <p><strong>Example 2: Stream</strong></p>
+ * <p>
+ * <strong>Example 2: Stream</strong>
+ * </p>
  *
  * <!-- src_embed com.azure.core.annotation.BodyParam.class2 -->
  * <pre>
@@ -43,7 +48,9 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @Target(PARAMETER)
 public @interface BodyParam {
     /**
-     * @return the Content-Type that the body should be treated as
+     * Gets the Content-Type for the body.
+     *
+     * @return The Content-Type for the body.
      */
     String value();
 }

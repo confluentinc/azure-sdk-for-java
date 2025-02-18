@@ -5,59 +5,67 @@
 package com.azure.resourcemanager.mysqlflexibleserver.fluent.models;
 
 import com.azure.core.annotation.Fluent;
-import com.azure.core.util.logging.ClientLogger;
+import com.azure.json.JsonReader;
+import com.azure.json.JsonSerializable;
+import com.azure.json.JsonToken;
+import com.azure.json.JsonWriter;
 import com.azure.resourcemanager.mysqlflexibleserver.models.Backup;
+import com.azure.resourcemanager.mysqlflexibleserver.models.DataEncryption;
 import com.azure.resourcemanager.mysqlflexibleserver.models.HighAvailability;
 import com.azure.resourcemanager.mysqlflexibleserver.models.MaintenanceWindow;
 import com.azure.resourcemanager.mysqlflexibleserver.models.ReplicationRole;
 import com.azure.resourcemanager.mysqlflexibleserver.models.Storage;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import java.io.IOException;
 
-/** The properties that can be updated for a server. */
+/**
+ * The properties that can be updated for a server.
+ */
 @Fluent
-public final class ServerPropertiesForUpdate {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(ServerPropertiesForUpdate.class);
-
+public final class ServerPropertiesForUpdate implements JsonSerializable<ServerPropertiesForUpdate> {
     /*
      * The password of the administrator login.
      */
-    @JsonProperty(value = "administratorLoginPassword")
     private String administratorLoginPassword;
 
     /*
      * Storage related properties of a server.
      */
-    @JsonProperty(value = "storage")
     private Storage storage;
 
     /*
      * Backup related properties of a server.
      */
-    @JsonProperty(value = "backup")
     private Backup backup;
 
     /*
      * High availability related properties of a server.
      */
-    @JsonProperty(value = "highAvailability")
     private HighAvailability highAvailability;
 
     /*
      * Maintenance window of a server.
      */
-    @JsonProperty(value = "maintenanceWindow")
     private MaintenanceWindow maintenanceWindow;
 
     /*
      * The replication role of the server.
      */
-    @JsonProperty(value = "replicationRole")
     private ReplicationRole replicationRole;
+
+    /*
+     * The Data Encryption for CMK.
+     */
+    private DataEncryption dataEncryption;
+
+    /**
+     * Creates an instance of ServerPropertiesForUpdate class.
+     */
+    public ServerPropertiesForUpdate() {
+    }
 
     /**
      * Get the administratorLoginPassword property: The password of the administrator login.
-     *
+     * 
      * @return the administratorLoginPassword value.
      */
     public String administratorLoginPassword() {
@@ -66,7 +74,7 @@ public final class ServerPropertiesForUpdate {
 
     /**
      * Set the administratorLoginPassword property: The password of the administrator login.
-     *
+     * 
      * @param administratorLoginPassword the administratorLoginPassword value to set.
      * @return the ServerPropertiesForUpdate object itself.
      */
@@ -77,7 +85,7 @@ public final class ServerPropertiesForUpdate {
 
     /**
      * Get the storage property: Storage related properties of a server.
-     *
+     * 
      * @return the storage value.
      */
     public Storage storage() {
@@ -86,7 +94,7 @@ public final class ServerPropertiesForUpdate {
 
     /**
      * Set the storage property: Storage related properties of a server.
-     *
+     * 
      * @param storage the storage value to set.
      * @return the ServerPropertiesForUpdate object itself.
      */
@@ -97,7 +105,7 @@ public final class ServerPropertiesForUpdate {
 
     /**
      * Get the backup property: Backup related properties of a server.
-     *
+     * 
      * @return the backup value.
      */
     public Backup backup() {
@@ -106,7 +114,7 @@ public final class ServerPropertiesForUpdate {
 
     /**
      * Set the backup property: Backup related properties of a server.
-     *
+     * 
      * @param backup the backup value to set.
      * @return the ServerPropertiesForUpdate object itself.
      */
@@ -117,7 +125,7 @@ public final class ServerPropertiesForUpdate {
 
     /**
      * Get the highAvailability property: High availability related properties of a server.
-     *
+     * 
      * @return the highAvailability value.
      */
     public HighAvailability highAvailability() {
@@ -126,7 +134,7 @@ public final class ServerPropertiesForUpdate {
 
     /**
      * Set the highAvailability property: High availability related properties of a server.
-     *
+     * 
      * @param highAvailability the highAvailability value to set.
      * @return the ServerPropertiesForUpdate object itself.
      */
@@ -137,7 +145,7 @@ public final class ServerPropertiesForUpdate {
 
     /**
      * Get the maintenanceWindow property: Maintenance window of a server.
-     *
+     * 
      * @return the maintenanceWindow value.
      */
     public MaintenanceWindow maintenanceWindow() {
@@ -146,7 +154,7 @@ public final class ServerPropertiesForUpdate {
 
     /**
      * Set the maintenanceWindow property: Maintenance window of a server.
-     *
+     * 
      * @param maintenanceWindow the maintenanceWindow value to set.
      * @return the ServerPropertiesForUpdate object itself.
      */
@@ -157,7 +165,7 @@ public final class ServerPropertiesForUpdate {
 
     /**
      * Get the replicationRole property: The replication role of the server.
-     *
+     * 
      * @return the replicationRole value.
      */
     public ReplicationRole replicationRole() {
@@ -166,7 +174,7 @@ public final class ServerPropertiesForUpdate {
 
     /**
      * Set the replicationRole property: The replication role of the server.
-     *
+     * 
      * @param replicationRole the replicationRole value to set.
      * @return the ServerPropertiesForUpdate object itself.
      */
@@ -176,8 +184,28 @@ public final class ServerPropertiesForUpdate {
     }
 
     /**
+     * Get the dataEncryption property: The Data Encryption for CMK.
+     * 
+     * @return the dataEncryption value.
+     */
+    public DataEncryption dataEncryption() {
+        return this.dataEncryption;
+    }
+
+    /**
+     * Set the dataEncryption property: The Data Encryption for CMK.
+     * 
+     * @param dataEncryption the dataEncryption value to set.
+     * @return the ServerPropertiesForUpdate object itself.
+     */
+    public ServerPropertiesForUpdate withDataEncryption(DataEncryption dataEncryption) {
+        this.dataEncryption = dataEncryption;
+        return this;
+    }
+
+    /**
      * Validates the instance.
-     *
+     * 
      * @throws IllegalArgumentException thrown if the instance is not valid.
      */
     public void validate() {
@@ -193,5 +221,64 @@ public final class ServerPropertiesForUpdate {
         if (maintenanceWindow() != null) {
             maintenanceWindow().validate();
         }
+        if (dataEncryption() != null) {
+            dataEncryption().validate();
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public JsonWriter toJson(JsonWriter jsonWriter) throws IOException {
+        jsonWriter.writeStartObject();
+        jsonWriter.writeStringField("administratorLoginPassword", this.administratorLoginPassword);
+        jsonWriter.writeJsonField("storage", this.storage);
+        jsonWriter.writeJsonField("backup", this.backup);
+        jsonWriter.writeJsonField("highAvailability", this.highAvailability);
+        jsonWriter.writeJsonField("maintenanceWindow", this.maintenanceWindow);
+        jsonWriter.writeStringField("replicationRole",
+            this.replicationRole == null ? null : this.replicationRole.toString());
+        jsonWriter.writeJsonField("dataEncryption", this.dataEncryption);
+        return jsonWriter.writeEndObject();
+    }
+
+    /**
+     * Reads an instance of ServerPropertiesForUpdate from the JsonReader.
+     * 
+     * @param jsonReader The JsonReader being read.
+     * @return An instance of ServerPropertiesForUpdate if the JsonReader was pointing to an instance of it, or null if
+     * it was pointing to JSON null.
+     * @throws IOException If an error occurs while reading the ServerPropertiesForUpdate.
+     */
+    public static ServerPropertiesForUpdate fromJson(JsonReader jsonReader) throws IOException {
+        return jsonReader.readObject(reader -> {
+            ServerPropertiesForUpdate deserializedServerPropertiesForUpdate = new ServerPropertiesForUpdate();
+            while (reader.nextToken() != JsonToken.END_OBJECT) {
+                String fieldName = reader.getFieldName();
+                reader.nextToken();
+
+                if ("administratorLoginPassword".equals(fieldName)) {
+                    deserializedServerPropertiesForUpdate.administratorLoginPassword = reader.getString();
+                } else if ("storage".equals(fieldName)) {
+                    deserializedServerPropertiesForUpdate.storage = Storage.fromJson(reader);
+                } else if ("backup".equals(fieldName)) {
+                    deserializedServerPropertiesForUpdate.backup = Backup.fromJson(reader);
+                } else if ("highAvailability".equals(fieldName)) {
+                    deserializedServerPropertiesForUpdate.highAvailability = HighAvailability.fromJson(reader);
+                } else if ("maintenanceWindow".equals(fieldName)) {
+                    deserializedServerPropertiesForUpdate.maintenanceWindow = MaintenanceWindow.fromJson(reader);
+                } else if ("replicationRole".equals(fieldName)) {
+                    deserializedServerPropertiesForUpdate.replicationRole
+                        = ReplicationRole.fromString(reader.getString());
+                } else if ("dataEncryption".equals(fieldName)) {
+                    deserializedServerPropertiesForUpdate.dataEncryption = DataEncryption.fromJson(reader);
+                } else {
+                    reader.skipChildren();
+                }
+            }
+
+            return deserializedServerPropertiesForUpdate;
+        });
     }
 }

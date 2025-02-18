@@ -13,7 +13,8 @@ import java.util.Map;
 public final class GeoObjectHelper {
     private static GeoObjectAccessor accessor;
 
-    private GeoObjectHelper() { }
+    private GeoObjectHelper() {
+    }
 
     /**
      * Type defining the methods to set the non-public properties of an {@link GeoObjectHelper} instance.
@@ -29,7 +30,7 @@ public final class GeoObjectHelper {
     }
 
     /**
-     * The method called from {@link GeoObject} to set it's accessor.
+     * The method called from {@link GeoObject} to set its accessor.
      *
      * @param geoObjectAccessor The accessor.
      */

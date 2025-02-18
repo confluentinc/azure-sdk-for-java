@@ -5,67 +5,78 @@
 package com.azure.resourcemanager.automation.fluent.models;
 
 import com.azure.core.annotation.Fluent;
-import com.azure.core.annotation.JsonFlatten;
 import com.azure.core.management.Resource;
-import com.azure.core.util.logging.ClientLogger;
+import com.azure.core.management.SystemData;
+import com.azure.json.JsonReader;
+import com.azure.json.JsonToken;
+import com.azure.json.JsonWriter;
 import com.azure.resourcemanager.automation.models.AutomationAccountState;
+import com.azure.resourcemanager.automation.models.EncryptionProperties;
+import com.azure.resourcemanager.automation.models.Identity;
 import com.azure.resourcemanager.automation.models.Sku;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import java.io.IOException;
 import java.time.OffsetDateTime;
+import java.util.List;
 import java.util.Map;
 
-/** Definition of the automation account type. */
-@JsonFlatten
+/**
+ * Definition of the automation account type.
+ */
 @Fluent
-public class AutomationAccountInner extends Resource {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(AutomationAccountInner.class);
+public final class AutomationAccountInner extends Resource {
+    /*
+     * Gets or sets the automation account properties.
+     */
+    private AutomationAccountProperties innerProperties;
 
     /*
      * Gets or sets the etag of the resource.
      */
-    @JsonProperty(value = "etag")
     private String etag;
 
     /*
-     * Gets or sets the SKU of account.
+     * Identity for the resource.
      */
-    @JsonProperty(value = "properties.sku")
-    private Sku sku;
+    private Identity identity;
 
     /*
-     * Gets or sets the last modified by.
+     * Resource system metadata.
      */
-    @JsonProperty(value = "properties.lastModifiedBy")
-    private String lastModifiedBy;
+    private SystemData systemData;
 
     /*
-     * Gets status of account.
+     * The type of the resource.
      */
-    @JsonProperty(value = "properties.state", access = JsonProperty.Access.WRITE_ONLY)
-    private AutomationAccountState state;
+    private String type;
 
     /*
-     * Gets the creation time.
+     * The name of the resource.
      */
-    @JsonProperty(value = "properties.creationTime", access = JsonProperty.Access.WRITE_ONLY)
-    private OffsetDateTime creationTime;
+    private String name;
 
     /*
-     * Gets the last modified time.
+     * Fully qualified resource Id for the resource.
      */
-    @JsonProperty(value = "properties.lastModifiedTime", access = JsonProperty.Access.WRITE_ONLY)
-    private OffsetDateTime lastModifiedTime;
+    private String id;
 
-    /*
-     * Gets or sets the description.
+    /**
+     * Creates an instance of AutomationAccountInner class.
      */
-    @JsonProperty(value = "properties.description")
-    private String description;
+    public AutomationAccountInner() {
+    }
+
+    /**
+     * Get the innerProperties property: Gets or sets the automation account properties.
+     * 
+     * @return the innerProperties value.
+     */
+    private AutomationAccountProperties innerProperties() {
+        return this.innerProperties;
+    }
 
     /**
      * Get the etag property: Gets or sets the etag of the resource.
-     *
+     * 
      * @return the etag value.
      */
     public String etag() {
@@ -74,7 +85,7 @@ public class AutomationAccountInner extends Resource {
 
     /**
      * Set the etag property: Gets or sets the etag of the resource.
-     *
+     * 
      * @param etag the etag value to set.
      * @return the AutomationAccountInner object itself.
      */
@@ -84,100 +95,76 @@ public class AutomationAccountInner extends Resource {
     }
 
     /**
-     * Get the sku property: Gets or sets the SKU of account.
-     *
-     * @return the sku value.
+     * Get the identity property: Identity for the resource.
+     * 
+     * @return the identity value.
      */
-    public Sku sku() {
-        return this.sku;
+    public Identity identity() {
+        return this.identity;
     }
 
     /**
-     * Set the sku property: Gets or sets the SKU of account.
-     *
-     * @param sku the sku value to set.
+     * Set the identity property: Identity for the resource.
+     * 
+     * @param identity the identity value to set.
      * @return the AutomationAccountInner object itself.
      */
-    public AutomationAccountInner withSku(Sku sku) {
-        this.sku = sku;
+    public AutomationAccountInner withIdentity(Identity identity) {
+        this.identity = identity;
         return this;
     }
 
     /**
-     * Get the lastModifiedBy property: Gets or sets the last modified by.
-     *
-     * @return the lastModifiedBy value.
+     * Get the systemData property: Resource system metadata.
+     * 
+     * @return the systemData value.
      */
-    public String lastModifiedBy() {
-        return this.lastModifiedBy;
+    public SystemData systemData() {
+        return this.systemData;
     }
 
     /**
-     * Set the lastModifiedBy property: Gets or sets the last modified by.
-     *
-     * @param lastModifiedBy the lastModifiedBy value to set.
-     * @return the AutomationAccountInner object itself.
+     * Get the type property: The type of the resource.
+     * 
+     * @return the type value.
      */
-    public AutomationAccountInner withLastModifiedBy(String lastModifiedBy) {
-        this.lastModifiedBy = lastModifiedBy;
-        return this;
+    @Override
+    public String type() {
+        return this.type;
     }
 
     /**
-     * Get the state property: Gets status of account.
-     *
-     * @return the state value.
+     * Get the name property: The name of the resource.
+     * 
+     * @return the name value.
      */
-    public AutomationAccountState state() {
-        return this.state;
+    @Override
+    public String name() {
+        return this.name;
     }
 
     /**
-     * Get the creationTime property: Gets the creation time.
-     *
-     * @return the creationTime value.
+     * Get the id property: Fully qualified resource Id for the resource.
+     * 
+     * @return the id value.
      */
-    public OffsetDateTime creationTime() {
-        return this.creationTime;
+    @Override
+    public String id() {
+        return this.id;
     }
 
     /**
-     * Get the lastModifiedTime property: Gets the last modified time.
-     *
-     * @return the lastModifiedTime value.
+     * {@inheritDoc}
      */
-    public OffsetDateTime lastModifiedTime() {
-        return this.lastModifiedTime;
-    }
-
-    /**
-     * Get the description property: Gets or sets the description.
-     *
-     * @return the description value.
-     */
-    public String description() {
-        return this.description;
-    }
-
-    /**
-     * Set the description property: Gets or sets the description.
-     *
-     * @param description the description value to set.
-     * @return the AutomationAccountInner object itself.
-     */
-    public AutomationAccountInner withDescription(String description) {
-        this.description = description;
-        return this;
-    }
-
-    /** {@inheritDoc} */
     @Override
     public AutomationAccountInner withLocation(String location) {
         super.withLocation(location);
         return this;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public AutomationAccountInner withTags(Map<String, String> tags) {
         super.withTags(tags);
@@ -185,13 +172,292 @@ public class AutomationAccountInner extends Resource {
     }
 
     /**
+     * Get the sku property: Gets or sets the SKU of account.
+     * 
+     * @return the sku value.
+     */
+    public Sku sku() {
+        return this.innerProperties() == null ? null : this.innerProperties().sku();
+    }
+
+    /**
+     * Set the sku property: Gets or sets the SKU of account.
+     * 
+     * @param sku the sku value to set.
+     * @return the AutomationAccountInner object itself.
+     */
+    public AutomationAccountInner withSku(Sku sku) {
+        if (this.innerProperties() == null) {
+            this.innerProperties = new AutomationAccountProperties();
+        }
+        this.innerProperties().withSku(sku);
+        return this;
+    }
+
+    /**
+     * Get the lastModifiedBy property: Gets or sets the last modified by.
+     * 
+     * @return the lastModifiedBy value.
+     */
+    public String lastModifiedBy() {
+        return this.innerProperties() == null ? null : this.innerProperties().lastModifiedBy();
+    }
+
+    /**
+     * Set the lastModifiedBy property: Gets or sets the last modified by.
+     * 
+     * @param lastModifiedBy the lastModifiedBy value to set.
+     * @return the AutomationAccountInner object itself.
+     */
+    public AutomationAccountInner withLastModifiedBy(String lastModifiedBy) {
+        if (this.innerProperties() == null) {
+            this.innerProperties = new AutomationAccountProperties();
+        }
+        this.innerProperties().withLastModifiedBy(lastModifiedBy);
+        return this;
+    }
+
+    /**
+     * Get the state property: Gets status of account.
+     * 
+     * @return the state value.
+     */
+    public AutomationAccountState state() {
+        return this.innerProperties() == null ? null : this.innerProperties().state();
+    }
+
+    /**
+     * Get the creationTime property: Gets the creation time.
+     * 
+     * @return the creationTime value.
+     */
+    public OffsetDateTime creationTime() {
+        return this.innerProperties() == null ? null : this.innerProperties().creationTime();
+    }
+
+    /**
+     * Get the lastModifiedTime property: Gets the last modified time.
+     * 
+     * @return the lastModifiedTime value.
+     */
+    public OffsetDateTime lastModifiedTime() {
+        return this.innerProperties() == null ? null : this.innerProperties().lastModifiedTime();
+    }
+
+    /**
+     * Get the description property: Gets or sets the description.
+     * 
+     * @return the description value.
+     */
+    public String description() {
+        return this.innerProperties() == null ? null : this.innerProperties().description();
+    }
+
+    /**
+     * Set the description property: Gets or sets the description.
+     * 
+     * @param description the description value to set.
+     * @return the AutomationAccountInner object itself.
+     */
+    public AutomationAccountInner withDescription(String description) {
+        if (this.innerProperties() == null) {
+            this.innerProperties = new AutomationAccountProperties();
+        }
+        this.innerProperties().withDescription(description);
+        return this;
+    }
+
+    /**
+     * Get the encryption property: Encryption properties for the automation account.
+     * 
+     * @return the encryption value.
+     */
+    public EncryptionProperties encryption() {
+        return this.innerProperties() == null ? null : this.innerProperties().encryption();
+    }
+
+    /**
+     * Set the encryption property: Encryption properties for the automation account.
+     * 
+     * @param encryption the encryption value to set.
+     * @return the AutomationAccountInner object itself.
+     */
+    public AutomationAccountInner withEncryption(EncryptionProperties encryption) {
+        if (this.innerProperties() == null) {
+            this.innerProperties = new AutomationAccountProperties();
+        }
+        this.innerProperties().withEncryption(encryption);
+        return this;
+    }
+
+    /**
+     * Get the privateEndpointConnections property: List of Automation operations supported by the Automation resource
+     * provider.
+     * 
+     * @return the privateEndpointConnections value.
+     */
+    public List<PrivateEndpointConnectionInner> privateEndpointConnections() {
+        return this.innerProperties() == null ? null : this.innerProperties().privateEndpointConnections();
+    }
+
+    /**
+     * Set the privateEndpointConnections property: List of Automation operations supported by the Automation resource
+     * provider.
+     * 
+     * @param privateEndpointConnections the privateEndpointConnections value to set.
+     * @return the AutomationAccountInner object itself.
+     */
+    public AutomationAccountInner
+        withPrivateEndpointConnections(List<PrivateEndpointConnectionInner> privateEndpointConnections) {
+        if (this.innerProperties() == null) {
+            this.innerProperties = new AutomationAccountProperties();
+        }
+        this.innerProperties().withPrivateEndpointConnections(privateEndpointConnections);
+        return this;
+    }
+
+    /**
+     * Get the publicNetworkAccess property: Indicates whether traffic on the non-ARM endpoint (Webhook/Agent) is
+     * allowed from the public internet.
+     * 
+     * @return the publicNetworkAccess value.
+     */
+    public Boolean publicNetworkAccess() {
+        return this.innerProperties() == null ? null : this.innerProperties().publicNetworkAccess();
+    }
+
+    /**
+     * Set the publicNetworkAccess property: Indicates whether traffic on the non-ARM endpoint (Webhook/Agent) is
+     * allowed from the public internet.
+     * 
+     * @param publicNetworkAccess the publicNetworkAccess value to set.
+     * @return the AutomationAccountInner object itself.
+     */
+    public AutomationAccountInner withPublicNetworkAccess(Boolean publicNetworkAccess) {
+        if (this.innerProperties() == null) {
+            this.innerProperties = new AutomationAccountProperties();
+        }
+        this.innerProperties().withPublicNetworkAccess(publicNetworkAccess);
+        return this;
+    }
+
+    /**
+     * Get the disableLocalAuth property: Indicates whether requests using non-AAD authentication are blocked.
+     * 
+     * @return the disableLocalAuth value.
+     */
+    public Boolean disableLocalAuth() {
+        return this.innerProperties() == null ? null : this.innerProperties().disableLocalAuth();
+    }
+
+    /**
+     * Set the disableLocalAuth property: Indicates whether requests using non-AAD authentication are blocked.
+     * 
+     * @param disableLocalAuth the disableLocalAuth value to set.
+     * @return the AutomationAccountInner object itself.
+     */
+    public AutomationAccountInner withDisableLocalAuth(Boolean disableLocalAuth) {
+        if (this.innerProperties() == null) {
+            this.innerProperties = new AutomationAccountProperties();
+        }
+        this.innerProperties().withDisableLocalAuth(disableLocalAuth);
+        return this;
+    }
+
+    /**
+     * Get the automationHybridServiceUrl property: URL of automation hybrid service which is used for hybrid worker
+     * on-boarding.
+     * 
+     * @return the automationHybridServiceUrl value.
+     */
+    public String automationHybridServiceUrl() {
+        return this.innerProperties() == null ? null : this.innerProperties().automationHybridServiceUrl();
+    }
+
+    /**
+     * Set the automationHybridServiceUrl property: URL of automation hybrid service which is used for hybrid worker
+     * on-boarding.
+     * 
+     * @param automationHybridServiceUrl the automationHybridServiceUrl value to set.
+     * @return the AutomationAccountInner object itself.
+     */
+    public AutomationAccountInner withAutomationHybridServiceUrl(String automationHybridServiceUrl) {
+        if (this.innerProperties() == null) {
+            this.innerProperties = new AutomationAccountProperties();
+        }
+        this.innerProperties().withAutomationHybridServiceUrl(automationHybridServiceUrl);
+        return this;
+    }
+
+    /**
      * Validates the instance.
-     *
+     * 
      * @throws IllegalArgumentException thrown if the instance is not valid.
      */
     public void validate() {
-        if (sku() != null) {
-            sku().validate();
+        if (innerProperties() != null) {
+            innerProperties().validate();
         }
+        if (identity() != null) {
+            identity().validate();
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public JsonWriter toJson(JsonWriter jsonWriter) throws IOException {
+        jsonWriter.writeStartObject();
+        jsonWriter.writeStringField("location", location());
+        jsonWriter.writeMapField("tags", tags(), (writer, element) -> writer.writeString(element));
+        jsonWriter.writeJsonField("properties", this.innerProperties);
+        jsonWriter.writeStringField("etag", this.etag);
+        jsonWriter.writeJsonField("identity", this.identity);
+        return jsonWriter.writeEndObject();
+    }
+
+    /**
+     * Reads an instance of AutomationAccountInner from the JsonReader.
+     * 
+     * @param jsonReader The JsonReader being read.
+     * @return An instance of AutomationAccountInner if the JsonReader was pointing to an instance of it, or null if it
+     * was pointing to JSON null.
+     * @throws IllegalStateException If the deserialized JSON object was missing any required properties.
+     * @throws IOException If an error occurs while reading the AutomationAccountInner.
+     */
+    public static AutomationAccountInner fromJson(JsonReader jsonReader) throws IOException {
+        return jsonReader.readObject(reader -> {
+            AutomationAccountInner deserializedAutomationAccountInner = new AutomationAccountInner();
+            while (reader.nextToken() != JsonToken.END_OBJECT) {
+                String fieldName = reader.getFieldName();
+                reader.nextToken();
+
+                if ("id".equals(fieldName)) {
+                    deserializedAutomationAccountInner.id = reader.getString();
+                } else if ("name".equals(fieldName)) {
+                    deserializedAutomationAccountInner.name = reader.getString();
+                } else if ("type".equals(fieldName)) {
+                    deserializedAutomationAccountInner.type = reader.getString();
+                } else if ("location".equals(fieldName)) {
+                    deserializedAutomationAccountInner.withLocation(reader.getString());
+                } else if ("tags".equals(fieldName)) {
+                    Map<String, String> tags = reader.readMap(reader1 -> reader1.getString());
+                    deserializedAutomationAccountInner.withTags(tags);
+                } else if ("properties".equals(fieldName)) {
+                    deserializedAutomationAccountInner.innerProperties = AutomationAccountProperties.fromJson(reader);
+                } else if ("etag".equals(fieldName)) {
+                    deserializedAutomationAccountInner.etag = reader.getString();
+                } else if ("identity".equals(fieldName)) {
+                    deserializedAutomationAccountInner.identity = Identity.fromJson(reader);
+                } else if ("systemData".equals(fieldName)) {
+                    deserializedAutomationAccountInner.systemData = SystemData.fromJson(reader);
+                } else {
+                    reader.skipChildren();
+                }
+            }
+
+            return deserializedAutomationAccountInner;
+        });
     }
 }

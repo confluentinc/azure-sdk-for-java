@@ -6,55 +6,49 @@ package com.azure.resourcemanager.automanage.models;
 
 import com.azure.core.management.SystemData;
 import com.azure.resourcemanager.automanage.fluent.models.BestPracticeInner;
-import java.util.List;
 
-/** An immutable client-side representation of BestPractice. */
+/**
+ * An immutable client-side representation of BestPractice.
+ */
 public interface BestPractice {
     /**
      * Gets the id property: Fully qualified resource Id for the resource.
-     *
+     * 
      * @return the id value.
      */
     String id();
 
     /**
      * Gets the name property: The name of the resource.
-     *
+     * 
      * @return the name value.
      */
     String name();
 
     /**
      * Gets the type property: The type of the resource.
-     *
+     * 
      * @return the type value.
      */
     String type();
 
     /**
+     * Gets the properties property: Properties of the best practice.
+     * 
+     * @return the properties value.
+     */
+    ConfigurationProfileProperties properties();
+
+    /**
      * Gets the systemData property: Azure Resource Manager metadata containing createdBy and modifiedBy information.
-     *
+     * 
      * @return the systemData value.
      */
     SystemData systemData();
 
     /**
-     * Gets the configuration property: configuration dictionary of the configuration profile.
-     *
-     * @return the configuration value.
-     */
-    Object configuration();
-
-    /**
-     * Gets the overrides property: overrides of the configuration profile.
-     *
-     * @return the overrides value.
-     */
-    List<Object> overrides();
-
-    /**
      * Gets the inner com.azure.resourcemanager.automanage.fluent.models.BestPracticeInner object.
-     *
+     * 
      * @return the inner object.
      */
     BestPracticeInner innerModel();

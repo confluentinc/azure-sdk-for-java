@@ -25,30 +25,33 @@ import com.azure.core.http.rest.RestProxy;
 import com.azure.core.management.exception.ManagementException;
 import com.azure.core.util.Context;
 import com.azure.core.util.FluxUtil;
-import com.azure.core.util.logging.ClientLogger;
 import com.azure.resourcemanager.synapse.fluent.SqlPoolTableColumnsClient;
 import com.azure.resourcemanager.synapse.fluent.models.SqlPoolColumnInner;
 import com.azure.resourcemanager.synapse.models.SqlPoolColumnListResult;
 import reactor.core.publisher.Mono;
 
-/** An instance of this class provides access to all the operations defined in SqlPoolTableColumnsClient. */
+/**
+ * An instance of this class provides access to all the operations defined in SqlPoolTableColumnsClient.
+ */
 public final class SqlPoolTableColumnsClientImpl implements SqlPoolTableColumnsClient {
-    private final ClientLogger logger = new ClientLogger(SqlPoolTableColumnsClientImpl.class);
-
-    /** The proxy service used to perform REST calls. */
+    /**
+     * The proxy service used to perform REST calls.
+     */
     private final SqlPoolTableColumnsService service;
 
-    /** The service client containing this operation class. */
+    /**
+     * The service client containing this operation class.
+     */
     private final SynapseManagementClientImpl client;
 
     /**
      * Initializes an instance of SqlPoolTableColumnsClientImpl.
-     *
+     * 
      * @param client the instance of the service client containing this operation class.
      */
     SqlPoolTableColumnsClientImpl(SynapseManagementClientImpl client) {
-        this.service =
-            RestProxy.create(SqlPoolTableColumnsService.class, client.getHttpPipeline(), client.getSerializerAdapter());
+        this.service = RestProxy.create(SqlPoolTableColumnsService.class, client.getHttpPipeline(),
+            client.getSerializerAdapter());
         this.client = client;
     }
 
@@ -58,40 +61,32 @@ public final class SqlPoolTableColumnsClientImpl implements SqlPoolTableColumnsC
      */
     @Host("{$host}")
     @ServiceInterface(name = "SynapseManagementCli")
-    private interface SqlPoolTableColumnsService {
-        @Headers({"Content-Type: application/json"})
-        @Get(
-            "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Synapse/workspaces"
-                + "/{workspaceName}/sqlPools/{sqlPoolName}/schemas/{schemaName}/tables/{tableName}/columns")
-        @ExpectedResponses({200})
+    public interface SqlPoolTableColumnsService {
+        @Headers({ "Content-Type: application/json" })
+        @Get("/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Synapse/workspaces/{workspaceName}/sqlPools/{sqlPoolName}/schemas/{schemaName}/tables/{tableName}/columns")
+        @ExpectedResponses({ 200 })
         @UnexpectedResponseExceptionType(ManagementException.class)
-        Mono<Response<SqlPoolColumnListResult>> listByTableName(
-            @HostParam("$host") String endpoint,
-            @QueryParam("api-version") String apiVersion,
-            @PathParam("subscriptionId") String subscriptionId,
-            @PathParam("resourceGroupName") String resourceGroupName,
-            @PathParam("workspaceName") String workspaceName,
-            @PathParam("sqlPoolName") String sqlPoolName,
-            @PathParam("schemaName") String schemaName,
-            @PathParam("tableName") String tableName,
-            @QueryParam("$filter") String filter,
-            @HeaderParam("Accept") String accept,
-            Context context);
+        Mono<Response<SqlPoolColumnListResult>> listByTableName(@HostParam("$host") String endpoint,
+            @QueryParam("api-version") String apiVersion, @PathParam("subscriptionId") String subscriptionId,
+            @PathParam("resourceGroupName") String resourceGroupName, @PathParam("workspaceName") String workspaceName,
+            @PathParam("sqlPoolName") String sqlPoolName, @PathParam("schemaName") String schemaName,
+            @PathParam("tableName") String tableName, @QueryParam("$filter") String filter,
+            @HeaderParam("Accept") String accept, Context context);
 
-        @Headers({"Content-Type: application/json"})
+        @Headers({ "Content-Type: application/json" })
         @Get("{nextLink}")
-        @ExpectedResponses({200})
+        @ExpectedResponses({ 200 })
         @UnexpectedResponseExceptionType(ManagementException.class)
         Mono<Response<SqlPoolColumnListResult>> listByTableNameNext(
-            @PathParam(value = "nextLink", encoded = true) String nextLink,
-            @HostParam("$host") String endpoint,
-            @HeaderParam("Accept") String accept,
-            Context context);
+            @PathParam(value = "nextLink", encoded = true) String nextLink, @HostParam("$host") String endpoint,
+            @HeaderParam("Accept") String accept, Context context);
     }
 
     /**
+     * Gets columns in a given table in a SQL pool
+     * 
      * Gets columns in a given table in a SQL pool.
-     *
+     * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
      * @param workspaceName The name of the workspace.
      * @param sqlPoolName SQL pool name.
@@ -102,27 +97,18 @@ public final class SqlPoolTableColumnsClientImpl implements SqlPoolTableColumnsC
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
      * @return columns in a given table in a SQL pool along with {@link PagedResponse} on successful completion of
-     *     {@link Mono}.
+     * {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    private Mono<PagedResponse<SqlPoolColumnInner>> listByTableNameSinglePageAsync(
-        String resourceGroupName,
-        String workspaceName,
-        String sqlPoolName,
-        String schemaName,
-        String tableName,
-        String filter) {
+    private Mono<PagedResponse<SqlPoolColumnInner>> listByTableNameSinglePageAsync(String resourceGroupName,
+        String workspaceName, String sqlPoolName, String schemaName, String tableName, String filter) {
         if (this.client.getEndpoint() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getEndpoint() is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
         }
         if (this.client.getSubscriptionId() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getSubscriptionId() is required and cannot be null."));
+            return Mono.error(new IllegalArgumentException(
+                "Parameter this.client.getSubscriptionId() is required and cannot be null."));
         }
         if (resourceGroupName == null) {
             return Mono
@@ -140,39 +126,21 @@ public final class SqlPoolTableColumnsClientImpl implements SqlPoolTableColumnsC
         if (tableName == null) {
             return Mono.error(new IllegalArgumentException("Parameter tableName is required and cannot be null."));
         }
-        final String apiVersion = "2021-06-01";
         final String accept = "application/json";
         return FluxUtil
-            .withContext(
-                context ->
-                    service
-                        .listByTableName(
-                            this.client.getEndpoint(),
-                            apiVersion,
-                            this.client.getSubscriptionId(),
-                            resourceGroupName,
-                            workspaceName,
-                            sqlPoolName,
-                            schemaName,
-                            tableName,
-                            filter,
-                            accept,
-                            context))
-            .<PagedResponse<SqlPoolColumnInner>>map(
-                res ->
-                    new PagedResponseBase<>(
-                        res.getRequest(),
-                        res.getStatusCode(),
-                        res.getHeaders(),
-                        res.getValue().value(),
-                        res.getValue().nextLink(),
-                        null))
+            .withContext(context -> service.listByTableName(this.client.getEndpoint(), this.client.getApiVersion(),
+                this.client.getSubscriptionId(), resourceGroupName, workspaceName, sqlPoolName, schemaName, tableName,
+                filter, accept, context))
+            .<PagedResponse<SqlPoolColumnInner>>map(res -> new PagedResponseBase<>(res.getRequest(),
+                res.getStatusCode(), res.getHeaders(), res.getValue().value(), res.getValue().nextLink(), null))
             .contextWrite(context -> context.putAll(FluxUtil.toReactorContext(this.client.getContext()).readOnly()));
     }
 
     /**
+     * Gets columns in a given table in a SQL pool
+     * 
      * Gets columns in a given table in a SQL pool.
-     *
+     * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
      * @param workspaceName The name of the workspace.
      * @param sqlPoolName SQL pool name.
@@ -184,28 +152,18 @@ public final class SqlPoolTableColumnsClientImpl implements SqlPoolTableColumnsC
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
      * @return columns in a given table in a SQL pool along with {@link PagedResponse} on successful completion of
-     *     {@link Mono}.
+     * {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    private Mono<PagedResponse<SqlPoolColumnInner>> listByTableNameSinglePageAsync(
-        String resourceGroupName,
-        String workspaceName,
-        String sqlPoolName,
-        String schemaName,
-        String tableName,
-        String filter,
-        Context context) {
+    private Mono<PagedResponse<SqlPoolColumnInner>> listByTableNameSinglePageAsync(String resourceGroupName,
+        String workspaceName, String sqlPoolName, String schemaName, String tableName, String filter, Context context) {
         if (this.client.getEndpoint() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getEndpoint() is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
         }
         if (this.client.getSubscriptionId() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getSubscriptionId() is required and cannot be null."));
+            return Mono.error(new IllegalArgumentException(
+                "Parameter this.client.getSubscriptionId() is required and cannot be null."));
         }
         if (resourceGroupName == null) {
             return Mono
@@ -223,36 +181,20 @@ public final class SqlPoolTableColumnsClientImpl implements SqlPoolTableColumnsC
         if (tableName == null) {
             return Mono.error(new IllegalArgumentException("Parameter tableName is required and cannot be null."));
         }
-        final String apiVersion = "2021-06-01";
         final String accept = "application/json";
         context = this.client.mergeContext(context);
         return service
-            .listByTableName(
-                this.client.getEndpoint(),
-                apiVersion,
-                this.client.getSubscriptionId(),
-                resourceGroupName,
-                workspaceName,
-                sqlPoolName,
-                schemaName,
-                tableName,
-                filter,
-                accept,
-                context)
-            .map(
-                res ->
-                    new PagedResponseBase<>(
-                        res.getRequest(),
-                        res.getStatusCode(),
-                        res.getHeaders(),
-                        res.getValue().value(),
-                        res.getValue().nextLink(),
-                        null));
+            .listByTableName(this.client.getEndpoint(), this.client.getApiVersion(), this.client.getSubscriptionId(),
+                resourceGroupName, workspaceName, sqlPoolName, schemaName, tableName, filter, accept, context)
+            .map(res -> new PagedResponseBase<>(res.getRequest(), res.getStatusCode(), res.getHeaders(),
+                res.getValue().value(), res.getValue().nextLink(), null));
     }
 
     /**
+     * Gets columns in a given table in a SQL pool
+     * 
      * Gets columns in a given table in a SQL pool.
-     *
+     * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
      * @param workspaceName The name of the workspace.
      * @param sqlPoolName SQL pool name.
@@ -262,26 +204,20 @@ public final class SqlPoolTableColumnsClientImpl implements SqlPoolTableColumnsC
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return columns in a given table in a SQL pool.
+     * @return columns in a given table in a SQL pool as paginated response with {@link PagedFlux}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
-    private PagedFlux<SqlPoolColumnInner> listByTableNameAsync(
-        String resourceGroupName,
-        String workspaceName,
-        String sqlPoolName,
-        String schemaName,
-        String tableName,
-        String filter) {
-        return new PagedFlux<>(
-            () ->
-                listByTableNameSinglePageAsync(
-                    resourceGroupName, workspaceName, sqlPoolName, schemaName, tableName, filter),
-            nextLink -> listByTableNameNextSinglePageAsync(nextLink));
+    private PagedFlux<SqlPoolColumnInner> listByTableNameAsync(String resourceGroupName, String workspaceName,
+        String sqlPoolName, String schemaName, String tableName, String filter) {
+        return new PagedFlux<>(() -> listByTableNameSinglePageAsync(resourceGroupName, workspaceName, sqlPoolName,
+            schemaName, tableName, filter), nextLink -> listByTableNameNextSinglePageAsync(nextLink));
     }
 
     /**
+     * Gets columns in a given table in a SQL pool
+     * 
      * Gets columns in a given table in a SQL pool.
-     *
+     * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
      * @param workspaceName The name of the workspace.
      * @param sqlPoolName SQL pool name.
@@ -290,22 +226,21 @@ public final class SqlPoolTableColumnsClientImpl implements SqlPoolTableColumnsC
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return columns in a given table in a SQL pool.
+     * @return columns in a given table in a SQL pool as paginated response with {@link PagedFlux}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
-    private PagedFlux<SqlPoolColumnInner> listByTableNameAsync(
-        String resourceGroupName, String workspaceName, String sqlPoolName, String schemaName, String tableName) {
+    private PagedFlux<SqlPoolColumnInner> listByTableNameAsync(String resourceGroupName, String workspaceName,
+        String sqlPoolName, String schemaName, String tableName) {
         final String filter = null;
-        return new PagedFlux<>(
-            () ->
-                listByTableNameSinglePageAsync(
-                    resourceGroupName, workspaceName, sqlPoolName, schemaName, tableName, filter),
-            nextLink -> listByTableNameNextSinglePageAsync(nextLink));
+        return new PagedFlux<>(() -> listByTableNameSinglePageAsync(resourceGroupName, workspaceName, sqlPoolName,
+            schemaName, tableName, filter), nextLink -> listByTableNameNextSinglePageAsync(nextLink));
     }
 
     /**
+     * Gets columns in a given table in a SQL pool
+     * 
      * Gets columns in a given table in a SQL pool.
-     *
+     * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
      * @param workspaceName The name of the workspace.
      * @param sqlPoolName SQL pool name.
@@ -316,27 +251,20 @@ public final class SqlPoolTableColumnsClientImpl implements SqlPoolTableColumnsC
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return columns in a given table in a SQL pool.
+     * @return columns in a given table in a SQL pool as paginated response with {@link PagedFlux}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
-    private PagedFlux<SqlPoolColumnInner> listByTableNameAsync(
-        String resourceGroupName,
-        String workspaceName,
-        String sqlPoolName,
-        String schemaName,
-        String tableName,
-        String filter,
-        Context context) {
-        return new PagedFlux<>(
-            () ->
-                listByTableNameSinglePageAsync(
-                    resourceGroupName, workspaceName, sqlPoolName, schemaName, tableName, filter, context),
-            nextLink -> listByTableNameNextSinglePageAsync(nextLink, context));
+    private PagedFlux<SqlPoolColumnInner> listByTableNameAsync(String resourceGroupName, String workspaceName,
+        String sqlPoolName, String schemaName, String tableName, String filter, Context context) {
+        return new PagedFlux<>(() -> listByTableNameSinglePageAsync(resourceGroupName, workspaceName, sqlPoolName,
+            schemaName, tableName, filter, context), nextLink -> listByTableNameNextSinglePageAsync(nextLink, context));
     }
 
     /**
+     * Gets columns in a given table in a SQL pool
+     * 
      * Gets columns in a given table in a SQL pool.
-     *
+     * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
      * @param workspaceName The name of the workspace.
      * @param sqlPoolName SQL pool name.
@@ -345,19 +273,21 @@ public final class SqlPoolTableColumnsClientImpl implements SqlPoolTableColumnsC
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return columns in a given table in a SQL pool.
+     * @return columns in a given table in a SQL pool as paginated response with {@link PagedIterable}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
-    public PagedIterable<SqlPoolColumnInner> listByTableName(
-        String resourceGroupName, String workspaceName, String sqlPoolName, String schemaName, String tableName) {
+    public PagedIterable<SqlPoolColumnInner> listByTableName(String resourceGroupName, String workspaceName,
+        String sqlPoolName, String schemaName, String tableName) {
         final String filter = null;
         return new PagedIterable<>(
             listByTableNameAsync(resourceGroupName, workspaceName, sqlPoolName, schemaName, tableName, filter));
     }
 
     /**
+     * Gets columns in a given table in a SQL pool
+     * 
      * Gets columns in a given table in a SQL pool.
-     *
+     * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
      * @param workspaceName The name of the workspace.
      * @param sqlPoolName SQL pool name.
@@ -368,26 +298,19 @@ public final class SqlPoolTableColumnsClientImpl implements SqlPoolTableColumnsC
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return columns in a given table in a SQL pool.
+     * @return columns in a given table in a SQL pool as paginated response with {@link PagedIterable}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
-    public PagedIterable<SqlPoolColumnInner> listByTableName(
-        String resourceGroupName,
-        String workspaceName,
-        String sqlPoolName,
-        String schemaName,
-        String tableName,
-        String filter,
-        Context context) {
-        return new PagedIterable<>(
-            listByTableNameAsync(
-                resourceGroupName, workspaceName, sqlPoolName, schemaName, tableName, filter, context));
+    public PagedIterable<SqlPoolColumnInner> listByTableName(String resourceGroupName, String workspaceName,
+        String sqlPoolName, String schemaName, String tableName, String filter, Context context) {
+        return new PagedIterable<>(listByTableNameAsync(resourceGroupName, workspaceName, sqlPoolName, schemaName,
+            tableName, filter, context));
     }
 
     /**
      * Get the next page of items.
-     *
-     * @param nextLink The nextLink parameter.
+     * 
+     * @param nextLink The URL to get the next list of items.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
@@ -399,30 +322,21 @@ public final class SqlPoolTableColumnsClientImpl implements SqlPoolTableColumnsC
             return Mono.error(new IllegalArgumentException("Parameter nextLink is required and cannot be null."));
         }
         if (this.client.getEndpoint() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getEndpoint() is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
         }
         final String accept = "application/json";
         return FluxUtil
             .withContext(context -> service.listByTableNameNext(nextLink, this.client.getEndpoint(), accept, context))
-            .<PagedResponse<SqlPoolColumnInner>>map(
-                res ->
-                    new PagedResponseBase<>(
-                        res.getRequest(),
-                        res.getStatusCode(),
-                        res.getHeaders(),
-                        res.getValue().value(),
-                        res.getValue().nextLink(),
-                        null))
+            .<PagedResponse<SqlPoolColumnInner>>map(res -> new PagedResponseBase<>(res.getRequest(),
+                res.getStatusCode(), res.getHeaders(), res.getValue().value(), res.getValue().nextLink(), null))
             .contextWrite(context -> context.putAll(FluxUtil.toReactorContext(this.client.getContext()).readOnly()));
     }
 
     /**
      * Get the next page of items.
-     *
-     * @param nextLink The nextLink parameter.
+     * 
+     * @param nextLink The URL to get the next list of items.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
@@ -430,29 +344,19 @@ public final class SqlPoolTableColumnsClientImpl implements SqlPoolTableColumnsC
      * @return a list of Sql pool columns along with {@link PagedResponse} on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    private Mono<PagedResponse<SqlPoolColumnInner>> listByTableNameNextSinglePageAsync(
-        String nextLink, Context context) {
+    private Mono<PagedResponse<SqlPoolColumnInner>> listByTableNameNextSinglePageAsync(String nextLink,
+        Context context) {
         if (nextLink == null) {
             return Mono.error(new IllegalArgumentException("Parameter nextLink is required and cannot be null."));
         }
         if (this.client.getEndpoint() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getEndpoint() is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
         }
         final String accept = "application/json";
         context = this.client.mergeContext(context);
-        return service
-            .listByTableNameNext(nextLink, this.client.getEndpoint(), accept, context)
-            .map(
-                res ->
-                    new PagedResponseBase<>(
-                        res.getRequest(),
-                        res.getStatusCode(),
-                        res.getHeaders(),
-                        res.getValue().value(),
-                        res.getValue().nextLink(),
-                        null));
+        return service.listByTableNameNext(nextLink, this.client.getEndpoint(), accept, context)
+            .map(res -> new PagedResponseBase<>(res.getRequest(), res.getStatusCode(), res.getHeaders(),
+                res.getValue().value(), res.getValue().nextLink(), null));
     }
 }

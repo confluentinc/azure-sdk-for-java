@@ -10,13 +10,20 @@ import com.azure.storage.common.implementation.Constants;
  * Represents protocols that can be set on a share.
  */
 public class ShareProtocols {
-    private final ClientLogger logger = new ClientLogger(ShareProtocols.class);
+    private static final ClientLogger LOGGER = new ClientLogger(ShareProtocols.class);
 
     private boolean smbEnabled;
-
     private boolean nfsEnabled;
 
     /**
+     * Creates a new instance of {@link ShareProtocols}.
+     */
+    public ShareProtocols() {
+    }
+
+    /**
+     * Whether SMB is enabled.
+     *
      * @return Enable SMB
      */
     public boolean isSmbEnabled() {
@@ -24,6 +31,8 @@ public class ShareProtocols {
     }
 
     /**
+     * Whether NFS is enabled.
+     *
      * @return Enable NFS
      */
     public boolean isNfsEnabled() {
@@ -31,6 +40,8 @@ public class ShareProtocols {
     }
 
     /**
+     * Sets whether SMB is enabled.
+     *
      * @param smb Enable SMB
      * @return The updated object
      */
@@ -40,6 +51,8 @@ public class ShareProtocols {
     }
 
     /**
+     * Sets whether NFS is enabled.
+     *
      * @param nfs Enable NFS
      * @return The updated object
      */
@@ -57,7 +70,7 @@ public class ShareProtocols {
     public String toString() {
         if (this.smbEnabled) {
             if (this.nfsEnabled) {
-                throw logger.logExceptionAsError(new IllegalArgumentException("SMB and NFS cannot both be set."));
+                throw LOGGER.logExceptionAsError(new IllegalArgumentException("SMB and NFS cannot both be set."));
             }
             return Constants.HeaderConstants.SMB_PROTOCOL;
         }

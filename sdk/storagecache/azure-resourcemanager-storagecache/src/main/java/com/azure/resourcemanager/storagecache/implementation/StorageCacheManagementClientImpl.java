@@ -5,6 +5,7 @@
 package com.azure.resourcemanager.storagecache.implementation;
 
 import com.azure.core.annotation.ServiceClient;
+import com.azure.core.http.HttpHeaderName;
 import com.azure.core.http.HttpHeaders;
 import com.azure.core.http.HttpPipeline;
 import com.azure.core.http.HttpResponse;
@@ -15,15 +16,20 @@ import com.azure.core.management.exception.ManagementException;
 import com.azure.core.management.polling.PollResult;
 import com.azure.core.management.polling.PollerFactory;
 import com.azure.core.util.Context;
+import com.azure.core.util.CoreUtils;
 import com.azure.core.util.logging.ClientLogger;
 import com.azure.core.util.polling.AsyncPollResponse;
 import com.azure.core.util.polling.LongRunningOperationStatus;
 import com.azure.core.util.polling.PollerFlux;
 import com.azure.core.util.serializer.SerializerAdapter;
 import com.azure.core.util.serializer.SerializerEncoding;
+import com.azure.resourcemanager.storagecache.fluent.AmlFilesystemsClient;
 import com.azure.resourcemanager.storagecache.fluent.AscOperationsClient;
+import com.azure.resourcemanager.storagecache.fluent.AscUsagesClient;
 import com.azure.resourcemanager.storagecache.fluent.CachesClient;
+import com.azure.resourcemanager.storagecache.fluent.ImportJobsClient;
 import com.azure.resourcemanager.storagecache.fluent.OperationsClient;
+import com.azure.resourcemanager.storagecache.fluent.ResourceProvidersClient;
 import com.azure.resourcemanager.storagecache.fluent.SkusClient;
 import com.azure.resourcemanager.storagecache.fluent.StorageCacheManagementClient;
 import com.azure.resourcemanager.storagecache.fluent.StorageTargetOperationsClient;
@@ -35,169 +41,246 @@ import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
-import java.util.Map;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-/** Initializes a new instance of the StorageCacheManagementClientImpl type. */
+/**
+ * Initializes a new instance of the StorageCacheManagementClientImpl type.
+ */
 @ServiceClient(builder = StorageCacheManagementClientBuilder.class)
 public final class StorageCacheManagementClientImpl implements StorageCacheManagementClient {
-    private final ClientLogger logger = new ClientLogger(StorageCacheManagementClientImpl.class);
-
     /**
-     * Subscription credentials which uniquely identify Microsoft Azure subscription. The subscription ID forms part of
-     * the URI for every service call.
+     * The ID of the target subscription.
      */
     private final String subscriptionId;
 
     /**
-     * Gets Subscription credentials which uniquely identify Microsoft Azure subscription. The subscription ID forms
-     * part of the URI for every service call.
-     *
+     * Gets The ID of the target subscription.
+     * 
      * @return the subscriptionId value.
      */
     public String getSubscriptionId() {
         return this.subscriptionId;
     }
 
-    /** server parameter. */
+    /**
+     * server parameter.
+     */
     private final String endpoint;
 
     /**
      * Gets server parameter.
-     *
+     * 
      * @return the endpoint value.
      */
     public String getEndpoint() {
         return this.endpoint;
     }
 
-    /** Api Version. */
+    /**
+     * Api Version.
+     */
     private final String apiVersion;
 
     /**
      * Gets Api Version.
-     *
+     * 
      * @return the apiVersion value.
      */
     public String getApiVersion() {
         return this.apiVersion;
     }
 
-    /** The HTTP pipeline to send requests through. */
+    /**
+     * The HTTP pipeline to send requests through.
+     */
     private final HttpPipeline httpPipeline;
 
     /**
      * Gets The HTTP pipeline to send requests through.
-     *
+     * 
      * @return the httpPipeline value.
      */
     public HttpPipeline getHttpPipeline() {
         return this.httpPipeline;
     }
 
-    /** The serializer to serialize an object into a string. */
+    /**
+     * The serializer to serialize an object into a string.
+     */
     private final SerializerAdapter serializerAdapter;
 
     /**
      * Gets The serializer to serialize an object into a string.
-     *
+     * 
      * @return the serializerAdapter value.
      */
     SerializerAdapter getSerializerAdapter() {
         return this.serializerAdapter;
     }
 
-    /** The default poll interval for long-running operation. */
+    /**
+     * The default poll interval for long-running operation.
+     */
     private final Duration defaultPollInterval;
 
     /**
      * Gets The default poll interval for long-running operation.
-     *
+     * 
      * @return the defaultPollInterval value.
      */
     public Duration getDefaultPollInterval() {
         return this.defaultPollInterval;
     }
 
-    /** The OperationsClient object to access its operations. */
+    /**
+     * The AmlFilesystemsClient object to access its operations.
+     */
+    private final AmlFilesystemsClient amlFilesystems;
+
+    /**
+     * Gets the AmlFilesystemsClient object to access its operations.
+     * 
+     * @return the AmlFilesystemsClient object.
+     */
+    public AmlFilesystemsClient getAmlFilesystems() {
+        return this.amlFilesystems;
+    }
+
+    /**
+     * The ImportJobsClient object to access its operations.
+     */
+    private final ImportJobsClient importJobs;
+
+    /**
+     * Gets the ImportJobsClient object to access its operations.
+     * 
+     * @return the ImportJobsClient object.
+     */
+    public ImportJobsClient getImportJobs() {
+        return this.importJobs;
+    }
+
+    /**
+     * The ResourceProvidersClient object to access its operations.
+     */
+    private final ResourceProvidersClient resourceProviders;
+
+    /**
+     * Gets the ResourceProvidersClient object to access its operations.
+     * 
+     * @return the ResourceProvidersClient object.
+     */
+    public ResourceProvidersClient getResourceProviders() {
+        return this.resourceProviders;
+    }
+
+    /**
+     * The OperationsClient object to access its operations.
+     */
     private final OperationsClient operations;
 
     /**
      * Gets the OperationsClient object to access its operations.
-     *
+     * 
      * @return the OperationsClient object.
      */
     public OperationsClient getOperations() {
         return this.operations;
     }
 
-    /** The SkusClient object to access its operations. */
+    /**
+     * The SkusClient object to access its operations.
+     */
     private final SkusClient skus;
 
     /**
      * Gets the SkusClient object to access its operations.
-     *
+     * 
      * @return the SkusClient object.
      */
     public SkusClient getSkus() {
         return this.skus;
     }
 
-    /** The UsageModelsClient object to access its operations. */
+    /**
+     * The UsageModelsClient object to access its operations.
+     */
     private final UsageModelsClient usageModels;
 
     /**
      * Gets the UsageModelsClient object to access its operations.
-     *
+     * 
      * @return the UsageModelsClient object.
      */
     public UsageModelsClient getUsageModels() {
         return this.usageModels;
     }
 
-    /** The AscOperationsClient object to access its operations. */
+    /**
+     * The AscOperationsClient object to access its operations.
+     */
     private final AscOperationsClient ascOperations;
 
     /**
      * Gets the AscOperationsClient object to access its operations.
-     *
+     * 
      * @return the AscOperationsClient object.
      */
     public AscOperationsClient getAscOperations() {
         return this.ascOperations;
     }
 
-    /** The CachesClient object to access its operations. */
+    /**
+     * The AscUsagesClient object to access its operations.
+     */
+    private final AscUsagesClient ascUsages;
+
+    /**
+     * Gets the AscUsagesClient object to access its operations.
+     * 
+     * @return the AscUsagesClient object.
+     */
+    public AscUsagesClient getAscUsages() {
+        return this.ascUsages;
+    }
+
+    /**
+     * The CachesClient object to access its operations.
+     */
     private final CachesClient caches;
 
     /**
      * Gets the CachesClient object to access its operations.
-     *
+     * 
      * @return the CachesClient object.
      */
     public CachesClient getCaches() {
         return this.caches;
     }
 
-    /** The StorageTargetsClient object to access its operations. */
+    /**
+     * The StorageTargetsClient object to access its operations.
+     */
     private final StorageTargetsClient storageTargets;
 
     /**
      * Gets the StorageTargetsClient object to access its operations.
-     *
+     * 
      * @return the StorageTargetsClient object.
      */
     public StorageTargetsClient getStorageTargets() {
         return this.storageTargets;
     }
 
-    /** The StorageTargetOperationsClient object to access its operations. */
+    /**
+     * The StorageTargetOperationsClient object to access its operations.
+     */
     private final StorageTargetOperationsClient storageTargetOperations;
 
     /**
      * Gets the StorageTargetOperationsClient object to access its operations.
-     *
+     * 
      * @return the StorageTargetOperationsClient object.
      */
     public StorageTargetOperationsClient getStorageTargetOperations() {
@@ -206,32 +289,30 @@ public final class StorageCacheManagementClientImpl implements StorageCacheManag
 
     /**
      * Initializes an instance of StorageCacheManagementClient client.
-     *
+     * 
      * @param httpPipeline The HTTP pipeline to send requests through.
      * @param serializerAdapter The serializer to serialize an object into a string.
      * @param defaultPollInterval The default poll interval for long-running operation.
      * @param environment The Azure environment.
-     * @param subscriptionId Subscription credentials which uniquely identify Microsoft Azure subscription. The
-     *     subscription ID forms part of the URI for every service call.
+     * @param subscriptionId The ID of the target subscription.
      * @param endpoint server parameter.
      */
-    StorageCacheManagementClientImpl(
-        HttpPipeline httpPipeline,
-        SerializerAdapter serializerAdapter,
-        Duration defaultPollInterval,
-        AzureEnvironment environment,
-        String subscriptionId,
-        String endpoint) {
+    StorageCacheManagementClientImpl(HttpPipeline httpPipeline, SerializerAdapter serializerAdapter,
+        Duration defaultPollInterval, AzureEnvironment environment, String subscriptionId, String endpoint) {
         this.httpPipeline = httpPipeline;
         this.serializerAdapter = serializerAdapter;
         this.defaultPollInterval = defaultPollInterval;
         this.subscriptionId = subscriptionId;
         this.endpoint = endpoint;
-        this.apiVersion = "2021-09-01";
+        this.apiVersion = "2024-03-01";
+        this.amlFilesystems = new AmlFilesystemsClientImpl(this);
+        this.importJobs = new ImportJobsClientImpl(this);
+        this.resourceProviders = new ResourceProvidersClientImpl(this);
         this.operations = new OperationsClientImpl(this);
         this.skus = new SkusClientImpl(this);
         this.usageModels = new UsageModelsClientImpl(this);
         this.ascOperations = new AscOperationsClientImpl(this);
+        this.ascUsages = new AscUsagesClientImpl(this);
         this.caches = new CachesClientImpl(this);
         this.storageTargets = new StorageTargetsClientImpl(this);
         this.storageTargetOperations = new StorageTargetOperationsClientImpl(this);
@@ -239,7 +320,7 @@ public final class StorageCacheManagementClientImpl implements StorageCacheManag
 
     /**
      * Gets default client context.
-     *
+     * 
      * @return the default client context.
      */
     public Context getContext() {
@@ -248,20 +329,17 @@ public final class StorageCacheManagementClientImpl implements StorageCacheManag
 
     /**
      * Merges default client context with provided context.
-     *
+     * 
      * @param context the context to be merged with default client context.
      * @return the merged context.
      */
     public Context mergeContext(Context context) {
-        for (Map.Entry<Object, Object> entry : this.getContext().getValues().entrySet()) {
-            context = context.addData(entry.getKey(), entry.getValue());
-        }
-        return context;
+        return CoreUtils.mergeContexts(this.getContext(), context);
     }
 
     /**
      * Gets long running operation result.
-     *
+     * 
      * @param activationResponse the response of activation operation.
      * @param httpPipeline the http pipeline.
      * @param pollResultType type of poll result.
@@ -271,26 +349,15 @@ public final class StorageCacheManagementClientImpl implements StorageCacheManag
      * @param <U> type of final result.
      * @return poller flux for poll result and final result.
      */
-    public <T, U> PollerFlux<PollResult<T>, U> getLroResult(
-        Mono<Response<Flux<ByteBuffer>>> activationResponse,
-        HttpPipeline httpPipeline,
-        Type pollResultType,
-        Type finalResultType,
-        Context context) {
-        return PollerFactory
-            .create(
-                serializerAdapter,
-                httpPipeline,
-                pollResultType,
-                finalResultType,
-                defaultPollInterval,
-                activationResponse,
-                context);
+    public <T, U> PollerFlux<PollResult<T>, U> getLroResult(Mono<Response<Flux<ByteBuffer>>> activationResponse,
+        HttpPipeline httpPipeline, Type pollResultType, Type finalResultType, Context context) {
+        return PollerFactory.create(serializerAdapter, httpPipeline, pollResultType, finalResultType,
+            defaultPollInterval, activationResponse, context);
     }
 
     /**
      * Gets the final result, or an error, based on last async poll response.
-     *
+     * 
      * @param response the last async poll response.
      * @param <T> type of poll result.
      * @param <U> type of final result.
@@ -303,24 +370,21 @@ public final class StorageCacheManagementClientImpl implements StorageCacheManag
             HttpResponse errorResponse = null;
             PollResult.Error lroError = response.getValue().getError();
             if (lroError != null) {
-                errorResponse =
-                    new HttpResponseImpl(
-                        lroError.getResponseStatusCode(), lroError.getResponseHeaders(), lroError.getResponseBody());
+                errorResponse = new HttpResponseImpl(lroError.getResponseStatusCode(), lroError.getResponseHeaders(),
+                    lroError.getResponseBody());
 
                 errorMessage = response.getValue().getError().getMessage();
                 String errorBody = response.getValue().getError().getResponseBody();
                 if (errorBody != null) {
                     // try to deserialize error body to ManagementError
                     try {
-                        managementError =
-                            this
-                                .getSerializerAdapter()
-                                .deserialize(errorBody, ManagementError.class, SerializerEncoding.JSON);
+                        managementError = this.getSerializerAdapter()
+                            .deserialize(errorBody, ManagementError.class, SerializerEncoding.JSON);
                         if (managementError.getCode() == null || managementError.getMessage() == null) {
                             managementError = null;
                         }
                     } catch (IOException | RuntimeException ioe) {
-                        logger.logThrowableAsWarning(ioe);
+                        LOGGER.logThrowableAsWarning(ioe);
                     }
                 }
             } else {
@@ -356,7 +420,7 @@ public final class StorageCacheManagementClientImpl implements StorageCacheManag
         }
 
         public String getHeaderValue(String s) {
-            return httpHeaders.getValue(s);
+            return httpHeaders.getValue(HttpHeaderName.fromString(s));
         }
 
         public HttpHeaders getHeaders() {
@@ -379,4 +443,6 @@ public final class StorageCacheManagementClientImpl implements StorageCacheManag
             return Mono.just(new String(responseBody, charset));
         }
     }
+
+    private static final ClientLogger LOGGER = new ClientLogger(StorageCacheManagementClientImpl.class);
 }

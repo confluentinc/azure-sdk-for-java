@@ -5,35 +5,56 @@
 package com.azure.resourcemanager.applicationinsights.models;
 
 import com.azure.core.util.ExpandableStringEnum;
-import com.fasterxml.jackson.annotation.JsonCreator;
 import java.util.Collection;
 
-/** Defines values for ItemType. */
+/**
+ * Enum indicating the type of the Analytics item.
+ */
 public final class ItemType extends ExpandableStringEnum<ItemType> {
-    /** Static value query for ItemType. */
+    /**
+     * Static value none for ItemType.
+     */
+    public static final ItemType NONE = fromString("none");
+
+    /**
+     * Static value query for ItemType.
+     */
     public static final ItemType QUERY = fromString("query");
 
-    /** Static value function for ItemType. */
-    public static final ItemType FUNCTION = fromString("function");
-
-    /** Static value folder for ItemType. */
-    public static final ItemType FOLDER = fromString("folder");
-
-    /** Static value recent for ItemType. */
+    /**
+     * Static value recent for ItemType.
+     */
     public static final ItemType RECENT = fromString("recent");
 
     /**
+     * Static value function for ItemType.
+     */
+    public static final ItemType FUNCTION = fromString("function");
+
+    /**
+     * Creates a new instance of ItemType value.
+     * 
+     * @deprecated Use the {@link #fromString(String)} factory method.
+     */
+    @Deprecated
+    public ItemType() {
+    }
+
+    /**
      * Creates or finds a ItemType from its string representation.
-     *
+     * 
      * @param name a name to look for.
      * @return the corresponding ItemType.
      */
-    @JsonCreator
     public static ItemType fromString(String name) {
         return fromString(name, ItemType.class);
     }
 
-    /** @return known ItemType values. */
+    /**
+     * Gets known ItemType values.
+     * 
+     * @return known ItemType values.
+     */
     public static Collection<ItemType> values() {
         return values(ItemType.class);
     }

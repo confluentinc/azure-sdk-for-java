@@ -90,6 +90,10 @@ public final class RemediationImpl implements Remediation, Remediation.Definitio
         return this.innerModel().failureThreshold();
     }
 
+    public String resourceGroupName() {
+        return resourceGroupName;
+    }
+
     public RemediationInner innerModel() {
         return this.innerObject;
     }
@@ -108,24 +112,19 @@ public final class RemediationImpl implements Remediation, Remediation.Definitio
     }
 
     public Remediation create() {
-        this.innerObject =
-            serviceManager
-                .serviceClient()
-                .getRemediations()
-                .createOrUpdateAtResourceGroupWithResponse(
-                    resourceGroupName, remediationName, this.innerModel(), Context.NONE)
-                .getValue();
+        this.innerObject = serviceManager.serviceClient()
+            .getRemediations()
+            .createOrUpdateAtResourceGroupWithResponse(resourceGroupName, remediationName, this.innerModel(),
+                Context.NONE)
+            .getValue();
         return this;
     }
 
     public Remediation create(Context context) {
-        this.innerObject =
-            serviceManager
-                .serviceClient()
-                .getRemediations()
-                .createOrUpdateAtResourceGroupWithResponse(
-                    resourceGroupName, remediationName, this.innerModel(), context)
-                .getValue();
+        this.innerObject = serviceManager.serviceClient()
+            .getRemediations()
+            .createOrUpdateAtResourceGroupWithResponse(resourceGroupName, remediationName, this.innerModel(), context)
+            .getValue();
         return this;
     }
 
@@ -140,52 +139,43 @@ public final class RemediationImpl implements Remediation, Remediation.Definitio
     }
 
     public Remediation apply() {
-        this.innerObject =
-            serviceManager
-                .serviceClient()
-                .getRemediations()
-                .createOrUpdateAtResourceGroupWithResponse(
-                    resourceGroupName, remediationName, this.innerModel(), Context.NONE)
-                .getValue();
+        this.innerObject = serviceManager.serviceClient()
+            .getRemediations()
+            .createOrUpdateAtResourceGroupWithResponse(resourceGroupName, remediationName, this.innerModel(),
+                Context.NONE)
+            .getValue();
         return this;
     }
 
     public Remediation apply(Context context) {
-        this.innerObject =
-            serviceManager
-                .serviceClient()
-                .getRemediations()
-                .createOrUpdateAtResourceGroupWithResponse(
-                    resourceGroupName, remediationName, this.innerModel(), context)
-                .getValue();
+        this.innerObject = serviceManager.serviceClient()
+            .getRemediations()
+            .createOrUpdateAtResourceGroupWithResponse(resourceGroupName, remediationName, this.innerModel(), context)
+            .getValue();
         return this;
     }
 
-    RemediationImpl(
-        RemediationInner innerObject, com.azure.resourcemanager.policyinsights.PolicyInsightsManager serviceManager) {
+    RemediationImpl(RemediationInner innerObject,
+        com.azure.resourcemanager.policyinsights.PolicyInsightsManager serviceManager) {
         this.innerObject = innerObject;
         this.serviceManager = serviceManager;
-        this.resourceGroupName = Utils.getValueFromIdByName(innerObject.id(), "resourceGroups");
-        this.remediationName = Utils.getValueFromIdByName(innerObject.id(), "remediations");
+        this.resourceGroupName = ResourceManagerUtils.getValueFromIdByName(innerObject.id(), "resourceGroups");
+        this.remediationName = ResourceManagerUtils.getValueFromIdByName(innerObject.id(), "remediations");
     }
 
     public Remediation refresh() {
-        this.innerObject =
-            serviceManager
-                .serviceClient()
-                .getRemediations()
-                .getByResourceGroupWithResponse(resourceGroupName, remediationName, Context.NONE)
-                .getValue();
+        this.innerObject = serviceManager.serviceClient()
+            .getRemediations()
+            .getByResourceGroupWithResponse(resourceGroupName, remediationName, Context.NONE)
+            .getValue();
         return this;
     }
 
     public Remediation refresh(Context context) {
-        this.innerObject =
-            serviceManager
-                .serviceClient()
-                .getRemediations()
-                .getByResourceGroupWithResponse(resourceGroupName, remediationName, context)
-                .getValue();
+        this.innerObject = serviceManager.serviceClient()
+            .getRemediations()
+            .getByResourceGroupWithResponse(resourceGroupName, remediationName, context)
+            .getValue();
         return this;
     }
 
@@ -194,19 +184,17 @@ public final class RemediationImpl implements Remediation, Remediation.Definitio
     }
 
     public PagedIterable<RemediationDeployment> listDeploymentsAtResourceGroup(Integer top, Context context) {
-        return serviceManager
-            .remediations()
+        return serviceManager.remediations()
             .listDeploymentsAtResourceGroup(resourceGroupName, remediationName, top, context);
+    }
+
+    public Response<Remediation> cancelAtResourceGroupWithResponse(Context context) {
+        return serviceManager.remediations()
+            .cancelAtResourceGroupWithResponse(resourceGroupName, remediationName, context);
     }
 
     public Remediation cancelAtResourceGroup() {
         return serviceManager.remediations().cancelAtResourceGroup(resourceGroupName, remediationName);
-    }
-
-    public Response<Remediation> cancelAtResourceGroupWithResponse(Context context) {
-        return serviceManager
-            .remediations()
-            .cancelAtResourceGroupWithResponse(resourceGroupName, remediationName, context);
     }
 
     public RemediationImpl withPolicyAssignmentId(String policyAssignmentId) {

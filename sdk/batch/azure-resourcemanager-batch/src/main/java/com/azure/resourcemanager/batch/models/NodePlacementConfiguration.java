@@ -5,27 +5,35 @@
 package com.azure.resourcemanager.batch.models;
 
 import com.azure.core.annotation.Fluent;
-import com.azure.core.util.logging.ClientLogger;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.azure.json.JsonReader;
+import com.azure.json.JsonSerializable;
+import com.azure.json.JsonToken;
+import com.azure.json.JsonWriter;
+import java.io.IOException;
 
-/** Allocation configuration used by Batch Service to provision the nodes. */
+/**
+ * Node placement configuration for batch pools.
+ * 
+ * Allocation configuration used by Batch Service to provision the nodes.
+ */
 @Fluent
-public final class NodePlacementConfiguration {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(NodePlacementConfiguration.class);
-
+public final class NodePlacementConfiguration implements JsonSerializable<NodePlacementConfiguration> {
     /*
-     * The placement policy for allocating nodes in the pool. Allocation policy
-     * used by Batch Service to provision the nodes. If not specified, Batch
-     * will use the regional policy.
+     * Allocation policy used by Batch Service to provision the nodes. If not specified, Batch will use the regional
+     * policy.
      */
-    @JsonProperty(value = "policy")
     private NodePlacementPolicyType policy;
 
     /**
-     * Get the policy property: The placement policy for allocating nodes in the pool. Allocation policy used by Batch
-     * Service to provision the nodes. If not specified, Batch will use the regional policy.
-     *
+     * Creates an instance of NodePlacementConfiguration class.
+     */
+    public NodePlacementConfiguration() {
+    }
+
+    /**
+     * Get the policy property: Allocation policy used by Batch Service to provision the nodes. If not specified, Batch
+     * will use the regional policy.
+     * 
      * @return the policy value.
      */
     public NodePlacementPolicyType policy() {
@@ -33,9 +41,9 @@ public final class NodePlacementConfiguration {
     }
 
     /**
-     * Set the policy property: The placement policy for allocating nodes in the pool. Allocation policy used by Batch
-     * Service to provision the nodes. If not specified, Batch will use the regional policy.
-     *
+     * Set the policy property: Allocation policy used by Batch Service to provision the nodes. If not specified, Batch
+     * will use the regional policy.
+     * 
      * @param policy the policy value to set.
      * @return the NodePlacementConfiguration object itself.
      */
@@ -46,9 +54,46 @@ public final class NodePlacementConfiguration {
 
     /**
      * Validates the instance.
-     *
+     * 
      * @throws IllegalArgumentException thrown if the instance is not valid.
      */
     public void validate() {
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public JsonWriter toJson(JsonWriter jsonWriter) throws IOException {
+        jsonWriter.writeStartObject();
+        jsonWriter.writeStringField("policy", this.policy == null ? null : this.policy.toString());
+        return jsonWriter.writeEndObject();
+    }
+
+    /**
+     * Reads an instance of NodePlacementConfiguration from the JsonReader.
+     * 
+     * @param jsonReader The JsonReader being read.
+     * @return An instance of NodePlacementConfiguration if the JsonReader was pointing to an instance of it, or null if
+     * it was pointing to JSON null.
+     * @throws IOException If an error occurs while reading the NodePlacementConfiguration.
+     */
+    public static NodePlacementConfiguration fromJson(JsonReader jsonReader) throws IOException {
+        return jsonReader.readObject(reader -> {
+            NodePlacementConfiguration deserializedNodePlacementConfiguration = new NodePlacementConfiguration();
+            while (reader.nextToken() != JsonToken.END_OBJECT) {
+                String fieldName = reader.getFieldName();
+                reader.nextToken();
+
+                if ("policy".equals(fieldName)) {
+                    deserializedNodePlacementConfiguration.policy
+                        = NodePlacementPolicyType.fromString(reader.getString());
+                } else {
+                    reader.skipChildren();
+                }
+            }
+
+            return deserializedNodePlacementConfiguration;
+        });
     }
 }

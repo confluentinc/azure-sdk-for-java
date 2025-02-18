@@ -62,6 +62,18 @@ public final class AzureCommunicationCallingServerServiceImpl {
         return this.serializerAdapter;
     }
 
+    /** The ServerCallingsImpl object to access its operations. */
+    private final ServerCallingsImpl serverCallings;
+
+    /**
+     * Gets the ServerCallingsImpl object to access its operations.
+     *
+     * @return the ServerCallingsImpl object.
+     */
+    public ServerCallingsImpl getServerCallings() {
+        return this.serverCallings;
+    }
+
     /** The CallConnectionsImpl object to access its operations. */
     private final CallConnectionsImpl callConnections;
 
@@ -72,6 +84,18 @@ public final class AzureCommunicationCallingServerServiceImpl {
      */
     public CallConnectionsImpl getCallConnections() {
         return this.callConnections;
+    }
+
+    /** The ContentsImpl object to access its operations. */
+    private final ContentsImpl contents;
+
+    /**
+     * Gets the ContentsImpl object to access its operations.
+     *
+     * @return the ContentsImpl object.
+     */
+    public ContentsImpl getContents() {
+        return this.contents;
     }
 
     /** The ServerCallsImpl object to access its operations. */
@@ -93,13 +117,8 @@ public final class AzureCommunicationCallingServerServiceImpl {
      * @param apiVersion Api Version.
      */
     AzureCommunicationCallingServerServiceImpl(String endpoint, String apiVersion) {
-        this(
-                new HttpPipelineBuilder()
-                        .policies(new UserAgentPolicy(), new RetryPolicy(), new CookiePolicy())
-                        .build(),
-                JacksonAdapter.createDefaultSerializerAdapter(),
-                endpoint,
-                apiVersion);
+        this(new HttpPipelineBuilder().policies(new UserAgentPolicy(), new RetryPolicy(), new CookiePolicy()).build(),
+            JacksonAdapter.createDefaultSerializerAdapter(), endpoint, apiVersion);
     }
 
     /**
@@ -121,13 +140,15 @@ public final class AzureCommunicationCallingServerServiceImpl {
      * @param endpoint The endpoint of the Azure Communication resource.
      * @param apiVersion Api Version.
      */
-    AzureCommunicationCallingServerServiceImpl(
-            HttpPipeline httpPipeline, SerializerAdapter serializerAdapter, String endpoint, String apiVersion) {
+    AzureCommunicationCallingServerServiceImpl(HttpPipeline httpPipeline, SerializerAdapter serializerAdapter,
+        String endpoint, String apiVersion) {
         this.httpPipeline = httpPipeline;
         this.serializerAdapter = serializerAdapter;
         this.endpoint = endpoint;
         this.apiVersion = apiVersion;
+        this.serverCallings = new ServerCallingsImpl(this);
         this.callConnections = new CallConnectionsImpl(this);
+        this.contents = new ContentsImpl(this);
         this.serverCalls = new ServerCallsImpl(this);
     }
 }

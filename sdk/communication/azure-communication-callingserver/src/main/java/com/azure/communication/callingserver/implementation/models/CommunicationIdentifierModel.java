@@ -5,41 +5,44 @@
 package com.azure.communication.callingserver.implementation.models;
 
 import com.azure.core.annotation.Fluent;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.azure.json.JsonReader;
+import com.azure.json.JsonSerializable;
+import com.azure.json.JsonToken;
+import com.azure.json.JsonWriter;
 
-/**
- * Identifies a participant in Azure Communication services. A participant is, for example, a phone number or an Azure
- * communication user. This model must be interpreted as a union: Apart from rawId, at most one further property may be
- * set.
- */
+import java.io.IOException;
+import java.util.Objects;
+
+/** The CommunicationIdentifierModel model. */
 @Fluent
-public final class CommunicationIdentifierModel {
+public final class CommunicationIdentifierModel implements JsonSerializable<CommunicationIdentifierModel> {
     /*
-     * Raw Id of the identifier. Optional in requests, required in responses.
+     * Full ID of the identifier.
      */
-    @JsonProperty(value = "rawId")
     private String rawId;
+
+    /*
+     * Type of CommunicationIdentifierModel.
+     */
+    private CommunicationIdentifierModelKind kind;
 
     /*
      * The communication user.
      */
-    @JsonProperty(value = "communicationUser")
     private CommunicationUserIdentifierModel communicationUser;
 
     /*
      * The phone number.
      */
-    @JsonProperty(value = "phoneNumber")
     private PhoneNumberIdentifierModel phoneNumber;
 
     /*
      * The Microsoft Teams user.
      */
-    @JsonProperty(value = "microsoftTeamsUser")
     private MicrosoftTeamsUserIdentifierModel microsoftTeamsUser;
 
     /**
-     * Get the rawId property: Raw Id of the identifier. Optional in requests, required in responses.
+     * Get the rawId property: Full ID of the identifier.
      *
      * @return the rawId value.
      */
@@ -48,13 +51,33 @@ public final class CommunicationIdentifierModel {
     }
 
     /**
-     * Set the rawId property: Raw Id of the identifier. Optional in requests, required in responses.
+     * Set the rawId property: Full ID of the identifier.
      *
      * @param rawId the rawId value to set.
      * @return the CommunicationIdentifierModel object itself.
      */
     public CommunicationIdentifierModel setRawId(String rawId) {
         this.rawId = rawId;
+        return this;
+    }
+
+    /**
+     * Get the kind property: Type of CommunicationIdentifierModel.
+     *
+     * @return the kind value.
+     */
+    public CommunicationIdentifierModelKind getKind() {
+        return this.kind;
+    }
+
+    /**
+     * Set the kind property: Type of CommunicationIdentifierModel.
+     *
+     * @param kind the kind value to set.
+     * @return the CommunicationIdentifierModel object itself.
+     */
+    public CommunicationIdentifierModel setKind(CommunicationIdentifierModelKind kind) {
+        this.kind = kind;
         return this;
     }
 
@@ -116,5 +139,51 @@ public final class CommunicationIdentifierModel {
     public CommunicationIdentifierModel setMicrosoftTeamsUser(MicrosoftTeamsUserIdentifierModel microsoftTeamsUser) {
         this.microsoftTeamsUser = microsoftTeamsUser;
         return this;
+    }
+
+    @Override
+    public JsonWriter toJson(JsonWriter jsonWriter) throws IOException {
+        return jsonWriter.writeStartObject()
+            .writeStringField("rawId", rawId)
+            .writeStringField("kind", Objects.toString(kind, null))
+            .writeJsonField("communicationUser", communicationUser)
+            .writeJsonField("phoneNumber", phoneNumber)
+            .writeJsonField("microsoftTeamsUser", microsoftTeamsUser)
+            .writeEndObject();
+    }
+
+    /**
+     * Reads an instance of {@link CommunicationIdentifierModel} from the {@link JsonReader}.
+     *
+     * @param jsonReader The {@link JsonReader} to read from.
+     * @return An instance of {@link CommunicationIdentifierModel}, or null if the {@link JsonReader} was pointing to
+     * {@link JsonToken#NULL}.
+     * @throws IOException If an error occurs while reading the {@link JsonReader}.
+     */
+    public static CommunicationIdentifierModel fromJson(JsonReader jsonReader) throws IOException {
+        return jsonReader.readObject(reader -> {
+            CommunicationIdentifierModel model = new CommunicationIdentifierModel();
+
+            while (reader.nextToken() != JsonToken.END_OBJECT) {
+                String fieldName = reader.getFieldName();
+                reader.nextToken();
+
+                if ("rawId".equals(fieldName)) {
+                    model.rawId = reader.getString();
+                } else if ("kind".equals(fieldName)) {
+                    model.kind = CommunicationIdentifierModelKind.fromString(reader.getString());
+                } else if ("communicationUser".equals(fieldName)) {
+                    model.communicationUser = CommunicationUserIdentifierModel.fromJson(reader);
+                } else if ("phoneNumber".equals(fieldName)) {
+                    model.phoneNumber = PhoneNumberIdentifierModel.fromJson(reader);
+                } else if ("microsoftTeamsUser".equals(fieldName)) {
+                    model.microsoftTeamsUser = MicrosoftTeamsUserIdentifierModel.fromJson(reader);
+                } else {
+                    reader.skipChildren();
+                }
+            }
+
+            return model;
+        });
     }
 }

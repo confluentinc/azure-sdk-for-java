@@ -4,6 +4,12 @@
 package com.azure.messaging.eventgrid;
 
 import com.azure.core.annotation.ServiceClientBuilder;
+import com.azure.core.client.traits.AzureKeyCredentialTrait;
+import com.azure.core.client.traits.AzureSasCredentialTrait;
+import com.azure.core.client.traits.ConfigurationTrait;
+import com.azure.core.client.traits.EndpointTrait;
+import com.azure.core.client.traits.HttpTrait;
+import com.azure.core.client.traits.TokenCredentialTrait;
 import com.azure.core.credential.AzureKeyCredential;
 import com.azure.core.credential.AzureSasCredential;
 import com.azure.core.credential.TokenCredential;
@@ -13,6 +19,7 @@ import com.azure.core.http.HttpHeaders;
 import com.azure.core.http.HttpPipeline;
 import com.azure.core.http.HttpPipelineBuilder;
 import com.azure.core.http.policy.AddDatePolicy;
+import com.azure.core.http.policy.AddHeadersFromContextPolicy;
 import com.azure.core.http.policy.AddHeadersPolicy;
 import com.azure.core.http.policy.AzureKeyCredentialPolicy;
 import com.azure.core.http.policy.BearerTokenAuthenticationPolicy;
@@ -21,6 +28,7 @@ import com.azure.core.http.policy.HttpLoggingPolicy;
 import com.azure.core.http.policy.HttpPipelinePolicy;
 import com.azure.core.http.policy.HttpPolicyProviders;
 import com.azure.core.http.policy.RequestIdPolicy;
+import com.azure.core.http.policy.RetryOptions;
 import com.azure.core.http.policy.RetryPolicy;
 import com.azure.core.http.policy.UserAgentPolicy;
 import com.azure.core.models.CloudEvent;
@@ -28,8 +36,11 @@ import com.azure.core.util.BinaryData;
 import com.azure.core.util.ClientOptions;
 import com.azure.core.util.Configuration;
 import com.azure.core.util.CoreUtils;
+import com.azure.core.util.TracingOptions;
+import com.azure.core.util.builder.ClientBuilderUtil;
 import com.azure.core.util.logging.ClientLogger;
-import com.azure.core.util.tracing.TracerProxy;
+import com.azure.core.util.tracing.Tracer;
+import com.azure.core.util.tracing.TracerProvider;
 import com.azure.messaging.eventgrid.implementation.CloudEventTracingPipelinePolicy;
 
 import java.net.MalformedURLException;
@@ -39,14 +50,54 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+import static com.azure.messaging.eventgrid.implementation.Constants.EVENT_GRID_TRACING_NAMESPACE_VALUE;
+
 /**
  * A Builder class to create service clients that can publish events to EventGrid.
+ *
+ * This builder will construct publishers for {@link CloudEvent}, {@link EventGridEvent}, and custom events. It will do
+ * for both sync and async clients.
+ *
+ * <p><b>Sample: Create a {@link EventGridEvent} asynchronous publisher client.</b>
+ * <!-- src_embed com.azure.messaging.eventgrid.EventGridPublisherAsyncClient#CreateEventGridEventClient -->
+ * <pre>
+ * &#47;&#47; Create a client to send events of EventGridEvent schema
+ * EventGridPublisherAsyncClient&lt;EventGridEvent&gt; eventGridEventPublisherClient = new EventGridPublisherClientBuilder&#40;&#41;
+ *     .endpoint&#40;System.getenv&#40;&quot;AZURE_EVENTGRID_EVENT_ENDPOINT&quot;&#41;&#41;  &#47;&#47; make sure it accepts EventGridEvent
+ *     .credential&#40;new AzureKeyCredential&#40;System.getenv&#40;&quot;AZURE_EVENTGRID_EVENT_KEY&quot;&#41;&#41;&#41;
+ *     .buildEventGridEventPublisherAsyncClient&#40;&#41;;
+ * </pre>
+ * <!-- end com.azure.messaging.eventgrid.EventGridPublisherAsyncClient#CreateEventGridEventClient -->
+ * <p><b>Sample: Create a {@link CloudEvent} synchronous client</b>
+ * <!-- src_embed com.azure.messaging.eventgrid.EventGridPublisherClient#CreateCloudEventClient -->
+ * <pre>
+ * &#47;&#47; Create a client to send events of CloudEvent schema &#40;com.azure.core.models.CloudEvent&#41;
+ * EventGridPublisherClient&lt;CloudEvent&gt; cloudEventPublisherClient = new EventGridPublisherClientBuilder&#40;&#41;
+ *     .endpoint&#40;System.getenv&#40;&quot;AZURE_EVENTGRID_CLOUDEVENT_ENDPOINT&quot;&#41;&#41;  &#47;&#47; make sure it accepts CloudEvent
+ *     .credential&#40;new AzureKeyCredential&#40;System.getenv&#40;&quot;AZURE_EVENTGRID_CLOUDEVENT_KEY&quot;&#41;&#41;&#41;
+ *     .buildCloudEventPublisherClient&#40;&#41;;
+ * </pre>
+ * <!-- end com.azure.messaging.eventgrid.EventGridPublisherClient#CreateCloudEventClient -->
+ * <p><b>Sample: Create a custom event asynchronous client</b>
+ * <!-- src_embed com.azure.messaging.eventgrid.EventGridPublisherAsyncClient#CreateCustomEventClient -->
+ * <pre>
+ * &#47;&#47; Create a client to send events of custom event
+ * EventGridPublisherAsyncClient&lt;BinaryData&gt; customEventPublisherClient = new EventGridPublisherClientBuilder&#40;&#41;
+ *     .endpoint&#40;System.getenv&#40;&quot;AZURE_CUSTOM_EVENT_ENDPOINT&quot;&#41;&#41;  &#47;&#47; make sure it accepts custom events
+ *     .credential&#40;new AzureKeyCredential&#40;System.getenv&#40;&quot;AZURE_CUSTOM_EVENT_KEY&quot;&#41;&#41;&#41;
+ *     .buildCustomEventPublisherAsyncClient&#40;&#41;;
+ * </pre>
+ * <!-- end com.azure.messaging.eventgrid.EventGridPublisherAsyncClient#CreateCustomEventClient -->
  * @see EventGridPublisherAsyncClient
+ * @see EventGridPublisherClient
  * @see EventGridEvent
  * @see CloudEvent
  */
-@ServiceClientBuilder(serviceClients = {EventGridPublisherClient.class, EventGridPublisherAsyncClient.class})
-public final class EventGridPublisherClientBuilder {
+@ServiceClientBuilder(serviceClients = { EventGridPublisherClient.class, EventGridPublisherAsyncClient.class })
+public final class EventGridPublisherClientBuilder implements TokenCredentialTrait<EventGridPublisherClientBuilder>,
+    AzureKeyCredentialTrait<EventGridPublisherClientBuilder>, AzureSasCredentialTrait<EventGridPublisherClientBuilder>,
+    HttpTrait<EventGridPublisherClientBuilder>, ConfigurationTrait<EventGridPublisherClientBuilder>,
+    EndpointTrait<EventGridPublisherClientBuilder> {
 
     private static final String AEG_SAS_KEY = "aeg-sas-key";
 
@@ -87,6 +138,8 @@ public final class EventGridPublisherClientBuilder {
 
     private RetryPolicy retryPolicy;
 
+    private RetryOptions retryOptions;
+
     /**
      * Construct a new instance with default building settings. The endpoint and one credential method must be set
      * in order for the client to be built.
@@ -98,7 +151,6 @@ public final class EventGridPublisherClientBuilder {
         clientVersion = properties.getOrDefault(VERSION, "UnknownVersion");
     }
 
-
     /**
      * Build a publisher client with asynchronous publishing methods and the current settings. An endpoint must be set,
      * and either a pipeline with correct authentication must be set, or a credential must be set in the form of
@@ -106,46 +158,51 @@ public final class EventGridPublisherClientBuilder {
      * All other settings have defaults and are optional.
      * @return a publisher client with asynchronous publishing methods.
      * @throws NullPointerException if {@code endpoint} is null.
+     * @throws IllegalStateException If both {@link #retryOptions(RetryOptions)}
+     * and {@link #retryPolicy(RetryPolicy)} have been set.
      */
     private <T> EventGridPublisherAsyncClient<T> buildAsyncClient(Class<T> eventClass) {
         Objects.requireNonNull(endpoint, "'endpoint' is required and can not be null.");
-        EventGridServiceVersion buildServiceVersion = serviceVersion == null
-            ? EventGridServiceVersion.getLatest()
-            : serviceVersion;
 
-        if (httpPipeline != null) {
-            return new EventGridPublisherAsyncClient<T>(httpPipeline, endpoint, buildServiceVersion, eventClass);
-        }
+        return new EventGridPublisherAsyncClient<T>((httpPipeline != null ? httpPipeline : getHttpPipeline()), endpoint,
+            getEventGridServiceVersion(), eventClass);
+    }
 
-        Configuration buildConfiguration = (configuration == null)
-            ? Configuration.getGlobalConfiguration()
-            : configuration;
+    private EventGridServiceVersion getEventGridServiceVersion() {
+        EventGridServiceVersion buildServiceVersion
+            = serviceVersion == null ? EventGridServiceVersion.getLatest() : serviceVersion;
+        return buildServiceVersion;
+    }
+
+    private HttpPipeline getHttpPipeline() {
+        Configuration buildConfiguration
+            = (configuration == null) ? Configuration.getGlobalConfiguration() : configuration;
 
         // Closest to API goes first, closest to wire goes last.
         final List<HttpPipelinePolicy> httpPipelinePolicies = new ArrayList<>();
 
-        String applicationId =
-            clientOptions == null ? httpLogOptions.getApplicationId() : clientOptions.getApplicationId();
+        String applicationId
+            = clientOptions == null ? httpLogOptions.getApplicationId() : clientOptions.getApplicationId();
 
-        httpPipelinePolicies.add(new UserAgentPolicy(applicationId, clientName, clientVersion,
-            buildConfiguration));
+        httpPipelinePolicies.add(new UserAgentPolicy(applicationId, clientName, clientVersion, buildConfiguration));
+        httpPipelinePolicies.add(new AddHeadersFromContextPolicy());
         httpPipelinePolicies.add(new RequestIdPolicy());
 
         HttpPolicyProviders.addBeforeRetryPolicies(httpPipelinePolicies);
-        httpPipelinePolicies.add(retryPolicy == null ? new RetryPolicy() : retryPolicy);
+        httpPipelinePolicies.add(ClientBuilderUtil.validateAndGetRetryPolicy(retryPolicy, retryOptions));
 
         httpPipelinePolicies.add(new AddDatePolicy());
 
-        final int credentialCount = (sasToken != null ? 1 : 0) + (keyCredential != null ? 1 : 0)
-            + (tokenCredential != null ? 1 : 0);
+        final int credentialCount
+            = (sasToken != null ? 1 : 0) + (keyCredential != null ? 1 : 0) + (tokenCredential != null ? 1 : 0);
         if (credentialCount > 1) {
             throw logger.logExceptionAsError(
                 new IllegalStateException("More than 1 credentials are set while building a client. "
                     + "You should set one and only one credential of type 'TokenCredential', 'AzureSasCredential', "
                     + "or 'AzureKeyCredential'."));
         } else if (credentialCount == 0) {
-            throw logger.logExceptionAsError(
-                new IllegalStateException("Missing credential information while building a client."
+            throw logger
+                .logExceptionAsError(new IllegalStateException("Missing credential information while building a client."
                     + "You should set one and only one credential of type 'TokenCredential', 'AzureSasCredential', "
                     + "or 'AzureKeyCredential'."));
         }
@@ -157,60 +214,64 @@ public final class EventGridPublisherClientBuilder {
         } else if (keyCredential != null) {
             httpPipelinePolicies.add(new AzureKeyCredentialPolicy(AEG_SAS_KEY, keyCredential));
         } else {
-            httpPipelinePolicies.add(new BearerTokenAuthenticationPolicy(this.tokenCredential,
-                DEFAULT_EVENTGRID_SCOPE));
+            httpPipelinePolicies
+                .add(new BearerTokenAuthenticationPolicy(this.tokenCredential, DEFAULT_EVENTGRID_SCOPE));
         }
 
         httpPipelinePolicies.addAll(policies);
 
         if (clientOptions != null) {
             List<HttpHeader> httpHeaderList = new ArrayList<>();
-            clientOptions.getHeaders().forEach(header ->
-                httpHeaderList.add(new HttpHeader(header.getName(), header.getValue())));
+            clientOptions.getHeaders()
+                .forEach(header -> httpHeaderList.add(new HttpHeader(header.getName(), header.getValue())));
             policies.add(new AddHeadersPolicy(new HttpHeaders(httpHeaderList)));
         }
 
         HttpPolicyProviders.addAfterRetryPolicies(httpPipelinePolicies);
 
-        if (TracerProxy.isTracingEnabled()) {
-            httpPipelinePolicies.add(new CloudEventTracingPipelinePolicy());
+        TracingOptions tracingOptions = null;
+        if (clientOptions != null) {
+            tracingOptions = clientOptions.getTracingOptions();
         }
+
+        Tracer tracer = TracerProvider.getDefaultProvider()
+            .createTracer(clientName, clientVersion, EVENT_GRID_TRACING_NAMESPACE_VALUE, tracingOptions);
+
+        if (tracer.isEnabled()) {
+            httpPipelinePolicies.add(new CloudEventTracingPipelinePolicy(tracer));
+        }
+
         httpPipelinePolicies.add(new HttpLoggingPolicy(httpLogOptions));
 
-        HttpPipeline buildPipeline = new HttpPipelineBuilder()
-            .httpClient(httpClient)
+        HttpPipeline buildPipeline = new HttpPipelineBuilder().httpClient(httpClient)
             .policies(httpPipelinePolicies.toArray(new HttpPipelinePolicy[0]))
             .clientOptions(clientOptions)
+            .tracer(tracer)
             .build();
-
-
-        return new EventGridPublisherAsyncClient<T>(buildPipeline, endpoint, buildServiceVersion, eventClass);
+        return buildPipeline;
     }
 
     /**
      * Build a publisher client with synchronous publishing methods and the current settings. Endpoint and a credential
      * must be set (either keyCredential or sharedAccessSignatureCredential), all other settings have defaults and/or are optional.
-     * Note that currently the asynchronous client created by the method above is the recommended version for higher
-     * performance, as the synchronous client simply blocks on the same asynchronous calls.
      * @return a publisher client with synchronous publishing methods.
      */
     private <T> EventGridPublisherClient<T> buildClient(Class<T> eventClass) {
-        return new EventGridPublisherClient<T>(buildAsyncClient(eventClass));
+        Objects.requireNonNull(endpoint, "'endpoint' is required and can not be null.");
+
+        return new EventGridPublisherClient<T>((httpPipeline != null ? httpPipeline : getHttpPipeline()), endpoint,
+            getEventGridServiceVersion(), eventClass);
     }
 
-    /**
-     * Add a policy to the current pipeline.
-     * @param httpPipelinePolicy the policy to add.
-     *
-     * @return the builder itself.
-     */
+    @Override
     public EventGridPublisherClientBuilder addPolicy(HttpPipelinePolicy httpPipelinePolicy) {
         this.policies.add(Objects.requireNonNull(httpPipelinePolicy));
         return this;
     }
 
     /**
-     * Add a custom retry policy to the pipeline. The default is {@link RetryPolicy#RetryPolicy()}
+     * Add a custom retry policy to the pipeline. The default is {@link RetryPolicy#RetryPolicy()}.
+     * Setting this is mutually exclusive with using {@link #retryOptions(RetryOptions)}.
      * @param retryPolicy the retry policy to add.
      *
      * @return the builder itself.
@@ -220,62 +281,37 @@ public final class EventGridPublisherClientBuilder {
         return this;
     }
 
-    /**
-     * Sets the {@link ClientOptions} which enables various options to be set on the client. For example setting an
-     * {@code applicationId} using {@link ClientOptions#setApplicationId(String)} to configure
-     * the {@link UserAgentPolicy} for telemetry/monitoring purposes.
-     *
-     * <p>More About <a href="https://azure.github.io/azure-sdk/general_azurecore.html#telemetry-policy">Azure Core: Telemetry policy</a>
-     *
-     * @param clientOptions the {@link ClientOptions} to be set on the client.
-     * @return The updated EventGridPublisherClientBuilder object.
-     */
+    @Override
+    public EventGridPublisherClientBuilder retryOptions(RetryOptions retryOptions) {
+        this.retryOptions = retryOptions;
+        return this;
+    }
+
+    @Override
     public EventGridPublisherClientBuilder clientOptions(ClientOptions clientOptions) {
         this.clientOptions = clientOptions;
         return this;
     }
 
-    /**
-     * Set the configuration of HTTP and Azure values. A default is already set.
-     * @param configuration the configuration to use.
-     *
-     * @return the builder itself.
-     */
+    @Override
     public EventGridPublisherClientBuilder configuration(Configuration configuration) {
         this.configuration = configuration;
         return this;
     }
 
-    /**
-     * Set the domain or topic authentication using a key obtained from Azure CLI, Azure portal, or the ARM SDKs.
-     * @param credential the key credential to use to authorize the publisher client.
-     *
-     * @return the builder itself.
-     */
+    @Override
     public EventGridPublisherClientBuilder credential(AzureKeyCredential credential) {
         this.keyCredential = credential;
         return this;
     }
 
-    /**
-     * Set the domain or topic authentication using an already obtained Shared Access Signature token.
-     * @param credential the sas credential to use.
-     *
-     * @return the builder itself.
-     */
+    @Override
     public EventGridPublisherClientBuilder credential(AzureSasCredential credential) {
         this.sasToken = credential;
         return this;
     }
 
-    /**
-     * Set the domain or topic authentication using Azure Activity Directory authentication.
-     * Refer to <a href="https://github.com/Azure/azure-sdk-for-java/tree/main/sdk/identity/azure-identity">azure-identity</a>
-     *
-     * @param credential the token credential to use.
-     *
-     * @return the builder itself.
-     */
+    @Override
     public EventGridPublisherClientBuilder credential(TokenCredential credential) {
         this.tokenCredential = credential;
         return this;
@@ -290,6 +326,7 @@ public final class EventGridPublisherClientBuilder {
      * @throws NullPointerException if {@code endpoint} is null.
      * @throws IllegalArgumentException if {@code endpoint} cannot be parsed into a valid URL.
      */
+    @Override
     public EventGridPublisherClientBuilder endpoint(String endpoint) {
         try {
             new URL(Objects.requireNonNull(endpoint, "'endpoint' cannot be null."));
@@ -300,12 +337,7 @@ public final class EventGridPublisherClientBuilder {
         return this;
     }
 
-    /**
-     * Set the HTTP Client that sends requests. Will use default if not set.
-     * @param httpClient the HTTP Client to use.
-     *
-     * @return the builder itself.
-     */
+    @Override
     public EventGridPublisherClientBuilder httpClient(HttpClient httpClient) {
         if (this.httpClient != null && httpClient == null) {
             logger.info("Http client is set to null when it was not previously null");
@@ -314,23 +346,13 @@ public final class EventGridPublisherClientBuilder {
         return this;
     }
 
-    /**
-     * Configure the logging of the HTTP requests and pipeline.
-     * @param httpLogOptions the log options to use.
-     *
-     * @return the builder itself.
-     */
+    @Override
     public EventGridPublisherClientBuilder httpLogOptions(HttpLogOptions httpLogOptions) {
         this.httpLogOptions = httpLogOptions;
         return this;
     }
 
-    /**
-     * Set the HTTP pipeline to use when sending calls to the service.
-     * @param httpPipeline the pipeline to use.
-     *
-     * @return the builder itself.
-     */
+    @Override
     public EventGridPublisherClientBuilder pipeline(HttpPipeline httpPipeline) {
         if (this.httpPipeline != null && httpPipeline == null) {
             logger.info("Http client is set to null when it was not previously null");

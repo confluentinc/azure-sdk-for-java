@@ -12,11 +12,29 @@ import com.azure.resourcemanager.recoveryservicesbackup.fluent.models.ResourceGu
 import com.azure.resourcemanager.recoveryservicesbackup.fluent.models.UnlockDeleteResponseInner;
 import com.azure.resourcemanager.recoveryservicesbackup.models.UnlockDeleteRequest;
 
-/** An instance of this class provides access to all the operations defined in ResourceGuardProxyOperationsClient. */
+/**
+ * An instance of this class provides access to all the operations defined in ResourceGuardProxyOperationsClient.
+ */
 public interface ResourceGuardProxyOperationsClient {
     /**
      * Returns ResourceGuardProxy under vault and with the name referenced in request.
-     *
+     * 
+     * @param vaultName The name of the recovery services vault.
+     * @param resourceGroupName The name of the resource group where the recovery services vault is present.
+     * @param resourceGuardProxyName The resourceGuardProxyName parameter.
+     * @param context The context to associate with this operation.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return the response body along with {@link Response}.
+     */
+    @ServiceMethod(returns = ReturnType.SINGLE)
+    Response<ResourceGuardProxyBaseResourceInner> getWithResponse(String vaultName, String resourceGroupName,
+        String resourceGuardProxyName, Context context);
+
+    /**
+     * Returns ResourceGuardProxy under vault and with the name referenced in request.
+     * 
      * @param vaultName The name of the recovery services vault.
      * @param resourceGroupName The name of the resource group where the recovery services vault is present.
      * @param resourceGuardProxyName The resourceGuardProxyName parameter.
@@ -29,54 +47,59 @@ public interface ResourceGuardProxyOperationsClient {
     ResourceGuardProxyBaseResourceInner get(String vaultName, String resourceGroupName, String resourceGuardProxyName);
 
     /**
-     * Returns ResourceGuardProxy under vault and with the name referenced in request.
-     *
+     * Add or Update ResourceGuardProxy under vault
+     * Secures vault critical operations.
+     * 
      * @param vaultName The name of the recovery services vault.
      * @param resourceGroupName The name of the resource group where the recovery services vault is present.
      * @param resourceGuardProxyName The resourceGuardProxyName parameter.
+     * @param parameters Request body for operation.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the response.
+     * @return the response body along with {@link Response}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    Response<ResourceGuardProxyBaseResourceInner> getWithResponse(
-        String vaultName, String resourceGroupName, String resourceGuardProxyName, Context context);
+    Response<ResourceGuardProxyBaseResourceInner> putWithResponse(String vaultName, String resourceGroupName,
+        String resourceGuardProxyName, ResourceGuardProxyBaseResourceInner parameters, Context context);
 
     /**
-     * Add or Update ResourceGuardProxy under vault Secures vault critical operations.
-     *
+     * Add or Update ResourceGuardProxy under vault
+     * Secures vault critical operations.
+     * 
      * @param vaultName The name of the recovery services vault.
      * @param resourceGroupName The name of the resource group where the recovery services vault is present.
      * @param resourceGuardProxyName The resourceGuardProxyName parameter.
+     * @param parameters Request body for operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
      * @return the response.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    ResourceGuardProxyBaseResourceInner put(String vaultName, String resourceGroupName, String resourceGuardProxyName);
-
-    /**
-     * Add or Update ResourceGuardProxy under vault Secures vault critical operations.
-     *
-     * @param vaultName The name of the recovery services vault.
-     * @param resourceGroupName The name of the resource group where the recovery services vault is present.
-     * @param resourceGuardProxyName The resourceGuardProxyName parameter.
-     * @param context The context to associate with this operation.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the response.
-     */
-    @ServiceMethod(returns = ReturnType.SINGLE)
-    Response<ResourceGuardProxyBaseResourceInner> putWithResponse(
-        String vaultName, String resourceGroupName, String resourceGuardProxyName, Context context);
+    ResourceGuardProxyBaseResourceInner put(String vaultName, String resourceGroupName, String resourceGuardProxyName,
+        ResourceGuardProxyBaseResourceInner parameters);
 
     /**
      * Delete ResourceGuardProxy under vault.
-     *
+     * 
+     * @param vaultName The name of the recovery services vault.
+     * @param resourceGroupName The name of the resource group where the recovery services vault is present.
+     * @param resourceGuardProxyName The resourceGuardProxyName parameter.
+     * @param context The context to associate with this operation.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return the {@link Response}.
+     */
+    @ServiceMethod(returns = ReturnType.SINGLE)
+    Response<Void> deleteWithResponse(String vaultName, String resourceGroupName, String resourceGuardProxyName,
+        Context context);
+
+    /**
+     * Delete ResourceGuardProxy under vault.
+     * 
      * @param vaultName The name of the recovery services vault.
      * @param resourceGroupName The name of the resource group where the recovery services vault is present.
      * @param resourceGuardProxyName The resourceGuardProxyName parameter.
@@ -88,24 +111,25 @@ public interface ResourceGuardProxyOperationsClient {
     void delete(String vaultName, String resourceGroupName, String resourceGuardProxyName);
 
     /**
-     * Delete ResourceGuardProxy under vault.
-     *
+     * Secures delete ResourceGuardProxy operations.
+     * 
      * @param vaultName The name of the recovery services vault.
      * @param resourceGroupName The name of the resource group where the recovery services vault is present.
      * @param resourceGuardProxyName The resourceGuardProxyName parameter.
+     * @param parameters Request body for operation.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the response.
+     * @return response of Unlock Delete API along with {@link Response}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    Response<Void> deleteWithResponse(
-        String vaultName, String resourceGroupName, String resourceGuardProxyName, Context context);
+    Response<UnlockDeleteResponseInner> unlockDeleteWithResponse(String vaultName, String resourceGroupName,
+        String resourceGuardProxyName, UnlockDeleteRequest parameters, Context context);
 
     /**
      * Secures delete ResourceGuardProxy operations.
-     *
+     * 
      * @param vaultName The name of the recovery services vault.
      * @param resourceGroupName The name of the resource group where the recovery services vault is present.
      * @param resourceGuardProxyName The resourceGuardProxyName parameter.
@@ -116,27 +140,6 @@ public interface ResourceGuardProxyOperationsClient {
      * @return response of Unlock Delete API.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    UnlockDeleteResponseInner unlockDelete(
-        String vaultName, String resourceGroupName, String resourceGuardProxyName, UnlockDeleteRequest parameters);
-
-    /**
-     * Secures delete ResourceGuardProxy operations.
-     *
-     * @param vaultName The name of the recovery services vault.
-     * @param resourceGroupName The name of the resource group where the recovery services vault is present.
-     * @param resourceGuardProxyName The resourceGuardProxyName parameter.
-     * @param parameters Request body for operation.
-     * @param context The context to associate with this operation.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return response of Unlock Delete API.
-     */
-    @ServiceMethod(returns = ReturnType.SINGLE)
-    Response<UnlockDeleteResponseInner> unlockDeleteWithResponse(
-        String vaultName,
-        String resourceGroupName,
-        String resourceGuardProxyName,
-        UnlockDeleteRequest parameters,
-        Context context);
+    UnlockDeleteResponseInner unlockDelete(String vaultName, String resourceGroupName, String resourceGuardProxyName,
+        UnlockDeleteRequest parameters);
 }

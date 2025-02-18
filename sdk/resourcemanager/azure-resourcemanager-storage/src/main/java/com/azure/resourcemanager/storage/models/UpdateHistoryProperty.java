@@ -4,61 +4,77 @@
 
 package com.azure.resourcemanager.storage.models;
 
-import com.azure.core.annotation.Immutable;
-import com.azure.core.util.logging.ClientLogger;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.azure.core.annotation.Fluent;
+import com.azure.core.util.CoreUtils;
+import com.azure.json.JsonReader;
+import com.azure.json.JsonSerializable;
+import com.azure.json.JsonToken;
+import com.azure.json.JsonWriter;
+import java.io.IOException;
 import java.time.OffsetDateTime;
 
-/** An update history of the ImmutabilityPolicy of a blob container. */
-@Immutable
-public final class UpdateHistoryProperty {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(UpdateHistoryProperty.class);
-
+/**
+ * An update history of the ImmutabilityPolicy of a blob container.
+ */
+@Fluent
+public final class UpdateHistoryProperty implements JsonSerializable<UpdateHistoryProperty> {
     /*
-     * The ImmutabilityPolicy update type of a blob container, possible values
-     * include: put, lock and extend.
+     * The ImmutabilityPolicy update type of a blob container, possible values include: put, lock and extend.
      */
-    @JsonProperty(value = "update", access = JsonProperty.Access.WRITE_ONLY)
     private ImmutabilityPolicyUpdateType update;
 
     /*
-     * The immutability period for the blobs in the container since the policy
-     * creation, in days.
+     * The immutability period for the blobs in the container since the policy creation, in days.
      */
-    @JsonProperty(value = "immutabilityPeriodSinceCreationInDays", access = JsonProperty.Access.WRITE_ONLY)
     private Integer immutabilityPeriodSinceCreationInDays;
 
     /*
      * Returns the date and time the ImmutabilityPolicy was updated.
      */
-    @JsonProperty(value = "timestamp", access = JsonProperty.Access.WRITE_ONLY)
     private OffsetDateTime timestamp;
 
     /*
      * Returns the Object ID of the user who updated the ImmutabilityPolicy.
      */
-    @JsonProperty(value = "objectIdentifier", access = JsonProperty.Access.WRITE_ONLY)
     private String objectIdentifier;
 
     /*
-     * Returns the Tenant ID that issued the token for the user who updated the
-     * ImmutabilityPolicy.
+     * Returns the Tenant ID that issued the token for the user who updated the ImmutabilityPolicy.
      */
-    @JsonProperty(value = "tenantId", access = JsonProperty.Access.WRITE_ONLY)
     private String tenantId;
 
     /*
-     * Returns the User Principal Name of the user who updated the
-     * ImmutabilityPolicy.
+     * Returns the User Principal Name of the user who updated the ImmutabilityPolicy.
      */
-    @JsonProperty(value = "upn", access = JsonProperty.Access.WRITE_ONLY)
     private String upn;
+
+    /*
+     * This property can only be changed for unlocked time-based retention policies. When enabled, new blocks can be
+     * written to an append blob while maintaining immutability protection and compliance. Only new blocks can be added
+     * and any existing blocks cannot be modified or deleted. This property cannot be changed with
+     * ExtendImmutabilityPolicy API.
+     */
+    private Boolean allowProtectedAppendWrites;
+
+    /*
+     * This property can only be changed for unlocked time-based retention policies. When enabled, new blocks can be
+     * written to both 'Append and Bock Blobs' while maintaining immutability protection and compliance. Only new blocks
+     * can be added and any existing blocks cannot be modified or deleted. This property cannot be changed with
+     * ExtendImmutabilityPolicy API. The 'allowProtectedAppendWrites' and 'allowProtectedAppendWritesAll' properties are
+     * mutually exclusive.
+     */
+    private Boolean allowProtectedAppendWritesAll;
+
+    /**
+     * Creates an instance of UpdateHistoryProperty class.
+     */
+    public UpdateHistoryProperty() {
+    }
 
     /**
      * Get the update property: The ImmutabilityPolicy update type of a blob container, possible values include: put,
      * lock and extend.
-     *
+     * 
      * @return the update value.
      */
     public ImmutabilityPolicyUpdateType update() {
@@ -68,7 +84,7 @@ public final class UpdateHistoryProperty {
     /**
      * Get the immutabilityPeriodSinceCreationInDays property: The immutability period for the blobs in the container
      * since the policy creation, in days.
-     *
+     * 
      * @return the immutabilityPeriodSinceCreationInDays value.
      */
     public Integer immutabilityPeriodSinceCreationInDays() {
@@ -77,7 +93,7 @@ public final class UpdateHistoryProperty {
 
     /**
      * Get the timestamp property: Returns the date and time the ImmutabilityPolicy was updated.
-     *
+     * 
      * @return the timestamp value.
      */
     public OffsetDateTime timestamp() {
@@ -86,7 +102,7 @@ public final class UpdateHistoryProperty {
 
     /**
      * Get the objectIdentifier property: Returns the Object ID of the user who updated the ImmutabilityPolicy.
-     *
+     * 
      * @return the objectIdentifier value.
      */
     public String objectIdentifier() {
@@ -96,7 +112,7 @@ public final class UpdateHistoryProperty {
     /**
      * Get the tenantId property: Returns the Tenant ID that issued the token for the user who updated the
      * ImmutabilityPolicy.
-     *
+     * 
      * @return the tenantId value.
      */
     public String tenantId() {
@@ -105,7 +121,7 @@ public final class UpdateHistoryProperty {
 
     /**
      * Get the upn property: Returns the User Principal Name of the user who updated the ImmutabilityPolicy.
-     *
+     * 
      * @return the upn value.
      */
     public String upn() {
@@ -113,10 +129,120 @@ public final class UpdateHistoryProperty {
     }
 
     /**
+     * Get the allowProtectedAppendWrites property: This property can only be changed for unlocked time-based retention
+     * policies. When enabled, new blocks can be written to an append blob while maintaining immutability protection and
+     * compliance. Only new blocks can be added and any existing blocks cannot be modified or deleted. This property
+     * cannot be changed with ExtendImmutabilityPolicy API.
+     * 
+     * @return the allowProtectedAppendWrites value.
+     */
+    public Boolean allowProtectedAppendWrites() {
+        return this.allowProtectedAppendWrites;
+    }
+
+    /**
+     * Set the allowProtectedAppendWrites property: This property can only be changed for unlocked time-based retention
+     * policies. When enabled, new blocks can be written to an append blob while maintaining immutability protection and
+     * compliance. Only new blocks can be added and any existing blocks cannot be modified or deleted. This property
+     * cannot be changed with ExtendImmutabilityPolicy API.
+     * 
+     * @param allowProtectedAppendWrites the allowProtectedAppendWrites value to set.
+     * @return the UpdateHistoryProperty object itself.
+     */
+    public UpdateHistoryProperty withAllowProtectedAppendWrites(Boolean allowProtectedAppendWrites) {
+        this.allowProtectedAppendWrites = allowProtectedAppendWrites;
+        return this;
+    }
+
+    /**
+     * Get the allowProtectedAppendWritesAll property: This property can only be changed for unlocked time-based
+     * retention policies. When enabled, new blocks can be written to both 'Append and Bock Blobs' while maintaining
+     * immutability protection and compliance. Only new blocks can be added and any existing blocks cannot be modified
+     * or deleted. This property cannot be changed with ExtendImmutabilityPolicy API. The 'allowProtectedAppendWrites'
+     * and 'allowProtectedAppendWritesAll' properties are mutually exclusive.
+     * 
+     * @return the allowProtectedAppendWritesAll value.
+     */
+    public Boolean allowProtectedAppendWritesAll() {
+        return this.allowProtectedAppendWritesAll;
+    }
+
+    /**
+     * Set the allowProtectedAppendWritesAll property: This property can only be changed for unlocked time-based
+     * retention policies. When enabled, new blocks can be written to both 'Append and Bock Blobs' while maintaining
+     * immutability protection and compliance. Only new blocks can be added and any existing blocks cannot be modified
+     * or deleted. This property cannot be changed with ExtendImmutabilityPolicy API. The 'allowProtectedAppendWrites'
+     * and 'allowProtectedAppendWritesAll' properties are mutually exclusive.
+     * 
+     * @param allowProtectedAppendWritesAll the allowProtectedAppendWritesAll value to set.
+     * @return the UpdateHistoryProperty object itself.
+     */
+    public UpdateHistoryProperty withAllowProtectedAppendWritesAll(Boolean allowProtectedAppendWritesAll) {
+        this.allowProtectedAppendWritesAll = allowProtectedAppendWritesAll;
+        return this;
+    }
+
+    /**
      * Validates the instance.
-     *
+     * 
      * @throws IllegalArgumentException thrown if the instance is not valid.
      */
     public void validate() {
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public JsonWriter toJson(JsonWriter jsonWriter) throws IOException {
+        jsonWriter.writeStartObject();
+        jsonWriter.writeBooleanField("allowProtectedAppendWrites", this.allowProtectedAppendWrites);
+        jsonWriter.writeBooleanField("allowProtectedAppendWritesAll", this.allowProtectedAppendWritesAll);
+        return jsonWriter.writeEndObject();
+    }
+
+    /**
+     * Reads an instance of UpdateHistoryProperty from the JsonReader.
+     * 
+     * @param jsonReader The JsonReader being read.
+     * @return An instance of UpdateHistoryProperty if the JsonReader was pointing to an instance of it, or null if it
+     * was pointing to JSON null.
+     * @throws IOException If an error occurs while reading the UpdateHistoryProperty.
+     */
+    public static UpdateHistoryProperty fromJson(JsonReader jsonReader) throws IOException {
+        return jsonReader.readObject(reader -> {
+            UpdateHistoryProperty deserializedUpdateHistoryProperty = new UpdateHistoryProperty();
+            while (reader.nextToken() != JsonToken.END_OBJECT) {
+                String fieldName = reader.getFieldName();
+                reader.nextToken();
+
+                if ("update".equals(fieldName)) {
+                    deserializedUpdateHistoryProperty.update
+                        = ImmutabilityPolicyUpdateType.fromString(reader.getString());
+                } else if ("immutabilityPeriodSinceCreationInDays".equals(fieldName)) {
+                    deserializedUpdateHistoryProperty.immutabilityPeriodSinceCreationInDays
+                        = reader.getNullable(JsonReader::getInt);
+                } else if ("timestamp".equals(fieldName)) {
+                    deserializedUpdateHistoryProperty.timestamp = reader
+                        .getNullable(nonNullReader -> CoreUtils.parseBestOffsetDateTime(nonNullReader.getString()));
+                } else if ("objectIdentifier".equals(fieldName)) {
+                    deserializedUpdateHistoryProperty.objectIdentifier = reader.getString();
+                } else if ("tenantId".equals(fieldName)) {
+                    deserializedUpdateHistoryProperty.tenantId = reader.getString();
+                } else if ("upn".equals(fieldName)) {
+                    deserializedUpdateHistoryProperty.upn = reader.getString();
+                } else if ("allowProtectedAppendWrites".equals(fieldName)) {
+                    deserializedUpdateHistoryProperty.allowProtectedAppendWrites
+                        = reader.getNullable(JsonReader::getBoolean);
+                } else if ("allowProtectedAppendWritesAll".equals(fieldName)) {
+                    deserializedUpdateHistoryProperty.allowProtectedAppendWritesAll
+                        = reader.getNullable(JsonReader::getBoolean);
+                } else {
+                    reader.skipChildren();
+                }
+            }
+
+            return deserializedUpdateHistoryProperty;
+        });
     }
 }

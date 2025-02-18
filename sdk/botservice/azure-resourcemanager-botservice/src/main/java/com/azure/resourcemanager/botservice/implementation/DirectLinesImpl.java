@@ -14,48 +14,38 @@ import com.azure.resourcemanager.botservice.models.BotChannel;
 import com.azure.resourcemanager.botservice.models.DirectLines;
 import com.azure.resourcemanager.botservice.models.RegenerateKeysChannelName;
 import com.azure.resourcemanager.botservice.models.SiteInfo;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 public final class DirectLinesImpl implements DirectLines {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(DirectLinesImpl.class);
+    private static final ClientLogger LOGGER = new ClientLogger(DirectLinesImpl.class);
 
     private final DirectLinesClient innerClient;
 
     private final com.azure.resourcemanager.botservice.BotServiceManager serviceManager;
 
-    public DirectLinesImpl(
-        DirectLinesClient innerClient, com.azure.resourcemanager.botservice.BotServiceManager serviceManager) {
+    public DirectLinesImpl(DirectLinesClient innerClient,
+        com.azure.resourcemanager.botservice.BotServiceManager serviceManager) {
         this.innerClient = innerClient;
         this.serviceManager = serviceManager;
     }
 
-    public BotChannel regenerateKeys(
-        String resourceGroupName, String resourceName, RegenerateKeysChannelName channelName, SiteInfo parameters) {
-        BotChannelInner inner =
-            this.serviceClient().regenerateKeys(resourceGroupName, resourceName, channelName, parameters);
+    public Response<BotChannel> regenerateKeysWithResponse(String resourceGroupName, String resourceName,
+        RegenerateKeysChannelName channelName, SiteInfo parameters, Context context) {
+        Response<BotChannelInner> inner = this.serviceClient()
+            .regenerateKeysWithResponse(resourceGroupName, resourceName, channelName, parameters, context);
         if (inner != null) {
-            return new BotChannelImpl(inner, this.manager());
+            return new SimpleResponse<>(inner.getRequest(), inner.getStatusCode(), inner.getHeaders(),
+                new BotChannelImpl(inner.getValue(), this.manager()));
         } else {
             return null;
         }
     }
 
-    public Response<BotChannel> regenerateKeysWithResponse(
-        String resourceGroupName,
-        String resourceName,
-        RegenerateKeysChannelName channelName,
-        SiteInfo parameters,
-        Context context) {
-        Response<BotChannelInner> inner =
-            this
-                .serviceClient()
-                .regenerateKeysWithResponse(resourceGroupName, resourceName, channelName, parameters, context);
+    public BotChannel regenerateKeys(String resourceGroupName, String resourceName,
+        RegenerateKeysChannelName channelName, SiteInfo parameters) {
+        BotChannelInner inner
+            = this.serviceClient().regenerateKeys(resourceGroupName, resourceName, channelName, parameters);
         if (inner != null) {
-            return new SimpleResponse<>(
-                inner.getRequest(),
-                inner.getStatusCode(),
-                inner.getHeaders(),
-                new BotChannelImpl(inner.getValue(), this.manager()));
+            return new BotChannelImpl(inner, this.manager());
         } else {
             return null;
         }

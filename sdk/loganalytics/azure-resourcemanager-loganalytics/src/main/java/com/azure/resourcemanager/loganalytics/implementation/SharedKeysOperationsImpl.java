@@ -12,20 +12,30 @@ import com.azure.resourcemanager.loganalytics.fluent.SharedKeysOperationsClient;
 import com.azure.resourcemanager.loganalytics.fluent.models.SharedKeysInner;
 import com.azure.resourcemanager.loganalytics.models.SharedKeys;
 import com.azure.resourcemanager.loganalytics.models.SharedKeysOperations;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 public final class SharedKeysOperationsImpl implements SharedKeysOperations {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(SharedKeysOperationsImpl.class);
+    private static final ClientLogger LOGGER = new ClientLogger(SharedKeysOperationsImpl.class);
 
     private final SharedKeysOperationsClient innerClient;
 
     private final com.azure.resourcemanager.loganalytics.LogAnalyticsManager serviceManager;
 
-    public SharedKeysOperationsImpl(
-        SharedKeysOperationsClient innerClient,
+    public SharedKeysOperationsImpl(SharedKeysOperationsClient innerClient,
         com.azure.resourcemanager.loganalytics.LogAnalyticsManager serviceManager) {
         this.innerClient = innerClient;
         this.serviceManager = serviceManager;
+    }
+
+    public Response<SharedKeys> getSharedKeysWithResponse(String resourceGroupName, String workspaceName,
+        Context context) {
+        Response<SharedKeysInner> inner
+            = this.serviceClient().getSharedKeysWithResponse(resourceGroupName, workspaceName, context);
+        if (inner != null) {
+            return new SimpleResponse<>(inner.getRequest(), inner.getStatusCode(), inner.getHeaders(),
+                new SharedKeysImpl(inner.getValue(), this.manager()));
+        } else {
+            return null;
+        }
     }
 
     public SharedKeys getSharedKeys(String resourceGroupName, String workspaceName) {
@@ -37,15 +47,12 @@ public final class SharedKeysOperationsImpl implements SharedKeysOperations {
         }
     }
 
-    public Response<SharedKeys> getSharedKeysWithResponse(
-        String resourceGroupName, String workspaceName, Context context) {
-        Response<SharedKeysInner> inner =
-            this.serviceClient().getSharedKeysWithResponse(resourceGroupName, workspaceName, context);
+    public Response<SharedKeys> regenerateWithResponse(String resourceGroupName, String workspaceName,
+        Context context) {
+        Response<SharedKeysInner> inner
+            = this.serviceClient().regenerateWithResponse(resourceGroupName, workspaceName, context);
         if (inner != null) {
-            return new SimpleResponse<>(
-                inner.getRequest(),
-                inner.getStatusCode(),
-                inner.getHeaders(),
+            return new SimpleResponse<>(inner.getRequest(), inner.getStatusCode(), inner.getHeaders(),
                 new SharedKeysImpl(inner.getValue(), this.manager()));
         } else {
             return null;
@@ -56,21 +63,6 @@ public final class SharedKeysOperationsImpl implements SharedKeysOperations {
         SharedKeysInner inner = this.serviceClient().regenerate(resourceGroupName, workspaceName);
         if (inner != null) {
             return new SharedKeysImpl(inner, this.manager());
-        } else {
-            return null;
-        }
-    }
-
-    public Response<SharedKeys> regenerateWithResponse(
-        String resourceGroupName, String workspaceName, Context context) {
-        Response<SharedKeysInner> inner =
-            this.serviceClient().regenerateWithResponse(resourceGroupName, workspaceName, context);
-        if (inner != null) {
-            return new SimpleResponse<>(
-                inner.getRequest(),
-                inner.getStatusCode(),
-                inner.getHeaders(),
-                new SharedKeysImpl(inner.getValue(), this.manager()));
         } else {
             return null;
         }

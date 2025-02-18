@@ -19,15 +19,9 @@ import reactor.core.publisher.Mono;
 /** Entry point for Action Group management API. */
 @Fluent
 public interface ActionGroups
-    extends SupportsCreating<ActionGroup.DefinitionStages.Blank>,
-        SupportsListing<ActionGroup>,
-        SupportsListingByResourceGroup<ActionGroup>,
-        SupportsGettingById<ActionGroup>,
-        SupportsBatchCreation<ActionGroup>,
-        SupportsDeletingById,
-        SupportsDeletingByResourceGroup,
-        SupportsBatchDeletion,
-        HasManager<MonitorManager> {
+    extends SupportsCreating<ActionGroup.DefinitionStages.Blank>, SupportsListing<ActionGroup>,
+    SupportsListingByResourceGroup<ActionGroup>, SupportsGettingById<ActionGroup>, SupportsBatchCreation<ActionGroup>,
+    SupportsDeletingById, SupportsDeletingByResourceGroup, SupportsBatchDeletion, HasManager<MonitorManager> {
 
     /**
      * Enable a receiver in an action group. This changes the receiver's status from Disabled to Enabled. This operation
@@ -36,6 +30,7 @@ public interface ActionGroups
      * @param resourceGroupName The name of the resource group.
      * @param actionGroupName The name of the action group.
      * @param receiverName The name of the receiver to resubscribe.
+     * @throws com.azure.core.management.exception.ManagementException if the specified receiver is already enabled
      */
     void enableReceiver(String resourceGroupName, String actionGroupName, String receiverName);
 
@@ -46,6 +41,7 @@ public interface ActionGroups
      * @param resourceGroupName The name of the resource group.
      * @param actionGroupName The name of the action group.
      * @param receiverName The name of the receiver to resubscribe.
+     * @throws com.azure.core.management.exception.ManagementException if the specified receiver is already enabled
      * @return a representation of the deferred computation of this call.
      */
     Mono<Void> enableReceiverAsync(String resourceGroupName, String actionGroupName, String receiverName);

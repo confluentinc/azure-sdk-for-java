@@ -5,33 +5,86 @@
 package com.azure.resourcemanager.appservice.fluent.models;
 
 import com.azure.core.annotation.Fluent;
-import com.azure.core.util.logging.ClientLogger;
+import com.azure.json.JsonReader;
+import com.azure.json.JsonToken;
+import com.azure.json.JsonWriter;
 import com.azure.resourcemanager.appservice.models.AppServicePlanRestrictions;
 import com.azure.resourcemanager.appservice.models.ProxyOnlyResource;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import java.io.IOException;
 
-/** Premier add-on offer. */
+/**
+ * Premier add-on offer.
+ */
 @Fluent
 public final class PremierAddOnOfferInner extends ProxyOnlyResource {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(PremierAddOnOfferInner.class);
-
     /*
      * PremierAddOnOffer resource specific properties
      */
-    @JsonProperty(value = "properties")
     private PremierAddOnOfferProperties innerProperties;
+
+    /*
+     * The type of the resource.
+     */
+    private String type;
+
+    /*
+     * The name of the resource.
+     */
+    private String name;
+
+    /*
+     * Fully qualified resource Id for the resource.
+     */
+    private String id;
+
+    /**
+     * Creates an instance of PremierAddOnOfferInner class.
+     */
+    public PremierAddOnOfferInner() {
+    }
 
     /**
      * Get the innerProperties property: PremierAddOnOffer resource specific properties.
-     *
+     * 
      * @return the innerProperties value.
      */
     private PremierAddOnOfferProperties innerProperties() {
         return this.innerProperties;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * Get the type property: The type of the resource.
+     * 
+     * @return the type value.
+     */
+    @Override
+    public String type() {
+        return this.type;
+    }
+
+    /**
+     * Get the name property: The name of the resource.
+     * 
+     * @return the name value.
+     */
+    @Override
+    public String name() {
+        return this.name;
+    }
+
+    /**
+     * Get the id property: Fully qualified resource Id for the resource.
+     * 
+     * @return the id value.
+     */
+    @Override
+    public String id() {
+        return this.id;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public PremierAddOnOfferInner withKind(String kind) {
         super.withKind(kind);
@@ -40,7 +93,7 @@ public final class PremierAddOnOfferInner extends ProxyOnlyResource {
 
     /**
      * Get the sku property: Premier add on SKU.
-     *
+     * 
      * @return the sku value.
      */
     public String sku() {
@@ -49,7 +102,7 @@ public final class PremierAddOnOfferInner extends ProxyOnlyResource {
 
     /**
      * Set the sku property: Premier add on SKU.
-     *
+     * 
      * @param sku the sku value to set.
      * @return the PremierAddOnOfferInner object itself.
      */
@@ -63,7 +116,7 @@ public final class PremierAddOnOfferInner extends ProxyOnlyResource {
 
     /**
      * Get the product property: Premier add on offer Product.
-     *
+     * 
      * @return the product value.
      */
     public String product() {
@@ -72,7 +125,7 @@ public final class PremierAddOnOfferInner extends ProxyOnlyResource {
 
     /**
      * Set the product property: Premier add on offer Product.
-     *
+     * 
      * @param product the product value to set.
      * @return the PremierAddOnOfferInner object itself.
      */
@@ -86,7 +139,7 @@ public final class PremierAddOnOfferInner extends ProxyOnlyResource {
 
     /**
      * Get the vendor property: Premier add on offer Vendor.
-     *
+     * 
      * @return the vendor value.
      */
     public String vendor() {
@@ -95,7 +148,7 @@ public final class PremierAddOnOfferInner extends ProxyOnlyResource {
 
     /**
      * Set the vendor property: Premier add on offer Vendor.
-     *
+     * 
      * @param vendor the vendor value to set.
      * @return the PremierAddOnOfferInner object itself.
      */
@@ -110,7 +163,7 @@ public final class PremierAddOnOfferInner extends ProxyOnlyResource {
     /**
      * Get the promoCodeRequired property: &lt;code&gt;true&lt;/code&gt; if promotion code is required; otherwise,
      * &lt;code&gt;false&lt;/code&gt;.
-     *
+     * 
      * @return the promoCodeRequired value.
      */
     public Boolean promoCodeRequired() {
@@ -120,7 +173,7 @@ public final class PremierAddOnOfferInner extends ProxyOnlyResource {
     /**
      * Set the promoCodeRequired property: &lt;code&gt;true&lt;/code&gt; if promotion code is required; otherwise,
      * &lt;code&gt;false&lt;/code&gt;.
-     *
+     * 
      * @param promoCodeRequired the promoCodeRequired value to set.
      * @return the PremierAddOnOfferInner object itself.
      */
@@ -134,7 +187,7 @@ public final class PremierAddOnOfferInner extends ProxyOnlyResource {
 
     /**
      * Get the quota property: Premier add on offer Quota.
-     *
+     * 
      * @return the quota value.
      */
     public Integer quota() {
@@ -143,7 +196,7 @@ public final class PremierAddOnOfferInner extends ProxyOnlyResource {
 
     /**
      * Set the quota property: Premier add on offer Quota.
-     *
+     * 
      * @param quota the quota value to set.
      * @return the PremierAddOnOfferInner object itself.
      */
@@ -157,7 +210,7 @@ public final class PremierAddOnOfferInner extends ProxyOnlyResource {
 
     /**
      * Get the webHostingPlanRestrictions property: App Service plans this offer is restricted to.
-     *
+     * 
      * @return the webHostingPlanRestrictions value.
      */
     public AppServicePlanRestrictions webHostingPlanRestrictions() {
@@ -166,12 +219,12 @@ public final class PremierAddOnOfferInner extends ProxyOnlyResource {
 
     /**
      * Set the webHostingPlanRestrictions property: App Service plans this offer is restricted to.
-     *
+     * 
      * @param webHostingPlanRestrictions the webHostingPlanRestrictions value to set.
      * @return the PremierAddOnOfferInner object itself.
      */
-    public PremierAddOnOfferInner withWebHostingPlanRestrictions(
-        AppServicePlanRestrictions webHostingPlanRestrictions) {
+    public PremierAddOnOfferInner
+        withWebHostingPlanRestrictions(AppServicePlanRestrictions webHostingPlanRestrictions) {
         if (this.innerProperties() == null) {
             this.innerProperties = new PremierAddOnOfferProperties();
         }
@@ -181,7 +234,7 @@ public final class PremierAddOnOfferInner extends ProxyOnlyResource {
 
     /**
      * Get the privacyPolicyUrl property: Privacy policy URL.
-     *
+     * 
      * @return the privacyPolicyUrl value.
      */
     public String privacyPolicyUrl() {
@@ -190,7 +243,7 @@ public final class PremierAddOnOfferInner extends ProxyOnlyResource {
 
     /**
      * Set the privacyPolicyUrl property: Privacy policy URL.
-     *
+     * 
      * @param privacyPolicyUrl the privacyPolicyUrl value to set.
      * @return the PremierAddOnOfferInner object itself.
      */
@@ -204,7 +257,7 @@ public final class PremierAddOnOfferInner extends ProxyOnlyResource {
 
     /**
      * Get the legalTermsUrl property: Legal terms URL.
-     *
+     * 
      * @return the legalTermsUrl value.
      */
     public String legalTermsUrl() {
@@ -213,7 +266,7 @@ public final class PremierAddOnOfferInner extends ProxyOnlyResource {
 
     /**
      * Set the legalTermsUrl property: Legal terms URL.
-     *
+     * 
      * @param legalTermsUrl the legalTermsUrl value to set.
      * @return the PremierAddOnOfferInner object itself.
      */
@@ -227,7 +280,7 @@ public final class PremierAddOnOfferInner extends ProxyOnlyResource {
 
     /**
      * Get the marketplacePublisher property: Marketplace publisher.
-     *
+     * 
      * @return the marketplacePublisher value.
      */
     public String marketplacePublisher() {
@@ -236,7 +289,7 @@ public final class PremierAddOnOfferInner extends ProxyOnlyResource {
 
     /**
      * Set the marketplacePublisher property: Marketplace publisher.
-     *
+     * 
      * @param marketplacePublisher the marketplacePublisher value to set.
      * @return the PremierAddOnOfferInner object itself.
      */
@@ -250,7 +303,7 @@ public final class PremierAddOnOfferInner extends ProxyOnlyResource {
 
     /**
      * Get the marketplaceOffer property: Marketplace offer.
-     *
+     * 
      * @return the marketplaceOffer value.
      */
     public String marketplaceOffer() {
@@ -259,7 +312,7 @@ public final class PremierAddOnOfferInner extends ProxyOnlyResource {
 
     /**
      * Set the marketplaceOffer property: Marketplace offer.
-     *
+     * 
      * @param marketplaceOffer the marketplaceOffer value to set.
      * @return the PremierAddOnOfferInner object itself.
      */
@@ -273,14 +326,59 @@ public final class PremierAddOnOfferInner extends ProxyOnlyResource {
 
     /**
      * Validates the instance.
-     *
+     * 
      * @throws IllegalArgumentException thrown if the instance is not valid.
      */
     @Override
     public void validate() {
-        super.validate();
         if (innerProperties() != null) {
             innerProperties().validate();
         }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public JsonWriter toJson(JsonWriter jsonWriter) throws IOException {
+        jsonWriter.writeStartObject();
+        jsonWriter.writeStringField("kind", kind());
+        jsonWriter.writeJsonField("properties", this.innerProperties);
+        return jsonWriter.writeEndObject();
+    }
+
+    /**
+     * Reads an instance of PremierAddOnOfferInner from the JsonReader.
+     * 
+     * @param jsonReader The JsonReader being read.
+     * @return An instance of PremierAddOnOfferInner if the JsonReader was pointing to an instance of it, or null if it
+     * was pointing to JSON null.
+     * @throws IllegalStateException If the deserialized JSON object was missing any required properties.
+     * @throws IOException If an error occurs while reading the PremierAddOnOfferInner.
+     */
+    public static PremierAddOnOfferInner fromJson(JsonReader jsonReader) throws IOException {
+        return jsonReader.readObject(reader -> {
+            PremierAddOnOfferInner deserializedPremierAddOnOfferInner = new PremierAddOnOfferInner();
+            while (reader.nextToken() != JsonToken.END_OBJECT) {
+                String fieldName = reader.getFieldName();
+                reader.nextToken();
+
+                if ("id".equals(fieldName)) {
+                    deserializedPremierAddOnOfferInner.id = reader.getString();
+                } else if ("name".equals(fieldName)) {
+                    deserializedPremierAddOnOfferInner.name = reader.getString();
+                } else if ("type".equals(fieldName)) {
+                    deserializedPremierAddOnOfferInner.type = reader.getString();
+                } else if ("kind".equals(fieldName)) {
+                    deserializedPremierAddOnOfferInner.withKind(reader.getString());
+                } else if ("properties".equals(fieldName)) {
+                    deserializedPremierAddOnOfferInner.innerProperties = PremierAddOnOfferProperties.fromJson(reader);
+                } else {
+                    reader.skipChildren();
+                }
+            }
+
+            return deserializedPremierAddOnOfferInner;
+        });
     }
 }

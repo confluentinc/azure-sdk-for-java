@@ -1,5 +1,5 @@
 . (Join-Path $PSScriptRoot common.ps1)
-Install-Module -Name powershell-yaml -RequiredVersion 0.4.1 -Force -Scope CurrentUser
+Install-Module -Name powershell-yaml -RequiredVersion 0.4.7 -Force -Scope CurrentUser
 $ymlfiles = Get-ChildItem $RepoRoot -recurse | Where-Object {$_ -like '*.yml'}
 $affectedRepos = [System.Collections.ArrayList]::new()
 
@@ -7,9 +7,18 @@ foreach ($file in $ymlfiles)
 {
   Write-Host "Verifying '${file}'"
   $ymlContent = Get-Content $file.FullName -Raw
-  $ymlObject = ConvertFrom-Yaml $ymlContent -Ordered
 
-  if ($ymlObject.Contains("resources"))
+  try
+  {
+    $ymlObject = ConvertFrom-Yaml $ymlContent -Ordered
+  }
+  catch
+  {
+    Write-Host "Skipping $($file.FullName) because the file does not contain valid yml."
+    continue
+  }
+
+  if ($ymlObject -and ($ymlObject.Contains("resources")))
   {
     if ($ymlObject["resources"]["repositories"])
     {

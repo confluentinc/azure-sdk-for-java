@@ -8,11 +8,28 @@ import com.azure.core.http.rest.PagedIterable;
 import com.azure.core.http.rest.Response;
 import com.azure.core.util.Context;
 
-/** Resource collection API of DscNodeConfigurations. */
+/**
+ * Resource collection API of DscNodeConfigurations.
+ */
 public interface DscNodeConfigurations {
     /**
      * Delete the Dsc node configurations by node configuration.
-     *
+     * 
+     * @param resourceGroupName Name of an Azure Resource group.
+     * @param automationAccountName The name of the automation account.
+     * @param nodeConfigurationName The Dsc node configuration name.
+     * @param context The context to associate with this operation.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return the {@link Response}.
+     */
+    Response<Void> deleteWithResponse(String resourceGroupName, String automationAccountName,
+        String nodeConfigurationName, Context context);
+
+    /**
+     * Delete the Dsc node configurations by node configuration.
+     * 
      * @param resourceGroupName Name of an Azure Resource group.
      * @param automationAccountName The name of the automation account.
      * @param nodeConfigurationName The Dsc node configuration name.
@@ -23,8 +40,8 @@ public interface DscNodeConfigurations {
     void delete(String resourceGroupName, String automationAccountName, String nodeConfigurationName);
 
     /**
-     * Delete the Dsc node configurations by node configuration.
-     *
+     * Retrieve the Dsc node configurations by node configuration.
+     * 
      * @param resourceGroupName Name of an Azure Resource group.
      * @param automationAccountName The name of the automation account.
      * @param nodeConfigurationName The Dsc node configuration name.
@@ -32,14 +49,14 @@ public interface DscNodeConfigurations {
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the response.
+     * @return definition of the dsc node configuration along with {@link Response}.
      */
-    Response<Void> deleteWithResponse(
-        String resourceGroupName, String automationAccountName, String nodeConfigurationName, Context context);
+    Response<DscNodeConfiguration> getWithResponse(String resourceGroupName, String automationAccountName,
+        String nodeConfigurationName, Context context);
 
     /**
      * Retrieve the Dsc node configurations by node configuration.
-     *
+     * 
      * @param resourceGroupName Name of an Azure Resource group.
      * @param automationAccountName The name of the automation account.
      * @param nodeConfigurationName The Dsc node configuration name.
@@ -51,35 +68,20 @@ public interface DscNodeConfigurations {
     DscNodeConfiguration get(String resourceGroupName, String automationAccountName, String nodeConfigurationName);
 
     /**
-     * Retrieve the Dsc node configurations by node configuration.
-     *
-     * @param resourceGroupName Name of an Azure Resource group.
-     * @param automationAccountName The name of the automation account.
-     * @param nodeConfigurationName The Dsc node configuration name.
-     * @param context The context to associate with this operation.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return definition of the dsc node configuration.
-     */
-    Response<DscNodeConfiguration> getWithResponse(
-        String resourceGroupName, String automationAccountName, String nodeConfigurationName, Context context);
-
-    /**
      * Retrieve a list of dsc node configurations.
-     *
+     * 
      * @param resourceGroupName Name of an Azure Resource group.
      * @param automationAccountName The name of the automation account.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the response model for the list job operation.
+     * @return the response model for the list job operation as paginated response with {@link PagedIterable}.
      */
     PagedIterable<DscNodeConfiguration> listByAutomationAccount(String resourceGroupName, String automationAccountName);
 
     /**
      * Retrieve a list of dsc node configurations.
-     *
+     * 
      * @param resourceGroupName Name of an Azure Resource group.
      * @param automationAccountName The name of the automation account.
      * @param filter The filter to apply on the operation.
@@ -90,43 +92,37 @@ public interface DscNodeConfigurations {
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the response model for the list job operation.
+     * @return the response model for the list job operation as paginated response with {@link PagedIterable}.
      */
-    PagedIterable<DscNodeConfiguration> listByAutomationAccount(
-        String resourceGroupName,
-        String automationAccountName,
-        String filter,
-        Integer skip,
-        Integer top,
-        String inlinecount,
-        Context context);
+    PagedIterable<DscNodeConfiguration> listByAutomationAccount(String resourceGroupName, String automationAccountName,
+        String filter, Integer skip, Integer top, String inlinecount, Context context);
 
     /**
      * Retrieve the Dsc node configurations by node configuration.
-     *
+     * 
      * @param id the resource ID.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return definition of the dsc node configuration.
+     * @return definition of the dsc node configuration along with {@link Response}.
      */
     DscNodeConfiguration getById(String id);
 
     /**
      * Retrieve the Dsc node configurations by node configuration.
-     *
+     * 
      * @param id the resource ID.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return definition of the dsc node configuration.
+     * @return definition of the dsc node configuration along with {@link Response}.
      */
     Response<DscNodeConfiguration> getByIdWithResponse(String id, Context context);
 
     /**
      * Delete the Dsc node configurations by node configuration.
-     *
+     * 
      * @param id the resource ID.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
@@ -136,19 +132,19 @@ public interface DscNodeConfigurations {
 
     /**
      * Delete the Dsc node configurations by node configuration.
-     *
+     * 
      * @param id the resource ID.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the response.
+     * @return the {@link Response}.
      */
     Response<Void> deleteByIdWithResponse(String id, Context context);
 
     /**
      * Begins definition for a new DscNodeConfiguration resource.
-     *
+     * 
      * @param name resource name.
      * @return the first stage of the new DscNodeConfiguration definition.
      */

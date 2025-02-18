@@ -5,66 +5,39 @@
 package com.azure.resourcemanager.monitor.models;
 
 import com.azure.core.annotation.Fluent;
-import com.azure.core.annotation.JsonFlatten;
-import com.azure.core.util.logging.ClientLogger;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.azure.json.JsonReader;
+import com.azure.json.JsonSerializable;
+import com.azure.json.JsonToken;
+import com.azure.json.JsonWriter;
+import com.azure.resourcemanager.monitor.fluent.models.LogProfileProperties;
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
-/** The log profile resource for patch operations. */
-@JsonFlatten
+/**
+ * The log profile resource for patch operations.
+ */
 @Fluent
-public class LogProfileResourcePatch {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(LogProfileResourcePatch.class);
-
+public final class LogProfileResourcePatch implements JsonSerializable<LogProfileResourcePatch> {
     /*
      * Resource tags
      */
-    @JsonProperty(value = "tags")
     private Map<String, String> tags;
 
     /*
-     * the resource id of the storage account to which you would like to send
-     * the Activity Log.
+     * The log profile properties for an update operation.
      */
-    @JsonProperty(value = "properties.storageAccountId")
-    private String storageAccountId;
+    private LogProfileProperties innerProperties;
 
-    /*
-     * The service bus rule ID of the service bus namespace in which you would
-     * like to have Event Hubs created for streaming the Activity Log. The rule
-     * ID is of the format: '{service bus resource ID}/authorizationrules/{key
-     * name}'.
+    /**
+     * Creates an instance of LogProfileResourcePatch class.
      */
-    @JsonProperty(value = "properties.serviceBusRuleId")
-    private String serviceBusRuleId;
-
-    /*
-     * List of regions for which Activity Log events should be stored or
-     * streamed. It is a comma separated list of valid ARM locations including
-     * the 'global' location.
-     */
-    @JsonProperty(value = "properties.locations")
-    private List<String> locations;
-
-    /*
-     * the categories of the logs. These categories are created as is
-     * convenient to the user. Some values are: 'Write', 'Delete', and/or
-     * 'Action.'
-     */
-    @JsonProperty(value = "properties.categories")
-    private List<String> categories;
-
-    /*
-     * the retention policy for the events in the log.
-     */
-    @JsonProperty(value = "properties.retentionPolicy")
-    private RetentionPolicy retentionPolicy;
+    public LogProfileResourcePatch() {
+    }
 
     /**
      * Get the tags property: Resource tags.
-     *
+     * 
      * @return the tags value.
      */
     public Map<String, String> tags() {
@@ -73,7 +46,7 @@ public class LogProfileResourcePatch {
 
     /**
      * Set the tags property: Resource tags.
-     *
+     * 
      * @param tags the tags value to set.
      * @return the LogProfileResourcePatch object itself.
      */
@@ -83,24 +56,36 @@ public class LogProfileResourcePatch {
     }
 
     /**
+     * Get the innerProperties property: The log profile properties for an update operation.
+     * 
+     * @return the innerProperties value.
+     */
+    private LogProfileProperties innerProperties() {
+        return this.innerProperties;
+    }
+
+    /**
      * Get the storageAccountId property: the resource id of the storage account to which you would like to send the
      * Activity Log.
-     *
+     * 
      * @return the storageAccountId value.
      */
     public String storageAccountId() {
-        return this.storageAccountId;
+        return this.innerProperties() == null ? null : this.innerProperties().storageAccountId();
     }
 
     /**
      * Set the storageAccountId property: the resource id of the storage account to which you would like to send the
      * Activity Log.
-     *
+     * 
      * @param storageAccountId the storageAccountId value to set.
      * @return the LogProfileResourcePatch object itself.
      */
     public LogProfileResourcePatch withStorageAccountId(String storageAccountId) {
-        this.storageAccountId = storageAccountId;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new LogProfileProperties();
+        }
+        this.innerProperties().withStorageAccountId(storageAccountId);
         return this;
     }
 
@@ -108,98 +93,150 @@ public class LogProfileResourcePatch {
      * Get the serviceBusRuleId property: The service bus rule ID of the service bus namespace in which you would like
      * to have Event Hubs created for streaming the Activity Log. The rule ID is of the format: '{service bus resource
      * ID}/authorizationrules/{key name}'.
-     *
+     * 
      * @return the serviceBusRuleId value.
      */
     public String serviceBusRuleId() {
-        return this.serviceBusRuleId;
+        return this.innerProperties() == null ? null : this.innerProperties().serviceBusRuleId();
     }
 
     /**
      * Set the serviceBusRuleId property: The service bus rule ID of the service bus namespace in which you would like
      * to have Event Hubs created for streaming the Activity Log. The rule ID is of the format: '{service bus resource
      * ID}/authorizationrules/{key name}'.
-     *
+     * 
      * @param serviceBusRuleId the serviceBusRuleId value to set.
      * @return the LogProfileResourcePatch object itself.
      */
     public LogProfileResourcePatch withServiceBusRuleId(String serviceBusRuleId) {
-        this.serviceBusRuleId = serviceBusRuleId;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new LogProfileProperties();
+        }
+        this.innerProperties().withServiceBusRuleId(serviceBusRuleId);
         return this;
     }
 
     /**
      * Get the locations property: List of regions for which Activity Log events should be stored or streamed. It is a
      * comma separated list of valid ARM locations including the 'global' location.
-     *
+     * 
      * @return the locations value.
      */
     public List<String> locations() {
-        return this.locations;
+        return this.innerProperties() == null ? null : this.innerProperties().locations();
     }
 
     /**
      * Set the locations property: List of regions for which Activity Log events should be stored or streamed. It is a
      * comma separated list of valid ARM locations including the 'global' location.
-     *
+     * 
      * @param locations the locations value to set.
      * @return the LogProfileResourcePatch object itself.
      */
     public LogProfileResourcePatch withLocations(List<String> locations) {
-        this.locations = locations;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new LogProfileProperties();
+        }
+        this.innerProperties().withLocations(locations);
         return this;
     }
 
     /**
      * Get the categories property: the categories of the logs. These categories are created as is convenient to the
      * user. Some values are: 'Write', 'Delete', and/or 'Action.'.
-     *
+     * 
      * @return the categories value.
      */
     public List<String> categories() {
-        return this.categories;
+        return this.innerProperties() == null ? null : this.innerProperties().categories();
     }
 
     /**
      * Set the categories property: the categories of the logs. These categories are created as is convenient to the
      * user. Some values are: 'Write', 'Delete', and/or 'Action.'.
-     *
+     * 
      * @param categories the categories value to set.
      * @return the LogProfileResourcePatch object itself.
      */
     public LogProfileResourcePatch withCategories(List<String> categories) {
-        this.categories = categories;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new LogProfileProperties();
+        }
+        this.innerProperties().withCategories(categories);
         return this;
     }
 
     /**
      * Get the retentionPolicy property: the retention policy for the events in the log.
-     *
+     * 
      * @return the retentionPolicy value.
      */
     public RetentionPolicy retentionPolicy() {
-        return this.retentionPolicy;
+        return this.innerProperties() == null ? null : this.innerProperties().retentionPolicy();
     }
 
     /**
      * Set the retentionPolicy property: the retention policy for the events in the log.
-     *
+     * 
      * @param retentionPolicy the retentionPolicy value to set.
      * @return the LogProfileResourcePatch object itself.
      */
     public LogProfileResourcePatch withRetentionPolicy(RetentionPolicy retentionPolicy) {
-        this.retentionPolicy = retentionPolicy;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new LogProfileProperties();
+        }
+        this.innerProperties().withRetentionPolicy(retentionPolicy);
         return this;
     }
 
     /**
      * Validates the instance.
-     *
+     * 
      * @throws IllegalArgumentException thrown if the instance is not valid.
      */
     public void validate() {
-        if (retentionPolicy() != null) {
-            retentionPolicy().validate();
+        if (innerProperties() != null) {
+            innerProperties().validate();
         }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public JsonWriter toJson(JsonWriter jsonWriter) throws IOException {
+        jsonWriter.writeStartObject();
+        jsonWriter.writeMapField("tags", this.tags, (writer, element) -> writer.writeString(element));
+        jsonWriter.writeJsonField("properties", this.innerProperties);
+        return jsonWriter.writeEndObject();
+    }
+
+    /**
+     * Reads an instance of LogProfileResourcePatch from the JsonReader.
+     * 
+     * @param jsonReader The JsonReader being read.
+     * @return An instance of LogProfileResourcePatch if the JsonReader was pointing to an instance of it, or null if it
+     * was pointing to JSON null.
+     * @throws IOException If an error occurs while reading the LogProfileResourcePatch.
+     */
+    public static LogProfileResourcePatch fromJson(JsonReader jsonReader) throws IOException {
+        return jsonReader.readObject(reader -> {
+            LogProfileResourcePatch deserializedLogProfileResourcePatch = new LogProfileResourcePatch();
+            while (reader.nextToken() != JsonToken.END_OBJECT) {
+                String fieldName = reader.getFieldName();
+                reader.nextToken();
+
+                if ("tags".equals(fieldName)) {
+                    Map<String, String> tags = reader.readMap(reader1 -> reader1.getString());
+                    deserializedLogProfileResourcePatch.tags = tags;
+                } else if ("properties".equals(fieldName)) {
+                    deserializedLogProfileResourcePatch.innerProperties = LogProfileProperties.fromJson(reader);
+                } else {
+                    reader.skipChildren();
+                }
+            }
+
+            return deserializedLogProfileResourcePatch;
+        });
     }
 }

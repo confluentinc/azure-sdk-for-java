@@ -25,32 +25,34 @@ import com.azure.core.http.rest.Response;
 import com.azure.core.http.rest.RestProxy;
 import com.azure.core.util.Context;
 import com.azure.core.util.FluxUtil;
-import com.azure.core.util.logging.ClientLogger;
 import com.azure.resourcemanager.appservice.fluent.ContainerAppsRevisionsClient;
 import com.azure.resourcemanager.appservice.fluent.models.RevisionInner;
 import com.azure.resourcemanager.appservice.models.DefaultErrorResponseErrorException;
 import com.azure.resourcemanager.appservice.models.RevisionCollection;
 import reactor.core.publisher.Mono;
 
-/** An instance of this class provides access to all the operations defined in ContainerAppsRevisionsClient. */
+/**
+ * An instance of this class provides access to all the operations defined in ContainerAppsRevisionsClient.
+ */
 public final class ContainerAppsRevisionsClientImpl implements ContainerAppsRevisionsClient {
-    private final ClientLogger logger = new ClientLogger(ContainerAppsRevisionsClientImpl.class);
-
-    /** The proxy service used to perform REST calls. */
+    /**
+     * The proxy service used to perform REST calls.
+     */
     private final ContainerAppsRevisionsService service;
 
-    /** The service client containing this operation class. */
+    /**
+     * The service client containing this operation class.
+     */
     private final WebSiteManagementClientImpl client;
 
     /**
      * Initializes an instance of ContainerAppsRevisionsClientImpl.
-     *
+     * 
      * @param client the instance of the service client containing this operation class.
      */
     ContainerAppsRevisionsClientImpl(WebSiteManagementClientImpl client) {
-        this.service =
-            RestProxy
-                .create(ContainerAppsRevisionsService.class, client.getHttpPipeline(), client.getSerializerAdapter());
+        this.service = RestProxy.create(ContainerAppsRevisionsService.class, client.getHttpPipeline(),
+            client.getSerializerAdapter());
         this.client = client;
     }
 
@@ -60,115 +62,82 @@ public final class ContainerAppsRevisionsClientImpl implements ContainerAppsRevi
      */
     @Host("{$host}")
     @ServiceInterface(name = "WebSiteManagementCli")
-    private interface ContainerAppsRevisionsService {
-        @Headers({"Content-Type: application/json"})
-        @Get(
-            "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/containerApps"
-                + "/{containerAppName}/revisions")
-        @ExpectedResponses({200})
+    public interface ContainerAppsRevisionsService {
+        @Headers({ "Content-Type: application/json" })
+        @Get("/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/containerApps/{containerAppName}/revisions")
+        @ExpectedResponses({ 200 })
         @UnexpectedResponseExceptionType(DefaultErrorResponseErrorException.class)
-        Mono<Response<RevisionCollection>> listRevisions(
-            @HostParam("$host") String endpoint,
+        Mono<Response<RevisionCollection>> listRevisions(@HostParam("$host") String endpoint,
             @PathParam("resourceGroupName") String resourceGroupName,
-            @PathParam("containerAppName") String containerAppName,
-            @PathParam("subscriptionId") String subscriptionId,
-            @QueryParam("api-version") String apiVersion,
-            @HeaderParam("Accept") String accept,
-            Context context);
+            @PathParam("containerAppName") String containerAppName, @PathParam("subscriptionId") String subscriptionId,
+            @QueryParam("api-version") String apiVersion, @HeaderParam("Accept") String accept, Context context);
 
-        @Headers({"Content-Type: application/json"})
-        @Get(
-            "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/containerApps"
-                + "/{containerAppName}/revisions/{name}")
-        @ExpectedResponses({200})
+        @Headers({ "Content-Type: application/json" })
+        @Get("/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/containerApps/{containerAppName}/revisions/{name}")
+        @ExpectedResponses({ 200 })
         @UnexpectedResponseExceptionType(DefaultErrorResponseErrorException.class)
-        Mono<Response<RevisionInner>> getRevision(
-            @HostParam("$host") String endpoint,
+        Mono<Response<RevisionInner>> getRevision(@HostParam("$host") String endpoint,
             @PathParam("resourceGroupName") String resourceGroupName,
-            @PathParam("containerAppName") String containerAppName,
-            @PathParam("name") String name,
-            @PathParam("subscriptionId") String subscriptionId,
-            @QueryParam("api-version") String apiVersion,
-            @HeaderParam("Accept") String accept,
-            Context context);
+            @PathParam("containerAppName") String containerAppName, @PathParam("name") String name,
+            @PathParam("subscriptionId") String subscriptionId, @QueryParam("api-version") String apiVersion,
+            @HeaderParam("Accept") String accept, Context context);
 
-        @Headers({"Content-Type: application/json"})
-        @Post(
-            "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/containerApps"
-                + "/{containerAppName}/revisions/{name}/activate")
-        @ExpectedResponses({200})
+        @Headers({ "Content-Type: application/json" })
+        @Post("/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/containerApps/{containerAppName}/revisions/{name}/activate")
+        @ExpectedResponses({ 200 })
         @UnexpectedResponseExceptionType(DefaultErrorResponseErrorException.class)
-        Mono<Response<Void>> activateRevision(
-            @HostParam("$host") String endpoint,
+        Mono<Response<Void>> activateRevision(@HostParam("$host") String endpoint,
             @PathParam("resourceGroupName") String resourceGroupName,
-            @PathParam("containerAppName") String containerAppName,
-            @PathParam("name") String name,
-            @PathParam("subscriptionId") String subscriptionId,
-            @QueryParam("api-version") String apiVersion,
-            @HeaderParam("Accept") String accept,
-            Context context);
+            @PathParam("containerAppName") String containerAppName, @PathParam("name") String name,
+            @PathParam("subscriptionId") String subscriptionId, @QueryParam("api-version") String apiVersion,
+            @HeaderParam("Accept") String accept, Context context);
 
-        @Headers({"Content-Type: application/json"})
-        @Post(
-            "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/containerApps"
-                + "/{containerAppName}/revisions/{name}/deactivate")
-        @ExpectedResponses({200})
+        @Headers({ "Content-Type: application/json" })
+        @Post("/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/containerApps/{containerAppName}/revisions/{name}/deactivate")
+        @ExpectedResponses({ 200 })
         @UnexpectedResponseExceptionType(DefaultErrorResponseErrorException.class)
-        Mono<Response<Void>> deactivateRevision(
-            @HostParam("$host") String endpoint,
+        Mono<Response<Void>> deactivateRevision(@HostParam("$host") String endpoint,
             @PathParam("resourceGroupName") String resourceGroupName,
-            @PathParam("containerAppName") String containerAppName,
-            @PathParam("name") String name,
-            @PathParam("subscriptionId") String subscriptionId,
-            @QueryParam("api-version") String apiVersion,
-            @HeaderParam("Accept") String accept,
-            Context context);
+            @PathParam("containerAppName") String containerAppName, @PathParam("name") String name,
+            @PathParam("subscriptionId") String subscriptionId, @QueryParam("api-version") String apiVersion,
+            @HeaderParam("Accept") String accept, Context context);
 
-        @Headers({"Content-Type: application/json"})
-        @Post(
-            "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/containerApps"
-                + "/{containerAppName}/revisions/{name}/restart")
-        @ExpectedResponses({200})
+        @Headers({ "Content-Type: application/json" })
+        @Post("/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/containerApps/{containerAppName}/revisions/{name}/restart")
+        @ExpectedResponses({ 200 })
         @UnexpectedResponseExceptionType(DefaultErrorResponseErrorException.class)
-        Mono<Response<Void>> restartRevision(
-            @HostParam("$host") String endpoint,
+        Mono<Response<Void>> restartRevision(@HostParam("$host") String endpoint,
             @PathParam("resourceGroupName") String resourceGroupName,
-            @PathParam("containerAppName") String containerAppName,
-            @PathParam("name") String name,
-            @PathParam("subscriptionId") String subscriptionId,
-            @QueryParam("api-version") String apiVersion,
-            @HeaderParam("Accept") String accept,
-            Context context);
+            @PathParam("containerAppName") String containerAppName, @PathParam("name") String name,
+            @PathParam("subscriptionId") String subscriptionId, @QueryParam("api-version") String apiVersion,
+            @HeaderParam("Accept") String accept, Context context);
 
-        @Headers({"Content-Type: application/json"})
+        @Headers({ "Content-Type: application/json" })
         @Get("{nextLink}")
-        @ExpectedResponses({200})
+        @ExpectedResponses({ 200 })
         @UnexpectedResponseExceptionType(DefaultErrorResponseErrorException.class)
         Mono<Response<RevisionCollection>> listRevisionsNext(
-            @PathParam(value = "nextLink", encoded = true) String nextLink,
-            @HostParam("$host") String endpoint,
-            @HeaderParam("Accept") String accept,
-            Context context);
+            @PathParam(value = "nextLink", encoded = true) String nextLink, @HostParam("$host") String endpoint,
+            @HeaderParam("Accept") String accept, Context context);
     }
 
     /**
      * Get the Revisions for a given Container App.
-     *
+     * 
      * @param resourceGroupName Name of the resource group to which the resource belongs.
      * @param containerAppName Name of the Container App for which Revisions are needed.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws DefaultErrorResponseErrorException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the Revisions for a given Container App.
+     * @return the Revisions for a given Container App along with {@link PagedResponse} on successful completion of
+     * {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    private Mono<PagedResponse<RevisionInner>> listRevisionsSinglePageAsync(
-        String resourceGroupName, String containerAppName) {
+    private Mono<PagedResponse<RevisionInner>> listRevisionsSinglePageAsync(String resourceGroupName,
+        String containerAppName) {
         if (this.client.getEndpoint() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getEndpoint() is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
         }
         if (resourceGroupName == null) {
             return Mono
@@ -179,55 +148,36 @@ public final class ContainerAppsRevisionsClientImpl implements ContainerAppsRevi
                 .error(new IllegalArgumentException("Parameter containerAppName is required and cannot be null."));
         }
         if (this.client.getSubscriptionId() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getSubscriptionId() is required and cannot be null."));
+            return Mono.error(new IllegalArgumentException(
+                "Parameter this.client.getSubscriptionId() is required and cannot be null."));
         }
         final String accept = "application/json";
         return FluxUtil
-            .withContext(
-                context ->
-                    service
-                        .listRevisions(
-                            this.client.getEndpoint(),
-                            resourceGroupName,
-                            containerAppName,
-                            this.client.getSubscriptionId(),
-                            this.client.getApiVersion(),
-                            accept,
-                            context))
-            .<PagedResponse<RevisionInner>>map(
-                res ->
-                    new PagedResponseBase<>(
-                        res.getRequest(),
-                        res.getStatusCode(),
-                        res.getHeaders(),
-                        res.getValue().value(),
-                        res.getValue().nextLink(),
-                        null))
+            .withContext(context -> service.listRevisions(this.client.getEndpoint(), resourceGroupName,
+                containerAppName, this.client.getSubscriptionId(), this.client.getApiVersion(), accept, context))
+            .<PagedResponse<RevisionInner>>map(res -> new PagedResponseBase<>(res.getRequest(), res.getStatusCode(),
+                res.getHeaders(), res.getValue().value(), res.getValue().nextLink(), null))
             .contextWrite(context -> context.putAll(FluxUtil.toReactorContext(this.client.getContext()).readOnly()));
     }
 
     /**
      * Get the Revisions for a given Container App.
-     *
+     * 
      * @param resourceGroupName Name of the resource group to which the resource belongs.
      * @param containerAppName Name of the Container App for which Revisions are needed.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws DefaultErrorResponseErrorException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the Revisions for a given Container App.
+     * @return the Revisions for a given Container App along with {@link PagedResponse} on successful completion of
+     * {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    private Mono<PagedResponse<RevisionInner>> listRevisionsSinglePageAsync(
-        String resourceGroupName, String containerAppName, Context context) {
+    private Mono<PagedResponse<RevisionInner>> listRevisionsSinglePageAsync(String resourceGroupName,
+        String containerAppName, Context context) {
         if (this.client.getEndpoint() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getEndpoint() is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
         }
         if (resourceGroupName == null) {
             return Mono
@@ -238,78 +188,61 @@ public final class ContainerAppsRevisionsClientImpl implements ContainerAppsRevi
                 .error(new IllegalArgumentException("Parameter containerAppName is required and cannot be null."));
         }
         if (this.client.getSubscriptionId() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getSubscriptionId() is required and cannot be null."));
+            return Mono.error(new IllegalArgumentException(
+                "Parameter this.client.getSubscriptionId() is required and cannot be null."));
         }
         final String accept = "application/json";
         context = this.client.mergeContext(context);
         return service
-            .listRevisions(
-                this.client.getEndpoint(),
-                resourceGroupName,
-                containerAppName,
-                this.client.getSubscriptionId(),
-                this.client.getApiVersion(),
-                accept,
-                context)
-            .map(
-                res ->
-                    new PagedResponseBase<>(
-                        res.getRequest(),
-                        res.getStatusCode(),
-                        res.getHeaders(),
-                        res.getValue().value(),
-                        res.getValue().nextLink(),
-                        null));
+            .listRevisions(this.client.getEndpoint(), resourceGroupName, containerAppName,
+                this.client.getSubscriptionId(), this.client.getApiVersion(), accept, context)
+            .map(res -> new PagedResponseBase<>(res.getRequest(), res.getStatusCode(), res.getHeaders(),
+                res.getValue().value(), res.getValue().nextLink(), null));
     }
 
     /**
      * Get the Revisions for a given Container App.
-     *
+     * 
      * @param resourceGroupName Name of the resource group to which the resource belongs.
      * @param containerAppName Name of the Container App for which Revisions are needed.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws DefaultErrorResponseErrorException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the Revisions for a given Container App.
+     * @return the Revisions for a given Container App as paginated response with {@link PagedFlux}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
     public PagedFlux<RevisionInner> listRevisionsAsync(String resourceGroupName, String containerAppName) {
-        return new PagedFlux<>(
-            () -> listRevisionsSinglePageAsync(resourceGroupName, containerAppName),
+        return new PagedFlux<>(() -> listRevisionsSinglePageAsync(resourceGroupName, containerAppName),
             nextLink -> listRevisionsNextSinglePageAsync(nextLink));
     }
 
     /**
      * Get the Revisions for a given Container App.
-     *
+     * 
      * @param resourceGroupName Name of the resource group to which the resource belongs.
      * @param containerAppName Name of the Container App for which Revisions are needed.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws DefaultErrorResponseErrorException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the Revisions for a given Container App.
+     * @return the Revisions for a given Container App as paginated response with {@link PagedFlux}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
-    private PagedFlux<RevisionInner> listRevisionsAsync(
-        String resourceGroupName, String containerAppName, Context context) {
-        return new PagedFlux<>(
-            () -> listRevisionsSinglePageAsync(resourceGroupName, containerAppName, context),
+    private PagedFlux<RevisionInner> listRevisionsAsync(String resourceGroupName, String containerAppName,
+        Context context) {
+        return new PagedFlux<>(() -> listRevisionsSinglePageAsync(resourceGroupName, containerAppName, context),
             nextLink -> listRevisionsNextSinglePageAsync(nextLink, context));
     }
 
     /**
      * Get the Revisions for a given Container App.
-     *
+     * 
      * @param resourceGroupName Name of the resource group to which the resource belongs.
      * @param containerAppName Name of the Container App for which Revisions are needed.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws DefaultErrorResponseErrorException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the Revisions for a given Container App.
+     * @return the Revisions for a given Container App as paginated response with {@link PagedIterable}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
     public PagedIterable<RevisionInner> listRevisions(String resourceGroupName, String containerAppName) {
@@ -318,40 +251,38 @@ public final class ContainerAppsRevisionsClientImpl implements ContainerAppsRevi
 
     /**
      * Get the Revisions for a given Container App.
-     *
+     * 
      * @param resourceGroupName Name of the resource group to which the resource belongs.
      * @param containerAppName Name of the Container App for which Revisions are needed.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws DefaultErrorResponseErrorException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the Revisions for a given Container App.
+     * @return the Revisions for a given Container App as paginated response with {@link PagedIterable}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
-    public PagedIterable<RevisionInner> listRevisions(
-        String resourceGroupName, String containerAppName, Context context) {
+    public PagedIterable<RevisionInner> listRevisions(String resourceGroupName, String containerAppName,
+        Context context) {
         return new PagedIterable<>(listRevisionsAsync(resourceGroupName, containerAppName, context));
     }
 
     /**
      * Get a revision of a Container App.
-     *
+     * 
      * @param resourceGroupName Name of the resource group to which the resource belongs.
      * @param containerAppName Name of the Container App.
      * @param name Name of the Container App Revision.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws DefaultErrorResponseErrorException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return a revision of a Container App.
+     * @return a revision of a Container App along with {@link Response} on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    public Mono<Response<RevisionInner>> getRevisionWithResponseAsync(
-        String resourceGroupName, String containerAppName, String name) {
+    public Mono<Response<RevisionInner>> getRevisionWithResponseAsync(String resourceGroupName, String containerAppName,
+        String name) {
         if (this.client.getEndpoint() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getEndpoint() is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
         }
         if (resourceGroupName == null) {
             return Mono
@@ -365,31 +296,19 @@ public final class ContainerAppsRevisionsClientImpl implements ContainerAppsRevi
             return Mono.error(new IllegalArgumentException("Parameter name is required and cannot be null."));
         }
         if (this.client.getSubscriptionId() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getSubscriptionId() is required and cannot be null."));
+            return Mono.error(new IllegalArgumentException(
+                "Parameter this.client.getSubscriptionId() is required and cannot be null."));
         }
         final String accept = "application/json";
         return FluxUtil
-            .withContext(
-                context ->
-                    service
-                        .getRevision(
-                            this.client.getEndpoint(),
-                            resourceGroupName,
-                            containerAppName,
-                            name,
-                            this.client.getSubscriptionId(),
-                            this.client.getApiVersion(),
-                            accept,
-                            context))
+            .withContext(context -> service.getRevision(this.client.getEndpoint(), resourceGroupName, containerAppName,
+                name, this.client.getSubscriptionId(), this.client.getApiVersion(), accept, context))
             .contextWrite(context -> context.putAll(FluxUtil.toReactorContext(this.client.getContext()).readOnly()));
     }
 
     /**
      * Get a revision of a Container App.
-     *
+     * 
      * @param resourceGroupName Name of the resource group to which the resource belongs.
      * @param containerAppName Name of the Container App.
      * @param name Name of the Container App Revision.
@@ -397,16 +316,14 @@ public final class ContainerAppsRevisionsClientImpl implements ContainerAppsRevi
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws DefaultErrorResponseErrorException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return a revision of a Container App.
+     * @return a revision of a Container App along with {@link Response} on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    private Mono<Response<RevisionInner>> getRevisionWithResponseAsync(
-        String resourceGroupName, String containerAppName, String name, Context context) {
+    private Mono<Response<RevisionInner>> getRevisionWithResponseAsync(String resourceGroupName,
+        String containerAppName, String name, Context context) {
         if (this.client.getEndpoint() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getEndpoint() is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
         }
         if (resourceGroupName == null) {
             return Mono
@@ -420,52 +337,53 @@ public final class ContainerAppsRevisionsClientImpl implements ContainerAppsRevi
             return Mono.error(new IllegalArgumentException("Parameter name is required and cannot be null."));
         }
         if (this.client.getSubscriptionId() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getSubscriptionId() is required and cannot be null."));
+            return Mono.error(new IllegalArgumentException(
+                "Parameter this.client.getSubscriptionId() is required and cannot be null."));
         }
         final String accept = "application/json";
         context = this.client.mergeContext(context);
-        return service
-            .getRevision(
-                this.client.getEndpoint(),
-                resourceGroupName,
-                containerAppName,
-                name,
-                this.client.getSubscriptionId(),
-                this.client.getApiVersion(),
-                accept,
-                context);
+        return service.getRevision(this.client.getEndpoint(), resourceGroupName, containerAppName, name,
+            this.client.getSubscriptionId(), this.client.getApiVersion(), accept, context);
     }
 
     /**
      * Get a revision of a Container App.
-     *
+     * 
      * @param resourceGroupName Name of the resource group to which the resource belongs.
      * @param containerAppName Name of the Container App.
      * @param name Name of the Container App Revision.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws DefaultErrorResponseErrorException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return a revision of a Container App.
+     * @return a revision of a Container App on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
     public Mono<RevisionInner> getRevisionAsync(String resourceGroupName, String containerAppName, String name) {
         return getRevisionWithResponseAsync(resourceGroupName, containerAppName, name)
-            .flatMap(
-                (Response<RevisionInner> res) -> {
-                    if (res.getValue() != null) {
-                        return Mono.just(res.getValue());
-                    } else {
-                        return Mono.empty();
-                    }
-                });
+            .flatMap(res -> Mono.justOrEmpty(res.getValue()));
     }
 
     /**
      * Get a revision of a Container App.
-     *
+     * 
+     * @param resourceGroupName Name of the resource group to which the resource belongs.
+     * @param containerAppName Name of the Container App.
+     * @param name Name of the Container App Revision.
+     * @param context The context to associate with this operation.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws DefaultErrorResponseErrorException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return a revision of a Container App along with {@link Response}.
+     */
+    @ServiceMethod(returns = ReturnType.SINGLE)
+    public Response<RevisionInner> getRevisionWithResponse(String resourceGroupName, String containerAppName,
+        String name, Context context) {
+        return getRevisionWithResponseAsync(resourceGroupName, containerAppName, name, context).block();
+    }
+
+    /**
+     * Get a revision of a Container App.
+     * 
      * @param resourceGroupName Name of the resource group to which the resource belongs.
      * @param containerAppName Name of the Container App.
      * @param name Name of the Container App Revision.
@@ -476,46 +394,26 @@ public final class ContainerAppsRevisionsClientImpl implements ContainerAppsRevi
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
     public RevisionInner getRevision(String resourceGroupName, String containerAppName, String name) {
-        return getRevisionAsync(resourceGroupName, containerAppName, name).block();
-    }
-
-    /**
-     * Get a revision of a Container App.
-     *
-     * @param resourceGroupName Name of the resource group to which the resource belongs.
-     * @param containerAppName Name of the Container App.
-     * @param name Name of the Container App Revision.
-     * @param context The context to associate with this operation.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws DefaultErrorResponseErrorException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return a revision of a Container App.
-     */
-    @ServiceMethod(returns = ReturnType.SINGLE)
-    public Response<RevisionInner> getRevisionWithResponse(
-        String resourceGroupName, String containerAppName, String name, Context context) {
-        return getRevisionWithResponseAsync(resourceGroupName, containerAppName, name, context).block();
+        return getRevisionWithResponse(resourceGroupName, containerAppName, name, Context.NONE).getValue();
     }
 
     /**
      * Activates a revision for a Container App.
-     *
+     * 
      * @param resourceGroupName Name of the resource group to which the resource belongs.
      * @param containerAppName Name of the Container App.
      * @param name Name of the Container App Revision to activate.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws DefaultErrorResponseErrorException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the completion.
+     * @return the {@link Response} on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    public Mono<Response<Void>> activateRevisionWithResponseAsync(
-        String resourceGroupName, String containerAppName, String name) {
+    public Mono<Response<Void>> activateRevisionWithResponseAsync(String resourceGroupName, String containerAppName,
+        String name) {
         if (this.client.getEndpoint() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getEndpoint() is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
         }
         if (resourceGroupName == null) {
             return Mono
@@ -529,31 +427,19 @@ public final class ContainerAppsRevisionsClientImpl implements ContainerAppsRevi
             return Mono.error(new IllegalArgumentException("Parameter name is required and cannot be null."));
         }
         if (this.client.getSubscriptionId() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getSubscriptionId() is required and cannot be null."));
+            return Mono.error(new IllegalArgumentException(
+                "Parameter this.client.getSubscriptionId() is required and cannot be null."));
         }
         final String accept = "application/json";
         return FluxUtil
-            .withContext(
-                context ->
-                    service
-                        .activateRevision(
-                            this.client.getEndpoint(),
-                            resourceGroupName,
-                            containerAppName,
-                            name,
-                            this.client.getSubscriptionId(),
-                            this.client.getApiVersion(),
-                            accept,
-                            context))
+            .withContext(context -> service.activateRevision(this.client.getEndpoint(), resourceGroupName,
+                containerAppName, name, this.client.getSubscriptionId(), this.client.getApiVersion(), accept, context))
             .contextWrite(context -> context.putAll(FluxUtil.toReactorContext(this.client.getContext()).readOnly()));
     }
 
     /**
      * Activates a revision for a Container App.
-     *
+     * 
      * @param resourceGroupName Name of the resource group to which the resource belongs.
      * @param containerAppName Name of the Container App.
      * @param name Name of the Container App Revision to activate.
@@ -561,16 +447,14 @@ public final class ContainerAppsRevisionsClientImpl implements ContainerAppsRevi
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws DefaultErrorResponseErrorException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the completion.
+     * @return the {@link Response} on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    private Mono<Response<Void>> activateRevisionWithResponseAsync(
-        String resourceGroupName, String containerAppName, String name, Context context) {
+    private Mono<Response<Void>> activateRevisionWithResponseAsync(String resourceGroupName, String containerAppName,
+        String name, Context context) {
         if (this.client.getEndpoint() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getEndpoint() is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
         }
         if (resourceGroupName == null) {
             return Mono
@@ -584,45 +468,53 @@ public final class ContainerAppsRevisionsClientImpl implements ContainerAppsRevi
             return Mono.error(new IllegalArgumentException("Parameter name is required and cannot be null."));
         }
         if (this.client.getSubscriptionId() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getSubscriptionId() is required and cannot be null."));
+            return Mono.error(new IllegalArgumentException(
+                "Parameter this.client.getSubscriptionId() is required and cannot be null."));
         }
         final String accept = "application/json";
         context = this.client.mergeContext(context);
-        return service
-            .activateRevision(
-                this.client.getEndpoint(),
-                resourceGroupName,
-                containerAppName,
-                name,
-                this.client.getSubscriptionId(),
-                this.client.getApiVersion(),
-                accept,
-                context);
+        return service.activateRevision(this.client.getEndpoint(), resourceGroupName, containerAppName, name,
+            this.client.getSubscriptionId(), this.client.getApiVersion(), accept, context);
     }
 
     /**
      * Activates a revision for a Container App.
-     *
+     * 
      * @param resourceGroupName Name of the resource group to which the resource belongs.
      * @param containerAppName Name of the Container App.
      * @param name Name of the Container App Revision to activate.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws DefaultErrorResponseErrorException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the completion.
+     * @return A {@link Mono} that completes when a successful response is received.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
     public Mono<Void> activateRevisionAsync(String resourceGroupName, String containerAppName, String name) {
         return activateRevisionWithResponseAsync(resourceGroupName, containerAppName, name)
-            .flatMap((Response<Void> res) -> Mono.empty());
+            .flatMap(ignored -> Mono.empty());
     }
 
     /**
      * Activates a revision for a Container App.
-     *
+     * 
+     * @param resourceGroupName Name of the resource group to which the resource belongs.
+     * @param containerAppName Name of the Container App.
+     * @param name Name of the Container App Revision to activate.
+     * @param context The context to associate with this operation.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws DefaultErrorResponseErrorException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return the {@link Response}.
+     */
+    @ServiceMethod(returns = ReturnType.SINGLE)
+    public Response<Void> activateRevisionWithResponse(String resourceGroupName, String containerAppName, String name,
+        Context context) {
+        return activateRevisionWithResponseAsync(resourceGroupName, containerAppName, name, context).block();
+    }
+
+    /**
+     * Activates a revision for a Container App.
+     * 
      * @param resourceGroupName Name of the resource group to which the resource belongs.
      * @param containerAppName Name of the Container App.
      * @param name Name of the Container App Revision to activate.
@@ -632,46 +524,26 @@ public final class ContainerAppsRevisionsClientImpl implements ContainerAppsRevi
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
     public void activateRevision(String resourceGroupName, String containerAppName, String name) {
-        activateRevisionAsync(resourceGroupName, containerAppName, name).block();
-    }
-
-    /**
-     * Activates a revision for a Container App.
-     *
-     * @param resourceGroupName Name of the resource group to which the resource belongs.
-     * @param containerAppName Name of the Container App.
-     * @param name Name of the Container App Revision to activate.
-     * @param context The context to associate with this operation.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws DefaultErrorResponseErrorException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the response.
-     */
-    @ServiceMethod(returns = ReturnType.SINGLE)
-    public Response<Void> activateRevisionWithResponse(
-        String resourceGroupName, String containerAppName, String name, Context context) {
-        return activateRevisionWithResponseAsync(resourceGroupName, containerAppName, name, context).block();
+        activateRevisionWithResponse(resourceGroupName, containerAppName, name, Context.NONE);
     }
 
     /**
      * Deactivates a revision for a Container App.
-     *
+     * 
      * @param resourceGroupName Name of the resource group to which the resource belongs.
      * @param containerAppName Name of the Container App.
      * @param name Name of the Container App Revision to deactivate.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws DefaultErrorResponseErrorException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the completion.
+     * @return the {@link Response} on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    public Mono<Response<Void>> deactivateRevisionWithResponseAsync(
-        String resourceGroupName, String containerAppName, String name) {
+    public Mono<Response<Void>> deactivateRevisionWithResponseAsync(String resourceGroupName, String containerAppName,
+        String name) {
         if (this.client.getEndpoint() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getEndpoint() is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
         }
         if (resourceGroupName == null) {
             return Mono
@@ -685,31 +557,19 @@ public final class ContainerAppsRevisionsClientImpl implements ContainerAppsRevi
             return Mono.error(new IllegalArgumentException("Parameter name is required and cannot be null."));
         }
         if (this.client.getSubscriptionId() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getSubscriptionId() is required and cannot be null."));
+            return Mono.error(new IllegalArgumentException(
+                "Parameter this.client.getSubscriptionId() is required and cannot be null."));
         }
         final String accept = "application/json";
         return FluxUtil
-            .withContext(
-                context ->
-                    service
-                        .deactivateRevision(
-                            this.client.getEndpoint(),
-                            resourceGroupName,
-                            containerAppName,
-                            name,
-                            this.client.getSubscriptionId(),
-                            this.client.getApiVersion(),
-                            accept,
-                            context))
+            .withContext(context -> service.deactivateRevision(this.client.getEndpoint(), resourceGroupName,
+                containerAppName, name, this.client.getSubscriptionId(), this.client.getApiVersion(), accept, context))
             .contextWrite(context -> context.putAll(FluxUtil.toReactorContext(this.client.getContext()).readOnly()));
     }
 
     /**
      * Deactivates a revision for a Container App.
-     *
+     * 
      * @param resourceGroupName Name of the resource group to which the resource belongs.
      * @param containerAppName Name of the Container App.
      * @param name Name of the Container App Revision to deactivate.
@@ -717,16 +577,14 @@ public final class ContainerAppsRevisionsClientImpl implements ContainerAppsRevi
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws DefaultErrorResponseErrorException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the completion.
+     * @return the {@link Response} on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    private Mono<Response<Void>> deactivateRevisionWithResponseAsync(
-        String resourceGroupName, String containerAppName, String name, Context context) {
+    private Mono<Response<Void>> deactivateRevisionWithResponseAsync(String resourceGroupName, String containerAppName,
+        String name, Context context) {
         if (this.client.getEndpoint() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getEndpoint() is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
         }
         if (resourceGroupName == null) {
             return Mono
@@ -740,45 +598,53 @@ public final class ContainerAppsRevisionsClientImpl implements ContainerAppsRevi
             return Mono.error(new IllegalArgumentException("Parameter name is required and cannot be null."));
         }
         if (this.client.getSubscriptionId() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getSubscriptionId() is required and cannot be null."));
+            return Mono.error(new IllegalArgumentException(
+                "Parameter this.client.getSubscriptionId() is required and cannot be null."));
         }
         final String accept = "application/json";
         context = this.client.mergeContext(context);
-        return service
-            .deactivateRevision(
-                this.client.getEndpoint(),
-                resourceGroupName,
-                containerAppName,
-                name,
-                this.client.getSubscriptionId(),
-                this.client.getApiVersion(),
-                accept,
-                context);
+        return service.deactivateRevision(this.client.getEndpoint(), resourceGroupName, containerAppName, name,
+            this.client.getSubscriptionId(), this.client.getApiVersion(), accept, context);
     }
 
     /**
      * Deactivates a revision for a Container App.
-     *
+     * 
      * @param resourceGroupName Name of the resource group to which the resource belongs.
      * @param containerAppName Name of the Container App.
      * @param name Name of the Container App Revision to deactivate.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws DefaultErrorResponseErrorException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the completion.
+     * @return A {@link Mono} that completes when a successful response is received.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
     public Mono<Void> deactivateRevisionAsync(String resourceGroupName, String containerAppName, String name) {
         return deactivateRevisionWithResponseAsync(resourceGroupName, containerAppName, name)
-            .flatMap((Response<Void> res) -> Mono.empty());
+            .flatMap(ignored -> Mono.empty());
     }
 
     /**
      * Deactivates a revision for a Container App.
-     *
+     * 
+     * @param resourceGroupName Name of the resource group to which the resource belongs.
+     * @param containerAppName Name of the Container App.
+     * @param name Name of the Container App Revision to deactivate.
+     * @param context The context to associate with this operation.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws DefaultErrorResponseErrorException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return the {@link Response}.
+     */
+    @ServiceMethod(returns = ReturnType.SINGLE)
+    public Response<Void> deactivateRevisionWithResponse(String resourceGroupName, String containerAppName, String name,
+        Context context) {
+        return deactivateRevisionWithResponseAsync(resourceGroupName, containerAppName, name, context).block();
+    }
+
+    /**
+     * Deactivates a revision for a Container App.
+     * 
      * @param resourceGroupName Name of the resource group to which the resource belongs.
      * @param containerAppName Name of the Container App.
      * @param name Name of the Container App Revision to deactivate.
@@ -788,46 +654,26 @@ public final class ContainerAppsRevisionsClientImpl implements ContainerAppsRevi
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
     public void deactivateRevision(String resourceGroupName, String containerAppName, String name) {
-        deactivateRevisionAsync(resourceGroupName, containerAppName, name).block();
-    }
-
-    /**
-     * Deactivates a revision for a Container App.
-     *
-     * @param resourceGroupName Name of the resource group to which the resource belongs.
-     * @param containerAppName Name of the Container App.
-     * @param name Name of the Container App Revision to deactivate.
-     * @param context The context to associate with this operation.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws DefaultErrorResponseErrorException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the response.
-     */
-    @ServiceMethod(returns = ReturnType.SINGLE)
-    public Response<Void> deactivateRevisionWithResponse(
-        String resourceGroupName, String containerAppName, String name, Context context) {
-        return deactivateRevisionWithResponseAsync(resourceGroupName, containerAppName, name, context).block();
+        deactivateRevisionWithResponse(resourceGroupName, containerAppName, name, Context.NONE);
     }
 
     /**
      * Restarts a revision for a Container App.
-     *
+     * 
      * @param resourceGroupName Name of the resource group to which the resource belongs.
      * @param containerAppName Name of the Container App.
      * @param name Name of the Container App Revision to restart.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws DefaultErrorResponseErrorException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the completion.
+     * @return the {@link Response} on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    public Mono<Response<Void>> restartRevisionWithResponseAsync(
-        String resourceGroupName, String containerAppName, String name) {
+    public Mono<Response<Void>> restartRevisionWithResponseAsync(String resourceGroupName, String containerAppName,
+        String name) {
         if (this.client.getEndpoint() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getEndpoint() is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
         }
         if (resourceGroupName == null) {
             return Mono
@@ -841,31 +687,19 @@ public final class ContainerAppsRevisionsClientImpl implements ContainerAppsRevi
             return Mono.error(new IllegalArgumentException("Parameter name is required and cannot be null."));
         }
         if (this.client.getSubscriptionId() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getSubscriptionId() is required and cannot be null."));
+            return Mono.error(new IllegalArgumentException(
+                "Parameter this.client.getSubscriptionId() is required and cannot be null."));
         }
         final String accept = "application/json";
         return FluxUtil
-            .withContext(
-                context ->
-                    service
-                        .restartRevision(
-                            this.client.getEndpoint(),
-                            resourceGroupName,
-                            containerAppName,
-                            name,
-                            this.client.getSubscriptionId(),
-                            this.client.getApiVersion(),
-                            accept,
-                            context))
+            .withContext(context -> service.restartRevision(this.client.getEndpoint(), resourceGroupName,
+                containerAppName, name, this.client.getSubscriptionId(), this.client.getApiVersion(), accept, context))
             .contextWrite(context -> context.putAll(FluxUtil.toReactorContext(this.client.getContext()).readOnly()));
     }
 
     /**
      * Restarts a revision for a Container App.
-     *
+     * 
      * @param resourceGroupName Name of the resource group to which the resource belongs.
      * @param containerAppName Name of the Container App.
      * @param name Name of the Container App Revision to restart.
@@ -873,16 +707,14 @@ public final class ContainerAppsRevisionsClientImpl implements ContainerAppsRevi
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws DefaultErrorResponseErrorException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the completion.
+     * @return the {@link Response} on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    private Mono<Response<Void>> restartRevisionWithResponseAsync(
-        String resourceGroupName, String containerAppName, String name, Context context) {
+    private Mono<Response<Void>> restartRevisionWithResponseAsync(String resourceGroupName, String containerAppName,
+        String name, Context context) {
         if (this.client.getEndpoint() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getEndpoint() is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
         }
         if (resourceGroupName == null) {
             return Mono
@@ -896,45 +728,53 @@ public final class ContainerAppsRevisionsClientImpl implements ContainerAppsRevi
             return Mono.error(new IllegalArgumentException("Parameter name is required and cannot be null."));
         }
         if (this.client.getSubscriptionId() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getSubscriptionId() is required and cannot be null."));
+            return Mono.error(new IllegalArgumentException(
+                "Parameter this.client.getSubscriptionId() is required and cannot be null."));
         }
         final String accept = "application/json";
         context = this.client.mergeContext(context);
-        return service
-            .restartRevision(
-                this.client.getEndpoint(),
-                resourceGroupName,
-                containerAppName,
-                name,
-                this.client.getSubscriptionId(),
-                this.client.getApiVersion(),
-                accept,
-                context);
+        return service.restartRevision(this.client.getEndpoint(), resourceGroupName, containerAppName, name,
+            this.client.getSubscriptionId(), this.client.getApiVersion(), accept, context);
     }
 
     /**
      * Restarts a revision for a Container App.
-     *
+     * 
      * @param resourceGroupName Name of the resource group to which the resource belongs.
      * @param containerAppName Name of the Container App.
      * @param name Name of the Container App Revision to restart.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws DefaultErrorResponseErrorException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the completion.
+     * @return A {@link Mono} that completes when a successful response is received.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
     public Mono<Void> restartRevisionAsync(String resourceGroupName, String containerAppName, String name) {
         return restartRevisionWithResponseAsync(resourceGroupName, containerAppName, name)
-            .flatMap((Response<Void> res) -> Mono.empty());
+            .flatMap(ignored -> Mono.empty());
     }
 
     /**
      * Restarts a revision for a Container App.
-     *
+     * 
+     * @param resourceGroupName Name of the resource group to which the resource belongs.
+     * @param containerAppName Name of the Container App.
+     * @param name Name of the Container App Revision to restart.
+     * @param context The context to associate with this operation.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws DefaultErrorResponseErrorException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return the {@link Response}.
+     */
+    @ServiceMethod(returns = ReturnType.SINGLE)
+    public Response<Void> restartRevisionWithResponse(String resourceGroupName, String containerAppName, String name,
+        Context context) {
+        return restartRevisionWithResponseAsync(resourceGroupName, containerAppName, name, context).block();
+    }
+
+    /**
+     * Restarts a revision for a Container App.
+     * 
      * @param resourceGroupName Name of the resource group to which the resource belongs.
      * @param containerAppName Name of the Container App.
      * @param name Name of the Container App Revision to restart.
@@ -944,35 +784,18 @@ public final class ContainerAppsRevisionsClientImpl implements ContainerAppsRevi
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
     public void restartRevision(String resourceGroupName, String containerAppName, String name) {
-        restartRevisionAsync(resourceGroupName, containerAppName, name).block();
-    }
-
-    /**
-     * Restarts a revision for a Container App.
-     *
-     * @param resourceGroupName Name of the resource group to which the resource belongs.
-     * @param containerAppName Name of the Container App.
-     * @param name Name of the Container App Revision to restart.
-     * @param context The context to associate with this operation.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws DefaultErrorResponseErrorException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the response.
-     */
-    @ServiceMethod(returns = ReturnType.SINGLE)
-    public Response<Void> restartRevisionWithResponse(
-        String resourceGroupName, String containerAppName, String name, Context context) {
-        return restartRevisionWithResponseAsync(resourceGroupName, containerAppName, name, context).block();
+        restartRevisionWithResponse(resourceGroupName, containerAppName, name, Context.NONE);
     }
 
     /**
      * Get the next page of items.
-     *
-     * @param nextLink The nextLink parameter.
+     * 
+     * @param nextLink The URL to get the next list of items.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws DefaultErrorResponseErrorException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return container App Revisions collection ARM resource.
+     * @return container App Revisions collection ARM resource along with {@link PagedResponse} on successful completion
+     * of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
     private Mono<PagedResponse<RevisionInner>> listRevisionsNextSinglePageAsync(String nextLink) {
@@ -980,35 +803,27 @@ public final class ContainerAppsRevisionsClientImpl implements ContainerAppsRevi
             return Mono.error(new IllegalArgumentException("Parameter nextLink is required and cannot be null."));
         }
         if (this.client.getEndpoint() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getEndpoint() is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
         }
         final String accept = "application/json";
         return FluxUtil
             .withContext(context -> service.listRevisionsNext(nextLink, this.client.getEndpoint(), accept, context))
-            .<PagedResponse<RevisionInner>>map(
-                res ->
-                    new PagedResponseBase<>(
-                        res.getRequest(),
-                        res.getStatusCode(),
-                        res.getHeaders(),
-                        res.getValue().value(),
-                        res.getValue().nextLink(),
-                        null))
+            .<PagedResponse<RevisionInner>>map(res -> new PagedResponseBase<>(res.getRequest(), res.getStatusCode(),
+                res.getHeaders(), res.getValue().value(), res.getValue().nextLink(), null))
             .contextWrite(context -> context.putAll(FluxUtil.toReactorContext(this.client.getContext()).readOnly()));
     }
 
     /**
      * Get the next page of items.
-     *
-     * @param nextLink The nextLink parameter.
+     * 
+     * @param nextLink The URL to get the next list of items.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws DefaultErrorResponseErrorException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return container App Revisions collection ARM resource.
+     * @return container App Revisions collection ARM resource along with {@link PagedResponse} on successful completion
+     * of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
     private Mono<PagedResponse<RevisionInner>> listRevisionsNextSinglePageAsync(String nextLink, Context context) {
@@ -1016,23 +831,13 @@ public final class ContainerAppsRevisionsClientImpl implements ContainerAppsRevi
             return Mono.error(new IllegalArgumentException("Parameter nextLink is required and cannot be null."));
         }
         if (this.client.getEndpoint() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getEndpoint() is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
         }
         final String accept = "application/json";
         context = this.client.mergeContext(context);
-        return service
-            .listRevisionsNext(nextLink, this.client.getEndpoint(), accept, context)
-            .map(
-                res ->
-                    new PagedResponseBase<>(
-                        res.getRequest(),
-                        res.getStatusCode(),
-                        res.getHeaders(),
-                        res.getValue().value(),
-                        res.getValue().nextLink(),
-                        null));
+        return service.listRevisionsNext(nextLink, this.client.getEndpoint(), accept, context)
+            .map(res -> new PagedResponseBase<>(res.getRequest(), res.getStatusCode(), res.getHeaders(),
+                res.getValue().value(), res.getValue().nextLink(), null));
     }
 }

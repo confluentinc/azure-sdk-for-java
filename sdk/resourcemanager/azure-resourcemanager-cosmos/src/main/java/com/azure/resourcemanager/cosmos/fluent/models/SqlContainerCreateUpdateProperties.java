@@ -6,32 +6,38 @@ package com.azure.resourcemanager.cosmos.fluent.models;
 
 import com.azure.core.annotation.Fluent;
 import com.azure.core.util.logging.ClientLogger;
+import com.azure.json.JsonReader;
+import com.azure.json.JsonSerializable;
+import com.azure.json.JsonToken;
+import com.azure.json.JsonWriter;
 import com.azure.resourcemanager.cosmos.models.CreateUpdateOptions;
 import com.azure.resourcemanager.cosmos.models.SqlContainerResource;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import java.io.IOException;
 
-/** Properties to create and update Azure Cosmos DB container. */
+/**
+ * Properties to create and update Azure Cosmos DB container.
+ */
 @Fluent
-public final class SqlContainerCreateUpdateProperties {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(SqlContainerCreateUpdateProperties.class);
-
+public final class SqlContainerCreateUpdateProperties implements JsonSerializable<SqlContainerCreateUpdateProperties> {
     /*
      * The standard JSON format of a container
      */
-    @JsonProperty(value = "resource", required = true)
     private SqlContainerResource resource;
 
     /*
-     * A key-value pair of options to be applied for the request. This
-     * corresponds to the headers sent with the request.
+     * A key-value pair of options to be applied for the request. This corresponds to the headers sent with the request.
      */
-    @JsonProperty(value = "options")
     private CreateUpdateOptions options;
 
     /**
+     * Creates an instance of SqlContainerCreateUpdateProperties class.
+     */
+    public SqlContainerCreateUpdateProperties() {
+    }
+
+    /**
      * Get the resource property: The standard JSON format of a container.
-     *
+     * 
      * @return the resource value.
      */
     public SqlContainerResource resource() {
@@ -40,7 +46,7 @@ public final class SqlContainerCreateUpdateProperties {
 
     /**
      * Set the resource property: The standard JSON format of a container.
-     *
+     * 
      * @param resource the resource value to set.
      * @return the SqlContainerCreateUpdateProperties object itself.
      */
@@ -52,7 +58,7 @@ public final class SqlContainerCreateUpdateProperties {
     /**
      * Get the options property: A key-value pair of options to be applied for the request. This corresponds to the
      * headers sent with the request.
-     *
+     * 
      * @return the options value.
      */
     public CreateUpdateOptions options() {
@@ -62,7 +68,7 @@ public final class SqlContainerCreateUpdateProperties {
     /**
      * Set the options property: A key-value pair of options to be applied for the request. This corresponds to the
      * headers sent with the request.
-     *
+     * 
      * @param options the options value to set.
      * @return the SqlContainerCreateUpdateProperties object itself.
      */
@@ -73,20 +79,62 @@ public final class SqlContainerCreateUpdateProperties {
 
     /**
      * Validates the instance.
-     *
+     * 
      * @throws IllegalArgumentException thrown if the instance is not valid.
      */
     public void validate() {
         if (resource() == null) {
-            throw logger
-                .logExceptionAsError(
-                    new IllegalArgumentException(
-                        "Missing required property resource in model SqlContainerCreateUpdateProperties"));
+            throw LOGGER.atError()
+                .log(new IllegalArgumentException(
+                    "Missing required property resource in model SqlContainerCreateUpdateProperties"));
         } else {
             resource().validate();
         }
         if (options() != null) {
             options().validate();
         }
+    }
+
+    private static final ClientLogger LOGGER = new ClientLogger(SqlContainerCreateUpdateProperties.class);
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public JsonWriter toJson(JsonWriter jsonWriter) throws IOException {
+        jsonWriter.writeStartObject();
+        jsonWriter.writeJsonField("resource", this.resource);
+        jsonWriter.writeJsonField("options", this.options);
+        return jsonWriter.writeEndObject();
+    }
+
+    /**
+     * Reads an instance of SqlContainerCreateUpdateProperties from the JsonReader.
+     * 
+     * @param jsonReader The JsonReader being read.
+     * @return An instance of SqlContainerCreateUpdateProperties if the JsonReader was pointing to an instance of it, or
+     * null if it was pointing to JSON null.
+     * @throws IllegalStateException If the deserialized JSON object was missing any required properties.
+     * @throws IOException If an error occurs while reading the SqlContainerCreateUpdateProperties.
+     */
+    public static SqlContainerCreateUpdateProperties fromJson(JsonReader jsonReader) throws IOException {
+        return jsonReader.readObject(reader -> {
+            SqlContainerCreateUpdateProperties deserializedSqlContainerCreateUpdateProperties
+                = new SqlContainerCreateUpdateProperties();
+            while (reader.nextToken() != JsonToken.END_OBJECT) {
+                String fieldName = reader.getFieldName();
+                reader.nextToken();
+
+                if ("resource".equals(fieldName)) {
+                    deserializedSqlContainerCreateUpdateProperties.resource = SqlContainerResource.fromJson(reader);
+                } else if ("options".equals(fieldName)) {
+                    deserializedSqlContainerCreateUpdateProperties.options = CreateUpdateOptions.fromJson(reader);
+                } else {
+                    reader.skipChildren();
+                }
+            }
+
+            return deserializedSqlContainerCreateUpdateProperties;
+        });
     }
 }

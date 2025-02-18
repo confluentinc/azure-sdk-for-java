@@ -16,19 +16,30 @@ import com.azure.resourcemanager.datafactory.models.ExposureControlBatchResponse
 import com.azure.resourcemanager.datafactory.models.ExposureControlRequest;
 import com.azure.resourcemanager.datafactory.models.ExposureControlResponse;
 import com.azure.resourcemanager.datafactory.models.ExposureControls;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 public final class ExposureControlsImpl implements ExposureControls {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(ExposureControlsImpl.class);
+    private static final ClientLogger LOGGER = new ClientLogger(ExposureControlsImpl.class);
 
     private final ExposureControlsClient innerClient;
 
     private final com.azure.resourcemanager.datafactory.DataFactoryManager serviceManager;
 
-    public ExposureControlsImpl(
-        ExposureControlsClient innerClient, com.azure.resourcemanager.datafactory.DataFactoryManager serviceManager) {
+    public ExposureControlsImpl(ExposureControlsClient innerClient,
+        com.azure.resourcemanager.datafactory.DataFactoryManager serviceManager) {
         this.innerClient = innerClient;
         this.serviceManager = serviceManager;
+    }
+
+    public Response<ExposureControlResponse> getFeatureValueWithResponse(String locationId,
+        ExposureControlRequest exposureControlRequest, Context context) {
+        Response<ExposureControlResponseInner> inner
+            = this.serviceClient().getFeatureValueWithResponse(locationId, exposureControlRequest, context);
+        if (inner != null) {
+            return new SimpleResponse<>(inner.getRequest(), inner.getStatusCode(), inner.getHeaders(),
+                new ExposureControlResponseImpl(inner.getValue(), this.manager()));
+        } else {
+            return null;
+        }
     }
 
     public ExposureControlResponse getFeatureValue(String locationId, ExposureControlRequest exposureControlRequest) {
@@ -40,25 +51,22 @@ public final class ExposureControlsImpl implements ExposureControls {
         }
     }
 
-    public Response<ExposureControlResponse> getFeatureValueWithResponse(
-        String locationId, ExposureControlRequest exposureControlRequest, Context context) {
-        Response<ExposureControlResponseInner> inner =
-            this.serviceClient().getFeatureValueWithResponse(locationId, exposureControlRequest, context);
+    public Response<ExposureControlResponse> getFeatureValueByFactoryWithResponse(String resourceGroupName,
+        String factoryName, ExposureControlRequest exposureControlRequest, Context context) {
+        Response<ExposureControlResponseInner> inner = this.serviceClient()
+            .getFeatureValueByFactoryWithResponse(resourceGroupName, factoryName, exposureControlRequest, context);
         if (inner != null) {
-            return new SimpleResponse<>(
-                inner.getRequest(),
-                inner.getStatusCode(),
-                inner.getHeaders(),
+            return new SimpleResponse<>(inner.getRequest(), inner.getStatusCode(), inner.getHeaders(),
                 new ExposureControlResponseImpl(inner.getValue(), this.manager()));
         } else {
             return null;
         }
     }
 
-    public ExposureControlResponse getFeatureValueByFactory(
-        String resourceGroupName, String factoryName, ExposureControlRequest exposureControlRequest) {
-        ExposureControlResponseInner inner =
-            this.serviceClient().getFeatureValueByFactory(resourceGroupName, factoryName, exposureControlRequest);
+    public ExposureControlResponse getFeatureValueByFactory(String resourceGroupName, String factoryName,
+        ExposureControlRequest exposureControlRequest) {
+        ExposureControlResponseInner inner
+            = this.serviceClient().getFeatureValueByFactory(resourceGroupName, factoryName, exposureControlRequest);
         if (inner != null) {
             return new ExposureControlResponseImpl(inner, this.manager());
         } else {
@@ -66,52 +74,25 @@ public final class ExposureControlsImpl implements ExposureControls {
         }
     }
 
-    public Response<ExposureControlResponse> getFeatureValueByFactoryWithResponse(
-        String resourceGroupName, String factoryName, ExposureControlRequest exposureControlRequest, Context context) {
-        Response<ExposureControlResponseInner> inner =
-            this
-                .serviceClient()
-                .getFeatureValueByFactoryWithResponse(resourceGroupName, factoryName, exposureControlRequest, context);
+    public Response<ExposureControlBatchResponse> queryFeatureValuesByFactoryWithResponse(String resourceGroupName,
+        String factoryName, ExposureControlBatchRequest exposureControlBatchRequest, Context context) {
+        Response<ExposureControlBatchResponseInner> inner = this.serviceClient()
+            .queryFeatureValuesByFactoryWithResponse(resourceGroupName, factoryName, exposureControlBatchRequest,
+                context);
         if (inner != null) {
-            return new SimpleResponse<>(
-                inner.getRequest(),
-                inner.getStatusCode(),
-                inner.getHeaders(),
-                new ExposureControlResponseImpl(inner.getValue(), this.manager()));
+            return new SimpleResponse<>(inner.getRequest(), inner.getStatusCode(), inner.getHeaders(),
+                new ExposureControlBatchResponseImpl(inner.getValue(), this.manager()));
         } else {
             return null;
         }
     }
 
-    public ExposureControlBatchResponse queryFeatureValuesByFactory(
-        String resourceGroupName, String factoryName, ExposureControlBatchRequest exposureControlBatchRequest) {
-        ExposureControlBatchResponseInner inner =
-            this
-                .serviceClient()
-                .queryFeatureValuesByFactory(resourceGroupName, factoryName, exposureControlBatchRequest);
+    public ExposureControlBatchResponse queryFeatureValuesByFactory(String resourceGroupName, String factoryName,
+        ExposureControlBatchRequest exposureControlBatchRequest) {
+        ExposureControlBatchResponseInner inner = this.serviceClient()
+            .queryFeatureValuesByFactory(resourceGroupName, factoryName, exposureControlBatchRequest);
         if (inner != null) {
             return new ExposureControlBatchResponseImpl(inner, this.manager());
-        } else {
-            return null;
-        }
-    }
-
-    public Response<ExposureControlBatchResponse> queryFeatureValuesByFactoryWithResponse(
-        String resourceGroupName,
-        String factoryName,
-        ExposureControlBatchRequest exposureControlBatchRequest,
-        Context context) {
-        Response<ExposureControlBatchResponseInner> inner =
-            this
-                .serviceClient()
-                .queryFeatureValuesByFactoryWithResponse(
-                    resourceGroupName, factoryName, exposureControlBatchRequest, context);
-        if (inner != null) {
-            return new SimpleResponse<>(
-                inner.getRequest(),
-                inner.getStatusCode(),
-                inner.getHeaders(),
-                new ExposureControlBatchResponseImpl(inner.getValue(), this.manager()));
         } else {
             return null;
         }

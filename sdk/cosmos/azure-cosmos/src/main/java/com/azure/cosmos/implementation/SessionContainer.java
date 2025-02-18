@@ -38,7 +38,7 @@ public final class SessionContainer implements ISessionContainer {
     private final ConcurrentHashMap<String, Long> collectionNameToCollectionResourceId = new ConcurrentHashMap<>();
     private final ConcurrentHashMap<Long, String> collectionResourceIdToCollectionName = new ConcurrentHashMap<>();
     private final String hostName;
-    private final boolean disableSessionCapturing;
+    private boolean disableSessionCapturing;
 
     public SessionContainer(final String hostName, boolean disableSessionCapturing) {
         this.hostName = hostName;
@@ -53,7 +53,18 @@ public final class SessionContainer implements ISessionContainer {
         return this.hostName;
     }
 
-    String getSessionToken(String collectionLink) {
+    @Override
+    public void setDisableSessionCapturing(boolean value) {
+        this.disableSessionCapturing = value;
+    }
+
+    @Override
+    public boolean getDisableSessionCapturing() {
+        return this.disableSessionCapturing;
+    }
+
+    @Override
+    public String getSessionToken(String collectionLink) {
 
         PathInfo pathInfo = new PathInfo(false, null, null, false);
         ConcurrentHashMap<String, ISessionToken> partitionKeyRangeIdToTokenMap = null;
@@ -104,7 +115,6 @@ public final class SessionContainer implements ISessionContainer {
         }
         return rangeIdToTokenMap;
     }
-
 
     public String resolveGlobalSessionToken(RxDocumentServiceRequest request) {
         ConcurrentHashMap<String, ISessionToken> partitionKeyRangeIdToTokenMap = this.getPartitionKeyRangeIdToTokenMap(request);
@@ -173,9 +183,24 @@ public final class SessionContainer implements ISessionContainer {
             ValueHolder<ResourceId> resourceId = ValueHolder.initialize(null);
             ValueHolder<String> collectionName = ValueHolder.initialize(null);
 
-            if (shouldUpdateSessionToken(request, responseHeaders, resourceId, collectionName)) {
+            if (SessionContainerUtil.shouldUpdateSessionToken(request, responseHeaders, resourceId, collectionName)) {
                 this.setSessionToken(resourceId.v, collectionName.v, token);
             }
+        }
+    }
+
+    @Override
+    public void setSessionToken(RxDocumentServiceRequest request, String collectionRid, String collectionFullName, Map<String, String> responseHeaders) {
+        if (this.disableSessionCapturing) {
+            return;
+        }
+
+        ResourceId resourceId = ResourceId.parse(collectionRid);
+        String collectionName = PathsHelper.getCollectionPath(collectionFullName);
+        String token = responseHeaders.get(HttpConstants.HttpHeaders.SESSION_TOKEN);
+
+        if (!Strings.isNullOrEmpty(token)) {
+            this.setSessionToken(resourceId, collectionName, token);
         }
     }
 
@@ -209,7 +234,8 @@ public final class SessionContainer implements ISessionContainer {
 
         this.readLock.lock();
         try {
-            isKnownCollection = this.collectionNameToCollectionResourceId.containsKey(collectionName) &&
+            isKnownCollection = collectionName != null &&
+                    this.collectionNameToCollectionResourceId.containsKey(collectionName) &&
                     this.collectionResourceIdToCollectionName.containsKey(resourceId.getUniqueDocumentCollectionId()) &&
                     this.collectionNameToCollectionResourceId.get(collectionName) == resourceId.getUniqueDocumentCollectionId() &&
                     this.collectionResourceIdToCollectionName.get(resourceId.getUniqueDocumentCollectionId()).equals(collectionName);
@@ -223,7 +249,7 @@ public final class SessionContainer implements ISessionContainer {
         if (!isKnownCollection) {
             this.writeLock.lock();
             try {
-                if (collectionName != null && resourceId.getUniqueDocumentCollectionId() != 0) {
+                if (resourceId.getUniqueDocumentCollectionId() != 0) {
                     this.collectionNameToCollectionResourceId.compute(collectionName, (k, v) -> resourceId.getUniqueDocumentCollectionId());
                     this.collectionResourceIdToCollectionName.compute(resourceId.getUniqueDocumentCollectionId(), (k, v) -> collectionName);
                 }
@@ -286,37 +312,5 @@ public final class SessionContainer implements ISessionContainer {
         }
 
         return result.toString();
-    }
-
-    private static boolean shouldUpdateSessionToken(
-            RxDocumentServiceRequest request,
-            Map<String, String> responseHeaders,
-            ValueHolder<ResourceId> resourceId,
-            ValueHolder<String> collectionName) {
-        resourceId.v = null;
-        String ownerFullName = responseHeaders.get(HttpConstants.HttpHeaders.OWNER_FULL_NAME);
-        if (Strings.isNullOrEmpty(ownerFullName)) ownerFullName = request.getResourceAddress();
-
-        collectionName.v = PathsHelper.getCollectionPath(ownerFullName);
-        String resourceIdString;
-
-        if (!request.getIsNameBased()) {
-            resourceIdString = request.getResourceId();
-        } else {
-            resourceIdString = responseHeaders.get(HttpConstants.HttpHeaders.OWNER_ID);
-            if (Strings.isNullOrEmpty(resourceIdString)) resourceIdString = request.getResourceId();
-        }
-
-        if (!Strings.isNullOrEmpty(resourceIdString)) {
-            resourceId.v = ResourceId.parse(resourceIdString);
-
-            if (resourceId.v.getDocumentCollection() != 0 &&
-                    collectionName != null &&
-                    !ReplicatedResourceClientUtils.isReadingFromMaster(request.getResourceType(), request.getOperationType())) {
-                return true;
-            }
-        }
-
-        return false;
     }
 }

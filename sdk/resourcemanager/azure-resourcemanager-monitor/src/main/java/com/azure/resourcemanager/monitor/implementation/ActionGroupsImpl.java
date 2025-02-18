@@ -8,13 +8,13 @@ import com.azure.resourcemanager.monitor.models.ActionGroup;
 import com.azure.resourcemanager.monitor.models.ActionGroups;
 import com.azure.resourcemanager.monitor.fluent.models.ActionGroupResourceInner;
 import com.azure.resourcemanager.monitor.fluent.ActionGroupsClient;
+import com.azure.resourcemanager.monitor.models.EnableRequest;
 import com.azure.resourcemanager.resources.fluentcore.arm.collection.implementation.TopLevelModifiableResourcesImpl;
 import reactor.core.publisher.Mono;
 
 /** Implementation for {@link ActionGroups}. */
-public class ActionGroupsImpl
-    extends TopLevelModifiableResourcesImpl<
-        ActionGroup, ActionGroupImpl, ActionGroupResourceInner, ActionGroupsClient, MonitorManager>
+public class ActionGroupsImpl extends
+    TopLevelModifiableResourcesImpl<ActionGroup, ActionGroupImpl, ActionGroupResourceInner, ActionGroupsClient, MonitorManager>
     implements ActionGroups {
 
     public ActionGroupsImpl(final MonitorManager monitorManager) {
@@ -41,11 +41,14 @@ public class ActionGroupsImpl
 
     @Override
     public void enableReceiver(String resourceGroupName, String actionGroupName, String receiverName) {
-        this.inner().enableReceiver(resourceGroupName, actionGroupName, receiverName);
+        this.inner()
+            .enableReceiver(resourceGroupName, actionGroupName, new EnableRequest().withReceiverName(receiverName));
     }
 
     @Override
     public Mono<Void> enableReceiverAsync(String resourceGroupName, String actionGroupName, String receiverName) {
-        return this.inner().enableReceiverAsync(resourceGroupName, actionGroupName, receiverName);
+        return this.inner()
+            .enableReceiverAsync(resourceGroupName, actionGroupName,
+                new EnableRequest().withReceiverName(receiverName));
     }
 }

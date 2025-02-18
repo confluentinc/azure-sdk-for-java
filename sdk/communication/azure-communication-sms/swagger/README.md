@@ -32,12 +32,14 @@ To update generated files for Sms service, run the following command
 ### Code generation settings
 ``` yaml
 tag: package-sms-2021-03-07
+use: '@autorest/java@4.1.29'
 require: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/896d05e37dbb00712726620b8d679cc3c3be09fb/specification/communication/data-plane/Sms/readme.md
 java: true
 output-folder: ..\
 license-header: MICROSOFT_MIT_SMALL	
 namespace: com.azure.communication.sms	
-generate-client-as-impl: true	
+generate-client-as-impl: true
+service-interface-as-public: true
 custom-types: SmsSendOptions
 custom-types-subpackage: models
 models-subpackage: implementation.models

@@ -5,139 +5,117 @@
 package com.azure.resourcemanager.authorization.fluent.models;
 
 import com.azure.core.annotation.Fluent;
-import com.azure.core.util.logging.ClientLogger;
-import com.fasterxml.jackson.annotation.JsonAnyGetter;
-import com.fasterxml.jackson.annotation.JsonAnySetter;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.azure.core.util.CoreUtils;
+import com.azure.json.JsonReader;
+import com.azure.json.JsonToken;
+import com.azure.json.JsonWriter;
+import java.io.IOException;
 import java.time.OffsetDateTime;
-import java.util.HashMap;
+import java.time.format.DateTimeFormatter;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
-/** subscription. */
+/**
+ * subscription.
+ */
 @Fluent
 public final class MicrosoftGraphSubscription extends MicrosoftGraphEntity {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(MicrosoftGraphSubscription.class);
-
     /*
-     * Identifier of the application used to create the subscription.
-     * Read-only.
+     * Identifier of the application used to create the subscription. Read-only.
      */
-    @JsonProperty(value = "applicationId")
     private String applicationId;
 
     /*
-     * Required. Indicates the type of change in the subscribed resource that
-     * will raise a change notification. The supported values are: created,
-     * updated, deleted. Multiple values can be combined using a
-     * comma-separated list.Note: Drive root item and list change notifications
-     * support only the updated changeType. User and group change notifications
-     * support updated and deleted changeType.
+     * Required. Indicates the type of change in the subscribed resource that will raise a change notification. The
+     * supported values are: created, updated, deleted. Multiple values can be combined using a comma-separated
+     * list.Note: Drive root item and list change notifications support only the updated changeType. User and group
+     * change notifications support updated and deleted changeType.
      */
-    @JsonProperty(value = "changeType")
     private String changeType;
 
     /*
-     * Optional. Specifies the value of the clientState property sent by the
-     * service in each change notification. The maximum length is 128
-     * characters. The client can check that the change notification came from
-     * the service by comparing the value of the clientState property sent with
-     * the subscription with the value of the clientState property received
-     * with each change notification.
+     * Optional. Specifies the value of the clientState property sent by the service in each change notification. The
+     * maximum length is 128 characters. The client can check that the change notification came from the service by
+     * comparing the value of the clientState property sent with the subscription with the value of the clientState
+     * property received with each change notification.
      */
-    @JsonProperty(value = "clientState")
     private String clientState;
 
     /*
-     * Identifier of the user or service principal that created the
-     * subscription. If the app used delegated permissions to create the
-     * subscription, this field contains the id of the signed-in user the app
-     * called on behalf of. If the app used application permissions, this field
-     * contains the id of the service principal corresponding to the app.
+     * Identifier of the user or service principal that created the subscription. If the app used delegated permissions
+     * to create the subscription, this field contains the id of the signed-in user the app called on behalf of. If the
+     * app used application permissions, this field contains the id of the service principal corresponding to the app.
      * Read-only.
      */
-    @JsonProperty(value = "creatorId")
     private String creatorId;
 
     /*
-     * A base64-encoded representation of a certificate with a public key used
-     * to encrypt resource data in change notifications. Optional. Required
-     * when includeResourceData is true.
+     * A base64-encoded representation of a certificate with a public key used to encrypt resource data in change
+     * notifications. Optional. Required when includeResourceData is true.
      */
-    @JsonProperty(value = "encryptionCertificate")
     private String encryptionCertificate;
 
     /*
-     * A custom app-provided identifier to help identify the certificate needed
-     * to decrypt resource data. Optional.
+     * A custom app-provided identifier to help identify the certificate needed to decrypt resource data. Optional.
      */
-    @JsonProperty(value = "encryptionCertificateId")
     private String encryptionCertificateId;
 
     /*
-     * Required. Specifies the date and time when the webhook subscription
-     * expires. The time is in UTC, and can be an amount of time from
-     * subscription creation that varies for the resource subscribed to.  See
-     * the table below for maximum supported subscription length of time.
+     * Required. Specifies the date and time when the webhook subscription expires. The time is in UTC, and can be an
+     * amount of time from subscription creation that varies for the resource subscribed to. See the table below for
+     * maximum supported subscription length of time.
      */
-    @JsonProperty(value = "expirationDateTime")
     private OffsetDateTime expirationDateTime;
 
     /*
-     * When set to true, change notifications include resource data (such as
-     * content of a chat message). Optional.
+     * When set to true, change notifications include resource data (such as content of a chat message). Optional.
      */
-    @JsonProperty(value = "includeResourceData")
     private Boolean includeResourceData;
 
     /*
-     * Specifies the latest version of Transport Layer Security (TLS) that the
-     * notification endpoint, specified by notificationUrl, supports. The
-     * possible values are: v1_0, v1_1, v1_2, v1_3. For subscribers whose
-     * notification endpoint supports a version lower than the currently
-     * recommended version (TLS 1.2), specifying this property by a set
-     * timeline allows them to temporarily use their deprecated version of TLS
-     * before completing their upgrade to TLS 1.2. For these subscribers, not
-     * setting this property per the timeline would result in subscription
-     * operations failing. For subscribers whose notification endpoint already
-     * supports TLS 1.2, setting this property is optional. In such cases,
-     * Microsoft Graph defaults the property to v1_2.
+     * Specifies the latest version of Transport Layer Security (TLS) that the notification endpoint, specified by
+     * notificationUrl, supports. The possible values are: v1_0, v1_1, v1_2, v1_3. For subscribers whose notification
+     * endpoint supports a version lower than the currently recommended version (TLS 1.2), specifying this property by a
+     * set timeline allows them to temporarily use their deprecated version of TLS before completing their upgrade to
+     * TLS 1.2. For these subscribers, not setting this property per the timeline would result in subscription
+     * operations failing. For subscribers whose notification endpoint already supports TLS 1.2, setting this property
+     * is optional. In such cases, Microsoft Graph defaults the property to v1_2.
      */
-    @JsonProperty(value = "latestSupportedTlsVersion")
     private String latestSupportedTlsVersion;
 
     /*
-     * The URL of the endpoint that receives lifecycle notifications, including
-     * subscriptionRemoved and missed notifications. This URL must make use of
-     * the HTTPS protocol. Optional. Read more about how Outlook resources use
+     * The URL of the endpoint that receives lifecycle notifications, including subscriptionRemoved and missed
+     * notifications. This URL must make use of the HTTPS protocol. Optional. Read more about how Outlook resources use
      * lifecycle notifications.
      */
-    @JsonProperty(value = "lifecycleNotificationUrl")
     private String lifecycleNotificationUrl;
 
     /*
-     * Required. The URL of the endpoint that will receive the change
-     * notifications. This URL must make use of the HTTPS protocol.
+     * Required. The URL of the endpoint that will receive the change notifications. This URL must make use of the HTTPS
+     * protocol.
      */
-    @JsonProperty(value = "notificationUrl")
     private String notificationUrl;
 
     /*
-     * Required. Specifies the resource that will be monitored for changes. Do
-     * not include the base URL (https://graph.microsoft.com/v1.0/). See the
-     * possible resource path values for each supported resource.
+     * Required. Specifies the resource that will be monitored for changes. Do not include the base URL
+     * (https://graph.microsoft.com/v1.0/). See the possible resource path values for each supported resource.
      */
-    @JsonProperty(value = "resource")
     private String resource;
 
     /*
      * subscription
      */
-    @JsonIgnore private Map<String, Object> additionalProperties;
+    private Map<String, Object> additionalProperties;
+
+    /**
+     * Creates an instance of MicrosoftGraphSubscription class.
+     */
+    public MicrosoftGraphSubscription() {
+    }
 
     /**
      * Get the applicationId property: Identifier of the application used to create the subscription. Read-only.
-     *
+     * 
      * @return the applicationId value.
      */
     public String applicationId() {
@@ -146,7 +124,7 @@ public final class MicrosoftGraphSubscription extends MicrosoftGraphEntity {
 
     /**
      * Set the applicationId property: Identifier of the application used to create the subscription. Read-only.
-     *
+     * 
      * @param applicationId the applicationId value to set.
      * @return the MicrosoftGraphSubscription object itself.
      */
@@ -160,7 +138,7 @@ public final class MicrosoftGraphSubscription extends MicrosoftGraphEntity {
      * change notification. The supported values are: created, updated, deleted. Multiple values can be combined using a
      * comma-separated list.Note: Drive root item and list change notifications support only the updated changeType.
      * User and group change notifications support updated and deleted changeType.
-     *
+     * 
      * @return the changeType value.
      */
     public String changeType() {
@@ -172,7 +150,7 @@ public final class MicrosoftGraphSubscription extends MicrosoftGraphEntity {
      * change notification. The supported values are: created, updated, deleted. Multiple values can be combined using a
      * comma-separated list.Note: Drive root item and list change notifications support only the updated changeType.
      * User and group change notifications support updated and deleted changeType.
-     *
+     * 
      * @param changeType the changeType value to set.
      * @return the MicrosoftGraphSubscription object itself.
      */
@@ -186,7 +164,7 @@ public final class MicrosoftGraphSubscription extends MicrosoftGraphEntity {
      * each change notification. The maximum length is 128 characters. The client can check that the change notification
      * came from the service by comparing the value of the clientState property sent with the subscription with the
      * value of the clientState property received with each change notification.
-     *
+     * 
      * @return the clientState value.
      */
     public String clientState() {
@@ -198,7 +176,7 @@ public final class MicrosoftGraphSubscription extends MicrosoftGraphEntity {
      * each change notification. The maximum length is 128 characters. The client can check that the change notification
      * came from the service by comparing the value of the clientState property sent with the subscription with the
      * value of the clientState property received with each change notification.
-     *
+     * 
      * @param clientState the clientState value to set.
      * @return the MicrosoftGraphSubscription object itself.
      */
@@ -212,7 +190,7 @@ public final class MicrosoftGraphSubscription extends MicrosoftGraphEntity {
      * used delegated permissions to create the subscription, this field contains the id of the signed-in user the app
      * called on behalf of. If the app used application permissions, this field contains the id of the service principal
      * corresponding to the app. Read-only.
-     *
+     * 
      * @return the creatorId value.
      */
     public String creatorId() {
@@ -224,7 +202,7 @@ public final class MicrosoftGraphSubscription extends MicrosoftGraphEntity {
      * used delegated permissions to create the subscription, this field contains the id of the signed-in user the app
      * called on behalf of. If the app used application permissions, this field contains the id of the service principal
      * corresponding to the app. Read-only.
-     *
+     * 
      * @param creatorId the creatorId value to set.
      * @return the MicrosoftGraphSubscription object itself.
      */
@@ -236,7 +214,7 @@ public final class MicrosoftGraphSubscription extends MicrosoftGraphEntity {
     /**
      * Get the encryptionCertificate property: A base64-encoded representation of a certificate with a public key used
      * to encrypt resource data in change notifications. Optional. Required when includeResourceData is true.
-     *
+     * 
      * @return the encryptionCertificate value.
      */
     public String encryptionCertificate() {
@@ -246,7 +224,7 @@ public final class MicrosoftGraphSubscription extends MicrosoftGraphEntity {
     /**
      * Set the encryptionCertificate property: A base64-encoded representation of a certificate with a public key used
      * to encrypt resource data in change notifications. Optional. Required when includeResourceData is true.
-     *
+     * 
      * @param encryptionCertificate the encryptionCertificate value to set.
      * @return the MicrosoftGraphSubscription object itself.
      */
@@ -258,7 +236,7 @@ public final class MicrosoftGraphSubscription extends MicrosoftGraphEntity {
     /**
      * Get the encryptionCertificateId property: A custom app-provided identifier to help identify the certificate
      * needed to decrypt resource data. Optional.
-     *
+     * 
      * @return the encryptionCertificateId value.
      */
     public String encryptionCertificateId() {
@@ -268,7 +246,7 @@ public final class MicrosoftGraphSubscription extends MicrosoftGraphEntity {
     /**
      * Set the encryptionCertificateId property: A custom app-provided identifier to help identify the certificate
      * needed to decrypt resource data. Optional.
-     *
+     * 
      * @param encryptionCertificateId the encryptionCertificateId value to set.
      * @return the MicrosoftGraphSubscription object itself.
      */
@@ -281,7 +259,7 @@ public final class MicrosoftGraphSubscription extends MicrosoftGraphEntity {
      * Get the expirationDateTime property: Required. Specifies the date and time when the webhook subscription expires.
      * The time is in UTC, and can be an amount of time from subscription creation that varies for the resource
      * subscribed to. See the table below for maximum supported subscription length of time.
-     *
+     * 
      * @return the expirationDateTime value.
      */
     public OffsetDateTime expirationDateTime() {
@@ -292,7 +270,7 @@ public final class MicrosoftGraphSubscription extends MicrosoftGraphEntity {
      * Set the expirationDateTime property: Required. Specifies the date and time when the webhook subscription expires.
      * The time is in UTC, and can be an amount of time from subscription creation that varies for the resource
      * subscribed to. See the table below for maximum supported subscription length of time.
-     *
+     * 
      * @param expirationDateTime the expirationDateTime value to set.
      * @return the MicrosoftGraphSubscription object itself.
      */
@@ -304,7 +282,7 @@ public final class MicrosoftGraphSubscription extends MicrosoftGraphEntity {
     /**
      * Get the includeResourceData property: When set to true, change notifications include resource data (such as
      * content of a chat message). Optional.
-     *
+     * 
      * @return the includeResourceData value.
      */
     public Boolean includeResourceData() {
@@ -314,7 +292,7 @@ public final class MicrosoftGraphSubscription extends MicrosoftGraphEntity {
     /**
      * Set the includeResourceData property: When set to true, change notifications include resource data (such as
      * content of a chat message). Optional.
-     *
+     * 
      * @param includeResourceData the includeResourceData value to set.
      * @return the MicrosoftGraphSubscription object itself.
      */
@@ -331,7 +309,7 @@ public final class MicrosoftGraphSubscription extends MicrosoftGraphEntity {
      * TLS before completing their upgrade to TLS 1.2. For these subscribers, not setting this property per the timeline
      * would result in subscription operations failing. For subscribers whose notification endpoint already supports TLS
      * 1.2, setting this property is optional. In such cases, Microsoft Graph defaults the property to v1_2.
-     *
+     * 
      * @return the latestSupportedTlsVersion value.
      */
     public String latestSupportedTlsVersion() {
@@ -346,7 +324,7 @@ public final class MicrosoftGraphSubscription extends MicrosoftGraphEntity {
      * TLS before completing their upgrade to TLS 1.2. For these subscribers, not setting this property per the timeline
      * would result in subscription operations failing. For subscribers whose notification endpoint already supports TLS
      * 1.2, setting this property is optional. In such cases, Microsoft Graph defaults the property to v1_2.
-     *
+     * 
      * @param latestSupportedTlsVersion the latestSupportedTlsVersion value to set.
      * @return the MicrosoftGraphSubscription object itself.
      */
@@ -359,7 +337,7 @@ public final class MicrosoftGraphSubscription extends MicrosoftGraphEntity {
      * Get the lifecycleNotificationUrl property: The URL of the endpoint that receives lifecycle notifications,
      * including subscriptionRemoved and missed notifications. This URL must make use of the HTTPS protocol. Optional.
      * Read more about how Outlook resources use lifecycle notifications.
-     *
+     * 
      * @return the lifecycleNotificationUrl value.
      */
     public String lifecycleNotificationUrl() {
@@ -370,7 +348,7 @@ public final class MicrosoftGraphSubscription extends MicrosoftGraphEntity {
      * Set the lifecycleNotificationUrl property: The URL of the endpoint that receives lifecycle notifications,
      * including subscriptionRemoved and missed notifications. This URL must make use of the HTTPS protocol. Optional.
      * Read more about how Outlook resources use lifecycle notifications.
-     *
+     * 
      * @param lifecycleNotificationUrl the lifecycleNotificationUrl value to set.
      * @return the MicrosoftGraphSubscription object itself.
      */
@@ -382,7 +360,7 @@ public final class MicrosoftGraphSubscription extends MicrosoftGraphEntity {
     /**
      * Get the notificationUrl property: Required. The URL of the endpoint that will receive the change notifications.
      * This URL must make use of the HTTPS protocol.
-     *
+     * 
      * @return the notificationUrl value.
      */
     public String notificationUrl() {
@@ -392,7 +370,7 @@ public final class MicrosoftGraphSubscription extends MicrosoftGraphEntity {
     /**
      * Set the notificationUrl property: Required. The URL of the endpoint that will receive the change notifications.
      * This URL must make use of the HTTPS protocol.
-     *
+     * 
      * @param notificationUrl the notificationUrl value to set.
      * @return the MicrosoftGraphSubscription object itself.
      */
@@ -405,7 +383,7 @@ public final class MicrosoftGraphSubscription extends MicrosoftGraphEntity {
      * Get the resource property: Required. Specifies the resource that will be monitored for changes. Do not include
      * the base URL (https://graph.microsoft.com/v1.0/). See the possible resource path values for each supported
      * resource.
-     *
+     * 
      * @return the resource value.
      */
     public String resource() {
@@ -416,7 +394,7 @@ public final class MicrosoftGraphSubscription extends MicrosoftGraphEntity {
      * Set the resource property: Required. Specifies the resource that will be monitored for changes. Do not include
      * the base URL (https://graph.microsoft.com/v1.0/). See the possible resource path values for each supported
      * resource.
-     *
+     * 
      * @param resource the resource value to set.
      * @return the MicrosoftGraphSubscription object itself.
      */
@@ -427,17 +405,16 @@ public final class MicrosoftGraphSubscription extends MicrosoftGraphEntity {
 
     /**
      * Get the additionalProperties property: subscription.
-     *
+     * 
      * @return the additionalProperties value.
      */
-    @JsonAnyGetter
     public Map<String, Object> additionalProperties() {
         return this.additionalProperties;
     }
 
     /**
      * Set the additionalProperties property: subscription.
-     *
+     * 
      * @param additionalProperties the additionalProperties value to set.
      * @return the MicrosoftGraphSubscription object itself.
      */
@@ -446,15 +423,9 @@ public final class MicrosoftGraphSubscription extends MicrosoftGraphEntity {
         return this;
     }
 
-    @JsonAnySetter
-    void withAdditionalProperties(String key, Object value) {
-        if (additionalProperties == null) {
-            additionalProperties = new HashMap<>();
-        }
-        additionalProperties.put(key, value);
-    }
-
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public MicrosoftGraphSubscription withId(String id) {
         super.withId(id);
@@ -463,11 +434,99 @@ public final class MicrosoftGraphSubscription extends MicrosoftGraphEntity {
 
     /**
      * Validates the instance.
-     *
+     * 
      * @throws IllegalArgumentException thrown if the instance is not valid.
      */
     @Override
     public void validate() {
         super.validate();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public JsonWriter toJson(JsonWriter jsonWriter) throws IOException {
+        jsonWriter.writeStartObject();
+        jsonWriter.writeStringField("id", id());
+        jsonWriter.writeStringField("applicationId", this.applicationId);
+        jsonWriter.writeStringField("changeType", this.changeType);
+        jsonWriter.writeStringField("clientState", this.clientState);
+        jsonWriter.writeStringField("creatorId", this.creatorId);
+        jsonWriter.writeStringField("encryptionCertificate", this.encryptionCertificate);
+        jsonWriter.writeStringField("encryptionCertificateId", this.encryptionCertificateId);
+        jsonWriter.writeStringField("expirationDateTime",
+            this.expirationDateTime == null
+                ? null
+                : DateTimeFormatter.ISO_OFFSET_DATE_TIME.format(this.expirationDateTime));
+        jsonWriter.writeBooleanField("includeResourceData", this.includeResourceData);
+        jsonWriter.writeStringField("latestSupportedTlsVersion", this.latestSupportedTlsVersion);
+        jsonWriter.writeStringField("lifecycleNotificationUrl", this.lifecycleNotificationUrl);
+        jsonWriter.writeStringField("notificationUrl", this.notificationUrl);
+        jsonWriter.writeStringField("resource", this.resource);
+        if (additionalProperties != null) {
+            for (Map.Entry<String, Object> additionalProperty : additionalProperties.entrySet()) {
+                jsonWriter.writeUntypedField(additionalProperty.getKey(), additionalProperty.getValue());
+            }
+        }
+        return jsonWriter.writeEndObject();
+    }
+
+    /**
+     * Reads an instance of MicrosoftGraphSubscription from the JsonReader.
+     * 
+     * @param jsonReader The JsonReader being read.
+     * @return An instance of MicrosoftGraphSubscription if the JsonReader was pointing to an instance of it, or null if
+     * it was pointing to JSON null.
+     * @throws IOException If an error occurs while reading the MicrosoftGraphSubscription.
+     */
+    public static MicrosoftGraphSubscription fromJson(JsonReader jsonReader) throws IOException {
+        return jsonReader.readObject(reader -> {
+            MicrosoftGraphSubscription deserializedMicrosoftGraphSubscription = new MicrosoftGraphSubscription();
+            Map<String, Object> additionalProperties = null;
+            while (reader.nextToken() != JsonToken.END_OBJECT) {
+                String fieldName = reader.getFieldName();
+                reader.nextToken();
+
+                if ("id".equals(fieldName)) {
+                    deserializedMicrosoftGraphSubscription.withId(reader.getString());
+                } else if ("applicationId".equals(fieldName)) {
+                    deserializedMicrosoftGraphSubscription.applicationId = reader.getString();
+                } else if ("changeType".equals(fieldName)) {
+                    deserializedMicrosoftGraphSubscription.changeType = reader.getString();
+                } else if ("clientState".equals(fieldName)) {
+                    deserializedMicrosoftGraphSubscription.clientState = reader.getString();
+                } else if ("creatorId".equals(fieldName)) {
+                    deserializedMicrosoftGraphSubscription.creatorId = reader.getString();
+                } else if ("encryptionCertificate".equals(fieldName)) {
+                    deserializedMicrosoftGraphSubscription.encryptionCertificate = reader.getString();
+                } else if ("encryptionCertificateId".equals(fieldName)) {
+                    deserializedMicrosoftGraphSubscription.encryptionCertificateId = reader.getString();
+                } else if ("expirationDateTime".equals(fieldName)) {
+                    deserializedMicrosoftGraphSubscription.expirationDateTime = reader
+                        .getNullable(nonNullReader -> CoreUtils.parseBestOffsetDateTime(nonNullReader.getString()));
+                } else if ("includeResourceData".equals(fieldName)) {
+                    deserializedMicrosoftGraphSubscription.includeResourceData
+                        = reader.getNullable(JsonReader::getBoolean);
+                } else if ("latestSupportedTlsVersion".equals(fieldName)) {
+                    deserializedMicrosoftGraphSubscription.latestSupportedTlsVersion = reader.getString();
+                } else if ("lifecycleNotificationUrl".equals(fieldName)) {
+                    deserializedMicrosoftGraphSubscription.lifecycleNotificationUrl = reader.getString();
+                } else if ("notificationUrl".equals(fieldName)) {
+                    deserializedMicrosoftGraphSubscription.notificationUrl = reader.getString();
+                } else if ("resource".equals(fieldName)) {
+                    deserializedMicrosoftGraphSubscription.resource = reader.getString();
+                } else {
+                    if (additionalProperties == null) {
+                        additionalProperties = new LinkedHashMap<>();
+                    }
+
+                    additionalProperties.put(fieldName, reader.readUntyped());
+                }
+            }
+            deserializedMicrosoftGraphSubscription.additionalProperties = additionalProperties;
+
+            return deserializedMicrosoftGraphSubscription;
+        });
     }
 }

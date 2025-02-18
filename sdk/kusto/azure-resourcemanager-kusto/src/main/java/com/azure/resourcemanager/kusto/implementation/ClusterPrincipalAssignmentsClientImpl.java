@@ -30,7 +30,6 @@ import com.azure.core.management.exception.ManagementException;
 import com.azure.core.management.polling.PollResult;
 import com.azure.core.util.Context;
 import com.azure.core.util.FluxUtil;
-import com.azure.core.util.logging.ClientLogger;
 import com.azure.core.util.polling.PollerFlux;
 import com.azure.core.util.polling.SyncPoller;
 import com.azure.resourcemanager.kusto.fluent.ClusterPrincipalAssignmentsClient;
@@ -42,26 +41,28 @@ import java.nio.ByteBuffer;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-/** An instance of this class provides access to all the operations defined in ClusterPrincipalAssignmentsClient. */
+/**
+ * An instance of this class provides access to all the operations defined in ClusterPrincipalAssignmentsClient.
+ */
 public final class ClusterPrincipalAssignmentsClientImpl implements ClusterPrincipalAssignmentsClient {
-    private final ClientLogger logger = new ClientLogger(ClusterPrincipalAssignmentsClientImpl.class);
-
-    /** The proxy service used to perform REST calls. */
+    /**
+     * The proxy service used to perform REST calls.
+     */
     private final ClusterPrincipalAssignmentsService service;
 
-    /** The service client containing this operation class. */
+    /**
+     * The service client containing this operation class.
+     */
     private final KustoManagementClientImpl client;
 
     /**
      * Initializes an instance of ClusterPrincipalAssignmentsClientImpl.
-     *
+     * 
      * @param client the instance of the service client containing this operation class.
      */
     ClusterPrincipalAssignmentsClientImpl(KustoManagementClientImpl client) {
-        this.service =
-            RestProxy
-                .create(
-                    ClusterPrincipalAssignmentsService.class, client.getHttpPipeline(), client.getSerializerAdapter());
+        this.service = RestProxy.create(ClusterPrincipalAssignmentsService.class, client.getHttpPipeline(),
+            client.getSerializerAdapter());
         this.client = client;
     }
 
@@ -71,109 +72,77 @@ public final class ClusterPrincipalAssignmentsClientImpl implements ClusterPrinc
      */
     @Host("{$host}")
     @ServiceInterface(name = "KustoManagementClien")
-    private interface ClusterPrincipalAssignmentsService {
-        @Headers({"Content-Type: application/json"})
-        @Post(
-            "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Kusto/clusters"
-                + "/{clusterName}/checkPrincipalAssignmentNameAvailability")
-        @ExpectedResponses({200})
+    public interface ClusterPrincipalAssignmentsService {
+        @Headers({ "Content-Type: application/json" })
+        @Post("/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Kusto/clusters/{clusterName}/checkPrincipalAssignmentNameAvailability")
+        @ExpectedResponses({ 200 })
         @UnexpectedResponseExceptionType(ManagementException.class)
-        Mono<Response<CheckNameResultInner>> checkNameAvailability(
-            @HostParam("$host") String endpoint,
-            @PathParam("resourceGroupName") String resourceGroupName,
-            @PathParam("clusterName") String clusterName,
-            @QueryParam("api-version") String apiVersion,
-            @PathParam("subscriptionId") String subscriptionId,
+        Mono<Response<CheckNameResultInner>> checkNameAvailability(@HostParam("$host") String endpoint,
+            @PathParam("resourceGroupName") String resourceGroupName, @PathParam("clusterName") String clusterName,
+            @QueryParam("api-version") String apiVersion, @PathParam("subscriptionId") String subscriptionId,
             @BodyParam("application/json") ClusterPrincipalAssignmentCheckNameRequest principalAssignmentName,
-            @HeaderParam("Accept") String accept,
-            Context context);
+            @HeaderParam("Accept") String accept, Context context);
 
-        @Headers({"Content-Type: application/json"})
-        @Get(
-            "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Kusto/clusters"
-                + "/{clusterName}/principalAssignments/{principalAssignmentName}")
-        @ExpectedResponses({200})
+        @Headers({ "Content-Type: application/json" })
+        @Get("/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Kusto/clusters/{clusterName}/principalAssignments/{principalAssignmentName}")
+        @ExpectedResponses({ 200 })
         @UnexpectedResponseExceptionType(ManagementException.class)
-        Mono<Response<ClusterPrincipalAssignmentInner>> get(
-            @HostParam("$host") String endpoint,
+        Mono<Response<ClusterPrincipalAssignmentInner>> get(@HostParam("$host") String endpoint,
             @PathParam("subscriptionId") String subscriptionId,
-            @PathParam("resourceGroupName") String resourceGroupName,
-            @PathParam("clusterName") String clusterName,
+            @PathParam("resourceGroupName") String resourceGroupName, @PathParam("clusterName") String clusterName,
             @PathParam("principalAssignmentName") String principalAssignmentName,
-            @QueryParam("api-version") String apiVersion,
-            @HeaderParam("Accept") String accept,
-            Context context);
+            @QueryParam("api-version") String apiVersion, @HeaderParam("Accept") String accept, Context context);
 
-        @Headers({"Content-Type: application/json"})
-        @Put(
-            "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Kusto/clusters"
-                + "/{clusterName}/principalAssignments/{principalAssignmentName}")
-        @ExpectedResponses({200, 201})
+        @Headers({ "Content-Type: application/json" })
+        @Put("/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Kusto/clusters/{clusterName}/principalAssignments/{principalAssignmentName}")
+        @ExpectedResponses({ 200, 201 })
         @UnexpectedResponseExceptionType(ManagementException.class)
-        Mono<Response<Flux<ByteBuffer>>> createOrUpdate(
-            @HostParam("$host") String endpoint,
+        Mono<Response<Flux<ByteBuffer>>> createOrUpdate(@HostParam("$host") String endpoint,
             @PathParam("subscriptionId") String subscriptionId,
-            @PathParam("resourceGroupName") String resourceGroupName,
-            @PathParam("clusterName") String clusterName,
+            @PathParam("resourceGroupName") String resourceGroupName, @PathParam("clusterName") String clusterName,
             @PathParam("principalAssignmentName") String principalAssignmentName,
             @QueryParam("api-version") String apiVersion,
             @BodyParam("application/json") ClusterPrincipalAssignmentInner parameters,
-            @HeaderParam("Accept") String accept,
-            Context context);
+            @HeaderParam("Accept") String accept, Context context);
 
-        @Headers({"Content-Type: application/json"})
-        @Delete(
-            "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Kusto/clusters"
-                + "/{clusterName}/principalAssignments/{principalAssignmentName}")
-        @ExpectedResponses({200, 202, 204})
+        @Headers({ "Content-Type: application/json" })
+        @Delete("/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Kusto/clusters/{clusterName}/principalAssignments/{principalAssignmentName}")
+        @ExpectedResponses({ 200, 202, 204 })
         @UnexpectedResponseExceptionType(ManagementException.class)
-        Mono<Response<Flux<ByteBuffer>>> delete(
-            @HostParam("$host") String endpoint,
+        Mono<Response<Flux<ByteBuffer>>> delete(@HostParam("$host") String endpoint,
             @PathParam("subscriptionId") String subscriptionId,
-            @PathParam("resourceGroupName") String resourceGroupName,
-            @PathParam("clusterName") String clusterName,
+            @PathParam("resourceGroupName") String resourceGroupName, @PathParam("clusterName") String clusterName,
             @PathParam("principalAssignmentName") String principalAssignmentName,
-            @QueryParam("api-version") String apiVersion,
-            @HeaderParam("Accept") String accept,
-            Context context);
+            @QueryParam("api-version") String apiVersion, @HeaderParam("Accept") String accept, Context context);
 
-        @Headers({"Content-Type: application/json"})
-        @Get(
-            "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Kusto/clusters"
-                + "/{clusterName}/principalAssignments")
-        @ExpectedResponses({200})
+        @Headers({ "Content-Type: application/json" })
+        @Get("/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Kusto/clusters/{clusterName}/principalAssignments")
+        @ExpectedResponses({ 200 })
         @UnexpectedResponseExceptionType(ManagementException.class)
-        Mono<Response<ClusterPrincipalAssignmentListResult>> list(
-            @HostParam("$host") String endpoint,
+        Mono<Response<ClusterPrincipalAssignmentListResult>> list(@HostParam("$host") String endpoint,
             @PathParam("subscriptionId") String subscriptionId,
-            @PathParam("resourceGroupName") String resourceGroupName,
-            @PathParam("clusterName") String clusterName,
-            @QueryParam("api-version") String apiVersion,
-            @HeaderParam("Accept") String accept,
-            Context context);
+            @PathParam("resourceGroupName") String resourceGroupName, @PathParam("clusterName") String clusterName,
+            @QueryParam("api-version") String apiVersion, @HeaderParam("Accept") String accept, Context context);
     }
 
     /**
      * Checks that the principal assignment name is valid and is not already in use.
-     *
-     * @param resourceGroupName The name of the resource group containing the Kusto cluster.
+     * 
+     * @param resourceGroupName The name of the resource group. The name is case insensitive.
      * @param clusterName The name of the Kusto cluster.
      * @param principalAssignmentName The name of the principal assignment.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the result returned from a check name availability request.
+     * @return the result returned from a check name availability request along with {@link Response} on successful
+     * completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    private Mono<Response<CheckNameResultInner>> checkNameAvailabilityWithResponseAsync(
-        String resourceGroupName,
-        String clusterName,
-        ClusterPrincipalAssignmentCheckNameRequest principalAssignmentName) {
+    private Mono<Response<CheckNameResultInner>> checkNameAvailabilityWithResponseAsync(String resourceGroupName,
+        String clusterName, ClusterPrincipalAssignmentCheckNameRequest principalAssignmentName) {
         if (this.client.getEndpoint() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getEndpoint() is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
         }
         if (resourceGroupName == null) {
             return Mono
@@ -183,58 +152,42 @@ public final class ClusterPrincipalAssignmentsClientImpl implements ClusterPrinc
             return Mono.error(new IllegalArgumentException("Parameter clusterName is required and cannot be null."));
         }
         if (this.client.getSubscriptionId() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getSubscriptionId() is required and cannot be null."));
+            return Mono.error(new IllegalArgumentException(
+                "Parameter this.client.getSubscriptionId() is required and cannot be null."));
         }
         if (principalAssignmentName == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException("Parameter principalAssignmentName is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter principalAssignmentName is required and cannot be null."));
         } else {
             principalAssignmentName.validate();
         }
         final String accept = "application/json";
         return FluxUtil
-            .withContext(
-                context ->
-                    service
-                        .checkNameAvailability(
-                            this.client.getEndpoint(),
-                            resourceGroupName,
-                            clusterName,
-                            this.client.getApiVersion(),
-                            this.client.getSubscriptionId(),
-                            principalAssignmentName,
-                            accept,
-                            context))
+            .withContext(context -> service.checkNameAvailability(this.client.getEndpoint(), resourceGroupName,
+                clusterName, this.client.getApiVersion(), this.client.getSubscriptionId(), principalAssignmentName,
+                accept, context))
             .contextWrite(context -> context.putAll(FluxUtil.toReactorContext(this.client.getContext()).readOnly()));
     }
 
     /**
      * Checks that the principal assignment name is valid and is not already in use.
-     *
-     * @param resourceGroupName The name of the resource group containing the Kusto cluster.
+     * 
+     * @param resourceGroupName The name of the resource group. The name is case insensitive.
      * @param clusterName The name of the Kusto cluster.
      * @param principalAssignmentName The name of the principal assignment.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the result returned from a check name availability request.
+     * @return the result returned from a check name availability request along with {@link Response} on successful
+     * completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    private Mono<Response<CheckNameResultInner>> checkNameAvailabilityWithResponseAsync(
-        String resourceGroupName,
-        String clusterName,
-        ClusterPrincipalAssignmentCheckNameRequest principalAssignmentName,
-        Context context) {
+    private Mono<Response<CheckNameResultInner>> checkNameAvailabilityWithResponseAsync(String resourceGroupName,
+        String clusterName, ClusterPrincipalAssignmentCheckNameRequest principalAssignmentName, Context context) {
         if (this.client.getEndpoint() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getEndpoint() is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
         }
         if (resourceGroupName == null) {
             return Mono
@@ -244,125 +197,97 @@ public final class ClusterPrincipalAssignmentsClientImpl implements ClusterPrinc
             return Mono.error(new IllegalArgumentException("Parameter clusterName is required and cannot be null."));
         }
         if (this.client.getSubscriptionId() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getSubscriptionId() is required and cannot be null."));
+            return Mono.error(new IllegalArgumentException(
+                "Parameter this.client.getSubscriptionId() is required and cannot be null."));
         }
         if (principalAssignmentName == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException("Parameter principalAssignmentName is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter principalAssignmentName is required and cannot be null."));
         } else {
             principalAssignmentName.validate();
         }
         final String accept = "application/json";
         context = this.client.mergeContext(context);
-        return service
-            .checkNameAvailability(
-                this.client.getEndpoint(),
-                resourceGroupName,
-                clusterName,
-                this.client.getApiVersion(),
-                this.client.getSubscriptionId(),
-                principalAssignmentName,
-                accept,
-                context);
+        return service.checkNameAvailability(this.client.getEndpoint(), resourceGroupName, clusterName,
+            this.client.getApiVersion(), this.client.getSubscriptionId(), principalAssignmentName, accept, context);
     }
 
     /**
      * Checks that the principal assignment name is valid and is not already in use.
-     *
-     * @param resourceGroupName The name of the resource group containing the Kusto cluster.
+     * 
+     * @param resourceGroupName The name of the resource group. The name is case insensitive.
      * @param clusterName The name of the Kusto cluster.
      * @param principalAssignmentName The name of the principal assignment.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the result returned from a check name availability request.
+     * @return the result returned from a check name availability request on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    private Mono<CheckNameResultInner> checkNameAvailabilityAsync(
-        String resourceGroupName,
-        String clusterName,
+    private Mono<CheckNameResultInner> checkNameAvailabilityAsync(String resourceGroupName, String clusterName,
         ClusterPrincipalAssignmentCheckNameRequest principalAssignmentName) {
         return checkNameAvailabilityWithResponseAsync(resourceGroupName, clusterName, principalAssignmentName)
-            .flatMap(
-                (Response<CheckNameResultInner> res) -> {
-                    if (res.getValue() != null) {
-                        return Mono.just(res.getValue());
-                    } else {
-                        return Mono.empty();
-                    }
-                });
+            .flatMap(res -> Mono.justOrEmpty(res.getValue()));
     }
 
     /**
      * Checks that the principal assignment name is valid and is not already in use.
-     *
-     * @param resourceGroupName The name of the resource group containing the Kusto cluster.
-     * @param clusterName The name of the Kusto cluster.
-     * @param principalAssignmentName The name of the principal assignment.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the result returned from a check name availability request.
-     */
-    @ServiceMethod(returns = ReturnType.SINGLE)
-    public CheckNameResultInner checkNameAvailability(
-        String resourceGroupName,
-        String clusterName,
-        ClusterPrincipalAssignmentCheckNameRequest principalAssignmentName) {
-        return checkNameAvailabilityAsync(resourceGroupName, clusterName, principalAssignmentName).block();
-    }
-
-    /**
-     * Checks that the principal assignment name is valid and is not already in use.
-     *
-     * @param resourceGroupName The name of the resource group containing the Kusto cluster.
+     * 
+     * @param resourceGroupName The name of the resource group. The name is case insensitive.
      * @param clusterName The name of the Kusto cluster.
      * @param principalAssignmentName The name of the principal assignment.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the result returned from a check name availability request.
+     * @return the result returned from a check name availability request along with {@link Response}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    public Response<CheckNameResultInner> checkNameAvailabilityWithResponse(
-        String resourceGroupName,
-        String clusterName,
-        ClusterPrincipalAssignmentCheckNameRequest principalAssignmentName,
-        Context context) {
+    public Response<CheckNameResultInner> checkNameAvailabilityWithResponse(String resourceGroupName,
+        String clusterName, ClusterPrincipalAssignmentCheckNameRequest principalAssignmentName, Context context) {
         return checkNameAvailabilityWithResponseAsync(resourceGroupName, clusterName, principalAssignmentName, context)
             .block();
     }
 
     /**
+     * Checks that the principal assignment name is valid and is not already in use.
+     * 
+     * @param resourceGroupName The name of the resource group. The name is case insensitive.
+     * @param clusterName The name of the Kusto cluster.
+     * @param principalAssignmentName The name of the principal assignment.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return the result returned from a check name availability request.
+     */
+    @ServiceMethod(returns = ReturnType.SINGLE)
+    public CheckNameResultInner checkNameAvailability(String resourceGroupName, String clusterName,
+        ClusterPrincipalAssignmentCheckNameRequest principalAssignmentName) {
+        return checkNameAvailabilityWithResponse(resourceGroupName, clusterName, principalAssignmentName, Context.NONE)
+            .getValue();
+    }
+
+    /**
      * Gets a Kusto cluster principalAssignment.
-     *
-     * @param resourceGroupName The name of the resource group containing the Kusto cluster.
+     * 
+     * @param resourceGroupName The name of the resource group. The name is case insensitive.
      * @param clusterName The name of the Kusto cluster.
      * @param principalAssignmentName The name of the Kusto principalAssignment.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return a Kusto cluster principalAssignment.
+     * @return a Kusto cluster principalAssignment along with {@link Response} on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    private Mono<Response<ClusterPrincipalAssignmentInner>> getWithResponseAsync(
-        String resourceGroupName, String clusterName, String principalAssignmentName) {
+    private Mono<Response<ClusterPrincipalAssignmentInner>> getWithResponseAsync(String resourceGroupName,
+        String clusterName, String principalAssignmentName) {
         if (this.client.getEndpoint() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getEndpoint() is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
         }
         if (this.client.getSubscriptionId() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getSubscriptionId() is required and cannot be null."));
+            return Mono.error(new IllegalArgumentException(
+                "Parameter this.client.getSubscriptionId() is required and cannot be null."));
         }
         if (resourceGroupName == null) {
             return Mono
@@ -372,53 +297,38 @@ public final class ClusterPrincipalAssignmentsClientImpl implements ClusterPrinc
             return Mono.error(new IllegalArgumentException("Parameter clusterName is required and cannot be null."));
         }
         if (principalAssignmentName == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException("Parameter principalAssignmentName is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter principalAssignmentName is required and cannot be null."));
         }
         final String accept = "application/json";
         return FluxUtil
-            .withContext(
-                context ->
-                    service
-                        .get(
-                            this.client.getEndpoint(),
-                            this.client.getSubscriptionId(),
-                            resourceGroupName,
-                            clusterName,
-                            principalAssignmentName,
-                            this.client.getApiVersion(),
-                            accept,
-                            context))
+            .withContext(context -> service.get(this.client.getEndpoint(), this.client.getSubscriptionId(),
+                resourceGroupName, clusterName, principalAssignmentName, this.client.getApiVersion(), accept, context))
             .contextWrite(context -> context.putAll(FluxUtil.toReactorContext(this.client.getContext()).readOnly()));
     }
 
     /**
      * Gets a Kusto cluster principalAssignment.
-     *
-     * @param resourceGroupName The name of the resource group containing the Kusto cluster.
+     * 
+     * @param resourceGroupName The name of the resource group. The name is case insensitive.
      * @param clusterName The name of the Kusto cluster.
      * @param principalAssignmentName The name of the Kusto principalAssignment.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return a Kusto cluster principalAssignment.
+     * @return a Kusto cluster principalAssignment along with {@link Response} on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    private Mono<Response<ClusterPrincipalAssignmentInner>> getWithResponseAsync(
-        String resourceGroupName, String clusterName, String principalAssignmentName, Context context) {
+    private Mono<Response<ClusterPrincipalAssignmentInner>> getWithResponseAsync(String resourceGroupName,
+        String clusterName, String principalAssignmentName, Context context) {
         if (this.client.getEndpoint() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getEndpoint() is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
         }
         if (this.client.getSubscriptionId() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getSubscriptionId() is required and cannot be null."));
+            return Mono.error(new IllegalArgumentException(
+                "Parameter this.client.getSubscriptionId() is required and cannot be null."));
         }
         if (resourceGroupName == null) {
             return Mono
@@ -428,113 +338,91 @@ public final class ClusterPrincipalAssignmentsClientImpl implements ClusterPrinc
             return Mono.error(new IllegalArgumentException("Parameter clusterName is required and cannot be null."));
         }
         if (principalAssignmentName == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException("Parameter principalAssignmentName is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter principalAssignmentName is required and cannot be null."));
         }
         final String accept = "application/json";
         context = this.client.mergeContext(context);
-        return service
-            .get(
-                this.client.getEndpoint(),
-                this.client.getSubscriptionId(),
-                resourceGroupName,
-                clusterName,
-                principalAssignmentName,
-                this.client.getApiVersion(),
-                accept,
-                context);
+        return service.get(this.client.getEndpoint(), this.client.getSubscriptionId(), resourceGroupName, clusterName,
+            principalAssignmentName, this.client.getApiVersion(), accept, context);
     }
 
     /**
      * Gets a Kusto cluster principalAssignment.
-     *
-     * @param resourceGroupName The name of the resource group containing the Kusto cluster.
+     * 
+     * @param resourceGroupName The name of the resource group. The name is case insensitive.
      * @param clusterName The name of the Kusto cluster.
      * @param principalAssignmentName The name of the Kusto principalAssignment.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return a Kusto cluster principalAssignment.
+     * @return a Kusto cluster principalAssignment on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    private Mono<ClusterPrincipalAssignmentInner> getAsync(
-        String resourceGroupName, String clusterName, String principalAssignmentName) {
+    private Mono<ClusterPrincipalAssignmentInner> getAsync(String resourceGroupName, String clusterName,
+        String principalAssignmentName) {
         return getWithResponseAsync(resourceGroupName, clusterName, principalAssignmentName)
-            .flatMap(
-                (Response<ClusterPrincipalAssignmentInner> res) -> {
-                    if (res.getValue() != null) {
-                        return Mono.just(res.getValue());
-                    } else {
-                        return Mono.empty();
-                    }
-                });
+            .flatMap(res -> Mono.justOrEmpty(res.getValue()));
     }
 
     /**
      * Gets a Kusto cluster principalAssignment.
-     *
-     * @param resourceGroupName The name of the resource group containing the Kusto cluster.
-     * @param clusterName The name of the Kusto cluster.
-     * @param principalAssignmentName The name of the Kusto principalAssignment.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return a Kusto cluster principalAssignment.
-     */
-    @ServiceMethod(returns = ReturnType.SINGLE)
-    public ClusterPrincipalAssignmentInner get(
-        String resourceGroupName, String clusterName, String principalAssignmentName) {
-        return getAsync(resourceGroupName, clusterName, principalAssignmentName).block();
-    }
-
-    /**
-     * Gets a Kusto cluster principalAssignment.
-     *
-     * @param resourceGroupName The name of the resource group containing the Kusto cluster.
+     * 
+     * @param resourceGroupName The name of the resource group. The name is case insensitive.
      * @param clusterName The name of the Kusto cluster.
      * @param principalAssignmentName The name of the Kusto principalAssignment.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return a Kusto cluster principalAssignment.
+     * @return a Kusto cluster principalAssignment along with {@link Response}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    public Response<ClusterPrincipalAssignmentInner> getWithResponse(
-        String resourceGroupName, String clusterName, String principalAssignmentName, Context context) {
+    public Response<ClusterPrincipalAssignmentInner> getWithResponse(String resourceGroupName, String clusterName,
+        String principalAssignmentName, Context context) {
         return getWithResponseAsync(resourceGroupName, clusterName, principalAssignmentName, context).block();
     }
 
     /**
+     * Gets a Kusto cluster principalAssignment.
+     * 
+     * @param resourceGroupName The name of the resource group. The name is case insensitive.
+     * @param clusterName The name of the Kusto cluster.
+     * @param principalAssignmentName The name of the Kusto principalAssignment.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return a Kusto cluster principalAssignment.
+     */
+    @ServiceMethod(returns = ReturnType.SINGLE)
+    public ClusterPrincipalAssignmentInner get(String resourceGroupName, String clusterName,
+        String principalAssignmentName) {
+        return getWithResponse(resourceGroupName, clusterName, principalAssignmentName, Context.NONE).getValue();
+    }
+
+    /**
      * Create a Kusto cluster principalAssignment.
-     *
-     * @param resourceGroupName The name of the resource group containing the Kusto cluster.
+     * 
+     * @param resourceGroupName The name of the resource group. The name is case insensitive.
      * @param clusterName The name of the Kusto cluster.
      * @param principalAssignmentName The name of the Kusto principalAssignment.
      * @param parameters The Kusto cluster principalAssignment's parameters supplied for the operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return class representing a cluster principal assignment.
+     * @return class representing a cluster principal assignment along with {@link Response} on successful completion of
+     * {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    private Mono<Response<Flux<ByteBuffer>>> createOrUpdateWithResponseAsync(
-        String resourceGroupName,
-        String clusterName,
-        String principalAssignmentName,
-        ClusterPrincipalAssignmentInner parameters) {
+    private Mono<Response<Flux<ByteBuffer>>> createOrUpdateWithResponseAsync(String resourceGroupName,
+        String clusterName, String principalAssignmentName, ClusterPrincipalAssignmentInner parameters) {
         if (this.client.getEndpoint() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getEndpoint() is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
         }
         if (this.client.getSubscriptionId() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getSubscriptionId() is required and cannot be null."));
+            return Mono.error(new IllegalArgumentException(
+                "Parameter this.client.getSubscriptionId() is required and cannot be null."));
         }
         if (resourceGroupName == null) {
             return Mono
@@ -544,9 +432,8 @@ public final class ClusterPrincipalAssignmentsClientImpl implements ClusterPrinc
             return Mono.error(new IllegalArgumentException("Parameter clusterName is required and cannot be null."));
         }
         if (principalAssignmentName == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException("Parameter principalAssignmentName is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter principalAssignmentName is required and cannot be null."));
         }
         if (parameters == null) {
             return Mono.error(new IllegalArgumentException("Parameter parameters is required and cannot be null."));
@@ -555,26 +442,16 @@ public final class ClusterPrincipalAssignmentsClientImpl implements ClusterPrinc
         }
         final String accept = "application/json";
         return FluxUtil
-            .withContext(
-                context ->
-                    service
-                        .createOrUpdate(
-                            this.client.getEndpoint(),
-                            this.client.getSubscriptionId(),
-                            resourceGroupName,
-                            clusterName,
-                            principalAssignmentName,
-                            this.client.getApiVersion(),
-                            parameters,
-                            accept,
-                            context))
+            .withContext(context -> service.createOrUpdate(this.client.getEndpoint(), this.client.getSubscriptionId(),
+                resourceGroupName, clusterName, principalAssignmentName, this.client.getApiVersion(), parameters,
+                accept, context))
             .contextWrite(context -> context.putAll(FluxUtil.toReactorContext(this.client.getContext()).readOnly()));
     }
 
     /**
      * Create a Kusto cluster principalAssignment.
-     *
-     * @param resourceGroupName The name of the resource group containing the Kusto cluster.
+     * 
+     * @param resourceGroupName The name of the resource group. The name is case insensitive.
      * @param clusterName The name of the Kusto cluster.
      * @param principalAssignmentName The name of the Kusto principalAssignment.
      * @param parameters The Kusto cluster principalAssignment's parameters supplied for the operation.
@@ -582,26 +459,20 @@ public final class ClusterPrincipalAssignmentsClientImpl implements ClusterPrinc
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return class representing a cluster principal assignment.
+     * @return class representing a cluster principal assignment along with {@link Response} on successful completion of
+     * {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    private Mono<Response<Flux<ByteBuffer>>> createOrUpdateWithResponseAsync(
-        String resourceGroupName,
-        String clusterName,
-        String principalAssignmentName,
-        ClusterPrincipalAssignmentInner parameters,
+    private Mono<Response<Flux<ByteBuffer>>> createOrUpdateWithResponseAsync(String resourceGroupName,
+        String clusterName, String principalAssignmentName, ClusterPrincipalAssignmentInner parameters,
         Context context) {
         if (this.client.getEndpoint() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getEndpoint() is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
         }
         if (this.client.getSubscriptionId() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getSubscriptionId() is required and cannot be null."));
+            return Mono.error(new IllegalArgumentException(
+                "Parameter this.client.getSubscriptionId() is required and cannot be null."));
         }
         if (resourceGroupName == null) {
             return Mono
@@ -611,9 +482,8 @@ public final class ClusterPrincipalAssignmentsClientImpl implements ClusterPrinc
             return Mono.error(new IllegalArgumentException("Parameter clusterName is required and cannot be null."));
         }
         if (principalAssignmentName == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException("Parameter principalAssignmentName is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter principalAssignmentName is required and cannot be null."));
         }
         if (parameters == null) {
             return Mono.error(new IllegalArgumentException("Parameter parameters is required and cannot be null."));
@@ -622,54 +492,37 @@ public final class ClusterPrincipalAssignmentsClientImpl implements ClusterPrinc
         }
         final String accept = "application/json";
         context = this.client.mergeContext(context);
-        return service
-            .createOrUpdate(
-                this.client.getEndpoint(),
-                this.client.getSubscriptionId(),
-                resourceGroupName,
-                clusterName,
-                principalAssignmentName,
-                this.client.getApiVersion(),
-                parameters,
-                accept,
-                context);
+        return service.createOrUpdate(this.client.getEndpoint(), this.client.getSubscriptionId(), resourceGroupName,
+            clusterName, principalAssignmentName, this.client.getApiVersion(), parameters, accept, context);
     }
 
     /**
      * Create a Kusto cluster principalAssignment.
-     *
-     * @param resourceGroupName The name of the resource group containing the Kusto cluster.
+     * 
+     * @param resourceGroupName The name of the resource group. The name is case insensitive.
      * @param clusterName The name of the Kusto cluster.
      * @param principalAssignmentName The name of the Kusto principalAssignment.
      * @param parameters The Kusto cluster principalAssignment's parameters supplied for the operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return class representing a cluster principal assignment.
+     * @return the {@link PollerFlux} for polling of class representing a cluster principal assignment.
      */
-    @ServiceMethod(returns = ReturnType.SINGLE)
+    @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
     private PollerFlux<PollResult<ClusterPrincipalAssignmentInner>, ClusterPrincipalAssignmentInner>
-        beginCreateOrUpdateAsync(
-            String resourceGroupName,
-            String clusterName,
-            String principalAssignmentName,
+        beginCreateOrUpdateAsync(String resourceGroupName, String clusterName, String principalAssignmentName,
             ClusterPrincipalAssignmentInner parameters) {
-        Mono<Response<Flux<ByteBuffer>>> mono =
-            createOrUpdateWithResponseAsync(resourceGroupName, clusterName, principalAssignmentName, parameters);
-        return this
-            .client
-            .<ClusterPrincipalAssignmentInner, ClusterPrincipalAssignmentInner>getLroResult(
-                mono,
-                this.client.getHttpPipeline(),
-                ClusterPrincipalAssignmentInner.class,
-                ClusterPrincipalAssignmentInner.class,
-                Context.NONE);
+        Mono<Response<Flux<ByteBuffer>>> mono
+            = createOrUpdateWithResponseAsync(resourceGroupName, clusterName, principalAssignmentName, parameters);
+        return this.client.<ClusterPrincipalAssignmentInner, ClusterPrincipalAssignmentInner>getLroResult(mono,
+            this.client.getHttpPipeline(), ClusterPrincipalAssignmentInner.class, ClusterPrincipalAssignmentInner.class,
+            this.client.getContext());
     }
 
     /**
      * Create a Kusto cluster principalAssignment.
-     *
-     * @param resourceGroupName The name of the resource group containing the Kusto cluster.
+     * 
+     * @param resourceGroupName The name of the resource group. The name is case insensitive.
      * @param clusterName The name of the Kusto cluster.
      * @param principalAssignmentName The name of the Kusto principalAssignment.
      * @param parameters The Kusto cluster principalAssignment's parameters supplied for the operation.
@@ -677,56 +530,85 @@ public final class ClusterPrincipalAssignmentsClientImpl implements ClusterPrinc
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return class representing a cluster principal assignment.
+     * @return the {@link PollerFlux} for polling of class representing a cluster principal assignment.
      */
-    @ServiceMethod(returns = ReturnType.SINGLE)
+    @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
     private PollerFlux<PollResult<ClusterPrincipalAssignmentInner>, ClusterPrincipalAssignmentInner>
-        beginCreateOrUpdateAsync(
-            String resourceGroupName,
-            String clusterName,
-            String principalAssignmentName,
-            ClusterPrincipalAssignmentInner parameters,
-            Context context) {
+        beginCreateOrUpdateAsync(String resourceGroupName, String clusterName, String principalAssignmentName,
+            ClusterPrincipalAssignmentInner parameters, Context context) {
         context = this.client.mergeContext(context);
-        Mono<Response<Flux<ByteBuffer>>> mono =
-            createOrUpdateWithResponseAsync(
-                resourceGroupName, clusterName, principalAssignmentName, parameters, context);
+        Mono<Response<Flux<ByteBuffer>>> mono = createOrUpdateWithResponseAsync(resourceGroupName, clusterName,
+            principalAssignmentName, parameters, context);
+        return this.client.<ClusterPrincipalAssignmentInner, ClusterPrincipalAssignmentInner>getLroResult(mono,
+            this.client.getHttpPipeline(), ClusterPrincipalAssignmentInner.class, ClusterPrincipalAssignmentInner.class,
+            context);
+    }
+
+    /**
+     * Create a Kusto cluster principalAssignment.
+     * 
+     * @param resourceGroupName The name of the resource group. The name is case insensitive.
+     * @param clusterName The name of the Kusto cluster.
+     * @param principalAssignmentName The name of the Kusto principalAssignment.
+     * @param parameters The Kusto cluster principalAssignment's parameters supplied for the operation.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return the {@link SyncPoller} for polling of class representing a cluster principal assignment.
+     */
+    @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
+    public SyncPoller<PollResult<ClusterPrincipalAssignmentInner>, ClusterPrincipalAssignmentInner> beginCreateOrUpdate(
+        String resourceGroupName, String clusterName, String principalAssignmentName,
+        ClusterPrincipalAssignmentInner parameters) {
+        return this.beginCreateOrUpdateAsync(resourceGroupName, clusterName, principalAssignmentName, parameters)
+            .getSyncPoller();
+    }
+
+    /**
+     * Create a Kusto cluster principalAssignment.
+     * 
+     * @param resourceGroupName The name of the resource group. The name is case insensitive.
+     * @param clusterName The name of the Kusto cluster.
+     * @param principalAssignmentName The name of the Kusto principalAssignment.
+     * @param parameters The Kusto cluster principalAssignment's parameters supplied for the operation.
+     * @param context The context to associate with this operation.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return the {@link SyncPoller} for polling of class representing a cluster principal assignment.
+     */
+    @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
+    public SyncPoller<PollResult<ClusterPrincipalAssignmentInner>, ClusterPrincipalAssignmentInner> beginCreateOrUpdate(
+        String resourceGroupName, String clusterName, String principalAssignmentName,
+        ClusterPrincipalAssignmentInner parameters, Context context) {
         return this
-            .client
-            .<ClusterPrincipalAssignmentInner, ClusterPrincipalAssignmentInner>getLroResult(
-                mono,
-                this.client.getHttpPipeline(),
-                ClusterPrincipalAssignmentInner.class,
-                ClusterPrincipalAssignmentInner.class,
-                context);
+            .beginCreateOrUpdateAsync(resourceGroupName, clusterName, principalAssignmentName, parameters, context)
+            .getSyncPoller();
     }
 
     /**
      * Create a Kusto cluster principalAssignment.
-     *
-     * @param resourceGroupName The name of the resource group containing the Kusto cluster.
+     * 
+     * @param resourceGroupName The name of the resource group. The name is case insensitive.
      * @param clusterName The name of the Kusto cluster.
      * @param principalAssignmentName The name of the Kusto principalAssignment.
      * @param parameters The Kusto cluster principalAssignment's parameters supplied for the operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return class representing a cluster principal assignment.
+     * @return class representing a cluster principal assignment on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    public SyncPoller<PollResult<ClusterPrincipalAssignmentInner>, ClusterPrincipalAssignmentInner> beginCreateOrUpdate(
-        String resourceGroupName,
-        String clusterName,
-        String principalAssignmentName,
-        ClusterPrincipalAssignmentInner parameters) {
-        return beginCreateOrUpdateAsync(resourceGroupName, clusterName, principalAssignmentName, parameters)
-            .getSyncPoller();
+    private Mono<ClusterPrincipalAssignmentInner> createOrUpdateAsync(String resourceGroupName, String clusterName,
+        String principalAssignmentName, ClusterPrincipalAssignmentInner parameters) {
+        return beginCreateOrUpdateAsync(resourceGroupName, clusterName, principalAssignmentName, parameters).last()
+            .flatMap(this.client::getLroFinalResultOrError);
     }
 
     /**
      * Create a Kusto cluster principalAssignment.
-     *
-     * @param resourceGroupName The name of the resource group containing the Kusto cluster.
+     * 
+     * @param resourceGroupName The name of the resource group. The name is case insensitive.
      * @param clusterName The name of the Kusto cluster.
      * @param principalAssignmentName The name of the Kusto principalAssignment.
      * @param parameters The Kusto cluster principalAssignment's parameters supplied for the operation.
@@ -734,62 +616,11 @@ public final class ClusterPrincipalAssignmentsClientImpl implements ClusterPrinc
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return class representing a cluster principal assignment.
+     * @return class representing a cluster principal assignment on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    public SyncPoller<PollResult<ClusterPrincipalAssignmentInner>, ClusterPrincipalAssignmentInner> beginCreateOrUpdate(
-        String resourceGroupName,
-        String clusterName,
-        String principalAssignmentName,
-        ClusterPrincipalAssignmentInner parameters,
-        Context context) {
-        return beginCreateOrUpdateAsync(resourceGroupName, clusterName, principalAssignmentName, parameters, context)
-            .getSyncPoller();
-    }
-
-    /**
-     * Create a Kusto cluster principalAssignment.
-     *
-     * @param resourceGroupName The name of the resource group containing the Kusto cluster.
-     * @param clusterName The name of the Kusto cluster.
-     * @param principalAssignmentName The name of the Kusto principalAssignment.
-     * @param parameters The Kusto cluster principalAssignment's parameters supplied for the operation.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return class representing a cluster principal assignment.
-     */
-    @ServiceMethod(returns = ReturnType.SINGLE)
-    private Mono<ClusterPrincipalAssignmentInner> createOrUpdateAsync(
-        String resourceGroupName,
-        String clusterName,
-        String principalAssignmentName,
-        ClusterPrincipalAssignmentInner parameters) {
-        return beginCreateOrUpdateAsync(resourceGroupName, clusterName, principalAssignmentName, parameters)
-            .last()
-            .flatMap(this.client::getLroFinalResultOrError);
-    }
-
-    /**
-     * Create a Kusto cluster principalAssignment.
-     *
-     * @param resourceGroupName The name of the resource group containing the Kusto cluster.
-     * @param clusterName The name of the Kusto cluster.
-     * @param principalAssignmentName The name of the Kusto principalAssignment.
-     * @param parameters The Kusto cluster principalAssignment's parameters supplied for the operation.
-     * @param context The context to associate with this operation.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return class representing a cluster principal assignment.
-     */
-    @ServiceMethod(returns = ReturnType.SINGLE)
-    private Mono<ClusterPrincipalAssignmentInner> createOrUpdateAsync(
-        String resourceGroupName,
-        String clusterName,
-        String principalAssignmentName,
-        ClusterPrincipalAssignmentInner parameters,
-        Context context) {
+    private Mono<ClusterPrincipalAssignmentInner> createOrUpdateAsync(String resourceGroupName, String clusterName,
+        String principalAssignmentName, ClusterPrincipalAssignmentInner parameters, Context context) {
         return beginCreateOrUpdateAsync(resourceGroupName, clusterName, principalAssignmentName, parameters, context)
             .last()
             .flatMap(this.client::getLroFinalResultOrError);
@@ -797,8 +628,8 @@ public final class ClusterPrincipalAssignmentsClientImpl implements ClusterPrinc
 
     /**
      * Create a Kusto cluster principalAssignment.
-     *
-     * @param resourceGroupName The name of the resource group containing the Kusto cluster.
+     * 
+     * @param resourceGroupName The name of the resource group. The name is case insensitive.
      * @param clusterName The name of the Kusto cluster.
      * @param principalAssignmentName The name of the Kusto principalAssignment.
      * @param parameters The Kusto cluster principalAssignment's parameters supplied for the operation.
@@ -808,18 +639,15 @@ public final class ClusterPrincipalAssignmentsClientImpl implements ClusterPrinc
      * @return class representing a cluster principal assignment.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    public ClusterPrincipalAssignmentInner createOrUpdate(
-        String resourceGroupName,
-        String clusterName,
-        String principalAssignmentName,
-        ClusterPrincipalAssignmentInner parameters) {
+    public ClusterPrincipalAssignmentInner createOrUpdate(String resourceGroupName, String clusterName,
+        String principalAssignmentName, ClusterPrincipalAssignmentInner parameters) {
         return createOrUpdateAsync(resourceGroupName, clusterName, principalAssignmentName, parameters).block();
     }
 
     /**
      * Create a Kusto cluster principalAssignment.
-     *
-     * @param resourceGroupName The name of the resource group containing the Kusto cluster.
+     * 
+     * @param resourceGroupName The name of the resource group. The name is case insensitive.
      * @param clusterName The name of the Kusto cluster.
      * @param principalAssignmentName The name of the Kusto principalAssignment.
      * @param parameters The Kusto cluster principalAssignment's parameters supplied for the operation.
@@ -830,41 +658,33 @@ public final class ClusterPrincipalAssignmentsClientImpl implements ClusterPrinc
      * @return class representing a cluster principal assignment.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    public ClusterPrincipalAssignmentInner createOrUpdate(
-        String resourceGroupName,
-        String clusterName,
-        String principalAssignmentName,
-        ClusterPrincipalAssignmentInner parameters,
-        Context context) {
+    public ClusterPrincipalAssignmentInner createOrUpdate(String resourceGroupName, String clusterName,
+        String principalAssignmentName, ClusterPrincipalAssignmentInner parameters, Context context) {
         return createOrUpdateAsync(resourceGroupName, clusterName, principalAssignmentName, parameters, context)
             .block();
     }
 
     /**
      * Deletes a Kusto cluster principalAssignment.
-     *
-     * @param resourceGroupName The name of the resource group containing the Kusto cluster.
+     * 
+     * @param resourceGroupName The name of the resource group. The name is case insensitive.
      * @param clusterName The name of the Kusto cluster.
      * @param principalAssignmentName The name of the Kusto principalAssignment.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the completion.
+     * @return the {@link Response} on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    private Mono<Response<Flux<ByteBuffer>>> deleteWithResponseAsync(
-        String resourceGroupName, String clusterName, String principalAssignmentName) {
+    private Mono<Response<Flux<ByteBuffer>>> deleteWithResponseAsync(String resourceGroupName, String clusterName,
+        String principalAssignmentName) {
         if (this.client.getEndpoint() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getEndpoint() is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
         }
         if (this.client.getSubscriptionId() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getSubscriptionId() is required and cannot be null."));
+            return Mono.error(new IllegalArgumentException(
+                "Parameter this.client.getSubscriptionId() is required and cannot be null."));
         }
         if (resourceGroupName == null) {
             return Mono
@@ -874,53 +694,38 @@ public final class ClusterPrincipalAssignmentsClientImpl implements ClusterPrinc
             return Mono.error(new IllegalArgumentException("Parameter clusterName is required and cannot be null."));
         }
         if (principalAssignmentName == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException("Parameter principalAssignmentName is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter principalAssignmentName is required and cannot be null."));
         }
         final String accept = "application/json";
         return FluxUtil
-            .withContext(
-                context ->
-                    service
-                        .delete(
-                            this.client.getEndpoint(),
-                            this.client.getSubscriptionId(),
-                            resourceGroupName,
-                            clusterName,
-                            principalAssignmentName,
-                            this.client.getApiVersion(),
-                            accept,
-                            context))
+            .withContext(context -> service.delete(this.client.getEndpoint(), this.client.getSubscriptionId(),
+                resourceGroupName, clusterName, principalAssignmentName, this.client.getApiVersion(), accept, context))
             .contextWrite(context -> context.putAll(FluxUtil.toReactorContext(this.client.getContext()).readOnly()));
     }
 
     /**
      * Deletes a Kusto cluster principalAssignment.
-     *
-     * @param resourceGroupName The name of the resource group containing the Kusto cluster.
+     * 
+     * @param resourceGroupName The name of the resource group. The name is case insensitive.
      * @param clusterName The name of the Kusto cluster.
      * @param principalAssignmentName The name of the Kusto principalAssignment.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the completion.
+     * @return the {@link Response} on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    private Mono<Response<Flux<ByteBuffer>>> deleteWithResponseAsync(
-        String resourceGroupName, String clusterName, String principalAssignmentName, Context context) {
+    private Mono<Response<Flux<ByteBuffer>>> deleteWithResponseAsync(String resourceGroupName, String clusterName,
+        String principalAssignmentName, Context context) {
         if (this.client.getEndpoint() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getEndpoint() is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
         }
         if (this.client.getSubscriptionId() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getSubscriptionId() is required and cannot be null."));
+            return Mono.error(new IllegalArgumentException(
+                "Parameter this.client.getSubscriptionId() is required and cannot be null."));
         }
         if (resourceGroupName == null) {
             return Mono
@@ -930,145 +735,132 @@ public final class ClusterPrincipalAssignmentsClientImpl implements ClusterPrinc
             return Mono.error(new IllegalArgumentException("Parameter clusterName is required and cannot be null."));
         }
         if (principalAssignmentName == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException("Parameter principalAssignmentName is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter principalAssignmentName is required and cannot be null."));
         }
         final String accept = "application/json";
         context = this.client.mergeContext(context);
-        return service
-            .delete(
-                this.client.getEndpoint(),
-                this.client.getSubscriptionId(),
-                resourceGroupName,
-                clusterName,
-                principalAssignmentName,
-                this.client.getApiVersion(),
-                accept,
-                context);
+        return service.delete(this.client.getEndpoint(), this.client.getSubscriptionId(), resourceGroupName,
+            clusterName, principalAssignmentName, this.client.getApiVersion(), accept, context);
     }
 
     /**
      * Deletes a Kusto cluster principalAssignment.
-     *
-     * @param resourceGroupName The name of the resource group containing the Kusto cluster.
+     * 
+     * @param resourceGroupName The name of the resource group. The name is case insensitive.
      * @param clusterName The name of the Kusto cluster.
      * @param principalAssignmentName The name of the Kusto principalAssignment.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the completion.
+     * @return the {@link PollerFlux} for polling of long-running operation.
      */
-    @ServiceMethod(returns = ReturnType.SINGLE)
-    private PollerFlux<PollResult<Void>, Void> beginDeleteAsync(
-        String resourceGroupName, String clusterName, String principalAssignmentName) {
-        Mono<Response<Flux<ByteBuffer>>> mono =
-            deleteWithResponseAsync(resourceGroupName, clusterName, principalAssignmentName);
-        return this
-            .client
-            .<Void, Void>getLroResult(mono, this.client.getHttpPipeline(), Void.class, Void.class, Context.NONE);
+    @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
+    private PollerFlux<PollResult<Void>, Void> beginDeleteAsync(String resourceGroupName, String clusterName,
+        String principalAssignmentName) {
+        Mono<Response<Flux<ByteBuffer>>> mono
+            = deleteWithResponseAsync(resourceGroupName, clusterName, principalAssignmentName);
+        return this.client.<Void, Void>getLroResult(mono, this.client.getHttpPipeline(), Void.class, Void.class,
+            this.client.getContext());
     }
 
     /**
      * Deletes a Kusto cluster principalAssignment.
-     *
-     * @param resourceGroupName The name of the resource group containing the Kusto cluster.
+     * 
+     * @param resourceGroupName The name of the resource group. The name is case insensitive.
      * @param clusterName The name of the Kusto cluster.
      * @param principalAssignmentName The name of the Kusto principalAssignment.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the completion.
+     * @return the {@link PollerFlux} for polling of long-running operation.
      */
-    @ServiceMethod(returns = ReturnType.SINGLE)
-    private PollerFlux<PollResult<Void>, Void> beginDeleteAsync(
-        String resourceGroupName, String clusterName, String principalAssignmentName, Context context) {
+    @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
+    private PollerFlux<PollResult<Void>, Void> beginDeleteAsync(String resourceGroupName, String clusterName,
+        String principalAssignmentName, Context context) {
         context = this.client.mergeContext(context);
-        Mono<Response<Flux<ByteBuffer>>> mono =
-            deleteWithResponseAsync(resourceGroupName, clusterName, principalAssignmentName, context);
-        return this
-            .client
-            .<Void, Void>getLroResult(mono, this.client.getHttpPipeline(), Void.class, Void.class, context);
+        Mono<Response<Flux<ByteBuffer>>> mono
+            = deleteWithResponseAsync(resourceGroupName, clusterName, principalAssignmentName, context);
+        return this.client.<Void, Void>getLroResult(mono, this.client.getHttpPipeline(), Void.class, Void.class,
+            context);
     }
 
     /**
      * Deletes a Kusto cluster principalAssignment.
-     *
-     * @param resourceGroupName The name of the resource group containing the Kusto cluster.
+     * 
+     * @param resourceGroupName The name of the resource group. The name is case insensitive.
      * @param clusterName The name of the Kusto cluster.
      * @param principalAssignmentName The name of the Kusto principalAssignment.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the completion.
+     * @return the {@link SyncPoller} for polling of long-running operation.
      */
-    @ServiceMethod(returns = ReturnType.SINGLE)
-    public SyncPoller<PollResult<Void>, Void> beginDelete(
-        String resourceGroupName, String clusterName, String principalAssignmentName) {
-        return beginDeleteAsync(resourceGroupName, clusterName, principalAssignmentName).getSyncPoller();
+    @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
+    public SyncPoller<PollResult<Void>, Void> beginDelete(String resourceGroupName, String clusterName,
+        String principalAssignmentName) {
+        return this.beginDeleteAsync(resourceGroupName, clusterName, principalAssignmentName).getSyncPoller();
     }
 
     /**
      * Deletes a Kusto cluster principalAssignment.
-     *
-     * @param resourceGroupName The name of the resource group containing the Kusto cluster.
+     * 
+     * @param resourceGroupName The name of the resource group. The name is case insensitive.
      * @param clusterName The name of the Kusto cluster.
      * @param principalAssignmentName The name of the Kusto principalAssignment.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the completion.
+     * @return the {@link SyncPoller} for polling of long-running operation.
      */
-    @ServiceMethod(returns = ReturnType.SINGLE)
-    public SyncPoller<PollResult<Void>, Void> beginDelete(
-        String resourceGroupName, String clusterName, String principalAssignmentName, Context context) {
-        return beginDeleteAsync(resourceGroupName, clusterName, principalAssignmentName, context).getSyncPoller();
+    @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
+    public SyncPoller<PollResult<Void>, Void> beginDelete(String resourceGroupName, String clusterName,
+        String principalAssignmentName, Context context) {
+        return this.beginDeleteAsync(resourceGroupName, clusterName, principalAssignmentName, context).getSyncPoller();
     }
 
     /**
      * Deletes a Kusto cluster principalAssignment.
-     *
-     * @param resourceGroupName The name of the resource group containing the Kusto cluster.
+     * 
+     * @param resourceGroupName The name of the resource group. The name is case insensitive.
      * @param clusterName The name of the Kusto cluster.
      * @param principalAssignmentName The name of the Kusto principalAssignment.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the completion.
+     * @return A {@link Mono} that completes when a successful response is received.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
     private Mono<Void> deleteAsync(String resourceGroupName, String clusterName, String principalAssignmentName) {
-        return beginDeleteAsync(resourceGroupName, clusterName, principalAssignmentName)
-            .last()
+        return beginDeleteAsync(resourceGroupName, clusterName, principalAssignmentName).last()
             .flatMap(this.client::getLroFinalResultOrError);
     }
 
     /**
      * Deletes a Kusto cluster principalAssignment.
-     *
-     * @param resourceGroupName The name of the resource group containing the Kusto cluster.
+     * 
+     * @param resourceGroupName The name of the resource group. The name is case insensitive.
      * @param clusterName The name of the Kusto cluster.
      * @param principalAssignmentName The name of the Kusto principalAssignment.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the completion.
+     * @return A {@link Mono} that completes when a successful response is received.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    private Mono<Void> deleteAsync(
-        String resourceGroupName, String clusterName, String principalAssignmentName, Context context) {
-        return beginDeleteAsync(resourceGroupName, clusterName, principalAssignmentName, context)
-            .last()
+    private Mono<Void> deleteAsync(String resourceGroupName, String clusterName, String principalAssignmentName,
+        Context context) {
+        return beginDeleteAsync(resourceGroupName, clusterName, principalAssignmentName, context).last()
             .flatMap(this.client::getLroFinalResultOrError);
     }
 
     /**
      * Deletes a Kusto cluster principalAssignment.
-     *
-     * @param resourceGroupName The name of the resource group containing the Kusto cluster.
+     * 
+     * @param resourceGroupName The name of the resource group. The name is case insensitive.
      * @param clusterName The name of the Kusto cluster.
      * @param principalAssignmentName The name of the Kusto principalAssignment.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
@@ -1082,8 +874,8 @@ public final class ClusterPrincipalAssignmentsClientImpl implements ClusterPrinc
 
     /**
      * Deletes a Kusto cluster principalAssignment.
-     *
-     * @param resourceGroupName The name of the resource group containing the Kusto cluster.
+     * 
+     * @param resourceGroupName The name of the resource group. The name is case insensitive.
      * @param clusterName The name of the Kusto cluster.
      * @param principalAssignmentName The name of the Kusto principalAssignment.
      * @param context The context to associate with this operation.
@@ -1098,28 +890,25 @@ public final class ClusterPrincipalAssignmentsClientImpl implements ClusterPrinc
 
     /**
      * Lists all Kusto cluster principalAssignments.
-     *
-     * @param resourceGroupName The name of the resource group containing the Kusto cluster.
+     * 
+     * @param resourceGroupName The name of the resource group. The name is case insensitive.
      * @param clusterName The name of the Kusto cluster.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the list Kusto cluster principal assignments operation response.
+     * @return the list Kusto cluster principal assignments operation response along with {@link PagedResponse} on
+     * successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    private Mono<PagedResponse<ClusterPrincipalAssignmentInner>> listSinglePageAsync(
-        String resourceGroupName, String clusterName) {
+    private Mono<PagedResponse<ClusterPrincipalAssignmentInner>> listSinglePageAsync(String resourceGroupName,
+        String clusterName) {
         if (this.client.getEndpoint() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getEndpoint() is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
         }
         if (this.client.getSubscriptionId() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getSubscriptionId() is required and cannot be null."));
+            return Mono.error(new IllegalArgumentException(
+                "Parameter this.client.getSubscriptionId() is required and cannot be null."));
         }
         if (resourceGroupName == null) {
             return Mono
@@ -1130,49 +919,35 @@ public final class ClusterPrincipalAssignmentsClientImpl implements ClusterPrinc
         }
         final String accept = "application/json";
         return FluxUtil
-            .withContext(
-                context ->
-                    service
-                        .list(
-                            this.client.getEndpoint(),
-                            this.client.getSubscriptionId(),
-                            resourceGroupName,
-                            clusterName,
-                            this.client.getApiVersion(),
-                            accept,
-                            context))
-            .<PagedResponse<ClusterPrincipalAssignmentInner>>map(
-                res ->
-                    new PagedResponseBase<>(
-                        res.getRequest(), res.getStatusCode(), res.getHeaders(), res.getValue().value(), null, null))
+            .withContext(context -> service.list(this.client.getEndpoint(), this.client.getSubscriptionId(),
+                resourceGroupName, clusterName, this.client.getApiVersion(), accept, context))
+            .<PagedResponse<ClusterPrincipalAssignmentInner>>map(res -> new PagedResponseBase<>(res.getRequest(),
+                res.getStatusCode(), res.getHeaders(), res.getValue().value(), null, null))
             .contextWrite(context -> context.putAll(FluxUtil.toReactorContext(this.client.getContext()).readOnly()));
     }
 
     /**
      * Lists all Kusto cluster principalAssignments.
-     *
-     * @param resourceGroupName The name of the resource group containing the Kusto cluster.
+     * 
+     * @param resourceGroupName The name of the resource group. The name is case insensitive.
      * @param clusterName The name of the Kusto cluster.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the list Kusto cluster principal assignments operation response.
+     * @return the list Kusto cluster principal assignments operation response along with {@link PagedResponse} on
+     * successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    private Mono<PagedResponse<ClusterPrincipalAssignmentInner>> listSinglePageAsync(
-        String resourceGroupName, String clusterName, Context context) {
+    private Mono<PagedResponse<ClusterPrincipalAssignmentInner>> listSinglePageAsync(String resourceGroupName,
+        String clusterName, Context context) {
         if (this.client.getEndpoint() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getEndpoint() is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
         }
         if (this.client.getSubscriptionId() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getSubscriptionId() is required and cannot be null."));
+            return Mono.error(new IllegalArgumentException(
+                "Parameter this.client.getSubscriptionId() is required and cannot be null."));
         }
         if (resourceGroupName == null) {
             return Mono
@@ -1184,29 +959,22 @@ public final class ClusterPrincipalAssignmentsClientImpl implements ClusterPrinc
         final String accept = "application/json";
         context = this.client.mergeContext(context);
         return service
-            .list(
-                this.client.getEndpoint(),
-                this.client.getSubscriptionId(),
-                resourceGroupName,
-                clusterName,
-                this.client.getApiVersion(),
-                accept,
-                context)
-            .map(
-                res ->
-                    new PagedResponseBase<>(
-                        res.getRequest(), res.getStatusCode(), res.getHeaders(), res.getValue().value(), null, null));
+            .list(this.client.getEndpoint(), this.client.getSubscriptionId(), resourceGroupName, clusterName,
+                this.client.getApiVersion(), accept, context)
+            .map(res -> new PagedResponseBase<>(res.getRequest(), res.getStatusCode(), res.getHeaders(),
+                res.getValue().value(), null, null));
     }
 
     /**
      * Lists all Kusto cluster principalAssignments.
-     *
-     * @param resourceGroupName The name of the resource group containing the Kusto cluster.
+     * 
+     * @param resourceGroupName The name of the resource group. The name is case insensitive.
      * @param clusterName The name of the Kusto cluster.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the list Kusto cluster principal assignments operation response.
+     * @return the list Kusto cluster principal assignments operation response as paginated response with
+     * {@link PagedFlux}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
     private PagedFlux<ClusterPrincipalAssignmentInner> listAsync(String resourceGroupName, String clusterName) {
@@ -1215,30 +983,32 @@ public final class ClusterPrincipalAssignmentsClientImpl implements ClusterPrinc
 
     /**
      * Lists all Kusto cluster principalAssignments.
-     *
-     * @param resourceGroupName The name of the resource group containing the Kusto cluster.
+     * 
+     * @param resourceGroupName The name of the resource group. The name is case insensitive.
      * @param clusterName The name of the Kusto cluster.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the list Kusto cluster principal assignments operation response.
+     * @return the list Kusto cluster principal assignments operation response as paginated response with
+     * {@link PagedFlux}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
-    private PagedFlux<ClusterPrincipalAssignmentInner> listAsync(
-        String resourceGroupName, String clusterName, Context context) {
+    private PagedFlux<ClusterPrincipalAssignmentInner> listAsync(String resourceGroupName, String clusterName,
+        Context context) {
         return new PagedFlux<>(() -> listSinglePageAsync(resourceGroupName, clusterName, context));
     }
 
     /**
      * Lists all Kusto cluster principalAssignments.
-     *
-     * @param resourceGroupName The name of the resource group containing the Kusto cluster.
+     * 
+     * @param resourceGroupName The name of the resource group. The name is case insensitive.
      * @param clusterName The name of the Kusto cluster.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the list Kusto cluster principal assignments operation response.
+     * @return the list Kusto cluster principal assignments operation response as paginated response with
+     * {@link PagedIterable}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
     public PagedIterable<ClusterPrincipalAssignmentInner> list(String resourceGroupName, String clusterName) {
@@ -1247,18 +1017,19 @@ public final class ClusterPrincipalAssignmentsClientImpl implements ClusterPrinc
 
     /**
      * Lists all Kusto cluster principalAssignments.
-     *
-     * @param resourceGroupName The name of the resource group containing the Kusto cluster.
+     * 
+     * @param resourceGroupName The name of the resource group. The name is case insensitive.
      * @param clusterName The name of the Kusto cluster.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the list Kusto cluster principal assignments operation response.
+     * @return the list Kusto cluster principal assignments operation response as paginated response with
+     * {@link PagedIterable}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
-    public PagedIterable<ClusterPrincipalAssignmentInner> list(
-        String resourceGroupName, String clusterName, Context context) {
+    public PagedIterable<ClusterPrincipalAssignmentInner> list(String resourceGroupName, String clusterName,
+        Context context) {
         return new PagedIterable<>(listAsync(resourceGroupName, clusterName, context));
     }
 }

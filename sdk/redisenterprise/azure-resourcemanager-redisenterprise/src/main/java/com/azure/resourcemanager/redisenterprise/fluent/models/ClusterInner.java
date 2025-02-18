@@ -5,76 +5,72 @@
 package com.azure.resourcemanager.redisenterprise.fluent.models;
 
 import com.azure.core.annotation.Fluent;
-import com.azure.core.annotation.JsonFlatten;
 import com.azure.core.management.Resource;
 import com.azure.core.util.logging.ClientLogger;
+import com.azure.json.JsonReader;
+import com.azure.json.JsonToken;
+import com.azure.json.JsonWriter;
+import com.azure.resourcemanager.redisenterprise.models.ClusterPropertiesEncryption;
+import com.azure.resourcemanager.redisenterprise.models.HighAvailability;
+import com.azure.resourcemanager.redisenterprise.models.ManagedServiceIdentity;
 import com.azure.resourcemanager.redisenterprise.models.ProvisioningState;
+import com.azure.resourcemanager.redisenterprise.models.RedundancyMode;
 import com.azure.resourcemanager.redisenterprise.models.ResourceState;
 import com.azure.resourcemanager.redisenterprise.models.Sku;
 import com.azure.resourcemanager.redisenterprise.models.TlsVersion;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
-/** Describes the RedisEnterprise cluster. */
-@JsonFlatten
+/**
+ * Describes the Redis Enterprise cluster.
+ */
 @Fluent
-public class ClusterInner extends Resource {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(ClusterInner.class);
-
+public final class ClusterInner extends Resource {
     /*
      * The SKU to create, which affects price, performance, and features.
      */
-    @JsonProperty(value = "sku", required = true)
     private Sku sku;
 
     /*
      * The Availability Zones where this cluster will be deployed.
      */
-    @JsonProperty(value = "zones")
     private List<String> zones;
 
     /*
-     * The minimum TLS version for the cluster to support, e.g. '1.2'
+     * The identity of the resource.
      */
-    @JsonProperty(value = "properties.minimumTlsVersion")
-    private TlsVersion minimumTlsVersion;
+    private ManagedServiceIdentity identity;
 
     /*
-     * DNS name of the cluster endpoint
+     * Other properties of the cluster.
      */
-    @JsonProperty(value = "properties.hostName", access = JsonProperty.Access.WRITE_ONLY)
-    private String hostname;
+    private ClusterProperties innerProperties;
 
     /*
-     * Current provisioning status of the cluster
+     * The type of the resource.
      */
-    @JsonProperty(value = "properties.provisioningState", access = JsonProperty.Access.WRITE_ONLY)
-    private ProvisioningState provisioningState;
+    private String type;
 
     /*
-     * Current resource status of the cluster
+     * The name of the resource.
      */
-    @JsonProperty(value = "properties.resourceState", access = JsonProperty.Access.WRITE_ONLY)
-    private ResourceState resourceState;
+    private String name;
 
     /*
-     * Version of redis the cluster supports, e.g. '6'
+     * Fully qualified resource Id for the resource.
      */
-    @JsonProperty(value = "properties.redisVersion", access = JsonProperty.Access.WRITE_ONLY)
-    private String redisVersion;
+    private String id;
 
-    /*
-     * List of private endpoint connections associated with the specified
-     * RedisEnterprise cluster
+    /**
+     * Creates an instance of ClusterInner class.
      */
-    @JsonProperty(value = "properties.privateEndpointConnections", access = JsonProperty.Access.WRITE_ONLY)
-    private List<PrivateEndpointConnectionInner> privateEndpointConnections;
+    public ClusterInner() {
+    }
 
     /**
      * Get the sku property: The SKU to create, which affects price, performance, and features.
-     *
+     * 
      * @return the sku value.
      */
     public Sku sku() {
@@ -83,7 +79,7 @@ public class ClusterInner extends Resource {
 
     /**
      * Set the sku property: The SKU to create, which affects price, performance, and features.
-     *
+     * 
      * @param sku the sku value to set.
      * @return the ClusterInner object itself.
      */
@@ -94,7 +90,7 @@ public class ClusterInner extends Resource {
 
     /**
      * Get the zones property: The Availability Zones where this cluster will be deployed.
-     *
+     * 
      * @return the zones value.
      */
     public List<String> zones() {
@@ -103,7 +99,7 @@ public class ClusterInner extends Resource {
 
     /**
      * Set the zones property: The Availability Zones where this cluster will be deployed.
-     *
+     * 
      * @param zones the zones value to set.
      * @return the ClusterInner object itself.
      */
@@ -113,79 +109,76 @@ public class ClusterInner extends Resource {
     }
 
     /**
-     * Get the minimumTlsVersion property: The minimum TLS version for the cluster to support, e.g. '1.2'.
-     *
-     * @return the minimumTlsVersion value.
+     * Get the identity property: The identity of the resource.
+     * 
+     * @return the identity value.
      */
-    public TlsVersion minimumTlsVersion() {
-        return this.minimumTlsVersion;
+    public ManagedServiceIdentity identity() {
+        return this.identity;
     }
 
     /**
-     * Set the minimumTlsVersion property: The minimum TLS version for the cluster to support, e.g. '1.2'.
-     *
-     * @param minimumTlsVersion the minimumTlsVersion value to set.
+     * Set the identity property: The identity of the resource.
+     * 
+     * @param identity the identity value to set.
      * @return the ClusterInner object itself.
      */
-    public ClusterInner withMinimumTlsVersion(TlsVersion minimumTlsVersion) {
-        this.minimumTlsVersion = minimumTlsVersion;
+    public ClusterInner withIdentity(ManagedServiceIdentity identity) {
+        this.identity = identity;
         return this;
     }
 
     /**
-     * Get the hostname property: DNS name of the cluster endpoint.
-     *
-     * @return the hostname value.
+     * Get the innerProperties property: Other properties of the cluster.
+     * 
+     * @return the innerProperties value.
      */
-    public String hostname() {
-        return this.hostname;
+    private ClusterProperties innerProperties() {
+        return this.innerProperties;
     }
 
     /**
-     * Get the provisioningState property: Current provisioning status of the cluster.
-     *
-     * @return the provisioningState value.
+     * Get the type property: The type of the resource.
+     * 
+     * @return the type value.
      */
-    public ProvisioningState provisioningState() {
-        return this.provisioningState;
+    @Override
+    public String type() {
+        return this.type;
     }
 
     /**
-     * Get the resourceState property: Current resource status of the cluster.
-     *
-     * @return the resourceState value.
+     * Get the name property: The name of the resource.
+     * 
+     * @return the name value.
      */
-    public ResourceState resourceState() {
-        return this.resourceState;
+    @Override
+    public String name() {
+        return this.name;
     }
 
     /**
-     * Get the redisVersion property: Version of redis the cluster supports, e.g. '6'.
-     *
-     * @return the redisVersion value.
+     * Get the id property: Fully qualified resource Id for the resource.
+     * 
+     * @return the id value.
      */
-    public String redisVersion() {
-        return this.redisVersion;
+    @Override
+    public String id() {
+        return this.id;
     }
 
     /**
-     * Get the privateEndpointConnections property: List of private endpoint connections associated with the specified
-     * RedisEnterprise cluster.
-     *
-     * @return the privateEndpointConnections value.
+     * {@inheritDoc}
      */
-    public List<PrivateEndpointConnectionInner> privateEndpointConnections() {
-        return this.privateEndpointConnections;
-    }
-
-    /** {@inheritDoc} */
     @Override
     public ClusterInner withLocation(String location) {
         super.withLocation(location);
         return this;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public ClusterInner withTags(Map<String, String> tags) {
         super.withTags(tags);
@@ -193,20 +186,215 @@ public class ClusterInner extends Resource {
     }
 
     /**
+     * Get the highAvailability property: Enabled by default. If highAvailability is disabled, the data set is not
+     * replicated. This affects the availability SLA, and increases the risk of data loss.
+     * 
+     * @return the highAvailability value.
+     */
+    public HighAvailability highAvailability() {
+        return this.innerProperties() == null ? null : this.innerProperties().highAvailability();
+    }
+
+    /**
+     * Set the highAvailability property: Enabled by default. If highAvailability is disabled, the data set is not
+     * replicated. This affects the availability SLA, and increases the risk of data loss.
+     * 
+     * @param highAvailability the highAvailability value to set.
+     * @return the ClusterInner object itself.
+     */
+    public ClusterInner withHighAvailability(HighAvailability highAvailability) {
+        if (this.innerProperties() == null) {
+            this.innerProperties = new ClusterProperties();
+        }
+        this.innerProperties().withHighAvailability(highAvailability);
+        return this;
+    }
+
+    /**
+     * Get the minimumTlsVersion property: The minimum TLS version for the cluster to support, e.g. '1.2'. Newer
+     * versions can be added in the future. Note that TLS 1.0 and TLS 1.1 are now completely obsolete -- you cannot use
+     * them. They are mentioned only for the sake of consistency with old API versions.
+     * 
+     * @return the minimumTlsVersion value.
+     */
+    public TlsVersion minimumTlsVersion() {
+        return this.innerProperties() == null ? null : this.innerProperties().minimumTlsVersion();
+    }
+
+    /**
+     * Set the minimumTlsVersion property: The minimum TLS version for the cluster to support, e.g. '1.2'. Newer
+     * versions can be added in the future. Note that TLS 1.0 and TLS 1.1 are now completely obsolete -- you cannot use
+     * them. They are mentioned only for the sake of consistency with old API versions.
+     * 
+     * @param minimumTlsVersion the minimumTlsVersion value to set.
+     * @return the ClusterInner object itself.
+     */
+    public ClusterInner withMinimumTlsVersion(TlsVersion minimumTlsVersion) {
+        if (this.innerProperties() == null) {
+            this.innerProperties = new ClusterProperties();
+        }
+        this.innerProperties().withMinimumTlsVersion(minimumTlsVersion);
+        return this;
+    }
+
+    /**
+     * Get the encryption property: Encryption-at-rest configuration for the cluster.
+     * 
+     * @return the encryption value.
+     */
+    public ClusterPropertiesEncryption encryption() {
+        return this.innerProperties() == null ? null : this.innerProperties().encryption();
+    }
+
+    /**
+     * Set the encryption property: Encryption-at-rest configuration for the cluster.
+     * 
+     * @param encryption the encryption value to set.
+     * @return the ClusterInner object itself.
+     */
+    public ClusterInner withEncryption(ClusterPropertiesEncryption encryption) {
+        if (this.innerProperties() == null) {
+            this.innerProperties = new ClusterProperties();
+        }
+        this.innerProperties().withEncryption(encryption);
+        return this;
+    }
+
+    /**
+     * Get the hostname property: DNS name of the cluster endpoint.
+     * 
+     * @return the hostname value.
+     */
+    public String hostname() {
+        return this.innerProperties() == null ? null : this.innerProperties().hostname();
+    }
+
+    /**
+     * Get the provisioningState property: Current provisioning status of the cluster.
+     * 
+     * @return the provisioningState value.
+     */
+    public ProvisioningState provisioningState() {
+        return this.innerProperties() == null ? null : this.innerProperties().provisioningState();
+    }
+
+    /**
+     * Get the redundancyMode property: Explains the current redundancy strategy of the cluster, which affects the
+     * expected SLA.
+     * 
+     * @return the redundancyMode value.
+     */
+    public RedundancyMode redundancyMode() {
+        return this.innerProperties() == null ? null : this.innerProperties().redundancyMode();
+    }
+
+    /**
+     * Get the resourceState property: Current resource status of the cluster.
+     * 
+     * @return the resourceState value.
+     */
+    public ResourceState resourceState() {
+        return this.innerProperties() == null ? null : this.innerProperties().resourceState();
+    }
+
+    /**
+     * Get the redisVersion property: Version of redis the cluster supports, e.g. '6'.
+     * 
+     * @return the redisVersion value.
+     */
+    public String redisVersion() {
+        return this.innerProperties() == null ? null : this.innerProperties().redisVersion();
+    }
+
+    /**
+     * Get the privateEndpointConnections property: List of private endpoint connections associated with the specified
+     * Redis Enterprise cluster.
+     * 
+     * @return the privateEndpointConnections value.
+     */
+    public List<PrivateEndpointConnectionInner> privateEndpointConnections() {
+        return this.innerProperties() == null ? null : this.innerProperties().privateEndpointConnections();
+    }
+
+    /**
      * Validates the instance.
-     *
+     * 
      * @throws IllegalArgumentException thrown if the instance is not valid.
      */
     public void validate() {
         if (sku() == null) {
-            throw logger
-                .logExceptionAsError(
-                    new IllegalArgumentException("Missing required property sku in model ClusterInner"));
+            throw LOGGER.atError()
+                .log(new IllegalArgumentException("Missing required property sku in model ClusterInner"));
         } else {
             sku().validate();
         }
-        if (privateEndpointConnections() != null) {
-            privateEndpointConnections().forEach(e -> e.validate());
+        if (identity() != null) {
+            identity().validate();
         }
+        if (innerProperties() != null) {
+            innerProperties().validate();
+        }
+    }
+
+    private static final ClientLogger LOGGER = new ClientLogger(ClusterInner.class);
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public JsonWriter toJson(JsonWriter jsonWriter) throws IOException {
+        jsonWriter.writeStartObject();
+        jsonWriter.writeStringField("location", location());
+        jsonWriter.writeMapField("tags", tags(), (writer, element) -> writer.writeString(element));
+        jsonWriter.writeJsonField("sku", this.sku);
+        jsonWriter.writeArrayField("zones", this.zones, (writer, element) -> writer.writeString(element));
+        jsonWriter.writeJsonField("identity", this.identity);
+        jsonWriter.writeJsonField("properties", this.innerProperties);
+        return jsonWriter.writeEndObject();
+    }
+
+    /**
+     * Reads an instance of ClusterInner from the JsonReader.
+     * 
+     * @param jsonReader The JsonReader being read.
+     * @return An instance of ClusterInner if the JsonReader was pointing to an instance of it, or null if it was
+     * pointing to JSON null.
+     * @throws IllegalStateException If the deserialized JSON object was missing any required properties.
+     * @throws IOException If an error occurs while reading the ClusterInner.
+     */
+    public static ClusterInner fromJson(JsonReader jsonReader) throws IOException {
+        return jsonReader.readObject(reader -> {
+            ClusterInner deserializedClusterInner = new ClusterInner();
+            while (reader.nextToken() != JsonToken.END_OBJECT) {
+                String fieldName = reader.getFieldName();
+                reader.nextToken();
+
+                if ("id".equals(fieldName)) {
+                    deserializedClusterInner.id = reader.getString();
+                } else if ("name".equals(fieldName)) {
+                    deserializedClusterInner.name = reader.getString();
+                } else if ("type".equals(fieldName)) {
+                    deserializedClusterInner.type = reader.getString();
+                } else if ("location".equals(fieldName)) {
+                    deserializedClusterInner.withLocation(reader.getString());
+                } else if ("tags".equals(fieldName)) {
+                    Map<String, String> tags = reader.readMap(reader1 -> reader1.getString());
+                    deserializedClusterInner.withTags(tags);
+                } else if ("sku".equals(fieldName)) {
+                    deserializedClusterInner.sku = Sku.fromJson(reader);
+                } else if ("zones".equals(fieldName)) {
+                    List<String> zones = reader.readArray(reader1 -> reader1.getString());
+                    deserializedClusterInner.zones = zones;
+                } else if ("identity".equals(fieldName)) {
+                    deserializedClusterInner.identity = ManagedServiceIdentity.fromJson(reader);
+                } else if ("properties".equals(fieldName)) {
+                    deserializedClusterInner.innerProperties = ClusterProperties.fromJson(reader);
+                } else {
+                    reader.skipChildren();
+                }
+            }
+
+            return deserializedClusterInner;
+        });
     }
 }

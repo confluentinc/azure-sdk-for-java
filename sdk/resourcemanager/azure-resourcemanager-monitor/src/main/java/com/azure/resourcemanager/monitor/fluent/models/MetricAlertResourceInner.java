@@ -5,369 +5,101 @@
 package com.azure.resourcemanager.monitor.fluent.models;
 
 import com.azure.core.annotation.Fluent;
-import com.azure.core.annotation.JsonFlatten;
 import com.azure.core.management.Resource;
 import com.azure.core.util.logging.ClientLogger;
+import com.azure.json.JsonReader;
+import com.azure.json.JsonToken;
+import com.azure.json.JsonWriter;
 import com.azure.resourcemanager.monitor.models.MetricAlertAction;
 import com.azure.resourcemanager.monitor.models.MetricAlertCriteria;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import java.io.IOException;
 import java.time.Duration;
 import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Map;
 
-/** The metric alert resource. */
-@JsonFlatten
+/**
+ * The metric alert resource.
+ */
 @Fluent
-public class MetricAlertResourceInner extends Resource {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(MetricAlertResourceInner.class);
+public final class MetricAlertResourceInner extends Resource {
+    /*
+     * The alert rule properties of the resource.
+     */
+    private MetricAlertProperties innerProperties = new MetricAlertProperties();
 
     /*
-     * the description of the metric alert that will be included in the alert
-     * email.
+     * Fully qualified resource Id for the resource.
      */
-    @JsonProperty(value = "properties.description")
-    private String description;
+    private String id;
 
     /*
-     * Alert severity {0, 1, 2, 3, 4}
+     * The name of the resource.
      */
-    @JsonProperty(value = "properties.severity", required = true)
-    private int severity;
+    private String name;
 
     /*
-     * the flag that indicates whether the metric alert is enabled.
+     * The type of the resource.
      */
-    @JsonProperty(value = "properties.enabled", required = true)
-    private boolean enabled;
-
-    /*
-     * the list of resource id's that this metric alert is scoped to.
-     */
-    @JsonProperty(value = "properties.scopes", required = true)
-    private List<String> scopes;
-
-    /*
-     * how often the metric alert is evaluated represented in ISO 8601 duration
-     * format.
-     */
-    @JsonProperty(value = "properties.evaluationFrequency", required = true)
-    private Duration evaluationFrequency;
-
-    /*
-     * the period of time (in ISO 8601 duration format) that is used to monitor
-     * alert activity based on the threshold.
-     */
-    @JsonProperty(value = "properties.windowSize", required = true)
-    private Duration windowSize;
-
-    /*
-     * the resource type of the target resource(s) on which the alert is
-     * created/updated. Mandatory if the scope contains a subscription,
-     * resource group, or more than one resource.
-     */
-    @JsonProperty(value = "properties.targetResourceType")
-    private String targetResourceType;
-
-    /*
-     * the region of the target resource(s) on which the alert is
-     * created/updated. Mandatory if the scope contains a subscription,
-     * resource group, or more than one resource.
-     */
-    @JsonProperty(value = "properties.targetResourceRegion")
-    private String targetResourceRegion;
-
-    /*
-     * defines the specific alert criteria information.
-     */
-    @JsonProperty(value = "properties.criteria", required = true)
-    private MetricAlertCriteria criteria;
-
-    /*
-     * the flag that indicates whether the alert should be auto resolved or
-     * not. The default is true.
-     */
-    @JsonProperty(value = "properties.autoMitigate")
-    private Boolean autoMitigate;
-
-    /*
-     * the array of actions that are performed when the alert rule becomes
-     * active, and when an alert condition is resolved.
-     */
-    @JsonProperty(value = "properties.actions")
-    private List<MetricAlertAction> actions;
-
-    /*
-     * Last time the rule was updated in ISO8601 format.
-     */
-    @JsonProperty(value = "properties.lastUpdatedTime", access = JsonProperty.Access.WRITE_ONLY)
-    private OffsetDateTime lastUpdatedTime;
-
-    /*
-     * the value indicating whether this alert rule is migrated.
-     */
-    @JsonProperty(value = "properties.isMigrated", access = JsonProperty.Access.WRITE_ONLY)
-    private Boolean isMigrated;
+    private String type;
 
     /**
-     * Get the description property: the description of the metric alert that will be included in the alert email.
-     *
-     * @return the description value.
+     * Creates an instance of MetricAlertResourceInner class.
      */
-    public String description() {
-        return this.description;
+    public MetricAlertResourceInner() {
     }
 
     /**
-     * Set the description property: the description of the metric alert that will be included in the alert email.
-     *
-     * @param description the description value to set.
-     * @return the MetricAlertResourceInner object itself.
+     * Get the innerProperties property: The alert rule properties of the resource.
+     * 
+     * @return the innerProperties value.
      */
-    public MetricAlertResourceInner withDescription(String description) {
-        this.description = description;
-        return this;
+    private MetricAlertProperties innerProperties() {
+        return this.innerProperties;
     }
 
     /**
-     * Get the severity property: Alert severity {0, 1, 2, 3, 4}.
-     *
-     * @return the severity value.
+     * Get the id property: Fully qualified resource Id for the resource.
+     * 
+     * @return the id value.
      */
-    public int severity() {
-        return this.severity;
+    @Override
+    public String id() {
+        return this.id;
     }
 
     /**
-     * Set the severity property: Alert severity {0, 1, 2, 3, 4}.
-     *
-     * @param severity the severity value to set.
-     * @return the MetricAlertResourceInner object itself.
+     * Get the name property: The name of the resource.
+     * 
+     * @return the name value.
      */
-    public MetricAlertResourceInner withSeverity(int severity) {
-        this.severity = severity;
-        return this;
+    @Override
+    public String name() {
+        return this.name;
     }
 
     /**
-     * Get the enabled property: the flag that indicates whether the metric alert is enabled.
-     *
-     * @return the enabled value.
+     * Get the type property: The type of the resource.
+     * 
+     * @return the type value.
      */
-    public boolean enabled() {
-        return this.enabled;
+    @Override
+    public String type() {
+        return this.type;
     }
 
     /**
-     * Set the enabled property: the flag that indicates whether the metric alert is enabled.
-     *
-     * @param enabled the enabled value to set.
-     * @return the MetricAlertResourceInner object itself.
+     * {@inheritDoc}
      */
-    public MetricAlertResourceInner withEnabled(boolean enabled) {
-        this.enabled = enabled;
-        return this;
-    }
-
-    /**
-     * Get the scopes property: the list of resource id's that this metric alert is scoped to.
-     *
-     * @return the scopes value.
-     */
-    public List<String> scopes() {
-        return this.scopes;
-    }
-
-    /**
-     * Set the scopes property: the list of resource id's that this metric alert is scoped to.
-     *
-     * @param scopes the scopes value to set.
-     * @return the MetricAlertResourceInner object itself.
-     */
-    public MetricAlertResourceInner withScopes(List<String> scopes) {
-        this.scopes = scopes;
-        return this;
-    }
-
-    /**
-     * Get the evaluationFrequency property: how often the metric alert is evaluated represented in ISO 8601 duration
-     * format.
-     *
-     * @return the evaluationFrequency value.
-     */
-    public Duration evaluationFrequency() {
-        return this.evaluationFrequency;
-    }
-
-    /**
-     * Set the evaluationFrequency property: how often the metric alert is evaluated represented in ISO 8601 duration
-     * format.
-     *
-     * @param evaluationFrequency the evaluationFrequency value to set.
-     * @return the MetricAlertResourceInner object itself.
-     */
-    public MetricAlertResourceInner withEvaluationFrequency(Duration evaluationFrequency) {
-        this.evaluationFrequency = evaluationFrequency;
-        return this;
-    }
-
-    /**
-     * Get the windowSize property: the period of time (in ISO 8601 duration format) that is used to monitor alert
-     * activity based on the threshold.
-     *
-     * @return the windowSize value.
-     */
-    public Duration windowSize() {
-        return this.windowSize;
-    }
-
-    /**
-     * Set the windowSize property: the period of time (in ISO 8601 duration format) that is used to monitor alert
-     * activity based on the threshold.
-     *
-     * @param windowSize the windowSize value to set.
-     * @return the MetricAlertResourceInner object itself.
-     */
-    public MetricAlertResourceInner withWindowSize(Duration windowSize) {
-        this.windowSize = windowSize;
-        return this;
-    }
-
-    /**
-     * Get the targetResourceType property: the resource type of the target resource(s) on which the alert is
-     * created/updated. Mandatory if the scope contains a subscription, resource group, or more than one resource.
-     *
-     * @return the targetResourceType value.
-     */
-    public String targetResourceType() {
-        return this.targetResourceType;
-    }
-
-    /**
-     * Set the targetResourceType property: the resource type of the target resource(s) on which the alert is
-     * created/updated. Mandatory if the scope contains a subscription, resource group, or more than one resource.
-     *
-     * @param targetResourceType the targetResourceType value to set.
-     * @return the MetricAlertResourceInner object itself.
-     */
-    public MetricAlertResourceInner withTargetResourceType(String targetResourceType) {
-        this.targetResourceType = targetResourceType;
-        return this;
-    }
-
-    /**
-     * Get the targetResourceRegion property: the region of the target resource(s) on which the alert is
-     * created/updated. Mandatory if the scope contains a subscription, resource group, or more than one resource.
-     *
-     * @return the targetResourceRegion value.
-     */
-    public String targetResourceRegion() {
-        return this.targetResourceRegion;
-    }
-
-    /**
-     * Set the targetResourceRegion property: the region of the target resource(s) on which the alert is
-     * created/updated. Mandatory if the scope contains a subscription, resource group, or more than one resource.
-     *
-     * @param targetResourceRegion the targetResourceRegion value to set.
-     * @return the MetricAlertResourceInner object itself.
-     */
-    public MetricAlertResourceInner withTargetResourceRegion(String targetResourceRegion) {
-        this.targetResourceRegion = targetResourceRegion;
-        return this;
-    }
-
-    /**
-     * Get the criteria property: defines the specific alert criteria information.
-     *
-     * @return the criteria value.
-     */
-    public MetricAlertCriteria criteria() {
-        return this.criteria;
-    }
-
-    /**
-     * Set the criteria property: defines the specific alert criteria information.
-     *
-     * @param criteria the criteria value to set.
-     * @return the MetricAlertResourceInner object itself.
-     */
-    public MetricAlertResourceInner withCriteria(MetricAlertCriteria criteria) {
-        this.criteria = criteria;
-        return this;
-    }
-
-    /**
-     * Get the autoMitigate property: the flag that indicates whether the alert should be auto resolved or not. The
-     * default is true.
-     *
-     * @return the autoMitigate value.
-     */
-    public Boolean autoMitigate() {
-        return this.autoMitigate;
-    }
-
-    /**
-     * Set the autoMitigate property: the flag that indicates whether the alert should be auto resolved or not. The
-     * default is true.
-     *
-     * @param autoMitigate the autoMitigate value to set.
-     * @return the MetricAlertResourceInner object itself.
-     */
-    public MetricAlertResourceInner withAutoMitigate(Boolean autoMitigate) {
-        this.autoMitigate = autoMitigate;
-        return this;
-    }
-
-    /**
-     * Get the actions property: the array of actions that are performed when the alert rule becomes active, and when an
-     * alert condition is resolved.
-     *
-     * @return the actions value.
-     */
-    public List<MetricAlertAction> actions() {
-        return this.actions;
-    }
-
-    /**
-     * Set the actions property: the array of actions that are performed when the alert rule becomes active, and when an
-     * alert condition is resolved.
-     *
-     * @param actions the actions value to set.
-     * @return the MetricAlertResourceInner object itself.
-     */
-    public MetricAlertResourceInner withActions(List<MetricAlertAction> actions) {
-        this.actions = actions;
-        return this;
-    }
-
-    /**
-     * Get the lastUpdatedTime property: Last time the rule was updated in ISO8601 format.
-     *
-     * @return the lastUpdatedTime value.
-     */
-    public OffsetDateTime lastUpdatedTime() {
-        return this.lastUpdatedTime;
-    }
-
-    /**
-     * Get the isMigrated property: the value indicating whether this alert rule is migrated.
-     *
-     * @return the isMigrated value.
-     */
-    public Boolean isMigrated() {
-        return this.isMigrated;
-    }
-
-    /** {@inheritDoc} */
     @Override
     public MetricAlertResourceInner withLocation(String location) {
         super.withLocation(location);
         return this;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public MetricAlertResourceInner withTags(Map<String, String> tags) {
         super.withTags(tags);
@@ -375,38 +107,352 @@ public class MetricAlertResourceInner extends Resource {
     }
 
     /**
+     * Get the description property: the description of the metric alert that will be included in the alert email.
+     * 
+     * @return the description value.
+     */
+    public String description() {
+        return this.innerProperties() == null ? null : this.innerProperties().description();
+    }
+
+    /**
+     * Set the description property: the description of the metric alert that will be included in the alert email.
+     * 
+     * @param description the description value to set.
+     * @return the MetricAlertResourceInner object itself.
+     */
+    public MetricAlertResourceInner withDescription(String description) {
+        if (this.innerProperties() == null) {
+            this.innerProperties = new MetricAlertProperties();
+        }
+        this.innerProperties().withDescription(description);
+        return this;
+    }
+
+    /**
+     * Get the severity property: Alert severity {0, 1, 2, 3, 4}.
+     * 
+     * @return the severity value.
+     */
+    public int severity() {
+        return this.innerProperties() == null ? 0 : this.innerProperties().severity();
+    }
+
+    /**
+     * Set the severity property: Alert severity {0, 1, 2, 3, 4}.
+     * 
+     * @param severity the severity value to set.
+     * @return the MetricAlertResourceInner object itself.
+     */
+    public MetricAlertResourceInner withSeverity(int severity) {
+        if (this.innerProperties() == null) {
+            this.innerProperties = new MetricAlertProperties();
+        }
+        this.innerProperties().withSeverity(severity);
+        return this;
+    }
+
+    /**
+     * Get the enabled property: the flag that indicates whether the metric alert is enabled.
+     * 
+     * @return the enabled value.
+     */
+    public boolean enabled() {
+        return this.innerProperties() == null ? false : this.innerProperties().enabled();
+    }
+
+    /**
+     * Set the enabled property: the flag that indicates whether the metric alert is enabled.
+     * 
+     * @param enabled the enabled value to set.
+     * @return the MetricAlertResourceInner object itself.
+     */
+    public MetricAlertResourceInner withEnabled(boolean enabled) {
+        if (this.innerProperties() == null) {
+            this.innerProperties = new MetricAlertProperties();
+        }
+        this.innerProperties().withEnabled(enabled);
+        return this;
+    }
+
+    /**
+     * Get the scopes property: the list of resource id's that this metric alert is scoped to.
+     * 
+     * @return the scopes value.
+     */
+    public List<String> scopes() {
+        return this.innerProperties() == null ? null : this.innerProperties().scopes();
+    }
+
+    /**
+     * Set the scopes property: the list of resource id's that this metric alert is scoped to.
+     * 
+     * @param scopes the scopes value to set.
+     * @return the MetricAlertResourceInner object itself.
+     */
+    public MetricAlertResourceInner withScopes(List<String> scopes) {
+        if (this.innerProperties() == null) {
+            this.innerProperties = new MetricAlertProperties();
+        }
+        this.innerProperties().withScopes(scopes);
+        return this;
+    }
+
+    /**
+     * Get the evaluationFrequency property: how often the metric alert is evaluated represented in ISO 8601 duration
+     * format.
+     * 
+     * @return the evaluationFrequency value.
+     */
+    public Duration evaluationFrequency() {
+        return this.innerProperties() == null ? null : this.innerProperties().evaluationFrequency();
+    }
+
+    /**
+     * Set the evaluationFrequency property: how often the metric alert is evaluated represented in ISO 8601 duration
+     * format.
+     * 
+     * @param evaluationFrequency the evaluationFrequency value to set.
+     * @return the MetricAlertResourceInner object itself.
+     */
+    public MetricAlertResourceInner withEvaluationFrequency(Duration evaluationFrequency) {
+        if (this.innerProperties() == null) {
+            this.innerProperties = new MetricAlertProperties();
+        }
+        this.innerProperties().withEvaluationFrequency(evaluationFrequency);
+        return this;
+    }
+
+    /**
+     * Get the windowSize property: the period of time (in ISO 8601 duration format) that is used to monitor alert
+     * activity based on the threshold.
+     * 
+     * @return the windowSize value.
+     */
+    public Duration windowSize() {
+        return this.innerProperties() == null ? null : this.innerProperties().windowSize();
+    }
+
+    /**
+     * Set the windowSize property: the period of time (in ISO 8601 duration format) that is used to monitor alert
+     * activity based on the threshold.
+     * 
+     * @param windowSize the windowSize value to set.
+     * @return the MetricAlertResourceInner object itself.
+     */
+    public MetricAlertResourceInner withWindowSize(Duration windowSize) {
+        if (this.innerProperties() == null) {
+            this.innerProperties = new MetricAlertProperties();
+        }
+        this.innerProperties().withWindowSize(windowSize);
+        return this;
+    }
+
+    /**
+     * Get the targetResourceType property: the resource type of the target resource(s) on which the alert is
+     * created/updated. Mandatory if the scope contains a subscription, resource group, or more than one resource.
+     * 
+     * @return the targetResourceType value.
+     */
+    public String targetResourceType() {
+        return this.innerProperties() == null ? null : this.innerProperties().targetResourceType();
+    }
+
+    /**
+     * Set the targetResourceType property: the resource type of the target resource(s) on which the alert is
+     * created/updated. Mandatory if the scope contains a subscription, resource group, or more than one resource.
+     * 
+     * @param targetResourceType the targetResourceType value to set.
+     * @return the MetricAlertResourceInner object itself.
+     */
+    public MetricAlertResourceInner withTargetResourceType(String targetResourceType) {
+        if (this.innerProperties() == null) {
+            this.innerProperties = new MetricAlertProperties();
+        }
+        this.innerProperties().withTargetResourceType(targetResourceType);
+        return this;
+    }
+
+    /**
+     * Get the targetResourceRegion property: the region of the target resource(s) on which the alert is
+     * created/updated. Mandatory if the scope contains a subscription, resource group, or more than one resource.
+     * 
+     * @return the targetResourceRegion value.
+     */
+    public String targetResourceRegion() {
+        return this.innerProperties() == null ? null : this.innerProperties().targetResourceRegion();
+    }
+
+    /**
+     * Set the targetResourceRegion property: the region of the target resource(s) on which the alert is
+     * created/updated. Mandatory if the scope contains a subscription, resource group, or more than one resource.
+     * 
+     * @param targetResourceRegion the targetResourceRegion value to set.
+     * @return the MetricAlertResourceInner object itself.
+     */
+    public MetricAlertResourceInner withTargetResourceRegion(String targetResourceRegion) {
+        if (this.innerProperties() == null) {
+            this.innerProperties = new MetricAlertProperties();
+        }
+        this.innerProperties().withTargetResourceRegion(targetResourceRegion);
+        return this;
+    }
+
+    /**
+     * Get the criteria property: defines the specific alert criteria information.
+     * 
+     * @return the criteria value.
+     */
+    public MetricAlertCriteria criteria() {
+        return this.innerProperties() == null ? null : this.innerProperties().criteria();
+    }
+
+    /**
+     * Set the criteria property: defines the specific alert criteria information.
+     * 
+     * @param criteria the criteria value to set.
+     * @return the MetricAlertResourceInner object itself.
+     */
+    public MetricAlertResourceInner withCriteria(MetricAlertCriteria criteria) {
+        if (this.innerProperties() == null) {
+            this.innerProperties = new MetricAlertProperties();
+        }
+        this.innerProperties().withCriteria(criteria);
+        return this;
+    }
+
+    /**
+     * Get the autoMitigate property: the flag that indicates whether the alert should be auto resolved or not. The
+     * default is true.
+     * 
+     * @return the autoMitigate value.
+     */
+    public Boolean autoMitigate() {
+        return this.innerProperties() == null ? null : this.innerProperties().autoMitigate();
+    }
+
+    /**
+     * Set the autoMitigate property: the flag that indicates whether the alert should be auto resolved or not. The
+     * default is true.
+     * 
+     * @param autoMitigate the autoMitigate value to set.
+     * @return the MetricAlertResourceInner object itself.
+     */
+    public MetricAlertResourceInner withAutoMitigate(Boolean autoMitigate) {
+        if (this.innerProperties() == null) {
+            this.innerProperties = new MetricAlertProperties();
+        }
+        this.innerProperties().withAutoMitigate(autoMitigate);
+        return this;
+    }
+
+    /**
+     * Get the actions property: the array of actions that are performed when the alert rule becomes active, and when an
+     * alert condition is resolved.
+     * 
+     * @return the actions value.
+     */
+    public List<MetricAlertAction> actions() {
+        return this.innerProperties() == null ? null : this.innerProperties().actions();
+    }
+
+    /**
+     * Set the actions property: the array of actions that are performed when the alert rule becomes active, and when an
+     * alert condition is resolved.
+     * 
+     * @param actions the actions value to set.
+     * @return the MetricAlertResourceInner object itself.
+     */
+    public MetricAlertResourceInner withActions(List<MetricAlertAction> actions) {
+        if (this.innerProperties() == null) {
+            this.innerProperties = new MetricAlertProperties();
+        }
+        this.innerProperties().withActions(actions);
+        return this;
+    }
+
+    /**
+     * Get the lastUpdatedTime property: Last time the rule was updated in ISO8601 format.
+     * 
+     * @return the lastUpdatedTime value.
+     */
+    public OffsetDateTime lastUpdatedTime() {
+        return this.innerProperties() == null ? null : this.innerProperties().lastUpdatedTime();
+    }
+
+    /**
+     * Get the isMigrated property: the value indicating whether this alert rule is migrated.
+     * 
+     * @return the isMigrated value.
+     */
+    public Boolean isMigrated() {
+        return this.innerProperties() == null ? null : this.innerProperties().isMigrated();
+    }
+
+    /**
      * Validates the instance.
-     *
+     * 
      * @throws IllegalArgumentException thrown if the instance is not valid.
      */
     public void validate() {
-        if (scopes() == null) {
-            throw logger
-                .logExceptionAsError(
-                    new IllegalArgumentException("Missing required property scopes in model MetricAlertResourceInner"));
-        }
-        if (evaluationFrequency() == null) {
-            throw logger
-                .logExceptionAsError(
-                    new IllegalArgumentException(
-                        "Missing required property evaluationFrequency in model MetricAlertResourceInner"));
-        }
-        if (windowSize() == null) {
-            throw logger
-                .logExceptionAsError(
-                    new IllegalArgumentException(
-                        "Missing required property windowSize in model MetricAlertResourceInner"));
-        }
-        if (criteria() == null) {
-            throw logger
-                .logExceptionAsError(
-                    new IllegalArgumentException(
-                        "Missing required property criteria in model MetricAlertResourceInner"));
+        if (innerProperties() == null) {
+            throw LOGGER.atError()
+                .log(new IllegalArgumentException(
+                    "Missing required property innerProperties in model MetricAlertResourceInner"));
         } else {
-            criteria().validate();
+            innerProperties().validate();
         }
-        if (actions() != null) {
-            actions().forEach(e -> e.validate());
-        }
+    }
+
+    private static final ClientLogger LOGGER = new ClientLogger(MetricAlertResourceInner.class);
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public JsonWriter toJson(JsonWriter jsonWriter) throws IOException {
+        jsonWriter.writeStartObject();
+        jsonWriter.writeStringField("location", location());
+        jsonWriter.writeMapField("tags", tags(), (writer, element) -> writer.writeString(element));
+        jsonWriter.writeJsonField("properties", this.innerProperties);
+        return jsonWriter.writeEndObject();
+    }
+
+    /**
+     * Reads an instance of MetricAlertResourceInner from the JsonReader.
+     * 
+     * @param jsonReader The JsonReader being read.
+     * @return An instance of MetricAlertResourceInner if the JsonReader was pointing to an instance of it, or null if
+     * it was pointing to JSON null.
+     * @throws IllegalStateException If the deserialized JSON object was missing any required properties.
+     * @throws IOException If an error occurs while reading the MetricAlertResourceInner.
+     */
+    public static MetricAlertResourceInner fromJson(JsonReader jsonReader) throws IOException {
+        return jsonReader.readObject(reader -> {
+            MetricAlertResourceInner deserializedMetricAlertResourceInner = new MetricAlertResourceInner();
+            while (reader.nextToken() != JsonToken.END_OBJECT) {
+                String fieldName = reader.getFieldName();
+                reader.nextToken();
+
+                if ("id".equals(fieldName)) {
+                    deserializedMetricAlertResourceInner.id = reader.getString();
+                } else if ("name".equals(fieldName)) {
+                    deserializedMetricAlertResourceInner.name = reader.getString();
+                } else if ("type".equals(fieldName)) {
+                    deserializedMetricAlertResourceInner.type = reader.getString();
+                } else if ("location".equals(fieldName)) {
+                    deserializedMetricAlertResourceInner.withLocation(reader.getString());
+                } else if ("tags".equals(fieldName)) {
+                    Map<String, String> tags = reader.readMap(reader1 -> reader1.getString());
+                    deserializedMetricAlertResourceInner.withTags(tags);
+                } else if ("properties".equals(fieldName)) {
+                    deserializedMetricAlertResourceInner.innerProperties = MetricAlertProperties.fromJson(reader);
+                } else {
+                    reader.skipChildren();
+                }
+            }
+
+            return deserializedMetricAlertResourceInner;
+        });
     }
 }

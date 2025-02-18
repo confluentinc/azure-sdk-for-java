@@ -6,53 +6,56 @@ package com.azure.resourcemanager.appservice.models;
 
 import com.azure.core.annotation.Fluent;
 import com.azure.core.util.logging.ClientLogger;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.azure.json.JsonReader;
+import com.azure.json.JsonSerializable;
+import com.azure.json.JsonToken;
+import com.azure.json.JsonWriter;
+import java.io.IOException;
 
-/** Address information for domain registration. */
+/**
+ * Address information for domain registration.
+ */
 @Fluent
-public final class Address {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(Address.class);
-
+public final class Address implements JsonSerializable<Address> {
     /*
      * First line of an Address.
      */
-    @JsonProperty(value = "address1", required = true)
     private String address1;
 
     /*
      * The second line of the Address. Optional.
      */
-    @JsonProperty(value = "address2")
     private String address2;
 
     /*
      * The city for the address.
      */
-    @JsonProperty(value = "city", required = true)
     private String city;
 
     /*
      * The country for the address.
      */
-    @JsonProperty(value = "country", required = true)
     private String country;
 
     /*
      * The postal code for the address.
      */
-    @JsonProperty(value = "postalCode", required = true)
     private String postalCode;
 
     /*
      * The state or province for the address.
      */
-    @JsonProperty(value = "state", required = true)
     private String state;
 
     /**
+     * Creates an instance of Address class.
+     */
+    public Address() {
+    }
+
+    /**
      * Get the address1 property: First line of an Address.
-     *
+     * 
      * @return the address1 value.
      */
     public String address1() {
@@ -61,7 +64,7 @@ public final class Address {
 
     /**
      * Set the address1 property: First line of an Address.
-     *
+     * 
      * @param address1 the address1 value to set.
      * @return the Address object itself.
      */
@@ -72,7 +75,7 @@ public final class Address {
 
     /**
      * Get the address2 property: The second line of the Address. Optional.
-     *
+     * 
      * @return the address2 value.
      */
     public String address2() {
@@ -81,7 +84,7 @@ public final class Address {
 
     /**
      * Set the address2 property: The second line of the Address. Optional.
-     *
+     * 
      * @param address2 the address2 value to set.
      * @return the Address object itself.
      */
@@ -92,7 +95,7 @@ public final class Address {
 
     /**
      * Get the city property: The city for the address.
-     *
+     * 
      * @return the city value.
      */
     public String city() {
@@ -101,7 +104,7 @@ public final class Address {
 
     /**
      * Set the city property: The city for the address.
-     *
+     * 
      * @param city the city value to set.
      * @return the Address object itself.
      */
@@ -112,7 +115,7 @@ public final class Address {
 
     /**
      * Get the country property: The country for the address.
-     *
+     * 
      * @return the country value.
      */
     public String country() {
@@ -121,7 +124,7 @@ public final class Address {
 
     /**
      * Set the country property: The country for the address.
-     *
+     * 
      * @param country the country value to set.
      * @return the Address object itself.
      */
@@ -132,7 +135,7 @@ public final class Address {
 
     /**
      * Get the postalCode property: The postal code for the address.
-     *
+     * 
      * @return the postalCode value.
      */
     public String postalCode() {
@@ -141,7 +144,7 @@ public final class Address {
 
     /**
      * Set the postalCode property: The postal code for the address.
-     *
+     * 
      * @param postalCode the postalCode value to set.
      * @return the Address object itself.
      */
@@ -152,7 +155,7 @@ public final class Address {
 
     /**
      * Get the state property: The state or province for the address.
-     *
+     * 
      * @return the state value.
      */
     public String state() {
@@ -161,7 +164,7 @@ public final class Address {
 
     /**
      * Set the state property: The state or province for the address.
-     *
+     * 
      * @param state the state value to set.
      * @return the Address object itself.
      */
@@ -172,32 +175,82 @@ public final class Address {
 
     /**
      * Validates the instance.
-     *
+     * 
      * @throws IllegalArgumentException thrown if the instance is not valid.
      */
     public void validate() {
         if (address1() == null) {
-            throw logger
-                .logExceptionAsError(
-                    new IllegalArgumentException("Missing required property address1 in model Address"));
+            throw LOGGER.atError()
+                .log(new IllegalArgumentException("Missing required property address1 in model Address"));
         }
         if (city() == null) {
-            throw logger
-                .logExceptionAsError(new IllegalArgumentException("Missing required property city in model Address"));
+            throw LOGGER.atError().log(new IllegalArgumentException("Missing required property city in model Address"));
         }
         if (country() == null) {
-            throw logger
-                .logExceptionAsError(
-                    new IllegalArgumentException("Missing required property country in model Address"));
+            throw LOGGER.atError()
+                .log(new IllegalArgumentException("Missing required property country in model Address"));
         }
         if (postalCode() == null) {
-            throw logger
-                .logExceptionAsError(
-                    new IllegalArgumentException("Missing required property postalCode in model Address"));
+            throw LOGGER.atError()
+                .log(new IllegalArgumentException("Missing required property postalCode in model Address"));
         }
         if (state() == null) {
-            throw logger
-                .logExceptionAsError(new IllegalArgumentException("Missing required property state in model Address"));
+            throw LOGGER.atError()
+                .log(new IllegalArgumentException("Missing required property state in model Address"));
         }
+    }
+
+    private static final ClientLogger LOGGER = new ClientLogger(Address.class);
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public JsonWriter toJson(JsonWriter jsonWriter) throws IOException {
+        jsonWriter.writeStartObject();
+        jsonWriter.writeStringField("address1", this.address1);
+        jsonWriter.writeStringField("city", this.city);
+        jsonWriter.writeStringField("country", this.country);
+        jsonWriter.writeStringField("postalCode", this.postalCode);
+        jsonWriter.writeStringField("state", this.state);
+        jsonWriter.writeStringField("address2", this.address2);
+        return jsonWriter.writeEndObject();
+    }
+
+    /**
+     * Reads an instance of Address from the JsonReader.
+     * 
+     * @param jsonReader The JsonReader being read.
+     * @return An instance of Address if the JsonReader was pointing to an instance of it, or null if it was pointing to
+     * JSON null.
+     * @throws IllegalStateException If the deserialized JSON object was missing any required properties.
+     * @throws IOException If an error occurs while reading the Address.
+     */
+    public static Address fromJson(JsonReader jsonReader) throws IOException {
+        return jsonReader.readObject(reader -> {
+            Address deserializedAddress = new Address();
+            while (reader.nextToken() != JsonToken.END_OBJECT) {
+                String fieldName = reader.getFieldName();
+                reader.nextToken();
+
+                if ("address1".equals(fieldName)) {
+                    deserializedAddress.address1 = reader.getString();
+                } else if ("city".equals(fieldName)) {
+                    deserializedAddress.city = reader.getString();
+                } else if ("country".equals(fieldName)) {
+                    deserializedAddress.country = reader.getString();
+                } else if ("postalCode".equals(fieldName)) {
+                    deserializedAddress.postalCode = reader.getString();
+                } else if ("state".equals(fieldName)) {
+                    deserializedAddress.state = reader.getString();
+                } else if ("address2".equals(fieldName)) {
+                    deserializedAddress.address2 = reader.getString();
+                } else {
+                    reader.skipChildren();
+                }
+            }
+
+            return deserializedAddress;
+        });
     }
 }

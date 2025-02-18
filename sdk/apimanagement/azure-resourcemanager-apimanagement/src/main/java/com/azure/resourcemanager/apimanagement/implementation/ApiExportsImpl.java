@@ -14,46 +14,37 @@ import com.azure.resourcemanager.apimanagement.models.ApiExportResult;
 import com.azure.resourcemanager.apimanagement.models.ApiExports;
 import com.azure.resourcemanager.apimanagement.models.ExportApi;
 import com.azure.resourcemanager.apimanagement.models.ExportFormat;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 public final class ApiExportsImpl implements ApiExports {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(ApiExportsImpl.class);
+    private static final ClientLogger LOGGER = new ClientLogger(ApiExportsImpl.class);
 
     private final ApiExportsClient innerClient;
 
     private final com.azure.resourcemanager.apimanagement.ApiManagementManager serviceManager;
 
-    public ApiExportsImpl(
-        ApiExportsClient innerClient, com.azure.resourcemanager.apimanagement.ApiManagementManager serviceManager) {
+    public ApiExportsImpl(ApiExportsClient innerClient,
+        com.azure.resourcemanager.apimanagement.ApiManagementManager serviceManager) {
         this.innerClient = innerClient;
         this.serviceManager = serviceManager;
     }
 
-    public ApiExportResult get(
-        String resourceGroupName, String serviceName, String apiId, ExportFormat format, ExportApi export) {
-        ApiExportResultInner inner = this.serviceClient().get(resourceGroupName, serviceName, apiId, format, export);
+    public Response<ApiExportResult> getWithResponse(String resourceGroupName, String serviceName, String apiId,
+        ExportFormat format, ExportApi export, Context context) {
+        Response<ApiExportResultInner> inner
+            = this.serviceClient().getWithResponse(resourceGroupName, serviceName, apiId, format, export, context);
         if (inner != null) {
-            return new ApiExportResultImpl(inner, this.manager());
+            return new SimpleResponse<>(inner.getRequest(), inner.getStatusCode(), inner.getHeaders(),
+                new ApiExportResultImpl(inner.getValue(), this.manager()));
         } else {
             return null;
         }
     }
 
-    public Response<ApiExportResult> getWithResponse(
-        String resourceGroupName,
-        String serviceName,
-        String apiId,
-        ExportFormat format,
-        ExportApi export,
-        Context context) {
-        Response<ApiExportResultInner> inner =
-            this.serviceClient().getWithResponse(resourceGroupName, serviceName, apiId, format, export, context);
+    public ApiExportResult get(String resourceGroupName, String serviceName, String apiId, ExportFormat format,
+        ExportApi export) {
+        ApiExportResultInner inner = this.serviceClient().get(resourceGroupName, serviceName, apiId, format, export);
         if (inner != null) {
-            return new SimpleResponse<>(
-                inner.getRequest(),
-                inner.getStatusCode(),
-                inner.getHeaders(),
-                new ApiExportResultImpl(inner.getValue(), this.manager()));
+            return new ApiExportResultImpl(inner, this.manager());
         } else {
             return null;
         }

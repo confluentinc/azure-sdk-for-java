@@ -3,42 +3,37 @@
 > see https://aka.ms/autorest
 
 ### Setup
+
 ```ps
-Fork and clone https://github.com/Azure/autorest.java 
-git checkout main
-git submodule update --init --recursive
-mvn package -Dlocal
-npm install
 npm install -g autorest
 ```
 
 ### Generation
 ```ps
 cd <swagger-folder>
-autorest --java --use=C:/work/autorest.java
+autorest
 ```
 
 ### Code generation settings
 ```yaml
-branch: 9ab141452538ce5cf1427300d3c181923a8a8765
+branch: main
 repo: https://github.com/Azure/azure-rest-api-specs/blob/$(branch)
 ```
 
 ```yaml
 java: true
+use: '@autorest/java@4.1.42'
 output-folder: ..\
 generate-client-as-impl: true
 generate-sync-async-clients: true
 namespace: com.azure.analytics.synapse.artifacts
-generate-client-interfaces: false
+artifact-id: azure-analytics-synapse-artifacts
 sync-methods: all
 license-header: MICROSOFT_MIT_SMALL
-add-context-parameter: true
 models-subpackage: models
-context-client-method-parameter: true
 required-parameter-client-methods: true
-credential-types: tokencredential
-credential-scopes: https://dev.azuresynapse.net/.default
-require: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/$(branch)/specification/synapse/data-plane/readme.md
-tag: package-artifacts-composite-v2
+security: AADToken
+security-scopes: https://dev.azuresynapse.net/.default
+require: https://github.com/Azure/azure-rest-api-specs/blob/02e1bd495ad6215aacec5d636a5ef7ad6f20281e/specification/synapse/data-plane/readme.md
+tag: package-artifacts-composite-v7
 ```

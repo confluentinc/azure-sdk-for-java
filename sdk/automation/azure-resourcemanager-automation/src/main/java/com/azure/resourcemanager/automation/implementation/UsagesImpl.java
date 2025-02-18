@@ -11,10 +11,9 @@ import com.azure.resourcemanager.automation.fluent.UsagesClient;
 import com.azure.resourcemanager.automation.fluent.models.UsageInner;
 import com.azure.resourcemanager.automation.models.Usage;
 import com.azure.resourcemanager.automation.models.Usages;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 public final class UsagesImpl implements Usages {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(UsagesImpl.class);
+    private static final ClientLogger LOGGER = new ClientLogger(UsagesImpl.class);
 
     private final UsagesClient innerClient;
 
@@ -26,16 +25,16 @@ public final class UsagesImpl implements Usages {
     }
 
     public PagedIterable<Usage> listByAutomationAccount(String resourceGroupName, String automationAccountName) {
-        PagedIterable<UsageInner> inner =
-            this.serviceClient().listByAutomationAccount(resourceGroupName, automationAccountName);
-        return Utils.mapPage(inner, inner1 -> new UsageImpl(inner1, this.manager()));
+        PagedIterable<UsageInner> inner
+            = this.serviceClient().listByAutomationAccount(resourceGroupName, automationAccountName);
+        return ResourceManagerUtils.mapPage(inner, inner1 -> new UsageImpl(inner1, this.manager()));
     }
 
-    public PagedIterable<Usage> listByAutomationAccount(
-        String resourceGroupName, String automationAccountName, Context context) {
-        PagedIterable<UsageInner> inner =
-            this.serviceClient().listByAutomationAccount(resourceGroupName, automationAccountName, context);
-        return Utils.mapPage(inner, inner1 -> new UsageImpl(inner1, this.manager()));
+    public PagedIterable<Usage> listByAutomationAccount(String resourceGroupName, String automationAccountName,
+        Context context) {
+        PagedIterable<UsageInner> inner
+            = this.serviceClient().listByAutomationAccount(resourceGroupName, automationAccountName, context);
+        return ResourceManagerUtils.mapPage(inner, inner1 -> new UsageImpl(inner1, this.manager()));
     }
 
     private UsagesClient serviceClient() {

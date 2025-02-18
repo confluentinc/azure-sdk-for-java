@@ -5,48 +5,56 @@
 package com.azure.resourcemanager.sqlvirtualmachine.models;
 
 import com.azure.core.annotation.Fluent;
-import com.azure.core.util.logging.ClientLogger;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.azure.json.JsonReader;
+import com.azure.json.JsonSerializable;
+import com.azure.json.JsonToken;
+import com.azure.json.JsonWriter;
+import java.io.IOException;
 
-/** Storage Configurations for SQL Data, Log and TempDb. */
+/**
+ * Storage Configurations for SQL Data, Log and TempDb.
+ */
 @Fluent
-public final class StorageConfigurationSettings {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(StorageConfigurationSettings.class);
-
+public final class StorageConfigurationSettings implements JsonSerializable<StorageConfigurationSettings> {
     /*
      * SQL Server Data Storage Settings.
      */
-    @JsonProperty(value = "sqlDataSettings")
     private SqlStorageSettings sqlDataSettings;
 
     /*
      * SQL Server Log Storage Settings.
      */
-    @JsonProperty(value = "sqlLogSettings")
     private SqlStorageSettings sqlLogSettings;
 
     /*
      * SQL Server TempDb Storage Settings.
      */
-    @JsonProperty(value = "sqlTempDbSettings")
-    private SqlStorageSettings sqlTempDbSettings;
+    private SqlTempDbSettings sqlTempDbSettings;
+
+    /*
+     * SQL Server SystemDb Storage on DataPool if true.
+     */
+    private Boolean sqlSystemDbOnDataDisk;
 
     /*
      * Disk configuration to apply to SQL Server.
      */
-    @JsonProperty(value = "diskConfigurationType")
     private DiskConfigurationType diskConfigurationType;
 
     /*
      * Storage workload type.
      */
-    @JsonProperty(value = "storageWorkloadType")
     private StorageWorkloadType storageWorkloadType;
 
     /**
+     * Creates an instance of StorageConfigurationSettings class.
+     */
+    public StorageConfigurationSettings() {
+    }
+
+    /**
      * Get the sqlDataSettings property: SQL Server Data Storage Settings.
-     *
+     * 
      * @return the sqlDataSettings value.
      */
     public SqlStorageSettings sqlDataSettings() {
@@ -55,7 +63,7 @@ public final class StorageConfigurationSettings {
 
     /**
      * Set the sqlDataSettings property: SQL Server Data Storage Settings.
-     *
+     * 
      * @param sqlDataSettings the sqlDataSettings value to set.
      * @return the StorageConfigurationSettings object itself.
      */
@@ -66,7 +74,7 @@ public final class StorageConfigurationSettings {
 
     /**
      * Get the sqlLogSettings property: SQL Server Log Storage Settings.
-     *
+     * 
      * @return the sqlLogSettings value.
      */
     public SqlStorageSettings sqlLogSettings() {
@@ -75,7 +83,7 @@ public final class StorageConfigurationSettings {
 
     /**
      * Set the sqlLogSettings property: SQL Server Log Storage Settings.
-     *
+     * 
      * @param sqlLogSettings the sqlLogSettings value to set.
      * @return the StorageConfigurationSettings object itself.
      */
@@ -86,27 +94,47 @@ public final class StorageConfigurationSettings {
 
     /**
      * Get the sqlTempDbSettings property: SQL Server TempDb Storage Settings.
-     *
+     * 
      * @return the sqlTempDbSettings value.
      */
-    public SqlStorageSettings sqlTempDbSettings() {
+    public SqlTempDbSettings sqlTempDbSettings() {
         return this.sqlTempDbSettings;
     }
 
     /**
      * Set the sqlTempDbSettings property: SQL Server TempDb Storage Settings.
-     *
+     * 
      * @param sqlTempDbSettings the sqlTempDbSettings value to set.
      * @return the StorageConfigurationSettings object itself.
      */
-    public StorageConfigurationSettings withSqlTempDbSettings(SqlStorageSettings sqlTempDbSettings) {
+    public StorageConfigurationSettings withSqlTempDbSettings(SqlTempDbSettings sqlTempDbSettings) {
         this.sqlTempDbSettings = sqlTempDbSettings;
         return this;
     }
 
     /**
+     * Get the sqlSystemDbOnDataDisk property: SQL Server SystemDb Storage on DataPool if true.
+     * 
+     * @return the sqlSystemDbOnDataDisk value.
+     */
+    public Boolean sqlSystemDbOnDataDisk() {
+        return this.sqlSystemDbOnDataDisk;
+    }
+
+    /**
+     * Set the sqlSystemDbOnDataDisk property: SQL Server SystemDb Storage on DataPool if true.
+     * 
+     * @param sqlSystemDbOnDataDisk the sqlSystemDbOnDataDisk value to set.
+     * @return the StorageConfigurationSettings object itself.
+     */
+    public StorageConfigurationSettings withSqlSystemDbOnDataDisk(Boolean sqlSystemDbOnDataDisk) {
+        this.sqlSystemDbOnDataDisk = sqlSystemDbOnDataDisk;
+        return this;
+    }
+
+    /**
      * Get the diskConfigurationType property: Disk configuration to apply to SQL Server.
-     *
+     * 
      * @return the diskConfigurationType value.
      */
     public DiskConfigurationType diskConfigurationType() {
@@ -115,7 +143,7 @@ public final class StorageConfigurationSettings {
 
     /**
      * Set the diskConfigurationType property: Disk configuration to apply to SQL Server.
-     *
+     * 
      * @param diskConfigurationType the diskConfigurationType value to set.
      * @return the StorageConfigurationSettings object itself.
      */
@@ -126,7 +154,7 @@ public final class StorageConfigurationSettings {
 
     /**
      * Get the storageWorkloadType property: Storage workload type.
-     *
+     * 
      * @return the storageWorkloadType value.
      */
     public StorageWorkloadType storageWorkloadType() {
@@ -135,7 +163,7 @@ public final class StorageConfigurationSettings {
 
     /**
      * Set the storageWorkloadType property: Storage workload type.
-     *
+     * 
      * @param storageWorkloadType the storageWorkloadType value to set.
      * @return the StorageConfigurationSettings object itself.
      */
@@ -146,7 +174,7 @@ public final class StorageConfigurationSettings {
 
     /**
      * Validates the instance.
-     *
+     * 
      * @throws IllegalArgumentException thrown if the instance is not valid.
      */
     public void validate() {
@@ -159,5 +187,61 @@ public final class StorageConfigurationSettings {
         if (sqlTempDbSettings() != null) {
             sqlTempDbSettings().validate();
         }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public JsonWriter toJson(JsonWriter jsonWriter) throws IOException {
+        jsonWriter.writeStartObject();
+        jsonWriter.writeJsonField("sqlDataSettings", this.sqlDataSettings);
+        jsonWriter.writeJsonField("sqlLogSettings", this.sqlLogSettings);
+        jsonWriter.writeJsonField("sqlTempDbSettings", this.sqlTempDbSettings);
+        jsonWriter.writeBooleanField("sqlSystemDbOnDataDisk", this.sqlSystemDbOnDataDisk);
+        jsonWriter.writeStringField("diskConfigurationType",
+            this.diskConfigurationType == null ? null : this.diskConfigurationType.toString());
+        jsonWriter.writeStringField("storageWorkloadType",
+            this.storageWorkloadType == null ? null : this.storageWorkloadType.toString());
+        return jsonWriter.writeEndObject();
+    }
+
+    /**
+     * Reads an instance of StorageConfigurationSettings from the JsonReader.
+     * 
+     * @param jsonReader The JsonReader being read.
+     * @return An instance of StorageConfigurationSettings if the JsonReader was pointing to an instance of it, or null
+     * if it was pointing to JSON null.
+     * @throws IOException If an error occurs while reading the StorageConfigurationSettings.
+     */
+    public static StorageConfigurationSettings fromJson(JsonReader jsonReader) throws IOException {
+        return jsonReader.readObject(reader -> {
+            StorageConfigurationSettings deserializedStorageConfigurationSettings = new StorageConfigurationSettings();
+            while (reader.nextToken() != JsonToken.END_OBJECT) {
+                String fieldName = reader.getFieldName();
+                reader.nextToken();
+
+                if ("sqlDataSettings".equals(fieldName)) {
+                    deserializedStorageConfigurationSettings.sqlDataSettings = SqlStorageSettings.fromJson(reader);
+                } else if ("sqlLogSettings".equals(fieldName)) {
+                    deserializedStorageConfigurationSettings.sqlLogSettings = SqlStorageSettings.fromJson(reader);
+                } else if ("sqlTempDbSettings".equals(fieldName)) {
+                    deserializedStorageConfigurationSettings.sqlTempDbSettings = SqlTempDbSettings.fromJson(reader);
+                } else if ("sqlSystemDbOnDataDisk".equals(fieldName)) {
+                    deserializedStorageConfigurationSettings.sqlSystemDbOnDataDisk
+                        = reader.getNullable(JsonReader::getBoolean);
+                } else if ("diskConfigurationType".equals(fieldName)) {
+                    deserializedStorageConfigurationSettings.diskConfigurationType
+                        = DiskConfigurationType.fromString(reader.getString());
+                } else if ("storageWorkloadType".equals(fieldName)) {
+                    deserializedStorageConfigurationSettings.storageWorkloadType
+                        = StorageWorkloadType.fromString(reader.getString());
+                } else {
+                    reader.skipChildren();
+                }
+            }
+
+            return deserializedStorageConfigurationSettings;
+        });
     }
 }

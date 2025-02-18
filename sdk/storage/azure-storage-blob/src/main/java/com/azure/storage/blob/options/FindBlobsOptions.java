@@ -16,13 +16,16 @@ import java.time.Duration;
  * for details on each of the options.
  */
 public class FindBlobsOptions {
-    private final ClientLogger logger = new ClientLogger(FindBlobsOptions.class);
+    private static final ClientLogger LOGGER = new ClientLogger(FindBlobsOptions.class);
 
     private final String query;
     private Integer maxResultsPerPage;
 
     /**
+     * Creates a new instance of {@link FindBlobsOptions}.
+     *
      * @param query Filters the results to return only blobs whose tags match the specified expression.
+     * @throws NullPointerException If {@code query} is null.
      */
     public FindBlobsOptions(String query) {
         StorageImplUtils.assertNotNull("query", query);
@@ -30,6 +33,8 @@ public class FindBlobsOptions {
     }
 
     /**
+     * Gets the filters the results to return only blobs whose tags match the specified expression.
+     *
      * @return Filters the results to return only blobs whose tags match the specified expression.
      */
     public String getQuery() {
@@ -56,7 +61,7 @@ public class FindBlobsOptions {
      */
     public FindBlobsOptions setMaxResultsPerPage(Integer maxResultsPerPage) {
         if (maxResultsPerPage != null && maxResultsPerPage <= 0) {
-            throw logger.logExceptionAsError(new IllegalArgumentException("MaxResultsPerPage must be greater than 0."));
+            throw LOGGER.logExceptionAsError(new IllegalArgumentException("MaxResultsPerPage must be greater than 0."));
         }
         this.maxResultsPerPage = maxResultsPerPage;
         return this;

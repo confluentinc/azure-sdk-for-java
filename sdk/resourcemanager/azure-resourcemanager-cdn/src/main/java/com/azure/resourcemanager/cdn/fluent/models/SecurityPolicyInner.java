@@ -5,87 +5,64 @@
 package com.azure.resourcemanager.cdn.fluent.models;
 
 import com.azure.core.annotation.Fluent;
-import com.azure.core.annotation.JsonFlatten;
 import com.azure.core.management.ProxyResource;
-import com.azure.core.util.logging.ClientLogger;
+import com.azure.core.management.SystemData;
+import com.azure.json.JsonReader;
+import com.azure.json.JsonToken;
+import com.azure.json.JsonWriter;
 import com.azure.resourcemanager.cdn.models.AfdProvisioningState;
 import com.azure.resourcemanager.cdn.models.DeploymentStatus;
-import com.azure.resourcemanager.cdn.models.SecurityPolicyParameters;
-import com.azure.resourcemanager.cdn.models.SystemData;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.azure.resourcemanager.cdn.models.SecurityPolicyPropertiesParameters;
+import java.io.IOException;
 
-/** SecurityPolicy association for AzureFrontDoor profile. */
-@JsonFlatten
+/**
+ * SecurityPolicy association for AzureFrontDoor profile.
+ */
 @Fluent
-public class SecurityPolicyInner extends ProxyResource {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(SecurityPolicyInner.class);
-
+public final class SecurityPolicyInner extends ProxyResource {
     /*
-     * Provisioning status
+     * The json object that contains properties required to create a security policy
      */
-    @JsonProperty(value = "properties.provisioningState", access = JsonProperty.Access.WRITE_ONLY)
-    private AfdProvisioningState provisioningState;
-
-    /*
-     * The deploymentStatus property.
-     */
-    @JsonProperty(value = "properties.deploymentStatus", access = JsonProperty.Access.WRITE_ONLY)
-    private DeploymentStatus deploymentStatus;
-
-    /*
-     * object which contains security policy parameters
-     */
-    @JsonProperty(value = "properties.parameters")
-    private SecurityPolicyParameters parameters;
+    private SecurityPolicyProperties innerProperties;
 
     /*
      * Read only system data
      */
-    @JsonProperty(value = "systemData", access = JsonProperty.Access.WRITE_ONLY)
     private SystemData systemData;
 
-    /**
-     * Get the provisioningState property: Provisioning status.
-     *
-     * @return the provisioningState value.
+    /*
+     * The type of the resource.
      */
-    public AfdProvisioningState provisioningState() {
-        return this.provisioningState;
+    private String type;
+
+    /*
+     * The name of the resource.
+     */
+    private String name;
+
+    /*
+     * Fully qualified resource Id for the resource.
+     */
+    private String id;
+
+    /**
+     * Creates an instance of SecurityPolicyInner class.
+     */
+    public SecurityPolicyInner() {
     }
 
     /**
-     * Get the deploymentStatus property: The deploymentStatus property.
-     *
-     * @return the deploymentStatus value.
+     * Get the innerProperties property: The json object that contains properties required to create a security policy.
+     * 
+     * @return the innerProperties value.
      */
-    public DeploymentStatus deploymentStatus() {
-        return this.deploymentStatus;
-    }
-
-    /**
-     * Get the parameters property: object which contains security policy parameters.
-     *
-     * @return the parameters value.
-     */
-    public SecurityPolicyParameters parameters() {
-        return this.parameters;
-    }
-
-    /**
-     * Set the parameters property: object which contains security policy parameters.
-     *
-     * @param parameters the parameters value to set.
-     * @return the SecurityPolicyInner object itself.
-     */
-    public SecurityPolicyInner withParameters(SecurityPolicyParameters parameters) {
-        this.parameters = parameters;
-        return this;
+    private SecurityPolicyProperties innerProperties() {
+        return this.innerProperties;
     }
 
     /**
      * Get the systemData property: Read only system data.
-     *
+     * 
      * @return the systemData value.
      */
     public SystemData systemData() {
@@ -93,16 +70,138 @@ public class SecurityPolicyInner extends ProxyResource {
     }
 
     /**
+     * Get the type property: The type of the resource.
+     * 
+     * @return the type value.
+     */
+    @Override
+    public String type() {
+        return this.type;
+    }
+
+    /**
+     * Get the name property: The name of the resource.
+     * 
+     * @return the name value.
+     */
+    @Override
+    public String name() {
+        return this.name;
+    }
+
+    /**
+     * Get the id property: Fully qualified resource Id for the resource.
+     * 
+     * @return the id value.
+     */
+    @Override
+    public String id() {
+        return this.id;
+    }
+
+    /**
+     * Get the profileName property: The name of the profile which holds the security policy.
+     * 
+     * @return the profileName value.
+     */
+    public String profileName() {
+        return this.innerProperties() == null ? null : this.innerProperties().profileName();
+    }
+
+    /**
+     * Get the parameters property: object which contains security policy parameters.
+     * 
+     * @return the parameters value.
+     */
+    public SecurityPolicyPropertiesParameters parameters() {
+        return this.innerProperties() == null ? null : this.innerProperties().parameters();
+    }
+
+    /**
+     * Set the parameters property: object which contains security policy parameters.
+     * 
+     * @param parameters the parameters value to set.
+     * @return the SecurityPolicyInner object itself.
+     */
+    public SecurityPolicyInner withParameters(SecurityPolicyPropertiesParameters parameters) {
+        if (this.innerProperties() == null) {
+            this.innerProperties = new SecurityPolicyProperties();
+        }
+        this.innerProperties().withParameters(parameters);
+        return this;
+    }
+
+    /**
+     * Get the provisioningState property: Provisioning status.
+     * 
+     * @return the provisioningState value.
+     */
+    public AfdProvisioningState provisioningState() {
+        return this.innerProperties() == null ? null : this.innerProperties().provisioningState();
+    }
+
+    /**
+     * Get the deploymentStatus property: The deploymentStatus property.
+     * 
+     * @return the deploymentStatus value.
+     */
+    public DeploymentStatus deploymentStatus() {
+        return this.innerProperties() == null ? null : this.innerProperties().deploymentStatus();
+    }
+
+    /**
      * Validates the instance.
-     *
+     * 
      * @throws IllegalArgumentException thrown if the instance is not valid.
      */
     public void validate() {
-        if (parameters() != null) {
-            parameters().validate();
+        if (innerProperties() != null) {
+            innerProperties().validate();
         }
-        if (systemData() != null) {
-            systemData().validate();
-        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public JsonWriter toJson(JsonWriter jsonWriter) throws IOException {
+        jsonWriter.writeStartObject();
+        jsonWriter.writeJsonField("properties", this.innerProperties);
+        return jsonWriter.writeEndObject();
+    }
+
+    /**
+     * Reads an instance of SecurityPolicyInner from the JsonReader.
+     * 
+     * @param jsonReader The JsonReader being read.
+     * @return An instance of SecurityPolicyInner if the JsonReader was pointing to an instance of it, or null if it was
+     * pointing to JSON null.
+     * @throws IllegalStateException If the deserialized JSON object was missing any required properties.
+     * @throws IOException If an error occurs while reading the SecurityPolicyInner.
+     */
+    public static SecurityPolicyInner fromJson(JsonReader jsonReader) throws IOException {
+        return jsonReader.readObject(reader -> {
+            SecurityPolicyInner deserializedSecurityPolicyInner = new SecurityPolicyInner();
+            while (reader.nextToken() != JsonToken.END_OBJECT) {
+                String fieldName = reader.getFieldName();
+                reader.nextToken();
+
+                if ("id".equals(fieldName)) {
+                    deserializedSecurityPolicyInner.id = reader.getString();
+                } else if ("name".equals(fieldName)) {
+                    deserializedSecurityPolicyInner.name = reader.getString();
+                } else if ("type".equals(fieldName)) {
+                    deserializedSecurityPolicyInner.type = reader.getString();
+                } else if ("properties".equals(fieldName)) {
+                    deserializedSecurityPolicyInner.innerProperties = SecurityPolicyProperties.fromJson(reader);
+                } else if ("systemData".equals(fieldName)) {
+                    deserializedSecurityPolicyInner.systemData = SystemData.fromJson(reader);
+                } else {
+                    reader.skipChildren();
+                }
+            }
+
+            return deserializedSecurityPolicyInner;
+        });
     }
 }

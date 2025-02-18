@@ -7,31 +7,33 @@ package com.azure.resourcemanager.datafactory.models;
 import com.azure.core.http.rest.PagedIterable;
 import com.azure.core.util.Context;
 
-/** Resource collection API of PrivateEndPointConnections. */
+/**
+ * Resource collection API of PrivateEndPointConnections.
+ */
 public interface PrivateEndPointConnections {
     /**
      * Lists Private endpoint connections.
-     *
+     * 
      * @param resourceGroupName The resource group name.
      * @param factoryName The factory name.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return a list of linked service resources.
+     * @return a list of linked service resources as paginated response with {@link PagedIterable}.
      */
     PagedIterable<PrivateEndpointConnectionResource> listByFactory(String resourceGroupName, String factoryName);
 
     /**
      * Lists Private endpoint connections.
-     *
+     * 
      * @param resourceGroupName The resource group name.
      * @param factoryName The factory name.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return a list of linked service resources.
+     * @return a list of linked service resources as paginated response with {@link PagedIterable}.
      */
-    PagedIterable<PrivateEndpointConnectionResource> listByFactory(
-        String resourceGroupName, String factoryName, Context context);
+    PagedIterable<PrivateEndpointConnectionResource> listByFactory(String resourceGroupName, String factoryName,
+        Context context);
 }

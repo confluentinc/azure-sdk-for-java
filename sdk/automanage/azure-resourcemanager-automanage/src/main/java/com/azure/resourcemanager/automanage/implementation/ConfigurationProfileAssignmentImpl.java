@@ -10,10 +10,8 @@ import com.azure.resourcemanager.automanage.fluent.models.ConfigurationProfileAs
 import com.azure.resourcemanager.automanage.models.ConfigurationProfileAssignment;
 import com.azure.resourcemanager.automanage.models.ConfigurationProfileAssignmentProperties;
 
-public final class ConfigurationProfileAssignmentImpl
-    implements ConfigurationProfileAssignment,
-        ConfigurationProfileAssignment.Definition,
-        ConfigurationProfileAssignment.Update {
+public final class ConfigurationProfileAssignmentImpl implements ConfigurationProfileAssignment,
+    ConfigurationProfileAssignment.Definition, ConfigurationProfileAssignment.Update {
     private ConfigurationProfileAssignmentInner innerObject;
 
     private final com.azure.resourcemanager.automanage.AutomanageManager serviceManager;
@@ -34,8 +32,16 @@ public final class ConfigurationProfileAssignmentImpl
         return this.innerModel().properties();
     }
 
+    public String managedBy() {
+        return this.innerModel().managedBy();
+    }
+
     public SystemData systemData() {
         return this.innerModel().systemData();
+    }
+
+    public String resourceGroupName() {
+        return resourceGroupName;
     }
 
     public ConfigurationProfileAssignmentInner innerModel() {
@@ -59,29 +65,25 @@ public final class ConfigurationProfileAssignmentImpl
     }
 
     public ConfigurationProfileAssignment create() {
-        this.innerObject =
-            serviceManager
-                .serviceClient()
-                .getConfigurationProfileAssignments()
-                .createOrUpdateWithResponse(
-                    configurationProfileAssignmentName, resourceGroupName, vmName, this.innerModel(), Context.NONE)
-                .getValue();
+        this.innerObject = serviceManager.serviceClient()
+            .getConfigurationProfileAssignments()
+            .createOrUpdateWithResponse(configurationProfileAssignmentName, resourceGroupName, vmName,
+                this.innerModel(), Context.NONE)
+            .getValue();
         return this;
     }
 
     public ConfigurationProfileAssignment create(Context context) {
-        this.innerObject =
-            serviceManager
-                .serviceClient()
-                .getConfigurationProfileAssignments()
-                .createOrUpdateWithResponse(
-                    configurationProfileAssignmentName, resourceGroupName, vmName, this.innerModel(), context)
-                .getValue();
+        this.innerObject = serviceManager.serviceClient()
+            .getConfigurationProfileAssignments()
+            .createOrUpdateWithResponse(configurationProfileAssignmentName, resourceGroupName, vmName,
+                this.innerModel(), context)
+            .getValue();
         return this;
     }
 
-    ConfigurationProfileAssignmentImpl(
-        String name, com.azure.resourcemanager.automanage.AutomanageManager serviceManager) {
+    ConfigurationProfileAssignmentImpl(String name,
+        com.azure.resourcemanager.automanage.AutomanageManager serviceManager) {
         this.innerObject = new ConfigurationProfileAssignmentInner();
         this.serviceManager = serviceManager;
         this.configurationProfileAssignmentName = name;
@@ -92,55 +94,46 @@ public final class ConfigurationProfileAssignmentImpl
     }
 
     public ConfigurationProfileAssignment apply() {
-        this.innerObject =
-            serviceManager
-                .serviceClient()
-                .getConfigurationProfileAssignments()
-                .createOrUpdateWithResponse(
-                    configurationProfileAssignmentName, resourceGroupName, vmName, this.innerModel(), Context.NONE)
-                .getValue();
+        this.innerObject = serviceManager.serviceClient()
+            .getConfigurationProfileAssignments()
+            .createOrUpdateWithResponse(configurationProfileAssignmentName, resourceGroupName, vmName,
+                this.innerModel(), Context.NONE)
+            .getValue();
         return this;
     }
 
     public ConfigurationProfileAssignment apply(Context context) {
-        this.innerObject =
-            serviceManager
-                .serviceClient()
-                .getConfigurationProfileAssignments()
-                .createOrUpdateWithResponse(
-                    configurationProfileAssignmentName, resourceGroupName, vmName, this.innerModel(), context)
-                .getValue();
+        this.innerObject = serviceManager.serviceClient()
+            .getConfigurationProfileAssignments()
+            .createOrUpdateWithResponse(configurationProfileAssignmentName, resourceGroupName, vmName,
+                this.innerModel(), context)
+            .getValue();
         return this;
     }
 
-    ConfigurationProfileAssignmentImpl(
-        ConfigurationProfileAssignmentInner innerObject,
+    ConfigurationProfileAssignmentImpl(ConfigurationProfileAssignmentInner innerObject,
         com.azure.resourcemanager.automanage.AutomanageManager serviceManager) {
         this.innerObject = innerObject;
         this.serviceManager = serviceManager;
-        this.configurationProfileAssignmentName =
-            Utils.getValueFromIdByName(innerObject.id(), "configurationProfileAssignments");
-        this.resourceGroupName = Utils.getValueFromIdByName(innerObject.id(), "resourceGroups");
-        this.vmName = Utils.getValueFromIdByName(innerObject.id(), "virtualMachines");
+        this.configurationProfileAssignmentName
+            = ResourceManagerUtils.getValueFromIdByName(innerObject.id(), "configurationProfileAssignments");
+        this.resourceGroupName = ResourceManagerUtils.getValueFromIdByName(innerObject.id(), "resourceGroups");
+        this.vmName = ResourceManagerUtils.getValueFromIdByName(innerObject.id(), "virtualMachines");
     }
 
     public ConfigurationProfileAssignment refresh() {
-        this.innerObject =
-            serviceManager
-                .serviceClient()
-                .getConfigurationProfileAssignments()
-                .getWithResponse(resourceGroupName, configurationProfileAssignmentName, vmName, Context.NONE)
-                .getValue();
+        this.innerObject = serviceManager.serviceClient()
+            .getConfigurationProfileAssignments()
+            .getWithResponse(resourceGroupName, configurationProfileAssignmentName, vmName, Context.NONE)
+            .getValue();
         return this;
     }
 
     public ConfigurationProfileAssignment refresh(Context context) {
-        this.innerObject =
-            serviceManager
-                .serviceClient()
-                .getConfigurationProfileAssignments()
-                .getWithResponse(resourceGroupName, configurationProfileAssignmentName, vmName, context)
-                .getValue();
+        this.innerObject = serviceManager.serviceClient()
+            .getConfigurationProfileAssignments()
+            .getWithResponse(resourceGroupName, configurationProfileAssignmentName, vmName, context)
+            .getValue();
         return this;
     }
 

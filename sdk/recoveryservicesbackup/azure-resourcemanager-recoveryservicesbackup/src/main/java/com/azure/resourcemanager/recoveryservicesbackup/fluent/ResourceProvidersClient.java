@@ -15,11 +15,29 @@ import com.azure.resourcemanager.recoveryservicesbackup.models.MoveRPAcrossTiers
 import com.azure.resourcemanager.recoveryservicesbackup.models.PrepareDataMoveRequest;
 import com.azure.resourcemanager.recoveryservicesbackup.models.TriggerDataMoveRequest;
 
-/** An instance of this class provides access to all the operations defined in ResourceProvidersClient. */
+/**
+ * An instance of this class provides access to all the operations defined in ResourceProvidersClient.
+ */
 public interface ResourceProvidersClient {
     /**
      * Fetches operation status for data move operation on vault.
-     *
+     * 
+     * @param vaultName The name of the recovery services vault.
+     * @param resourceGroupName The name of the resource group where the recovery services vault is present.
+     * @param operationId The operationId parameter.
+     * @param context The context to associate with this operation.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return operation status along with {@link Response}.
+     */
+    @ServiceMethod(returns = ReturnType.SINGLE)
+    Response<OperationStatusInner> getOperationStatusWithResponse(String vaultName, String resourceGroupName,
+        String operationId, Context context);
+
+    /**
+     * Fetches operation status for data move operation on vault.
+     * 
      * @param vaultName The name of the recovery services vault.
      * @param resourceGroupName The name of the resource group where the recovery services vault is present.
      * @param operationId The operationId parameter.
@@ -32,39 +50,23 @@ public interface ResourceProvidersClient {
     OperationStatusInner getOperationStatus(String vaultName, String resourceGroupName, String operationId);
 
     /**
-     * Fetches operation status for data move operation on vault.
-     *
-     * @param vaultName The name of the recovery services vault.
-     * @param resourceGroupName The name of the resource group where the recovery services vault is present.
-     * @param operationId The operationId parameter.
-     * @param context The context to associate with this operation.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return operation status.
-     */
-    @ServiceMethod(returns = ReturnType.SINGLE)
-    Response<OperationStatusInner> getOperationStatusWithResponse(
-        String vaultName, String resourceGroupName, String operationId, Context context);
-
-    /**
      * Prepares source vault for Data Move operation.
-     *
+     * 
      * @param vaultName The name of the recovery services vault.
      * @param resourceGroupName The name of the resource group where the recovery services vault is present.
      * @param parameters Prepare data move request.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the completion.
+     * @return the {@link SyncPoller} for polling of long-running operation.
      */
     @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
-    SyncPoller<PollResult<Void>, Void> beginBmsPrepareDataMove(
-        String vaultName, String resourceGroupName, PrepareDataMoveRequest parameters);
+    SyncPoller<PollResult<Void>, Void> beginBmsPrepareDataMove(String vaultName, String resourceGroupName,
+        PrepareDataMoveRequest parameters);
 
     /**
      * Prepares source vault for Data Move operation.
-     *
+     * 
      * @param vaultName The name of the recovery services vault.
      * @param resourceGroupName The name of the resource group where the recovery services vault is present.
      * @param parameters Prepare data move request.
@@ -72,15 +74,15 @@ public interface ResourceProvidersClient {
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the completion.
+     * @return the {@link SyncPoller} for polling of long-running operation.
      */
     @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
-    SyncPoller<PollResult<Void>, Void> beginBmsPrepareDataMove(
-        String vaultName, String resourceGroupName, PrepareDataMoveRequest parameters, Context context);
+    SyncPoller<PollResult<Void>, Void> beginBmsPrepareDataMove(String vaultName, String resourceGroupName,
+        PrepareDataMoveRequest parameters, Context context);
 
     /**
      * Prepares source vault for Data Move operation.
-     *
+     * 
      * @param vaultName The name of the recovery services vault.
      * @param resourceGroupName The name of the resource group where the recovery services vault is present.
      * @param parameters Prepare data move request.
@@ -93,7 +95,7 @@ public interface ResourceProvidersClient {
 
     /**
      * Prepares source vault for Data Move operation.
-     *
+     * 
      * @param vaultName The name of the recovery services vault.
      * @param resourceGroupName The name of the resource group where the recovery services vault is present.
      * @param parameters Prepare data move request.
@@ -103,27 +105,27 @@ public interface ResourceProvidersClient {
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    void bmsPrepareDataMove(
-        String vaultName, String resourceGroupName, PrepareDataMoveRequest parameters, Context context);
+    void bmsPrepareDataMove(String vaultName, String resourceGroupName, PrepareDataMoveRequest parameters,
+        Context context);
 
     /**
      * Triggers Data Move Operation on target vault.
-     *
+     * 
      * @param vaultName The name of the recovery services vault.
      * @param resourceGroupName The name of the resource group where the recovery services vault is present.
      * @param parameters Trigger data move request.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the completion.
+     * @return the {@link SyncPoller} for polling of long-running operation.
      */
     @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
-    SyncPoller<PollResult<Void>, Void> beginBmsTriggerDataMove(
-        String vaultName, String resourceGroupName, TriggerDataMoveRequest parameters);
+    SyncPoller<PollResult<Void>, Void> beginBmsTriggerDataMove(String vaultName, String resourceGroupName,
+        TriggerDataMoveRequest parameters);
 
     /**
      * Triggers Data Move Operation on target vault.
-     *
+     * 
      * @param vaultName The name of the recovery services vault.
      * @param resourceGroupName The name of the resource group where the recovery services vault is present.
      * @param parameters Trigger data move request.
@@ -131,15 +133,15 @@ public interface ResourceProvidersClient {
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the completion.
+     * @return the {@link SyncPoller} for polling of long-running operation.
      */
     @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
-    SyncPoller<PollResult<Void>, Void> beginBmsTriggerDataMove(
-        String vaultName, String resourceGroupName, TriggerDataMoveRequest parameters, Context context);
+    SyncPoller<PollResult<Void>, Void> beginBmsTriggerDataMove(String vaultName, String resourceGroupName,
+        TriggerDataMoveRequest parameters, Context context);
 
     /**
      * Triggers Data Move Operation on target vault.
-     *
+     * 
      * @param vaultName The name of the recovery services vault.
      * @param resourceGroupName The name of the resource group where the recovery services vault is present.
      * @param parameters Trigger data move request.
@@ -152,7 +154,7 @@ public interface ResourceProvidersClient {
 
     /**
      * Triggers Data Move Operation on target vault.
-     *
+     * 
      * @param vaultName The name of the recovery services vault.
      * @param resourceGroupName The name of the resource group where the recovery services vault is present.
      * @param parameters Trigger data move request.
@@ -162,12 +164,12 @@ public interface ResourceProvidersClient {
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    void bmsTriggerDataMove(
-        String vaultName, String resourceGroupName, TriggerDataMoveRequest parameters, Context context);
+    void bmsTriggerDataMove(String vaultName, String resourceGroupName, TriggerDataMoveRequest parameters,
+        Context context);
 
     /**
      * Move recovery point from one datastore to another store.
-     *
+     * 
      * @param vaultName The name of the recovery services vault.
      * @param resourceGroupName The name of the resource group where the recovery services vault is present.
      * @param fabricName The fabricName parameter.
@@ -178,21 +180,16 @@ public interface ResourceProvidersClient {
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the completion.
+     * @return the {@link SyncPoller} for polling of long-running operation.
      */
     @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
-    SyncPoller<PollResult<Void>, Void> beginMoveRecoveryPoint(
-        String vaultName,
-        String resourceGroupName,
-        String fabricName,
-        String containerName,
-        String protectedItemName,
-        String recoveryPointId,
+    SyncPoller<PollResult<Void>, Void> beginMoveRecoveryPoint(String vaultName, String resourceGroupName,
+        String fabricName, String containerName, String protectedItemName, String recoveryPointId,
         MoveRPAcrossTiersRequest parameters);
 
     /**
      * Move recovery point from one datastore to another store.
-     *
+     * 
      * @param vaultName The name of the recovery services vault.
      * @param resourceGroupName The name of the resource group where the recovery services vault is present.
      * @param fabricName The fabricName parameter.
@@ -204,22 +201,16 @@ public interface ResourceProvidersClient {
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the completion.
+     * @return the {@link SyncPoller} for polling of long-running operation.
      */
     @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
-    SyncPoller<PollResult<Void>, Void> beginMoveRecoveryPoint(
-        String vaultName,
-        String resourceGroupName,
-        String fabricName,
-        String containerName,
-        String protectedItemName,
-        String recoveryPointId,
-        MoveRPAcrossTiersRequest parameters,
-        Context context);
+    SyncPoller<PollResult<Void>, Void> beginMoveRecoveryPoint(String vaultName, String resourceGroupName,
+        String fabricName, String containerName, String protectedItemName, String recoveryPointId,
+        MoveRPAcrossTiersRequest parameters, Context context);
 
     /**
      * Move recovery point from one datastore to another store.
-     *
+     * 
      * @param vaultName The name of the recovery services vault.
      * @param resourceGroupName The name of the resource group where the recovery services vault is present.
      * @param fabricName The fabricName parameter.
@@ -232,18 +223,12 @@ public interface ResourceProvidersClient {
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    void moveRecoveryPoint(
-        String vaultName,
-        String resourceGroupName,
-        String fabricName,
-        String containerName,
-        String protectedItemName,
-        String recoveryPointId,
-        MoveRPAcrossTiersRequest parameters);
+    void moveRecoveryPoint(String vaultName, String resourceGroupName, String fabricName, String containerName,
+        String protectedItemName, String recoveryPointId, MoveRPAcrossTiersRequest parameters);
 
     /**
      * Move recovery point from one datastore to another store.
-     *
+     * 
      * @param vaultName The name of the recovery services vault.
      * @param resourceGroupName The name of the resource group where the recovery services vault is present.
      * @param fabricName The fabricName parameter.
@@ -257,13 +242,6 @@ public interface ResourceProvidersClient {
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    void moveRecoveryPoint(
-        String vaultName,
-        String resourceGroupName,
-        String fabricName,
-        String containerName,
-        String protectedItemName,
-        String recoveryPointId,
-        MoveRPAcrossTiersRequest parameters,
-        Context context);
+    void moveRecoveryPoint(String vaultName, String resourceGroupName, String fabricName, String containerName,
+        String protectedItemName, String recoveryPointId, MoveRPAcrossTiersRequest parameters, Context context);
 }

@@ -6,101 +6,120 @@ package com.azure.resourcemanager.network.models;
 
 import com.azure.core.annotation.Fluent;
 import com.azure.core.management.SubResource;
-import com.azure.core.util.logging.ClientLogger;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.azure.json.JsonReader;
+import com.azure.json.JsonSerializable;
+import com.azure.json.JsonToken;
+import com.azure.json.JsonWriter;
+import java.io.IOException;
 
-/** Contains the DDoS protection settings of the public IP. */
+/**
+ * Contains the DDoS protection settings of the public IP.
+ */
 @Fluent
-public final class DdosSettings {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(DdosSettings.class);
+public final class DdosSettings implements JsonSerializable<DdosSettings> {
+    /*
+     * The DDoS protection mode of the public IP
+     */
+    private DdosSettingsProtectionMode protectionMode;
 
     /*
-     * The DDoS custom policy associated with the public IP.
+     * The DDoS protection plan associated with the public IP. Can only be set if ProtectionMode is Enabled
      */
-    @JsonProperty(value = "ddosCustomPolicy")
-    private SubResource ddosCustomPolicy;
-
-    /*
-     * The DDoS protection policy customizability of the public IP. Only
-     * standard coverage will have the ability to be customized.
-     */
-    @JsonProperty(value = "protectionCoverage")
-    private DdosSettingsProtectionCoverage protectionCoverage;
-
-    /*
-     * Enables DDoS protection on the public IP.
-     */
-    @JsonProperty(value = "protectedIP")
-    private Boolean protectedIp;
+    private SubResource ddosProtectionPlan;
 
     /**
-     * Get the ddosCustomPolicy property: The DDoS custom policy associated with the public IP.
-     *
-     * @return the ddosCustomPolicy value.
+     * Creates an instance of DdosSettings class.
      */
-    public SubResource ddosCustomPolicy() {
-        return this.ddosCustomPolicy;
+    public DdosSettings() {
     }
 
     /**
-     * Set the ddosCustomPolicy property: The DDoS custom policy associated with the public IP.
-     *
-     * @param ddosCustomPolicy the ddosCustomPolicy value to set.
+     * Get the protectionMode property: The DDoS protection mode of the public IP.
+     * 
+     * @return the protectionMode value.
+     */
+    public DdosSettingsProtectionMode protectionMode() {
+        return this.protectionMode;
+    }
+
+    /**
+     * Set the protectionMode property: The DDoS protection mode of the public IP.
+     * 
+     * @param protectionMode the protectionMode value to set.
      * @return the DdosSettings object itself.
      */
-    public DdosSettings withDdosCustomPolicy(SubResource ddosCustomPolicy) {
-        this.ddosCustomPolicy = ddosCustomPolicy;
+    public DdosSettings withProtectionMode(DdosSettingsProtectionMode protectionMode) {
+        this.protectionMode = protectionMode;
         return this;
     }
 
     /**
-     * Get the protectionCoverage property: The DDoS protection policy customizability of the public IP. Only standard
-     * coverage will have the ability to be customized.
-     *
-     * @return the protectionCoverage value.
+     * Get the ddosProtectionPlan property: The DDoS protection plan associated with the public IP. Can only be set if
+     * ProtectionMode is Enabled.
+     * 
+     * @return the ddosProtectionPlan value.
      */
-    public DdosSettingsProtectionCoverage protectionCoverage() {
-        return this.protectionCoverage;
+    public SubResource ddosProtectionPlan() {
+        return this.ddosProtectionPlan;
     }
 
     /**
-     * Set the protectionCoverage property: The DDoS protection policy customizability of the public IP. Only standard
-     * coverage will have the ability to be customized.
-     *
-     * @param protectionCoverage the protectionCoverage value to set.
+     * Set the ddosProtectionPlan property: The DDoS protection plan associated with the public IP. Can only be set if
+     * ProtectionMode is Enabled.
+     * 
+     * @param ddosProtectionPlan the ddosProtectionPlan value to set.
      * @return the DdosSettings object itself.
      */
-    public DdosSettings withProtectionCoverage(DdosSettingsProtectionCoverage protectionCoverage) {
-        this.protectionCoverage = protectionCoverage;
-        return this;
-    }
-
-    /**
-     * Get the protectedIp property: Enables DDoS protection on the public IP.
-     *
-     * @return the protectedIp value.
-     */
-    public Boolean protectedIp() {
-        return this.protectedIp;
-    }
-
-    /**
-     * Set the protectedIp property: Enables DDoS protection on the public IP.
-     *
-     * @param protectedIp the protectedIp value to set.
-     * @return the DdosSettings object itself.
-     */
-    public DdosSettings withProtectedIp(Boolean protectedIp) {
-        this.protectedIp = protectedIp;
+    public DdosSettings withDdosProtectionPlan(SubResource ddosProtectionPlan) {
+        this.ddosProtectionPlan = ddosProtectionPlan;
         return this;
     }
 
     /**
      * Validates the instance.
-     *
+     * 
      * @throws IllegalArgumentException thrown if the instance is not valid.
      */
     public void validate() {
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public JsonWriter toJson(JsonWriter jsonWriter) throws IOException {
+        jsonWriter.writeStartObject();
+        jsonWriter.writeStringField("protectionMode",
+            this.protectionMode == null ? null : this.protectionMode.toString());
+        jsonWriter.writeJsonField("ddosProtectionPlan", this.ddosProtectionPlan);
+        return jsonWriter.writeEndObject();
+    }
+
+    /**
+     * Reads an instance of DdosSettings from the JsonReader.
+     * 
+     * @param jsonReader The JsonReader being read.
+     * @return An instance of DdosSettings if the JsonReader was pointing to an instance of it, or null if it was
+     * pointing to JSON null.
+     * @throws IOException If an error occurs while reading the DdosSettings.
+     */
+    public static DdosSettings fromJson(JsonReader jsonReader) throws IOException {
+        return jsonReader.readObject(reader -> {
+            DdosSettings deserializedDdosSettings = new DdosSettings();
+            while (reader.nextToken() != JsonToken.END_OBJECT) {
+                String fieldName = reader.getFieldName();
+                reader.nextToken();
+
+                if ("protectionMode".equals(fieldName)) {
+                    deserializedDdosSettings.protectionMode = DdosSettingsProtectionMode.fromString(reader.getString());
+                } else if ("ddosProtectionPlan".equals(fieldName)) {
+                    deserializedDdosSettings.ddosProtectionPlan = SubResource.fromJson(reader);
+                } else {
+                    reader.skipChildren();
+                }
+            }
+
+            return deserializedDdosSettings;
+        });
     }
 }

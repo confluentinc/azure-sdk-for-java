@@ -13,11 +13,28 @@ import com.azure.resourcemanager.datafactory.fluent.models.ExposureControlRespon
 import com.azure.resourcemanager.datafactory.models.ExposureControlBatchRequest;
 import com.azure.resourcemanager.datafactory.models.ExposureControlRequest;
 
-/** An instance of this class provides access to all the operations defined in ExposureControlsClient. */
+/**
+ * An instance of this class provides access to all the operations defined in ExposureControlsClient.
+ */
 public interface ExposureControlsClient {
     /**
      * Get exposure control feature for specific location.
-     *
+     * 
+     * @param locationId The location identifier.
+     * @param exposureControlRequest The exposure control request.
+     * @param context The context to associate with this operation.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return exposure control feature for specific location along with {@link Response}.
+     */
+    @ServiceMethod(returns = ReturnType.SINGLE)
+    Response<ExposureControlResponseInner> getFeatureValueWithResponse(String locationId,
+        ExposureControlRequest exposureControlRequest, Context context);
+
+    /**
+     * Get exposure control feature for specific location.
+     * 
      * @param locationId The location identifier.
      * @param exposureControlRequest The exposure control request.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
@@ -29,38 +46,8 @@ public interface ExposureControlsClient {
     ExposureControlResponseInner getFeatureValue(String locationId, ExposureControlRequest exposureControlRequest);
 
     /**
-     * Get exposure control feature for specific location.
-     *
-     * @param locationId The location identifier.
-     * @param exposureControlRequest The exposure control request.
-     * @param context The context to associate with this operation.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return exposure control feature for specific location along with {@link Response}.
-     */
-    @ServiceMethod(returns = ReturnType.SINGLE)
-    Response<ExposureControlResponseInner> getFeatureValueWithResponse(
-        String locationId, ExposureControlRequest exposureControlRequest, Context context);
-
-    /**
      * Get exposure control feature for specific factory.
-     *
-     * @param resourceGroupName The resource group name.
-     * @param factoryName The factory name.
-     * @param exposureControlRequest The exposure control request.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return exposure control feature for specific factory.
-     */
-    @ServiceMethod(returns = ReturnType.SINGLE)
-    ExposureControlResponseInner getFeatureValueByFactory(
-        String resourceGroupName, String factoryName, ExposureControlRequest exposureControlRequest);
-
-    /**
-     * Get exposure control feature for specific factory.
-     *
+     * 
      * @param resourceGroupName The resource group name.
      * @param factoryName The factory name.
      * @param exposureControlRequest The exposure control request.
@@ -71,27 +58,27 @@ public interface ExposureControlsClient {
      * @return exposure control feature for specific factory along with {@link Response}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    Response<ExposureControlResponseInner> getFeatureValueByFactoryWithResponse(
-        String resourceGroupName, String factoryName, ExposureControlRequest exposureControlRequest, Context context);
+    Response<ExposureControlResponseInner> getFeatureValueByFactoryWithResponse(String resourceGroupName,
+        String factoryName, ExposureControlRequest exposureControlRequest, Context context);
 
     /**
-     * Get list of exposure control features for specific factory.
-     *
+     * Get exposure control feature for specific factory.
+     * 
      * @param resourceGroupName The resource group name.
      * @param factoryName The factory name.
-     * @param exposureControlBatchRequest The exposure control request for list of features.
+     * @param exposureControlRequest The exposure control request.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return list of exposure control features for specific factory.
+     * @return exposure control feature for specific factory.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    ExposureControlBatchResponseInner queryFeatureValuesByFactory(
-        String resourceGroupName, String factoryName, ExposureControlBatchRequest exposureControlBatchRequest);
+    ExposureControlResponseInner getFeatureValueByFactory(String resourceGroupName, String factoryName,
+        ExposureControlRequest exposureControlRequest);
 
     /**
      * Get list of exposure control features for specific factory.
-     *
+     * 
      * @param resourceGroupName The resource group name.
      * @param factoryName The factory name.
      * @param exposureControlBatchRequest The exposure control request for list of features.
@@ -102,9 +89,21 @@ public interface ExposureControlsClient {
      * @return list of exposure control features for specific factory along with {@link Response}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    Response<ExposureControlBatchResponseInner> queryFeatureValuesByFactoryWithResponse(
-        String resourceGroupName,
-        String factoryName,
-        ExposureControlBatchRequest exposureControlBatchRequest,
-        Context context);
+    Response<ExposureControlBatchResponseInner> queryFeatureValuesByFactoryWithResponse(String resourceGroupName,
+        String factoryName, ExposureControlBatchRequest exposureControlBatchRequest, Context context);
+
+    /**
+     * Get list of exposure control features for specific factory.
+     * 
+     * @param resourceGroupName The resource group name.
+     * @param factoryName The factory name.
+     * @param exposureControlBatchRequest The exposure control request for list of features.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return list of exposure control features for specific factory.
+     */
+    @ServiceMethod(returns = ReturnType.SINGLE)
+    ExposureControlBatchResponseInner queryFeatureValuesByFactory(String resourceGroupName, String factoryName,
+        ExposureControlBatchRequest exposureControlBatchRequest);
 }

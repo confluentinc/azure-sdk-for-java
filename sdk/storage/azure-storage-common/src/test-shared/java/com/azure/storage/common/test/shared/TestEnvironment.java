@@ -12,6 +12,13 @@ import java.util.Locale;
 public final class TestEnvironment {
     private static final ClientLogger LOGGER = new ClientLogger(TestEnvironment.class);
 
+    private static final String SCHEME;
+
+    static {
+        String disableHttps = Configuration.getGlobalConfiguration().get("AZURE_STORAGE_TEST_DISABLE_HTTPS");
+        SCHEME = "true".equalsIgnoreCase(disableHttps) ? "http" : "https";
+    }
+
     private static final TestEnvironment INSTANCE = new TestEnvironment();
 
     private final TestHttpClientType httpClientType;
@@ -36,7 +43,8 @@ public final class TestEnvironment {
         this.testMode = readTestModeFromEnvironment();
         this.serviceVersion = readServiceVersionFromEnvironment();
         this.httpClientType = readHttpClientTypeFromEnvironment();
-        System.out.printf("Tests will run with %s http client%n", this.httpClientType);
+
+        LOGGER.info("Tests will run with " + this.httpClientType + " http client");
         this.resourceGroupName = Configuration.getGlobalConfiguration().get("STORAGE_RESOURCE_GROUP_NAME");
         this.subscriptionId = Configuration.getGlobalConfiguration().get("STORAGE_SUBSCRIPTION_ID");
         this.primaryAccount = readTestAccountFromEnvironment("PRIMARY_STORAGE_", this.testMode);
@@ -70,17 +78,17 @@ public final class TestEnvironment {
             testMode = TestMode.PLAYBACK;
         }
 
-        System.out.printf("--------%s---------%n", testMode);
+        LOGGER.atInfo().log("--------" + testMode + "---------");
         return testMode;
     }
 
     private String readServiceVersionFromEnvironment() {
         String serviceVersion = Configuration.getGlobalConfiguration().get("AZURE_LIVE_TEST_SERVICE_VERSION");
         if (serviceVersion == null || serviceVersion.trim().isEmpty()) {
-            System.out.println("Tests will run with default service version");
+            LOGGER.info("Tests will run with default service version");
             return null;
         } else {
-            System.out.printf("Tests will run with %s service version%n", serviceVersion);
+            LOGGER.info("Tests will run with " + serviceVersion + " service version");
             return serviceVersion;
         }
     }
@@ -88,22 +96,22 @@ public final class TestEnvironment {
     private static TestAccount readTestAccountFromEnvironment(String prefix, TestMode testMode) {
         String name = "azstoragesdkaccount";
         String key = "astorageaccountkey";
-        String connectionString = "DefaultEndpointsProtocol=https;AccountName=teststorage;"
+        String connectionString = "DefaultEndpointsProtocol=" + SCHEME + ";AccountName=teststorage;"
             + "AccountKey=atestaccountkey;EndpointSuffix=core.windows.net";
         if (testMode != TestMode.PLAYBACK) {
             name = Configuration.getGlobalConfiguration().get(prefix + "ACCOUNT_NAME");
             key = Configuration.getGlobalConfiguration().get(prefix + "ACCOUNT_KEY");
             connectionString =  Configuration.getGlobalConfiguration().get(prefix + "CONNECTION_STRING");
             if (connectionString == null || connectionString.trim().isEmpty()) {
-                connectionString = String.format("DefaultEndpointsProtocol=https;AccountName=%s;"
+                connectionString = String.format("DefaultEndpointsProtocol=" + SCHEME + ";AccountName=%s;"
                     + "AccountKey=%s;EndpointSuffix=core.windows.net", name, key);
             }
         }
-        String blobEndpoint = String.format("https://%s.blob.core.windows.net", name);
-        String blobEndpointSecondary = String.format("https://%s-secondary.blob.core.windows.net", name);
-        String dataLakeEndpoint = String.format("https://%s.dfs.core.windows.net", name);
-        String queueEndpoint = String.format("https://%s.queue.core.windows.net", name);
-        String fileEndpoint = String.format("https://%s.file.core.windows.net", name);
+        String blobEndpoint = String.format(SCHEME + "://%s.blob.core.windows.net", name);
+        String blobEndpointSecondary = String.format(SCHEME + "://%s-secondary.blob.core.windows.net", name);
+        String dataLakeEndpoint = String.format(SCHEME + "://%s.dfs.core.windows.net", name);
+        String queueEndpoint = String.format(SCHEME + "://%s.queue.core.windows.net", name);
+        String fileEndpoint = String.format(SCHEME + "://%s.file.core.windows.net", name);
 
         return new TestAccount(name, key, connectionString, blobEndpoint, blobEndpointSecondary,
             dataLakeEndpoint, queueEndpoint, fileEndpoint);
@@ -111,13 +119,16 @@ public final class TestEnvironment {
 
     private static TestHttpClientType readHttpClientTypeFromEnvironment() {
         String httpClients = Configuration.getGlobalConfiguration().get("AZURE_TEST_HTTP_CLIENTS", "netty");
-        switch (httpClients.toLowerCase()) {
-            case "netty":
-                return TestHttpClientType.NETTY;
-            case "okhttp":
-                return TestHttpClientType.OK_HTTP;
-            default:
-                throw new IllegalArgumentException("Unknown value of AZURE_TEST_HTTP_CLIENTS: " + httpClients);
+        if (httpClients.contains("netty")) {
+            return TestHttpClientType.NETTY;
+        } else if (httpClients.contains("okhttp")) {
+            return TestHttpClientType.OK_HTTP;
+        } else if (httpClients.contains("Vertx")) {
+            return TestHttpClientType.VERTX;
+        } else if (httpClients.contains("JdkHttp")) {
+            return TestHttpClientType.JDK_HTTP;
+        } else {
+            throw new IllegalArgumentException("Unknown value of AZURE_TEST_HTTP_CLIENTS: " + httpClients);
         }
     }
 

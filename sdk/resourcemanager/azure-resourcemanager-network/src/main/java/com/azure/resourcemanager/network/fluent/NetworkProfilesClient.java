@@ -22,81 +22,81 @@ import java.nio.ByteBuffer;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-/** An instance of this class provides access to all the operations defined in NetworkProfilesClient. */
-public interface NetworkProfilesClient
-    extends InnerSupportsGet<NetworkProfileInner>,
-        InnerSupportsListing<NetworkProfileInner>,
-        InnerSupportsDelete<Void> {
+/**
+ * An instance of this class provides access to all the operations defined in NetworkProfilesClient.
+ */
+public interface NetworkProfilesClient extends InnerSupportsGet<NetworkProfileInner>,
+    InnerSupportsListing<NetworkProfileInner>, InnerSupportsDelete<Void> {
     /**
      * Deletes the specified network profile.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param networkProfileName The name of the NetworkProfile.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the completion.
+     * @return the {@link Response} on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
     Mono<Response<Flux<ByteBuffer>>> deleteWithResponseAsync(String resourceGroupName, String networkProfileName);
 
     /**
      * Deletes the specified network profile.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param networkProfileName The name of the NetworkProfile.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the completion.
+     * @return the {@link PollerFlux} for polling of long-running operation.
      */
     @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
     PollerFlux<PollResult<Void>, Void> beginDeleteAsync(String resourceGroupName, String networkProfileName);
 
     /**
      * Deletes the specified network profile.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param networkProfileName The name of the NetworkProfile.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the completion.
+     * @return the {@link SyncPoller} for polling of long-running operation.
      */
     @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
     SyncPoller<PollResult<Void>, Void> beginDelete(String resourceGroupName, String networkProfileName);
 
     /**
      * Deletes the specified network profile.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param networkProfileName The name of the NetworkProfile.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the completion.
+     * @return the {@link SyncPoller} for polling of long-running operation.
      */
     @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
-    SyncPoller<PollResult<Void>, Void> beginDelete(
-        String resourceGroupName, String networkProfileName, Context context);
+    SyncPoller<PollResult<Void>, Void> beginDelete(String resourceGroupName, String networkProfileName,
+        Context context);
 
     /**
      * Deletes the specified network profile.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param networkProfileName The name of the NetworkProfile.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the completion.
+     * @return A {@link Mono} that completes when a successful response is received.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
     Mono<Void> deleteAsync(String resourceGroupName, String networkProfileName);
 
     /**
      * Deletes the specified network profile.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param networkProfileName The name of the NetworkProfile.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
@@ -108,7 +108,7 @@ public interface NetworkProfilesClient
 
     /**
      * Deletes the specified network profile.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param networkProfileName The name of the NetworkProfile.
      * @param context The context to associate with this operation.
@@ -121,50 +121,52 @@ public interface NetworkProfilesClient
 
     /**
      * Gets the specified network profile in a specified resource group.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param networkProfileName The name of the public IP prefix.
      * @param expand Expands referenced resources.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the specified network profile in a specified resource group.
+     * @return the specified network profile in a specified resource group along with {@link Response} on successful
+     * completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    Mono<Response<NetworkProfileInner>> getByResourceGroupWithResponseAsync(
-        String resourceGroupName, String networkProfileName, String expand);
+    Mono<Response<NetworkProfileInner>> getByResourceGroupWithResponseAsync(String resourceGroupName,
+        String networkProfileName, String expand);
 
     /**
      * Gets the specified network profile in a specified resource group.
-     *
-     * @param resourceGroupName The name of the resource group.
-     * @param networkProfileName The name of the public IP prefix.
-     * @param expand Expands referenced resources.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the specified network profile in a specified resource group.
-     */
-    @ServiceMethod(returns = ReturnType.SINGLE)
-    Mono<NetworkProfileInner> getByResourceGroupAsync(
-        String resourceGroupName, String networkProfileName, String expand);
-
-    /**
-     * Gets the specified network profile in a specified resource group.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param networkProfileName The name of the public IP prefix.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the specified network profile in a specified resource group.
+     * @return the specified network profile in a specified resource group on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
     Mono<NetworkProfileInner> getByResourceGroupAsync(String resourceGroupName, String networkProfileName);
 
     /**
      * Gets the specified network profile in a specified resource group.
-     *
+     * 
+     * @param resourceGroupName The name of the resource group.
+     * @param networkProfileName The name of the public IP prefix.
+     * @param expand Expands referenced resources.
+     * @param context The context to associate with this operation.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return the specified network profile in a specified resource group along with {@link Response}.
+     */
+    @ServiceMethod(returns = ReturnType.SINGLE)
+    Response<NetworkProfileInner> getByResourceGroupWithResponse(String resourceGroupName, String networkProfileName,
+        String expand, Context context);
+
+    /**
+     * Gets the specified network profile in a specified resource group.
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param networkProfileName The name of the public IP prefix.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
@@ -176,69 +178,38 @@ public interface NetworkProfilesClient
     NetworkProfileInner getByResourceGroup(String resourceGroupName, String networkProfileName);
 
     /**
-     * Gets the specified network profile in a specified resource group.
-     *
-     * @param resourceGroupName The name of the resource group.
-     * @param networkProfileName The name of the public IP prefix.
-     * @param expand Expands referenced resources.
-     * @param context The context to associate with this operation.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the specified network profile in a specified resource group.
-     */
-    @ServiceMethod(returns = ReturnType.SINGLE)
-    Response<NetworkProfileInner> getByResourceGroupWithResponse(
-        String resourceGroupName, String networkProfileName, String expand, Context context);
-
-    /**
      * Creates or updates a network profile.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param networkProfileName The name of the network profile.
      * @param parameters Parameters supplied to the create or update network profile operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return network profile resource.
+     * @return network profile resource along with {@link Response} on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    Mono<Response<NetworkProfileInner>> createOrUpdateWithResponseAsync(
-        String resourceGroupName, String networkProfileName, NetworkProfileInner parameters);
+    Mono<Response<NetworkProfileInner>> createOrUpdateWithResponseAsync(String resourceGroupName,
+        String networkProfileName, NetworkProfileInner parameters);
 
     /**
      * Creates or updates a network profile.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param networkProfileName The name of the network profile.
      * @param parameters Parameters supplied to the create or update network profile operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return network profile resource.
+     * @return network profile resource on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    Mono<NetworkProfileInner> createOrUpdateAsync(
-        String resourceGroupName, String networkProfileName, NetworkProfileInner parameters);
+    Mono<NetworkProfileInner> createOrUpdateAsync(String resourceGroupName, String networkProfileName,
+        NetworkProfileInner parameters);
 
     /**
      * Creates or updates a network profile.
-     *
-     * @param resourceGroupName The name of the resource group.
-     * @param networkProfileName The name of the network profile.
-     * @param parameters Parameters supplied to the create or update network profile operation.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return network profile resource.
-     */
-    @ServiceMethod(returns = ReturnType.SINGLE)
-    NetworkProfileInner createOrUpdate(
-        String resourceGroupName, String networkProfileName, NetworkProfileInner parameters);
-
-    /**
-     * Creates or updates a network profile.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param networkProfileName The name of the network profile.
      * @param parameters Parameters supplied to the create or update network profile operation.
@@ -246,45 +217,76 @@ public interface NetworkProfilesClient
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return network profile resource.
+     * @return network profile resource along with {@link Response}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    Response<NetworkProfileInner> createOrUpdateWithResponse(
-        String resourceGroupName, String networkProfileName, NetworkProfileInner parameters, Context context);
+    Response<NetworkProfileInner> createOrUpdateWithResponse(String resourceGroupName, String networkProfileName,
+        NetworkProfileInner parameters, Context context);
 
     /**
-     * Updates network profile tags.
-     *
+     * Creates or updates a network profile.
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param networkProfileName The name of the network profile.
-     * @param parameters Parameters supplied to update network profile tags.
+     * @param parameters Parameters supplied to the create or update network profile operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
      * @return network profile resource.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    Mono<Response<NetworkProfileInner>> updateTagsWithResponseAsync(
-        String resourceGroupName, String networkProfileName, TagsObject parameters);
+    NetworkProfileInner createOrUpdate(String resourceGroupName, String networkProfileName,
+        NetworkProfileInner parameters);
 
     /**
      * Updates network profile tags.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param networkProfileName The name of the network profile.
      * @param parameters Parameters supplied to update network profile tags.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return network profile resource.
+     * @return network profile resource along with {@link Response} on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    Mono<NetworkProfileInner> updateTagsAsync(
-        String resourceGroupName, String networkProfileName, TagsObject parameters);
+    Mono<Response<NetworkProfileInner>> updateTagsWithResponseAsync(String resourceGroupName, String networkProfileName,
+        TagsObject parameters);
 
     /**
      * Updates network profile tags.
-     *
+     * 
+     * @param resourceGroupName The name of the resource group.
+     * @param networkProfileName The name of the network profile.
+     * @param parameters Parameters supplied to update network profile tags.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return network profile resource on successful completion of {@link Mono}.
+     */
+    @ServiceMethod(returns = ReturnType.SINGLE)
+    Mono<NetworkProfileInner> updateTagsAsync(String resourceGroupName, String networkProfileName,
+        TagsObject parameters);
+
+    /**
+     * Updates network profile tags.
+     * 
+     * @param resourceGroupName The name of the resource group.
+     * @param networkProfileName The name of the network profile.
+     * @param parameters Parameters supplied to update network profile tags.
+     * @param context The context to associate with this operation.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return network profile resource along with {@link Response}.
+     */
+    @ServiceMethod(returns = ReturnType.SINGLE)
+    Response<NetworkProfileInner> updateTagsWithResponse(String resourceGroupName, String networkProfileName,
+        TagsObject parameters, Context context);
+
+    /**
+     * Updates network profile tags.
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param networkProfileName The name of the network profile.
      * @param parameters Parameters supplied to update network profile tags.
@@ -297,86 +299,70 @@ public interface NetworkProfilesClient
     NetworkProfileInner updateTags(String resourceGroupName, String networkProfileName, TagsObject parameters);
 
     /**
-     * Updates network profile tags.
-     *
-     * @param resourceGroupName The name of the resource group.
-     * @param networkProfileName The name of the network profile.
-     * @param parameters Parameters supplied to update network profile tags.
-     * @param context The context to associate with this operation.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return network profile resource.
-     */
-    @ServiceMethod(returns = ReturnType.SINGLE)
-    Response<NetworkProfileInner> updateTagsWithResponse(
-        String resourceGroupName, String networkProfileName, TagsObject parameters, Context context);
-
-    /**
      * Gets all the network profiles in a subscription.
-     *
+     * 
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return all the network profiles in a subscription.
+     * @return all the network profiles in a subscription as paginated response with {@link PagedFlux}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
     PagedFlux<NetworkProfileInner> listAsync();
 
     /**
      * Gets all the network profiles in a subscription.
-     *
+     * 
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return all the network profiles in a subscription.
+     * @return all the network profiles in a subscription as paginated response with {@link PagedIterable}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
     PagedIterable<NetworkProfileInner> list();
 
     /**
      * Gets all the network profiles in a subscription.
-     *
+     * 
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return all the network profiles in a subscription.
+     * @return all the network profiles in a subscription as paginated response with {@link PagedIterable}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
     PagedIterable<NetworkProfileInner> list(Context context);
 
     /**
      * Gets all network profiles in a resource group.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return all network profiles in a resource group.
+     * @return all network profiles in a resource group as paginated response with {@link PagedFlux}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
     PagedFlux<NetworkProfileInner> listByResourceGroupAsync(String resourceGroupName);
 
     /**
      * Gets all network profiles in a resource group.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return all network profiles in a resource group.
+     * @return all network profiles in a resource group as paginated response with {@link PagedIterable}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
     PagedIterable<NetworkProfileInner> listByResourceGroup(String resourceGroupName);
 
     /**
      * Gets all network profiles in a resource group.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return all network profiles in a resource group.
+     * @return all network profiles in a resource group as paginated response with {@link PagedIterable}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
     PagedIterable<NetworkProfileInner> listByResourceGroup(String resourceGroupName, Context context);

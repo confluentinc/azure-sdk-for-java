@@ -5,85 +5,86 @@
 package com.azure.resourcemanager.compute.fluent.models;
 
 import com.azure.core.annotation.Fluent;
-import com.azure.core.util.logging.ClientLogger;
+import com.azure.json.JsonReader;
+import com.azure.json.JsonSerializable;
+import com.azure.json.JsonToken;
+import com.azure.json.JsonWriter;
+import com.azure.resourcemanager.compute.models.DataAccessAuthMode;
 import com.azure.resourcemanager.compute.models.Encryption;
 import com.azure.resourcemanager.compute.models.EncryptionSettingsCollection;
 import com.azure.resourcemanager.compute.models.NetworkAccessPolicy;
 import com.azure.resourcemanager.compute.models.OperatingSystemTypes;
 import com.azure.resourcemanager.compute.models.PublicNetworkAccess;
 import com.azure.resourcemanager.compute.models.SupportedCapabilities;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import java.io.IOException;
 
-/** Snapshot resource update properties. */
+/**
+ * Snapshot resource update properties.
+ */
 @Fluent
-public final class SnapshotUpdateProperties {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(SnapshotUpdateProperties.class);
-
+public final class SnapshotUpdateProperties implements JsonSerializable<SnapshotUpdateProperties> {
     /*
      * the Operating System type.
      */
-    @JsonProperty(value = "osType")
     private OperatingSystemTypes osType;
 
     /*
-     * If creationData.createOption is Empty, this field is mandatory and it
-     * indicates the size of the disk to create. If this field is present for
-     * updates or creation with other options, it indicates a resize. Resizes
-     * are only allowed if the disk is not attached to a running VM, and can
-     * only increase the disk's size.
+     * If creationData.createOption is Empty, this field is mandatory and it indicates the size of the disk to create.
+     * If this field is present for updates or creation with other options, it indicates a resize. Resizes are only
+     * allowed if the disk is not attached to a running VM, and can only increase the disk's size.
      */
-    @JsonProperty(value = "diskSizeGB")
     private Integer diskSizeGB;
 
     /*
-     * Encryption settings collection used be Azure Disk Encryption, can
-     * contain multiple encryption settings per disk or snapshot.
+     * Encryption settings collection used be Azure Disk Encryption, can contain multiple encryption settings per disk
+     * or snapshot.
      */
-    @JsonProperty(value = "encryptionSettingsCollection")
     private EncryptionSettingsCollection encryptionSettingsCollection;
 
     /*
-     * Encryption property can be used to encrypt data at rest with customer
-     * managed keys or platform managed keys.
+     * Encryption property can be used to encrypt data at rest with customer managed keys or platform managed keys.
      */
-    @JsonProperty(value = "encryption")
     private Encryption encryption;
 
     /*
      * Policy for accessing the disk via network.
      */
-    @JsonProperty(value = "networkAccessPolicy")
     private NetworkAccessPolicy networkAccessPolicy;
 
     /*
      * ARM id of the DiskAccess resource for using private endpoints on disks.
      */
-    @JsonProperty(value = "diskAccessId")
     private String diskAccessId;
 
     /*
      * Indicates the OS on a snapshot supports hibernation.
      */
-    @JsonProperty(value = "supportsHibernation")
     private Boolean supportsHibernation;
 
     /*
      * Policy for controlling export on the disk.
      */
-    @JsonProperty(value = "publicNetworkAccess")
     private PublicNetworkAccess publicNetworkAccess;
 
     /*
-     * List of supported capabilities (like accelerated networking) for the
-     * image from which the OS disk was created.
+     * Additional authentication requirements when exporting or uploading to a disk or snapshot.
      */
-    @JsonProperty(value = "supportedCapabilities")
+    private DataAccessAuthMode dataAccessAuthMode;
+
+    /*
+     * List of supported capabilities for the image from which the OS disk was created.
+     */
     private SupportedCapabilities supportedCapabilities;
 
     /**
+     * Creates an instance of SnapshotUpdateProperties class.
+     */
+    public SnapshotUpdateProperties() {
+    }
+
+    /**
      * Get the osType property: the Operating System type.
-     *
+     * 
      * @return the osType value.
      */
     public OperatingSystemTypes osType() {
@@ -92,7 +93,7 @@ public final class SnapshotUpdateProperties {
 
     /**
      * Set the osType property: the Operating System type.
-     *
+     * 
      * @param osType the osType value to set.
      * @return the SnapshotUpdateProperties object itself.
      */
@@ -106,7 +107,7 @@ public final class SnapshotUpdateProperties {
      * size of the disk to create. If this field is present for updates or creation with other options, it indicates a
      * resize. Resizes are only allowed if the disk is not attached to a running VM, and can only increase the disk's
      * size.
-     *
+     * 
      * @return the diskSizeGB value.
      */
     public Integer diskSizeGB() {
@@ -118,7 +119,7 @@ public final class SnapshotUpdateProperties {
      * size of the disk to create. If this field is present for updates or creation with other options, it indicates a
      * resize. Resizes are only allowed if the disk is not attached to a running VM, and can only increase the disk's
      * size.
-     *
+     * 
      * @param diskSizeGB the diskSizeGB value to set.
      * @return the SnapshotUpdateProperties object itself.
      */
@@ -130,7 +131,7 @@ public final class SnapshotUpdateProperties {
     /**
      * Get the encryptionSettingsCollection property: Encryption settings collection used be Azure Disk Encryption, can
      * contain multiple encryption settings per disk or snapshot.
-     *
+     * 
      * @return the encryptionSettingsCollection value.
      */
     public EncryptionSettingsCollection encryptionSettingsCollection() {
@@ -140,12 +141,12 @@ public final class SnapshotUpdateProperties {
     /**
      * Set the encryptionSettingsCollection property: Encryption settings collection used be Azure Disk Encryption, can
      * contain multiple encryption settings per disk or snapshot.
-     *
+     * 
      * @param encryptionSettingsCollection the encryptionSettingsCollection value to set.
      * @return the SnapshotUpdateProperties object itself.
      */
-    public SnapshotUpdateProperties withEncryptionSettingsCollection(
-        EncryptionSettingsCollection encryptionSettingsCollection) {
+    public SnapshotUpdateProperties
+        withEncryptionSettingsCollection(EncryptionSettingsCollection encryptionSettingsCollection) {
         this.encryptionSettingsCollection = encryptionSettingsCollection;
         return this;
     }
@@ -153,7 +154,7 @@ public final class SnapshotUpdateProperties {
     /**
      * Get the encryption property: Encryption property can be used to encrypt data at rest with customer managed keys
      * or platform managed keys.
-     *
+     * 
      * @return the encryption value.
      */
     public Encryption encryption() {
@@ -163,7 +164,7 @@ public final class SnapshotUpdateProperties {
     /**
      * Set the encryption property: Encryption property can be used to encrypt data at rest with customer managed keys
      * or platform managed keys.
-     *
+     * 
      * @param encryption the encryption value to set.
      * @return the SnapshotUpdateProperties object itself.
      */
@@ -174,7 +175,7 @@ public final class SnapshotUpdateProperties {
 
     /**
      * Get the networkAccessPolicy property: Policy for accessing the disk via network.
-     *
+     * 
      * @return the networkAccessPolicy value.
      */
     public NetworkAccessPolicy networkAccessPolicy() {
@@ -183,7 +184,7 @@ public final class SnapshotUpdateProperties {
 
     /**
      * Set the networkAccessPolicy property: Policy for accessing the disk via network.
-     *
+     * 
      * @param networkAccessPolicy the networkAccessPolicy value to set.
      * @return the SnapshotUpdateProperties object itself.
      */
@@ -194,7 +195,7 @@ public final class SnapshotUpdateProperties {
 
     /**
      * Get the diskAccessId property: ARM id of the DiskAccess resource for using private endpoints on disks.
-     *
+     * 
      * @return the diskAccessId value.
      */
     public String diskAccessId() {
@@ -203,7 +204,7 @@ public final class SnapshotUpdateProperties {
 
     /**
      * Set the diskAccessId property: ARM id of the DiskAccess resource for using private endpoints on disks.
-     *
+     * 
      * @param diskAccessId the diskAccessId value to set.
      * @return the SnapshotUpdateProperties object itself.
      */
@@ -214,7 +215,7 @@ public final class SnapshotUpdateProperties {
 
     /**
      * Get the supportsHibernation property: Indicates the OS on a snapshot supports hibernation.
-     *
+     * 
      * @return the supportsHibernation value.
      */
     public Boolean supportsHibernation() {
@@ -223,7 +224,7 @@ public final class SnapshotUpdateProperties {
 
     /**
      * Set the supportsHibernation property: Indicates the OS on a snapshot supports hibernation.
-     *
+     * 
      * @param supportsHibernation the supportsHibernation value to set.
      * @return the SnapshotUpdateProperties object itself.
      */
@@ -234,7 +235,7 @@ public final class SnapshotUpdateProperties {
 
     /**
      * Get the publicNetworkAccess property: Policy for controlling export on the disk.
-     *
+     * 
      * @return the publicNetworkAccess value.
      */
     public PublicNetworkAccess publicNetworkAccess() {
@@ -243,7 +244,7 @@ public final class SnapshotUpdateProperties {
 
     /**
      * Set the publicNetworkAccess property: Policy for controlling export on the disk.
-     *
+     * 
      * @param publicNetworkAccess the publicNetworkAccess value to set.
      * @return the SnapshotUpdateProperties object itself.
      */
@@ -253,9 +254,31 @@ public final class SnapshotUpdateProperties {
     }
 
     /**
-     * Get the supportedCapabilities property: List of supported capabilities (like accelerated networking) for the
-     * image from which the OS disk was created.
-     *
+     * Get the dataAccessAuthMode property: Additional authentication requirements when exporting or uploading to a disk
+     * or snapshot.
+     * 
+     * @return the dataAccessAuthMode value.
+     */
+    public DataAccessAuthMode dataAccessAuthMode() {
+        return this.dataAccessAuthMode;
+    }
+
+    /**
+     * Set the dataAccessAuthMode property: Additional authentication requirements when exporting or uploading to a disk
+     * or snapshot.
+     * 
+     * @param dataAccessAuthMode the dataAccessAuthMode value to set.
+     * @return the SnapshotUpdateProperties object itself.
+     */
+    public SnapshotUpdateProperties withDataAccessAuthMode(DataAccessAuthMode dataAccessAuthMode) {
+        this.dataAccessAuthMode = dataAccessAuthMode;
+        return this;
+    }
+
+    /**
+     * Get the supportedCapabilities property: List of supported capabilities for the image from which the OS disk was
+     * created.
+     * 
      * @return the supportedCapabilities value.
      */
     public SupportedCapabilities supportedCapabilities() {
@@ -263,9 +286,9 @@ public final class SnapshotUpdateProperties {
     }
 
     /**
-     * Set the supportedCapabilities property: List of supported capabilities (like accelerated networking) for the
-     * image from which the OS disk was created.
-     *
+     * Set the supportedCapabilities property: List of supported capabilities for the image from which the OS disk was
+     * created.
+     * 
      * @param supportedCapabilities the supportedCapabilities value to set.
      * @return the SnapshotUpdateProperties object itself.
      */
@@ -276,7 +299,7 @@ public final class SnapshotUpdateProperties {
 
     /**
      * Validates the instance.
-     *
+     * 
      * @throws IllegalArgumentException thrown if the instance is not valid.
      */
     public void validate() {
@@ -289,5 +312,76 @@ public final class SnapshotUpdateProperties {
         if (supportedCapabilities() != null) {
             supportedCapabilities().validate();
         }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public JsonWriter toJson(JsonWriter jsonWriter) throws IOException {
+        jsonWriter.writeStartObject();
+        jsonWriter.writeStringField("osType", this.osType == null ? null : this.osType.toString());
+        jsonWriter.writeNumberField("diskSizeGB", this.diskSizeGB);
+        jsonWriter.writeJsonField("encryptionSettingsCollection", this.encryptionSettingsCollection);
+        jsonWriter.writeJsonField("encryption", this.encryption);
+        jsonWriter.writeStringField("networkAccessPolicy",
+            this.networkAccessPolicy == null ? null : this.networkAccessPolicy.toString());
+        jsonWriter.writeStringField("diskAccessId", this.diskAccessId);
+        jsonWriter.writeBooleanField("supportsHibernation", this.supportsHibernation);
+        jsonWriter.writeStringField("publicNetworkAccess",
+            this.publicNetworkAccess == null ? null : this.publicNetworkAccess.toString());
+        jsonWriter.writeStringField("dataAccessAuthMode",
+            this.dataAccessAuthMode == null ? null : this.dataAccessAuthMode.toString());
+        jsonWriter.writeJsonField("supportedCapabilities", this.supportedCapabilities);
+        return jsonWriter.writeEndObject();
+    }
+
+    /**
+     * Reads an instance of SnapshotUpdateProperties from the JsonReader.
+     * 
+     * @param jsonReader The JsonReader being read.
+     * @return An instance of SnapshotUpdateProperties if the JsonReader was pointing to an instance of it, or null if
+     * it was pointing to JSON null.
+     * @throws IOException If an error occurs while reading the SnapshotUpdateProperties.
+     */
+    public static SnapshotUpdateProperties fromJson(JsonReader jsonReader) throws IOException {
+        return jsonReader.readObject(reader -> {
+            SnapshotUpdateProperties deserializedSnapshotUpdateProperties = new SnapshotUpdateProperties();
+            while (reader.nextToken() != JsonToken.END_OBJECT) {
+                String fieldName = reader.getFieldName();
+                reader.nextToken();
+
+                if ("osType".equals(fieldName)) {
+                    deserializedSnapshotUpdateProperties.osType = OperatingSystemTypes.fromString(reader.getString());
+                } else if ("diskSizeGB".equals(fieldName)) {
+                    deserializedSnapshotUpdateProperties.diskSizeGB = reader.getNullable(JsonReader::getInt);
+                } else if ("encryptionSettingsCollection".equals(fieldName)) {
+                    deserializedSnapshotUpdateProperties.encryptionSettingsCollection
+                        = EncryptionSettingsCollection.fromJson(reader);
+                } else if ("encryption".equals(fieldName)) {
+                    deserializedSnapshotUpdateProperties.encryption = Encryption.fromJson(reader);
+                } else if ("networkAccessPolicy".equals(fieldName)) {
+                    deserializedSnapshotUpdateProperties.networkAccessPolicy
+                        = NetworkAccessPolicy.fromString(reader.getString());
+                } else if ("diskAccessId".equals(fieldName)) {
+                    deserializedSnapshotUpdateProperties.diskAccessId = reader.getString();
+                } else if ("supportsHibernation".equals(fieldName)) {
+                    deserializedSnapshotUpdateProperties.supportsHibernation
+                        = reader.getNullable(JsonReader::getBoolean);
+                } else if ("publicNetworkAccess".equals(fieldName)) {
+                    deserializedSnapshotUpdateProperties.publicNetworkAccess
+                        = PublicNetworkAccess.fromString(reader.getString());
+                } else if ("dataAccessAuthMode".equals(fieldName)) {
+                    deserializedSnapshotUpdateProperties.dataAccessAuthMode
+                        = DataAccessAuthMode.fromString(reader.getString());
+                } else if ("supportedCapabilities".equals(fieldName)) {
+                    deserializedSnapshotUpdateProperties.supportedCapabilities = SupportedCapabilities.fromJson(reader);
+                } else {
+                    reader.skipChildren();
+                }
+            }
+
+            return deserializedSnapshotUpdateProperties;
+        });
     }
 }

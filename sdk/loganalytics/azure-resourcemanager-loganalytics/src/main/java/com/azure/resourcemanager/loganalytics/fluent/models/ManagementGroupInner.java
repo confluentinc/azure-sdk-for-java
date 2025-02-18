@@ -5,232 +5,266 @@
 package com.azure.resourcemanager.loganalytics.fluent.models;
 
 import com.azure.core.annotation.Fluent;
-import com.azure.core.annotation.JsonFlatten;
-import com.azure.core.util.logging.ClientLogger;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.azure.json.JsonReader;
+import com.azure.json.JsonSerializable;
+import com.azure.json.JsonToken;
+import com.azure.json.JsonWriter;
+import java.io.IOException;
 import java.time.OffsetDateTime;
 
-/** A management group that is connected to a workspace. */
-@JsonFlatten
+/**
+ * A management group that is connected to a workspace.
+ */
 @Fluent
-public class ManagementGroupInner {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(ManagementGroupInner.class);
-
+public final class ManagementGroupInner implements JsonSerializable<ManagementGroupInner> {
     /*
-     * The number of servers connected to the management group.
+     * The properties of the management group.
      */
-    @JsonProperty(value = "properties.serverCount")
-    private Integer serverCount;
+    private ManagementGroupProperties innerProperties;
 
-    /*
-     * Gets or sets a value indicating whether the management group is a
-     * gateway.
+    /**
+     * Creates an instance of ManagementGroupInner class.
      */
-    @JsonProperty(value = "properties.isGateway")
-    private Boolean isGateway;
+    public ManagementGroupInner() {
+    }
 
-    /*
-     * The name of the management group.
+    /**
+     * Get the innerProperties property: The properties of the management group.
+     * 
+     * @return the innerProperties value.
      */
-    @JsonProperty(value = "properties.name")
-    private String name;
-
-    /*
-     * The unique ID of the management group.
-     */
-    @JsonProperty(value = "properties.id")
-    private String id;
-
-    /*
-     * The datetime that the management group was created.
-     */
-    @JsonProperty(value = "properties.created")
-    private OffsetDateTime created;
-
-    /*
-     * The last datetime that the management group received data.
-     */
-    @JsonProperty(value = "properties.dataReceived")
-    private OffsetDateTime dataReceived;
-
-    /*
-     * The version of System Center that is managing the management group.
-     */
-    @JsonProperty(value = "properties.version")
-    private String version;
-
-    /*
-     * The SKU of System Center that is managing the management group.
-     */
-    @JsonProperty(value = "properties.sku")
-    private String sku;
+    private ManagementGroupProperties innerProperties() {
+        return this.innerProperties;
+    }
 
     /**
      * Get the serverCount property: The number of servers connected to the management group.
-     *
+     * 
      * @return the serverCount value.
      */
     public Integer serverCount() {
-        return this.serverCount;
+        return this.innerProperties() == null ? null : this.innerProperties().serverCount();
     }
 
     /**
      * Set the serverCount property: The number of servers connected to the management group.
-     *
+     * 
      * @param serverCount the serverCount value to set.
      * @return the ManagementGroupInner object itself.
      */
     public ManagementGroupInner withServerCount(Integer serverCount) {
-        this.serverCount = serverCount;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new ManagementGroupProperties();
+        }
+        this.innerProperties().withServerCount(serverCount);
         return this;
     }
 
     /**
      * Get the isGateway property: Gets or sets a value indicating whether the management group is a gateway.
-     *
+     * 
      * @return the isGateway value.
      */
     public Boolean isGateway() {
-        return this.isGateway;
+        return this.innerProperties() == null ? null : this.innerProperties().isGateway();
     }
 
     /**
      * Set the isGateway property: Gets or sets a value indicating whether the management group is a gateway.
-     *
+     * 
      * @param isGateway the isGateway value to set.
      * @return the ManagementGroupInner object itself.
      */
     public ManagementGroupInner withIsGateway(Boolean isGateway) {
-        this.isGateway = isGateway;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new ManagementGroupProperties();
+        }
+        this.innerProperties().withIsGateway(isGateway);
         return this;
     }
 
     /**
      * Get the name property: The name of the management group.
-     *
+     * 
      * @return the name value.
      */
     public String name() {
-        return this.name;
+        return this.innerProperties() == null ? null : this.innerProperties().name();
     }
 
     /**
      * Set the name property: The name of the management group.
-     *
+     * 
      * @param name the name value to set.
      * @return the ManagementGroupInner object itself.
      */
     public ManagementGroupInner withName(String name) {
-        this.name = name;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new ManagementGroupProperties();
+        }
+        this.innerProperties().withName(name);
         return this;
     }
 
     /**
      * Get the id property: The unique ID of the management group.
-     *
+     * 
      * @return the id value.
      */
     public String id() {
-        return this.id;
+        return this.innerProperties() == null ? null : this.innerProperties().id();
     }
 
     /**
      * Set the id property: The unique ID of the management group.
-     *
+     * 
      * @param id the id value to set.
      * @return the ManagementGroupInner object itself.
      */
     public ManagementGroupInner withId(String id) {
-        this.id = id;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new ManagementGroupProperties();
+        }
+        this.innerProperties().withId(id);
         return this;
     }
 
     /**
      * Get the created property: The datetime that the management group was created.
-     *
+     * 
      * @return the created value.
      */
     public OffsetDateTime created() {
-        return this.created;
+        return this.innerProperties() == null ? null : this.innerProperties().created();
     }
 
     /**
      * Set the created property: The datetime that the management group was created.
-     *
+     * 
      * @param created the created value to set.
      * @return the ManagementGroupInner object itself.
      */
     public ManagementGroupInner withCreated(OffsetDateTime created) {
-        this.created = created;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new ManagementGroupProperties();
+        }
+        this.innerProperties().withCreated(created);
         return this;
     }
 
     /**
      * Get the dataReceived property: The last datetime that the management group received data.
-     *
+     * 
      * @return the dataReceived value.
      */
     public OffsetDateTime dataReceived() {
-        return this.dataReceived;
+        return this.innerProperties() == null ? null : this.innerProperties().dataReceived();
     }
 
     /**
      * Set the dataReceived property: The last datetime that the management group received data.
-     *
+     * 
      * @param dataReceived the dataReceived value to set.
      * @return the ManagementGroupInner object itself.
      */
     public ManagementGroupInner withDataReceived(OffsetDateTime dataReceived) {
-        this.dataReceived = dataReceived;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new ManagementGroupProperties();
+        }
+        this.innerProperties().withDataReceived(dataReceived);
         return this;
     }
 
     /**
      * Get the version property: The version of System Center that is managing the management group.
-     *
+     * 
      * @return the version value.
      */
     public String version() {
-        return this.version;
+        return this.innerProperties() == null ? null : this.innerProperties().version();
     }
 
     /**
      * Set the version property: The version of System Center that is managing the management group.
-     *
+     * 
      * @param version the version value to set.
      * @return the ManagementGroupInner object itself.
      */
     public ManagementGroupInner withVersion(String version) {
-        this.version = version;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new ManagementGroupProperties();
+        }
+        this.innerProperties().withVersion(version);
         return this;
     }
 
     /**
      * Get the sku property: The SKU of System Center that is managing the management group.
-     *
+     * 
      * @return the sku value.
      */
     public String sku() {
-        return this.sku;
+        return this.innerProperties() == null ? null : this.innerProperties().sku();
     }
 
     /**
      * Set the sku property: The SKU of System Center that is managing the management group.
-     *
+     * 
      * @param sku the sku value to set.
      * @return the ManagementGroupInner object itself.
      */
     public ManagementGroupInner withSku(String sku) {
-        this.sku = sku;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new ManagementGroupProperties();
+        }
+        this.innerProperties().withSku(sku);
         return this;
     }
 
     /**
      * Validates the instance.
-     *
+     * 
      * @throws IllegalArgumentException thrown if the instance is not valid.
      */
     public void validate() {
+        if (innerProperties() != null) {
+            innerProperties().validate();
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public JsonWriter toJson(JsonWriter jsonWriter) throws IOException {
+        jsonWriter.writeStartObject();
+        jsonWriter.writeJsonField("properties", this.innerProperties);
+        return jsonWriter.writeEndObject();
+    }
+
+    /**
+     * Reads an instance of ManagementGroupInner from the JsonReader.
+     * 
+     * @param jsonReader The JsonReader being read.
+     * @return An instance of ManagementGroupInner if the JsonReader was pointing to an instance of it, or null if it
+     * was pointing to JSON null.
+     * @throws IOException If an error occurs while reading the ManagementGroupInner.
+     */
+    public static ManagementGroupInner fromJson(JsonReader jsonReader) throws IOException {
+        return jsonReader.readObject(reader -> {
+            ManagementGroupInner deserializedManagementGroupInner = new ManagementGroupInner();
+            while (reader.nextToken() != JsonToken.END_OBJECT) {
+                String fieldName = reader.getFieldName();
+                reader.nextToken();
+
+                if ("properties".equals(fieldName)) {
+                    deserializedManagementGroupInner.innerProperties = ManagementGroupProperties.fromJson(reader);
+                } else {
+                    reader.skipChildren();
+                }
+            }
+
+            return deserializedManagementGroupInner;
+        });
     }
 }

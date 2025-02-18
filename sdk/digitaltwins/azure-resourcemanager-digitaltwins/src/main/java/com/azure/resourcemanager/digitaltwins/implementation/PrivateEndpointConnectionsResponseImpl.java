@@ -4,7 +4,6 @@
 
 package com.azure.resourcemanager.digitaltwins.implementation;
 
-import com.azure.resourcemanager.digitaltwins.AzureDigitalTwinsManager;
 import com.azure.resourcemanager.digitaltwins.fluent.models.PrivateEndpointConnectionInner;
 import com.azure.resourcemanager.digitaltwins.fluent.models.PrivateEndpointConnectionsResponseInner;
 import com.azure.resourcemanager.digitaltwins.models.PrivateEndpointConnection;
@@ -16,10 +15,10 @@ import java.util.stream.Collectors;
 public final class PrivateEndpointConnectionsResponseImpl implements PrivateEndpointConnectionsResponse {
     private PrivateEndpointConnectionsResponseInner innerObject;
 
-    private final AzureDigitalTwinsManager serviceManager;
+    private final com.azure.resourcemanager.digitaltwins.AzureDigitalTwinsManager serviceManager;
 
-    PrivateEndpointConnectionsResponseImpl(
-        PrivateEndpointConnectionsResponseInner innerObject, AzureDigitalTwinsManager serviceManager) {
+    PrivateEndpointConnectionsResponseImpl(PrivateEndpointConnectionsResponseInner innerObject,
+        com.azure.resourcemanager.digitaltwins.AzureDigitalTwinsManager serviceManager) {
         this.innerObject = innerObject;
         this.serviceManager = serviceManager;
     }
@@ -27,12 +26,9 @@ public final class PrivateEndpointConnectionsResponseImpl implements PrivateEndp
     public List<PrivateEndpointConnection> value() {
         List<PrivateEndpointConnectionInner> inner = this.innerModel().value();
         if (inner != null) {
-            return Collections
-                .unmodifiableList(
-                    inner
-                        .stream()
-                        .map(inner1 -> new PrivateEndpointConnectionImpl(inner1, this.manager()))
-                        .collect(Collectors.toList()));
+            return Collections.unmodifiableList(inner.stream()
+                .map(inner1 -> new PrivateEndpointConnectionImpl(inner1, this.manager()))
+                .collect(Collectors.toList()));
         } else {
             return Collections.emptyList();
         }
@@ -42,7 +38,7 @@ public final class PrivateEndpointConnectionsResponseImpl implements PrivateEndp
         return this.innerObject;
     }
 
-    private AzureDigitalTwinsManager manager() {
+    private com.azure.resourcemanager.digitaltwins.AzureDigitalTwinsManager manager() {
         return this.serviceManager;
     }
 }

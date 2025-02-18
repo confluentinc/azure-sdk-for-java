@@ -29,7 +29,6 @@ import com.azure.core.management.exception.ManagementException;
 import com.azure.core.management.polling.PollResult;
 import com.azure.core.util.Context;
 import com.azure.core.util.FluxUtil;
-import com.azure.core.util.logging.ClientLogger;
 import com.azure.core.util.polling.PollerFlux;
 import com.azure.core.util.polling.SyncPoller;
 import com.azure.resourcemanager.network.fluent.NatRulesClient;
@@ -39,19 +38,23 @@ import java.nio.ByteBuffer;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-/** An instance of this class provides access to all the operations defined in NatRulesClient. */
+/**
+ * An instance of this class provides access to all the operations defined in NatRulesClient.
+ */
 public final class NatRulesClientImpl implements NatRulesClient {
-    private final ClientLogger logger = new ClientLogger(NatRulesClientImpl.class);
-
-    /** The proxy service used to perform REST calls. */
+    /**
+     * The proxy service used to perform REST calls.
+     */
     private final NatRulesService service;
 
-    /** The service client containing this operation class. */
+    /**
+     * The service client containing this operation class.
+     */
     private final NetworkManagementClientImpl client;
 
     /**
      * Initializes an instance of NatRulesClientImpl.
-     *
+     * 
      * @param client the instance of the service client containing this operation class.
      */
     NatRulesClientImpl(NetworkManagementClientImpl client) {
@@ -65,107 +68,77 @@ public final class NatRulesClientImpl implements NatRulesClient {
      */
     @Host("{$host}")
     @ServiceInterface(name = "NetworkManagementCli")
-    private interface NatRulesService {
-        @Headers({"Content-Type: application/json"})
-        @Get(
-            "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/vpnGateways"
-                + "/{gatewayName}/natRules/{natRuleName}")
-        @ExpectedResponses({200})
+    public interface NatRulesService {
+        @Headers({ "Content-Type: application/json" })
+        @Get("/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/vpnGateways/{gatewayName}/natRules/{natRuleName}")
+        @ExpectedResponses({ 200 })
         @UnexpectedResponseExceptionType(ManagementException.class)
-        Mono<Response<VpnGatewayNatRuleInner>> get(
-            @HostParam("$host") String endpoint,
+        Mono<Response<VpnGatewayNatRuleInner>> get(@HostParam("$host") String endpoint,
             @PathParam("subscriptionId") String subscriptionId,
-            @PathParam("resourceGroupName") String resourceGroupName,
-            @PathParam("gatewayName") String gatewayName,
-            @PathParam("natRuleName") String natRuleName,
-            @QueryParam("api-version") String apiVersion,
-            @HeaderParam("Accept") String accept,
-            Context context);
+            @PathParam("resourceGroupName") String resourceGroupName, @PathParam("gatewayName") String gatewayName,
+            @PathParam("natRuleName") String natRuleName, @QueryParam("api-version") String apiVersion,
+            @HeaderParam("Accept") String accept, Context context);
 
-        @Headers({"Content-Type: application/json"})
-        @Put(
-            "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/vpnGateways"
-                + "/{gatewayName}/natRules/{natRuleName}")
-        @ExpectedResponses({200, 201})
+        @Headers({ "Content-Type: application/json" })
+        @Put("/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/vpnGateways/{gatewayName}/natRules/{natRuleName}")
+        @ExpectedResponses({ 200, 201 })
         @UnexpectedResponseExceptionType(ManagementException.class)
-        Mono<Response<Flux<ByteBuffer>>> createOrUpdate(
-            @HostParam("$host") String endpoint,
+        Mono<Response<Flux<ByteBuffer>>> createOrUpdate(@HostParam("$host") String endpoint,
             @PathParam("subscriptionId") String subscriptionId,
-            @PathParam("resourceGroupName") String resourceGroupName,
-            @PathParam("gatewayName") String gatewayName,
-            @PathParam("natRuleName") String natRuleName,
-            @QueryParam("api-version") String apiVersion,
+            @PathParam("resourceGroupName") String resourceGroupName, @PathParam("gatewayName") String gatewayName,
+            @PathParam("natRuleName") String natRuleName, @QueryParam("api-version") String apiVersion,
             @BodyParam("application/json") VpnGatewayNatRuleInner natRuleParameters,
-            @HeaderParam("Accept") String accept,
-            Context context);
+            @HeaderParam("Accept") String accept, Context context);
 
-        @Headers({"Content-Type: application/json"})
-        @Delete(
-            "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/vpnGateways"
-                + "/{gatewayName}/natRules/{natRuleName}")
-        @ExpectedResponses({200, 202, 204})
+        @Headers({ "Content-Type: application/json" })
+        @Delete("/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/vpnGateways/{gatewayName}/natRules/{natRuleName}")
+        @ExpectedResponses({ 200, 202, 204 })
         @UnexpectedResponseExceptionType(ManagementException.class)
-        Mono<Response<Flux<ByteBuffer>>> delete(
-            @HostParam("$host") String endpoint,
+        Mono<Response<Flux<ByteBuffer>>> delete(@HostParam("$host") String endpoint,
             @PathParam("subscriptionId") String subscriptionId,
-            @PathParam("resourceGroupName") String resourceGroupName,
-            @PathParam("gatewayName") String gatewayName,
-            @PathParam("natRuleName") String natRuleName,
-            @QueryParam("api-version") String apiVersion,
-            @HeaderParam("Accept") String accept,
-            Context context);
+            @PathParam("resourceGroupName") String resourceGroupName, @PathParam("gatewayName") String gatewayName,
+            @PathParam("natRuleName") String natRuleName, @QueryParam("api-version") String apiVersion,
+            @HeaderParam("Accept") String accept, Context context);
 
-        @Headers({"Content-Type: application/json"})
-        @Get(
-            "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/vpnGateways"
-                + "/{gatewayName}/natRules")
-        @ExpectedResponses({200})
+        @Headers({ "Content-Type: application/json" })
+        @Get("/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/vpnGateways/{gatewayName}/natRules")
+        @ExpectedResponses({ 200 })
         @UnexpectedResponseExceptionType(ManagementException.class)
-        Mono<Response<ListVpnGatewayNatRulesResult>> listByVpnGateway(
-            @HostParam("$host") String endpoint,
+        Mono<Response<ListVpnGatewayNatRulesResult>> listByVpnGateway(@HostParam("$host") String endpoint,
             @PathParam("subscriptionId") String subscriptionId,
-            @PathParam("resourceGroupName") String resourceGroupName,
-            @PathParam("gatewayName") String gatewayName,
-            @QueryParam("api-version") String apiVersion,
-            @HeaderParam("Accept") String accept,
-            Context context);
+            @PathParam("resourceGroupName") String resourceGroupName, @PathParam("gatewayName") String gatewayName,
+            @QueryParam("api-version") String apiVersion, @HeaderParam("Accept") String accept, Context context);
 
-        @Headers({"Content-Type: application/json"})
+        @Headers({ "Content-Type: application/json" })
         @Get("{nextLink}")
-        @ExpectedResponses({200})
+        @ExpectedResponses({ 200 })
         @UnexpectedResponseExceptionType(ManagementException.class)
         Mono<Response<ListVpnGatewayNatRulesResult>> listByVpnGatewayNext(
-            @PathParam(value = "nextLink", encoded = true) String nextLink,
-            @HostParam("$host") String endpoint,
-            @HeaderParam("Accept") String accept,
-            Context context);
+            @PathParam(value = "nextLink", encoded = true) String nextLink, @HostParam("$host") String endpoint,
+            @HeaderParam("Accept") String accept, Context context);
     }
 
     /**
      * Retrieves the details of a nat ruleGet.
-     *
+     * 
      * @param resourceGroupName The resource group name of the VpnGateway.
      * @param gatewayName The name of the gateway.
      * @param natRuleName The name of the nat rule.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return vpnGatewayNatRule Resource.
+     * @return vpnGatewayNatRule Resource along with {@link Response} on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    public Mono<Response<VpnGatewayNatRuleInner>> getWithResponseAsync(
-        String resourceGroupName, String gatewayName, String natRuleName) {
+    public Mono<Response<VpnGatewayNatRuleInner>> getWithResponseAsync(String resourceGroupName, String gatewayName,
+        String natRuleName) {
         if (this.client.getEndpoint() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getEndpoint() is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
         }
         if (this.client.getSubscriptionId() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getSubscriptionId() is required and cannot be null."));
+            return Mono.error(new IllegalArgumentException(
+                "Parameter this.client.getSubscriptionId() is required and cannot be null."));
         }
         if (resourceGroupName == null) {
             return Mono
@@ -177,27 +150,17 @@ public final class NatRulesClientImpl implements NatRulesClient {
         if (natRuleName == null) {
             return Mono.error(new IllegalArgumentException("Parameter natRuleName is required and cannot be null."));
         }
-        final String apiVersion = "2021-05-01";
+        final String apiVersion = "2024-05-01";
         final String accept = "application/json";
         return FluxUtil
-            .withContext(
-                context ->
-                    service
-                        .get(
-                            this.client.getEndpoint(),
-                            this.client.getSubscriptionId(),
-                            resourceGroupName,
-                            gatewayName,
-                            natRuleName,
-                            apiVersion,
-                            accept,
-                            context))
+            .withContext(context -> service.get(this.client.getEndpoint(), this.client.getSubscriptionId(),
+                resourceGroupName, gatewayName, natRuleName, apiVersion, accept, context))
             .contextWrite(context -> context.putAll(FluxUtil.toReactorContext(this.client.getContext()).readOnly()));
     }
 
     /**
      * Retrieves the details of a nat ruleGet.
-     *
+     * 
      * @param resourceGroupName The resource group name of the VpnGateway.
      * @param gatewayName The name of the gateway.
      * @param natRuleName The name of the nat rule.
@@ -205,22 +168,18 @@ public final class NatRulesClientImpl implements NatRulesClient {
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return vpnGatewayNatRule Resource.
+     * @return vpnGatewayNatRule Resource along with {@link Response} on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    private Mono<Response<VpnGatewayNatRuleInner>> getWithResponseAsync(
-        String resourceGroupName, String gatewayName, String natRuleName, Context context) {
+    private Mono<Response<VpnGatewayNatRuleInner>> getWithResponseAsync(String resourceGroupName, String gatewayName,
+        String natRuleName, Context context) {
         if (this.client.getEndpoint() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getEndpoint() is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
         }
         if (this.client.getSubscriptionId() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getSubscriptionId() is required and cannot be null."));
+            return Mono.error(new IllegalArgumentException(
+                "Parameter this.client.getSubscriptionId() is required and cannot be null."));
         }
         if (resourceGroupName == null) {
             return Mono
@@ -232,48 +191,51 @@ public final class NatRulesClientImpl implements NatRulesClient {
         if (natRuleName == null) {
             return Mono.error(new IllegalArgumentException("Parameter natRuleName is required and cannot be null."));
         }
-        final String apiVersion = "2021-05-01";
+        final String apiVersion = "2024-05-01";
         final String accept = "application/json";
         context = this.client.mergeContext(context);
-        return service
-            .get(
-                this.client.getEndpoint(),
-                this.client.getSubscriptionId(),
-                resourceGroupName,
-                gatewayName,
-                natRuleName,
-                apiVersion,
-                accept,
-                context);
+        return service.get(this.client.getEndpoint(), this.client.getSubscriptionId(), resourceGroupName, gatewayName,
+            natRuleName, apiVersion, accept, context);
     }
 
     /**
      * Retrieves the details of a nat ruleGet.
-     *
+     * 
      * @param resourceGroupName The resource group name of the VpnGateway.
      * @param gatewayName The name of the gateway.
      * @param natRuleName The name of the nat rule.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return vpnGatewayNatRule Resource.
+     * @return vpnGatewayNatRule Resource on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
     public Mono<VpnGatewayNatRuleInner> getAsync(String resourceGroupName, String gatewayName, String natRuleName) {
         return getWithResponseAsync(resourceGroupName, gatewayName, natRuleName)
-            .flatMap(
-                (Response<VpnGatewayNatRuleInner> res) -> {
-                    if (res.getValue() != null) {
-                        return Mono.just(res.getValue());
-                    } else {
-                        return Mono.empty();
-                    }
-                });
+            .flatMap(res -> Mono.justOrEmpty(res.getValue()));
     }
 
     /**
      * Retrieves the details of a nat ruleGet.
-     *
+     * 
+     * @param resourceGroupName The resource group name of the VpnGateway.
+     * @param gatewayName The name of the gateway.
+     * @param natRuleName The name of the nat rule.
+     * @param context The context to associate with this operation.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return vpnGatewayNatRule Resource along with {@link Response}.
+     */
+    @ServiceMethod(returns = ReturnType.SINGLE)
+    public Response<VpnGatewayNatRuleInner> getWithResponse(String resourceGroupName, String gatewayName,
+        String natRuleName, Context context) {
+        return getWithResponseAsync(resourceGroupName, gatewayName, natRuleName, context).block();
+    }
+
+    /**
+     * Retrieves the details of a nat ruleGet.
+     * 
      * @param resourceGroupName The resource group name of the VpnGateway.
      * @param gatewayName The name of the gateway.
      * @param natRuleName The name of the nat rule.
@@ -284,30 +246,12 @@ public final class NatRulesClientImpl implements NatRulesClient {
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
     public VpnGatewayNatRuleInner get(String resourceGroupName, String gatewayName, String natRuleName) {
-        return getAsync(resourceGroupName, gatewayName, natRuleName).block();
-    }
-
-    /**
-     * Retrieves the details of a nat ruleGet.
-     *
-     * @param resourceGroupName The resource group name of the VpnGateway.
-     * @param gatewayName The name of the gateway.
-     * @param natRuleName The name of the nat rule.
-     * @param context The context to associate with this operation.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return vpnGatewayNatRule Resource.
-     */
-    @ServiceMethod(returns = ReturnType.SINGLE)
-    public Response<VpnGatewayNatRuleInner> getWithResponse(
-        String resourceGroupName, String gatewayName, String natRuleName, Context context) {
-        return getWithResponseAsync(resourceGroupName, gatewayName, natRuleName, context).block();
+        return getWithResponse(resourceGroupName, gatewayName, natRuleName, Context.NONE).getValue();
     }
 
     /**
      * Creates a nat rule to a scalable vpn gateway if it doesn't exist else updates the existing nat rules.
-     *
+     * 
      * @param resourceGroupName The resource group name of the VpnGateway.
      * @param gatewayName The name of the gateway.
      * @param natRuleName The name of the nat rule.
@@ -315,22 +259,18 @@ public final class NatRulesClientImpl implements NatRulesClient {
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return vpnGatewayNatRule Resource.
+     * @return vpnGatewayNatRule Resource along with {@link Response} on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    public Mono<Response<Flux<ByteBuffer>>> createOrUpdateWithResponseAsync(
-        String resourceGroupName, String gatewayName, String natRuleName, VpnGatewayNatRuleInner natRuleParameters) {
+    public Mono<Response<Flux<ByteBuffer>>> createOrUpdateWithResponseAsync(String resourceGroupName,
+        String gatewayName, String natRuleName, VpnGatewayNatRuleInner natRuleParameters) {
         if (this.client.getEndpoint() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getEndpoint() is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
         }
         if (this.client.getSubscriptionId() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getSubscriptionId() is required and cannot be null."));
+            return Mono.error(new IllegalArgumentException(
+                "Parameter this.client.getSubscriptionId() is required and cannot be null."));
         }
         if (resourceGroupName == null) {
             return Mono
@@ -348,28 +288,17 @@ public final class NatRulesClientImpl implements NatRulesClient {
         } else {
             natRuleParameters.validate();
         }
-        final String apiVersion = "2021-05-01";
+        final String apiVersion = "2024-05-01";
         final String accept = "application/json";
         return FluxUtil
-            .withContext(
-                context ->
-                    service
-                        .createOrUpdate(
-                            this.client.getEndpoint(),
-                            this.client.getSubscriptionId(),
-                            resourceGroupName,
-                            gatewayName,
-                            natRuleName,
-                            apiVersion,
-                            natRuleParameters,
-                            accept,
-                            context))
+            .withContext(context -> service.createOrUpdate(this.client.getEndpoint(), this.client.getSubscriptionId(),
+                resourceGroupName, gatewayName, natRuleName, apiVersion, natRuleParameters, accept, context))
             .contextWrite(context -> context.putAll(FluxUtil.toReactorContext(this.client.getContext()).readOnly()));
     }
 
     /**
      * Creates a nat rule to a scalable vpn gateway if it doesn't exist else updates the existing nat rules.
-     *
+     * 
      * @param resourceGroupName The resource group name of the VpnGateway.
      * @param gatewayName The name of the gateway.
      * @param natRuleName The name of the nat rule.
@@ -378,26 +307,18 @@ public final class NatRulesClientImpl implements NatRulesClient {
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return vpnGatewayNatRule Resource.
+     * @return vpnGatewayNatRule Resource along with {@link Response} on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    private Mono<Response<Flux<ByteBuffer>>> createOrUpdateWithResponseAsync(
-        String resourceGroupName,
-        String gatewayName,
-        String natRuleName,
-        VpnGatewayNatRuleInner natRuleParameters,
-        Context context) {
+    private Mono<Response<Flux<ByteBuffer>>> createOrUpdateWithResponseAsync(String resourceGroupName,
+        String gatewayName, String natRuleName, VpnGatewayNatRuleInner natRuleParameters, Context context) {
         if (this.client.getEndpoint() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getEndpoint() is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
         }
         if (this.client.getSubscriptionId() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getSubscriptionId() is required and cannot be null."));
+            return Mono.error(new IllegalArgumentException(
+                "Parameter this.client.getSubscriptionId() is required and cannot be null."));
         }
         if (resourceGroupName == null) {
             return Mono
@@ -415,25 +336,16 @@ public final class NatRulesClientImpl implements NatRulesClient {
         } else {
             natRuleParameters.validate();
         }
-        final String apiVersion = "2021-05-01";
+        final String apiVersion = "2024-05-01";
         final String accept = "application/json";
         context = this.client.mergeContext(context);
-        return service
-            .createOrUpdate(
-                this.client.getEndpoint(),
-                this.client.getSubscriptionId(),
-                resourceGroupName,
-                gatewayName,
-                natRuleName,
-                apiVersion,
-                natRuleParameters,
-                accept,
-                context);
+        return service.createOrUpdate(this.client.getEndpoint(), this.client.getSubscriptionId(), resourceGroupName,
+            gatewayName, natRuleName, apiVersion, natRuleParameters, accept, context);
     }
 
     /**
      * Creates a nat rule to a scalable vpn gateway if it doesn't exist else updates the existing nat rules.
-     *
+     * 
      * @param resourceGroupName The resource group name of the VpnGateway.
      * @param gatewayName The name of the gateway.
      * @param natRuleName The name of the nat rule.
@@ -441,26 +353,21 @@ public final class NatRulesClientImpl implements NatRulesClient {
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return vpnGatewayNatRule Resource.
+     * @return the {@link PollerFlux} for polling of vpnGatewayNatRule Resource.
      */
     @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
     public PollerFlux<PollResult<VpnGatewayNatRuleInner>, VpnGatewayNatRuleInner> beginCreateOrUpdateAsync(
         String resourceGroupName, String gatewayName, String natRuleName, VpnGatewayNatRuleInner natRuleParameters) {
-        Mono<Response<Flux<ByteBuffer>>> mono =
-            createOrUpdateWithResponseAsync(resourceGroupName, gatewayName, natRuleName, natRuleParameters);
-        return this
-            .client
-            .<VpnGatewayNatRuleInner, VpnGatewayNatRuleInner>getLroResult(
-                mono,
-                this.client.getHttpPipeline(),
-                VpnGatewayNatRuleInner.class,
-                VpnGatewayNatRuleInner.class,
-                this.client.getContext());
+        Mono<Response<Flux<ByteBuffer>>> mono
+            = createOrUpdateWithResponseAsync(resourceGroupName, gatewayName, natRuleName, natRuleParameters);
+        return this.client.<VpnGatewayNatRuleInner, VpnGatewayNatRuleInner>getLroResult(mono,
+            this.client.getHttpPipeline(), VpnGatewayNatRuleInner.class, VpnGatewayNatRuleInner.class,
+            this.client.getContext());
     }
 
     /**
      * Creates a nat rule to a scalable vpn gateway if it doesn't exist else updates the existing nat rules.
-     *
+     * 
      * @param resourceGroupName The resource group name of the VpnGateway.
      * @param gatewayName The name of the gateway.
      * @param natRuleName The name of the nat rule.
@@ -469,31 +376,22 @@ public final class NatRulesClientImpl implements NatRulesClient {
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return vpnGatewayNatRule Resource.
+     * @return the {@link PollerFlux} for polling of vpnGatewayNatRule Resource.
      */
     @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
     private PollerFlux<PollResult<VpnGatewayNatRuleInner>, VpnGatewayNatRuleInner> beginCreateOrUpdateAsync(
-        String resourceGroupName,
-        String gatewayName,
-        String natRuleName,
-        VpnGatewayNatRuleInner natRuleParameters,
+        String resourceGroupName, String gatewayName, String natRuleName, VpnGatewayNatRuleInner natRuleParameters,
         Context context) {
         context = this.client.mergeContext(context);
-        Mono<Response<Flux<ByteBuffer>>> mono =
-            createOrUpdateWithResponseAsync(resourceGroupName, gatewayName, natRuleName, natRuleParameters, context);
-        return this
-            .client
-            .<VpnGatewayNatRuleInner, VpnGatewayNatRuleInner>getLroResult(
-                mono,
-                this.client.getHttpPipeline(),
-                VpnGatewayNatRuleInner.class,
-                VpnGatewayNatRuleInner.class,
-                context);
+        Mono<Response<Flux<ByteBuffer>>> mono
+            = createOrUpdateWithResponseAsync(resourceGroupName, gatewayName, natRuleName, natRuleParameters, context);
+        return this.client.<VpnGatewayNatRuleInner, VpnGatewayNatRuleInner>getLroResult(mono,
+            this.client.getHttpPipeline(), VpnGatewayNatRuleInner.class, VpnGatewayNatRuleInner.class, context);
     }
 
     /**
      * Creates a nat rule to a scalable vpn gateway if it doesn't exist else updates the existing nat rules.
-     *
+     * 
      * @param resourceGroupName The resource group name of the VpnGateway.
      * @param gatewayName The name of the gateway.
      * @param natRuleName The name of the nat rule.
@@ -501,61 +399,18 @@ public final class NatRulesClientImpl implements NatRulesClient {
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return vpnGatewayNatRule Resource.
+     * @return the {@link SyncPoller} for polling of vpnGatewayNatRule Resource.
      */
     @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
     public SyncPoller<PollResult<VpnGatewayNatRuleInner>, VpnGatewayNatRuleInner> beginCreateOrUpdate(
         String resourceGroupName, String gatewayName, String natRuleName, VpnGatewayNatRuleInner natRuleParameters) {
-        return beginCreateOrUpdateAsync(resourceGroupName, gatewayName, natRuleName, natRuleParameters).getSyncPoller();
-    }
-
-    /**
-     * Creates a nat rule to a scalable vpn gateway if it doesn't exist else updates the existing nat rules.
-     *
-     * @param resourceGroupName The resource group name of the VpnGateway.
-     * @param gatewayName The name of the gateway.
-     * @param natRuleName The name of the nat rule.
-     * @param natRuleParameters Parameters supplied to create or Update a Nat Rule.
-     * @param context The context to associate with this operation.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return vpnGatewayNatRule Resource.
-     */
-    @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
-    public SyncPoller<PollResult<VpnGatewayNatRuleInner>, VpnGatewayNatRuleInner> beginCreateOrUpdate(
-        String resourceGroupName,
-        String gatewayName,
-        String natRuleName,
-        VpnGatewayNatRuleInner natRuleParameters,
-        Context context) {
-        return beginCreateOrUpdateAsync(resourceGroupName, gatewayName, natRuleName, natRuleParameters, context)
+        return this.beginCreateOrUpdateAsync(resourceGroupName, gatewayName, natRuleName, natRuleParameters)
             .getSyncPoller();
     }
 
     /**
      * Creates a nat rule to a scalable vpn gateway if it doesn't exist else updates the existing nat rules.
-     *
-     * @param resourceGroupName The resource group name of the VpnGateway.
-     * @param gatewayName The name of the gateway.
-     * @param natRuleName The name of the nat rule.
-     * @param natRuleParameters Parameters supplied to create or Update a Nat Rule.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return vpnGatewayNatRule Resource.
-     */
-    @ServiceMethod(returns = ReturnType.SINGLE)
-    public Mono<VpnGatewayNatRuleInner> createOrUpdateAsync(
-        String resourceGroupName, String gatewayName, String natRuleName, VpnGatewayNatRuleInner natRuleParameters) {
-        return beginCreateOrUpdateAsync(resourceGroupName, gatewayName, natRuleName, natRuleParameters)
-            .last()
-            .flatMap(this.client::getLroFinalResultOrError);
-    }
-
-    /**
-     * Creates a nat rule to a scalable vpn gateway if it doesn't exist else updates the existing nat rules.
-     *
+     * 
      * @param resourceGroupName The resource group name of the VpnGateway.
      * @param gatewayName The name of the gateway.
      * @param natRuleName The name of the nat rule.
@@ -564,23 +419,58 @@ public final class NatRulesClientImpl implements NatRulesClient {
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return vpnGatewayNatRule Resource.
+     * @return the {@link SyncPoller} for polling of vpnGatewayNatRule Resource.
+     */
+    @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
+    public SyncPoller<PollResult<VpnGatewayNatRuleInner>, VpnGatewayNatRuleInner> beginCreateOrUpdate(
+        String resourceGroupName, String gatewayName, String natRuleName, VpnGatewayNatRuleInner natRuleParameters,
+        Context context) {
+        return this.beginCreateOrUpdateAsync(resourceGroupName, gatewayName, natRuleName, natRuleParameters, context)
+            .getSyncPoller();
+    }
+
+    /**
+     * Creates a nat rule to a scalable vpn gateway if it doesn't exist else updates the existing nat rules.
+     * 
+     * @param resourceGroupName The resource group name of the VpnGateway.
+     * @param gatewayName The name of the gateway.
+     * @param natRuleName The name of the nat rule.
+     * @param natRuleParameters Parameters supplied to create or Update a Nat Rule.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return vpnGatewayNatRule Resource on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    private Mono<VpnGatewayNatRuleInner> createOrUpdateAsync(
-        String resourceGroupName,
-        String gatewayName,
-        String natRuleName,
-        VpnGatewayNatRuleInner natRuleParameters,
-        Context context) {
-        return beginCreateOrUpdateAsync(resourceGroupName, gatewayName, natRuleName, natRuleParameters, context)
-            .last()
+    public Mono<VpnGatewayNatRuleInner> createOrUpdateAsync(String resourceGroupName, String gatewayName,
+        String natRuleName, VpnGatewayNatRuleInner natRuleParameters) {
+        return beginCreateOrUpdateAsync(resourceGroupName, gatewayName, natRuleName, natRuleParameters).last()
             .flatMap(this.client::getLroFinalResultOrError);
     }
 
     /**
      * Creates a nat rule to a scalable vpn gateway if it doesn't exist else updates the existing nat rules.
-     *
+     * 
+     * @param resourceGroupName The resource group name of the VpnGateway.
+     * @param gatewayName The name of the gateway.
+     * @param natRuleName The name of the nat rule.
+     * @param natRuleParameters Parameters supplied to create or Update a Nat Rule.
+     * @param context The context to associate with this operation.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return vpnGatewayNatRule Resource on successful completion of {@link Mono}.
+     */
+    @ServiceMethod(returns = ReturnType.SINGLE)
+    private Mono<VpnGatewayNatRuleInner> createOrUpdateAsync(String resourceGroupName, String gatewayName,
+        String natRuleName, VpnGatewayNatRuleInner natRuleParameters, Context context) {
+        return beginCreateOrUpdateAsync(resourceGroupName, gatewayName, natRuleName, natRuleParameters, context).last()
+            .flatMap(this.client::getLroFinalResultOrError);
+    }
+
+    /**
+     * Creates a nat rule to a scalable vpn gateway if it doesn't exist else updates the existing nat rules.
+     * 
      * @param resourceGroupName The resource group name of the VpnGateway.
      * @param gatewayName The name of the gateway.
      * @param natRuleName The name of the nat rule.
@@ -591,14 +481,14 @@ public final class NatRulesClientImpl implements NatRulesClient {
      * @return vpnGatewayNatRule Resource.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    public VpnGatewayNatRuleInner createOrUpdate(
-        String resourceGroupName, String gatewayName, String natRuleName, VpnGatewayNatRuleInner natRuleParameters) {
+    public VpnGatewayNatRuleInner createOrUpdate(String resourceGroupName, String gatewayName, String natRuleName,
+        VpnGatewayNatRuleInner natRuleParameters) {
         return createOrUpdateAsync(resourceGroupName, gatewayName, natRuleName, natRuleParameters).block();
     }
 
     /**
      * Creates a nat rule to a scalable vpn gateway if it doesn't exist else updates the existing nat rules.
-     *
+     * 
      * @param resourceGroupName The resource group name of the VpnGateway.
      * @param gatewayName The name of the gateway.
      * @param natRuleName The name of the nat rule.
@@ -610,40 +500,32 @@ public final class NatRulesClientImpl implements NatRulesClient {
      * @return vpnGatewayNatRule Resource.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    public VpnGatewayNatRuleInner createOrUpdate(
-        String resourceGroupName,
-        String gatewayName,
-        String natRuleName,
-        VpnGatewayNatRuleInner natRuleParameters,
-        Context context) {
+    public VpnGatewayNatRuleInner createOrUpdate(String resourceGroupName, String gatewayName, String natRuleName,
+        VpnGatewayNatRuleInner natRuleParameters, Context context) {
         return createOrUpdateAsync(resourceGroupName, gatewayName, natRuleName, natRuleParameters, context).block();
     }
 
     /**
      * Deletes a nat rule.
-     *
+     * 
      * @param resourceGroupName The resource group name of the VpnGateway.
      * @param gatewayName The name of the gateway.
      * @param natRuleName The name of the nat rule.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the completion.
+     * @return the {@link Response} on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    public Mono<Response<Flux<ByteBuffer>>> deleteWithResponseAsync(
-        String resourceGroupName, String gatewayName, String natRuleName) {
+    public Mono<Response<Flux<ByteBuffer>>> deleteWithResponseAsync(String resourceGroupName, String gatewayName,
+        String natRuleName) {
         if (this.client.getEndpoint() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getEndpoint() is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
         }
         if (this.client.getSubscriptionId() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getSubscriptionId() is required and cannot be null."));
+            return Mono.error(new IllegalArgumentException(
+                "Parameter this.client.getSubscriptionId() is required and cannot be null."));
         }
         if (resourceGroupName == null) {
             return Mono
@@ -655,27 +537,17 @@ public final class NatRulesClientImpl implements NatRulesClient {
         if (natRuleName == null) {
             return Mono.error(new IllegalArgumentException("Parameter natRuleName is required and cannot be null."));
         }
-        final String apiVersion = "2021-05-01";
+        final String apiVersion = "2024-05-01";
         final String accept = "application/json";
         return FluxUtil
-            .withContext(
-                context ->
-                    service
-                        .delete(
-                            this.client.getEndpoint(),
-                            this.client.getSubscriptionId(),
-                            resourceGroupName,
-                            gatewayName,
-                            natRuleName,
-                            apiVersion,
-                            accept,
-                            context))
+            .withContext(context -> service.delete(this.client.getEndpoint(), this.client.getSubscriptionId(),
+                resourceGroupName, gatewayName, natRuleName, apiVersion, accept, context))
             .contextWrite(context -> context.putAll(FluxUtil.toReactorContext(this.client.getContext()).readOnly()));
     }
 
     /**
      * Deletes a nat rule.
-     *
+     * 
      * @param resourceGroupName The resource group name of the VpnGateway.
      * @param gatewayName The name of the gateway.
      * @param natRuleName The name of the nat rule.
@@ -683,22 +555,18 @@ public final class NatRulesClientImpl implements NatRulesClient {
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the completion.
+     * @return the {@link Response} on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    private Mono<Response<Flux<ByteBuffer>>> deleteWithResponseAsync(
-        String resourceGroupName, String gatewayName, String natRuleName, Context context) {
+    private Mono<Response<Flux<ByteBuffer>>> deleteWithResponseAsync(String resourceGroupName, String gatewayName,
+        String natRuleName, Context context) {
         if (this.client.getEndpoint() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getEndpoint() is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
         }
         if (this.client.getSubscriptionId() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getSubscriptionId() is required and cannot be null."));
+            return Mono.error(new IllegalArgumentException(
+                "Parameter this.client.getSubscriptionId() is required and cannot be null."));
         }
         if (resourceGroupName == null) {
             return Mono
@@ -710,45 +578,35 @@ public final class NatRulesClientImpl implements NatRulesClient {
         if (natRuleName == null) {
             return Mono.error(new IllegalArgumentException("Parameter natRuleName is required and cannot be null."));
         }
-        final String apiVersion = "2021-05-01";
+        final String apiVersion = "2024-05-01";
         final String accept = "application/json";
         context = this.client.mergeContext(context);
-        return service
-            .delete(
-                this.client.getEndpoint(),
-                this.client.getSubscriptionId(),
-                resourceGroupName,
-                gatewayName,
-                natRuleName,
-                apiVersion,
-                accept,
-                context);
+        return service.delete(this.client.getEndpoint(), this.client.getSubscriptionId(), resourceGroupName,
+            gatewayName, natRuleName, apiVersion, accept, context);
     }
 
     /**
      * Deletes a nat rule.
-     *
+     * 
      * @param resourceGroupName The resource group name of the VpnGateway.
      * @param gatewayName The name of the gateway.
      * @param natRuleName The name of the nat rule.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the completion.
+     * @return the {@link PollerFlux} for polling of long-running operation.
      */
     @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
-    public PollerFlux<PollResult<Void>, Void> beginDeleteAsync(
-        String resourceGroupName, String gatewayName, String natRuleName) {
+    public PollerFlux<PollResult<Void>, Void> beginDeleteAsync(String resourceGroupName, String gatewayName,
+        String natRuleName) {
         Mono<Response<Flux<ByteBuffer>>> mono = deleteWithResponseAsync(resourceGroupName, gatewayName, natRuleName);
-        return this
-            .client
-            .<Void, Void>getLroResult(
-                mono, this.client.getHttpPipeline(), Void.class, Void.class, this.client.getContext());
+        return this.client.<Void, Void>getLroResult(mono, this.client.getHttpPipeline(), Void.class, Void.class,
+            this.client.getContext());
     }
 
     /**
      * Deletes a nat rule.
-     *
+     * 
      * @param resourceGroupName The resource group name of the VpnGateway.
      * @param gatewayName The name of the gateway.
      * @param natRuleName The name of the nat rule.
@@ -756,39 +614,38 @@ public final class NatRulesClientImpl implements NatRulesClient {
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the completion.
+     * @return the {@link PollerFlux} for polling of long-running operation.
      */
     @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
-    private PollerFlux<PollResult<Void>, Void> beginDeleteAsync(
-        String resourceGroupName, String gatewayName, String natRuleName, Context context) {
+    private PollerFlux<PollResult<Void>, Void> beginDeleteAsync(String resourceGroupName, String gatewayName,
+        String natRuleName, Context context) {
         context = this.client.mergeContext(context);
-        Mono<Response<Flux<ByteBuffer>>> mono =
-            deleteWithResponseAsync(resourceGroupName, gatewayName, natRuleName, context);
-        return this
-            .client
-            .<Void, Void>getLroResult(mono, this.client.getHttpPipeline(), Void.class, Void.class, context);
+        Mono<Response<Flux<ByteBuffer>>> mono
+            = deleteWithResponseAsync(resourceGroupName, gatewayName, natRuleName, context);
+        return this.client.<Void, Void>getLroResult(mono, this.client.getHttpPipeline(), Void.class, Void.class,
+            context);
     }
 
     /**
      * Deletes a nat rule.
-     *
+     * 
      * @param resourceGroupName The resource group name of the VpnGateway.
      * @param gatewayName The name of the gateway.
      * @param natRuleName The name of the nat rule.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the completion.
+     * @return the {@link SyncPoller} for polling of long-running operation.
      */
     @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
-    public SyncPoller<PollResult<Void>, Void> beginDelete(
-        String resourceGroupName, String gatewayName, String natRuleName) {
-        return beginDeleteAsync(resourceGroupName, gatewayName, natRuleName).getSyncPoller();
+    public SyncPoller<PollResult<Void>, Void> beginDelete(String resourceGroupName, String gatewayName,
+        String natRuleName) {
+        return this.beginDeleteAsync(resourceGroupName, gatewayName, natRuleName).getSyncPoller();
     }
 
     /**
      * Deletes a nat rule.
-     *
+     * 
      * @param resourceGroupName The resource group name of the VpnGateway.
      * @param gatewayName The name of the gateway.
      * @param natRuleName The name of the nat rule.
@@ -796,35 +653,34 @@ public final class NatRulesClientImpl implements NatRulesClient {
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the completion.
+     * @return the {@link SyncPoller} for polling of long-running operation.
      */
     @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
-    public SyncPoller<PollResult<Void>, Void> beginDelete(
-        String resourceGroupName, String gatewayName, String natRuleName, Context context) {
-        return beginDeleteAsync(resourceGroupName, gatewayName, natRuleName, context).getSyncPoller();
+    public SyncPoller<PollResult<Void>, Void> beginDelete(String resourceGroupName, String gatewayName,
+        String natRuleName, Context context) {
+        return this.beginDeleteAsync(resourceGroupName, gatewayName, natRuleName, context).getSyncPoller();
     }
 
     /**
      * Deletes a nat rule.
-     *
+     * 
      * @param resourceGroupName The resource group name of the VpnGateway.
      * @param gatewayName The name of the gateway.
      * @param natRuleName The name of the nat rule.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the completion.
+     * @return A {@link Mono} that completes when a successful response is received.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
     public Mono<Void> deleteAsync(String resourceGroupName, String gatewayName, String natRuleName) {
-        return beginDeleteAsync(resourceGroupName, gatewayName, natRuleName)
-            .last()
+        return beginDeleteAsync(resourceGroupName, gatewayName, natRuleName).last()
             .flatMap(this.client::getLroFinalResultOrError);
     }
 
     /**
      * Deletes a nat rule.
-     *
+     * 
      * @param resourceGroupName The resource group name of the VpnGateway.
      * @param gatewayName The name of the gateway.
      * @param natRuleName The name of the nat rule.
@@ -832,18 +688,17 @@ public final class NatRulesClientImpl implements NatRulesClient {
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the completion.
+     * @return A {@link Mono} that completes when a successful response is received.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
     private Mono<Void> deleteAsync(String resourceGroupName, String gatewayName, String natRuleName, Context context) {
-        return beginDeleteAsync(resourceGroupName, gatewayName, natRuleName, context)
-            .last()
+        return beginDeleteAsync(resourceGroupName, gatewayName, natRuleName, context).last()
             .flatMap(this.client::getLroFinalResultOrError);
     }
 
     /**
      * Deletes a nat rule.
-     *
+     * 
      * @param resourceGroupName The resource group name of the VpnGateway.
      * @param gatewayName The name of the gateway.
      * @param natRuleName The name of the nat rule.
@@ -858,7 +713,7 @@ public final class NatRulesClientImpl implements NatRulesClient {
 
     /**
      * Deletes a nat rule.
-     *
+     * 
      * @param resourceGroupName The resource group name of the VpnGateway.
      * @param gatewayName The name of the gateway.
      * @param natRuleName The name of the nat rule.
@@ -874,28 +729,25 @@ public final class NatRulesClientImpl implements NatRulesClient {
 
     /**
      * Retrieves all nat rules for a particular virtual wan vpn gateway.
-     *
+     * 
      * @param resourceGroupName The resource group name of the VpnGateway.
      * @param gatewayName The name of the gateway.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return result of the request to list all nat rules to a virtual wan vpn gateway.
+     * @return result of the request to list all nat rules to a virtual wan vpn gateway along with {@link PagedResponse}
+     * on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    private Mono<PagedResponse<VpnGatewayNatRuleInner>> listByVpnGatewaySinglePageAsync(
-        String resourceGroupName, String gatewayName) {
+    private Mono<PagedResponse<VpnGatewayNatRuleInner>> listByVpnGatewaySinglePageAsync(String resourceGroupName,
+        String gatewayName) {
         if (this.client.getEndpoint() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getEndpoint() is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
         }
         if (this.client.getSubscriptionId() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getSubscriptionId() is required and cannot be null."));
+            return Mono.error(new IllegalArgumentException(
+                "Parameter this.client.getSubscriptionId() is required and cannot be null."));
         }
         if (resourceGroupName == null) {
             return Mono
@@ -904,57 +756,38 @@ public final class NatRulesClientImpl implements NatRulesClient {
         if (gatewayName == null) {
             return Mono.error(new IllegalArgumentException("Parameter gatewayName is required and cannot be null."));
         }
-        final String apiVersion = "2021-05-01";
+        final String apiVersion = "2024-05-01";
         final String accept = "application/json";
         return FluxUtil
-            .withContext(
-                context ->
-                    service
-                        .listByVpnGateway(
-                            this.client.getEndpoint(),
-                            this.client.getSubscriptionId(),
-                            resourceGroupName,
-                            gatewayName,
-                            apiVersion,
-                            accept,
-                            context))
-            .<PagedResponse<VpnGatewayNatRuleInner>>map(
-                res ->
-                    new PagedResponseBase<>(
-                        res.getRequest(),
-                        res.getStatusCode(),
-                        res.getHeaders(),
-                        res.getValue().value(),
-                        res.getValue().nextLink(),
-                        null))
+            .withContext(context -> service.listByVpnGateway(this.client.getEndpoint(), this.client.getSubscriptionId(),
+                resourceGroupName, gatewayName, apiVersion, accept, context))
+            .<PagedResponse<VpnGatewayNatRuleInner>>map(res -> new PagedResponseBase<>(res.getRequest(),
+                res.getStatusCode(), res.getHeaders(), res.getValue().value(), res.getValue().nextLink(), null))
             .contextWrite(context -> context.putAll(FluxUtil.toReactorContext(this.client.getContext()).readOnly()));
     }
 
     /**
      * Retrieves all nat rules for a particular virtual wan vpn gateway.
-     *
+     * 
      * @param resourceGroupName The resource group name of the VpnGateway.
      * @param gatewayName The name of the gateway.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return result of the request to list all nat rules to a virtual wan vpn gateway.
+     * @return result of the request to list all nat rules to a virtual wan vpn gateway along with {@link PagedResponse}
+     * on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    private Mono<PagedResponse<VpnGatewayNatRuleInner>> listByVpnGatewaySinglePageAsync(
-        String resourceGroupName, String gatewayName, Context context) {
+    private Mono<PagedResponse<VpnGatewayNatRuleInner>> listByVpnGatewaySinglePageAsync(String resourceGroupName,
+        String gatewayName, Context context) {
         if (this.client.getEndpoint() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getEndpoint() is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
         }
         if (this.client.getSubscriptionId() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getSubscriptionId() is required and cannot be null."));
+            return Mono.error(new IllegalArgumentException(
+                "Parameter this.client.getSubscriptionId() is required and cannot be null."));
         }
         if (resourceGroupName == null) {
             return Mono
@@ -963,74 +796,62 @@ public final class NatRulesClientImpl implements NatRulesClient {
         if (gatewayName == null) {
             return Mono.error(new IllegalArgumentException("Parameter gatewayName is required and cannot be null."));
         }
-        final String apiVersion = "2021-05-01";
+        final String apiVersion = "2024-05-01";
         final String accept = "application/json";
         context = this.client.mergeContext(context);
         return service
-            .listByVpnGateway(
-                this.client.getEndpoint(),
-                this.client.getSubscriptionId(),
-                resourceGroupName,
-                gatewayName,
-                apiVersion,
-                accept,
-                context)
-            .map(
-                res ->
-                    new PagedResponseBase<>(
-                        res.getRequest(),
-                        res.getStatusCode(),
-                        res.getHeaders(),
-                        res.getValue().value(),
-                        res.getValue().nextLink(),
-                        null));
+            .listByVpnGateway(this.client.getEndpoint(), this.client.getSubscriptionId(), resourceGroupName,
+                gatewayName, apiVersion, accept, context)
+            .map(res -> new PagedResponseBase<>(res.getRequest(), res.getStatusCode(), res.getHeaders(),
+                res.getValue().value(), res.getValue().nextLink(), null));
     }
 
     /**
      * Retrieves all nat rules for a particular virtual wan vpn gateway.
-     *
+     * 
      * @param resourceGroupName The resource group name of the VpnGateway.
      * @param gatewayName The name of the gateway.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return result of the request to list all nat rules to a virtual wan vpn gateway.
+     * @return result of the request to list all nat rules to a virtual wan vpn gateway as paginated response with
+     * {@link PagedFlux}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
     public PagedFlux<VpnGatewayNatRuleInner> listByVpnGatewayAsync(String resourceGroupName, String gatewayName) {
-        return new PagedFlux<>(
-            () -> listByVpnGatewaySinglePageAsync(resourceGroupName, gatewayName),
+        return new PagedFlux<>(() -> listByVpnGatewaySinglePageAsync(resourceGroupName, gatewayName),
             nextLink -> listByVpnGatewayNextSinglePageAsync(nextLink));
     }
 
     /**
      * Retrieves all nat rules for a particular virtual wan vpn gateway.
-     *
+     * 
      * @param resourceGroupName The resource group name of the VpnGateway.
      * @param gatewayName The name of the gateway.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return result of the request to list all nat rules to a virtual wan vpn gateway.
+     * @return result of the request to list all nat rules to a virtual wan vpn gateway as paginated response with
+     * {@link PagedFlux}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
-    private PagedFlux<VpnGatewayNatRuleInner> listByVpnGatewayAsync(
-        String resourceGroupName, String gatewayName, Context context) {
-        return new PagedFlux<>(
-            () -> listByVpnGatewaySinglePageAsync(resourceGroupName, gatewayName, context),
+    private PagedFlux<VpnGatewayNatRuleInner> listByVpnGatewayAsync(String resourceGroupName, String gatewayName,
+        Context context) {
+        return new PagedFlux<>(() -> listByVpnGatewaySinglePageAsync(resourceGroupName, gatewayName, context),
             nextLink -> listByVpnGatewayNextSinglePageAsync(nextLink, context));
     }
 
     /**
      * Retrieves all nat rules for a particular virtual wan vpn gateway.
-     *
+     * 
      * @param resourceGroupName The resource group name of the VpnGateway.
      * @param gatewayName The name of the gateway.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return result of the request to list all nat rules to a virtual wan vpn gateway.
+     * @return result of the request to list all nat rules to a virtual wan vpn gateway as paginated response with
+     * {@link PagedIterable}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
     public PagedIterable<VpnGatewayNatRuleInner> listByVpnGateway(String resourceGroupName, String gatewayName) {
@@ -1039,29 +860,31 @@ public final class NatRulesClientImpl implements NatRulesClient {
 
     /**
      * Retrieves all nat rules for a particular virtual wan vpn gateway.
-     *
+     * 
      * @param resourceGroupName The resource group name of the VpnGateway.
      * @param gatewayName The name of the gateway.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return result of the request to list all nat rules to a virtual wan vpn gateway.
+     * @return result of the request to list all nat rules to a virtual wan vpn gateway as paginated response with
+     * {@link PagedIterable}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
-    public PagedIterable<VpnGatewayNatRuleInner> listByVpnGateway(
-        String resourceGroupName, String gatewayName, Context context) {
+    public PagedIterable<VpnGatewayNatRuleInner> listByVpnGateway(String resourceGroupName, String gatewayName,
+        Context context) {
         return new PagedIterable<>(listByVpnGatewayAsync(resourceGroupName, gatewayName, context));
     }
 
     /**
      * Get the next page of items.
-     *
-     * @param nextLink The nextLink parameter.
+     * 
+     * @param nextLink The URL to get the next list of items.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return result of the request to list all nat rules to a virtual wan vpn gateway.
+     * @return result of the request to list all nat rules to a virtual wan vpn gateway along with {@link PagedResponse}
+     * on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
     private Mono<PagedResponse<VpnGatewayNatRuleInner>> listByVpnGatewayNextSinglePageAsync(String nextLink) {
@@ -1069,60 +892,42 @@ public final class NatRulesClientImpl implements NatRulesClient {
             return Mono.error(new IllegalArgumentException("Parameter nextLink is required and cannot be null."));
         }
         if (this.client.getEndpoint() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getEndpoint() is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
         }
         final String accept = "application/json";
         return FluxUtil
             .withContext(context -> service.listByVpnGatewayNext(nextLink, this.client.getEndpoint(), accept, context))
-            .<PagedResponse<VpnGatewayNatRuleInner>>map(
-                res ->
-                    new PagedResponseBase<>(
-                        res.getRequest(),
-                        res.getStatusCode(),
-                        res.getHeaders(),
-                        res.getValue().value(),
-                        res.getValue().nextLink(),
-                        null))
+            .<PagedResponse<VpnGatewayNatRuleInner>>map(res -> new PagedResponseBase<>(res.getRequest(),
+                res.getStatusCode(), res.getHeaders(), res.getValue().value(), res.getValue().nextLink(), null))
             .contextWrite(context -> context.putAll(FluxUtil.toReactorContext(this.client.getContext()).readOnly()));
     }
 
     /**
      * Get the next page of items.
-     *
-     * @param nextLink The nextLink parameter.
+     * 
+     * @param nextLink The URL to get the next list of items.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return result of the request to list all nat rules to a virtual wan vpn gateway.
+     * @return result of the request to list all nat rules to a virtual wan vpn gateway along with {@link PagedResponse}
+     * on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    private Mono<PagedResponse<VpnGatewayNatRuleInner>> listByVpnGatewayNextSinglePageAsync(
-        String nextLink, Context context) {
+    private Mono<PagedResponse<VpnGatewayNatRuleInner>> listByVpnGatewayNextSinglePageAsync(String nextLink,
+        Context context) {
         if (nextLink == null) {
             return Mono.error(new IllegalArgumentException("Parameter nextLink is required and cannot be null."));
         }
         if (this.client.getEndpoint() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getEndpoint() is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
         }
         final String accept = "application/json";
         context = this.client.mergeContext(context);
-        return service
-            .listByVpnGatewayNext(nextLink, this.client.getEndpoint(), accept, context)
-            .map(
-                res ->
-                    new PagedResponseBase<>(
-                        res.getRequest(),
-                        res.getStatusCode(),
-                        res.getHeaders(),
-                        res.getValue().value(),
-                        res.getValue().nextLink(),
-                        null));
+        return service.listByVpnGatewayNext(nextLink, this.client.getEndpoint(), accept, context)
+            .map(res -> new PagedResponseBase<>(res.getRequest(), res.getStatusCode(), res.getHeaders(),
+                res.getValue().value(), res.getValue().nextLink(), null));
     }
 }

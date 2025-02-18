@@ -10,24 +10,26 @@ import com.azure.core.http.rest.PagedIterable;
 import com.azure.core.util.Context;
 import com.azure.resourcemanager.automation.fluent.models.StatisticsInner;
 
-/** An instance of this class provides access to all the operations defined in StatisticsOperationsClient. */
+/**
+ * An instance of this class provides access to all the operations defined in StatisticsOperationsClient.
+ */
 public interface StatisticsOperationsClient {
     /**
      * Retrieve the statistics for the account.
-     *
+     * 
      * @param resourceGroupName Name of an Azure Resource group.
      * @param automationAccountName The name of the automation account.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the response model for the list statistics operation.
+     * @return the response model for the list statistics operation as paginated response with {@link PagedIterable}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
     PagedIterable<StatisticsInner> listByAutomationAccount(String resourceGroupName, String automationAccountName);
 
     /**
      * Retrieve the statistics for the account.
-     *
+     * 
      * @param resourceGroupName Name of an Azure Resource group.
      * @param automationAccountName The name of the automation account.
      * @param filter The filter to apply on the operation.
@@ -35,9 +37,9 @@ public interface StatisticsOperationsClient {
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the response model for the list statistics operation.
+     * @return the response model for the list statistics operation as paginated response with {@link PagedIterable}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
-    PagedIterable<StatisticsInner> listByAutomationAccount(
-        String resourceGroupName, String automationAccountName, String filter, Context context);
+    PagedIterable<StatisticsInner> listByAutomationAccount(String resourceGroupName, String automationAccountName,
+        String filter, Context context);
 }

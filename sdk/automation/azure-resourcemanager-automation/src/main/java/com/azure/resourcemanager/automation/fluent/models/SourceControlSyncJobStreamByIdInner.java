@@ -5,65 +5,40 @@
 package com.azure.resourcemanager.automation.fluent.models;
 
 import com.azure.core.annotation.Fluent;
-import com.azure.core.annotation.JsonFlatten;
-import com.azure.core.util.logging.ClientLogger;
+import com.azure.json.JsonReader;
+import com.azure.json.JsonSerializable;
+import com.azure.json.JsonToken;
+import com.azure.json.JsonWriter;
 import com.azure.resourcemanager.automation.models.StreamType;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import java.io.IOException;
 import java.time.OffsetDateTime;
 import java.util.Map;
 
-/** Definition of the source control sync job stream by id. */
-@JsonFlatten
+/**
+ * Definition of the source control sync job stream by id.
+ */
 @Fluent
-public class SourceControlSyncJobStreamByIdInner {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(SourceControlSyncJobStreamByIdInner.class);
-
+public final class SourceControlSyncJobStreamByIdInner
+    implements JsonSerializable<SourceControlSyncJobStreamByIdInner> {
     /*
      * Resource id.
      */
-    @JsonProperty(value = "id", access = JsonProperty.Access.WRITE_ONLY)
     private String id;
 
     /*
-     * The sync job stream id.
+     * The properties of the source control sync job stream.
      */
-    @JsonProperty(value = "properties.sourceControlSyncJobStreamId")
-    private String sourceControlSyncJobStreamId;
+    private SourceControlSyncJobStreamByIdProperties innerProperties;
 
-    /*
-     * The summary of the sync job stream.
+    /**
+     * Creates an instance of SourceControlSyncJobStreamByIdInner class.
      */
-    @JsonProperty(value = "properties.summary")
-    private String summary;
-
-    /*
-     * The time of the sync job stream.
-     */
-    @JsonProperty(value = "properties.time", access = JsonProperty.Access.WRITE_ONLY)
-    private OffsetDateTime time;
-
-    /*
-     * The type of the sync job stream.
-     */
-    @JsonProperty(value = "properties.streamType")
-    private StreamType streamType;
-
-    /*
-     * The text of the sync job stream.
-     */
-    @JsonProperty(value = "properties.streamText")
-    private String streamText;
-
-    /*
-     * The values of the job stream.
-     */
-    @JsonProperty(value = "properties.value")
-    private Map<String, Object> value;
+    public SourceControlSyncJobStreamByIdInner() {
+    }
 
     /**
      * Get the id property: Resource id.
-     *
+     * 
      * @return the id value.
      */
     public String id() {
@@ -71,119 +46,186 @@ public class SourceControlSyncJobStreamByIdInner {
     }
 
     /**
+     * Get the innerProperties property: The properties of the source control sync job stream.
+     * 
+     * @return the innerProperties value.
+     */
+    private SourceControlSyncJobStreamByIdProperties innerProperties() {
+        return this.innerProperties;
+    }
+
+    /**
      * Get the sourceControlSyncJobStreamId property: The sync job stream id.
-     *
+     * 
      * @return the sourceControlSyncJobStreamId value.
      */
     public String sourceControlSyncJobStreamId() {
-        return this.sourceControlSyncJobStreamId;
+        return this.innerProperties() == null ? null : this.innerProperties().sourceControlSyncJobStreamId();
     }
 
     /**
      * Set the sourceControlSyncJobStreamId property: The sync job stream id.
-     *
+     * 
      * @param sourceControlSyncJobStreamId the sourceControlSyncJobStreamId value to set.
      * @return the SourceControlSyncJobStreamByIdInner object itself.
      */
     public SourceControlSyncJobStreamByIdInner withSourceControlSyncJobStreamId(String sourceControlSyncJobStreamId) {
-        this.sourceControlSyncJobStreamId = sourceControlSyncJobStreamId;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new SourceControlSyncJobStreamByIdProperties();
+        }
+        this.innerProperties().withSourceControlSyncJobStreamId(sourceControlSyncJobStreamId);
         return this;
     }
 
     /**
      * Get the summary property: The summary of the sync job stream.
-     *
+     * 
      * @return the summary value.
      */
     public String summary() {
-        return this.summary;
+        return this.innerProperties() == null ? null : this.innerProperties().summary();
     }
 
     /**
      * Set the summary property: The summary of the sync job stream.
-     *
+     * 
      * @param summary the summary value to set.
      * @return the SourceControlSyncJobStreamByIdInner object itself.
      */
     public SourceControlSyncJobStreamByIdInner withSummary(String summary) {
-        this.summary = summary;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new SourceControlSyncJobStreamByIdProperties();
+        }
+        this.innerProperties().withSummary(summary);
         return this;
     }
 
     /**
      * Get the time property: The time of the sync job stream.
-     *
+     * 
      * @return the time value.
      */
     public OffsetDateTime time() {
-        return this.time;
+        return this.innerProperties() == null ? null : this.innerProperties().time();
     }
 
     /**
      * Get the streamType property: The type of the sync job stream.
-     *
+     * 
      * @return the streamType value.
      */
     public StreamType streamType() {
-        return this.streamType;
+        return this.innerProperties() == null ? null : this.innerProperties().streamType();
     }
 
     /**
      * Set the streamType property: The type of the sync job stream.
-     *
+     * 
      * @param streamType the streamType value to set.
      * @return the SourceControlSyncJobStreamByIdInner object itself.
      */
     public SourceControlSyncJobStreamByIdInner withStreamType(StreamType streamType) {
-        this.streamType = streamType;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new SourceControlSyncJobStreamByIdProperties();
+        }
+        this.innerProperties().withStreamType(streamType);
         return this;
     }
 
     /**
      * Get the streamText property: The text of the sync job stream.
-     *
+     * 
      * @return the streamText value.
      */
     public String streamText() {
-        return this.streamText;
+        return this.innerProperties() == null ? null : this.innerProperties().streamText();
     }
 
     /**
      * Set the streamText property: The text of the sync job stream.
-     *
+     * 
      * @param streamText the streamText value to set.
      * @return the SourceControlSyncJobStreamByIdInner object itself.
      */
     public SourceControlSyncJobStreamByIdInner withStreamText(String streamText) {
-        this.streamText = streamText;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new SourceControlSyncJobStreamByIdProperties();
+        }
+        this.innerProperties().withStreamText(streamText);
         return this;
     }
 
     /**
      * Get the value property: The values of the job stream.
-     *
+     * 
      * @return the value value.
      */
     public Map<String, Object> value() {
-        return this.value;
+        return this.innerProperties() == null ? null : this.innerProperties().value();
     }
 
     /**
      * Set the value property: The values of the job stream.
-     *
+     * 
      * @param value the value value to set.
      * @return the SourceControlSyncJobStreamByIdInner object itself.
      */
     public SourceControlSyncJobStreamByIdInner withValue(Map<String, Object> value) {
-        this.value = value;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new SourceControlSyncJobStreamByIdProperties();
+        }
+        this.innerProperties().withValue(value);
         return this;
     }
 
     /**
      * Validates the instance.
-     *
+     * 
      * @throws IllegalArgumentException thrown if the instance is not valid.
      */
     public void validate() {
+        if (innerProperties() != null) {
+            innerProperties().validate();
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public JsonWriter toJson(JsonWriter jsonWriter) throws IOException {
+        jsonWriter.writeStartObject();
+        jsonWriter.writeJsonField("properties", this.innerProperties);
+        return jsonWriter.writeEndObject();
+    }
+
+    /**
+     * Reads an instance of SourceControlSyncJobStreamByIdInner from the JsonReader.
+     * 
+     * @param jsonReader The JsonReader being read.
+     * @return An instance of SourceControlSyncJobStreamByIdInner if the JsonReader was pointing to an instance of it,
+     * or null if it was pointing to JSON null.
+     * @throws IOException If an error occurs while reading the SourceControlSyncJobStreamByIdInner.
+     */
+    public static SourceControlSyncJobStreamByIdInner fromJson(JsonReader jsonReader) throws IOException {
+        return jsonReader.readObject(reader -> {
+            SourceControlSyncJobStreamByIdInner deserializedSourceControlSyncJobStreamByIdInner
+                = new SourceControlSyncJobStreamByIdInner();
+            while (reader.nextToken() != JsonToken.END_OBJECT) {
+                String fieldName = reader.getFieldName();
+                reader.nextToken();
+
+                if ("id".equals(fieldName)) {
+                    deserializedSourceControlSyncJobStreamByIdInner.id = reader.getString();
+                } else if ("properties".equals(fieldName)) {
+                    deserializedSourceControlSyncJobStreamByIdInner.innerProperties
+                        = SourceControlSyncJobStreamByIdProperties.fromJson(reader);
+                } else {
+                    reader.skipChildren();
+                }
+            }
+
+            return deserializedSourceControlSyncJobStreamByIdInner;
+        });
     }
 }

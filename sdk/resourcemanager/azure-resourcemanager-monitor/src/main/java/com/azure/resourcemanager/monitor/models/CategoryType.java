@@ -4,18 +4,23 @@
 
 package com.azure.resourcemanager.monitor.models;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonValue;
-
-/** Defines values for CategoryType. */
+/**
+ * The type of the diagnostic settings category.
+ */
 public enum CategoryType {
-    /** Enum value Metrics. */
+    /**
+     * Enum value Metrics.
+     */
     METRICS("Metrics"),
 
-    /** Enum value Logs. */
+    /**
+     * Enum value Logs.
+     */
     LOGS("Logs");
 
-    /** The actual serialized value for a CategoryType instance. */
+    /**
+     * The actual serialized value for a CategoryType instance.
+     */
     private final String value;
 
     CategoryType(String value) {
@@ -24,12 +29,14 @@ public enum CategoryType {
 
     /**
      * Parses a serialized value to a CategoryType instance.
-     *
+     * 
      * @param value the serialized value to parse.
      * @return the parsed CategoryType object, or null if unable to parse.
      */
-    @JsonCreator
     public static CategoryType fromString(String value) {
+        if (value == null) {
+            return null;
+        }
         CategoryType[] items = CategoryType.values();
         for (CategoryType item : items) {
             if (item.toString().equalsIgnoreCase(value)) {
@@ -39,7 +46,9 @@ public enum CategoryType {
         return null;
     }
 
-    @JsonValue
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String toString() {
         return this.value;

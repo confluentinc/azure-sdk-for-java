@@ -13,8 +13,7 @@ public final class OperationResultsDescriptionImpl implements OperationResultsDe
 
     private final com.azure.resourcemanager.healthcareapis.HealthcareApisManager serviceManager;
 
-    OperationResultsDescriptionImpl(
-        OperationResultsDescriptionInner innerObject,
+    OperationResultsDescriptionImpl(OperationResultsDescriptionInner innerObject,
         com.azure.resourcemanager.healthcareapis.HealthcareApisManager serviceManager) {
         this.innerObject = innerObject;
         this.serviceManager = serviceManager;
@@ -34,6 +33,10 @@ public final class OperationResultsDescriptionImpl implements OperationResultsDe
 
     public String startTime() {
         return this.innerModel().startTime();
+    }
+
+    public String endTime() {
+        return this.innerModel().endTime();
     }
 
     public Object properties() {

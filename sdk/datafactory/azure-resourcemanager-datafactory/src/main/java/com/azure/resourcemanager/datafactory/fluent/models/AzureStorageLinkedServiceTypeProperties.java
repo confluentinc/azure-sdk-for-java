@@ -5,55 +5,57 @@
 package com.azure.resourcemanager.datafactory.fluent.models;
 
 import com.azure.core.annotation.Fluent;
-import com.azure.core.util.logging.ClientLogger;
+import com.azure.json.JsonReader;
+import com.azure.json.JsonSerializable;
+import com.azure.json.JsonToken;
+import com.azure.json.JsonWriter;
 import com.azure.resourcemanager.datafactory.models.AzureKeyVaultSecretReference;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import java.io.IOException;
 
-/** Azure Storage linked service properties. */
+/**
+ * Azure Storage linked service properties.
+ */
 @Fluent
-public final class AzureStorageLinkedServiceTypeProperties {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(AzureStorageLinkedServiceTypeProperties.class);
-
+public class AzureStorageLinkedServiceTypeProperties
+    implements JsonSerializable<AzureStorageLinkedServiceTypeProperties> {
     /*
-     * The connection string. It is mutually exclusive with sasUri property.
-     * Type: string, SecureString or AzureKeyVaultSecretReference.
+     * The connection string. It is mutually exclusive with sasUri property. Type: string, SecureString or
+     * AzureKeyVaultSecretReference.
      */
-    @JsonProperty(value = "connectionString")
     private Object connectionString;
 
     /*
      * The Azure key vault secret reference of accountKey in connection string.
      */
-    @JsonProperty(value = "accountKey")
     private AzureKeyVaultSecretReference accountKey;
 
     /*
-     * SAS URI of the Azure Storage resource. It is mutually exclusive with
-     * connectionString property. Type: string, SecureString or
-     * AzureKeyVaultSecretReference.
+     * SAS URI of the Azure Storage resource. It is mutually exclusive with connectionString property. Type: string,
+     * SecureString or AzureKeyVaultSecretReference.
      */
-    @JsonProperty(value = "sasUri")
     private Object sasUri;
 
     /*
      * The Azure key vault secret reference of sasToken in sas uri.
      */
-    @JsonProperty(value = "sasToken")
     private AzureKeyVaultSecretReference sasToken;
 
     /*
-     * The encrypted credential used for authentication. Credentials are
-     * encrypted using the integration runtime credential manager. Type: string
-     * (or Expression with resultType string).
+     * The encrypted credential used for authentication. Credentials are encrypted using the integration runtime
+     * credential manager. Type: string.
      */
-    @JsonProperty(value = "encryptedCredential")
     private String encryptedCredential;
+
+    /**
+     * Creates an instance of AzureStorageLinkedServiceTypeProperties class.
+     */
+    public AzureStorageLinkedServiceTypeProperties() {
+    }
 
     /**
      * Get the connectionString property: The connection string. It is mutually exclusive with sasUri property. Type:
      * string, SecureString or AzureKeyVaultSecretReference.
-     *
+     * 
      * @return the connectionString value.
      */
     public Object connectionString() {
@@ -63,7 +65,7 @@ public final class AzureStorageLinkedServiceTypeProperties {
     /**
      * Set the connectionString property: The connection string. It is mutually exclusive with sasUri property. Type:
      * string, SecureString or AzureKeyVaultSecretReference.
-     *
+     * 
      * @param connectionString the connectionString value to set.
      * @return the AzureStorageLinkedServiceTypeProperties object itself.
      */
@@ -74,7 +76,7 @@ public final class AzureStorageLinkedServiceTypeProperties {
 
     /**
      * Get the accountKey property: The Azure key vault secret reference of accountKey in connection string.
-     *
+     * 
      * @return the accountKey value.
      */
     public AzureKeyVaultSecretReference accountKey() {
@@ -83,7 +85,7 @@ public final class AzureStorageLinkedServiceTypeProperties {
 
     /**
      * Set the accountKey property: The Azure key vault secret reference of accountKey in connection string.
-     *
+     * 
      * @param accountKey the accountKey value to set.
      * @return the AzureStorageLinkedServiceTypeProperties object itself.
      */
@@ -95,7 +97,7 @@ public final class AzureStorageLinkedServiceTypeProperties {
     /**
      * Get the sasUri property: SAS URI of the Azure Storage resource. It is mutually exclusive with connectionString
      * property. Type: string, SecureString or AzureKeyVaultSecretReference.
-     *
+     * 
      * @return the sasUri value.
      */
     public Object sasUri() {
@@ -105,7 +107,7 @@ public final class AzureStorageLinkedServiceTypeProperties {
     /**
      * Set the sasUri property: SAS URI of the Azure Storage resource. It is mutually exclusive with connectionString
      * property. Type: string, SecureString or AzureKeyVaultSecretReference.
-     *
+     * 
      * @param sasUri the sasUri value to set.
      * @return the AzureStorageLinkedServiceTypeProperties object itself.
      */
@@ -116,7 +118,7 @@ public final class AzureStorageLinkedServiceTypeProperties {
 
     /**
      * Get the sasToken property: The Azure key vault secret reference of sasToken in sas uri.
-     *
+     * 
      * @return the sasToken value.
      */
     public AzureKeyVaultSecretReference sasToken() {
@@ -125,7 +127,7 @@ public final class AzureStorageLinkedServiceTypeProperties {
 
     /**
      * Set the sasToken property: The Azure key vault secret reference of sasToken in sas uri.
-     *
+     * 
      * @param sasToken the sasToken value to set.
      * @return the AzureStorageLinkedServiceTypeProperties object itself.
      */
@@ -136,8 +138,8 @@ public final class AzureStorageLinkedServiceTypeProperties {
 
     /**
      * Get the encryptedCredential property: The encrypted credential used for authentication. Credentials are encrypted
-     * using the integration runtime credential manager. Type: string (or Expression with resultType string).
-     *
+     * using the integration runtime credential manager. Type: string.
+     * 
      * @return the encryptedCredential value.
      */
     public String encryptedCredential() {
@@ -146,8 +148,8 @@ public final class AzureStorageLinkedServiceTypeProperties {
 
     /**
      * Set the encryptedCredential property: The encrypted credential used for authentication. Credentials are encrypted
-     * using the integration runtime credential manager. Type: string (or Expression with resultType string).
-     *
+     * using the integration runtime credential manager. Type: string.
+     * 
      * @param encryptedCredential the encryptedCredential value to set.
      * @return the AzureStorageLinkedServiceTypeProperties object itself.
      */
@@ -158,7 +160,7 @@ public final class AzureStorageLinkedServiceTypeProperties {
 
     /**
      * Validates the instance.
-     *
+     * 
      * @throws IllegalArgumentException thrown if the instance is not valid.
      */
     public void validate() {
@@ -168,5 +170,56 @@ public final class AzureStorageLinkedServiceTypeProperties {
         if (sasToken() != null) {
             sasToken().validate();
         }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public JsonWriter toJson(JsonWriter jsonWriter) throws IOException {
+        jsonWriter.writeStartObject();
+        jsonWriter.writeUntypedField("connectionString", this.connectionString);
+        jsonWriter.writeJsonField("accountKey", this.accountKey);
+        jsonWriter.writeUntypedField("sasUri", this.sasUri);
+        jsonWriter.writeJsonField("sasToken", this.sasToken);
+        jsonWriter.writeStringField("encryptedCredential", this.encryptedCredential);
+        return jsonWriter.writeEndObject();
+    }
+
+    /**
+     * Reads an instance of AzureStorageLinkedServiceTypeProperties from the JsonReader.
+     * 
+     * @param jsonReader The JsonReader being read.
+     * @return An instance of AzureStorageLinkedServiceTypeProperties if the JsonReader was pointing to an instance of
+     * it, or null if it was pointing to JSON null.
+     * @throws IOException If an error occurs while reading the AzureStorageLinkedServiceTypeProperties.
+     */
+    public static AzureStorageLinkedServiceTypeProperties fromJson(JsonReader jsonReader) throws IOException {
+        return jsonReader.readObject(reader -> {
+            AzureStorageLinkedServiceTypeProperties deserializedAzureStorageLinkedServiceTypeProperties
+                = new AzureStorageLinkedServiceTypeProperties();
+            while (reader.nextToken() != JsonToken.END_OBJECT) {
+                String fieldName = reader.getFieldName();
+                reader.nextToken();
+
+                if ("connectionString".equals(fieldName)) {
+                    deserializedAzureStorageLinkedServiceTypeProperties.connectionString = reader.readUntyped();
+                } else if ("accountKey".equals(fieldName)) {
+                    deserializedAzureStorageLinkedServiceTypeProperties.accountKey
+                        = AzureKeyVaultSecretReference.fromJson(reader);
+                } else if ("sasUri".equals(fieldName)) {
+                    deserializedAzureStorageLinkedServiceTypeProperties.sasUri = reader.readUntyped();
+                } else if ("sasToken".equals(fieldName)) {
+                    deserializedAzureStorageLinkedServiceTypeProperties.sasToken
+                        = AzureKeyVaultSecretReference.fromJson(reader);
+                } else if ("encryptedCredential".equals(fieldName)) {
+                    deserializedAzureStorageLinkedServiceTypeProperties.encryptedCredential = reader.getString();
+                } else {
+                    reader.skipChildren();
+                }
+            }
+
+            return deserializedAzureStorageLinkedServiceTypeProperties;
+        });
     }
 }

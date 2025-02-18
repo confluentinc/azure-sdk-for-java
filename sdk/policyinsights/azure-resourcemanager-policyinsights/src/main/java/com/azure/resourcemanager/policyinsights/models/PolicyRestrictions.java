@@ -7,11 +7,26 @@ package com.azure.resourcemanager.policyinsights.models;
 import com.azure.core.http.rest.Response;
 import com.azure.core.util.Context;
 
-/** Resource collection API of PolicyRestrictions. */
+/**
+ * Resource collection API of PolicyRestrictions.
+ */
 public interface PolicyRestrictions {
     /**
      * Checks what restrictions Azure Policy will place on a resource within a subscription.
-     *
+     * 
+     * @param parameters The check policy restrictions parameters.
+     * @param context The context to associate with this operation.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return the result of a check policy restrictions evaluation on a resource along with {@link Response}.
+     */
+    Response<CheckRestrictionsResult> checkAtSubscriptionScopeWithResponse(CheckRestrictionsRequest parameters,
+        Context context);
+
+    /**
+     * Checks what restrictions Azure Policy will place on a resource within a subscription.
+     * 
      * @param parameters The check policy restrictions parameters.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
@@ -21,22 +36,24 @@ public interface PolicyRestrictions {
     CheckRestrictionsResult checkAtSubscriptionScope(CheckRestrictionsRequest parameters);
 
     /**
-     * Checks what restrictions Azure Policy will place on a resource within a subscription.
-     *
+     * Checks what restrictions Azure Policy will place on a resource within a resource group. Use this when the
+     * resource group the resource will be created in is already known.
+     * 
+     * @param resourceGroupName The name of the resource group. The name is case insensitive.
      * @param parameters The check policy restrictions parameters.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the result of a check policy restrictions evaluation on a resource.
+     * @return the result of a check policy restrictions evaluation on a resource along with {@link Response}.
      */
-    Response<CheckRestrictionsResult> checkAtSubscriptionScopeWithResponse(
+    Response<CheckRestrictionsResult> checkAtResourceGroupScopeWithResponse(String resourceGroupName,
         CheckRestrictionsRequest parameters, Context context);
 
     /**
      * Checks what restrictions Azure Policy will place on a resource within a resource group. Use this when the
      * resource group the resource will be created in is already known.
-     *
+     * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
      * @param parameters The check policy restrictions parameters.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
@@ -47,17 +64,29 @@ public interface PolicyRestrictions {
     CheckRestrictionsResult checkAtResourceGroupScope(String resourceGroupName, CheckRestrictionsRequest parameters);
 
     /**
-     * Checks what restrictions Azure Policy will place on a resource within a resource group. Use this when the
-     * resource group the resource will be created in is already known.
-     *
-     * @param resourceGroupName The name of the resource group. The name is case insensitive.
+     * Checks what restrictions Azure Policy will place on resources within a management group.
+     * 
+     * @param managementGroupId Management group ID.
      * @param parameters The check policy restrictions parameters.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return the result of a check policy restrictions evaluation on a resource along with {@link Response}.
+     */
+    Response<CheckRestrictionsResult> checkAtManagementGroupScopeWithResponse(String managementGroupId,
+        CheckManagementGroupRestrictionsRequest parameters, Context context);
+
+    /**
+     * Checks what restrictions Azure Policy will place on resources within a management group.
+     * 
+     * @param managementGroupId Management group ID.
+     * @param parameters The check policy restrictions parameters.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
      * @return the result of a check policy restrictions evaluation on a resource.
      */
-    Response<CheckRestrictionsResult> checkAtResourceGroupScopeWithResponse(
-        String resourceGroupName, CheckRestrictionsRequest parameters, Context context);
+    CheckRestrictionsResult checkAtManagementGroupScope(String managementGroupId,
+        CheckManagementGroupRestrictionsRequest parameters);
 }

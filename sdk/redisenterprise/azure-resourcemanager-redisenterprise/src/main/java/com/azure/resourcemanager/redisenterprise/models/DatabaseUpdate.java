@@ -5,224 +5,329 @@
 package com.azure.resourcemanager.redisenterprise.models;
 
 import com.azure.core.annotation.Fluent;
-import com.azure.core.annotation.JsonFlatten;
-import com.azure.core.util.logging.ClientLogger;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.azure.json.JsonReader;
+import com.azure.json.JsonSerializable;
+import com.azure.json.JsonToken;
+import com.azure.json.JsonWriter;
+import com.azure.resourcemanager.redisenterprise.fluent.models.DatabaseProperties;
+import java.io.IOException;
 import java.util.List;
 
-/** A partial update to the RedisEnterprise database. */
-@JsonFlatten
+/**
+ * A partial update to the Redis Enterprise database.
+ */
 @Fluent
-public class DatabaseUpdate {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(DatabaseUpdate.class);
-
+public final class DatabaseUpdate implements JsonSerializable<DatabaseUpdate> {
     /*
-     * Specifies whether redis clients can connect using TLS-encrypted or
-     * plaintext redis protocols. Default is TLS-encrypted.
+     * Properties of the database.
      */
-    @JsonProperty(value = "properties.clientProtocol")
-    private Protocol clientProtocol;
+    private DatabaseProperties innerProperties;
 
-    /*
-     * TCP port of the database endpoint. Specified at create time. Defaults to
-     * an available port.
+    /**
+     * Creates an instance of DatabaseUpdate class.
      */
-    @JsonProperty(value = "properties.port")
-    private Integer port;
+    public DatabaseUpdate() {
+    }
 
-    /*
-     * Current provisioning status of the database
+    /**
+     * Get the innerProperties property: Properties of the database.
+     * 
+     * @return the innerProperties value.
      */
-    @JsonProperty(value = "properties.provisioningState", access = JsonProperty.Access.WRITE_ONLY)
-    private ProvisioningState provisioningState;
-
-    /*
-     * Current resource status of the database
-     */
-    @JsonProperty(value = "properties.resourceState", access = JsonProperty.Access.WRITE_ONLY)
-    private ResourceState resourceState;
-
-    /*
-     * Clustering policy - default is OSSCluster. Specified at create time.
-     */
-    @JsonProperty(value = "properties.clusteringPolicy")
-    private ClusteringPolicy clusteringPolicy;
-
-    /*
-     * Redis eviction policy - default is VolatileLRU
-     */
-    @JsonProperty(value = "properties.evictionPolicy")
-    private EvictionPolicy evictionPolicy;
-
-    /*
-     * Persistence settings
-     */
-    @JsonProperty(value = "properties.persistence")
-    private Persistence persistence;
-
-    /*
-     * Optional set of redis modules to enable in this database - modules can
-     * only be added at creation time.
-     */
-    @JsonProperty(value = "properties.modules")
-    private List<Module> modules;
+    private DatabaseProperties innerProperties() {
+        return this.innerProperties;
+    }
 
     /**
      * Get the clientProtocol property: Specifies whether redis clients can connect using TLS-encrypted or plaintext
      * redis protocols. Default is TLS-encrypted.
-     *
+     * 
      * @return the clientProtocol value.
      */
     public Protocol clientProtocol() {
-        return this.clientProtocol;
+        return this.innerProperties() == null ? null : this.innerProperties().clientProtocol();
     }
 
     /**
      * Set the clientProtocol property: Specifies whether redis clients can connect using TLS-encrypted or plaintext
      * redis protocols. Default is TLS-encrypted.
-     *
+     * 
      * @param clientProtocol the clientProtocol value to set.
      * @return the DatabaseUpdate object itself.
      */
     public DatabaseUpdate withClientProtocol(Protocol clientProtocol) {
-        this.clientProtocol = clientProtocol;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new DatabaseProperties();
+        }
+        this.innerProperties().withClientProtocol(clientProtocol);
         return this;
     }
 
     /**
      * Get the port property: TCP port of the database endpoint. Specified at create time. Defaults to an available
      * port.
-     *
+     * 
      * @return the port value.
      */
     public Integer port() {
-        return this.port;
+        return this.innerProperties() == null ? null : this.innerProperties().port();
     }
 
     /**
      * Set the port property: TCP port of the database endpoint. Specified at create time. Defaults to an available
      * port.
-     *
+     * 
      * @param port the port value to set.
      * @return the DatabaseUpdate object itself.
      */
     public DatabaseUpdate withPort(Integer port) {
-        this.port = port;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new DatabaseProperties();
+        }
+        this.innerProperties().withPort(port);
         return this;
     }
 
     /**
      * Get the provisioningState property: Current provisioning status of the database.
-     *
+     * 
      * @return the provisioningState value.
      */
     public ProvisioningState provisioningState() {
-        return this.provisioningState;
+        return this.innerProperties() == null ? null : this.innerProperties().provisioningState();
     }
 
     /**
      * Get the resourceState property: Current resource status of the database.
-     *
+     * 
      * @return the resourceState value.
      */
     public ResourceState resourceState() {
-        return this.resourceState;
+        return this.innerProperties() == null ? null : this.innerProperties().resourceState();
     }
 
     /**
-     * Get the clusteringPolicy property: Clustering policy - default is OSSCluster. Specified at create time.
-     *
+     * Get the clusteringPolicy property: Clustering policy - default is OSSCluster. This property must be chosen at
+     * create time, and cannot be changed without deleting the database.
+     * 
      * @return the clusteringPolicy value.
      */
     public ClusteringPolicy clusteringPolicy() {
-        return this.clusteringPolicy;
+        return this.innerProperties() == null ? null : this.innerProperties().clusteringPolicy();
     }
 
     /**
-     * Set the clusteringPolicy property: Clustering policy - default is OSSCluster. Specified at create time.
-     *
+     * Set the clusteringPolicy property: Clustering policy - default is OSSCluster. This property must be chosen at
+     * create time, and cannot be changed without deleting the database.
+     * 
      * @param clusteringPolicy the clusteringPolicy value to set.
      * @return the DatabaseUpdate object itself.
      */
     public DatabaseUpdate withClusteringPolicy(ClusteringPolicy clusteringPolicy) {
-        this.clusteringPolicy = clusteringPolicy;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new DatabaseProperties();
+        }
+        this.innerProperties().withClusteringPolicy(clusteringPolicy);
         return this;
     }
 
     /**
      * Get the evictionPolicy property: Redis eviction policy - default is VolatileLRU.
-     *
+     * 
      * @return the evictionPolicy value.
      */
     public EvictionPolicy evictionPolicy() {
-        return this.evictionPolicy;
+        return this.innerProperties() == null ? null : this.innerProperties().evictionPolicy();
     }
 
     /**
      * Set the evictionPolicy property: Redis eviction policy - default is VolatileLRU.
-     *
+     * 
      * @param evictionPolicy the evictionPolicy value to set.
      * @return the DatabaseUpdate object itself.
      */
     public DatabaseUpdate withEvictionPolicy(EvictionPolicy evictionPolicy) {
-        this.evictionPolicy = evictionPolicy;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new DatabaseProperties();
+        }
+        this.innerProperties().withEvictionPolicy(evictionPolicy);
         return this;
     }
 
     /**
      * Get the persistence property: Persistence settings.
-     *
+     * 
      * @return the persistence value.
      */
     public Persistence persistence() {
-        return this.persistence;
+        return this.innerProperties() == null ? null : this.innerProperties().persistence();
     }
 
     /**
      * Set the persistence property: Persistence settings.
-     *
+     * 
      * @param persistence the persistence value to set.
      * @return the DatabaseUpdate object itself.
      */
     public DatabaseUpdate withPersistence(Persistence persistence) {
-        this.persistence = persistence;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new DatabaseProperties();
+        }
+        this.innerProperties().withPersistence(persistence);
         return this;
     }
 
     /**
      * Get the modules property: Optional set of redis modules to enable in this database - modules can only be added at
      * creation time.
-     *
+     * 
      * @return the modules value.
      */
     public List<Module> modules() {
-        return this.modules;
+        return this.innerProperties() == null ? null : this.innerProperties().modules();
     }
 
     /**
      * Set the modules property: Optional set of redis modules to enable in this database - modules can only be added at
      * creation time.
-     *
+     * 
      * @param modules the modules value to set.
      * @return the DatabaseUpdate object itself.
      */
     public DatabaseUpdate withModules(List<Module> modules) {
-        this.modules = modules;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new DatabaseProperties();
+        }
+        this.innerProperties().withModules(modules);
+        return this;
+    }
+
+    /**
+     * Get the geoReplication property: Optional set of properties to configure geo replication for this database.
+     * 
+     * @return the geoReplication value.
+     */
+    public DatabasePropertiesGeoReplication geoReplication() {
+        return this.innerProperties() == null ? null : this.innerProperties().geoReplication();
+    }
+
+    /**
+     * Set the geoReplication property: Optional set of properties to configure geo replication for this database.
+     * 
+     * @param geoReplication the geoReplication value to set.
+     * @return the DatabaseUpdate object itself.
+     */
+    public DatabaseUpdate withGeoReplication(DatabasePropertiesGeoReplication geoReplication) {
+        if (this.innerProperties() == null) {
+            this.innerProperties = new DatabaseProperties();
+        }
+        this.innerProperties().withGeoReplication(geoReplication);
+        return this;
+    }
+
+    /**
+     * Get the redisVersion property: Version of Redis the database is running on, e.g. '6.0'.
+     * 
+     * @return the redisVersion value.
+     */
+    public String redisVersion() {
+        return this.innerProperties() == null ? null : this.innerProperties().redisVersion();
+    }
+
+    /**
+     * Get the deferUpgrade property: Option to defer upgrade when newest version is released - default is NotDeferred.
+     * Learn more: https://aka.ms/redisversionupgrade.
+     * 
+     * @return the deferUpgrade value.
+     */
+    public DeferUpgradeSetting deferUpgrade() {
+        return this.innerProperties() == null ? null : this.innerProperties().deferUpgrade();
+    }
+
+    /**
+     * Set the deferUpgrade property: Option to defer upgrade when newest version is released - default is NotDeferred.
+     * Learn more: https://aka.ms/redisversionupgrade.
+     * 
+     * @param deferUpgrade the deferUpgrade value to set.
+     * @return the DatabaseUpdate object itself.
+     */
+    public DatabaseUpdate withDeferUpgrade(DeferUpgradeSetting deferUpgrade) {
+        if (this.innerProperties() == null) {
+            this.innerProperties = new DatabaseProperties();
+        }
+        this.innerProperties().withDeferUpgrade(deferUpgrade);
+        return this;
+    }
+
+    /**
+     * Get the accessKeysAuthentication property: This property can be Enabled/Disabled to allow or deny access with the
+     * current access keys. Can be updated even after database is created.
+     * 
+     * @return the accessKeysAuthentication value.
+     */
+    public AccessKeysAuthentication accessKeysAuthentication() {
+        return this.innerProperties() == null ? null : this.innerProperties().accessKeysAuthentication();
+    }
+
+    /**
+     * Set the accessKeysAuthentication property: This property can be Enabled/Disabled to allow or deny access with the
+     * current access keys. Can be updated even after database is created.
+     * 
+     * @param accessKeysAuthentication the accessKeysAuthentication value to set.
+     * @return the DatabaseUpdate object itself.
+     */
+    public DatabaseUpdate withAccessKeysAuthentication(AccessKeysAuthentication accessKeysAuthentication) {
+        if (this.innerProperties() == null) {
+            this.innerProperties = new DatabaseProperties();
+        }
+        this.innerProperties().withAccessKeysAuthentication(accessKeysAuthentication);
         return this;
     }
 
     /**
      * Validates the instance.
-     *
+     * 
      * @throws IllegalArgumentException thrown if the instance is not valid.
      */
     public void validate() {
-        if (persistence() != null) {
-            persistence().validate();
+        if (innerProperties() != null) {
+            innerProperties().validate();
         }
-        if (modules() != null) {
-            modules().forEach(e -> e.validate());
-        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public JsonWriter toJson(JsonWriter jsonWriter) throws IOException {
+        jsonWriter.writeStartObject();
+        jsonWriter.writeJsonField("properties", this.innerProperties);
+        return jsonWriter.writeEndObject();
+    }
+
+    /**
+     * Reads an instance of DatabaseUpdate from the JsonReader.
+     * 
+     * @param jsonReader The JsonReader being read.
+     * @return An instance of DatabaseUpdate if the JsonReader was pointing to an instance of it, or null if it was
+     * pointing to JSON null.
+     * @throws IOException If an error occurs while reading the DatabaseUpdate.
+     */
+    public static DatabaseUpdate fromJson(JsonReader jsonReader) throws IOException {
+        return jsonReader.readObject(reader -> {
+            DatabaseUpdate deserializedDatabaseUpdate = new DatabaseUpdate();
+            while (reader.nextToken() != JsonToken.END_OBJECT) {
+                String fieldName = reader.getFieldName();
+                reader.nextToken();
+
+                if ("properties".equals(fieldName)) {
+                    deserializedDatabaseUpdate.innerProperties = DatabaseProperties.fromJson(reader);
+                } else {
+                    reader.skipChildren();
+                }
+            }
+
+            return deserializedDatabaseUpdate;
+        });
     }
 }

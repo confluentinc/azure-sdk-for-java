@@ -6,47 +6,51 @@ package com.azure.resourcemanager.datafactory.models;
 
 import com.azure.core.annotation.Fluent;
 import com.azure.core.util.logging.ClientLogger;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.azure.json.JsonReader;
+import com.azure.json.JsonSerializable;
+import com.azure.json.JsonToken;
+import com.azure.json.JsonWriter;
+import java.io.IOException;
 
-/** A data flow transformation. */
+/**
+ * A data flow transformation.
+ */
 @Fluent
-public class Transformation {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(Transformation.class);
-
+public class Transformation implements JsonSerializable<Transformation> {
     /*
      * Transformation name.
      */
-    @JsonProperty(value = "name", required = true)
     private String name;
 
     /*
      * Transformation description.
      */
-    @JsonProperty(value = "description")
     private String description;
 
     /*
      * Dataset reference.
      */
-    @JsonProperty(value = "dataset")
     private DatasetReference dataset;
 
     /*
      * Linked service reference.
      */
-    @JsonProperty(value = "linkedService")
     private LinkedServiceReference linkedService;
 
     /*
      * Flowlet Reference
      */
-    @JsonProperty(value = "flowlet")
     private DataFlowReference flowlet;
 
     /**
+     * Creates an instance of Transformation class.
+     */
+    public Transformation() {
+    }
+
+    /**
      * Get the name property: Transformation name.
-     *
+     * 
      * @return the name value.
      */
     public String name() {
@@ -55,7 +59,7 @@ public class Transformation {
 
     /**
      * Set the name property: Transformation name.
-     *
+     * 
      * @param name the name value to set.
      * @return the Transformation object itself.
      */
@@ -66,7 +70,7 @@ public class Transformation {
 
     /**
      * Get the description property: Transformation description.
-     *
+     * 
      * @return the description value.
      */
     public String description() {
@@ -75,7 +79,7 @@ public class Transformation {
 
     /**
      * Set the description property: Transformation description.
-     *
+     * 
      * @param description the description value to set.
      * @return the Transformation object itself.
      */
@@ -86,7 +90,7 @@ public class Transformation {
 
     /**
      * Get the dataset property: Dataset reference.
-     *
+     * 
      * @return the dataset value.
      */
     public DatasetReference dataset() {
@@ -95,7 +99,7 @@ public class Transformation {
 
     /**
      * Set the dataset property: Dataset reference.
-     *
+     * 
      * @param dataset the dataset value to set.
      * @return the Transformation object itself.
      */
@@ -106,7 +110,7 @@ public class Transformation {
 
     /**
      * Get the linkedService property: Linked service reference.
-     *
+     * 
      * @return the linkedService value.
      */
     public LinkedServiceReference linkedService() {
@@ -115,7 +119,7 @@ public class Transformation {
 
     /**
      * Set the linkedService property: Linked service reference.
-     *
+     * 
      * @param linkedService the linkedService value to set.
      * @return the Transformation object itself.
      */
@@ -126,7 +130,7 @@ public class Transformation {
 
     /**
      * Get the flowlet property: Flowlet Reference.
-     *
+     * 
      * @return the flowlet value.
      */
     public DataFlowReference flowlet() {
@@ -135,7 +139,7 @@ public class Transformation {
 
     /**
      * Set the flowlet property: Flowlet Reference.
-     *
+     * 
      * @param flowlet the flowlet value to set.
      * @return the Transformation object itself.
      */
@@ -146,14 +150,13 @@ public class Transformation {
 
     /**
      * Validates the instance.
-     *
+     * 
      * @throws IllegalArgumentException thrown if the instance is not valid.
      */
     public void validate() {
         if (name() == null) {
-            throw logger
-                .logExceptionAsError(
-                    new IllegalArgumentException("Missing required property name in model Transformation"));
+            throw LOGGER.atError()
+                .log(new IllegalArgumentException("Missing required property name in model Transformation"));
         }
         if (dataset() != null) {
             dataset().validate();
@@ -164,5 +167,56 @@ public class Transformation {
         if (flowlet() != null) {
             flowlet().validate();
         }
+    }
+
+    private static final ClientLogger LOGGER = new ClientLogger(Transformation.class);
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public JsonWriter toJson(JsonWriter jsonWriter) throws IOException {
+        jsonWriter.writeStartObject();
+        jsonWriter.writeStringField("name", this.name);
+        jsonWriter.writeStringField("description", this.description);
+        jsonWriter.writeJsonField("dataset", this.dataset);
+        jsonWriter.writeJsonField("linkedService", this.linkedService);
+        jsonWriter.writeJsonField("flowlet", this.flowlet);
+        return jsonWriter.writeEndObject();
+    }
+
+    /**
+     * Reads an instance of Transformation from the JsonReader.
+     * 
+     * @param jsonReader The JsonReader being read.
+     * @return An instance of Transformation if the JsonReader was pointing to an instance of it, or null if it was
+     * pointing to JSON null.
+     * @throws IllegalStateException If the deserialized JSON object was missing any required properties.
+     * @throws IOException If an error occurs while reading the Transformation.
+     */
+    public static Transformation fromJson(JsonReader jsonReader) throws IOException {
+        return jsonReader.readObject(reader -> {
+            Transformation deserializedTransformation = new Transformation();
+            while (reader.nextToken() != JsonToken.END_OBJECT) {
+                String fieldName = reader.getFieldName();
+                reader.nextToken();
+
+                if ("name".equals(fieldName)) {
+                    deserializedTransformation.name = reader.getString();
+                } else if ("description".equals(fieldName)) {
+                    deserializedTransformation.description = reader.getString();
+                } else if ("dataset".equals(fieldName)) {
+                    deserializedTransformation.dataset = DatasetReference.fromJson(reader);
+                } else if ("linkedService".equals(fieldName)) {
+                    deserializedTransformation.linkedService = LinkedServiceReference.fromJson(reader);
+                } else if ("flowlet".equals(fieldName)) {
+                    deserializedTransformation.flowlet = DataFlowReference.fromJson(reader);
+                } else {
+                    reader.skipChildren();
+                }
+            }
+
+            return deserializedTransformation;
+        });
     }
 }

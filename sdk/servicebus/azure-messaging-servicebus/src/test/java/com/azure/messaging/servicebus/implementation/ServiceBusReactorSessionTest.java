@@ -12,6 +12,7 @@ import com.azure.core.amqp.FixedAmqpRetryPolicy;
 import com.azure.core.amqp.exception.AmqpResponseCode;
 import com.azure.core.amqp.implementation.AmqpConstants;
 import com.azure.core.amqp.implementation.MessageSerializer;
+import com.azure.core.amqp.implementation.ProtonSessionWrapper;
 import com.azure.core.amqp.implementation.ReactorDispatcher;
 import com.azure.core.amqp.implementation.ReactorHandlerProvider;
 import com.azure.core.amqp.implementation.ReactorProvider;
@@ -32,9 +33,7 @@ import org.apache.qpid.proton.engine.Sender;
 import org.apache.qpid.proton.engine.Session;
 import org.apache.qpid.proton.reactor.Reactor;
 import org.apache.qpid.proton.reactor.Selectable;
-import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInfo;
@@ -44,9 +43,8 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import reactor.core.publisher.Flux;
-import reactor.core.publisher.FluxSink;
 import reactor.core.publisher.Mono;
-import reactor.core.publisher.ReplayProcessor;
+import reactor.core.publisher.Sinks;
 import reactor.test.StepVerifier;
 
 import java.io.IOException;
@@ -67,21 +65,20 @@ import static org.mockito.Mockito.when;
  * Test for {@link ServiceBusReactorSession}.
  */
 public class ServiceBusReactorSessionTest {
-    private final ClientLogger logger = new ClientLogger(ServiceBusReactorSessionTest.class);
-    private final AmqpRetryOptions retryOptions = new AmqpRetryOptions()
-        .setTryTimeout(Duration.ofSeconds(5))
-        .setMode(AmqpRetryMode.FIXED)
-        .setMaxRetries(1);
+    private static final ClientLogger LOGGER = new ClientLogger(ServiceBusReactorSessionTest.class);
+    private final AmqpRetryOptions retryOptions
+        = new AmqpRetryOptions().setTryTimeout(Duration.ofSeconds(5)).setMode(AmqpRetryMode.FIXED).setMaxRetries(1);
     private final AmqpRetryPolicy retryPolicy = new FixedAmqpRetryPolicy(retryOptions);
 
     private static final String CONNECTION_ID = "test-connection-id";
     private static final String HOSTNAME = "test-event-hub.servicebus.windows.net/";
-    private static final Symbol LINK_TRANSFER_DESTINATION_PROPERTY = Symbol.getSymbol(AmqpConstants.VENDOR
-        + ":transfer-destination-address");
+    private static final Symbol LINK_TRANSFER_DESTINATION_PROPERTY
+        = Symbol.getSymbol(AmqpConstants.VENDOR + ":transfer-destination-address");
     private static final String SESSION_NAME = "sessionName";
     private static final String ENTITY_PATH = "entityPath";
     private static final String VIA_ENTITY_PATH = "viaEntityPath";
     private static final String VIA_ENTITY_PATH_SENDER_LINK_NAME = "VIA-" + VIA_ENTITY_PATH;
+    private static final String CLIENT_IDENTIFIER = "clientIdentifier";
 
     @Mock
     private Reactor reactor;
@@ -111,9 +108,6 @@ public class ServiceBusReactorSessionTest {
     private Sender senderViaEntity;
     @Mock
     private Record record;
-    @Mock
-    private SendLinkHandler sendViaEntityLinkHandler;
-    @Mock
     private SendLinkHandler sendEntityLinkHandler;
     @Captor
     private ArgumentCaptor<Runnable> dispatcherCaptor;
@@ -123,20 +117,11 @@ public class ServiceBusReactorSessionTest {
     private AmqpConnection connection;
 
     private ServiceBusReactorSession serviceBusReactorSession;
-
-    @BeforeAll
-    static void beforeAll() {
-        StepVerifier.setDefaultTimeout(Duration.ofSeconds(60));
-    }
-
-    @AfterAll
-    static void afterAll() {
-        StepVerifier.resetDefaultTimeout();
-    }
+    private final ServiceBusAmqpLinkProvider linkProvider = new ServiceBusAmqpLinkProvider();
 
     @BeforeEach
     void setup(TestInfo testInfo) {
-        logger.info("[{}] Setting up.", testInfo.getDisplayName());
+        LOGGER.info("[{}] Setting up.", testInfo.getDisplayName());
 
         MockitoAnnotations.initMocks(this);
         when(tokenManagerEntity.getAuthorizationResults()).thenReturn(Flux.just(AmqpResponseCode.ACCEPTED));
@@ -149,29 +134,54 @@ public class ServiceBusReactorSessionTest {
         doNothing().when(reactor).update(selectable);
         when(reactor.selectable()).thenReturn(selectable);
 
-        final ReplayProcessor<EndpointState> endpointStateReplayProcessor = ReplayProcessor.cacheLast();
-        when(handler.getEndpointStates()).thenReturn(endpointStateReplayProcessor);
-        FluxSink<EndpointState> sink1 = endpointStateReplayProcessor.sink();
-        sink1.next(EndpointState.ACTIVE);
+        final Sinks.Many<EndpointState> endpointStates
+            = Sinks.many().replay().latestOrDefault(EndpointState.UNINITIALIZED);
+        when(handler.getEndpointStates()).thenReturn(endpointStates.asFlux());
+        endpointStates.emitNext(EndpointState.ACTIVE, Sinks.EmitFailureHandler.FAIL_FAST);
+        when(handler.getSessionName()).thenReturn(SESSION_NAME);
         when(handler.getHostname()).thenReturn(HOSTNAME);
         when(handler.getConnectionId()).thenReturn(CONNECTION_ID);
-
-        when(handlerProvider.createSendLinkHandler(CONNECTION_ID, HOSTNAME, VIA_ENTITY_PATH_SENDER_LINK_NAME, VIA_ENTITY_PATH))
-            .thenReturn(sendViaEntityLinkHandler);
-        when(handlerProvider.createSendLinkHandler(CONNECTION_ID, HOSTNAME, ENTITY_PATH, ENTITY_PATH))
-            .thenReturn(sendEntityLinkHandler);
 
         Delivery delivery = mock(Delivery.class);
         when(delivery.getRemoteState()).thenReturn(Accepted.getInstance());
         when(delivery.getTag()).thenReturn("tag".getBytes());
-        when(sendViaEntityLinkHandler.getDeliveredMessages()).thenReturn(Flux.just(delivery));
-        when(sendEntityLinkHandler.getDeliveredMessages()).thenReturn(Flux.just(delivery));
 
-        when(sendViaEntityLinkHandler.getLinkCredits()).thenReturn(Flux.just(100));
-        when(sendEntityLinkHandler.getLinkCredits()).thenReturn(Flux.just(100));
+        SendLinkHandler sendViaEntityLinkHandler = new SendLinkHandler("", "", "", "", null) {
+            @Override
+            public Flux<Delivery> getDeliveredMessages() {
+                return Flux.just(delivery);
+            }
 
-        when(sendViaEntityLinkHandler.getEndpointStates()).thenReturn(endpointStateReplayProcessor);
-        when(sendEntityLinkHandler.getEndpointStates()).thenReturn(endpointStateReplayProcessor);
+            @Override
+            public Flux<Integer> getLinkCredits() {
+                return Flux.just(100);
+            }
+
+            @Override
+            public Flux<EndpointState> getEndpointStates() {
+                return endpointStates.asFlux();
+            }
+        };
+        sendEntityLinkHandler = new SendLinkHandler("", "", "", "", null) {
+            @Override
+            public Flux<Delivery> getDeliveredMessages() {
+                return Flux.just(delivery);
+            }
+
+            @Override
+            public Flux<Integer> getLinkCredits() {
+                return Flux.just(100);
+            }
+
+            @Override
+            public Flux<EndpointState> getEndpointStates() {
+                return endpointStates.asFlux();
+            }
+        };
+        when(handlerProvider.createSendLinkHandler(CONNECTION_ID, HOSTNAME, VIA_ENTITY_PATH_SENDER_LINK_NAME,
+            VIA_ENTITY_PATH)).thenReturn(sendViaEntityLinkHandler);
+        when(handlerProvider.createSendLinkHandler(CONNECTION_ID, HOSTNAME, ENTITY_PATH, ENTITY_PATH))
+            .thenReturn(sendEntityLinkHandler);
 
         when(tokenManagerProvider.getTokenManager(cbsNodeSupplier, VIA_ENTITY_PATH)).thenReturn(tokenManagerViaQueue);
         when(tokenManagerProvider.getTokenManager(cbsNodeSupplier, ENTITY_PATH)).thenReturn(tokenManagerEntity);
@@ -197,15 +207,18 @@ public class ServiceBusReactorSessionTest {
         when(reactorProvider.getReactorDispatcher()).thenReturn(dispatcher);
 
         when(connection.getShutdownSignals()).thenReturn(Flux.empty());
-        serviceBusReactorSession = new ServiceBusReactorSession(connection, session, handler, SESSION_NAME, reactorProvider,
-            handlerProvider, cbsNodeSupplier, tokenManagerProvider, messageSerializer, retryOptions,
-            new ServiceBusCreateSessionOptions(false));
+        // TODO (anu): use 'ProtonSession' instead of 'ProtonSessionWrapper' and update the test.
+        final ProtonSessionWrapper sessionWrapper = new ProtonSessionWrapper(session, handler, reactorProvider);
+
+        serviceBusReactorSession
+            = new ServiceBusReactorSession(connection, sessionWrapper, handlerProvider, linkProvider, cbsNodeSupplier,
+                tokenManagerProvider, messageSerializer, retryOptions, new ServiceBusCreateSessionOptions(false), true);
         when(connection.getShutdownSignals()).thenReturn(Flux.never());
     }
 
     @AfterEach
     void teardown(TestInfo testInfo) {
-        logger.info("[{}] Tearing down.", testInfo.getDisplayName());
+        LOGGER.info("[{}] Tearing down.", testInfo.getDisplayName());
 
         Mockito.framework().clearInlineMock(this);
     }
@@ -219,8 +232,9 @@ public class ServiceBusReactorSessionTest {
         doNothing().when(dispatcher).invoke(any(Runnable.class));
 
         // Act
-        serviceBusReactorSession.createProducer(VIA_ENTITY_PATH_SENDER_LINK_NAME, VIA_ENTITY_PATH,
-            retryOptions.getTryTimeout(), retryPolicy, ENTITY_PATH)
+        serviceBusReactorSession
+            .createProducer(VIA_ENTITY_PATH_SENDER_LINK_NAME, VIA_ENTITY_PATH, retryOptions.getTryTimeout(),
+                retryPolicy, ENTITY_PATH, CLIENT_IDENTIFIER)
             .subscribe();
 
         // Assert
@@ -233,9 +247,9 @@ public class ServiceBusReactorSessionTest {
         // Apply the invocation.
         invocations.get(0).run();
 
-        verify(senderViaEntity).setProperties(argThat(linkProperties ->
-            ((String) linkProperties.get(LINK_TRANSFER_DESTINATION_PROPERTY)).equalsIgnoreCase(ENTITY_PATH)
-        ));
+        verify(senderViaEntity)
+            .setProperties(argThat(linkProperties -> ((String) linkProperties.get(LINK_TRANSFER_DESTINATION_PROPERTY))
+                .equalsIgnoreCase(ENTITY_PATH)));
     }
 
     /**
@@ -249,9 +263,11 @@ public class ServiceBusReactorSessionTest {
         when(tokenManagerEntity.authorize()).thenReturn(Mono.error(authorizeError));
 
         // Act
-        StepVerifier.create(serviceBusReactorSession.createProducer(VIA_ENTITY_PATH_SENDER_LINK_NAME, VIA_ENTITY_PATH,
-            retryOptions.getTryTimeout(), retryPolicy, ENTITY_PATH))
-            .verifyError(RuntimeException.class);
+        StepVerifier
+            .create(serviceBusReactorSession.createProducer(VIA_ENTITY_PATH_SENDER_LINK_NAME, VIA_ENTITY_PATH,
+                retryOptions.getTryTimeout(), retryPolicy, ENTITY_PATH, CLIENT_IDENTIFIER))
+            .expectError(RuntimeException.class)
+            .verify(Duration.ofSeconds(60));
 
         // Assert
         verify(tokenManagerEntity).authorize();
@@ -268,8 +284,7 @@ public class ServiceBusReactorSessionTest {
         doNothing().when(dispatcher).invoke(any(Runnable.class));
 
         // Act
-        serviceBusReactorSession.createProducer(ENTITY_PATH, ENTITY_PATH, retryOptions.getTryTimeout(),
-            retryPolicy)
+        serviceBusReactorSession.createProducer(ENTITY_PATH, ENTITY_PATH, retryOptions.getTryTimeout(), retryPolicy)
             .subscribe();
 
         // Assert
@@ -299,17 +314,18 @@ public class ServiceBusReactorSessionTest {
         doNothing().when(coordinatorSenderEntity).setTarget(any(Target.class));
         when(coordinatorSenderEntity.attachments()).thenReturn(record);
         when(session.sender(transactionLinkName)).thenReturn(coordinatorSenderEntity);
+        // TODO (anu): use 'ProtonSession' instead of 'ProtonSessionWrapper' and update the test.
+        final ProtonSessionWrapper sessionWrapper = new ProtonSessionWrapper(session, handler, reactorProvider);
 
-        final ServiceBusReactorSession serviceBusReactorSession = new ServiceBusReactorSession(connection, session, handler,
-            SESSION_NAME, reactorProvider, handlerProvider, cbsNodeSupplier, tokenManagerProvider, messageSerializer,
-            retryOptions, new ServiceBusCreateSessionOptions(true));
+        final ServiceBusReactorSession serviceBusReactorSession
+            = new ServiceBusReactorSession(connection, sessionWrapper, handlerProvider, linkProvider, cbsNodeSupplier,
+                tokenManagerProvider, messageSerializer, retryOptions, new ServiceBusCreateSessionOptions(true), true);
 
         when(handlerProvider.createSendLinkHandler(CONNECTION_ID, HOSTNAME, transactionLinkName, transactionLinkName))
             .thenReturn(sendEntityLinkHandler);
 
         // Act
-        serviceBusReactorSession.getOrCreateTransactionCoordinator()
-            .subscribe();
+        serviceBusReactorSession.getOrCreateTransactionCoordinator().subscribe();
 
         // Assert
         verify(tokenManagerEntity, never()).authorize();

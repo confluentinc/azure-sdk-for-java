@@ -5,180 +5,67 @@
 package com.azure.resourcemanager.cdn.fluent.models;
 
 import com.azure.core.annotation.Fluent;
-import com.azure.core.annotation.JsonFlatten;
 import com.azure.core.management.ProxyResource;
-import com.azure.core.util.logging.ClientLogger;
+import com.azure.core.management.SystemData;
+import com.azure.json.JsonReader;
+import com.azure.json.JsonToken;
+import com.azure.json.JsonWriter;
 import com.azure.resourcemanager.cdn.models.AfdProvisioningState;
 import com.azure.resourcemanager.cdn.models.DeliveryRuleAction;
 import com.azure.resourcemanager.cdn.models.DeliveryRuleCondition;
 import com.azure.resourcemanager.cdn.models.DeploymentStatus;
 import com.azure.resourcemanager.cdn.models.MatchProcessingBehavior;
-import com.azure.resourcemanager.cdn.models.SystemData;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import java.io.IOException;
 import java.util.List;
 
-/** Friendly Rules name mapping to the any Rules or secret related information. */
-@JsonFlatten
+/**
+ * Friendly Rules name mapping to the any Rules or secret related information.
+ */
 @Fluent
-public class RuleInner extends ProxyResource {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(RuleInner.class);
-
+public final class RuleInner extends ProxyResource {
     /*
-     * The order in which the rules are applied for the endpoint. Possible
-     * values {0,1,2,3,………}. A rule with a lesser order will be applied before
-     * a rule with a greater order. Rule with order 0 is a special rule. It
-     * does not require any condition and actions listed in it will always be
-     * applied.
+     * The JSON object that contains the properties of the Rules to create.
      */
-    @JsonProperty(value = "properties.order")
-    private Integer order;
-
-    /*
-     * A list of conditions that must be matched for the actions to be executed
-     */
-    @JsonProperty(value = "properties.conditions")
-    private List<DeliveryRuleCondition> conditions;
-
-    /*
-     * A list of actions that are executed when all the conditions of a rule
-     * are satisfied.
-     */
-    @JsonProperty(value = "properties.actions")
-    private List<DeliveryRuleAction> actions;
-
-    /*
-     * If this rule is a match should the rules engine continue running the
-     * remaining rules or stop. If not present, defaults to Continue.
-     */
-    @JsonProperty(value = "properties.matchProcessingBehavior")
-    private MatchProcessingBehavior matchProcessingBehavior;
-
-    /*
-     * Provisioning status
-     */
-    @JsonProperty(value = "properties.provisioningState", access = JsonProperty.Access.WRITE_ONLY)
-    private AfdProvisioningState provisioningState;
-
-    /*
-     * The deploymentStatus property.
-     */
-    @JsonProperty(value = "properties.deploymentStatus", access = JsonProperty.Access.WRITE_ONLY)
-    private DeploymentStatus deploymentStatus;
+    private RuleProperties innerProperties;
 
     /*
      * Read only system data
      */
-    @JsonProperty(value = "systemData", access = JsonProperty.Access.WRITE_ONLY)
     private SystemData systemData;
 
-    /**
-     * Get the order property: The order in which the rules are applied for the endpoint. Possible values {0,1,2,3,………}.
-     * A rule with a lesser order will be applied before a rule with a greater order. Rule with order 0 is a special
-     * rule. It does not require any condition and actions listed in it will always be applied.
-     *
-     * @return the order value.
+    /*
+     * The type of the resource.
      */
-    public Integer order() {
-        return this.order;
+    private String type;
+
+    /*
+     * The name of the resource.
+     */
+    private String name;
+
+    /*
+     * Fully qualified resource Id for the resource.
+     */
+    private String id;
+
+    /**
+     * Creates an instance of RuleInner class.
+     */
+    public RuleInner() {
     }
 
     /**
-     * Set the order property: The order in which the rules are applied for the endpoint. Possible values {0,1,2,3,………}.
-     * A rule with a lesser order will be applied before a rule with a greater order. Rule with order 0 is a special
-     * rule. It does not require any condition and actions listed in it will always be applied.
-     *
-     * @param order the order value to set.
-     * @return the RuleInner object itself.
+     * Get the innerProperties property: The JSON object that contains the properties of the Rules to create.
+     * 
+     * @return the innerProperties value.
      */
-    public RuleInner withOrder(Integer order) {
-        this.order = order;
-        return this;
-    }
-
-    /**
-     * Get the conditions property: A list of conditions that must be matched for the actions to be executed.
-     *
-     * @return the conditions value.
-     */
-    public List<DeliveryRuleCondition> conditions() {
-        return this.conditions;
-    }
-
-    /**
-     * Set the conditions property: A list of conditions that must be matched for the actions to be executed.
-     *
-     * @param conditions the conditions value to set.
-     * @return the RuleInner object itself.
-     */
-    public RuleInner withConditions(List<DeliveryRuleCondition> conditions) {
-        this.conditions = conditions;
-        return this;
-    }
-
-    /**
-     * Get the actions property: A list of actions that are executed when all the conditions of a rule are satisfied.
-     *
-     * @return the actions value.
-     */
-    public List<DeliveryRuleAction> actions() {
-        return this.actions;
-    }
-
-    /**
-     * Set the actions property: A list of actions that are executed when all the conditions of a rule are satisfied.
-     *
-     * @param actions the actions value to set.
-     * @return the RuleInner object itself.
-     */
-    public RuleInner withActions(List<DeliveryRuleAction> actions) {
-        this.actions = actions;
-        return this;
-    }
-
-    /**
-     * Get the matchProcessingBehavior property: If this rule is a match should the rules engine continue running the
-     * remaining rules or stop. If not present, defaults to Continue.
-     *
-     * @return the matchProcessingBehavior value.
-     */
-    public MatchProcessingBehavior matchProcessingBehavior() {
-        return this.matchProcessingBehavior;
-    }
-
-    /**
-     * Set the matchProcessingBehavior property: If this rule is a match should the rules engine continue running the
-     * remaining rules or stop. If not present, defaults to Continue.
-     *
-     * @param matchProcessingBehavior the matchProcessingBehavior value to set.
-     * @return the RuleInner object itself.
-     */
-    public RuleInner withMatchProcessingBehavior(MatchProcessingBehavior matchProcessingBehavior) {
-        this.matchProcessingBehavior = matchProcessingBehavior;
-        return this;
-    }
-
-    /**
-     * Get the provisioningState property: Provisioning status.
-     *
-     * @return the provisioningState value.
-     */
-    public AfdProvisioningState provisioningState() {
-        return this.provisioningState;
-    }
-
-    /**
-     * Get the deploymentStatus property: The deploymentStatus property.
-     *
-     * @return the deploymentStatus value.
-     */
-    public DeploymentStatus deploymentStatus() {
-        return this.deploymentStatus;
+    private RuleProperties innerProperties() {
+        return this.innerProperties;
     }
 
     /**
      * Get the systemData property: Read only system data.
-     *
+     * 
      * @return the systemData value.
      */
     public SystemData systemData() {
@@ -186,19 +73,213 @@ public class RuleInner extends ProxyResource {
     }
 
     /**
+     * Get the type property: The type of the resource.
+     * 
+     * @return the type value.
+     */
+    @Override
+    public String type() {
+        return this.type;
+    }
+
+    /**
+     * Get the name property: The name of the resource.
+     * 
+     * @return the name value.
+     */
+    @Override
+    public String name() {
+        return this.name;
+    }
+
+    /**
+     * Get the id property: Fully qualified resource Id for the resource.
+     * 
+     * @return the id value.
+     */
+    @Override
+    public String id() {
+        return this.id;
+    }
+
+    /**
+     * Get the provisioningState property: Provisioning status.
+     * 
+     * @return the provisioningState value.
+     */
+    public AfdProvisioningState provisioningState() {
+        return this.innerProperties() == null ? null : this.innerProperties().provisioningState();
+    }
+
+    /**
+     * Get the deploymentStatus property: The deploymentStatus property.
+     * 
+     * @return the deploymentStatus value.
+     */
+    public DeploymentStatus deploymentStatus() {
+        return this.innerProperties() == null ? null : this.innerProperties().deploymentStatus();
+    }
+
+    /**
+     * Get the ruleSetName property: The name of the rule set containing the rule.
+     * 
+     * @return the ruleSetName value.
+     */
+    public String ruleSetName() {
+        return this.innerProperties() == null ? null : this.innerProperties().ruleSetName();
+    }
+
+    /**
+     * Get the order property: The order in which the rules are applied for the endpoint. Possible values {0,1,2,3,………}.
+     * A rule with a lesser order will be applied before a rule with a greater order. Rule with order 0 is a special
+     * rule. It does not require any condition and actions listed in it will always be applied.
+     * 
+     * @return the order value.
+     */
+    public Integer order() {
+        return this.innerProperties() == null ? null : this.innerProperties().order();
+    }
+
+    /**
+     * Set the order property: The order in which the rules are applied for the endpoint. Possible values {0,1,2,3,………}.
+     * A rule with a lesser order will be applied before a rule with a greater order. Rule with order 0 is a special
+     * rule. It does not require any condition and actions listed in it will always be applied.
+     * 
+     * @param order the order value to set.
+     * @return the RuleInner object itself.
+     */
+    public RuleInner withOrder(Integer order) {
+        if (this.innerProperties() == null) {
+            this.innerProperties = new RuleProperties();
+        }
+        this.innerProperties().withOrder(order);
+        return this;
+    }
+
+    /**
+     * Get the conditions property: A list of conditions that must be matched for the actions to be executed.
+     * 
+     * @return the conditions value.
+     */
+    public List<DeliveryRuleCondition> conditions() {
+        return this.innerProperties() == null ? null : this.innerProperties().conditions();
+    }
+
+    /**
+     * Set the conditions property: A list of conditions that must be matched for the actions to be executed.
+     * 
+     * @param conditions the conditions value to set.
+     * @return the RuleInner object itself.
+     */
+    public RuleInner withConditions(List<DeliveryRuleCondition> conditions) {
+        if (this.innerProperties() == null) {
+            this.innerProperties = new RuleProperties();
+        }
+        this.innerProperties().withConditions(conditions);
+        return this;
+    }
+
+    /**
+     * Get the actions property: A list of actions that are executed when all the conditions of a rule are satisfied.
+     * 
+     * @return the actions value.
+     */
+    public List<DeliveryRuleAction> actions() {
+        return this.innerProperties() == null ? null : this.innerProperties().actions();
+    }
+
+    /**
+     * Set the actions property: A list of actions that are executed when all the conditions of a rule are satisfied.
+     * 
+     * @param actions the actions value to set.
+     * @return the RuleInner object itself.
+     */
+    public RuleInner withActions(List<DeliveryRuleAction> actions) {
+        if (this.innerProperties() == null) {
+            this.innerProperties = new RuleProperties();
+        }
+        this.innerProperties().withActions(actions);
+        return this;
+    }
+
+    /**
+     * Get the matchProcessingBehavior property: If this rule is a match should the rules engine continue running the
+     * remaining rules or stop. If not present, defaults to Continue.
+     * 
+     * @return the matchProcessingBehavior value.
+     */
+    public MatchProcessingBehavior matchProcessingBehavior() {
+        return this.innerProperties() == null ? null : this.innerProperties().matchProcessingBehavior();
+    }
+
+    /**
+     * Set the matchProcessingBehavior property: If this rule is a match should the rules engine continue running the
+     * remaining rules or stop. If not present, defaults to Continue.
+     * 
+     * @param matchProcessingBehavior the matchProcessingBehavior value to set.
+     * @return the RuleInner object itself.
+     */
+    public RuleInner withMatchProcessingBehavior(MatchProcessingBehavior matchProcessingBehavior) {
+        if (this.innerProperties() == null) {
+            this.innerProperties = new RuleProperties();
+        }
+        this.innerProperties().withMatchProcessingBehavior(matchProcessingBehavior);
+        return this;
+    }
+
+    /**
      * Validates the instance.
-     *
+     * 
      * @throws IllegalArgumentException thrown if the instance is not valid.
      */
     public void validate() {
-        if (conditions() != null) {
-            conditions().forEach(e -> e.validate());
+        if (innerProperties() != null) {
+            innerProperties().validate();
         }
-        if (actions() != null) {
-            actions().forEach(e -> e.validate());
-        }
-        if (systemData() != null) {
-            systemData().validate();
-        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public JsonWriter toJson(JsonWriter jsonWriter) throws IOException {
+        jsonWriter.writeStartObject();
+        jsonWriter.writeJsonField("properties", this.innerProperties);
+        return jsonWriter.writeEndObject();
+    }
+
+    /**
+     * Reads an instance of RuleInner from the JsonReader.
+     * 
+     * @param jsonReader The JsonReader being read.
+     * @return An instance of RuleInner if the JsonReader was pointing to an instance of it, or null if it was pointing
+     * to JSON null.
+     * @throws IllegalStateException If the deserialized JSON object was missing any required properties.
+     * @throws IOException If an error occurs while reading the RuleInner.
+     */
+    public static RuleInner fromJson(JsonReader jsonReader) throws IOException {
+        return jsonReader.readObject(reader -> {
+            RuleInner deserializedRuleInner = new RuleInner();
+            while (reader.nextToken() != JsonToken.END_OBJECT) {
+                String fieldName = reader.getFieldName();
+                reader.nextToken();
+
+                if ("id".equals(fieldName)) {
+                    deserializedRuleInner.id = reader.getString();
+                } else if ("name".equals(fieldName)) {
+                    deserializedRuleInner.name = reader.getString();
+                } else if ("type".equals(fieldName)) {
+                    deserializedRuleInner.type = reader.getString();
+                } else if ("properties".equals(fieldName)) {
+                    deserializedRuleInner.innerProperties = RuleProperties.fromJson(reader);
+                } else if ("systemData".equals(fieldName)) {
+                    deserializedRuleInner.systemData = SystemData.fromJson(reader);
+                } else {
+                    reader.skipChildren();
+                }
+            }
+
+            return deserializedRuleInner;
+        });
     }
 }

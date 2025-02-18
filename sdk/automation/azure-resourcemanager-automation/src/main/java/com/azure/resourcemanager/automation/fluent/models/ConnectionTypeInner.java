@@ -5,72 +5,49 @@
 package com.azure.resourcemanager.automation.fluent.models;
 
 import com.azure.core.annotation.Fluent;
-import com.azure.core.annotation.JsonFlatten;
-import com.azure.core.util.logging.ClientLogger;
+import com.azure.json.JsonReader;
+import com.azure.json.JsonSerializable;
+import com.azure.json.JsonToken;
+import com.azure.json.JsonWriter;
 import com.azure.resourcemanager.automation.models.FieldDefinition;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import java.io.IOException;
 import java.time.OffsetDateTime;
 import java.util.Map;
 
-/** Definition of the connection type. */
-@JsonFlatten
+/**
+ * Definition of the connection type.
+ */
 @Fluent
-public class ConnectionTypeInner {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(ConnectionTypeInner.class);
-
+public final class ConnectionTypeInner implements JsonSerializable<ConnectionTypeInner> {
     /*
      * Gets the id of the resource.
      */
-    @JsonProperty(value = "id", access = JsonProperty.Access.WRITE_ONLY)
     private String id;
 
     /*
      * Gets the name of the connection type.
      */
-    @JsonProperty(value = "name", access = JsonProperty.Access.WRITE_ONLY)
     private String name;
 
     /*
      * Resource type
      */
-    @JsonProperty(value = "type", access = JsonProperty.Access.WRITE_ONLY)
     private String type;
 
     /*
-     * Gets or sets a Boolean value to indicate if the connection type is
-     * global.
+     * Gets or sets the properties of the connection type.
      */
-    @JsonProperty(value = "properties.isGlobal")
-    private Boolean isGlobal;
+    private ConnectionTypeProperties innerProperties;
 
-    /*
-     * Gets the field definitions of the connection type.
+    /**
+     * Creates an instance of ConnectionTypeInner class.
      */
-    @JsonProperty(value = "properties.fieldDefinitions", access = JsonProperty.Access.WRITE_ONLY)
-    private Map<String, FieldDefinition> fieldDefinitions;
-
-    /*
-     * Gets the creation time.
-     */
-    @JsonProperty(value = "properties.creationTime", access = JsonProperty.Access.WRITE_ONLY)
-    private OffsetDateTime creationTime;
-
-    /*
-     * Gets or sets the last modified time.
-     */
-    @JsonProperty(value = "properties.lastModifiedTime")
-    private OffsetDateTime lastModifiedTime;
-
-    /*
-     * Gets or sets the description.
-     */
-    @JsonProperty(value = "properties.description")
-    private String description;
+    public ConnectionTypeInner() {
+    }
 
     /**
      * Get the id property: Gets the id of the resource.
-     *
+     * 
      * @return the id value.
      */
     public String id() {
@@ -79,7 +56,7 @@ public class ConnectionTypeInner {
 
     /**
      * Get the name property: Gets the name of the connection type.
-     *
+     * 
      * @return the name value.
      */
     public String name() {
@@ -88,7 +65,7 @@ public class ConnectionTypeInner {
 
     /**
      * Get the type property: Resource type.
-     *
+     * 
      * @return the type value.
      */
     public String type() {
@@ -96,98 +73,151 @@ public class ConnectionTypeInner {
     }
 
     /**
+     * Get the innerProperties property: Gets or sets the properties of the connection type.
+     * 
+     * @return the innerProperties value.
+     */
+    private ConnectionTypeProperties innerProperties() {
+        return this.innerProperties;
+    }
+
+    /**
      * Get the isGlobal property: Gets or sets a Boolean value to indicate if the connection type is global.
-     *
+     * 
      * @return the isGlobal value.
      */
     public Boolean isGlobal() {
-        return this.isGlobal;
+        return this.innerProperties() == null ? null : this.innerProperties().isGlobal();
     }
 
     /**
      * Set the isGlobal property: Gets or sets a Boolean value to indicate if the connection type is global.
-     *
+     * 
      * @param isGlobal the isGlobal value to set.
      * @return the ConnectionTypeInner object itself.
      */
     public ConnectionTypeInner withIsGlobal(Boolean isGlobal) {
-        this.isGlobal = isGlobal;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new ConnectionTypeProperties();
+        }
+        this.innerProperties().withIsGlobal(isGlobal);
         return this;
     }
 
     /**
      * Get the fieldDefinitions property: Gets the field definitions of the connection type.
-     *
+     * 
      * @return the fieldDefinitions value.
      */
     public Map<String, FieldDefinition> fieldDefinitions() {
-        return this.fieldDefinitions;
+        return this.innerProperties() == null ? null : this.innerProperties().fieldDefinitions();
     }
 
     /**
      * Get the creationTime property: Gets the creation time.
-     *
+     * 
      * @return the creationTime value.
      */
     public OffsetDateTime creationTime() {
-        return this.creationTime;
+        return this.innerProperties() == null ? null : this.innerProperties().creationTime();
     }
 
     /**
      * Get the lastModifiedTime property: Gets or sets the last modified time.
-     *
+     * 
      * @return the lastModifiedTime value.
      */
     public OffsetDateTime lastModifiedTime() {
-        return this.lastModifiedTime;
+        return this.innerProperties() == null ? null : this.innerProperties().lastModifiedTime();
     }
 
     /**
      * Set the lastModifiedTime property: Gets or sets the last modified time.
-     *
+     * 
      * @param lastModifiedTime the lastModifiedTime value to set.
      * @return the ConnectionTypeInner object itself.
      */
     public ConnectionTypeInner withLastModifiedTime(OffsetDateTime lastModifiedTime) {
-        this.lastModifiedTime = lastModifiedTime;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new ConnectionTypeProperties();
+        }
+        this.innerProperties().withLastModifiedTime(lastModifiedTime);
         return this;
     }
 
     /**
      * Get the description property: Gets or sets the description.
-     *
+     * 
      * @return the description value.
      */
     public String description() {
-        return this.description;
+        return this.innerProperties() == null ? null : this.innerProperties().description();
     }
 
     /**
      * Set the description property: Gets or sets the description.
-     *
+     * 
      * @param description the description value to set.
      * @return the ConnectionTypeInner object itself.
      */
     public ConnectionTypeInner withDescription(String description) {
-        this.description = description;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new ConnectionTypeProperties();
+        }
+        this.innerProperties().withDescription(description);
         return this;
     }
 
     /**
      * Validates the instance.
-     *
+     * 
      * @throws IllegalArgumentException thrown if the instance is not valid.
      */
     public void validate() {
-        if (fieldDefinitions() != null) {
-            fieldDefinitions()
-                .values()
-                .forEach(
-                    e -> {
-                        if (e != null) {
-                            e.validate();
-                        }
-                    });
+        if (innerProperties() != null) {
+            innerProperties().validate();
         }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public JsonWriter toJson(JsonWriter jsonWriter) throws IOException {
+        jsonWriter.writeStartObject();
+        jsonWriter.writeJsonField("properties", this.innerProperties);
+        return jsonWriter.writeEndObject();
+    }
+
+    /**
+     * Reads an instance of ConnectionTypeInner from the JsonReader.
+     * 
+     * @param jsonReader The JsonReader being read.
+     * @return An instance of ConnectionTypeInner if the JsonReader was pointing to an instance of it, or null if it was
+     * pointing to JSON null.
+     * @throws IOException If an error occurs while reading the ConnectionTypeInner.
+     */
+    public static ConnectionTypeInner fromJson(JsonReader jsonReader) throws IOException {
+        return jsonReader.readObject(reader -> {
+            ConnectionTypeInner deserializedConnectionTypeInner = new ConnectionTypeInner();
+            while (reader.nextToken() != JsonToken.END_OBJECT) {
+                String fieldName = reader.getFieldName();
+                reader.nextToken();
+
+                if ("id".equals(fieldName)) {
+                    deserializedConnectionTypeInner.id = reader.getString();
+                } else if ("name".equals(fieldName)) {
+                    deserializedConnectionTypeInner.name = reader.getString();
+                } else if ("type".equals(fieldName)) {
+                    deserializedConnectionTypeInner.type = reader.getString();
+                } else if ("properties".equals(fieldName)) {
+                    deserializedConnectionTypeInner.innerProperties = ConnectionTypeProperties.fromJson(reader);
+                } else {
+                    reader.skipChildren();
+                }
+            }
+
+            return deserializedConnectionTypeInner;
+        });
     }
 }

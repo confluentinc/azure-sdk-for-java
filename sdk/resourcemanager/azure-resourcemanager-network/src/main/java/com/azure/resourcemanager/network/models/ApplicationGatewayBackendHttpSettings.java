@@ -6,45 +6,47 @@ package com.azure.resourcemanager.network.models;
 
 import com.azure.core.annotation.Fluent;
 import com.azure.core.management.SubResource;
-import com.azure.core.util.logging.ClientLogger;
+import com.azure.json.JsonReader;
+import com.azure.json.JsonToken;
+import com.azure.json.JsonWriter;
 import com.azure.resourcemanager.network.fluent.models.ApplicationGatewayBackendHttpSettingsPropertiesFormat;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import java.io.IOException;
 import java.util.List;
 
-/** Backend address pool settings of an application gateway. */
+/**
+ * Backend address pool settings of an application gateway.
+ */
 @Fluent
 public final class ApplicationGatewayBackendHttpSettings extends SubResource {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(ApplicationGatewayBackendHttpSettings.class);
-
     /*
      * Properties of the application gateway backend HTTP settings.
      */
-    @JsonProperty(value = "properties")
     private ApplicationGatewayBackendHttpSettingsPropertiesFormat innerProperties;
 
     /*
-     * Name of the backend http settings that is unique within an Application
-     * Gateway.
+     * Name of the backend http settings that is unique within an Application Gateway.
      */
-    @JsonProperty(value = "name")
     private String name;
 
     /*
      * A unique read-only string that changes whenever the resource is updated.
      */
-    @JsonProperty(value = "etag", access = JsonProperty.Access.WRITE_ONLY)
     private String etag;
 
     /*
      * Type of the resource.
      */
-    @JsonProperty(value = "type", access = JsonProperty.Access.WRITE_ONLY)
     private String type;
 
     /**
+     * Creates an instance of ApplicationGatewayBackendHttpSettings class.
+     */
+    public ApplicationGatewayBackendHttpSettings() {
+    }
+
+    /**
      * Get the innerProperties property: Properties of the application gateway backend HTTP settings.
-     *
+     * 
      * @return the innerProperties value.
      */
     private ApplicationGatewayBackendHttpSettingsPropertiesFormat innerProperties() {
@@ -53,7 +55,7 @@ public final class ApplicationGatewayBackendHttpSettings extends SubResource {
 
     /**
      * Get the name property: Name of the backend http settings that is unique within an Application Gateway.
-     *
+     * 
      * @return the name value.
      */
     public String name() {
@@ -62,7 +64,7 @@ public final class ApplicationGatewayBackendHttpSettings extends SubResource {
 
     /**
      * Set the name property: Name of the backend http settings that is unique within an Application Gateway.
-     *
+     * 
      * @param name the name value to set.
      * @return the ApplicationGatewayBackendHttpSettings object itself.
      */
@@ -73,7 +75,7 @@ public final class ApplicationGatewayBackendHttpSettings extends SubResource {
 
     /**
      * Get the etag property: A unique read-only string that changes whenever the resource is updated.
-     *
+     * 
      * @return the etag value.
      */
     public String etag() {
@@ -82,14 +84,16 @@ public final class ApplicationGatewayBackendHttpSettings extends SubResource {
 
     /**
      * Get the type property: Type of the resource.
-     *
+     * 
      * @return the type value.
      */
     public String type() {
         return this.type;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public ApplicationGatewayBackendHttpSettings withId(String id) {
         super.withId(id);
@@ -98,7 +102,7 @@ public final class ApplicationGatewayBackendHttpSettings extends SubResource {
 
     /**
      * Get the port property: The destination port on the backend.
-     *
+     * 
      * @return the port value.
      */
     public Integer port() {
@@ -107,7 +111,7 @@ public final class ApplicationGatewayBackendHttpSettings extends SubResource {
 
     /**
      * Set the port property: The destination port on the backend.
-     *
+     * 
      * @param port the port value to set.
      * @return the ApplicationGatewayBackendHttpSettings object itself.
      */
@@ -121,7 +125,7 @@ public final class ApplicationGatewayBackendHttpSettings extends SubResource {
 
     /**
      * Get the protocol property: The protocol used to communicate with the backend.
-     *
+     * 
      * @return the protocol value.
      */
     public ApplicationGatewayProtocol protocol() {
@@ -130,7 +134,7 @@ public final class ApplicationGatewayBackendHttpSettings extends SubResource {
 
     /**
      * Set the protocol property: The protocol used to communicate with the backend.
-     *
+     * 
      * @param protocol the protocol value to set.
      * @return the ApplicationGatewayBackendHttpSettings object itself.
      */
@@ -144,7 +148,7 @@ public final class ApplicationGatewayBackendHttpSettings extends SubResource {
 
     /**
      * Get the cookieBasedAffinity property: Cookie based affinity.
-     *
+     * 
      * @return the cookieBasedAffinity value.
      */
     public ApplicationGatewayCookieBasedAffinity cookieBasedAffinity() {
@@ -153,12 +157,12 @@ public final class ApplicationGatewayBackendHttpSettings extends SubResource {
 
     /**
      * Set the cookieBasedAffinity property: Cookie based affinity.
-     *
+     * 
      * @param cookieBasedAffinity the cookieBasedAffinity value to set.
      * @return the ApplicationGatewayBackendHttpSettings object itself.
      */
-    public ApplicationGatewayBackendHttpSettings withCookieBasedAffinity(
-        ApplicationGatewayCookieBasedAffinity cookieBasedAffinity) {
+    public ApplicationGatewayBackendHttpSettings
+        withCookieBasedAffinity(ApplicationGatewayCookieBasedAffinity cookieBasedAffinity) {
         if (this.innerProperties() == null) {
             this.innerProperties = new ApplicationGatewayBackendHttpSettingsPropertiesFormat();
         }
@@ -169,7 +173,7 @@ public final class ApplicationGatewayBackendHttpSettings extends SubResource {
     /**
      * Get the requestTimeout property: Request timeout in seconds. Application Gateway will fail the request if
      * response is not received within RequestTimeout. Acceptable values are from 1 second to 86400 seconds.
-     *
+     * 
      * @return the requestTimeout value.
      */
     public Integer requestTimeout() {
@@ -179,7 +183,7 @@ public final class ApplicationGatewayBackendHttpSettings extends SubResource {
     /**
      * Set the requestTimeout property: Request timeout in seconds. Application Gateway will fail the request if
      * response is not received within RequestTimeout. Acceptable values are from 1 second to 86400 seconds.
-     *
+     * 
      * @param requestTimeout the requestTimeout value to set.
      * @return the ApplicationGatewayBackendHttpSettings object itself.
      */
@@ -193,7 +197,7 @@ public final class ApplicationGatewayBackendHttpSettings extends SubResource {
 
     /**
      * Get the probe property: Probe resource of an application gateway.
-     *
+     * 
      * @return the probe value.
      */
     public SubResource probe() {
@@ -202,7 +206,7 @@ public final class ApplicationGatewayBackendHttpSettings extends SubResource {
 
     /**
      * Set the probe property: Probe resource of an application gateway.
-     *
+     * 
      * @param probe the probe value to set.
      * @return the ApplicationGatewayBackendHttpSettings object itself.
      */
@@ -217,7 +221,7 @@ public final class ApplicationGatewayBackendHttpSettings extends SubResource {
     /**
      * Get the authenticationCertificates property: Array of references to application gateway authentication
      * certificates.
-     *
+     * 
      * @return the authenticationCertificates value.
      */
     public List<SubResource> authenticationCertificates() {
@@ -227,12 +231,12 @@ public final class ApplicationGatewayBackendHttpSettings extends SubResource {
     /**
      * Set the authenticationCertificates property: Array of references to application gateway authentication
      * certificates.
-     *
+     * 
      * @param authenticationCertificates the authenticationCertificates value to set.
      * @return the ApplicationGatewayBackendHttpSettings object itself.
      */
-    public ApplicationGatewayBackendHttpSettings withAuthenticationCertificates(
-        List<SubResource> authenticationCertificates) {
+    public ApplicationGatewayBackendHttpSettings
+        withAuthenticationCertificates(List<SubResource> authenticationCertificates) {
         if (this.innerProperties() == null) {
             this.innerProperties = new ApplicationGatewayBackendHttpSettingsPropertiesFormat();
         }
@@ -242,7 +246,7 @@ public final class ApplicationGatewayBackendHttpSettings extends SubResource {
 
     /**
      * Get the trustedRootCertificates property: Array of references to application gateway trusted root certificates.
-     *
+     * 
      * @return the trustedRootCertificates value.
      */
     public List<SubResource> trustedRootCertificates() {
@@ -251,12 +255,12 @@ public final class ApplicationGatewayBackendHttpSettings extends SubResource {
 
     /**
      * Set the trustedRootCertificates property: Array of references to application gateway trusted root certificates.
-     *
+     * 
      * @param trustedRootCertificates the trustedRootCertificates value to set.
      * @return the ApplicationGatewayBackendHttpSettings object itself.
      */
-    public ApplicationGatewayBackendHttpSettings withTrustedRootCertificates(
-        List<SubResource> trustedRootCertificates) {
+    public ApplicationGatewayBackendHttpSettings
+        withTrustedRootCertificates(List<SubResource> trustedRootCertificates) {
         if (this.innerProperties() == null) {
             this.innerProperties = new ApplicationGatewayBackendHttpSettingsPropertiesFormat();
         }
@@ -266,7 +270,7 @@ public final class ApplicationGatewayBackendHttpSettings extends SubResource {
 
     /**
      * Get the connectionDraining property: Connection draining of the backend http settings resource.
-     *
+     * 
      * @return the connectionDraining value.
      */
     public ApplicationGatewayConnectionDraining connectionDraining() {
@@ -275,12 +279,12 @@ public final class ApplicationGatewayBackendHttpSettings extends SubResource {
 
     /**
      * Set the connectionDraining property: Connection draining of the backend http settings resource.
-     *
+     * 
      * @param connectionDraining the connectionDraining value to set.
      * @return the ApplicationGatewayBackendHttpSettings object itself.
      */
-    public ApplicationGatewayBackendHttpSettings withConnectionDraining(
-        ApplicationGatewayConnectionDraining connectionDraining) {
+    public ApplicationGatewayBackendHttpSettings
+        withConnectionDraining(ApplicationGatewayConnectionDraining connectionDraining) {
         if (this.innerProperties() == null) {
             this.innerProperties = new ApplicationGatewayBackendHttpSettingsPropertiesFormat();
         }
@@ -290,7 +294,7 @@ public final class ApplicationGatewayBackendHttpSettings extends SubResource {
 
     /**
      * Get the hostname property: Host header to be sent to the backend servers.
-     *
+     * 
      * @return the hostname value.
      */
     public String hostname() {
@@ -299,7 +303,7 @@ public final class ApplicationGatewayBackendHttpSettings extends SubResource {
 
     /**
      * Set the hostname property: Host header to be sent to the backend servers.
-     *
+     * 
      * @param hostname the hostname value to set.
      * @return the ApplicationGatewayBackendHttpSettings object itself.
      */
@@ -314,7 +318,7 @@ public final class ApplicationGatewayBackendHttpSettings extends SubResource {
     /**
      * Get the pickHostnameFromBackendAddress property: Whether to pick host header should be picked from the host name
      * of the backend server. Default value is false.
-     *
+     * 
      * @return the pickHostnameFromBackendAddress value.
      */
     public Boolean pickHostnameFromBackendAddress() {
@@ -324,12 +328,12 @@ public final class ApplicationGatewayBackendHttpSettings extends SubResource {
     /**
      * Set the pickHostnameFromBackendAddress property: Whether to pick host header should be picked from the host name
      * of the backend server. Default value is false.
-     *
+     * 
      * @param pickHostnameFromBackendAddress the pickHostnameFromBackendAddress value to set.
      * @return the ApplicationGatewayBackendHttpSettings object itself.
      */
-    public ApplicationGatewayBackendHttpSettings withPickHostnameFromBackendAddress(
-        Boolean pickHostnameFromBackendAddress) {
+    public ApplicationGatewayBackendHttpSettings
+        withPickHostnameFromBackendAddress(Boolean pickHostnameFromBackendAddress) {
         if (this.innerProperties() == null) {
             this.innerProperties = new ApplicationGatewayBackendHttpSettingsPropertiesFormat();
         }
@@ -339,7 +343,7 @@ public final class ApplicationGatewayBackendHttpSettings extends SubResource {
 
     /**
      * Get the affinityCookieName property: Cookie name to use for the affinity cookie.
-     *
+     * 
      * @return the affinityCookieName value.
      */
     public String affinityCookieName() {
@@ -348,7 +352,7 @@ public final class ApplicationGatewayBackendHttpSettings extends SubResource {
 
     /**
      * Set the affinityCookieName property: Cookie name to use for the affinity cookie.
-     *
+     * 
      * @param affinityCookieName the affinityCookieName value to set.
      * @return the ApplicationGatewayBackendHttpSettings object itself.
      */
@@ -362,7 +366,7 @@ public final class ApplicationGatewayBackendHttpSettings extends SubResource {
 
     /**
      * Get the probeEnabled property: Whether the probe is enabled. Default value is false.
-     *
+     * 
      * @return the probeEnabled value.
      */
     public Boolean probeEnabled() {
@@ -371,7 +375,7 @@ public final class ApplicationGatewayBackendHttpSettings extends SubResource {
 
     /**
      * Set the probeEnabled property: Whether the probe is enabled. Default value is false.
-     *
+     * 
      * @param probeEnabled the probeEnabled value to set.
      * @return the ApplicationGatewayBackendHttpSettings object itself.
      */
@@ -386,7 +390,7 @@ public final class ApplicationGatewayBackendHttpSettings extends SubResource {
     /**
      * Get the path property: Path which should be used as a prefix for all HTTP requests. Null means no path will be
      * prefixed. Default value is null.
-     *
+     * 
      * @return the path value.
      */
     public String path() {
@@ -396,7 +400,7 @@ public final class ApplicationGatewayBackendHttpSettings extends SubResource {
     /**
      * Set the path property: Path which should be used as a prefix for all HTTP requests. Null means no path will be
      * prefixed. Default value is null.
-     *
+     * 
      * @param path the path value to set.
      * @return the ApplicationGatewayBackendHttpSettings object itself.
      */
@@ -410,7 +414,7 @@ public final class ApplicationGatewayBackendHttpSettings extends SubResource {
 
     /**
      * Get the provisioningState property: The provisioning state of the backend HTTP settings resource.
-     *
+     * 
      * @return the provisioningState value.
      */
     public ProvisioningState provisioningState() {
@@ -419,12 +423,60 @@ public final class ApplicationGatewayBackendHttpSettings extends SubResource {
 
     /**
      * Validates the instance.
-     *
+     * 
      * @throws IllegalArgumentException thrown if the instance is not valid.
      */
     public void validate() {
         if (innerProperties() != null) {
             innerProperties().validate();
         }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public JsonWriter toJson(JsonWriter jsonWriter) throws IOException {
+        jsonWriter.writeStartObject();
+        jsonWriter.writeStringField("id", id());
+        jsonWriter.writeJsonField("properties", this.innerProperties);
+        jsonWriter.writeStringField("name", this.name);
+        return jsonWriter.writeEndObject();
+    }
+
+    /**
+     * Reads an instance of ApplicationGatewayBackendHttpSettings from the JsonReader.
+     * 
+     * @param jsonReader The JsonReader being read.
+     * @return An instance of ApplicationGatewayBackendHttpSettings if the JsonReader was pointing to an instance of it,
+     * or null if it was pointing to JSON null.
+     * @throws IOException If an error occurs while reading the ApplicationGatewayBackendHttpSettings.
+     */
+    public static ApplicationGatewayBackendHttpSettings fromJson(JsonReader jsonReader) throws IOException {
+        return jsonReader.readObject(reader -> {
+            ApplicationGatewayBackendHttpSettings deserializedApplicationGatewayBackendHttpSettings
+                = new ApplicationGatewayBackendHttpSettings();
+            while (reader.nextToken() != JsonToken.END_OBJECT) {
+                String fieldName = reader.getFieldName();
+                reader.nextToken();
+
+                if ("id".equals(fieldName)) {
+                    deserializedApplicationGatewayBackendHttpSettings.withId(reader.getString());
+                } else if ("properties".equals(fieldName)) {
+                    deserializedApplicationGatewayBackendHttpSettings.innerProperties
+                        = ApplicationGatewayBackendHttpSettingsPropertiesFormat.fromJson(reader);
+                } else if ("name".equals(fieldName)) {
+                    deserializedApplicationGatewayBackendHttpSettings.name = reader.getString();
+                } else if ("etag".equals(fieldName)) {
+                    deserializedApplicationGatewayBackendHttpSettings.etag = reader.getString();
+                } else if ("type".equals(fieldName)) {
+                    deserializedApplicationGatewayBackendHttpSettings.type = reader.getString();
+                } else {
+                    reader.skipChildren();
+                }
+            }
+
+            return deserializedApplicationGatewayBackendHttpSettings;
+        });
     }
 }

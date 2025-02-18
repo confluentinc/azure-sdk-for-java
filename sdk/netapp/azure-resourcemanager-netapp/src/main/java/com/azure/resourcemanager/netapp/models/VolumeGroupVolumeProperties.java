@@ -7,41 +7,59 @@ package com.azure.resourcemanager.netapp.models;
 import com.azure.core.annotation.Fluent;
 import com.azure.core.management.ProxyResource;
 import com.azure.core.util.logging.ClientLogger;
+import com.azure.json.JsonReader;
+import com.azure.json.JsonToken;
+import com.azure.json.JsonWriter;
 import com.azure.resourcemanager.netapp.fluent.models.MountTargetProperties;
 import com.azure.resourcemanager.netapp.fluent.models.VolumeProperties;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
-/** Volume resource. */
+/**
+ * Volume resource.
+ */
 @Fluent
 public final class VolumeGroupVolumeProperties extends ProxyResource {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(VolumeGroupVolumeProperties.class);
-
     /*
      * Resource name
      */
-    @JsonProperty(value = "name")
     private String name;
 
     /*
      * Resource tags
      */
-    @JsonProperty(value = "tags")
-    @JsonInclude(value = JsonInclude.Include.NON_NULL, content = JsonInclude.Include.ALWAYS)
     private Map<String, String> tags;
+
+    /*
+     * Availability Zone
+     */
+    private List<String> zones;
 
     /*
      * Volume properties
      */
-    @JsonProperty(value = "properties", required = true)
     private VolumeProperties innerProperties = new VolumeProperties();
+
+    /*
+     * The type of the resource.
+     */
+    private String type;
+
+    /*
+     * Fully qualified resource Id for the resource.
+     */
+    private String id;
+
+    /**
+     * Creates an instance of VolumeGroupVolumeProperties class.
+     */
+    public VolumeGroupVolumeProperties() {
+    }
 
     /**
      * Get the name property: Resource name.
-     *
+     * 
      * @return the name value.
      */
     public String name() {
@@ -50,7 +68,7 @@ public final class VolumeGroupVolumeProperties extends ProxyResource {
 
     /**
      * Set the name property: Resource name.
-     *
+     * 
      * @param name the name value to set.
      * @return the VolumeGroupVolumeProperties object itself.
      */
@@ -61,7 +79,7 @@ public final class VolumeGroupVolumeProperties extends ProxyResource {
 
     /**
      * Get the tags property: Resource tags.
-     *
+     * 
      * @return the tags value.
      */
     public Map<String, String> tags() {
@@ -70,7 +88,7 @@ public final class VolumeGroupVolumeProperties extends ProxyResource {
 
     /**
      * Set the tags property: Resource tags.
-     *
+     * 
      * @param tags the tags value to set.
      * @return the VolumeGroupVolumeProperties object itself.
      */
@@ -80,8 +98,28 @@ public final class VolumeGroupVolumeProperties extends ProxyResource {
     }
 
     /**
+     * Get the zones property: Availability Zone.
+     * 
+     * @return the zones value.
+     */
+    public List<String> zones() {
+        return this.zones;
+    }
+
+    /**
+     * Set the zones property: Availability Zone.
+     * 
+     * @param zones the zones value to set.
+     * @return the VolumeGroupVolumeProperties object itself.
+     */
+    public VolumeGroupVolumeProperties withZones(List<String> zones) {
+        this.zones = zones;
+        return this;
+    }
+
+    /**
      * Get the innerProperties property: Volume properties.
-     *
+     * 
      * @return the innerProperties value.
      */
     private VolumeProperties innerProperties() {
@@ -89,8 +127,28 @@ public final class VolumeGroupVolumeProperties extends ProxyResource {
     }
 
     /**
-     * Get the fileSystemId property: FileSystem ID Unique FileSystem Identifier.
-     *
+     * Get the type property: The type of the resource.
+     * 
+     * @return the type value.
+     */
+    @Override
+    public String type() {
+        return this.type;
+    }
+
+    /**
+     * Get the id property: Fully qualified resource Id for the resource.
+     * 
+     * @return the id value.
+     */
+    @Override
+    public String id() {
+        return this.id;
+    }
+
+    /**
+     * Get the fileSystemId property: Unique FileSystem Identifier.
+     * 
      * @return the fileSystemId value.
      */
     public String fileSystemId() {
@@ -98,9 +156,8 @@ public final class VolumeGroupVolumeProperties extends ProxyResource {
     }
 
     /**
-     * Get the creationToken property: Creation Token or File Path A unique file path for the volume. Used when creating
-     * mount targets.
-     *
+     * Get the creationToken property: A unique file path for the volume. Used when creating mount targets.
+     * 
      * @return the creationToken value.
      */
     public String creationToken() {
@@ -108,9 +165,8 @@ public final class VolumeGroupVolumeProperties extends ProxyResource {
     }
 
     /**
-     * Set the creationToken property: Creation Token or File Path A unique file path for the volume. Used when creating
-     * mount targets.
-     *
+     * Set the creationToken property: A unique file path for the volume. Used when creating mount targets.
+     * 
      * @param creationToken the creationToken value to set.
      * @return the VolumeGroupVolumeProperties object itself.
      */
@@ -123,8 +179,8 @@ public final class VolumeGroupVolumeProperties extends ProxyResource {
     }
 
     /**
-     * Get the serviceLevel property: serviceLevel The service level of the file system.
-     *
+     * Get the serviceLevel property: The service level of the file system.
+     * 
      * @return the serviceLevel value.
      */
     public ServiceLevel serviceLevel() {
@@ -132,8 +188,8 @@ public final class VolumeGroupVolumeProperties extends ProxyResource {
     }
 
     /**
-     * Set the serviceLevel property: serviceLevel The service level of the file system.
-     *
+     * Set the serviceLevel property: The service level of the file system.
+     * 
      * @param serviceLevel the serviceLevel value to set.
      * @return the VolumeGroupVolumeProperties object itself.
      */
@@ -146,9 +202,11 @@ public final class VolumeGroupVolumeProperties extends ProxyResource {
     }
 
     /**
-     * Get the usageThreshold property: usageThreshold Maximum storage quota allowed for a file system in bytes. This is
-     * a soft quota used for alerting only. Minimum size is 100 GiB. Upper limit is 100TiB. Specified in bytes.
-     *
+     * Get the usageThreshold property: Maximum storage quota allowed for a file system in bytes. This is a soft quota
+     * used for alerting only. For regular volumes, valid values are in the range 50GiB to 100TiB. For large volumes,
+     * valid values are in the range 100TiB to 1PiB, and on an exceptional basis, from to 2400GiB to 2400TiB. Values
+     * expressed in bytes as multiples of 1 GiB.
+     * 
      * @return the usageThreshold value.
      */
     public long usageThreshold() {
@@ -156,9 +214,11 @@ public final class VolumeGroupVolumeProperties extends ProxyResource {
     }
 
     /**
-     * Set the usageThreshold property: usageThreshold Maximum storage quota allowed for a file system in bytes. This is
-     * a soft quota used for alerting only. Minimum size is 100 GiB. Upper limit is 100TiB. Specified in bytes.
-     *
+     * Set the usageThreshold property: Maximum storage quota allowed for a file system in bytes. This is a soft quota
+     * used for alerting only. For regular volumes, valid values are in the range 50GiB to 100TiB. For large volumes,
+     * valid values are in the range 100TiB to 1PiB, and on an exceptional basis, from to 2400GiB to 2400TiB. Values
+     * expressed in bytes as multiples of 1 GiB.
+     * 
      * @param usageThreshold the usageThreshold value to set.
      * @return the VolumeGroupVolumeProperties object itself.
      */
@@ -171,8 +231,8 @@ public final class VolumeGroupVolumeProperties extends ProxyResource {
     }
 
     /**
-     * Get the exportPolicy property: exportPolicy Set of export policy rules.
-     *
+     * Get the exportPolicy property: Set of export policy rules.
+     * 
      * @return the exportPolicy value.
      */
     public VolumePropertiesExportPolicy exportPolicy() {
@@ -180,8 +240,8 @@ public final class VolumeGroupVolumeProperties extends ProxyResource {
     }
 
     /**
-     * Set the exportPolicy property: exportPolicy Set of export policy rules.
-     *
+     * Set the exportPolicy property: Set of export policy rules.
+     * 
      * @param exportPolicy the exportPolicy value to set.
      * @return the VolumeGroupVolumeProperties object itself.
      */
@@ -194,8 +254,8 @@ public final class VolumeGroupVolumeProperties extends ProxyResource {
     }
 
     /**
-     * Get the protocolTypes property: protocolTypes Set of protocol types, default NFSv3, CIFS for SMB protocol.
-     *
+     * Get the protocolTypes property: Set of protocol types, default NFSv3, CIFS for SMB protocol.
+     * 
      * @return the protocolTypes value.
      */
     public List<String> protocolTypes() {
@@ -203,8 +263,8 @@ public final class VolumeGroupVolumeProperties extends ProxyResource {
     }
 
     /**
-     * Set the protocolTypes property: protocolTypes Set of protocol types, default NFSv3, CIFS for SMB protocol.
-     *
+     * Set the protocolTypes property: Set of protocol types, default NFSv3, CIFS for SMB protocol.
+     * 
      * @param protocolTypes the protocolTypes value to set.
      * @return the VolumeGroupVolumeProperties object itself.
      */
@@ -218,7 +278,7 @@ public final class VolumeGroupVolumeProperties extends ProxyResource {
 
     /**
      * Get the provisioningState property: Azure lifecycle management.
-     *
+     * 
      * @return the provisioningState value.
      */
     public String provisioningState() {
@@ -226,8 +286,8 @@ public final class VolumeGroupVolumeProperties extends ProxyResource {
     }
 
     /**
-     * Get the snapshotId property: Snapshot ID UUID v4 or resource identifier used to identify the Snapshot.
-     *
+     * Get the snapshotId property: Resource identifier used to identify the Snapshot.
+     * 
      * @return the snapshotId value.
      */
     public String snapshotId() {
@@ -235,8 +295,8 @@ public final class VolumeGroupVolumeProperties extends ProxyResource {
     }
 
     /**
-     * Set the snapshotId property: Snapshot ID UUID v4 or resource identifier used to identify the Snapshot.
-     *
+     * Set the snapshotId property: Resource identifier used to identify the Snapshot.
+     * 
      * @param snapshotId the snapshotId value to set.
      * @return the VolumeGroupVolumeProperties object itself.
      */
@@ -249,8 +309,33 @@ public final class VolumeGroupVolumeProperties extends ProxyResource {
     }
 
     /**
-     * Get the backupId property: Backup ID UUID v4 or resource identifier used to identify the Backup.
-     *
+     * Get the deleteBaseSnapshot property: If enabled (true) the snapshot the volume was created from will be
+     * automatically deleted after the volume create operation has finished. Defaults to false.
+     * 
+     * @return the deleteBaseSnapshot value.
+     */
+    public Boolean deleteBaseSnapshot() {
+        return this.innerProperties() == null ? null : this.innerProperties().deleteBaseSnapshot();
+    }
+
+    /**
+     * Set the deleteBaseSnapshot property: If enabled (true) the snapshot the volume was created from will be
+     * automatically deleted after the volume create operation has finished. Defaults to false.
+     * 
+     * @param deleteBaseSnapshot the deleteBaseSnapshot value to set.
+     * @return the VolumeGroupVolumeProperties object itself.
+     */
+    public VolumeGroupVolumeProperties withDeleteBaseSnapshot(Boolean deleteBaseSnapshot) {
+        if (this.innerProperties() == null) {
+            this.innerProperties = new VolumeProperties();
+        }
+        this.innerProperties().withDeleteBaseSnapshot(deleteBaseSnapshot);
+        return this;
+    }
+
+    /**
+     * Get the backupId property: Resource identifier used to identify the Backup.
+     * 
      * @return the backupId value.
      */
     public String backupId() {
@@ -258,8 +343,8 @@ public final class VolumeGroupVolumeProperties extends ProxyResource {
     }
 
     /**
-     * Set the backupId property: Backup ID UUID v4 or resource identifier used to identify the Backup.
-     *
+     * Set the backupId property: Resource identifier used to identify the Backup.
+     * 
      * @param backupId the backupId value to set.
      * @return the VolumeGroupVolumeProperties object itself.
      */
@@ -272,8 +357,8 @@ public final class VolumeGroupVolumeProperties extends ProxyResource {
     }
 
     /**
-     * Get the baremetalTenantId property: Baremetal Tenant ID Unique Baremetal Tenant Identifier.
-     *
+     * Get the baremetalTenantId property: Unique Baremetal Tenant Identifier.
+     * 
      * @return the baremetalTenantId value.
      */
     public String baremetalTenantId() {
@@ -283,7 +368,7 @@ public final class VolumeGroupVolumeProperties extends ProxyResource {
     /**
      * Get the subnetId property: The Azure Resource URI for a delegated subnet. Must have the delegation
      * Microsoft.NetApp/volumes.
-     *
+     * 
      * @return the subnetId value.
      */
     public String subnetId() {
@@ -293,7 +378,7 @@ public final class VolumeGroupVolumeProperties extends ProxyResource {
     /**
      * Set the subnetId property: The Azure Resource URI for a delegated subnet. Must have the delegation
      * Microsoft.NetApp/volumes.
-     *
+     * 
      * @param subnetId the subnetId value to set.
      * @return the VolumeGroupVolumeProperties object itself.
      */
@@ -306,8 +391,9 @@ public final class VolumeGroupVolumeProperties extends ProxyResource {
     }
 
     /**
-     * Get the networkFeatures property: Network features Basic network, or Standard features available to the volume.
-     *
+     * Get the networkFeatures property: The original value of the network features type available to the volume at the
+     * time it was created.
+     * 
      * @return the networkFeatures value.
      */
     public NetworkFeatures networkFeatures() {
@@ -315,8 +401,9 @@ public final class VolumeGroupVolumeProperties extends ProxyResource {
     }
 
     /**
-     * Set the networkFeatures property: Network features Basic network, or Standard features available to the volume.
-     *
+     * Set the networkFeatures property: The original value of the network features type available to the volume at the
+     * time it was created.
+     * 
      * @param networkFeatures the networkFeatures value to set.
      * @return the VolumeGroupVolumeProperties object itself.
      */
@@ -329,9 +416,19 @@ public final class VolumeGroupVolumeProperties extends ProxyResource {
     }
 
     /**
-     * Get the networkSiblingSetId property: Network Sibling Set ID Network Sibling Set ID for the the group of volumes
-     * sharing networking resources.
-     *
+     * Get the effectiveNetworkFeatures property: The effective value of the network features type available to the
+     * volume, or current effective state of update.
+     * 
+     * @return the effectiveNetworkFeatures value.
+     */
+    public NetworkFeatures effectiveNetworkFeatures() {
+        return this.innerProperties() == null ? null : this.innerProperties().effectiveNetworkFeatures();
+    }
+
+    /**
+     * Get the networkSiblingSetId property: Network Sibling Set ID for the the group of volumes sharing networking
+     * resources.
+     * 
      * @return the networkSiblingSetId value.
      */
     public String networkSiblingSetId() {
@@ -339,9 +436,8 @@ public final class VolumeGroupVolumeProperties extends ProxyResource {
     }
 
     /**
-     * Get the storageToNetworkProximity property: Storage to Network Proximity Provides storage to network proximity
-     * information for the volume.
-     *
+     * Get the storageToNetworkProximity property: Provides storage to network proximity information for the volume.
+     * 
      * @return the storageToNetworkProximity value.
      */
     public VolumeStorageToNetworkProximity storageToNetworkProximity() {
@@ -349,8 +445,8 @@ public final class VolumeGroupVolumeProperties extends ProxyResource {
     }
 
     /**
-     * Get the mountTargets property: mountTargets List of mount targets.
-     *
+     * Get the mountTargets property: List of mount targets.
+     * 
      * @return the mountTargets value.
      */
     public List<MountTargetProperties> mountTargets() {
@@ -359,8 +455,8 @@ public final class VolumeGroupVolumeProperties extends ProxyResource {
 
     /**
      * Get the volumeType property: What type of volume is this. For destination volumes in Cross Region Replication,
-     * set type to DataProtection.
-     *
+     * set type to DataProtection. For creating clone volume, set type to ShortTermClone.
+     * 
      * @return the volumeType value.
      */
     public String volumeType() {
@@ -369,8 +465,8 @@ public final class VolumeGroupVolumeProperties extends ProxyResource {
 
     /**
      * Set the volumeType property: What type of volume is this. For destination volumes in Cross Region Replication,
-     * set type to DataProtection.
-     *
+     * set type to DataProtection. For creating clone volume, set type to ShortTermClone.
+     * 
      * @param volumeType the volumeType value to set.
      * @return the VolumeGroupVolumeProperties object itself.
      */
@@ -383,9 +479,9 @@ public final class VolumeGroupVolumeProperties extends ProxyResource {
     }
 
     /**
-     * Get the dataProtection property: DataProtection DataProtection type volumes include an object containing details
-     * of the replication.
-     *
+     * Get the dataProtection property: DataProtection type volumes include an object containing details of the
+     * replication.
+     * 
      * @return the dataProtection value.
      */
     public VolumePropertiesDataProtection dataProtection() {
@@ -393,9 +489,9 @@ public final class VolumeGroupVolumeProperties extends ProxyResource {
     }
 
     /**
-     * Set the dataProtection property: DataProtection DataProtection type volumes include an object containing details
-     * of the replication.
-     *
+     * Set the dataProtection property: DataProtection type volumes include an object containing details of the
+     * replication.
+     * 
      * @param dataProtection the dataProtection value to set.
      * @return the VolumeGroupVolumeProperties object itself.
      */
@@ -408,8 +504,42 @@ public final class VolumeGroupVolumeProperties extends ProxyResource {
     }
 
     /**
+     * Get the acceptGrowCapacityPoolForShortTermCloneSplit property: While auto splitting the short term clone volume,
+     * if the parent pool does not have enough space to accommodate the volume after split, it will be automatically
+     * resized, which will lead to increased billing. To accept capacity pool size auto grow and create a short term
+     * clone volume, set the property as accepted.
+     * 
+     * @return the acceptGrowCapacityPoolForShortTermCloneSplit value.
+     */
+    public AcceptGrowCapacityPoolForShortTermCloneSplit acceptGrowCapacityPoolForShortTermCloneSplit() {
+        return this.innerProperties() == null
+            ? null
+            : this.innerProperties().acceptGrowCapacityPoolForShortTermCloneSplit();
+    }
+
+    /**
+     * Set the acceptGrowCapacityPoolForShortTermCloneSplit property: While auto splitting the short term clone volume,
+     * if the parent pool does not have enough space to accommodate the volume after split, it will be automatically
+     * resized, which will lead to increased billing. To accept capacity pool size auto grow and create a short term
+     * clone volume, set the property as accepted.
+     * 
+     * @param acceptGrowCapacityPoolForShortTermCloneSplit the acceptGrowCapacityPoolForShortTermCloneSplit value to
+     * set.
+     * @return the VolumeGroupVolumeProperties object itself.
+     */
+    public VolumeGroupVolumeProperties withAcceptGrowCapacityPoolForShortTermCloneSplit(
+        AcceptGrowCapacityPoolForShortTermCloneSplit acceptGrowCapacityPoolForShortTermCloneSplit) {
+        if (this.innerProperties() == null) {
+            this.innerProperties = new VolumeProperties();
+        }
+        this.innerProperties()
+            .withAcceptGrowCapacityPoolForShortTermCloneSplit(acceptGrowCapacityPoolForShortTermCloneSplit);
+        return this;
+    }
+
+    /**
      * Get the isRestoring property: Restoring.
-     *
+     * 
      * @return the isRestoring value.
      */
     public Boolean isRestoring() {
@@ -418,7 +548,7 @@ public final class VolumeGroupVolumeProperties extends ProxyResource {
 
     /**
      * Set the isRestoring property: Restoring.
-     *
+     * 
      * @param isRestoring the isRestoring value to set.
      * @return the VolumeGroupVolumeProperties object itself.
      */
@@ -432,8 +562,8 @@ public final class VolumeGroupVolumeProperties extends ProxyResource {
 
     /**
      * Get the snapshotDirectoryVisible property: If enabled (true) the volume will contain a read-only snapshot
-     * directory which provides access to each of the volume's snapshots (default to true).
-     *
+     * directory which provides access to each of the volume's snapshots (defaults to true).
+     * 
      * @return the snapshotDirectoryVisible value.
      */
     public Boolean snapshotDirectoryVisible() {
@@ -442,8 +572,8 @@ public final class VolumeGroupVolumeProperties extends ProxyResource {
 
     /**
      * Set the snapshotDirectoryVisible property: If enabled (true) the volume will contain a read-only snapshot
-     * directory which provides access to each of the volume's snapshots (default to true).
-     *
+     * directory which provides access to each of the volume's snapshots (defaults to true).
+     * 
      * @param snapshotDirectoryVisible the snapshotDirectoryVisible value to set.
      * @return the VolumeGroupVolumeProperties object itself.
      */
@@ -458,7 +588,7 @@ public final class VolumeGroupVolumeProperties extends ProxyResource {
     /**
      * Get the kerberosEnabled property: Describe if a volume is KerberosEnabled. To be use with swagger version
      * 2020-05-01 or later.
-     *
+     * 
      * @return the kerberosEnabled value.
      */
     public Boolean kerberosEnabled() {
@@ -468,7 +598,7 @@ public final class VolumeGroupVolumeProperties extends ProxyResource {
     /**
      * Set the kerberosEnabled property: Describe if a volume is KerberosEnabled. To be use with swagger version
      * 2020-05-01 or later.
-     *
+     * 
      * @param kerberosEnabled the kerberosEnabled value to set.
      * @return the VolumeGroupVolumeProperties object itself.
      */
@@ -483,7 +613,7 @@ public final class VolumeGroupVolumeProperties extends ProxyResource {
     /**
      * Get the securityStyle property: The security style of volume, default unix, defaults to ntfs for dual protocol or
      * CIFS protocol.
-     *
+     * 
      * @return the securityStyle value.
      */
     public SecurityStyle securityStyle() {
@@ -493,7 +623,7 @@ public final class VolumeGroupVolumeProperties extends ProxyResource {
     /**
      * Set the securityStyle property: The security style of volume, default unix, defaults to ntfs for dual protocol or
      * CIFS protocol.
-     *
+     * 
      * @param securityStyle the securityStyle value to set.
      * @return the VolumeGroupVolumeProperties object itself.
      */
@@ -508,7 +638,7 @@ public final class VolumeGroupVolumeProperties extends ProxyResource {
     /**
      * Get the smbEncryption property: Enables encryption for in-flight smb3 data. Only applicable for SMB/DualProtocol
      * volume. To be used with swagger version 2020-08-01 or later.
-     *
+     * 
      * @return the smbEncryption value.
      */
     public Boolean smbEncryption() {
@@ -518,7 +648,7 @@ public final class VolumeGroupVolumeProperties extends ProxyResource {
     /**
      * Set the smbEncryption property: Enables encryption for in-flight smb3 data. Only applicable for SMB/DualProtocol
      * volume. To be used with swagger version 2020-08-01 or later.
-     *
+     * 
      * @param smbEncryption the smbEncryption value to set.
      * @return the VolumeGroupVolumeProperties object itself.
      */
@@ -531,9 +661,60 @@ public final class VolumeGroupVolumeProperties extends ProxyResource {
     }
 
     /**
+     * Get the smbAccessBasedEnumeration property: Enables access-based enumeration share property for SMB Shares. Only
+     * applicable for SMB/DualProtocol volume.
+     * 
+     * @return the smbAccessBasedEnumeration value.
+     */
+    public SmbAccessBasedEnumeration smbAccessBasedEnumeration() {
+        return this.innerProperties() == null ? null : this.innerProperties().smbAccessBasedEnumeration();
+    }
+
+    /**
+     * Set the smbAccessBasedEnumeration property: Enables access-based enumeration share property for SMB Shares. Only
+     * applicable for SMB/DualProtocol volume.
+     * 
+     * @param smbAccessBasedEnumeration the smbAccessBasedEnumeration value to set.
+     * @return the VolumeGroupVolumeProperties object itself.
+     */
+    public VolumeGroupVolumeProperties
+        withSmbAccessBasedEnumeration(SmbAccessBasedEnumeration smbAccessBasedEnumeration) {
+        if (this.innerProperties() == null) {
+            this.innerProperties = new VolumeProperties();
+        }
+        this.innerProperties().withSmbAccessBasedEnumeration(smbAccessBasedEnumeration);
+        return this;
+    }
+
+    /**
+     * Get the smbNonBrowsable property: Enables non-browsable property for SMB Shares. Only applicable for
+     * SMB/DualProtocol volume.
+     * 
+     * @return the smbNonBrowsable value.
+     */
+    public SmbNonBrowsable smbNonBrowsable() {
+        return this.innerProperties() == null ? null : this.innerProperties().smbNonBrowsable();
+    }
+
+    /**
+     * Set the smbNonBrowsable property: Enables non-browsable property for SMB Shares. Only applicable for
+     * SMB/DualProtocol volume.
+     * 
+     * @param smbNonBrowsable the smbNonBrowsable value to set.
+     * @return the VolumeGroupVolumeProperties object itself.
+     */
+    public VolumeGroupVolumeProperties withSmbNonBrowsable(SmbNonBrowsable smbNonBrowsable) {
+        if (this.innerProperties() == null) {
+            this.innerProperties = new VolumeProperties();
+        }
+        this.innerProperties().withSmbNonBrowsable(smbNonBrowsable);
+        return this;
+    }
+
+    /**
      * Get the smbContinuouslyAvailable property: Enables continuously available share property for smb volume. Only
      * applicable for SMB volume.
-     *
+     * 
      * @return the smbContinuouslyAvailable value.
      */
     public Boolean smbContinuouslyAvailable() {
@@ -543,7 +724,7 @@ public final class VolumeGroupVolumeProperties extends ProxyResource {
     /**
      * Set the smbContinuouslyAvailable property: Enables continuously available share property for smb volume. Only
      * applicable for SMB volume.
-     *
+     * 
      * @param smbContinuouslyAvailable the smbContinuouslyAvailable value to set.
      * @return the VolumeGroupVolumeProperties object itself.
      */
@@ -556,9 +737,9 @@ public final class VolumeGroupVolumeProperties extends ProxyResource {
     }
 
     /**
-     * Get the throughputMibps property: Maximum throughput in Mibps that can be achieved by this volume and this will
+     * Get the throughputMibps property: Maximum throughput in MiB/s that can be achieved by this volume and this will
      * be accepted as input only for manual qosType volume.
-     *
+     * 
      * @return the throughputMibps value.
      */
     public Float throughputMibps() {
@@ -566,9 +747,9 @@ public final class VolumeGroupVolumeProperties extends ProxyResource {
     }
 
     /**
-     * Set the throughputMibps property: Maximum throughput in Mibps that can be achieved by this volume and this will
+     * Set the throughputMibps property: Maximum throughput in MiB/s that can be achieved by this volume and this will
      * be accepted as input only for manual qosType volume.
-     *
+     * 
      * @param throughputMibps the throughputMibps value to set.
      * @return the VolumeGroupVolumeProperties object itself.
      */
@@ -581,21 +762,35 @@ public final class VolumeGroupVolumeProperties extends ProxyResource {
     }
 
     /**
-     * Get the encryptionKeySource property: Encryption Key Source. Possible values are: 'Microsoft.NetApp'.
-     *
+     * Get the actualThroughputMibps property: Actual throughput in MiB/s for auto qosType volumes calculated based on
+     * size and serviceLevel.
+     * 
+     * @return the actualThroughputMibps value.
+     */
+    public Float actualThroughputMibps() {
+        return this.innerProperties() == null ? null : this.innerProperties().actualThroughputMibps();
+    }
+
+    /**
+     * Get the encryptionKeySource property: Source of key used to encrypt data in volume. Applicable if NetApp account
+     * has encryption.keySource = 'Microsoft.KeyVault'. Possible values (case-insensitive) are: 'Microsoft.NetApp,
+     * Microsoft.KeyVault'.
+     * 
      * @return the encryptionKeySource value.
      */
-    public String encryptionKeySource() {
+    public EncryptionKeySource encryptionKeySource() {
         return this.innerProperties() == null ? null : this.innerProperties().encryptionKeySource();
     }
 
     /**
-     * Set the encryptionKeySource property: Encryption Key Source. Possible values are: 'Microsoft.NetApp'.
-     *
+     * Set the encryptionKeySource property: Source of key used to encrypt data in volume. Applicable if NetApp account
+     * has encryption.keySource = 'Microsoft.KeyVault'. Possible values (case-insensitive) are: 'Microsoft.NetApp,
+     * Microsoft.KeyVault'.
+     * 
      * @param encryptionKeySource the encryptionKeySource value to set.
      * @return the VolumeGroupVolumeProperties object itself.
      */
-    public VolumeGroupVolumeProperties withEncryptionKeySource(String encryptionKeySource) {
+    public VolumeGroupVolumeProperties withEncryptionKeySource(EncryptionKeySource encryptionKeySource) {
         if (this.innerProperties() == null) {
             this.innerProperties = new VolumeProperties();
         }
@@ -604,8 +799,33 @@ public final class VolumeGroupVolumeProperties extends ProxyResource {
     }
 
     /**
+     * Get the keyVaultPrivateEndpointResourceId property: The resource ID of private endpoint for KeyVault. It must
+     * reside in the same VNET as the volume. Only applicable if encryptionKeySource = 'Microsoft.KeyVault'.
+     * 
+     * @return the keyVaultPrivateEndpointResourceId value.
+     */
+    public String keyVaultPrivateEndpointResourceId() {
+        return this.innerProperties() == null ? null : this.innerProperties().keyVaultPrivateEndpointResourceId();
+    }
+
+    /**
+     * Set the keyVaultPrivateEndpointResourceId property: The resource ID of private endpoint for KeyVault. It must
+     * reside in the same VNET as the volume. Only applicable if encryptionKeySource = 'Microsoft.KeyVault'.
+     * 
+     * @param keyVaultPrivateEndpointResourceId the keyVaultPrivateEndpointResourceId value to set.
+     * @return the VolumeGroupVolumeProperties object itself.
+     */
+    public VolumeGroupVolumeProperties withKeyVaultPrivateEndpointResourceId(String keyVaultPrivateEndpointResourceId) {
+        if (this.innerProperties() == null) {
+            this.innerProperties = new VolumeProperties();
+        }
+        this.innerProperties().withKeyVaultPrivateEndpointResourceId(keyVaultPrivateEndpointResourceId);
+        return this;
+    }
+
+    /**
      * Get the ldapEnabled property: Specifies whether LDAP is enabled or not for a given NFS volume.
-     *
+     * 
      * @return the ldapEnabled value.
      */
     public Boolean ldapEnabled() {
@@ -614,7 +834,7 @@ public final class VolumeGroupVolumeProperties extends ProxyResource {
 
     /**
      * Set the ldapEnabled property: Specifies whether LDAP is enabled or not for a given NFS volume.
-     *
+     * 
      * @param ldapEnabled the ldapEnabled value to set.
      * @return the VolumeGroupVolumeProperties object itself.
      */
@@ -628,7 +848,7 @@ public final class VolumeGroupVolumeProperties extends ProxyResource {
 
     /**
      * Get the coolAccess property: Specifies whether Cool Access(tiering) is enabled for the volume.
-     *
+     * 
      * @return the coolAccess value.
      */
     public Boolean coolAccess() {
@@ -637,7 +857,7 @@ public final class VolumeGroupVolumeProperties extends ProxyResource {
 
     /**
      * Set the coolAccess property: Specifies whether Cool Access(tiering) is enabled for the volume.
-     *
+     * 
      * @param coolAccess the coolAccess value to set.
      * @return the VolumeGroupVolumeProperties object itself.
      */
@@ -652,7 +872,7 @@ public final class VolumeGroupVolumeProperties extends ProxyResource {
     /**
      * Get the coolnessPeriod property: Specifies the number of days after which data that is not accessed by clients
      * will be tiered.
-     *
+     * 
      * @return the coolnessPeriod value.
      */
     public Integer coolnessPeriod() {
@@ -662,7 +882,7 @@ public final class VolumeGroupVolumeProperties extends ProxyResource {
     /**
      * Set the coolnessPeriod property: Specifies the number of days after which data that is not accessed by clients
      * will be tiered.
-     *
+     * 
      * @param coolnessPeriod the coolnessPeriod value to set.
      * @return the VolumeGroupVolumeProperties object itself.
      */
@@ -675,12 +895,51 @@ public final class VolumeGroupVolumeProperties extends ProxyResource {
     }
 
     /**
+     * Get the coolAccessRetrievalPolicy property: coolAccessRetrievalPolicy determines the data retrieval behavior from
+     * the cool tier to standard storage based on the read pattern for cool access enabled volumes. The possible values
+     * for this field are:
+     * Default - Data will be pulled from cool tier to standard storage on random reads. This policy is the default.
+     * OnRead - All client-driven data read is pulled from cool tier to standard storage on both sequential and random
+     * reads.
+     * Never - No client-driven data is pulled from cool tier to standard storage.
+     * 
+     * @return the coolAccessRetrievalPolicy value.
+     */
+    public CoolAccessRetrievalPolicy coolAccessRetrievalPolicy() {
+        return this.innerProperties() == null ? null : this.innerProperties().coolAccessRetrievalPolicy();
+    }
+
+    /**
+     * Set the coolAccessRetrievalPolicy property: coolAccessRetrievalPolicy determines the data retrieval behavior from
+     * the cool tier to standard storage based on the read pattern for cool access enabled volumes. The possible values
+     * for this field are:
+     * Default - Data will be pulled from cool tier to standard storage on random reads. This policy is the default.
+     * OnRead - All client-driven data read is pulled from cool tier to standard storage on both sequential and random
+     * reads.
+     * Never - No client-driven data is pulled from cool tier to standard storage.
+     * 
+     * @param coolAccessRetrievalPolicy the coolAccessRetrievalPolicy value to set.
+     * @return the VolumeGroupVolumeProperties object itself.
+     */
+    public VolumeGroupVolumeProperties
+        withCoolAccessRetrievalPolicy(CoolAccessRetrievalPolicy coolAccessRetrievalPolicy) {
+        if (this.innerProperties() == null) {
+            this.innerProperties = new VolumeProperties();
+        }
+        this.innerProperties().withCoolAccessRetrievalPolicy(coolAccessRetrievalPolicy);
+        return this;
+    }
+
+    /**
      * Get the unixPermissions property: UNIX permissions for NFS volume accepted in octal 4 digit format. First digit
      * selects the set user ID(4), set group ID (2) and sticky (1) attributes. Second digit selects permission for the
      * owner of the file: read (4), write (2) and execute (1). Third selects permissions for other users in the same
      * group. the fourth for other users not in the group. 0755 - gives read/write/execute permissions to owner and
-     * read/execute to group and other users.
-     *
+     * read/execute to group and other users. Avoid passing null value for unixPermissions in volume update operation,
+     * As per the behavior, If Null value is passed then user-visible unixPermissions value will became null, and user
+     * will not be able to get unixPermissions value. On safer side, actual unixPermissions value on volume will remain
+     * as its last saved value only.
+     * 
      * @return the unixPermissions value.
      */
     public String unixPermissions() {
@@ -692,8 +951,11 @@ public final class VolumeGroupVolumeProperties extends ProxyResource {
      * selects the set user ID(4), set group ID (2) and sticky (1) attributes. Second digit selects permission for the
      * owner of the file: read (4), write (2) and execute (1). Third selects permissions for other users in the same
      * group. the fourth for other users not in the group. 0755 - gives read/write/execute permissions to owner and
-     * read/execute to group and other users.
-     *
+     * read/execute to group and other users. Avoid passing null value for unixPermissions in volume update operation,
+     * As per the behavior, If Null value is passed then user-visible unixPermissions value will became null, and user
+     * will not be able to get unixPermissions value. On safer side, actual unixPermissions value on volume will remain
+     * as its last saved value only.
+     * 
      * @param unixPermissions the unixPermissions value to set.
      * @return the VolumeGroupVolumeProperties object itself.
      */
@@ -709,7 +971,7 @@ public final class VolumeGroupVolumeProperties extends ProxyResource {
      * Get the cloneProgress property: When a volume is being restored from another volume's snapshot, will show the
      * percentage completion of this cloning process. When this value is empty/null there is no cloning process
      * currently happening on this volume. This value will update every 5 minutes during cloning.
-     *
+     * 
      * @return the cloneProgress value.
      */
     public Integer cloneProgress() {
@@ -717,9 +979,19 @@ public final class VolumeGroupVolumeProperties extends ProxyResource {
     }
 
     /**
-     * Get the avsDataStore property: avsDataStore Specifies whether the volume is enabled for Azure VMware Solution
-     * (AVS) datastore purpose.
-     *
+     * Get the fileAccessLogs property: Flag indicating whether file access logs are enabled for the volume, based on
+     * active diagnostic settings present on the volume.
+     * 
+     * @return the fileAccessLogs value.
+     */
+    public FileAccessLogs fileAccessLogs() {
+        return this.innerProperties() == null ? null : this.innerProperties().fileAccessLogs();
+    }
+
+    /**
+     * Get the avsDataStore property: Specifies whether the volume is enabled for Azure VMware Solution (AVS) datastore
+     * purpose.
+     * 
      * @return the avsDataStore value.
      */
     public AvsDataStore avsDataStore() {
@@ -727,9 +999,9 @@ public final class VolumeGroupVolumeProperties extends ProxyResource {
     }
 
     /**
-     * Set the avsDataStore property: avsDataStore Specifies whether the volume is enabled for Azure VMware Solution
-     * (AVS) datastore purpose.
-     *
+     * Set the avsDataStore property: Specifies whether the volume is enabled for Azure VMware Solution (AVS) datastore
+     * purpose.
+     * 
      * @param avsDataStore the avsDataStore value to set.
      * @return the VolumeGroupVolumeProperties object itself.
      */
@@ -742,8 +1014,17 @@ public final class VolumeGroupVolumeProperties extends ProxyResource {
     }
 
     /**
+     * Get the dataStoreResourceId property: Data store resource unique identifier.
+     * 
+     * @return the dataStoreResourceId value.
+     */
+    public List<String> dataStoreResourceId() {
+        return this.innerProperties() == null ? null : this.innerProperties().dataStoreResourceId();
+    }
+
+    /**
      * Get the isDefaultQuotaEnabled property: Specifies if default quota is enabled for the volume.
-     *
+     * 
      * @return the isDefaultQuotaEnabled value.
      */
     public Boolean isDefaultQuotaEnabled() {
@@ -752,7 +1033,7 @@ public final class VolumeGroupVolumeProperties extends ProxyResource {
 
     /**
      * Set the isDefaultQuotaEnabled property: Specifies if default quota is enabled for the volume.
-     *
+     * 
      * @param isDefaultQuotaEnabled the isDefaultQuotaEnabled value to set.
      * @return the VolumeGroupVolumeProperties object itself.
      */
@@ -767,7 +1048,7 @@ public final class VolumeGroupVolumeProperties extends ProxyResource {
     /**
      * Get the defaultUserQuotaInKiBs property: Default user quota for volume in KiBs. If isDefaultQuotaEnabled is set,
      * the minimum value of 4 KiBs applies .
-     *
+     * 
      * @return the defaultUserQuotaInKiBs value.
      */
     public Long defaultUserQuotaInKiBs() {
@@ -777,7 +1058,7 @@ public final class VolumeGroupVolumeProperties extends ProxyResource {
     /**
      * Set the defaultUserQuotaInKiBs property: Default user quota for volume in KiBs. If isDefaultQuotaEnabled is set,
      * the minimum value of 4 KiBs applies .
-     *
+     * 
      * @param defaultUserQuotaInKiBs the defaultUserQuotaInKiBs value to set.
      * @return the VolumeGroupVolumeProperties object itself.
      */
@@ -792,7 +1073,7 @@ public final class VolumeGroupVolumeProperties extends ProxyResource {
     /**
      * Get the defaultGroupQuotaInKiBs property: Default group quota for volume in KiBs. If isDefaultQuotaEnabled is
      * set, the minimum value of 4 KiBs applies.
-     *
+     * 
      * @return the defaultGroupQuotaInKiBs value.
      */
     public Long defaultGroupQuotaInKiBs() {
@@ -802,7 +1083,7 @@ public final class VolumeGroupVolumeProperties extends ProxyResource {
     /**
      * Set the defaultGroupQuotaInKiBs property: Default group quota for volume in KiBs. If isDefaultQuotaEnabled is
      * set, the minimum value of 4 KiBs applies.
-     *
+     * 
      * @param defaultGroupQuotaInKiBs the defaultGroupQuotaInKiBs value to set.
      * @return the VolumeGroupVolumeProperties object itself.
      */
@@ -815,8 +1096,18 @@ public final class VolumeGroupVolumeProperties extends ProxyResource {
     }
 
     /**
+     * Get the maximumNumberOfFiles property: Maximum number of files allowed. Needs a service request in order to be
+     * changed. Only allowed to be changed if volume quota is more than 4TiB.
+     * 
+     * @return the maximumNumberOfFiles value.
+     */
+    public Long maximumNumberOfFiles() {
+        return this.innerProperties() == null ? null : this.innerProperties().maximumNumberOfFiles();
+    }
+
+    /**
      * Get the volumeGroupName property: Volume Group Name.
-     *
+     * 
      * @return the volumeGroupName value.
      */
     public String volumeGroupName() {
@@ -825,7 +1116,7 @@ public final class VolumeGroupVolumeProperties extends ProxyResource {
 
     /**
      * Get the capacityPoolResourceId property: Pool Resource Id used in case of creating a volume through volume group.
-     *
+     * 
      * @return the capacityPoolResourceId value.
      */
     public String capacityPoolResourceId() {
@@ -834,7 +1125,7 @@ public final class VolumeGroupVolumeProperties extends ProxyResource {
 
     /**
      * Set the capacityPoolResourceId property: Pool Resource Id used in case of creating a volume through volume group.
-     *
+     * 
      * @param capacityPoolResourceId the capacityPoolResourceId value to set.
      * @return the VolumeGroupVolumeProperties object itself.
      */
@@ -848,7 +1139,7 @@ public final class VolumeGroupVolumeProperties extends ProxyResource {
 
     /**
      * Get the proximityPlacementGroup property: Proximity placement group associated with the volume.
-     *
+     * 
      * @return the proximityPlacementGroup value.
      */
     public String proximityPlacementGroup() {
@@ -857,7 +1148,7 @@ public final class VolumeGroupVolumeProperties extends ProxyResource {
 
     /**
      * Set the proximityPlacementGroup property: Proximity placement group associated with the volume.
-     *
+     * 
      * @param proximityPlacementGroup the proximityPlacementGroup value to set.
      * @return the VolumeGroupVolumeProperties object itself.
      */
@@ -871,7 +1162,7 @@ public final class VolumeGroupVolumeProperties extends ProxyResource {
 
     /**
      * Get the t2Network property: T2 network information.
-     *
+     * 
      * @return the t2Network value.
      */
     public String t2Network() {
@@ -881,7 +1172,7 @@ public final class VolumeGroupVolumeProperties extends ProxyResource {
     /**
      * Get the volumeSpecName property: Volume spec name is the application specific designation or identifier for the
      * particular volume in a volume group for e.g. data, log.
-     *
+     * 
      * @return the volumeSpecName value.
      */
     public String volumeSpecName() {
@@ -891,7 +1182,7 @@ public final class VolumeGroupVolumeProperties extends ProxyResource {
     /**
      * Set the volumeSpecName property: Volume spec name is the application specific designation or identifier for the
      * particular volume in a volume group for e.g. data, log.
-     *
+     * 
      * @param volumeSpecName the volumeSpecName value to set.
      * @return the VolumeGroupVolumeProperties object itself.
      */
@@ -904,9 +1195,18 @@ public final class VolumeGroupVolumeProperties extends ProxyResource {
     }
 
     /**
-     * Get the placementRules property: Volume placement rules Application specific placement rules for the particular
-     * volume.
-     *
+     * Get the encrypted property: Specifies if the volume is encrypted or not. Only available on volumes created or
+     * updated after 2022-01-01.
+     * 
+     * @return the encrypted value.
+     */
+    public Boolean encrypted() {
+        return this.innerProperties() == null ? null : this.innerProperties().encrypted();
+    }
+
+    /**
+     * Get the placementRules property: Application specific placement rules for the particular volume.
+     * 
      * @return the placementRules value.
      */
     public List<PlacementKeyValuePairs> placementRules() {
@@ -914,9 +1214,8 @@ public final class VolumeGroupVolumeProperties extends ProxyResource {
     }
 
     /**
-     * Set the placementRules property: Volume placement rules Application specific placement rules for the particular
-     * volume.
-     *
+     * Set the placementRules property: Application specific placement rules for the particular volume.
+     * 
      * @param placementRules the placementRules value to set.
      * @return the VolumeGroupVolumeProperties object itself.
      */
@@ -929,18 +1228,168 @@ public final class VolumeGroupVolumeProperties extends ProxyResource {
     }
 
     /**
+     * Get the enableSubvolumes property: Flag indicating whether subvolume operations are enabled on the volume.
+     * 
+     * @return the enableSubvolumes value.
+     */
+    public EnableSubvolumes enableSubvolumes() {
+        return this.innerProperties() == null ? null : this.innerProperties().enableSubvolumes();
+    }
+
+    /**
+     * Set the enableSubvolumes property: Flag indicating whether subvolume operations are enabled on the volume.
+     * 
+     * @param enableSubvolumes the enableSubvolumes value to set.
+     * @return the VolumeGroupVolumeProperties object itself.
+     */
+    public VolumeGroupVolumeProperties withEnableSubvolumes(EnableSubvolumes enableSubvolumes) {
+        if (this.innerProperties() == null) {
+            this.innerProperties = new VolumeProperties();
+        }
+        this.innerProperties().withEnableSubvolumes(enableSubvolumes);
+        return this;
+    }
+
+    /**
+     * Get the provisionedAvailabilityZone property: The availability zone where the volume is provisioned. This refers
+     * to the logical availability zone where the volume resides.
+     * 
+     * @return the provisionedAvailabilityZone value.
+     */
+    public String provisionedAvailabilityZone() {
+        return this.innerProperties() == null ? null : this.innerProperties().provisionedAvailabilityZone();
+    }
+
+    /**
+     * Get the isLargeVolume property: Specifies whether volume is a Large Volume or Regular Volume.
+     * 
+     * @return the isLargeVolume value.
+     */
+    public Boolean isLargeVolume() {
+        return this.innerProperties() == null ? null : this.innerProperties().isLargeVolume();
+    }
+
+    /**
+     * Set the isLargeVolume property: Specifies whether volume is a Large Volume or Regular Volume.
+     * 
+     * @param isLargeVolume the isLargeVolume value to set.
+     * @return the VolumeGroupVolumeProperties object itself.
+     */
+    public VolumeGroupVolumeProperties withIsLargeVolume(Boolean isLargeVolume) {
+        if (this.innerProperties() == null) {
+            this.innerProperties = new VolumeProperties();
+        }
+        this.innerProperties().withIsLargeVolume(isLargeVolume);
+        return this;
+    }
+
+    /**
+     * Get the originatingResourceId property: Id of the snapshot or backup that the volume is restored from.
+     * 
+     * @return the originatingResourceId value.
+     */
+    public String originatingResourceId() {
+        return this.innerProperties() == null ? null : this.innerProperties().originatingResourceId();
+    }
+
+    /**
+     * Get the inheritedSizeInBytes property: Space shared by short term clone volume with parent volume in bytes.
+     * 
+     * @return the inheritedSizeInBytes value.
+     */
+    public Long inheritedSizeInBytes() {
+        return this.innerProperties() == null ? null : this.innerProperties().inheritedSizeInBytes();
+    }
+
+    /**
+     * Get the language property: Language supported for volume.
+     * 
+     * @return the language value.
+     */
+    public VolumeLanguage language() {
+        return this.innerProperties() == null ? null : this.innerProperties().language();
+    }
+
+    /**
+     * Set the language property: Language supported for volume.
+     * 
+     * @param language the language value to set.
+     * @return the VolumeGroupVolumeProperties object itself.
+     */
+    public VolumeGroupVolumeProperties withLanguage(VolumeLanguage language) {
+        if (this.innerProperties() == null) {
+            this.innerProperties = new VolumeProperties();
+        }
+        this.innerProperties().withLanguage(language);
+        return this;
+    }
+
+    /**
      * Validates the instance.
-     *
+     * 
      * @throws IllegalArgumentException thrown if the instance is not valid.
      */
     public void validate() {
         if (innerProperties() == null) {
-            throw logger
-                .logExceptionAsError(
-                    new IllegalArgumentException(
-                        "Missing required property innerProperties in model VolumeGroupVolumeProperties"));
+            throw LOGGER.atError()
+                .log(new IllegalArgumentException(
+                    "Missing required property innerProperties in model VolumeGroupVolumeProperties"));
         } else {
             innerProperties().validate();
         }
+    }
+
+    private static final ClientLogger LOGGER = new ClientLogger(VolumeGroupVolumeProperties.class);
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public JsonWriter toJson(JsonWriter jsonWriter) throws IOException {
+        jsonWriter.writeStartObject();
+        jsonWriter.writeJsonField("properties", this.innerProperties);
+        jsonWriter.writeStringField("name", this.name);
+        jsonWriter.writeMapField("tags", this.tags, (writer, element) -> writer.writeString(element));
+        jsonWriter.writeArrayField("zones", this.zones, (writer, element) -> writer.writeString(element));
+        return jsonWriter.writeEndObject();
+    }
+
+    /**
+     * Reads an instance of VolumeGroupVolumeProperties from the JsonReader.
+     * 
+     * @param jsonReader The JsonReader being read.
+     * @return An instance of VolumeGroupVolumeProperties if the JsonReader was pointing to an instance of it, or null
+     * if it was pointing to JSON null.
+     * @throws IllegalStateException If the deserialized JSON object was missing any required properties.
+     * @throws IOException If an error occurs while reading the VolumeGroupVolumeProperties.
+     */
+    public static VolumeGroupVolumeProperties fromJson(JsonReader jsonReader) throws IOException {
+        return jsonReader.readObject(reader -> {
+            VolumeGroupVolumeProperties deserializedVolumeGroupVolumeProperties = new VolumeGroupVolumeProperties();
+            while (reader.nextToken() != JsonToken.END_OBJECT) {
+                String fieldName = reader.getFieldName();
+                reader.nextToken();
+
+                if ("id".equals(fieldName)) {
+                    deserializedVolumeGroupVolumeProperties.id = reader.getString();
+                } else if ("type".equals(fieldName)) {
+                    deserializedVolumeGroupVolumeProperties.type = reader.getString();
+                } else if ("properties".equals(fieldName)) {
+                    deserializedVolumeGroupVolumeProperties.innerProperties = VolumeProperties.fromJson(reader);
+                } else if ("name".equals(fieldName)) {
+                    deserializedVolumeGroupVolumeProperties.name = reader.getString();
+                } else if ("tags".equals(fieldName)) {
+                    Map<String, String> tags = reader.readMap(reader1 -> reader1.getString());
+                    deserializedVolumeGroupVolumeProperties.tags = tags;
+                } else if ("zones".equals(fieldName)) {
+                    List<String> zones = reader.readArray(reader1 -> reader1.getString());
+                    deserializedVolumeGroupVolumeProperties.zones = zones;
+                } else {
+                    reader.skipChildren();
+                }
+            }
+
+            return deserializedVolumeGroupVolumeProperties;
+        });
     }
 }

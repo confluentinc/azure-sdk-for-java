@@ -12,28 +12,35 @@ import com.azure.core.management.polling.PollResult;
 import com.azure.core.util.Context;
 import com.azure.core.util.polling.SyncPoller;
 import com.azure.resourcemanager.netapp.fluent.models.SnapshotInner;
+import com.azure.resourcemanager.netapp.models.SnapshotRestoreFiles;
 
-/** An instance of this class provides access to all the operations defined in SnapshotsClient. */
+/**
+ * An instance of this class provides access to all the operations defined in SnapshotsClient.
+ */
 public interface SnapshotsClient {
     /**
+     * Describe all snapshots
+     * 
      * List all snapshots associated with the volume.
-     *
-     * @param resourceGroupName The name of the resource group.
+     * 
+     * @param resourceGroupName The name of the resource group. The name is case insensitive.
      * @param accountName The name of the NetApp account.
      * @param poolName The name of the capacity pool.
      * @param volumeName The name of the volume.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return list of Snapshots.
+     * @return list of Snapshots as paginated response with {@link PagedIterable}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
     PagedIterable<SnapshotInner> list(String resourceGroupName, String accountName, String poolName, String volumeName);
 
     /**
+     * Describe all snapshots
+     * 
      * List all snapshots associated with the volume.
-     *
-     * @param resourceGroupName The name of the resource group.
+     * 
+     * @param resourceGroupName The name of the resource group. The name is case insensitive.
      * @param accountName The name of the NetApp account.
      * @param poolName The name of the capacity pool.
      * @param volumeName The name of the volume.
@@ -41,16 +48,38 @@ public interface SnapshotsClient {
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return list of Snapshots.
+     * @return list of Snapshots as paginated response with {@link PagedIterable}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
-    PagedIterable<SnapshotInner> list(
-        String resourceGroupName, String accountName, String poolName, String volumeName, Context context);
+    PagedIterable<SnapshotInner> list(String resourceGroupName, String accountName, String poolName, String volumeName,
+        Context context);
 
     /**
+     * Describe a snapshot
+     * 
      * Get details of the specified snapshot.
-     *
-     * @param resourceGroupName The name of the resource group.
+     * 
+     * @param resourceGroupName The name of the resource group. The name is case insensitive.
+     * @param accountName The name of the NetApp account.
+     * @param poolName The name of the capacity pool.
+     * @param volumeName The name of the volume.
+     * @param snapshotName The name of the snapshot.
+     * @param context The context to associate with this operation.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return details of the specified snapshot along with {@link Response}.
+     */
+    @ServiceMethod(returns = ReturnType.SINGLE)
+    Response<SnapshotInner> getWithResponse(String resourceGroupName, String accountName, String poolName,
+        String volumeName, String snapshotName, Context context);
+
+    /**
+     * Describe a snapshot
+     * 
+     * Get details of the specified snapshot.
+     * 
+     * @param resourceGroupName The name of the resource group. The name is case insensitive.
      * @param accountName The name of the NetApp account.
      * @param poolName The name of the capacity pool.
      * @param volumeName The name of the volume.
@@ -61,36 +90,15 @@ public interface SnapshotsClient {
      * @return details of the specified snapshot.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    SnapshotInner get(
-        String resourceGroupName, String accountName, String poolName, String volumeName, String snapshotName);
+    SnapshotInner get(String resourceGroupName, String accountName, String poolName, String volumeName,
+        String snapshotName);
 
     /**
-     * Get details of the specified snapshot.
-     *
-     * @param resourceGroupName The name of the resource group.
-     * @param accountName The name of the NetApp account.
-     * @param poolName The name of the capacity pool.
-     * @param volumeName The name of the volume.
-     * @param snapshotName The name of the snapshot.
-     * @param context The context to associate with this operation.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return details of the specified snapshot.
-     */
-    @ServiceMethod(returns = ReturnType.SINGLE)
-    Response<SnapshotInner> getWithResponse(
-        String resourceGroupName,
-        String accountName,
-        String poolName,
-        String volumeName,
-        String snapshotName,
-        Context context);
-
-    /**
+     * Create a snapshot
+     * 
      * Create the specified snapshot within the given volume.
-     *
-     * @param resourceGroupName The name of the resource group.
+     * 
+     * @param resourceGroupName The name of the resource group. The name is case insensitive.
      * @param accountName The name of the NetApp account.
      * @param poolName The name of the capacity pool.
      * @param volumeName The name of the volume.
@@ -99,21 +107,18 @@ public interface SnapshotsClient {
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return snapshot of a Volume.
+     * @return the {@link SyncPoller} for polling of snapshot of a Volume.
      */
     @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
-    SyncPoller<PollResult<SnapshotInner>, SnapshotInner> beginCreate(
-        String resourceGroupName,
-        String accountName,
-        String poolName,
-        String volumeName,
-        String snapshotName,
-        SnapshotInner body);
+    SyncPoller<PollResult<SnapshotInner>, SnapshotInner> beginCreate(String resourceGroupName, String accountName,
+        String poolName, String volumeName, String snapshotName, SnapshotInner body);
 
     /**
+     * Create a snapshot
+     * 
      * Create the specified snapshot within the given volume.
-     *
-     * @param resourceGroupName The name of the resource group.
+     * 
+     * @param resourceGroupName The name of the resource group. The name is case insensitive.
      * @param accountName The name of the NetApp account.
      * @param poolName The name of the capacity pool.
      * @param volumeName The name of the volume.
@@ -123,22 +128,18 @@ public interface SnapshotsClient {
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return snapshot of a Volume.
+     * @return the {@link SyncPoller} for polling of snapshot of a Volume.
      */
     @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
-    SyncPoller<PollResult<SnapshotInner>, SnapshotInner> beginCreate(
-        String resourceGroupName,
-        String accountName,
-        String poolName,
-        String volumeName,
-        String snapshotName,
-        SnapshotInner body,
-        Context context);
+    SyncPoller<PollResult<SnapshotInner>, SnapshotInner> beginCreate(String resourceGroupName, String accountName,
+        String poolName, String volumeName, String snapshotName, SnapshotInner body, Context context);
 
     /**
+     * Create a snapshot
+     * 
      * Create the specified snapshot within the given volume.
-     *
-     * @param resourceGroupName The name of the resource group.
+     * 
+     * @param resourceGroupName The name of the resource group. The name is case insensitive.
      * @param accountName The name of the NetApp account.
      * @param poolName The name of the capacity pool.
      * @param volumeName The name of the volume.
@@ -150,18 +151,15 @@ public interface SnapshotsClient {
      * @return snapshot of a Volume.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    SnapshotInner create(
-        String resourceGroupName,
-        String accountName,
-        String poolName,
-        String volumeName,
-        String snapshotName,
-        SnapshotInner body);
+    SnapshotInner create(String resourceGroupName, String accountName, String poolName, String volumeName,
+        String snapshotName, SnapshotInner body);
 
     /**
+     * Create a snapshot
+     * 
      * Create the specified snapshot within the given volume.
-     *
-     * @param resourceGroupName The name of the resource group.
+     * 
+     * @param resourceGroupName The name of the resource group. The name is case insensitive.
      * @param accountName The name of the NetApp account.
      * @param poolName The name of the capacity pool.
      * @param volumeName The name of the volume.
@@ -174,19 +172,15 @@ public interface SnapshotsClient {
      * @return snapshot of a Volume.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    SnapshotInner create(
-        String resourceGroupName,
-        String accountName,
-        String poolName,
-        String volumeName,
-        String snapshotName,
-        SnapshotInner body,
-        Context context);
+    SnapshotInner create(String resourceGroupName, String accountName, String poolName, String volumeName,
+        String snapshotName, SnapshotInner body, Context context);
 
     /**
+     * Update a snapshot
+     * 
      * Patch a snapshot.
-     *
-     * @param resourceGroupName The name of the resource group.
+     * 
+     * @param resourceGroupName The name of the resource group. The name is case insensitive.
      * @param accountName The name of the NetApp account.
      * @param poolName The name of the capacity pool.
      * @param volumeName The name of the volume.
@@ -195,21 +189,18 @@ public interface SnapshotsClient {
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return snapshot of a Volume.
+     * @return the {@link SyncPoller} for polling of snapshot of a Volume.
      */
     @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
-    SyncPoller<PollResult<SnapshotInner>, SnapshotInner> beginUpdate(
-        String resourceGroupName,
-        String accountName,
-        String poolName,
-        String volumeName,
-        String snapshotName,
-        Object body);
+    SyncPoller<PollResult<SnapshotInner>, SnapshotInner> beginUpdate(String resourceGroupName, String accountName,
+        String poolName, String volumeName, String snapshotName, Object body);
 
     /**
+     * Update a snapshot
+     * 
      * Patch a snapshot.
-     *
-     * @param resourceGroupName The name of the resource group.
+     * 
+     * @param resourceGroupName The name of the resource group. The name is case insensitive.
      * @param accountName The name of the NetApp account.
      * @param poolName The name of the capacity pool.
      * @param volumeName The name of the volume.
@@ -219,22 +210,18 @@ public interface SnapshotsClient {
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return snapshot of a Volume.
+     * @return the {@link SyncPoller} for polling of snapshot of a Volume.
      */
     @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
-    SyncPoller<PollResult<SnapshotInner>, SnapshotInner> beginUpdate(
-        String resourceGroupName,
-        String accountName,
-        String poolName,
-        String volumeName,
-        String snapshotName,
-        Object body,
-        Context context);
+    SyncPoller<PollResult<SnapshotInner>, SnapshotInner> beginUpdate(String resourceGroupName, String accountName,
+        String poolName, String volumeName, String snapshotName, Object body, Context context);
 
     /**
+     * Update a snapshot
+     * 
      * Patch a snapshot.
-     *
-     * @param resourceGroupName The name of the resource group.
+     * 
+     * @param resourceGroupName The name of the resource group. The name is case insensitive.
      * @param accountName The name of the NetApp account.
      * @param poolName The name of the capacity pool.
      * @param volumeName The name of the volume.
@@ -246,18 +233,15 @@ public interface SnapshotsClient {
      * @return snapshot of a Volume.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    SnapshotInner update(
-        String resourceGroupName,
-        String accountName,
-        String poolName,
-        String volumeName,
-        String snapshotName,
-        Object body);
+    SnapshotInner update(String resourceGroupName, String accountName, String poolName, String volumeName,
+        String snapshotName, Object body);
 
     /**
+     * Update a snapshot
+     * 
      * Patch a snapshot.
-     *
-     * @param resourceGroupName The name of the resource group.
+     * 
+     * @param resourceGroupName The name of the resource group. The name is case insensitive.
      * @param accountName The name of the NetApp account.
      * @param poolName The name of the capacity pool.
      * @param volumeName The name of the volume.
@@ -270,19 +254,15 @@ public interface SnapshotsClient {
      * @return snapshot of a Volume.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    SnapshotInner update(
-        String resourceGroupName,
-        String accountName,
-        String poolName,
-        String volumeName,
-        String snapshotName,
-        Object body,
-        Context context);
+    SnapshotInner update(String resourceGroupName, String accountName, String poolName, String volumeName,
+        String snapshotName, Object body, Context context);
 
     /**
+     * Delete a snapshot
+     * 
      * Delete snapshot.
-     *
-     * @param resourceGroupName The name of the resource group.
+     * 
+     * @param resourceGroupName The name of the resource group. The name is case insensitive.
      * @param accountName The name of the NetApp account.
      * @param poolName The name of the capacity pool.
      * @param volumeName The name of the volume.
@@ -290,16 +270,18 @@ public interface SnapshotsClient {
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the completion.
+     * @return the {@link SyncPoller} for polling of long-running operation.
      */
     @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
-    SyncPoller<PollResult<Void>, Void> beginDelete(
-        String resourceGroupName, String accountName, String poolName, String volumeName, String snapshotName);
+    SyncPoller<PollResult<Void>, Void> beginDelete(String resourceGroupName, String accountName, String poolName,
+        String volumeName, String snapshotName);
 
     /**
+     * Delete a snapshot
+     * 
      * Delete snapshot.
-     *
-     * @param resourceGroupName The name of the resource group.
+     * 
+     * @param resourceGroupName The name of the resource group. The name is case insensitive.
      * @param accountName The name of the NetApp account.
      * @param poolName The name of the capacity pool.
      * @param volumeName The name of the volume.
@@ -308,21 +290,18 @@ public interface SnapshotsClient {
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the completion.
+     * @return the {@link SyncPoller} for polling of long-running operation.
      */
     @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
-    SyncPoller<PollResult<Void>, Void> beginDelete(
-        String resourceGroupName,
-        String accountName,
-        String poolName,
-        String volumeName,
-        String snapshotName,
-        Context context);
+    SyncPoller<PollResult<Void>, Void> beginDelete(String resourceGroupName, String accountName, String poolName,
+        String volumeName, String snapshotName, Context context);
 
     /**
+     * Delete a snapshot
+     * 
      * Delete snapshot.
-     *
-     * @param resourceGroupName The name of the resource group.
+     * 
+     * @param resourceGroupName The name of the resource group. The name is case insensitive.
      * @param accountName The name of the NetApp account.
      * @param poolName The name of the capacity pool.
      * @param volumeName The name of the volume.
@@ -335,9 +314,11 @@ public interface SnapshotsClient {
     void delete(String resourceGroupName, String accountName, String poolName, String volumeName, String snapshotName);
 
     /**
+     * Delete a snapshot
+     * 
      * Delete snapshot.
-     *
-     * @param resourceGroupName The name of the resource group.
+     * 
+     * @param resourceGroupName The name of the resource group. The name is case insensitive.
      * @param accountName The name of the NetApp account.
      * @param poolName The name of the capacity pool.
      * @param volumeName The name of the volume.
@@ -348,11 +329,86 @@ public interface SnapshotsClient {
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    void delete(
-        String resourceGroupName,
-        String accountName,
-        String poolName,
-        String volumeName,
-        String snapshotName,
+    void delete(String resourceGroupName, String accountName, String poolName, String volumeName, String snapshotName,
         Context context);
+
+    /**
+     * Create a new Snapshot Restore Files request
+     * 
+     * Restore the specified files from the specified snapshot to the active filesystem.
+     * 
+     * @param resourceGroupName The name of the resource group. The name is case insensitive.
+     * @param accountName The name of the NetApp account.
+     * @param poolName The name of the capacity pool.
+     * @param volumeName The name of the volume.
+     * @param snapshotName The name of the snapshot.
+     * @param body Restore payload supplied in the body of the operation.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return the {@link SyncPoller} for polling of long-running operation.
+     */
+    @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
+    SyncPoller<PollResult<Void>, Void> beginRestoreFiles(String resourceGroupName, String accountName, String poolName,
+        String volumeName, String snapshotName, SnapshotRestoreFiles body);
+
+    /**
+     * Create a new Snapshot Restore Files request
+     * 
+     * Restore the specified files from the specified snapshot to the active filesystem.
+     * 
+     * @param resourceGroupName The name of the resource group. The name is case insensitive.
+     * @param accountName The name of the NetApp account.
+     * @param poolName The name of the capacity pool.
+     * @param volumeName The name of the volume.
+     * @param snapshotName The name of the snapshot.
+     * @param body Restore payload supplied in the body of the operation.
+     * @param context The context to associate with this operation.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return the {@link SyncPoller} for polling of long-running operation.
+     */
+    @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
+    SyncPoller<PollResult<Void>, Void> beginRestoreFiles(String resourceGroupName, String accountName, String poolName,
+        String volumeName, String snapshotName, SnapshotRestoreFiles body, Context context);
+
+    /**
+     * Create a new Snapshot Restore Files request
+     * 
+     * Restore the specified files from the specified snapshot to the active filesystem.
+     * 
+     * @param resourceGroupName The name of the resource group. The name is case insensitive.
+     * @param accountName The name of the NetApp account.
+     * @param poolName The name of the capacity pool.
+     * @param volumeName The name of the volume.
+     * @param snapshotName The name of the snapshot.
+     * @param body Restore payload supplied in the body of the operation.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     */
+    @ServiceMethod(returns = ReturnType.SINGLE)
+    void restoreFiles(String resourceGroupName, String accountName, String poolName, String volumeName,
+        String snapshotName, SnapshotRestoreFiles body);
+
+    /**
+     * Create a new Snapshot Restore Files request
+     * 
+     * Restore the specified files from the specified snapshot to the active filesystem.
+     * 
+     * @param resourceGroupName The name of the resource group. The name is case insensitive.
+     * @param accountName The name of the NetApp account.
+     * @param poolName The name of the capacity pool.
+     * @param volumeName The name of the volume.
+     * @param snapshotName The name of the snapshot.
+     * @param body Restore payload supplied in the body of the operation.
+     * @param context The context to associate with this operation.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     */
+    @ServiceMethod(returns = ReturnType.SINGLE)
+    void restoreFiles(String resourceGroupName, String accountName, String poolName, String volumeName,
+        String snapshotName, SnapshotRestoreFiles body, Context context);
 }

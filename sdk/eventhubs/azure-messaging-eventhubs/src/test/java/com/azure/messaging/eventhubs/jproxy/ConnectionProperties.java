@@ -15,7 +15,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * Properties when creating a connection through the {@link SimpleProxy}.
  */
 class ConnectionProperties implements Closeable {
-    private final ClientLogger logger = new ClientLogger(ConnectionProperties.class);
+    private static final ClientLogger LOGGER = new ClientLogger(ConnectionProperties.class);
     private final AtomicBoolean isClosed = new AtomicBoolean();
     private final AsynchronousSocketChannel clientSocket;
     private final AsynchronousSocketChannel outgoingSocket;
@@ -23,9 +23,9 @@ class ConnectionProperties implements Closeable {
     private volatile ProxyConnectionState proxyConnectionState;
 
     ConnectionProperties(ProxyConnectionState proxyConnectionState, AsynchronousSocketChannel clientSocket,
-                         AsynchronousSocketChannel outgoingSocket) {
-        this.proxyConnectionState = Objects.requireNonNull(proxyConnectionState,
-            "'proxyConnectionState' cannot be null.");
+        AsynchronousSocketChannel outgoingSocket) {
+        this.proxyConnectionState
+            = Objects.requireNonNull(proxyConnectionState, "'proxyConnectionState' cannot be null.");
         this.clientSocket = Objects.requireNonNull(clientSocket, "'clientSocket' cannot be null.");
         this.outgoingSocket = Objects.requireNonNull(outgoingSocket, "'outgoingSocket' cannot be null.");
     }
@@ -82,8 +82,7 @@ class ConnectionProperties implements Closeable {
             // It's possible to get this IOException when we've closed the socket after disposing of the client.
         }
 
-        return String.format("ConnectionProperties [state='%s', client='%s', service='%s']",
-            proxyConnectionState,
+        return String.format("ConnectionProperties [state='%s', client='%s', service='%s']", proxyConnectionState,
             clientAddress != null ? clientAddress.toString() : "n/a",
             serviceAddress != null ? serviceAddress.toString() : "n/a");
     }
@@ -91,11 +90,11 @@ class ConnectionProperties implements Closeable {
     @Override
     public void close() throws IOException {
         if (isClosed.getAndSet(true)) {
-            logger.info("Connection already closed.");
+            LOGGER.info("Connection already closed.");
             return;
         }
 
-        logger.info("Closing connection.");
+        LOGGER.info("Closing connection.");
 
         setProxyConnectionState(ProxyConnectionState.PROXY_CLOSED);
         clientSocket.close();

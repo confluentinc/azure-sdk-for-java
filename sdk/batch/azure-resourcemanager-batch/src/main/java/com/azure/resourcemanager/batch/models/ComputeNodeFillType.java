@@ -4,18 +4,23 @@
 
 package com.azure.resourcemanager.batch.models;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonValue;
-
-/** Defines values for ComputeNodeFillType. */
+/**
+ * How tasks should be distributed across compute nodes.
+ */
 public enum ComputeNodeFillType {
-    /** Enum value Spread. */
+    /**
+     * Enum value Spread.
+     */
     SPREAD("Spread"),
 
-    /** Enum value Pack. */
+    /**
+     * Enum value Pack.
+     */
     PACK("Pack");
 
-    /** The actual serialized value for a ComputeNodeFillType instance. */
+    /**
+     * The actual serialized value for a ComputeNodeFillType instance.
+     */
     private final String value;
 
     ComputeNodeFillType(String value) {
@@ -24,12 +29,14 @@ public enum ComputeNodeFillType {
 
     /**
      * Parses a serialized value to a ComputeNodeFillType instance.
-     *
+     * 
      * @param value the serialized value to parse.
      * @return the parsed ComputeNodeFillType object, or null if unable to parse.
      */
-    @JsonCreator
     public static ComputeNodeFillType fromString(String value) {
+        if (value == null) {
+            return null;
+        }
         ComputeNodeFillType[] items = ComputeNodeFillType.values();
         for (ComputeNodeFillType item : items) {
             if (item.toString().equalsIgnoreCase(value)) {
@@ -39,7 +46,9 @@ public enum ComputeNodeFillType {
         return null;
     }
 
-    @JsonValue
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String toString() {
         return this.value;

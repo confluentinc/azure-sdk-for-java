@@ -7,37 +7,63 @@ import com.azure.core.http.HttpClient;
 import com.azure.core.http.policy.HttpLogDetailLevel;
 import com.azure.core.http.policy.HttpLogOptions;
 import com.azure.core.http.policy.HttpPipelinePolicy;
-import com.azure.core.test.TestBase;
+import com.azure.core.test.TestProxyTestBase;
 import org.junit.jupiter.api.Test;
 
-public abstract class TableClientTestBase extends TestBase {
+public abstract class TableClientTestBase extends TestProxyTestBase {
     protected static final HttpClient DEFAULT_HTTP_CLIENT = HttpClient.createDefault();
     protected static final boolean IS_COSMOS_TEST = TestUtils.isCosmosTest();
 
     protected HttpPipelinePolicy recordPolicy;
     protected HttpClient playbackClient;
 
-    protected TableClientBuilder getClientBuilder(String tableName, String connectionString) {
-        final TableClientBuilder builder = new TableClientBuilder()
-            .connectionString(connectionString)
-            .httpLogOptions(new HttpLogOptions().setLogLevel(HttpLogDetailLevel.BODY_AND_HEADERS))
+    protected abstract HttpClient buildAssertingClient(HttpClient httpClient);
+
+    protected TableClientBuilder getClientBuilder(String tableName, boolean enableTenantDiscovery) {
+        return getClientBuilderUsingEntra(tableName, enableTenantDiscovery);
+    }
+
+    protected TableClientBuilder getClientBuilderUsingEntra(String tableName, boolean enableTenantDiscovery) {
+        final TableClientBuilder tableClientBuilder
+            = new TableClientBuilder().credential(TestUtils.getTestTokenCredential(interceptorManager))
+                .endpoint(TestUtils.getEndpoint(interceptorManager.isPlaybackMode()));
+
+        if (enableTenantDiscovery) {
+            tableClientBuilder.enableTenantDiscovery();
+        }
+
+        return configureTestClientBuilder(tableClientBuilder, tableName);
+    }
+
+    protected TableClientBuilder getClientBuilderWithConnectionString(String tableName, boolean enableTenantDiscovery) {
+        final TableClientBuilder tableClientBuilder = new TableClientBuilder()
+            .connectionString(TestUtils.getConnectionString(interceptorManager.isPlaybackMode()));
+
+        if (enableTenantDiscovery) {
+            tableClientBuilder.enableTenantDiscovery();
+        }
+
+        return configureTestClientBuilder(tableClientBuilder, tableName);
+    }
+
+    private TableClientBuilder configureTestClientBuilder(TableClientBuilder tableClientBuilder, String tableName) {
+        tableClientBuilder.httpLogOptions(new HttpLogOptions().setLogLevel(HttpLogDetailLevel.BODY_AND_HEADERS))
             .tableName(tableName);
 
         if (interceptorManager.isPlaybackMode()) {
             playbackClient = interceptorManager.getPlaybackClient();
 
-            builder.httpClient(playbackClient);
+            tableClientBuilder.httpClient(buildAssertingClient(playbackClient));
         } else {
-            builder.httpClient(DEFAULT_HTTP_CLIENT);
+            tableClientBuilder.httpClient(buildAssertingClient(DEFAULT_HTTP_CLIENT));
 
-            if (!interceptorManager.isLiveMode()) {
+            if (interceptorManager.isRecordMode()) {
                 recordPolicy = interceptorManager.getRecordPolicy();
-
-                builder.addPolicy(recordPolicy);
+                tableClientBuilder.addPolicy(recordPolicy);
             }
         }
-
-        return builder;
+        TestUtils.addTestProxyTestSanitizersAndMatchers(interceptorManager);
+        return tableClientBuilder;
     }
 
     @Test

@@ -25,30 +25,33 @@ import com.azure.core.http.rest.RestProxy;
 import com.azure.core.management.exception.ManagementException;
 import com.azure.core.util.Context;
 import com.azure.core.util.FluxUtil;
-import com.azure.core.util.logging.ClientLogger;
 import com.azure.resourcemanager.automation.fluent.TestJobStreamsClient;
 import com.azure.resourcemanager.automation.fluent.models.JobStreamInner;
 import com.azure.resourcemanager.automation.fluent.models.JobStreamListResultInner;
 import reactor.core.publisher.Mono;
 
-/** An instance of this class provides access to all the operations defined in TestJobStreamsClient. */
+/**
+ * An instance of this class provides access to all the operations defined in TestJobStreamsClient.
+ */
 public final class TestJobStreamsClientImpl implements TestJobStreamsClient {
-    private final ClientLogger logger = new ClientLogger(TestJobStreamsClientImpl.class);
-
-    /** The proxy service used to perform REST calls. */
+    /**
+     * The proxy service used to perform REST calls.
+     */
     private final TestJobStreamsService service;
 
-    /** The service client containing this operation class. */
+    /**
+     * The service client containing this operation class.
+     */
     private final AutomationClientImpl client;
 
     /**
      * Initializes an instance of TestJobStreamsClientImpl.
-     *
+     * 
      * @param client the instance of the service client containing this operation class.
      */
     TestJobStreamsClientImpl(AutomationClientImpl client) {
-        this.service =
-            RestProxy.create(TestJobStreamsService.class, client.getHttpPipeline(), client.getSerializerAdapter());
+        this.service
+            = RestProxy.create(TestJobStreamsService.class, client.getHttpPipeline(), client.getSerializerAdapter());
         this.client = client;
     }
 
@@ -58,56 +61,41 @@ public final class TestJobStreamsClientImpl implements TestJobStreamsClient {
      */
     @Host("{$host}")
     @ServiceInterface(name = "AutomationClientTest")
-    private interface TestJobStreamsService {
-        @Headers({"Content-Type: application/json"})
-        @Get(
-            "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Automation"
-                + "/automationAccounts/{automationAccountName}/runbooks/{runbookName}/draft/testJob/streams"
-                + "/{jobStreamId}")
-        @ExpectedResponses({200})
+    public interface TestJobStreamsService {
+        @Headers({ "Content-Type: application/json" })
+        @Get("/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Automation/automationAccounts/{automationAccountName}/runbooks/{runbookName}/draft/testJob/streams/{jobStreamId}")
+        @ExpectedResponses({ 200 })
         @UnexpectedResponseExceptionType(ManagementException.class)
-        Mono<Response<JobStreamInner>> get(
-            @HostParam("$host") String endpoint,
+        Mono<Response<JobStreamInner>> get(@HostParam("$host") String endpoint,
             @PathParam("subscriptionId") String subscriptionId,
             @PathParam("resourceGroupName") String resourceGroupName,
             @PathParam("automationAccountName") String automationAccountName,
-            @PathParam("runbookName") String runbookName,
-            @PathParam("jobStreamId") String jobStreamId,
-            @QueryParam("api-version") String apiVersion,
-            @HeaderParam("Accept") String accept,
-            Context context);
+            @PathParam("runbookName") String runbookName, @PathParam("jobStreamId") String jobStreamId,
+            @QueryParam("api-version") String apiVersion, @HeaderParam("Accept") String accept, Context context);
 
-        @Headers({"Content-Type: application/json"})
-        @Get(
-            "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Automation"
-                + "/automationAccounts/{automationAccountName}/runbooks/{runbookName}/draft/testJob/streams")
-        @ExpectedResponses({200})
+        @Headers({ "Content-Type: application/json" })
+        @Get("/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Automation/automationAccounts/{automationAccountName}/runbooks/{runbookName}/draft/testJob/streams")
+        @ExpectedResponses({ 200 })
         @UnexpectedResponseExceptionType(ManagementException.class)
-        Mono<Response<JobStreamListResultInner>> listByTestJob(
-            @HostParam("$host") String endpoint,
+        Mono<Response<JobStreamListResultInner>> listByTestJob(@HostParam("$host") String endpoint,
             @PathParam("subscriptionId") String subscriptionId,
             @PathParam("resourceGroupName") String resourceGroupName,
             @PathParam("automationAccountName") String automationAccountName,
-            @PathParam("runbookName") String runbookName,
-            @QueryParam("$filter") String filter,
-            @QueryParam("api-version") String apiVersion,
-            @HeaderParam("Accept") String accept,
-            Context context);
+            @PathParam("runbookName") String runbookName, @QueryParam("$filter") String filter,
+            @QueryParam("api-version") String apiVersion, @HeaderParam("Accept") String accept, Context context);
 
-        @Headers({"Content-Type: application/json"})
+        @Headers({ "Content-Type: application/json" })
         @Get("{nextLink}")
-        @ExpectedResponses({200})
+        @ExpectedResponses({ 200 })
         @UnexpectedResponseExceptionType(ManagementException.class)
         Mono<Response<JobStreamListResultInner>> listByTestJobNext(
-            @PathParam(value = "nextLink", encoded = true) String nextLink,
-            @HostParam("$host") String endpoint,
-            @HeaderParam("Accept") String accept,
-            Context context);
+            @PathParam(value = "nextLink", encoded = true) String nextLink, @HostParam("$host") String endpoint,
+            @HeaderParam("Accept") String accept, Context context);
     }
 
     /**
      * Retrieve a test job stream of the test job identified by runbook name and stream id.
-     *
+     * 
      * @param resourceGroupName Name of an Azure Resource group.
      * @param automationAccountName The name of the automation account.
      * @param runbookName The runbook name.
@@ -115,22 +103,18 @@ public final class TestJobStreamsClientImpl implements TestJobStreamsClient {
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return definition of the job stream.
+     * @return definition of the job stream along with {@link Response} on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    private Mono<Response<JobStreamInner>> getWithResponseAsync(
-        String resourceGroupName, String automationAccountName, String runbookName, String jobStreamId) {
+    private Mono<Response<JobStreamInner>> getWithResponseAsync(String resourceGroupName, String automationAccountName,
+        String runbookName, String jobStreamId) {
         if (this.client.getEndpoint() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getEndpoint() is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
         }
         if (this.client.getSubscriptionId() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getSubscriptionId() is required and cannot be null."));
+            return Mono.error(new IllegalArgumentException(
+                "Parameter this.client.getSubscriptionId() is required and cannot be null."));
         }
         if (resourceGroupName == null) {
             return Mono
@@ -146,28 +130,17 @@ public final class TestJobStreamsClientImpl implements TestJobStreamsClient {
         if (jobStreamId == null) {
             return Mono.error(new IllegalArgumentException("Parameter jobStreamId is required and cannot be null."));
         }
-        final String apiVersion = "2019-06-01";
+        final String apiVersion = "2018-06-30";
         final String accept = "application/json";
         return FluxUtil
-            .withContext(
-                context ->
-                    service
-                        .get(
-                            this.client.getEndpoint(),
-                            this.client.getSubscriptionId(),
-                            resourceGroupName,
-                            automationAccountName,
-                            runbookName,
-                            jobStreamId,
-                            apiVersion,
-                            accept,
-                            context))
+            .withContext(context -> service.get(this.client.getEndpoint(), this.client.getSubscriptionId(),
+                resourceGroupName, automationAccountName, runbookName, jobStreamId, apiVersion, accept, context))
             .contextWrite(context -> context.putAll(FluxUtil.toReactorContext(this.client.getContext()).readOnly()));
     }
 
     /**
      * Retrieve a test job stream of the test job identified by runbook name and stream id.
-     *
+     * 
      * @param resourceGroupName Name of an Azure Resource group.
      * @param automationAccountName The name of the automation account.
      * @param runbookName The runbook name.
@@ -176,26 +149,18 @@ public final class TestJobStreamsClientImpl implements TestJobStreamsClient {
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return definition of the job stream.
+     * @return definition of the job stream along with {@link Response} on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    private Mono<Response<JobStreamInner>> getWithResponseAsync(
-        String resourceGroupName,
-        String automationAccountName,
-        String runbookName,
-        String jobStreamId,
-        Context context) {
+    private Mono<Response<JobStreamInner>> getWithResponseAsync(String resourceGroupName, String automationAccountName,
+        String runbookName, String jobStreamId, Context context) {
         if (this.client.getEndpoint() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getEndpoint() is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
         }
         if (this.client.getSubscriptionId() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getSubscriptionId() is required and cannot be null."));
+            return Mono.error(new IllegalArgumentException(
+                "Parameter this.client.getSubscriptionId() is required and cannot be null."));
         }
         if (resourceGroupName == null) {
             return Mono
@@ -211,25 +176,16 @@ public final class TestJobStreamsClientImpl implements TestJobStreamsClient {
         if (jobStreamId == null) {
             return Mono.error(new IllegalArgumentException("Parameter jobStreamId is required and cannot be null."));
         }
-        final String apiVersion = "2019-06-01";
+        final String apiVersion = "2018-06-30";
         final String accept = "application/json";
         context = this.client.mergeContext(context);
-        return service
-            .get(
-                this.client.getEndpoint(),
-                this.client.getSubscriptionId(),
-                resourceGroupName,
-                automationAccountName,
-                runbookName,
-                jobStreamId,
-                apiVersion,
-                accept,
-                context);
+        return service.get(this.client.getEndpoint(), this.client.getSubscriptionId(), resourceGroupName,
+            automationAccountName, runbookName, jobStreamId, apiVersion, accept, context);
     }
 
     /**
      * Retrieve a test job stream of the test job identified by runbook name and stream id.
-     *
+     * 
      * @param resourceGroupName Name of an Azure Resource group.
      * @param automationAccountName The name of the automation account.
      * @param runbookName The runbook name.
@@ -237,43 +193,18 @@ public final class TestJobStreamsClientImpl implements TestJobStreamsClient {
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return definition of the job stream.
+     * @return definition of the job stream on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    private Mono<JobStreamInner> getAsync(
-        String resourceGroupName, String automationAccountName, String runbookName, String jobStreamId) {
+    private Mono<JobStreamInner> getAsync(String resourceGroupName, String automationAccountName, String runbookName,
+        String jobStreamId) {
         return getWithResponseAsync(resourceGroupName, automationAccountName, runbookName, jobStreamId)
-            .flatMap(
-                (Response<JobStreamInner> res) -> {
-                    if (res.getValue() != null) {
-                        return Mono.just(res.getValue());
-                    } else {
-                        return Mono.empty();
-                    }
-                });
+            .flatMap(res -> Mono.justOrEmpty(res.getValue()));
     }
 
     /**
      * Retrieve a test job stream of the test job identified by runbook name and stream id.
-     *
-     * @param resourceGroupName Name of an Azure Resource group.
-     * @param automationAccountName The name of the automation account.
-     * @param runbookName The runbook name.
-     * @param jobStreamId The job stream id.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return definition of the job stream.
-     */
-    @ServiceMethod(returns = ReturnType.SINGLE)
-    public JobStreamInner get(
-        String resourceGroupName, String automationAccountName, String runbookName, String jobStreamId) {
-        return getAsync(resourceGroupName, automationAccountName, runbookName, jobStreamId).block();
-    }
-
-    /**
-     * Retrieve a test job stream of the test job identified by runbook name and stream id.
-     *
+     * 
      * @param resourceGroupName Name of an Azure Resource group.
      * @param automationAccountName The name of the automation account.
      * @param runbookName The runbook name.
@@ -282,22 +213,37 @@ public final class TestJobStreamsClientImpl implements TestJobStreamsClient {
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return definition of the job stream.
+     * @return definition of the job stream along with {@link Response}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    public Response<JobStreamInner> getWithResponse(
-        String resourceGroupName,
-        String automationAccountName,
-        String runbookName,
-        String jobStreamId,
-        Context context) {
+    public Response<JobStreamInner> getWithResponse(String resourceGroupName, String automationAccountName,
+        String runbookName, String jobStreamId, Context context) {
         return getWithResponseAsync(resourceGroupName, automationAccountName, runbookName, jobStreamId, context)
             .block();
     }
 
     /**
+     * Retrieve a test job stream of the test job identified by runbook name and stream id.
+     * 
+     * @param resourceGroupName Name of an Azure Resource group.
+     * @param automationAccountName The name of the automation account.
+     * @param runbookName The runbook name.
+     * @param jobStreamId The job stream id.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return definition of the job stream.
+     */
+    @ServiceMethod(returns = ReturnType.SINGLE)
+    public JobStreamInner get(String resourceGroupName, String automationAccountName, String runbookName,
+        String jobStreamId) {
+        return getWithResponse(resourceGroupName, automationAccountName, runbookName, jobStreamId, Context.NONE)
+            .getValue();
+    }
+
+    /**
      * Retrieve a list of test job streams identified by runbook name.
-     *
+     * 
      * @param resourceGroupName Name of an Azure Resource group.
      * @param automationAccountName The name of the automation account.
      * @param runbookName The runbook name.
@@ -305,22 +251,19 @@ public final class TestJobStreamsClientImpl implements TestJobStreamsClient {
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the response model for the list job stream operation.
+     * @return the response model for the list job stream operation along with {@link PagedResponse} on successful
+     * completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    private Mono<PagedResponse<JobStreamInner>> listByTestJobSinglePageAsync(
-        String resourceGroupName, String automationAccountName, String runbookName, String filter) {
+    private Mono<PagedResponse<JobStreamInner>> listByTestJobSinglePageAsync(String resourceGroupName,
+        String automationAccountName, String runbookName, String filter) {
         if (this.client.getEndpoint() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getEndpoint() is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
         }
         if (this.client.getSubscriptionId() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getSubscriptionId() is required and cannot be null."));
+            return Mono.error(new IllegalArgumentException(
+                "Parameter this.client.getSubscriptionId() is required and cannot be null."));
         }
         if (resourceGroupName == null) {
             return Mono
@@ -333,37 +276,19 @@ public final class TestJobStreamsClientImpl implements TestJobStreamsClient {
         if (runbookName == null) {
             return Mono.error(new IllegalArgumentException("Parameter runbookName is required and cannot be null."));
         }
-        final String apiVersion = "2019-06-01";
+        final String apiVersion = "2018-06-30";
         final String accept = "application/json";
         return FluxUtil
-            .withContext(
-                context ->
-                    service
-                        .listByTestJob(
-                            this.client.getEndpoint(),
-                            this.client.getSubscriptionId(),
-                            resourceGroupName,
-                            automationAccountName,
-                            runbookName,
-                            filter,
-                            apiVersion,
-                            accept,
-                            context))
-            .<PagedResponse<JobStreamInner>>map(
-                res ->
-                    new PagedResponseBase<>(
-                        res.getRequest(),
-                        res.getStatusCode(),
-                        res.getHeaders(),
-                        res.getValue().value(),
-                        res.getValue().nextLink(),
-                        null))
+            .withContext(context -> service.listByTestJob(this.client.getEndpoint(), this.client.getSubscriptionId(),
+                resourceGroupName, automationAccountName, runbookName, filter, apiVersion, accept, context))
+            .<PagedResponse<JobStreamInner>>map(res -> new PagedResponseBase<>(res.getRequest(), res.getStatusCode(),
+                res.getHeaders(), res.getValue().value(), res.getValue().nextLink(), null))
             .contextWrite(context -> context.putAll(FluxUtil.toReactorContext(this.client.getContext()).readOnly()));
     }
 
     /**
      * Retrieve a list of test job streams identified by runbook name.
-     *
+     * 
      * @param resourceGroupName Name of an Azure Resource group.
      * @param automationAccountName The name of the automation account.
      * @param runbookName The runbook name.
@@ -372,22 +297,19 @@ public final class TestJobStreamsClientImpl implements TestJobStreamsClient {
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the response model for the list job stream operation.
+     * @return the response model for the list job stream operation along with {@link PagedResponse} on successful
+     * completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    private Mono<PagedResponse<JobStreamInner>> listByTestJobSinglePageAsync(
-        String resourceGroupName, String automationAccountName, String runbookName, String filter, Context context) {
+    private Mono<PagedResponse<JobStreamInner>> listByTestJobSinglePageAsync(String resourceGroupName,
+        String automationAccountName, String runbookName, String filter, Context context) {
         if (this.client.getEndpoint() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getEndpoint() is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
         }
         if (this.client.getSubscriptionId() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getSubscriptionId() is required and cannot be null."));
+            return Mono.error(new IllegalArgumentException(
+                "Parameter this.client.getSubscriptionId() is required and cannot be null."));
         }
         if (resourceGroupName == null) {
             return Mono
@@ -400,34 +322,19 @@ public final class TestJobStreamsClientImpl implements TestJobStreamsClient {
         if (runbookName == null) {
             return Mono.error(new IllegalArgumentException("Parameter runbookName is required and cannot be null."));
         }
-        final String apiVersion = "2019-06-01";
+        final String apiVersion = "2018-06-30";
         final String accept = "application/json";
         context = this.client.mergeContext(context);
         return service
-            .listByTestJob(
-                this.client.getEndpoint(),
-                this.client.getSubscriptionId(),
-                resourceGroupName,
-                automationAccountName,
-                runbookName,
-                filter,
-                apiVersion,
-                accept,
-                context)
-            .map(
-                res ->
-                    new PagedResponseBase<>(
-                        res.getRequest(),
-                        res.getStatusCode(),
-                        res.getHeaders(),
-                        res.getValue().value(),
-                        res.getValue().nextLink(),
-                        null));
+            .listByTestJob(this.client.getEndpoint(), this.client.getSubscriptionId(), resourceGroupName,
+                automationAccountName, runbookName, filter, apiVersion, accept, context)
+            .map(res -> new PagedResponseBase<>(res.getRequest(), res.getStatusCode(), res.getHeaders(),
+                res.getValue().value(), res.getValue().nextLink(), null));
     }
 
     /**
      * Retrieve a list of test job streams identified by runbook name.
-     *
+     * 
      * @param resourceGroupName Name of an Azure Resource group.
      * @param automationAccountName The name of the automation account.
      * @param runbookName The runbook name.
@@ -435,11 +342,11 @@ public final class TestJobStreamsClientImpl implements TestJobStreamsClient {
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the response model for the list job stream operation.
+     * @return the response model for the list job stream operation as paginated response with {@link PagedFlux}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
-    private PagedFlux<JobStreamInner> listByTestJobAsync(
-        String resourceGroupName, String automationAccountName, String runbookName, String filter) {
+    private PagedFlux<JobStreamInner> listByTestJobAsync(String resourceGroupName, String automationAccountName,
+        String runbookName, String filter) {
         return new PagedFlux<>(
             () -> listByTestJobSinglePageAsync(resourceGroupName, automationAccountName, runbookName, filter),
             nextLink -> listByTestJobNextSinglePageAsync(nextLink));
@@ -447,18 +354,18 @@ public final class TestJobStreamsClientImpl implements TestJobStreamsClient {
 
     /**
      * Retrieve a list of test job streams identified by runbook name.
-     *
+     * 
      * @param resourceGroupName Name of an Azure Resource group.
      * @param automationAccountName The name of the automation account.
      * @param runbookName The runbook name.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the response model for the list job stream operation.
+     * @return the response model for the list job stream operation as paginated response with {@link PagedFlux}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
-    private PagedFlux<JobStreamInner> listByTestJobAsync(
-        String resourceGroupName, String automationAccountName, String runbookName) {
+    private PagedFlux<JobStreamInner> listByTestJobAsync(String resourceGroupName, String automationAccountName,
+        String runbookName) {
         final String filter = null;
         return new PagedFlux<>(
             () -> listByTestJobSinglePageAsync(resourceGroupName, automationAccountName, runbookName, filter),
@@ -467,7 +374,7 @@ public final class TestJobStreamsClientImpl implements TestJobStreamsClient {
 
     /**
      * Retrieve a list of test job streams identified by runbook name.
-     *
+     * 
      * @param resourceGroupName Name of an Azure Resource group.
      * @param automationAccountName The name of the automation account.
      * @param runbookName The runbook name.
@@ -476,11 +383,11 @@ public final class TestJobStreamsClientImpl implements TestJobStreamsClient {
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the response model for the list job stream operation.
+     * @return the response model for the list job stream operation as paginated response with {@link PagedFlux}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
-    private PagedFlux<JobStreamInner> listByTestJobAsync(
-        String resourceGroupName, String automationAccountName, String runbookName, String filter, Context context) {
+    private PagedFlux<JobStreamInner> listByTestJobAsync(String resourceGroupName, String automationAccountName,
+        String runbookName, String filter, Context context) {
         return new PagedFlux<>(
             () -> listByTestJobSinglePageAsync(resourceGroupName, automationAccountName, runbookName, filter, context),
             nextLink -> listByTestJobNextSinglePageAsync(nextLink, context));
@@ -488,25 +395,25 @@ public final class TestJobStreamsClientImpl implements TestJobStreamsClient {
 
     /**
      * Retrieve a list of test job streams identified by runbook name.
-     *
+     * 
      * @param resourceGroupName Name of an Azure Resource group.
      * @param automationAccountName The name of the automation account.
      * @param runbookName The runbook name.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the response model for the list job stream operation.
+     * @return the response model for the list job stream operation as paginated response with {@link PagedIterable}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
-    public PagedIterable<JobStreamInner> listByTestJob(
-        String resourceGroupName, String automationAccountName, String runbookName) {
+    public PagedIterable<JobStreamInner> listByTestJob(String resourceGroupName, String automationAccountName,
+        String runbookName) {
         final String filter = null;
         return new PagedIterable<>(listByTestJobAsync(resourceGroupName, automationAccountName, runbookName, filter));
     }
 
     /**
      * Retrieve a list of test job streams identified by runbook name.
-     *
+     * 
      * @param resourceGroupName Name of an Azure Resource group.
      * @param automationAccountName The name of the automation account.
      * @param runbookName The runbook name.
@@ -515,23 +422,24 @@ public final class TestJobStreamsClientImpl implements TestJobStreamsClient {
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the response model for the list job stream operation.
+     * @return the response model for the list job stream operation as paginated response with {@link PagedIterable}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
-    public PagedIterable<JobStreamInner> listByTestJob(
-        String resourceGroupName, String automationAccountName, String runbookName, String filter, Context context) {
+    public PagedIterable<JobStreamInner> listByTestJob(String resourceGroupName, String automationAccountName,
+        String runbookName, String filter, Context context) {
         return new PagedIterable<>(
             listByTestJobAsync(resourceGroupName, automationAccountName, runbookName, filter, context));
     }
 
     /**
      * Get the next page of items.
-     *
-     * @param nextLink The nextLink parameter.
+     * 
+     * @param nextLink The URL to get the next list of items.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the response model for the list job stream operation.
+     * @return the response model for the list job stream operation along with {@link PagedResponse} on successful
+     * completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
     private Mono<PagedResponse<JobStreamInner>> listByTestJobNextSinglePageAsync(String nextLink) {
@@ -539,35 +447,27 @@ public final class TestJobStreamsClientImpl implements TestJobStreamsClient {
             return Mono.error(new IllegalArgumentException("Parameter nextLink is required and cannot be null."));
         }
         if (this.client.getEndpoint() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getEndpoint() is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
         }
         final String accept = "application/json";
         return FluxUtil
             .withContext(context -> service.listByTestJobNext(nextLink, this.client.getEndpoint(), accept, context))
-            .<PagedResponse<JobStreamInner>>map(
-                res ->
-                    new PagedResponseBase<>(
-                        res.getRequest(),
-                        res.getStatusCode(),
-                        res.getHeaders(),
-                        res.getValue().value(),
-                        res.getValue().nextLink(),
-                        null))
+            .<PagedResponse<JobStreamInner>>map(res -> new PagedResponseBase<>(res.getRequest(), res.getStatusCode(),
+                res.getHeaders(), res.getValue().value(), res.getValue().nextLink(), null))
             .contextWrite(context -> context.putAll(FluxUtil.toReactorContext(this.client.getContext()).readOnly()));
     }
 
     /**
      * Get the next page of items.
-     *
-     * @param nextLink The nextLink parameter.
+     * 
+     * @param nextLink The URL to get the next list of items.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the response model for the list job stream operation.
+     * @return the response model for the list job stream operation along with {@link PagedResponse} on successful
+     * completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
     private Mono<PagedResponse<JobStreamInner>> listByTestJobNextSinglePageAsync(String nextLink, Context context) {
@@ -575,23 +475,13 @@ public final class TestJobStreamsClientImpl implements TestJobStreamsClient {
             return Mono.error(new IllegalArgumentException("Parameter nextLink is required and cannot be null."));
         }
         if (this.client.getEndpoint() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getEndpoint() is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
         }
         final String accept = "application/json";
         context = this.client.mergeContext(context);
-        return service
-            .listByTestJobNext(nextLink, this.client.getEndpoint(), accept, context)
-            .map(
-                res ->
-                    new PagedResponseBase<>(
-                        res.getRequest(),
-                        res.getStatusCode(),
-                        res.getHeaders(),
-                        res.getValue().value(),
-                        res.getValue().nextLink(),
-                        null));
+        return service.listByTestJobNext(nextLink, this.client.getEndpoint(), accept, context)
+            .map(res -> new PagedResponseBase<>(res.getRequest(), res.getStatusCode(), res.getHeaders(),
+                res.getValue().value(), res.getValue().nextLink(), null));
     }
 }

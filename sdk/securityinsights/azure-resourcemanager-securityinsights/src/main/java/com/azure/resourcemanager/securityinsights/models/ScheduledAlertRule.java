@@ -5,41 +5,121 @@
 package com.azure.resourcemanager.securityinsights.models;
 
 import com.azure.core.annotation.Fluent;
-import com.azure.core.util.logging.ClientLogger;
+import com.azure.core.management.SystemData;
+import com.azure.json.JsonReader;
+import com.azure.json.JsonToken;
+import com.azure.json.JsonWriter;
 import com.azure.resourcemanager.securityinsights.fluent.models.AlertRuleInner;
 import com.azure.resourcemanager.securityinsights.fluent.models.ScheduledAlertRuleProperties;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import com.fasterxml.jackson.annotation.JsonTypeName;
+import java.io.IOException;
 import java.time.Duration;
 import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Map;
 
-/** Represents scheduled alert rule. */
-@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "kind")
-@JsonTypeName("Scheduled")
+/**
+ * Represents scheduled alert rule.
+ */
 @Fluent
 public final class ScheduledAlertRule extends AlertRuleInner {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(ScheduledAlertRule.class);
+    /*
+     * The alert rule kind
+     */
+    private AlertRuleKind kind = AlertRuleKind.SCHEDULED;
 
     /*
      * Scheduled alert rule properties
      */
-    @JsonProperty(value = "properties")
     private ScheduledAlertRuleProperties innerProperties;
+
+    /*
+     * Azure Resource Manager metadata containing createdBy and modifiedBy information.
+     */
+    private SystemData systemData;
+
+    /*
+     * The type of the resource.
+     */
+    private String type;
+
+    /*
+     * The name of the resource.
+     */
+    private String name;
+
+    /*
+     * Fully qualified resource Id for the resource.
+     */
+    private String id;
+
+    /**
+     * Creates an instance of ScheduledAlertRule class.
+     */
+    public ScheduledAlertRule() {
+    }
+
+    /**
+     * Get the kind property: The alert rule kind.
+     * 
+     * @return the kind value.
+     */
+    @Override
+    public AlertRuleKind kind() {
+        return this.kind;
+    }
 
     /**
      * Get the innerProperties property: Scheduled alert rule properties.
-     *
+     * 
      * @return the innerProperties value.
      */
     private ScheduledAlertRuleProperties innerProperties() {
         return this.innerProperties;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * Get the systemData property: Azure Resource Manager metadata containing createdBy and modifiedBy information.
+     * 
+     * @return the systemData value.
+     */
+    @Override
+    public SystemData systemData() {
+        return this.systemData;
+    }
+
+    /**
+     * Get the type property: The type of the resource.
+     * 
+     * @return the type value.
+     */
+    @Override
+    public String type() {
+        return this.type;
+    }
+
+    /**
+     * Get the name property: The name of the resource.
+     * 
+     * @return the name value.
+     */
+    @Override
+    public String name() {
+        return this.name;
+    }
+
+    /**
+     * Get the id property: Fully qualified resource Id for the resource.
+     * 
+     * @return the id value.
+     */
+    @Override
+    public String id() {
+        return this.id;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public ScheduledAlertRule withEtag(String etag) {
         super.withEtag(etag);
@@ -48,7 +128,7 @@ public final class ScheduledAlertRule extends AlertRuleInner {
 
     /**
      * Get the alertRuleTemplateName property: The Name of the alert rule template used to create this rule.
-     *
+     * 
      * @return the alertRuleTemplateName value.
      */
     public String alertRuleTemplateName() {
@@ -57,7 +137,7 @@ public final class ScheduledAlertRule extends AlertRuleInner {
 
     /**
      * Set the alertRuleTemplateName property: The Name of the alert rule template used to create this rule.
-     *
+     * 
      * @param alertRuleTemplateName the alertRuleTemplateName value to set.
      * @return the ScheduledAlertRule object itself.
      */
@@ -72,7 +152,7 @@ public final class ScheduledAlertRule extends AlertRuleInner {
     /**
      * Get the templateVersion property: The version of the alert rule template used to create this rule - in format
      * &lt;a.b.c&gt;, where all are numbers, for example 0 &lt;1.0.2&gt;.
-     *
+     * 
      * @return the templateVersion value.
      */
     public String templateVersion() {
@@ -82,7 +162,7 @@ public final class ScheduledAlertRule extends AlertRuleInner {
     /**
      * Set the templateVersion property: The version of the alert rule template used to create this rule - in format
      * &lt;a.b.c&gt;, where all are numbers, for example 0 &lt;1.0.2&gt;.
-     *
+     * 
      * @param templateVersion the templateVersion value to set.
      * @return the ScheduledAlertRule object itself.
      */
@@ -96,7 +176,7 @@ public final class ScheduledAlertRule extends AlertRuleInner {
 
     /**
      * Get the description property: The description of the alert rule.
-     *
+     * 
      * @return the description value.
      */
     public String description() {
@@ -105,7 +185,7 @@ public final class ScheduledAlertRule extends AlertRuleInner {
 
     /**
      * Set the description property: The description of the alert rule.
-     *
+     * 
      * @param description the description value to set.
      * @return the ScheduledAlertRule object itself.
      */
@@ -118,31 +198,8 @@ public final class ScheduledAlertRule extends AlertRuleInner {
     }
 
     /**
-     * Get the query property: The query that creates alerts for this rule.
-     *
-     * @return the query value.
-     */
-    public String query() {
-        return this.innerProperties() == null ? null : this.innerProperties().query();
-    }
-
-    /**
-     * Set the query property: The query that creates alerts for this rule.
-     *
-     * @param query the query value to set.
-     * @return the ScheduledAlertRule object itself.
-     */
-    public ScheduledAlertRule withQuery(String query) {
-        if (this.innerProperties() == null) {
-            this.innerProperties = new ScheduledAlertRuleProperties();
-        }
-        this.innerProperties().withQuery(query);
-        return this;
-    }
-
-    /**
      * Get the displayName property: The display name for alerts created by this alert rule.
-     *
+     * 
      * @return the displayName value.
      */
     public String displayName() {
@@ -151,7 +208,7 @@ public final class ScheduledAlertRule extends AlertRuleInner {
 
     /**
      * Set the displayName property: The display name for alerts created by this alert rule.
-     *
+     * 
      * @param displayName the displayName value to set.
      * @return the ScheduledAlertRule object itself.
      */
@@ -165,7 +222,7 @@ public final class ScheduledAlertRule extends AlertRuleInner {
 
     /**
      * Get the enabled property: Determines whether this alert rule is enabled or disabled.
-     *
+     * 
      * @return the enabled value.
      */
     public Boolean enabled() {
@@ -174,7 +231,7 @@ public final class ScheduledAlertRule extends AlertRuleInner {
 
     /**
      * Set the enabled property: Determines whether this alert rule is enabled or disabled.
-     *
+     * 
      * @param enabled the enabled value to set.
      * @return the ScheduledAlertRule object itself.
      */
@@ -188,7 +245,7 @@ public final class ScheduledAlertRule extends AlertRuleInner {
 
     /**
      * Get the lastModifiedUtc property: The last time that this alert rule has been modified.
-     *
+     * 
      * @return the lastModifiedUtc value.
      */
     public OffsetDateTime lastModifiedUtc() {
@@ -198,7 +255,7 @@ public final class ScheduledAlertRule extends AlertRuleInner {
     /**
      * Get the suppressionDuration property: The suppression (in ISO 8601 duration format) to wait since last time this
      * alert rule been triggered.
-     *
+     * 
      * @return the suppressionDuration value.
      */
     public Duration suppressionDuration() {
@@ -208,7 +265,7 @@ public final class ScheduledAlertRule extends AlertRuleInner {
     /**
      * Set the suppressionDuration property: The suppression (in ISO 8601 duration format) to wait since last time this
      * alert rule been triggered.
-     *
+     * 
      * @param suppressionDuration the suppressionDuration value to set.
      * @return the ScheduledAlertRule object itself.
      */
@@ -223,7 +280,7 @@ public final class ScheduledAlertRule extends AlertRuleInner {
     /**
      * Get the suppressionEnabled property: Determines whether the suppression for this alert rule is enabled or
      * disabled.
-     *
+     * 
      * @return the suppressionEnabled value.
      */
     public Boolean suppressionEnabled() {
@@ -233,7 +290,7 @@ public final class ScheduledAlertRule extends AlertRuleInner {
     /**
      * Set the suppressionEnabled property: Determines whether the suppression for this alert rule is enabled or
      * disabled.
-     *
+     * 
      * @param suppressionEnabled the suppressionEnabled value to set.
      * @return the ScheduledAlertRule object itself.
      */
@@ -246,31 +303,8 @@ public final class ScheduledAlertRule extends AlertRuleInner {
     }
 
     /**
-     * Get the severity property: The severity for alerts created by this alert rule.
-     *
-     * @return the severity value.
-     */
-    public AlertSeverity severity() {
-        return this.innerProperties() == null ? null : this.innerProperties().severity();
-    }
-
-    /**
-     * Set the severity property: The severity for alerts created by this alert rule.
-     *
-     * @param severity the severity value to set.
-     * @return the ScheduledAlertRule object itself.
-     */
-    public ScheduledAlertRule withSeverity(AlertSeverity severity) {
-        if (this.innerProperties() == null) {
-            this.innerProperties = new ScheduledAlertRuleProperties();
-        }
-        this.innerProperties().withSeverity(severity);
-        return this;
-    }
-
-    /**
      * Get the tactics property: The tactics of the alert rule.
-     *
+     * 
      * @return the tactics value.
      */
     public List<AttackTactic> tactics() {
@@ -279,7 +313,7 @@ public final class ScheduledAlertRule extends AlertRuleInner {
 
     /**
      * Set the tactics property: The tactics of the alert rule.
-     *
+     * 
      * @param tactics the tactics value to set.
      * @return the ScheduledAlertRule object itself.
      */
@@ -292,9 +326,32 @@ public final class ScheduledAlertRule extends AlertRuleInner {
     }
 
     /**
+     * Get the techniques property: The techniques of the alert rule.
+     * 
+     * @return the techniques value.
+     */
+    public List<String> techniques() {
+        return this.innerProperties() == null ? null : this.innerProperties().techniques();
+    }
+
+    /**
+     * Set the techniques property: The techniques of the alert rule.
+     * 
+     * @param techniques the techniques value to set.
+     * @return the ScheduledAlertRule object itself.
+     */
+    public ScheduledAlertRule withTechniques(List<String> techniques) {
+        if (this.innerProperties() == null) {
+            this.innerProperties = new ScheduledAlertRuleProperties();
+        }
+        this.innerProperties().withTechniques(techniques);
+        return this;
+    }
+
+    /**
      * Get the incidentConfiguration property: The settings of the incidents that created from alerts triggered by this
      * analytics rule.
-     *
+     * 
      * @return the incidentConfiguration value.
      */
     public IncidentConfiguration incidentConfiguration() {
@@ -304,7 +361,7 @@ public final class ScheduledAlertRule extends AlertRuleInner {
     /**
      * Set the incidentConfiguration property: The settings of the incidents that created from alerts triggered by this
      * analytics rule.
-     *
+     * 
      * @param incidentConfiguration the incidentConfiguration value to set.
      * @return the ScheduledAlertRule object itself.
      */
@@ -317,77 +374,31 @@ public final class ScheduledAlertRule extends AlertRuleInner {
     }
 
     /**
-     * Get the customDetails property: Dictionary of string key-value pairs of columns to be attached to the alert.
-     *
-     * @return the customDetails value.
+     * Get the query property: The query that creates alerts for this rule.
+     * 
+     * @return the query value.
      */
-    public Map<String, String> customDetails() {
-        return this.innerProperties() == null ? null : this.innerProperties().customDetails();
+    public String query() {
+        return this.innerProperties() == null ? null : this.innerProperties().query();
     }
 
     /**
-     * Set the customDetails property: Dictionary of string key-value pairs of columns to be attached to the alert.
-     *
-     * @param customDetails the customDetails value to set.
+     * Set the query property: The query that creates alerts for this rule.
+     * 
+     * @param query the query value to set.
      * @return the ScheduledAlertRule object itself.
      */
-    public ScheduledAlertRule withCustomDetails(Map<String, String> customDetails) {
+    public ScheduledAlertRule withQuery(String query) {
         if (this.innerProperties() == null) {
             this.innerProperties = new ScheduledAlertRuleProperties();
         }
-        this.innerProperties().withCustomDetails(customDetails);
-        return this;
-    }
-
-    /**
-     * Get the entityMappings property: Array of the entity mappings of the alert rule.
-     *
-     * @return the entityMappings value.
-     */
-    public List<EntityMapping> entityMappings() {
-        return this.innerProperties() == null ? null : this.innerProperties().entityMappings();
-    }
-
-    /**
-     * Set the entityMappings property: Array of the entity mappings of the alert rule.
-     *
-     * @param entityMappings the entityMappings value to set.
-     * @return the ScheduledAlertRule object itself.
-     */
-    public ScheduledAlertRule withEntityMappings(List<EntityMapping> entityMappings) {
-        if (this.innerProperties() == null) {
-            this.innerProperties = new ScheduledAlertRuleProperties();
-        }
-        this.innerProperties().withEntityMappings(entityMappings);
-        return this;
-    }
-
-    /**
-     * Get the alertDetailsOverride property: The alert details override settings.
-     *
-     * @return the alertDetailsOverride value.
-     */
-    public AlertDetailsOverride alertDetailsOverride() {
-        return this.innerProperties() == null ? null : this.innerProperties().alertDetailsOverride();
-    }
-
-    /**
-     * Set the alertDetailsOverride property: The alert details override settings.
-     *
-     * @param alertDetailsOverride the alertDetailsOverride value to set.
-     * @return the ScheduledAlertRule object itself.
-     */
-    public ScheduledAlertRule withAlertDetailsOverride(AlertDetailsOverride alertDetailsOverride) {
-        if (this.innerProperties() == null) {
-            this.innerProperties = new ScheduledAlertRuleProperties();
-        }
-        this.innerProperties().withAlertDetailsOverride(alertDetailsOverride);
+        this.innerProperties().withQuery(query);
         return this;
     }
 
     /**
      * Get the queryFrequency property: The frequency (in ISO 8601 duration format) for this alert rule to run.
-     *
+     * 
      * @return the queryFrequency value.
      */
     public Duration queryFrequency() {
@@ -396,7 +407,7 @@ public final class ScheduledAlertRule extends AlertRuleInner {
 
     /**
      * Set the queryFrequency property: The frequency (in ISO 8601 duration format) for this alert rule to run.
-     *
+     * 
      * @param queryFrequency the queryFrequency value to set.
      * @return the ScheduledAlertRule object itself.
      */
@@ -410,7 +421,7 @@ public final class ScheduledAlertRule extends AlertRuleInner {
 
     /**
      * Get the queryPeriod property: The period (in ISO 8601 duration format) that this alert rule looks at.
-     *
+     * 
      * @return the queryPeriod value.
      */
     public Duration queryPeriod() {
@@ -419,7 +430,7 @@ public final class ScheduledAlertRule extends AlertRuleInner {
 
     /**
      * Set the queryPeriod property: The period (in ISO 8601 duration format) that this alert rule looks at.
-     *
+     * 
      * @param queryPeriod the queryPeriod value to set.
      * @return the ScheduledAlertRule object itself.
      */
@@ -432,8 +443,31 @@ public final class ScheduledAlertRule extends AlertRuleInner {
     }
 
     /**
+     * Get the severity property: The severity for alerts created by this alert rule.
+     * 
+     * @return the severity value.
+     */
+    public AlertSeverity severity() {
+        return this.innerProperties() == null ? null : this.innerProperties().severity();
+    }
+
+    /**
+     * Set the severity property: The severity for alerts created by this alert rule.
+     * 
+     * @param severity the severity value to set.
+     * @return the ScheduledAlertRule object itself.
+     */
+    public ScheduledAlertRule withSeverity(AlertSeverity severity) {
+        if (this.innerProperties() == null) {
+            this.innerProperties = new ScheduledAlertRuleProperties();
+        }
+        this.innerProperties().withSeverity(severity);
+        return this;
+    }
+
+    /**
      * Get the triggerOperator property: The operation against the threshold that triggers alert rule.
-     *
+     * 
      * @return the triggerOperator value.
      */
     public TriggerOperator triggerOperator() {
@@ -442,7 +476,7 @@ public final class ScheduledAlertRule extends AlertRuleInner {
 
     /**
      * Set the triggerOperator property: The operation against the threshold that triggers alert rule.
-     *
+     * 
      * @param triggerOperator the triggerOperator value to set.
      * @return the ScheduledAlertRule object itself.
      */
@@ -456,7 +490,7 @@ public final class ScheduledAlertRule extends AlertRuleInner {
 
     /**
      * Get the triggerThreshold property: The threshold triggers this alert rule.
-     *
+     * 
      * @return the triggerThreshold value.
      */
     public Integer triggerThreshold() {
@@ -465,7 +499,7 @@ public final class ScheduledAlertRule extends AlertRuleInner {
 
     /**
      * Set the triggerThreshold property: The threshold triggers this alert rule.
-     *
+     * 
      * @param triggerThreshold the triggerThreshold value to set.
      * @return the ScheduledAlertRule object itself.
      */
@@ -479,7 +513,7 @@ public final class ScheduledAlertRule extends AlertRuleInner {
 
     /**
      * Get the eventGroupingSettings property: The event grouping settings.
-     *
+     * 
      * @return the eventGroupingSettings value.
      */
     public EventGroupingSettings eventGroupingSettings() {
@@ -488,7 +522,7 @@ public final class ScheduledAlertRule extends AlertRuleInner {
 
     /**
      * Set the eventGroupingSettings property: The event grouping settings.
-     *
+     * 
      * @param eventGroupingSettings the eventGroupingSettings value to set.
      * @return the ScheduledAlertRule object itself.
      */
@@ -501,15 +535,134 @@ public final class ScheduledAlertRule extends AlertRuleInner {
     }
 
     /**
+     * Get the customDetails property: Dictionary of string key-value pairs of columns to be attached to the alert.
+     * 
+     * @return the customDetails value.
+     */
+    public Map<String, String> customDetails() {
+        return this.innerProperties() == null ? null : this.innerProperties().customDetails();
+    }
+
+    /**
+     * Set the customDetails property: Dictionary of string key-value pairs of columns to be attached to the alert.
+     * 
+     * @param customDetails the customDetails value to set.
+     * @return the ScheduledAlertRule object itself.
+     */
+    public ScheduledAlertRule withCustomDetails(Map<String, String> customDetails) {
+        if (this.innerProperties() == null) {
+            this.innerProperties = new ScheduledAlertRuleProperties();
+        }
+        this.innerProperties().withCustomDetails(customDetails);
+        return this;
+    }
+
+    /**
+     * Get the entityMappings property: Array of the entity mappings of the alert rule.
+     * 
+     * @return the entityMappings value.
+     */
+    public List<EntityMapping> entityMappings() {
+        return this.innerProperties() == null ? null : this.innerProperties().entityMappings();
+    }
+
+    /**
+     * Set the entityMappings property: Array of the entity mappings of the alert rule.
+     * 
+     * @param entityMappings the entityMappings value to set.
+     * @return the ScheduledAlertRule object itself.
+     */
+    public ScheduledAlertRule withEntityMappings(List<EntityMapping> entityMappings) {
+        if (this.innerProperties() == null) {
+            this.innerProperties = new ScheduledAlertRuleProperties();
+        }
+        this.innerProperties().withEntityMappings(entityMappings);
+        return this;
+    }
+
+    /**
+     * Get the alertDetailsOverride property: The alert details override settings.
+     * 
+     * @return the alertDetailsOverride value.
+     */
+    public AlertDetailsOverride alertDetailsOverride() {
+        return this.innerProperties() == null ? null : this.innerProperties().alertDetailsOverride();
+    }
+
+    /**
+     * Set the alertDetailsOverride property: The alert details override settings.
+     * 
+     * @param alertDetailsOverride the alertDetailsOverride value to set.
+     * @return the ScheduledAlertRule object itself.
+     */
+    public ScheduledAlertRule withAlertDetailsOverride(AlertDetailsOverride alertDetailsOverride) {
+        if (this.innerProperties() == null) {
+            this.innerProperties = new ScheduledAlertRuleProperties();
+        }
+        this.innerProperties().withAlertDetailsOverride(alertDetailsOverride);
+        return this;
+    }
+
+    /**
      * Validates the instance.
-     *
+     * 
      * @throws IllegalArgumentException thrown if the instance is not valid.
      */
     @Override
     public void validate() {
-        super.validate();
         if (innerProperties() != null) {
             innerProperties().validate();
         }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public JsonWriter toJson(JsonWriter jsonWriter) throws IOException {
+        jsonWriter.writeStartObject();
+        jsonWriter.writeStringField("etag", etag());
+        jsonWriter.writeStringField("kind", this.kind == null ? null : this.kind.toString());
+        jsonWriter.writeJsonField("properties", this.innerProperties);
+        return jsonWriter.writeEndObject();
+    }
+
+    /**
+     * Reads an instance of ScheduledAlertRule from the JsonReader.
+     * 
+     * @param jsonReader The JsonReader being read.
+     * @return An instance of ScheduledAlertRule if the JsonReader was pointing to an instance of it, or null if it was
+     * pointing to JSON null.
+     * @throws IllegalStateException If the deserialized JSON object was missing any required properties.
+     * @throws IOException If an error occurs while reading the ScheduledAlertRule.
+     */
+    public static ScheduledAlertRule fromJson(JsonReader jsonReader) throws IOException {
+        return jsonReader.readObject(reader -> {
+            ScheduledAlertRule deserializedScheduledAlertRule = new ScheduledAlertRule();
+            while (reader.nextToken() != JsonToken.END_OBJECT) {
+                String fieldName = reader.getFieldName();
+                reader.nextToken();
+
+                if ("id".equals(fieldName)) {
+                    deserializedScheduledAlertRule.id = reader.getString();
+                } else if ("name".equals(fieldName)) {
+                    deserializedScheduledAlertRule.name = reader.getString();
+                } else if ("type".equals(fieldName)) {
+                    deserializedScheduledAlertRule.type = reader.getString();
+                } else if ("etag".equals(fieldName)) {
+                    deserializedScheduledAlertRule.withEtag(reader.getString());
+                } else if ("systemData".equals(fieldName)) {
+                    deserializedScheduledAlertRule.systemData = SystemData.fromJson(reader);
+                } else if ("kind".equals(fieldName)) {
+                    deserializedScheduledAlertRule.kind = AlertRuleKind.fromString(reader.getString());
+                } else if ("properties".equals(fieldName)) {
+                    deserializedScheduledAlertRule.innerProperties = ScheduledAlertRuleProperties.fromJson(reader);
+                } else {
+                    reader.skipChildren();
+                }
+            }
+
+            return deserializedScheduledAlertRule;
+        });
     }
 }

@@ -3,54 +3,54 @@
 
 package com.azure.core.http.policy;
 
+import com.azure.core.SyncAsyncExtension;
+import com.azure.core.SyncAsyncTest;
 import com.azure.core.http.HttpMethod;
 import com.azure.core.http.HttpPipeline;
-import com.azure.core.http.HttpRequest;
 import com.azure.core.http.HttpPipelineBuilder;
+import com.azure.core.http.HttpRequest;
 import com.azure.core.http.clients.NoOpHttpClient;
-import org.junit.jupiter.api.Test;
+import com.azure.core.util.Context;
 
 import java.net.MalformedURLException;
-import java.net.URL;
 
+import static com.azure.core.CoreTestUtils.createUrl;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ProtocolPolicyTests {
-
-    @Test
-    public void withOverwrite() throws MalformedURLException {
+    @SyncAsyncTest
+    public void withOverwrite() {
         final HttpPipeline pipeline = createPipeline("ftp", "ftp://www.bing.com");
-        pipeline.send(createHttpRequest("http://www.bing.com"));
+        SyncAsyncExtension.execute(() -> pipeline.sendSync(createHttpRequest("https://www.bing.com"), Context.NONE),
+            () -> pipeline.send(createHttpRequest("https://www.bing.com")));
     }
 
-    @Test
-    public void withNoOverwrite() throws MalformedURLException {
+    @SyncAsyncTest
+    public void withNoOverwrite() {
         final HttpPipeline pipeline = createPipeline("ftp", false, "https://www.bing.com");
-        pipeline.send(createHttpRequest("https://www.bing.com"));
+        SyncAsyncExtension.execute(() -> pipeline.sendSync(createHttpRequest("https://www.bing.com"), Context.NONE),
+            () -> pipeline.send(createHttpRequest("https://www.bing.com")));
     }
+
     private static HttpPipeline createPipeline(String protocol, String expectedUrl) {
-        return new HttpPipelineBuilder()
-            .httpClient(new NoOpHttpClient())
-            .policies(new ProtocolPolicy(protocol, true),
-                (context, next) -> {
-                    assertEquals(expectedUrl, context.getHttpRequest().getUrl().toString());
-                    return next.process();
-                })
+        return new HttpPipelineBuilder().httpClient(new NoOpHttpClient())
+            .policies(new ProtocolPolicy(protocol, true), (context, next) -> {
+                assertEquals(expectedUrl, context.getHttpRequest().getUrl().toString());
+                return next.process();
+            })
             .build();
     }
 
     private static HttpPipeline createPipeline(String protocol, boolean overwrite, String expectedUrl) {
-        return new HttpPipelineBuilder()
-            .httpClient(new NoOpHttpClient())
-            .policies(new ProtocolPolicy(protocol, overwrite),
-                (context, next) -> {
-                    assertEquals(expectedUrl, context.getHttpRequest().getUrl().toString());
-                    return next.process();
-                })
+        return new HttpPipelineBuilder().httpClient(new NoOpHttpClient())
+            .policies(new ProtocolPolicy(protocol, overwrite), (context, next) -> {
+                assertEquals(expectedUrl, context.getHttpRequest().getUrl().toString());
+                return next.process();
+            })
             .build();
     }
 
     private static HttpRequest createHttpRequest(String url) throws MalformedURLException {
-        return new HttpRequest(HttpMethod.GET, new URL(url));
+        return new HttpRequest(HttpMethod.GET, createUrl(url));
     }
 }

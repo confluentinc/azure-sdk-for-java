@@ -11,17 +11,15 @@ import com.azure.resourcemanager.recoveryservicesbackup.fluent.BackupProtectedIt
 import com.azure.resourcemanager.recoveryservicesbackup.fluent.models.ProtectedItemResourceInner;
 import com.azure.resourcemanager.recoveryservicesbackup.models.BackupProtectedItems;
 import com.azure.resourcemanager.recoveryservicesbackup.models.ProtectedItemResource;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 public final class BackupProtectedItemsImpl implements BackupProtectedItems {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(BackupProtectedItemsImpl.class);
+    private static final ClientLogger LOGGER = new ClientLogger(BackupProtectedItemsImpl.class);
 
     private final BackupProtectedItemsClient innerClient;
 
     private final com.azure.resourcemanager.recoveryservicesbackup.RecoveryServicesBackupManager serviceManager;
 
-    public BackupProtectedItemsImpl(
-        BackupProtectedItemsClient innerClient,
+    public BackupProtectedItemsImpl(BackupProtectedItemsClient innerClient,
         com.azure.resourcemanager.recoveryservicesbackup.RecoveryServicesBackupManager serviceManager) {
         this.innerClient = innerClient;
         this.serviceManager = serviceManager;
@@ -29,14 +27,14 @@ public final class BackupProtectedItemsImpl implements BackupProtectedItems {
 
     public PagedIterable<ProtectedItemResource> list(String vaultName, String resourceGroupName) {
         PagedIterable<ProtectedItemResourceInner> inner = this.serviceClient().list(vaultName, resourceGroupName);
-        return Utils.mapPage(inner, inner1 -> new ProtectedItemResourceImpl(inner1, this.manager()));
+        return ResourceManagerUtils.mapPage(inner, inner1 -> new ProtectedItemResourceImpl(inner1, this.manager()));
     }
 
-    public PagedIterable<ProtectedItemResource> list(
-        String vaultName, String resourceGroupName, String filter, String skipToken, Context context) {
-        PagedIterable<ProtectedItemResourceInner> inner =
-            this.serviceClient().list(vaultName, resourceGroupName, filter, skipToken, context);
-        return Utils.mapPage(inner, inner1 -> new ProtectedItemResourceImpl(inner1, this.manager()));
+    public PagedIterable<ProtectedItemResource> list(String vaultName, String resourceGroupName, String filter,
+        String skipToken, Context context) {
+        PagedIterable<ProtectedItemResourceInner> inner
+            = this.serviceClient().list(vaultName, resourceGroupName, filter, skipToken, context);
+        return ResourceManagerUtils.mapPage(inner, inner1 -> new ProtectedItemResourceImpl(inner1, this.manager()));
     }
 
     private BackupProtectedItemsClient serviceClient() {

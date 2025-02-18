@@ -5,60 +5,57 @@
 package com.azure.resourcemanager.authorization.fluent.models;
 
 import com.azure.core.annotation.Fluent;
-import com.azure.core.util.logging.ClientLogger;
-import com.fasterxml.jackson.annotation.JsonAnyGetter;
-import com.fasterxml.jackson.annotation.JsonAnySetter;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import java.util.HashMap;
+import com.azure.json.JsonReader;
+import com.azure.json.JsonToken;
+import com.azure.json.JsonWriter;
+import java.io.IOException;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-/** officeGraphInsights. */
+/**
+ * officeGraphInsights.
+ */
 @Fluent
 public final class MicrosoftGraphOfficeGraphInsights extends MicrosoftGraphEntity {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(MicrosoftGraphOfficeGraphInsights.class);
-
     /*
-     * Calculated relationship identifying documents shared with or by the
-     * user. This includes URLs, file attachments, and reference attachments to
-     * OneDrive for Business and SharePoint files found in Outlook messages and
-     * meetings. This also includes URLs and reference attachments to Teams
-     * conversations. Ordered by recency of share.
+     * Calculated relationship identifying documents shared with or by the user. This includes URLs, file attachments,
+     * and reference attachments to OneDrive for Business and SharePoint files found in Outlook messages and meetings.
+     * This also includes URLs and reference attachments to Teams conversations. Ordered by recency of share.
      */
-    @JsonProperty(value = "shared")
     private List<MicrosoftGraphSharedInsight> shared;
 
     /*
-     * Calculated relationship identifying documents trending around a user.
-     * Trending documents are calculated based on activity of the user's
-     * closest network of people and include files stored in OneDrive for
-     * Business and SharePoint. Trending insights help the user to discover
-     * potentially useful content that the user has access to, but has never
-     * viewed before.
+     * Calculated relationship identifying documents trending around a user. Trending documents are calculated based on
+     * activity of the user's closest network of people and include files stored in OneDrive for Business and
+     * SharePoint. Trending insights help the user to discover potentially useful content that the user has access to,
+     * but has never viewed before.
      */
-    @JsonProperty(value = "trending")
     private List<MicrosoftGraphTrending> trending;
 
     /*
-     * Calculated relationship identifying the latest documents viewed or
-     * modified by a user, including OneDrive for Business and SharePoint
-     * documents, ranked by recency of use.
+     * Calculated relationship identifying the latest documents viewed or modified by a user, including OneDrive for
+     * Business and SharePoint documents, ranked by recency of use.
      */
-    @JsonProperty(value = "used")
     private List<MicrosoftGraphUsedInsight> used;
 
     /*
      * officeGraphInsights
      */
-    @JsonIgnore private Map<String, Object> additionalProperties;
+    private Map<String, Object> additionalProperties;
+
+    /**
+     * Creates an instance of MicrosoftGraphOfficeGraphInsights class.
+     */
+    public MicrosoftGraphOfficeGraphInsights() {
+    }
 
     /**
      * Get the shared property: Calculated relationship identifying documents shared with or by the user. This includes
      * URLs, file attachments, and reference attachments to OneDrive for Business and SharePoint files found in Outlook
      * messages and meetings. This also includes URLs and reference attachments to Teams conversations. Ordered by
      * recency of share.
-     *
+     * 
      * @return the shared value.
      */
     public List<MicrosoftGraphSharedInsight> shared() {
@@ -70,7 +67,7 @@ public final class MicrosoftGraphOfficeGraphInsights extends MicrosoftGraphEntit
      * URLs, file attachments, and reference attachments to OneDrive for Business and SharePoint files found in Outlook
      * messages and meetings. This also includes URLs and reference attachments to Teams conversations. Ordered by
      * recency of share.
-     *
+     * 
      * @param shared the shared value to set.
      * @return the MicrosoftGraphOfficeGraphInsights object itself.
      */
@@ -84,7 +81,7 @@ public final class MicrosoftGraphOfficeGraphInsights extends MicrosoftGraphEntit
      * documents are calculated based on activity of the user's closest network of people and include files stored in
      * OneDrive for Business and SharePoint. Trending insights help the user to discover potentially useful content that
      * the user has access to, but has never viewed before.
-     *
+     * 
      * @return the trending value.
      */
     public List<MicrosoftGraphTrending> trending() {
@@ -96,7 +93,7 @@ public final class MicrosoftGraphOfficeGraphInsights extends MicrosoftGraphEntit
      * documents are calculated based on activity of the user's closest network of people and include files stored in
      * OneDrive for Business and SharePoint. Trending insights help the user to discover potentially useful content that
      * the user has access to, but has never viewed before.
-     *
+     * 
      * @param trending the trending value to set.
      * @return the MicrosoftGraphOfficeGraphInsights object itself.
      */
@@ -108,7 +105,7 @@ public final class MicrosoftGraphOfficeGraphInsights extends MicrosoftGraphEntit
     /**
      * Get the used property: Calculated relationship identifying the latest documents viewed or modified by a user,
      * including OneDrive for Business and SharePoint documents, ranked by recency of use.
-     *
+     * 
      * @return the used value.
      */
     public List<MicrosoftGraphUsedInsight> used() {
@@ -118,7 +115,7 @@ public final class MicrosoftGraphOfficeGraphInsights extends MicrosoftGraphEntit
     /**
      * Set the used property: Calculated relationship identifying the latest documents viewed or modified by a user,
      * including OneDrive for Business and SharePoint documents, ranked by recency of use.
-     *
+     * 
      * @param used the used value to set.
      * @return the MicrosoftGraphOfficeGraphInsights object itself.
      */
@@ -129,17 +126,16 @@ public final class MicrosoftGraphOfficeGraphInsights extends MicrosoftGraphEntit
 
     /**
      * Get the additionalProperties property: officeGraphInsights.
-     *
+     * 
      * @return the additionalProperties value.
      */
-    @JsonAnyGetter
     public Map<String, Object> additionalProperties() {
         return this.additionalProperties;
     }
 
     /**
      * Set the additionalProperties property: officeGraphInsights.
-     *
+     * 
      * @param additionalProperties the additionalProperties value to set.
      * @return the MicrosoftGraphOfficeGraphInsights object itself.
      */
@@ -148,15 +144,9 @@ public final class MicrosoftGraphOfficeGraphInsights extends MicrosoftGraphEntit
         return this;
     }
 
-    @JsonAnySetter
-    void withAdditionalProperties(String key, Object value) {
-        if (additionalProperties == null) {
-            additionalProperties = new HashMap<>();
-        }
-        additionalProperties.put(key, value);
-    }
-
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public MicrosoftGraphOfficeGraphInsights withId(String id) {
         super.withId(id);
@@ -165,7 +155,7 @@ public final class MicrosoftGraphOfficeGraphInsights extends MicrosoftGraphEntit
 
     /**
      * Validates the instance.
-     *
+     * 
      * @throws IllegalArgumentException thrown if the instance is not valid.
      */
     @Override
@@ -180,5 +170,68 @@ public final class MicrosoftGraphOfficeGraphInsights extends MicrosoftGraphEntit
         if (used() != null) {
             used().forEach(e -> e.validate());
         }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public JsonWriter toJson(JsonWriter jsonWriter) throws IOException {
+        jsonWriter.writeStartObject();
+        jsonWriter.writeStringField("id", id());
+        jsonWriter.writeArrayField("shared", this.shared, (writer, element) -> writer.writeJson(element));
+        jsonWriter.writeArrayField("trending", this.trending, (writer, element) -> writer.writeJson(element));
+        jsonWriter.writeArrayField("used", this.used, (writer, element) -> writer.writeJson(element));
+        if (additionalProperties != null) {
+            for (Map.Entry<String, Object> additionalProperty : additionalProperties.entrySet()) {
+                jsonWriter.writeUntypedField(additionalProperty.getKey(), additionalProperty.getValue());
+            }
+        }
+        return jsonWriter.writeEndObject();
+    }
+
+    /**
+     * Reads an instance of MicrosoftGraphOfficeGraphInsights from the JsonReader.
+     * 
+     * @param jsonReader The JsonReader being read.
+     * @return An instance of MicrosoftGraphOfficeGraphInsights if the JsonReader was pointing to an instance of it, or
+     * null if it was pointing to JSON null.
+     * @throws IOException If an error occurs while reading the MicrosoftGraphOfficeGraphInsights.
+     */
+    public static MicrosoftGraphOfficeGraphInsights fromJson(JsonReader jsonReader) throws IOException {
+        return jsonReader.readObject(reader -> {
+            MicrosoftGraphOfficeGraphInsights deserializedMicrosoftGraphOfficeGraphInsights
+                = new MicrosoftGraphOfficeGraphInsights();
+            Map<String, Object> additionalProperties = null;
+            while (reader.nextToken() != JsonToken.END_OBJECT) {
+                String fieldName = reader.getFieldName();
+                reader.nextToken();
+
+                if ("id".equals(fieldName)) {
+                    deserializedMicrosoftGraphOfficeGraphInsights.withId(reader.getString());
+                } else if ("shared".equals(fieldName)) {
+                    List<MicrosoftGraphSharedInsight> shared
+                        = reader.readArray(reader1 -> MicrosoftGraphSharedInsight.fromJson(reader1));
+                    deserializedMicrosoftGraphOfficeGraphInsights.shared = shared;
+                } else if ("trending".equals(fieldName)) {
+                    List<MicrosoftGraphTrending> trending
+                        = reader.readArray(reader1 -> MicrosoftGraphTrending.fromJson(reader1));
+                    deserializedMicrosoftGraphOfficeGraphInsights.trending = trending;
+                } else if ("used".equals(fieldName)) {
+                    List<MicrosoftGraphUsedInsight> used
+                        = reader.readArray(reader1 -> MicrosoftGraphUsedInsight.fromJson(reader1));
+                    deserializedMicrosoftGraphOfficeGraphInsights.used = used;
+                } else {
+                    if (additionalProperties == null) {
+                        additionalProperties = new LinkedHashMap<>();
+                    }
+
+                    additionalProperties.put(fieldName, reader.readUntyped());
+                }
+            }
+            deserializedMicrosoftGraphOfficeGraphInsights.additionalProperties = additionalProperties;
+
+            return deserializedMicrosoftGraphOfficeGraphInsights;
+        });
     }
 }

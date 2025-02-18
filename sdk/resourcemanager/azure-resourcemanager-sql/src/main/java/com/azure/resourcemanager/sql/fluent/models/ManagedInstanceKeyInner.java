@@ -5,55 +5,53 @@
 package com.azure.resourcemanager.sql.fluent.models;
 
 import com.azure.core.annotation.Fluent;
-import com.azure.core.annotation.JsonFlatten;
 import com.azure.core.management.ProxyResource;
-import com.azure.core.util.logging.ClientLogger;
+import com.azure.json.JsonReader;
+import com.azure.json.JsonToken;
+import com.azure.json.JsonWriter;
 import com.azure.resourcemanager.sql.models.ServerKeyType;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import java.io.IOException;
 import java.time.OffsetDateTime;
 
-/** A managed instance key. */
-@JsonFlatten
+/**
+ * A managed instance key.
+ */
 @Fluent
-public class ManagedInstanceKeyInner extends ProxyResource {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(ManagedInstanceKeyInner.class);
-
+public final class ManagedInstanceKeyInner extends ProxyResource {
     /*
-     * Kind of encryption protector. This is metadata used for the Azure portal
-     * experience.
+     * Kind of encryption protector. This is metadata used for the Azure portal experience.
      */
-    @JsonProperty(value = "kind", access = JsonProperty.Access.WRITE_ONLY)
     private String kind;
 
     /*
-     * The key type like 'ServiceManaged', 'AzureKeyVault'.
+     * Resource properties.
      */
-    @JsonProperty(value = "properties.serverKeyType")
-    private ServerKeyType serverKeyType;
+    private ManagedInstanceKeyProperties innerProperties;
 
     /*
-     * The URI of the key. If the ServerKeyType is AzureKeyVault, then the URI
-     * is required.
+     * The type of the resource.
      */
-    @JsonProperty(value = "properties.uri")
-    private String uri;
+    private String type;
 
     /*
-     * Thumbprint of the key.
+     * The name of the resource.
      */
-    @JsonProperty(value = "properties.thumbprint", access = JsonProperty.Access.WRITE_ONLY)
-    private String thumbprint;
+    private String name;
 
     /*
-     * The key creation date.
+     * Fully qualified resource Id for the resource.
      */
-    @JsonProperty(value = "properties.creationDate", access = JsonProperty.Access.WRITE_ONLY)
-    private OffsetDateTime creationDate;
+    private String id;
+
+    /**
+     * Creates an instance of ManagedInstanceKeyInner class.
+     */
+    public ManagedInstanceKeyInner() {
+    }
 
     /**
      * Get the kind property: Kind of encryption protector. This is metadata used for the Azure portal experience.
-     *
+     * 
      * @return the kind value.
      */
     public String kind() {
@@ -61,68 +59,170 @@ public class ManagedInstanceKeyInner extends ProxyResource {
     }
 
     /**
+     * Get the innerProperties property: Resource properties.
+     * 
+     * @return the innerProperties value.
+     */
+    private ManagedInstanceKeyProperties innerProperties() {
+        return this.innerProperties;
+    }
+
+    /**
+     * Get the type property: The type of the resource.
+     * 
+     * @return the type value.
+     */
+    @Override
+    public String type() {
+        return this.type;
+    }
+
+    /**
+     * Get the name property: The name of the resource.
+     * 
+     * @return the name value.
+     */
+    @Override
+    public String name() {
+        return this.name;
+    }
+
+    /**
+     * Get the id property: Fully qualified resource Id for the resource.
+     * 
+     * @return the id value.
+     */
+    @Override
+    public String id() {
+        return this.id;
+    }
+
+    /**
      * Get the serverKeyType property: The key type like 'ServiceManaged', 'AzureKeyVault'.
-     *
+     * 
      * @return the serverKeyType value.
      */
     public ServerKeyType serverKeyType() {
-        return this.serverKeyType;
+        return this.innerProperties() == null ? null : this.innerProperties().serverKeyType();
     }
 
     /**
      * Set the serverKeyType property: The key type like 'ServiceManaged', 'AzureKeyVault'.
-     *
+     * 
      * @param serverKeyType the serverKeyType value to set.
      * @return the ManagedInstanceKeyInner object itself.
      */
     public ManagedInstanceKeyInner withServerKeyType(ServerKeyType serverKeyType) {
-        this.serverKeyType = serverKeyType;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new ManagedInstanceKeyProperties();
+        }
+        this.innerProperties().withServerKeyType(serverKeyType);
         return this;
     }
 
     /**
      * Get the uri property: The URI of the key. If the ServerKeyType is AzureKeyVault, then the URI is required.
-     *
+     * 
      * @return the uri value.
      */
     public String uri() {
-        return this.uri;
+        return this.innerProperties() == null ? null : this.innerProperties().uri();
     }
 
     /**
      * Set the uri property: The URI of the key. If the ServerKeyType is AzureKeyVault, then the URI is required.
-     *
+     * 
      * @param uri the uri value to set.
      * @return the ManagedInstanceKeyInner object itself.
      */
     public ManagedInstanceKeyInner withUri(String uri) {
-        this.uri = uri;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new ManagedInstanceKeyProperties();
+        }
+        this.innerProperties().withUri(uri);
         return this;
     }
 
     /**
      * Get the thumbprint property: Thumbprint of the key.
-     *
+     * 
      * @return the thumbprint value.
      */
     public String thumbprint() {
-        return this.thumbprint;
+        return this.innerProperties() == null ? null : this.innerProperties().thumbprint();
     }
 
     /**
      * Get the creationDate property: The key creation date.
-     *
+     * 
      * @return the creationDate value.
      */
     public OffsetDateTime creationDate() {
-        return this.creationDate;
+        return this.innerProperties() == null ? null : this.innerProperties().creationDate();
+    }
+
+    /**
+     * Get the autoRotationEnabled property: Key auto rotation opt-in flag. Either true or false.
+     * 
+     * @return the autoRotationEnabled value.
+     */
+    public Boolean autoRotationEnabled() {
+        return this.innerProperties() == null ? null : this.innerProperties().autoRotationEnabled();
     }
 
     /**
      * Validates the instance.
-     *
+     * 
      * @throws IllegalArgumentException thrown if the instance is not valid.
      */
     public void validate() {
+        if (innerProperties() != null) {
+            innerProperties().validate();
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public JsonWriter toJson(JsonWriter jsonWriter) throws IOException {
+        jsonWriter.writeStartObject();
+        jsonWriter.writeJsonField("properties", this.innerProperties);
+        return jsonWriter.writeEndObject();
+    }
+
+    /**
+     * Reads an instance of ManagedInstanceKeyInner from the JsonReader.
+     * 
+     * @param jsonReader The JsonReader being read.
+     * @return An instance of ManagedInstanceKeyInner if the JsonReader was pointing to an instance of it, or null if it
+     * was pointing to JSON null.
+     * @throws IllegalStateException If the deserialized JSON object was missing any required properties.
+     * @throws IOException If an error occurs while reading the ManagedInstanceKeyInner.
+     */
+    public static ManagedInstanceKeyInner fromJson(JsonReader jsonReader) throws IOException {
+        return jsonReader.readObject(reader -> {
+            ManagedInstanceKeyInner deserializedManagedInstanceKeyInner = new ManagedInstanceKeyInner();
+            while (reader.nextToken() != JsonToken.END_OBJECT) {
+                String fieldName = reader.getFieldName();
+                reader.nextToken();
+
+                if ("id".equals(fieldName)) {
+                    deserializedManagedInstanceKeyInner.id = reader.getString();
+                } else if ("name".equals(fieldName)) {
+                    deserializedManagedInstanceKeyInner.name = reader.getString();
+                } else if ("type".equals(fieldName)) {
+                    deserializedManagedInstanceKeyInner.type = reader.getString();
+                } else if ("kind".equals(fieldName)) {
+                    deserializedManagedInstanceKeyInner.kind = reader.getString();
+                } else if ("properties".equals(fieldName)) {
+                    deserializedManagedInstanceKeyInner.innerProperties = ManagedInstanceKeyProperties.fromJson(reader);
+                } else {
+                    reader.skipChildren();
+                }
+            }
+
+            return deserializedManagedInstanceKeyInner;
+        });
     }
 }

@@ -4,12 +4,14 @@
 package com.azure.resourcemanager.compute.implementation;
 
 import com.azure.resourcemanager.compute.ComputeManager;
-import com.azure.resourcemanager.compute.models.GalleryArtifactVersionSource;
+import com.azure.resourcemanager.compute.models.GalleryArtifactVersionFullSource;
 import com.azure.resourcemanager.compute.models.GalleryImageVersion;
 import com.azure.resourcemanager.compute.models.GalleryImageVersionPublishingProfile;
+import com.azure.resourcemanager.compute.models.GalleryImageVersionSafetyProfile;
 import com.azure.resourcemanager.compute.models.GalleryImageVersionStorageProfile;
 import com.azure.resourcemanager.compute.models.ReplicationStatus;
 import com.azure.resourcemanager.compute.models.TargetRegion;
+import com.azure.resourcemanager.compute.models.VirtualMachine;
 import com.azure.resourcemanager.compute.models.VirtualMachineCustomImage;
 import com.azure.resourcemanager.compute.fluent.models.GalleryImageVersionInner;
 import com.azure.core.management.Region;
@@ -23,6 +25,7 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 /** The implementation for GalleryImageVersion and its create and update interfaces. */
 class GalleryImageVersionImpl
@@ -62,36 +65,25 @@ class GalleryImageVersionImpl
 
     @Override
     public Mono<GalleryImageVersion> createResourceAsync() {
-        return manager()
-            .serviceClient()
+        return manager().serviceClient()
             .getGalleryImageVersions()
-            .createOrUpdateAsync(
-                this.resourceGroupName,
-                this.galleryName,
-                this.galleryImageName,
-                this.galleryImageVersionName,
-                this.innerModel())
+            .createOrUpdateAsync(this.resourceGroupName, this.galleryName, this.galleryImageName,
+                this.galleryImageVersionName, this.innerModel())
             .map(innerToFluentMap(this));
     }
 
     @Override
     public Mono<GalleryImageVersion> updateResourceAsync() {
-        return manager()
-            .serviceClient()
+        return manager().serviceClient()
             .getGalleryImageVersions()
-            .createOrUpdateAsync(
-                this.resourceGroupName,
-                this.galleryName,
-                this.galleryImageName,
-                this.galleryImageVersionName,
-                this.innerModel())
+            .createOrUpdateAsync(this.resourceGroupName, this.galleryName, this.galleryImageName,
+                this.galleryImageVersionName, this.innerModel())
             .map(innerToFluentMap(this));
     }
 
     @Override
     protected Mono<GalleryImageVersionInner> getInnerAsync() {
-        return manager()
-            .serviceClient()
+        return manager().serviceClient()
             .getGalleryImageVersions()
             .getAsync(this.resourceGroupName, this.galleryName, this.galleryImageName, this.galleryImageVersionName);
     }
@@ -132,11 +124,8 @@ class GalleryImageVersionImpl
         if (this.innerModel().publishingProfile() != null
             && this.innerModel().publishingProfile().targetRegions() != null) {
             for (TargetRegion targetRegion : this.innerModel().publishingProfile().targetRegions()) {
-                regions
-                    .add(
-                        new TargetRegion()
-                            .withName(targetRegion.name())
-                            .withRegionalReplicaCount(targetRegion.regionalReplicaCount()));
+                regions.add(new TargetRegion().withName(targetRegion.name())
+                    .withRegionalReplicaCount(targetRegion.regionalReplicaCount()));
             }
         }
         return Collections.unmodifiableList(regions);
@@ -181,8 +170,8 @@ class GalleryImageVersionImpl
     }
 
     @Override
-    public GalleryImageVersionImpl withExistingImage(
-        String resourceGroupName, String galleryName, String galleryImageName) {
+    public GalleryImageVersionImpl withExistingImage(String resourceGroupName, String galleryName,
+        String galleryImageName) {
         this.resourceGroupName = resourceGroupName;
         this.galleryName = galleryName;
         this.galleryImageName = galleryImageName;
@@ -203,19 +192,28 @@ class GalleryImageVersionImpl
 
     @Override
     public GalleryImageVersionImpl withSourceCustomImage(String customImageId) {
-        if (this.innerModel().storageProfile() == null) {
-            this.innerModel().withStorageProfile(new GalleryImageVersionStorageProfile());
-        }
-        if (this.innerModel().storageProfile().source() == null) {
-            this.innerModel().storageProfile().withSource(new GalleryArtifactVersionSource());
-        }
+        ensureSource();
         this.innerModel().storageProfile().source().withId(customImageId);
         return this;
     }
 
     @Override
     public GalleryImageVersionImpl withSourceCustomImage(VirtualMachineCustomImage customImage) {
+        Objects.requireNonNull(customImage);
         return this.withSourceCustomImage(customImage.id());
+    }
+
+    @Override
+    public GalleryImageVersionImpl withSourceVirtualMachine(String vmId) {
+        ensureSource();
+        this.innerModel().storageProfile().source().withVirtualMachineId(vmId);
+        return this;
+    }
+
+    @Override
+    public GalleryImageVersionImpl withSourceVirtualMachine(VirtualMachine virtualMachine) {
+        Objects.requireNonNull(virtualMachine);
+        return this.withSourceVirtualMachine(virtualMachine.id());
     }
 
     @Override
@@ -240,8 +238,8 @@ class GalleryImageVersionImpl
             }
         }
         if (!found) {
-            TargetRegion targetRegion =
-                new TargetRegion().withName(newRegionName).withRegionalReplicaCount(replicaCount);
+            TargetRegion targetRegion
+                = new TargetRegion().withName(newRegionName).withRegionalReplicaCount(replicaCount);
             this.innerModel().publishingProfile().targetRegions().add(targetRegion);
         }
         //
@@ -258,10 +256,8 @@ class GalleryImageVersionImpl
             }
         }
         if (!found) {
-            TargetRegion defaultTargetRegion =
-                new TargetRegion()
-                    .withName(this.location())
-                    .withRegionalReplicaCount(null); // null means default where service default to 1 replica
+            TargetRegion defaultTargetRegion
+                = new TargetRegion().withName(this.location()).withRegionalReplicaCount(null); // null means default where service default to 1 replica
             this.innerModel().publishingProfile().targetRegions().add(defaultTargetRegion);
         }
         //
@@ -288,10 +284,8 @@ class GalleryImageVersionImpl
             }
         }
         if (!found) {
-            TargetRegion defaultTargetRegion =
-                new TargetRegion()
-                    .withName(this.location())
-                    .withRegionalReplicaCount(null); // null means default where service default to 1 replica
+            TargetRegion defaultTargetRegion
+                = new TargetRegion().withName(this.location()).withRegionalReplicaCount(null); // null means default where service default to 1 replica
             this.innerModel().publishingProfile().targetRegions().add(defaultTargetRegion);
         }
         //
@@ -318,6 +312,13 @@ class GalleryImageVersionImpl
             }
             if (foundIndex != -1) {
                 this.innerModel().publishingProfile().targetRegions().remove(foundIndex);
+
+                GalleryImageVersionSafetyProfile safetyProfile = this.innerModel().safetyProfile();
+                if (safetyProfile == null) {
+                    safetyProfile = new GalleryImageVersionSafetyProfile();
+                    this.innerModel().withSafetyProfile(safetyProfile);
+                }
+                safetyProfile.withAllowDeletionOfReplicatedLocations(true);
             }
         }
         return this;
@@ -375,5 +376,14 @@ class GalleryImageVersionImpl
             }
         }
         return null;
+    }
+
+    private void ensureSource() {
+        if (this.innerModel().storageProfile() == null) {
+            this.innerModel().withStorageProfile(new GalleryImageVersionStorageProfile());
+        }
+        if (this.innerModel().storageProfile().source() == null) {
+            this.innerModel().storageProfile().withSource(new GalleryArtifactVersionFullSource());
+        }
     }
 }

@@ -11,17 +11,15 @@ import com.azure.resourcemanager.cognitiveservices.fluent.CommitmentTiersClient;
 import com.azure.resourcemanager.cognitiveservices.fluent.models.CommitmentTierInner;
 import com.azure.resourcemanager.cognitiveservices.models.CommitmentTier;
 import com.azure.resourcemanager.cognitiveservices.models.CommitmentTiers;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 public final class CommitmentTiersImpl implements CommitmentTiers {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(CommitmentTiersImpl.class);
+    private static final ClientLogger LOGGER = new ClientLogger(CommitmentTiersImpl.class);
 
     private final CommitmentTiersClient innerClient;
 
     private final com.azure.resourcemanager.cognitiveservices.CognitiveServicesManager serviceManager;
 
-    public CommitmentTiersImpl(
-        CommitmentTiersClient innerClient,
+    public CommitmentTiersImpl(CommitmentTiersClient innerClient,
         com.azure.resourcemanager.cognitiveservices.CognitiveServicesManager serviceManager) {
         this.innerClient = innerClient;
         this.serviceManager = serviceManager;
@@ -29,12 +27,12 @@ public final class CommitmentTiersImpl implements CommitmentTiers {
 
     public PagedIterable<CommitmentTier> list(String location) {
         PagedIterable<CommitmentTierInner> inner = this.serviceClient().list(location);
-        return Utils.mapPage(inner, inner1 -> new CommitmentTierImpl(inner1, this.manager()));
+        return ResourceManagerUtils.mapPage(inner, inner1 -> new CommitmentTierImpl(inner1, this.manager()));
     }
 
     public PagedIterable<CommitmentTier> list(String location, Context context) {
         PagedIterable<CommitmentTierInner> inner = this.serviceClient().list(location, context);
-        return Utils.mapPage(inner, inner1 -> new CommitmentTierImpl(inner1, this.manager()));
+        return ResourceManagerUtils.mapPage(inner, inner1 -> new CommitmentTierImpl(inner1, this.manager()));
     }
 
     private CommitmentTiersClient serviceClient() {

@@ -5,40 +5,68 @@
 package com.azure.resourcemanager.mysqlflexibleserver.models;
 
 import com.azure.core.annotation.Fluent;
-import com.azure.core.util.logging.ClientLogger;
+import com.azure.json.JsonReader;
+import com.azure.json.JsonSerializable;
+import com.azure.json.JsonToken;
+import com.azure.json.JsonWriter;
 import com.azure.resourcemanager.mysqlflexibleserver.fluent.models.ServerPropertiesForUpdate;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import java.io.IOException;
 import java.util.Map;
 
-/** Parameters allowed to update for a server. */
+/**
+ * Parameters allowed to update for a server.
+ */
 @Fluent
-public final class ServerForUpdate {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(ServerForUpdate.class);
+public final class ServerForUpdate implements JsonSerializable<ServerForUpdate> {
+    /*
+     * The cmk identity for the server.
+     */
+    private Identity identity;
 
     /*
      * The SKU (pricing tier) of the server.
      */
-    @JsonProperty(value = "sku")
     private Sku sku;
 
     /*
      * The properties that can be updated for a server.
      */
-    @JsonProperty(value = "properties")
     private ServerPropertiesForUpdate innerProperties;
 
     /*
      * Application-specific metadata in the form of key-value pairs.
      */
-    @JsonProperty(value = "tags")
-    @JsonInclude(value = JsonInclude.Include.NON_NULL, content = JsonInclude.Include.ALWAYS)
     private Map<String, String> tags;
 
     /**
+     * Creates an instance of ServerForUpdate class.
+     */
+    public ServerForUpdate() {
+    }
+
+    /**
+     * Get the identity property: The cmk identity for the server.
+     * 
+     * @return the identity value.
+     */
+    public Identity identity() {
+        return this.identity;
+    }
+
+    /**
+     * Set the identity property: The cmk identity for the server.
+     * 
+     * @param identity the identity value to set.
+     * @return the ServerForUpdate object itself.
+     */
+    public ServerForUpdate withIdentity(Identity identity) {
+        this.identity = identity;
+        return this;
+    }
+
+    /**
      * Get the sku property: The SKU (pricing tier) of the server.
-     *
+     * 
      * @return the sku value.
      */
     public Sku sku() {
@@ -47,7 +75,7 @@ public final class ServerForUpdate {
 
     /**
      * Set the sku property: The SKU (pricing tier) of the server.
-     *
+     * 
      * @param sku the sku value to set.
      * @return the ServerForUpdate object itself.
      */
@@ -58,7 +86,7 @@ public final class ServerForUpdate {
 
     /**
      * Get the innerProperties property: The properties that can be updated for a server.
-     *
+     * 
      * @return the innerProperties value.
      */
     private ServerPropertiesForUpdate innerProperties() {
@@ -67,7 +95,7 @@ public final class ServerForUpdate {
 
     /**
      * Get the tags property: Application-specific metadata in the form of key-value pairs.
-     *
+     * 
      * @return the tags value.
      */
     public Map<String, String> tags() {
@@ -76,7 +104,7 @@ public final class ServerForUpdate {
 
     /**
      * Set the tags property: Application-specific metadata in the form of key-value pairs.
-     *
+     * 
      * @param tags the tags value to set.
      * @return the ServerForUpdate object itself.
      */
@@ -87,7 +115,7 @@ public final class ServerForUpdate {
 
     /**
      * Get the administratorLoginPassword property: The password of the administrator login.
-     *
+     * 
      * @return the administratorLoginPassword value.
      */
     public String administratorLoginPassword() {
@@ -96,7 +124,7 @@ public final class ServerForUpdate {
 
     /**
      * Set the administratorLoginPassword property: The password of the administrator login.
-     *
+     * 
      * @param administratorLoginPassword the administratorLoginPassword value to set.
      * @return the ServerForUpdate object itself.
      */
@@ -110,7 +138,7 @@ public final class ServerForUpdate {
 
     /**
      * Get the storage property: Storage related properties of a server.
-     *
+     * 
      * @return the storage value.
      */
     public Storage storage() {
@@ -119,7 +147,7 @@ public final class ServerForUpdate {
 
     /**
      * Set the storage property: Storage related properties of a server.
-     *
+     * 
      * @param storage the storage value to set.
      * @return the ServerForUpdate object itself.
      */
@@ -133,7 +161,7 @@ public final class ServerForUpdate {
 
     /**
      * Get the backup property: Backup related properties of a server.
-     *
+     * 
      * @return the backup value.
      */
     public Backup backup() {
@@ -142,7 +170,7 @@ public final class ServerForUpdate {
 
     /**
      * Set the backup property: Backup related properties of a server.
-     *
+     * 
      * @param backup the backup value to set.
      * @return the ServerForUpdate object itself.
      */
@@ -156,7 +184,7 @@ public final class ServerForUpdate {
 
     /**
      * Get the highAvailability property: High availability related properties of a server.
-     *
+     * 
      * @return the highAvailability value.
      */
     public HighAvailability highAvailability() {
@@ -165,7 +193,7 @@ public final class ServerForUpdate {
 
     /**
      * Set the highAvailability property: High availability related properties of a server.
-     *
+     * 
      * @param highAvailability the highAvailability value to set.
      * @return the ServerForUpdate object itself.
      */
@@ -179,7 +207,7 @@ public final class ServerForUpdate {
 
     /**
      * Get the maintenanceWindow property: Maintenance window of a server.
-     *
+     * 
      * @return the maintenanceWindow value.
      */
     public MaintenanceWindow maintenanceWindow() {
@@ -188,7 +216,7 @@ public final class ServerForUpdate {
 
     /**
      * Set the maintenanceWindow property: Maintenance window of a server.
-     *
+     * 
      * @param maintenanceWindow the maintenanceWindow value to set.
      * @return the ServerForUpdate object itself.
      */
@@ -202,7 +230,7 @@ public final class ServerForUpdate {
 
     /**
      * Get the replicationRole property: The replication role of the server.
-     *
+     * 
      * @return the replicationRole value.
      */
     public ReplicationRole replicationRole() {
@@ -211,7 +239,7 @@ public final class ServerForUpdate {
 
     /**
      * Set the replicationRole property: The replication role of the server.
-     *
+     * 
      * @param replicationRole the replicationRole value to set.
      * @return the ServerForUpdate object itself.
      */
@@ -224,16 +252,88 @@ public final class ServerForUpdate {
     }
 
     /**
+     * Get the dataEncryption property: The Data Encryption for CMK.
+     * 
+     * @return the dataEncryption value.
+     */
+    public DataEncryption dataEncryption() {
+        return this.innerProperties() == null ? null : this.innerProperties().dataEncryption();
+    }
+
+    /**
+     * Set the dataEncryption property: The Data Encryption for CMK.
+     * 
+     * @param dataEncryption the dataEncryption value to set.
+     * @return the ServerForUpdate object itself.
+     */
+    public ServerForUpdate withDataEncryption(DataEncryption dataEncryption) {
+        if (this.innerProperties() == null) {
+            this.innerProperties = new ServerPropertiesForUpdate();
+        }
+        this.innerProperties().withDataEncryption(dataEncryption);
+        return this;
+    }
+
+    /**
      * Validates the instance.
-     *
+     * 
      * @throws IllegalArgumentException thrown if the instance is not valid.
      */
     public void validate() {
+        if (identity() != null) {
+            identity().validate();
+        }
         if (sku() != null) {
             sku().validate();
         }
         if (innerProperties() != null) {
             innerProperties().validate();
         }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public JsonWriter toJson(JsonWriter jsonWriter) throws IOException {
+        jsonWriter.writeStartObject();
+        jsonWriter.writeJsonField("identity", this.identity);
+        jsonWriter.writeJsonField("sku", this.sku);
+        jsonWriter.writeJsonField("properties", this.innerProperties);
+        jsonWriter.writeMapField("tags", this.tags, (writer, element) -> writer.writeString(element));
+        return jsonWriter.writeEndObject();
+    }
+
+    /**
+     * Reads an instance of ServerForUpdate from the JsonReader.
+     * 
+     * @param jsonReader The JsonReader being read.
+     * @return An instance of ServerForUpdate if the JsonReader was pointing to an instance of it, or null if it was
+     * pointing to JSON null.
+     * @throws IOException If an error occurs while reading the ServerForUpdate.
+     */
+    public static ServerForUpdate fromJson(JsonReader jsonReader) throws IOException {
+        return jsonReader.readObject(reader -> {
+            ServerForUpdate deserializedServerForUpdate = new ServerForUpdate();
+            while (reader.nextToken() != JsonToken.END_OBJECT) {
+                String fieldName = reader.getFieldName();
+                reader.nextToken();
+
+                if ("identity".equals(fieldName)) {
+                    deserializedServerForUpdate.identity = Identity.fromJson(reader);
+                } else if ("sku".equals(fieldName)) {
+                    deserializedServerForUpdate.sku = Sku.fromJson(reader);
+                } else if ("properties".equals(fieldName)) {
+                    deserializedServerForUpdate.innerProperties = ServerPropertiesForUpdate.fromJson(reader);
+                } else if ("tags".equals(fieldName)) {
+                    Map<String, String> tags = reader.readMap(reader1 -> reader1.getString());
+                    deserializedServerForUpdate.tags = tags;
+                } else {
+                    reader.skipChildren();
+                }
+            }
+
+            return deserializedServerForUpdate;
+        });
     }
 }

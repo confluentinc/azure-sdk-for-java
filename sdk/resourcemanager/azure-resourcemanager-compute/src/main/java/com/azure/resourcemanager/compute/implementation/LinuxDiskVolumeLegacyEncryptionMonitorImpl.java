@@ -3,6 +3,7 @@
 
 package com.azure.resourcemanager.compute.implementation;
 
+import com.azure.core.http.rest.Response;
 import com.azure.resourcemanager.compute.ComputeManager;
 import com.azure.resourcemanager.compute.models.DiskVolumeEncryptionMonitor;
 import com.azure.resourcemanager.compute.models.EncryptionStatus;
@@ -80,13 +81,10 @@ class LinuxDiskVolumeLegacyEncryptionMonitorImpl implements DiskVolumeEncryption
     public Mono<DiskVolumeEncryptionMonitor> refreshAsync() {
         // Refreshes the cached encryption extension installed in the Linux virtual machine.
         final DiskVolumeEncryptionMonitor self = this;
-        return retrieveEncryptExtensionWithInstanceViewAsync()
-            .flatMap(
-                virtualMachineExtensionInner -> {
-                    encryptionExtension = virtualMachineExtensionInner;
-                    return Mono.just(self);
-                })
-            .switchIfEmpty(Mono.just(self));
+        return retrieveEncryptExtensionWithInstanceViewAsync().flatMap(virtualMachineExtensionInner -> {
+            encryptionExtension = virtualMachineExtensionInner;
+            return Mono.just(self);
+        }).switchIfEmpty(Mono.just(self));
     }
 
     /**
@@ -112,12 +110,12 @@ class LinuxDiskVolumeLegacyEncryptionMonitorImpl implements DiskVolumeEncryption
      * @param extension the extension name
      * @return an observable that emits the retrieved extension
      */
-    private Mono<VirtualMachineExtensionInner> retrieveExtensionWithInstanceViewAsync(
-        VirtualMachineExtensionInner extension) {
-        return computeManager
-            .serviceClient()
+    private Mono<VirtualMachineExtensionInner>
+        retrieveExtensionWithInstanceViewAsync(VirtualMachineExtensionInner extension) {
+        return computeManager.serviceClient()
             .getVirtualMachineExtensions()
-            .getAsync(rgName, vmName, extension.name(), "instanceView");
+            .getWithResponseAsync(rgName, vmName, extension.name(), "instanceView")
+            .map(Response::getValue);
     }
 
     /**
@@ -128,24 +126,22 @@ class LinuxDiskVolumeLegacyEncryptionMonitorImpl implements DiskVolumeEncryption
      * @return the retrieved extension
      */
     private Mono<VirtualMachineExtensionInner> retrieveEncryptExtensionWithInstanceViewFromVMAsync() {
-        return computeManager
-            .serviceClient()
+        return computeManager.serviceClient()
             .getVirtualMachines()
             .getByResourceGroupAsync(rgName, vmName)
             // Exception if vm not found
-            .flatMap(
-                virtualMachine -> {
-                    if (virtualMachine.resources() != null) {
-                        for (VirtualMachineExtensionInner extension : virtualMachine.resources()) {
-                            if (EncryptionExtensionIdentifier.isEncryptionPublisherName(extension.publisher())
-                                && EncryptionExtensionIdentifier
-                                    .isEncryptionTypeName(extension.typePropertiesType(), OperatingSystemTypes.LINUX)) {
-                                return retrieveExtensionWithInstanceViewAsync(extension);
-                            }
+            .flatMap(virtualMachine -> {
+                if (virtualMachine.resources() != null) {
+                    for (VirtualMachineExtensionInner extension : virtualMachine.resources()) {
+                        if (EncryptionExtensionIdentifier.isEncryptionPublisherName(extension.publisher())
+                            && EncryptionExtensionIdentifier.isEncryptionTypeName(extension.typePropertiesType(),
+                                OperatingSystemTypes.LINUX)) {
+                            return retrieveExtensionWithInstanceViewAsync(extension);
                         }
                     }
-                    return Mono.empty();
-                });
+                }
+                return Mono.empty();
+            });
     }
 
     private boolean hasEncryptionExtension() {

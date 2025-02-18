@@ -6,68 +6,64 @@ package com.azure.resourcemanager.datafactory.fluent.models;
 
 import com.azure.core.annotation.Fluent;
 import com.azure.core.util.logging.ClientLogger;
+import com.azure.json.JsonReader;
+import com.azure.json.JsonSerializable;
+import com.azure.json.JsonToken;
+import com.azure.json.JsonWriter;
 import com.azure.resourcemanager.datafactory.models.DatasetCompression;
 import com.azure.resourcemanager.datafactory.models.DatasetLocation;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import java.io.IOException;
 
-/** Excel dataset properties. */
+/**
+ * Excel dataset properties.
+ */
 @Fluent
-public final class ExcelDatasetTypeProperties {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(ExcelDatasetTypeProperties.class);
-
+public final class ExcelDatasetTypeProperties implements JsonSerializable<ExcelDatasetTypeProperties> {
     /*
      * The location of the excel storage.
      */
-    @JsonProperty(value = "location", required = true)
     private DatasetLocation location;
 
     /*
-     * The sheet name of excel file. Type: string (or Expression with
-     * resultType string).
+     * The sheet name of excel file. Type: string (or Expression with resultType string).
      */
-    @JsonProperty(value = "sheetName")
     private Object sheetName;
 
     /*
-     * The sheet index of excel file and default value is 0. Type: integer (or
-     * Expression with resultType integer)
+     * The sheet index of excel file and default value is 0. Type: integer (or Expression with resultType integer)
      */
-    @JsonProperty(value = "sheetIndex")
     private Object sheetIndex;
 
     /*
-     * The partial data of one sheet. Type: string (or Expression with
-     * resultType string).
+     * The partial data of one sheet. Type: string (or Expression with resultType string).
      */
-    @JsonProperty(value = "range")
     private Object range;
 
     /*
-     * When used as input, treat the first row of data as headers. When used as
-     * output,write the headers into the output as the first row of data. The
-     * default value is false. Type: boolean (or Expression with resultType
-     * boolean).
+     * When used as input, treat the first row of data as headers. When used as output,write the headers into the output
+     * as the first row of data. The default value is false. Type: boolean (or Expression with resultType boolean).
      */
-    @JsonProperty(value = "firstRowAsHeader")
     private Object firstRowAsHeader;
 
     /*
      * The data compression method used for the json dataset.
      */
-    @JsonProperty(value = "compression")
     private DatasetCompression compression;
 
     /*
-     * The null value string. Type: string (or Expression with resultType
-     * string).
+     * The null value string. Type: string (or Expression with resultType string).
      */
-    @JsonProperty(value = "nullValue")
     private Object nullValue;
 
     /**
+     * Creates an instance of ExcelDatasetTypeProperties class.
+     */
+    public ExcelDatasetTypeProperties() {
+    }
+
+    /**
      * Get the location property: The location of the excel storage.
-     *
+     * 
      * @return the location value.
      */
     public DatasetLocation location() {
@@ -76,7 +72,7 @@ public final class ExcelDatasetTypeProperties {
 
     /**
      * Set the location property: The location of the excel storage.
-     *
+     * 
      * @param location the location value to set.
      * @return the ExcelDatasetTypeProperties object itself.
      */
@@ -87,7 +83,7 @@ public final class ExcelDatasetTypeProperties {
 
     /**
      * Get the sheetName property: The sheet name of excel file. Type: string (or Expression with resultType string).
-     *
+     * 
      * @return the sheetName value.
      */
     public Object sheetName() {
@@ -96,7 +92,7 @@ public final class ExcelDatasetTypeProperties {
 
     /**
      * Set the sheetName property: The sheet name of excel file. Type: string (or Expression with resultType string).
-     *
+     * 
      * @param sheetName the sheetName value to set.
      * @return the ExcelDatasetTypeProperties object itself.
      */
@@ -108,7 +104,7 @@ public final class ExcelDatasetTypeProperties {
     /**
      * Get the sheetIndex property: The sheet index of excel file and default value is 0. Type: integer (or Expression
      * with resultType integer).
-     *
+     * 
      * @return the sheetIndex value.
      */
     public Object sheetIndex() {
@@ -118,7 +114,7 @@ public final class ExcelDatasetTypeProperties {
     /**
      * Set the sheetIndex property: The sheet index of excel file and default value is 0. Type: integer (or Expression
      * with resultType integer).
-     *
+     * 
      * @param sheetIndex the sheetIndex value to set.
      * @return the ExcelDatasetTypeProperties object itself.
      */
@@ -129,7 +125,7 @@ public final class ExcelDatasetTypeProperties {
 
     /**
      * Get the range property: The partial data of one sheet. Type: string (or Expression with resultType string).
-     *
+     * 
      * @return the range value.
      */
     public Object range() {
@@ -138,7 +134,7 @@ public final class ExcelDatasetTypeProperties {
 
     /**
      * Set the range property: The partial data of one sheet. Type: string (or Expression with resultType string).
-     *
+     * 
      * @param range the range value to set.
      * @return the ExcelDatasetTypeProperties object itself.
      */
@@ -151,7 +147,7 @@ public final class ExcelDatasetTypeProperties {
      * Get the firstRowAsHeader property: When used as input, treat the first row of data as headers. When used as
      * output,write the headers into the output as the first row of data. The default value is false. Type: boolean (or
      * Expression with resultType boolean).
-     *
+     * 
      * @return the firstRowAsHeader value.
      */
     public Object firstRowAsHeader() {
@@ -162,7 +158,7 @@ public final class ExcelDatasetTypeProperties {
      * Set the firstRowAsHeader property: When used as input, treat the first row of data as headers. When used as
      * output,write the headers into the output as the first row of data. The default value is false. Type: boolean (or
      * Expression with resultType boolean).
-     *
+     * 
      * @param firstRowAsHeader the firstRowAsHeader value to set.
      * @return the ExcelDatasetTypeProperties object itself.
      */
@@ -173,7 +169,7 @@ public final class ExcelDatasetTypeProperties {
 
     /**
      * Get the compression property: The data compression method used for the json dataset.
-     *
+     * 
      * @return the compression value.
      */
     public DatasetCompression compression() {
@@ -182,7 +178,7 @@ public final class ExcelDatasetTypeProperties {
 
     /**
      * Set the compression property: The data compression method used for the json dataset.
-     *
+     * 
      * @param compression the compression value to set.
      * @return the ExcelDatasetTypeProperties object itself.
      */
@@ -193,7 +189,7 @@ public final class ExcelDatasetTypeProperties {
 
     /**
      * Get the nullValue property: The null value string. Type: string (or Expression with resultType string).
-     *
+     * 
      * @return the nullValue value.
      */
     public Object nullValue() {
@@ -202,7 +198,7 @@ public final class ExcelDatasetTypeProperties {
 
     /**
      * Set the nullValue property: The null value string. Type: string (or Expression with resultType string).
-     *
+     * 
      * @param nullValue the nullValue value to set.
      * @return the ExcelDatasetTypeProperties object itself.
      */
@@ -213,20 +209,76 @@ public final class ExcelDatasetTypeProperties {
 
     /**
      * Validates the instance.
-     *
+     * 
      * @throws IllegalArgumentException thrown if the instance is not valid.
      */
     public void validate() {
         if (location() == null) {
-            throw logger
-                .logExceptionAsError(
-                    new IllegalArgumentException(
-                        "Missing required property location in model ExcelDatasetTypeProperties"));
+            throw LOGGER.atError()
+                .log(new IllegalArgumentException(
+                    "Missing required property location in model ExcelDatasetTypeProperties"));
         } else {
             location().validate();
         }
         if (compression() != null) {
             compression().validate();
         }
+    }
+
+    private static final ClientLogger LOGGER = new ClientLogger(ExcelDatasetTypeProperties.class);
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public JsonWriter toJson(JsonWriter jsonWriter) throws IOException {
+        jsonWriter.writeStartObject();
+        jsonWriter.writeJsonField("location", this.location);
+        jsonWriter.writeUntypedField("sheetName", this.sheetName);
+        jsonWriter.writeUntypedField("sheetIndex", this.sheetIndex);
+        jsonWriter.writeUntypedField("range", this.range);
+        jsonWriter.writeUntypedField("firstRowAsHeader", this.firstRowAsHeader);
+        jsonWriter.writeJsonField("compression", this.compression);
+        jsonWriter.writeUntypedField("nullValue", this.nullValue);
+        return jsonWriter.writeEndObject();
+    }
+
+    /**
+     * Reads an instance of ExcelDatasetTypeProperties from the JsonReader.
+     * 
+     * @param jsonReader The JsonReader being read.
+     * @return An instance of ExcelDatasetTypeProperties if the JsonReader was pointing to an instance of it, or null if
+     * it was pointing to JSON null.
+     * @throws IllegalStateException If the deserialized JSON object was missing any required properties.
+     * @throws IOException If an error occurs while reading the ExcelDatasetTypeProperties.
+     */
+    public static ExcelDatasetTypeProperties fromJson(JsonReader jsonReader) throws IOException {
+        return jsonReader.readObject(reader -> {
+            ExcelDatasetTypeProperties deserializedExcelDatasetTypeProperties = new ExcelDatasetTypeProperties();
+            while (reader.nextToken() != JsonToken.END_OBJECT) {
+                String fieldName = reader.getFieldName();
+                reader.nextToken();
+
+                if ("location".equals(fieldName)) {
+                    deserializedExcelDatasetTypeProperties.location = DatasetLocation.fromJson(reader);
+                } else if ("sheetName".equals(fieldName)) {
+                    deserializedExcelDatasetTypeProperties.sheetName = reader.readUntyped();
+                } else if ("sheetIndex".equals(fieldName)) {
+                    deserializedExcelDatasetTypeProperties.sheetIndex = reader.readUntyped();
+                } else if ("range".equals(fieldName)) {
+                    deserializedExcelDatasetTypeProperties.range = reader.readUntyped();
+                } else if ("firstRowAsHeader".equals(fieldName)) {
+                    deserializedExcelDatasetTypeProperties.firstRowAsHeader = reader.readUntyped();
+                } else if ("compression".equals(fieldName)) {
+                    deserializedExcelDatasetTypeProperties.compression = DatasetCompression.fromJson(reader);
+                } else if ("nullValue".equals(fieldName)) {
+                    deserializedExcelDatasetTypeProperties.nullValue = reader.readUntyped();
+                } else {
+                    reader.skipChildren();
+                }
+            }
+
+            return deserializedExcelDatasetTypeProperties;
+        });
     }
 }

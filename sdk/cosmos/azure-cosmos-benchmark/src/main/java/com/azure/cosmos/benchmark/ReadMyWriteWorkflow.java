@@ -3,21 +3,23 @@
 
 package com.azure.cosmos.benchmark;
 
-import com.azure.cosmos.BridgeInternal;
 import com.azure.cosmos.CosmosBridgeInternal;
 import com.azure.cosmos.CosmosException;
 import com.azure.cosmos.implementation.AsyncDocumentClient;
+import com.azure.cosmos.implementation.CosmosPagedFluxOptions;
 import com.azure.cosmos.implementation.Database;
 import com.azure.cosmos.implementation.Document;
-import com.azure.cosmos.models.CosmosQueryRequestOptions;
+import com.azure.cosmos.implementation.DocumentCollection;
 import com.azure.cosmos.implementation.NotFoundException;
+import com.azure.cosmos.implementation.OperationType;
+import com.azure.cosmos.implementation.QueryFeedOperationState;
+import com.azure.cosmos.implementation.RequestOptions;
+import com.azure.cosmos.implementation.ResourceResponse;
+import com.azure.cosmos.implementation.ResourceType;
+import com.azure.cosmos.models.CosmosQueryRequestOptions;
 import com.azure.cosmos.models.PartitionKey;
 import com.azure.cosmos.models.SqlParameter;
 import com.azure.cosmos.models.SqlQuerySpec;
-import com.azure.cosmos.implementation.DocumentCollection;
-import com.azure.cosmos.implementation.RequestOptions;
-import com.azure.cosmos.implementation.ResourceResponse;
-import com.azure.cosmos.implementation.Utils;
 import org.apache.commons.lang3.RandomUtils;
 import reactor.core.publisher.BaseSubscriber;
 import reactor.core.publisher.Flux;
@@ -29,6 +31,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
@@ -153,6 +156,9 @@ class ReadMyWriteWorkflow extends AsyncBenchmark<Document> {
         } catch (Throwable error) {
             concurrencyControlSemaphore.release();
             logger.error("subscription failed due to ", error);
+            if (error instanceof Error) {
+                throw (Error) error;
+            }
         }
     }
 
@@ -183,16 +189,16 @@ class ReadMyWriteWorkflow extends AsyncBenchmark<Document> {
      * @return Observable of document
      */
     private Flux<Document> writeDocument(Integer i) {
-        String idString = Utils.randomUUID().toString();
-        String randomVal = Utils.randomUUID().toString();
+        String idString = UUID.randomUUID().toString();
+        String randomVal = UUID.randomUUID().toString();
         Document document = new Document();
         document.setId(idString);
-        BridgeInternal.setProperty(document, partitionKey, idString);
-        BridgeInternal.setProperty(document, QUERY_FIELD_NAME, randomVal);
-        BridgeInternal.setProperty(document, "dataField1", randomVal);
-        BridgeInternal.setProperty(document, "dataField2", randomVal);
-        BridgeInternal.setProperty(document, "dataField3", randomVal);
-        BridgeInternal.setProperty(document, "dataField4", randomVal);
+        document.set(partitionKey, idString);
+        document.set(QUERY_FIELD_NAME, randomVal);
+        document.set("dataField1", randomVal);
+        document.set("dataField2", randomVal);
+        document.set("dataField3", randomVal);
+        document.set("dataField4", randomVal);
 
         Integer key = i == null ? cacheKey() : i;
         return client.createDocument(getCollectionLink(), document, null, false)
@@ -275,7 +281,19 @@ class ReadMyWriteWorkflow extends AsyncBenchmark<Document> {
         CosmosQueryRequestOptions options = new CosmosQueryRequestOptions();
         options.setMaxDegreeOfParallelism(-1);
 
-        return client.<Document>queryDocuments(getCollectionLink(), query, options)
+        QueryFeedOperationState state = new QueryFeedOperationState(
+            cosmosClient,
+            "xPartitionQuery",
+            configuration.getDatabaseId(),
+            configuration.getCollectionId(),
+            ResourceType.Document,
+            OperationType.Query,
+            null,
+            options,
+            new CosmosPagedFluxOptions()
+        );
+
+        return client.<Document>queryDocuments(getCollectionLink(), query, state, Document.class)
                 .flatMap(p -> Flux.fromIterable(p.getResults()));
     }
 
@@ -293,7 +311,20 @@ class ReadMyWriteWorkflow extends AsyncBenchmark<Document> {
         SqlQuerySpec sqlQuerySpec = new SqlQuerySpec(String.format("Select top 100 * from c where c.%s = '%s'",
                                                                    QUERY_FIELD_NAME,
                                                                    d.getString(QUERY_FIELD_NAME)));
-        return client.<Document>queryDocuments(getCollectionLink(), sqlQuerySpec, options)
+
+        QueryFeedOperationState state = new QueryFeedOperationState(
+            cosmosClient,
+            "singlePartitionQuery",
+            configuration.getDatabaseId(),
+            configuration.getCollectionId(),
+            ResourceType.Document,
+            OperationType.Query,
+            null,
+            options,
+            new CosmosPagedFluxOptions()
+        );
+
+        return client.<Document>queryDocuments(getCollectionLink(), sqlQuerySpec, state, Document.class)
                 .flatMap(p -> Flux.fromIterable(p.getResults()));
     }
 

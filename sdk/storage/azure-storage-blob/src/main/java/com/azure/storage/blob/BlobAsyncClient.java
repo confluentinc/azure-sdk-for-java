@@ -8,9 +8,14 @@ import com.azure.core.annotation.ServiceMethod;
 import com.azure.core.http.HttpPipeline;
 import com.azure.core.http.rest.Response;
 import com.azure.core.util.BinaryData;
+import com.azure.core.util.Contexts;
+import com.azure.core.util.CoreUtils;
 import com.azure.core.util.FluxUtil;
+import com.azure.core.util.ProgressListener;
+import com.azure.core.util.ProgressReporter;
 import com.azure.core.util.logging.ClientLogger;
 import com.azure.storage.blob.implementation.models.EncryptionScope;
+import com.azure.storage.blob.implementation.util.BlobConstants;
 import com.azure.storage.blob.implementation.util.ModelHelper;
 import com.azure.storage.blob.models.AccessTier;
 import com.azure.storage.blob.models.BlobHttpHeaders;
@@ -25,35 +30,32 @@ import com.azure.storage.blob.options.BlobParallelUploadOptions;
 import com.azure.storage.blob.options.BlobUploadFromFileOptions;
 import com.azure.storage.blob.options.BlockBlobCommitBlockListOptions;
 import com.azure.storage.blob.options.BlockBlobSimpleUploadOptions;
+import com.azure.storage.blob.options.BlockBlobStageBlockOptions;
 import com.azure.storage.blob.specialized.AppendBlobAsyncClient;
 import com.azure.storage.blob.specialized.BlobAsyncClientBase;
 import com.azure.storage.blob.specialized.BlockBlobAsyncClient;
 import com.azure.storage.blob.specialized.BlockBlobClient;
 import com.azure.storage.blob.specialized.PageBlobAsyncClient;
 import com.azure.storage.blob.specialized.SpecializedBlobClientBuilder;
-import com.azure.storage.common.Utility;
+import com.azure.storage.common.implementation.BufferStagingArea;
 import com.azure.storage.common.implementation.Constants;
 import com.azure.storage.common.implementation.StorageImplUtils;
-import com.azure.storage.common.implementation.BufferStagingArea;
 import com.azure.storage.common.implementation.UploadUtils;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.AsynchronousFileChannel;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
 import java.util.Map;
 import java.util.SortedMap;
 import java.util.TreeMap;
-import java.util.UUID;
-import java.util.concurrent.atomic.AtomicLong;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -71,7 +73,7 @@ import static java.nio.charset.StandardCharsets.UTF_8;
  * BlobContainerAsyncClient#getBlobAsyncClient(String) getBlobAsyncClient}.
  *
  * <p>
- * For operations on a specific blob type (i.e append, block, or page) use {@link #getAppendBlobAsyncClient()
+ * For operations on a specific blob type (i.e. append, block, or page) use {@link #getAppendBlobAsyncClient()
  * getAppendBlobAsyncClient}, {@link #getBlockBlobAsyncClient() getBlockBlobAsyncClient}, or {@link
  * #getPageBlobAsyncClient() getPageBlobAsyncClient} to construct a client that allows blob specific operations.
  *
@@ -84,22 +86,31 @@ public class BlobAsyncClient extends BlobAsyncClientBase {
     /**
      * The block size to use if none is specified in parallel operations.
      */
-    public static final int BLOB_DEFAULT_UPLOAD_BLOCK_SIZE = 4 * Constants.MB;
+    public static final int BLOB_DEFAULT_UPLOAD_BLOCK_SIZE = BlobConstants.BLOB_DEFAULT_UPLOAD_BLOCK_SIZE;
 
     /**
-     * The number of buffers to use if none is specied on the buffered upload method.
+     * The number of buffers to use if none is specified on the buffered upload method.
      */
-    public static final int BLOB_DEFAULT_NUMBER_OF_BUFFERS = 8;
+    public static final int BLOB_DEFAULT_NUMBER_OF_BUFFERS = BlobConstants.BLOB_DEFAULT_NUMBER_OF_BUFFERS;
 
     /**
      * If a blob is known to be greater than 100MB, using a larger block size will trigger some server-side
      * optimizations. If the block size is not set and the size of the blob is known to be greater than 100MB, this
      * value will be used.
      */
-    public static final int BLOB_DEFAULT_HTBB_UPLOAD_BLOCK_SIZE = 8 * Constants.MB;
+    public static final int BLOB_DEFAULT_HTBB_UPLOAD_BLOCK_SIZE = BlobConstants.BLOB_DEFAULT_HTBB_UPLOAD_BLOCK_SIZE;
 
     static final long BLOB_MAX_UPLOAD_BLOCK_SIZE = 4000L * Constants.MB;
-    private final ClientLogger logger = new ClientLogger(BlobAsyncClient.class);
+
+    /**
+     * The default block size used in {@link FluxUtil#readFile(AsynchronousFileChannel)}.
+     * This is to make sure we're using same size when using {@link BinaryData#fromFile(Path, int)}
+     * and {@link BinaryData#fromFile(Path, Long, Long, int)}
+     * to represent the content.
+     */
+    private static final int DEFAULT_FILE_READ_CHUNK_SIZE = BlobConstants.DEFAULT_FILE_READ_CHUNK_SIZE;
+
+    private static final ClientLogger LOGGER = new ClientLogger(BlobAsyncClient.class);
 
     private BlockBlobAsyncClient blockBlobAsyncClient;
     private AppendBlobAsyncClient appendBlobAsyncClient;
@@ -162,8 +173,8 @@ public class BlobAsyncClient extends BlobAsyncClientBase {
      * @param versionId The version identifier for the blob, pass {@code null} to interact with the latest blob version.
      */
     protected BlobAsyncClient(HttpPipeline pipeline, String url, BlobServiceVersion serviceVersion, String accountName,
-                              String containerName, String blobName, String snapshot, CpkInfo customerProvidedKey,
-                              EncryptionScope encryptionScope, String versionId) {
+        String containerName, String blobName, String snapshot, CpkInfo customerProvidedKey,
+        EncryptionScope encryptionScope, String versionId) {
         super(pipeline, url, serviceVersion, accountName, containerName, blobName, snapshot, customerProvidedKey,
             encryptionScope, versionId);
     }
@@ -221,8 +232,7 @@ public class BlobAsyncClient extends BlobAsyncClientBase {
     public BlobAsyncClient getCustomerProvidedKeyAsyncClient(CustomerProvidedKey customerProvidedKey) {
         CpkInfo finalCustomerProvidedKey = null;
         if (customerProvidedKey != null) {
-            finalCustomerProvidedKey = new CpkInfo()
-                .setEncryptionKey(customerProvidedKey.getKey())
+            finalCustomerProvidedKey = new CpkInfo().setEncryptionKey(customerProvidedKey.getKey())
                 .setEncryptionKeySha256(customerProvidedKey.getKeySha256())
                 .setEncryptionAlgorithm(customerProvidedKey.getEncryptionAlgorithm());
         }
@@ -268,8 +278,7 @@ public class BlobAsyncClient extends BlobAsyncClientBase {
     }
 
     private SpecializedBlobClientBuilder prepareBuilder() {
-        SpecializedBlobClientBuilder builder = new SpecializedBlobClientBuilder()
-            .pipeline(getHttpPipeline())
+        SpecializedBlobClientBuilder builder = new SpecializedBlobClientBuilder().pipeline(getHttpPipeline())
             .endpoint(getBlobUrl())
             .snapshot(getSnapshotId())
             .serviceVersion(getServiceVersion());
@@ -287,7 +296,7 @@ public class BlobAsyncClient extends BlobAsyncClientBase {
     }
 
     /**
-     * Creates a new block blob. By default this method will not overwrite an existing blob.
+     * Creates a new block blob. By default, this method will not overwrite an existing blob.
      * <p>
      * Updating an existing block blob overwrites any existing metadata on the blob. Partial updates are not supported
      * with this method; the content of the existing blob is overwritten with the new content. To perform a partial
@@ -329,11 +338,7 @@ public class BlobAsyncClient extends BlobAsyncClientBase {
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
     public Mono<BlockBlobItem> upload(Flux<ByteBuffer> data, ParallelTransferOptions parallelTransferOptions) {
-        try {
-            return upload(data, parallelTransferOptions, false);
-        } catch (RuntimeException ex) {
-            return monoError(logger, ex);
-        }
+        return upload(data, parallelTransferOptions, false);
     }
 
     /**
@@ -376,37 +381,32 @@ public class BlobAsyncClient extends BlobAsyncClientBase {
      * {@code Flux} be replayable. In other words, it does not have to support multiple subscribers and is not expected
      * to produce the same values across subscriptions.
      * @param parallelTransferOptions {@link ParallelTransferOptions} used to configure buffered uploading.
-     * @param overwrite Whether or not to overwrite, should the blob already exist.
+     * @param overwrite Whether to overwrite, should the blob already exist.
      * @return A reactive response containing the information of the uploaded block blob.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
     public Mono<BlockBlobItem> upload(Flux<ByteBuffer> data, ParallelTransferOptions parallelTransferOptions,
         boolean overwrite) {
-        try {
-            Mono<Void> overwriteCheck;
-            BlobRequestConditions requestConditions;
+        Mono<Void> overwriteCheck;
+        BlobRequestConditions requestConditions;
 
-            if (overwrite) {
-                overwriteCheck = Mono.empty();
-                requestConditions = null;
-            } else {
-                overwriteCheck = exists().flatMap(exists -> exists
-                    ? monoError(logger, new IllegalArgumentException(Constants.BLOB_ALREADY_EXISTS))
-                    : Mono.empty());
-                requestConditions = new BlobRequestConditions().setIfNoneMatch(Constants.HeaderConstants.ETAG_WILDCARD);
-            }
-
-            return overwriteCheck
-                .then(uploadWithResponse(data, parallelTransferOptions, null, null, null,
-                    requestConditions)).flatMap(FluxUtil::toMono);
-        } catch (RuntimeException ex) {
-            return monoError(logger, ex);
+        if (overwrite) {
+            overwriteCheck = Mono.empty();
+            requestConditions = null;
+        } else {
+            overwriteCheck = exists().flatMap(exists -> exists
+                ? monoError(LOGGER, new IllegalArgumentException(Constants.BLOB_ALREADY_EXISTS))
+                : Mono.empty());
+            requestConditions = new BlobRequestConditions().setIfNoneMatch(Constants.HeaderConstants.ETAG_WILDCARD);
         }
+
+        return overwriteCheck
+            .then(uploadWithResponse(data, parallelTransferOptions, null, null, null, requestConditions))
+            .flatMap(FluxUtil::toMono);
     }
 
-
     /**
-     * Creates a new block blob. By default this method will not overwrite an existing blob.
+     * Creates a new block blob. By default, this method will not overwrite an existing blob.
      *
      * <p><strong>Code Samples</strong></p>
      *
@@ -423,11 +423,7 @@ public class BlobAsyncClient extends BlobAsyncClientBase {
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
     public Mono<BlockBlobItem> upload(BinaryData data) {
-        try {
-            return upload(data, false);
-        } catch (RuntimeException ex) {
-            return monoError(logger, ex);
-        }
+        return upload(data, false);
     }
 
     /**
@@ -445,32 +441,27 @@ public class BlobAsyncClient extends BlobAsyncClientBase {
      * <!-- end com.azure.storage.blob.BlobAsyncClient.upload#BinaryData-boolean -->
      *
      * @param data The data to write to the blob.
-     * @param overwrite Whether or not to overwrite, should the blob already exist.
+     * @param overwrite Whether to overwrite, should the blob already exist.
      * @return A reactive response containing the information of the uploaded block blob.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    public Mono<BlockBlobItem> upload(BinaryData data,
-                                      boolean overwrite) {
-        try {
-            Mono<Void> overwriteCheck;
-            BlobRequestConditions requestConditions;
+    public Mono<BlockBlobItem> upload(BinaryData data, boolean overwrite) {
+        Mono<Void> overwriteCheck;
+        BlobRequestConditions requestConditions;
 
-            if (overwrite) {
-                overwriteCheck = Mono.empty();
-                requestConditions = null;
-            } else {
-                overwriteCheck = exists().flatMap(exists -> exists
-                    ? monoError(logger, new IllegalArgumentException(Constants.BLOB_ALREADY_EXISTS))
-                    : Mono.empty());
-                requestConditions = new BlobRequestConditions().setIfNoneMatch(Constants.HeaderConstants.ETAG_WILDCARD);
-            }
-
-            return overwriteCheck
-                .then(uploadWithResponse(Flux.just(data.toByteBuffer()), null, null, null, null,
-                    requestConditions)).flatMap(FluxUtil::toMono);
-        } catch (RuntimeException ex) {
-            return monoError(logger, ex);
+        if (overwrite) {
+            overwriteCheck = Mono.empty();
+            requestConditions = null;
+        } else {
+            overwriteCheck = exists().flatMap(exists -> exists
+                ? monoError(LOGGER, new IllegalArgumentException(Constants.BLOB_ALREADY_EXISTS))
+                : Mono.empty());
+            requestConditions = new BlobRequestConditions().setIfNoneMatch(Constants.HeaderConstants.ETAG_WILDCARD);
         }
+
+        return overwriteCheck
+            .then(uploadWithResponse(data.toFluxByteBuffer(), null, null, null, null, requestConditions))
+            .flatMap(FluxUtil::toMono);
     }
 
     /**
@@ -538,7 +529,7 @@ public class BlobAsyncClient extends BlobAsyncClientBase {
      * ParallelTransferOptions parallelTransferOptions = new ParallelTransferOptions&#40;&#41;
      *     .setBlockSizeLong&#40;blockSize&#41;
      *     .setMaxConcurrency&#40;maxConcurrency&#41;
-     *     .setProgressReceiver&#40;bytesTransferred -&gt; System.out.printf&#40;&quot;Upload progress: %s bytes sent&quot;, bytesTransferred&#41;&#41;;
+     *     .setProgressListener&#40;bytesTransferred -&gt; System.out.printf&#40;&quot;Upload progress: %s bytes sent&quot;, bytesTransferred&#41;&#41;;
      *
      * client.uploadWithResponse&#40;data, parallelTransferOptions, headers, metadata, AccessTier.HOT, requestConditions&#41;
      *     .subscribe&#40;response -&gt; System.out.printf&#40;&quot;Uploaded BlockBlob MD5 is %s%n&quot;,
@@ -561,9 +552,16 @@ public class BlobAsyncClient extends BlobAsyncClientBase {
     public Mono<Response<BlockBlobItem>> uploadWithResponse(Flux<ByteBuffer> data,
         ParallelTransferOptions parallelTransferOptions, BlobHttpHeaders headers, Map<String, String> metadata,
         AccessTier tier, BlobRequestConditions requestConditions) {
-        return this.uploadWithResponse(new BlobParallelUploadOptions(data)
-            .setParallelTransferOptions(parallelTransferOptions).setHeaders(headers).setMetadata(metadata).setTier(tier)
-            .setRequestConditions(requestConditions));
+        try {
+            return this.uploadWithResponse(
+                new BlobParallelUploadOptions(data).setParallelTransferOptions(parallelTransferOptions)
+                    .setHeaders(headers)
+                    .setMetadata(metadata)
+                    .setTier(tier)
+                    .setRequestConditions(requestConditions));
+        } catch (RuntimeException ex) {
+            return monoError(LOGGER, ex);
+        }
     }
 
     /**
@@ -606,7 +604,7 @@ public class BlobAsyncClient extends BlobAsyncClientBase {
      *     .setIfUnmodifiedSince&#40;OffsetDateTime.now&#40;&#41;.minusDays&#40;3&#41;&#41;;
      *
      * ParallelTransferOptions parallelTransferOptions = new ParallelTransferOptions&#40;&#41;.setBlockSizeLong&#40;blockSize&#41;
-     *     .setMaxConcurrency&#40;maxConcurrency&#41;.setProgressReceiver&#40;bytesTransferred -&gt;
+     *     .setMaxConcurrency&#40;maxConcurrency&#41;.setProgressListener&#40;bytesTransferred -&gt;
      *         System.out.printf&#40;&quot;Upload progress: %s bytes sent&quot;, bytesTransferred&#41;&#41;;
      *
      * client.uploadWithResponse&#40;new BlobParallelUploadOptions&#40;data&#41;
@@ -633,7 +631,7 @@ public class BlobAsyncClient extends BlobAsyncClientBase {
      *     .setIfUnmodifiedSince&#40;OffsetDateTime.now&#40;&#41;.minusDays&#40;3&#41;&#41;;
      *
      * ParallelTransferOptions parallelTransferOptions = new ParallelTransferOptions&#40;&#41;.setBlockSizeLong&#40;blockSize&#41;
-     *     .setMaxConcurrency&#40;maxConcurrency&#41;.setProgressReceiver&#40;bytesTransferred -&gt;
+     *     .setMaxConcurrency&#40;maxConcurrency&#41;.setProgressListener&#40;bytesTransferred -&gt;
      *         System.out.printf&#40;&quot;Upload progress: %s bytes sent&quot;, bytesTransferred&#41;&#41;;
      *
      * client.uploadWithResponse&#40;new BlobParallelUploadOptions&#40;data&#41;
@@ -652,74 +650,70 @@ public class BlobAsyncClient extends BlobAsyncClientBase {
     @ServiceMethod(returns = ReturnType.SINGLE)
     public Mono<Response<BlockBlobItem>> uploadWithResponse(BlobParallelUploadOptions options) {
         /*
-        The following is catalogue of all the places we allocate memory/copy in any upload method a justifaction for
-        that case current as of 1/13/21.
-        - Async buffered upload chunked upload: We used an UploadBufferPool. This will allocate memory as needed up to
-        the configured maximum. This is necessary to support replayability on retires. Each flux to come out of the pool
-        is a Flux.just() of up to two deep copied buffers, so it is replayable. It also allows us to optimize the upload
-        by uploading the maximum amount per block. Finally, in the case of chunked uploading, it allows the customer to
-        pass data without knowing the size. Note that full upload does not need a deep copy because the Flux emitted by
-        the PayloadSizeGate in the full upload case is already replayable and the length is maintained by the gate.
-        - Sync buffered upload: converting the input stream to a flux involves creating a buffer for each stream read.
-        Using a new buffer per read ensures that the reads are safe and not overwriting data in buffers that were passed
-        to the async upload but have not yet been sent. This covers both full and chunked uploads in the sync case.
-        - BlobOutputStream: A deep copy is made of any buffer passed to write. While async copy does streamline our code
-        and allow for some potential parallelization, this extra copy is necessary to ensure that customers writing to
-        the stream in a tight loop are not overwriting data previously given to the stream before it has been sent.
-
-        Taken together, these should support retries and protect against data being overwritten in all upload scenarios.
-
-        One note is that there is no deep copy in the uploadFull method. This is unnecessary as explained in
-        uploadFullOrChunked because the Flux coming out of the size gate in that case is already replayable and reusing
-        buffers is not a common scenario for async like it is in sync (and we already buffer in sync to convert from a
-        stream).
+         * The following is catalogue of all the places we allocate memory/copy in any upload method a justification for
+         * that case current as of 1/13/21.
+         *
+         * - Async buffered upload chunked upload: We used an UploadBufferPool. This will allocate memory as needed up
+         *   to the configured maximum. This is necessary to support replayability on retires. Each flux to come out of
+         *   the pool is a Flux.just() of up to two deep copied buffers, so it is replayable. It also allows us to
+         *   optimize the upload by uploading the maximum amount per block. Finally, in the case of chunked uploading,
+         *   it allows the customer to pass data without knowing the size. Note that full upload does not need a deep
+         *   copy because the Flux emitted by the PayloadSizeGate in the full upload case is already replayable and the
+         *   length is maintained by the gate.
+         *
+         * - Sync buffered upload: converting the input stream to a flux involves creating a buffer for each stream
+         *   read. Using a new buffer per read ensures that the reads are safe and not overwriting data in buffers that
+         *   were passed to the async upload but have not yet been sent. This covers both full and chunked uploads in
+         *   the sync case.
+         *
+         * - BlobOutputStream: A deep copy is made of any buffer passed to write. While async copy does streamline our
+         *   code and allow for some potential parallelization, this extra copy is necessary to ensure that customers
+         *   writing to the stream in a tight loop are not overwriting data previously given to the stream before it has
+         *   been sent.
+         *
+         * Taken together, these should support retries and protect against data being overwritten in all upload
+         * scenarios.
+         *
+         * One note is that there is no deep copy in the uploadFull method. This is unnecessary as explained in
+         * uploadFullOrChunked because the Flux coming out of the size gate in that case is already replayable and
+         * reusing buffers is not a common scenario for async like it is in sync (and we already buffer in sync to
+         * convert from a stream).
          */
         try {
             StorageImplUtils.assertNotNull("options", options);
 
-            final ParallelTransferOptions parallelTransferOptions =
-                ModelHelper.populateAndApplyDefaults(options.getParallelTransferOptions());
+            final ParallelTransferOptions parallelTransferOptions
+                = ModelHelper.populateAndApplyDefaults(options.getParallelTransferOptions());
             final BlobHttpHeaders headers = options.getHeaders();
             final Map<String, String> metadata = options.getMetadata();
             final Map<String, String> tags = options.getTags();
             final AccessTier tier = options.getTier();
-            final BlobRequestConditions requestConditions = options.getRequestConditions() == null
-                ? new BlobRequestConditions() : options.getRequestConditions();
+            final BlobRequestConditions requestConditions
+                = options.getRequestConditions() == null ? new BlobRequestConditions() : options.getRequestConditions();
             final boolean computeMd5 = options.isComputeMd5();
             final BlobImmutabilityPolicy immutabilityPolicy = options.getImmutabilityPolicy() == null
-                ? new BlobImmutabilityPolicy() : options.getImmutabilityPolicy();
+                ? new BlobImmutabilityPolicy()
+                : options.getImmutabilityPolicy();
             final Boolean legalHold = options.isLegalHold();
 
             BlockBlobAsyncClient blockBlobAsyncClient = getBlockBlobAsyncClient();
 
-            Function<Flux<ByteBuffer>, Mono<Response<BlockBlobItem>>> uploadInChunksFunction = (stream) ->
-                uploadInChunks(blockBlobAsyncClient, stream, parallelTransferOptions, headers, metadata, tags,
-                    tier, requestConditions, computeMd5, immutabilityPolicy, legalHold);
+            Function<Flux<ByteBuffer>, Mono<Response<BlockBlobItem>>> uploadInChunksFunction
+                = (stream) -> uploadInChunks(blockBlobAsyncClient, stream, parallelTransferOptions, headers, metadata,
+                    tags, tier, requestConditions, computeMd5, immutabilityPolicy, legalHold);
 
-            BiFunction<Flux<ByteBuffer>, Long, Mono<Response<BlockBlobItem>>> uploadFullBlobFunction =
-                (stream, length) -> uploadFullBlob(blockBlobAsyncClient, stream, length, parallelTransferOptions,
+            BiFunction<Flux<ByteBuffer>, Long, Mono<Response<BlockBlobItem>>> uploadFullBlobFunction
+                = (stream, length) -> uploadFullBlob(blockBlobAsyncClient, stream, length, parallelTransferOptions,
                     headers, metadata, tags, tier, requestConditions, computeMd5, immutabilityPolicy, legalHold);
 
             Flux<ByteBuffer> data = options.getDataFlux();
-            // no specified length: use azure.core's converter
-            if (data == null && options.getOptionalLength() == null) {
-                // We can only buffer up to max int due to restrictions in ByteBuffer.
-                int chunkSize = (int) Math.min(Constants.MAX_INPUT_STREAM_CONVERTER_BUFFER_LENGTH,
-                    parallelTransferOptions.getBlockSizeLong());
-                data = FluxUtil.toFluxByteBuffer(options.getDataStream(), chunkSize);
-            // specified length (legacy requirement): use custom converter. no marking because we buffer anyway.
-            } else if (data == null) {
-                // We can only buffer up to max int due to restrictions in ByteBuffer.
-                int chunkSize = (int) Math.min(Constants.MAX_INPUT_STREAM_CONVERTER_BUFFER_LENGTH,
-                    parallelTransferOptions.getBlockSizeLong());
-                data = Utility.convertStreamToByteBuffer(
-                    options.getDataStream(), options.getOptionalLength(), chunkSize, false);
-            }
+            data = UploadUtils.extractByteBuffer(data, options.getOptionalLength(),
+                parallelTransferOptions.getBlockSizeLong(), options.getDataStream());
 
             return UploadUtils.uploadFullOrChunked(data, ModelHelper.wrapBlobOptions(parallelTransferOptions),
                 uploadInChunksFunction, uploadFullBlobFunction);
         } catch (RuntimeException ex) {
-            return monoError(logger, ex);
+            return monoError(LOGGER, ex);
         }
     }
 
@@ -730,25 +724,29 @@ public class BlobAsyncClient extends BlobAsyncClientBase {
         Boolean legalHold) {
 
         /*
-        Note that there is no need to buffer here as the flux returned by the size gate in this case is created
-        from an iterable and is therefore replayable.
+         * Note that there is no need to buffer here as the flux returned by the size gate in this case is created
+         * from an iterable and is therefore replayable.
          */
-
-        // Report progress as necessary.
-        Flux<ByteBuffer> progressData = ProgressReporter.addProgressReporting(data,
-            parallelTransferOptions.getProgressReceiver());
-
-        return UploadUtils.computeMd5(progressData, computeMd5, logger)
-            .map(fluxMd5Wrapper -> new BlockBlobSimpleUploadOptions(fluxMd5Wrapper.getData(), length)
-                .setHeaders(headers)
-                .setMetadata(metadata)
-                .setTags(tags)
-                .setTier(tier)
-                .setRequestConditions(requestConditions)
-                .setContentMd5(fluxMd5Wrapper.getMd5())
-                .setImmutabilityPolicy(immutabilityPolicy)
-                .setLegalHold(legalHold))
-            .flatMap(blockBlobAsyncClient::uploadWithResponse);
+        return UploadUtils.computeMd5(data, computeMd5, LOGGER)
+            .map(
+                fluxMd5Wrapper -> new BlockBlobSimpleUploadOptions(fluxMd5Wrapper.getData(), length).setHeaders(headers)
+                    .setMetadata(metadata)
+                    .setTags(tags)
+                    .setTier(tier)
+                    .setRequestConditions(requestConditions)
+                    .setContentMd5(fluxMd5Wrapper.getMd5())
+                    .setImmutabilityPolicy(immutabilityPolicy)
+                    .setLegalHold(legalHold))
+            .flatMap(options -> {
+                Mono<Response<BlockBlobItem>> responseMono = blockBlobAsyncClient.uploadWithResponse(options);
+                if (parallelTransferOptions.getProgressListener() != null) {
+                    ProgressReporter progressReporter
+                        = ProgressReporter.withProgressListener(parallelTransferOptions.getProgressListener());
+                    responseMono = responseMono.contextWrite(FluxUtil.toReactorContext(
+                        Contexts.empty().setHttpRequestProgressReporter(progressReporter).getContext()));
+                }
+                return responseMono;
+            });
     }
 
     private Mono<Response<BlockBlobItem>> uploadInChunks(BlockBlobAsyncClient blockBlobAsyncClient,
@@ -757,53 +755,57 @@ public class BlobAsyncClient extends BlobAsyncClientBase {
         BlobRequestConditions requestConditions, boolean computeMd5, BlobImmutabilityPolicy immutabilityPolicy,
         Boolean legalHold) {
         // TODO: Sample/api reference
-        // See ProgressReporter for an explanation on why this lock is necessary and why we use AtomicLong.
-        AtomicLong totalProgress = new AtomicLong();
-        Lock progressLock = new ReentrantLock();
+
+        ProgressListener progressListener = parallelTransferOptions.getProgressListener();
+        ProgressReporter progressReporter
+            = progressListener == null ? null : ProgressReporter.withProgressListener(progressListener);
 
         // Validation done in the constructor.
         BufferStagingArea stagingArea = new BufferStagingArea(parallelTransferOptions.getBlockSizeLong(),
             BlockBlobClient.MAX_STAGE_BLOCK_BYTES_LONG);
 
-        Flux<ByteBuffer> chunkedSource = UploadUtils.chunkSource(data,
-            ModelHelper.wrapBlobOptions(parallelTransferOptions));
+        Flux<ByteBuffer> chunkedSource
+            = UploadUtils.chunkSource(data, ModelHelper.wrapBlobOptions(parallelTransferOptions));
 
         /*
-         Write to the pool and upload the output.
-         maxConcurrency = 1 when writing means only 1 BufferAggregator will be accumulating at a time.
-         parallelTransferOptions.getMaxConcurrency() appends will be happening at once, so we guarantee buffering of
-         only concurrency + 1 chunks at a time.
+         * Write to the pool and upload the output.
+         * maxConcurrency = 1 when writing means only 1 BufferAggregator will be accumulating at a time.
+         * parallelTransferOptions.getMaxConcurrency() appends will be happening at once, so we guarantee buffering of
+         * only concurrency + 1 chunks at a time.
          */
         return chunkedSource.flatMapSequential(stagingArea::write, 1, 1)
             .concatWith(Flux.defer(stagingArea::flush))
             .flatMapSequential(bufferAggregator -> {
-                // Report progress as necessary.
-                Flux<ByteBuffer> progressData = ProgressReporter.addParallelProgressReporting(
-                    bufferAggregator.asFlux(),
-                    parallelTransferOptions.getProgressReceiver(),
-                    progressLock,
-                    totalProgress);
+                Flux<ByteBuffer> chunkData = bufferAggregator.asFlux();
 
-                final String blockId = Base64.getEncoder().encodeToString(UUID.randomUUID().toString().getBytes(UTF_8));
-                return UploadUtils.computeMd5(progressData, computeMd5, logger)
-                    .flatMap(fluxMd5Wrapper -> blockBlobAsyncClient.stageBlockWithResponse(blockId,
-                        fluxMd5Wrapper.getData(), bufferAggregator.length(), fluxMd5Wrapper.getMd5(),
-                        requestConditions.getLeaseId()))
-                    // We only care about the stageBlock insofar as it was successful,
-                    // but we need to collect the ids.
-                    .map(x -> blockId)
-                    .flux();
+                String blockId = Base64.getEncoder().encodeToString(CoreUtils.randomUuid().toString().getBytes(UTF_8));
+                return UploadUtils.computeMd5(chunkData, computeMd5, LOGGER).flatMap(fluxMd5Wrapper -> {
+                    Mono<Response<Void>> responseMono
+                        = blockBlobAsyncClient.stageBlockWithResponse(blockId, fluxMd5Wrapper.getData(),
+                            bufferAggregator.length(), fluxMd5Wrapper.getMd5(), requestConditions.getLeaseId());
+                    if (progressReporter != null) {
+                        responseMono = responseMono.contextWrite(FluxUtil.toReactorContext(Contexts.empty()
+                            .setHttpRequestProgressReporter(progressReporter.createChild())
+                            .getContext()));
+                    }
+                    return responseMono;
+                })
+                    // We only care about the stageBlock insofar as it was successful, but we need to collect the ids.
+                    .map(x -> blockId);
             }, parallelTransferOptions.getMaxConcurrency(), 1)
             .collect(Collectors.toList())
-            .flatMap(ids ->
-                blockBlobAsyncClient.commitBlockListWithResponse(new BlockBlobCommitBlockListOptions(ids)
-                    .setHeaders(headers).setMetadata(metadata).setTags(tags).setTier(tier)
-                    .setRequestConditions(requestConditions).setImmutabilityPolicy(immutabilityPolicy)
+            .flatMap(ids -> blockBlobAsyncClient
+                .commitBlockListWithResponse(new BlockBlobCommitBlockListOptions(ids).setHeaders(headers)
+                    .setMetadata(metadata)
+                    .setTags(tags)
+                    .setTier(tier)
+                    .setRequestConditions(requestConditions)
+                    .setImmutabilityPolicy(immutabilityPolicy)
                     .setLegalHold(legalHold)));
     }
 
     /**
-     * Creates a new block blob with the content of the specified file. By default this method will not overwrite an
+     * Creates a new block blob with the content of the specified file. By default, this method will not overwrite an
      * existing blob.
      *
      * <p><strong>Code Samples</strong></p>
@@ -822,11 +824,7 @@ public class BlobAsyncClient extends BlobAsyncClientBase {
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
     public Mono<Void> uploadFromFile(String filePath) {
-        try {
-            return uploadFromFile(filePath, false);
-        } catch (RuntimeException ex) {
-            return monoError(logger, ex);
-        }
+        return uploadFromFile(filePath, false);
     }
 
     /**
@@ -845,32 +843,29 @@ public class BlobAsyncClient extends BlobAsyncClientBase {
      * <!-- end com.azure.storage.blob.BlobAsyncClient.uploadFromFile#String-boolean -->
      *
      * @param filePath Path to the upload file
-     * @param overwrite Whether or not to overwrite, should the blob already exist.
+     * @param overwrite Whether to overwrite, should the blob already exist.
      * @return An empty response
      * @throws UncheckedIOException If an I/O error occurs
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
     public Mono<Void> uploadFromFile(String filePath, boolean overwrite) {
-        try {
-            Mono<Void> overwriteCheck = Mono.empty();
-            BlobRequestConditions requestConditions = null;
+        Mono<Void> overwriteCheck = Mono.empty();
+        BlobRequestConditions requestConditions = null;
 
-            // Note that if the file will be uploaded using a putBlob, we also can skip the exists check.
-            if (!overwrite) {
-                if (UploadUtils.shouldUploadInChunks(filePath,
-                    BlockBlobAsyncClient.MAX_UPLOAD_BLOB_BYTES_LONG, logger)) {
-                    overwriteCheck = exists().flatMap(exists -> exists
-                        ? monoError(logger, new IllegalArgumentException(Constants.BLOB_ALREADY_EXISTS))
-                        : Mono.empty());
-                }
-
-                requestConditions = new BlobRequestConditions().setIfNoneMatch(Constants.HeaderConstants.ETAG_WILDCARD);
+        // Note that if the file will be uploaded using a putBlob, we also can skip the exists check.
+        //
+        // Default behavior is to use uploading in chunks when the file size is greater than 256 MB.
+        if (!overwrite) {
+            if (UploadUtils.shouldUploadInChunks(filePath, ModelHelper.BLOB_DEFAULT_MAX_SINGLE_UPLOAD_SIZE, LOGGER)) {
+                overwriteCheck = exists().flatMap(exists -> exists
+                    ? monoError(LOGGER, new IllegalArgumentException(Constants.BLOB_ALREADY_EXISTS))
+                    : Mono.empty());
             }
 
-            return overwriteCheck.then(uploadFromFile(filePath, null, null, null, null, requestConditions));
-        } catch (RuntimeException ex) {
-            return monoError(logger, ex);
+            requestConditions = new BlobRequestConditions().setIfNoneMatch(Constants.HeaderConstants.ETAG_WILDCARD);
         }
+
+        return overwriteCheck.then(uploadFromFile(filePath, null, null, null, null, requestConditions));
     }
 
     /**
@@ -916,10 +911,17 @@ public class BlobAsyncClient extends BlobAsyncClientBase {
     public Mono<Void> uploadFromFile(String filePath, ParallelTransferOptions parallelTransferOptions,
         BlobHttpHeaders headers, Map<String, String> metadata, AccessTier tier,
         BlobRequestConditions requestConditions) {
-        return this.uploadFromFileWithResponse(new BlobUploadFromFileOptions(filePath)
-            .setParallelTransferOptions(parallelTransferOptions).setHeaders(headers).setMetadata(metadata)
-            .setTier(tier).setRequestConditions(requestConditions))
-            .then();
+        try {
+            return this.uploadFromFileWithResponse(
+                new BlobUploadFromFileOptions(filePath).setParallelTransferOptions(parallelTransferOptions)
+                    .setHeaders(headers)
+                    .setMetadata(metadata)
+                    .setTier(tier)
+                    .setRequestConditions(requestConditions))
+                .then();
+        } catch (RuntimeException ex) {
+            return monoError(LOGGER, ex);
+        }
     }
 
     /**
@@ -942,10 +944,11 @@ public class BlobAsyncClient extends BlobAsyncClientBase {
      * BlobRequestConditions requestConditions = new BlobRequestConditions&#40;&#41;
      *     .setLeaseId&#40;leaseId&#41;
      *     .setIfUnmodifiedSince&#40;OffsetDateTime.now&#40;&#41;.minusDays&#40;3&#41;&#41;;
+     * Long blockSize = 100 * 1024 * 1024L; &#47;&#47; 100 MB;
      *
      * client.uploadFromFileWithResponse&#40;new BlobUploadFromFileOptions&#40;filePath&#41;
      *     .setParallelTransferOptions&#40;
-     *         new ParallelTransferOptions&#40;&#41;.setBlockSizeLong&#40;BlobAsyncClient.BLOB_MAX_UPLOAD_BLOCK_SIZE&#41;&#41;
+     *         new ParallelTransferOptions&#40;&#41;.setBlockSizeLong&#40;blockSize&#41;&#41;
      *     .setHeaders&#40;headers&#41;.setMetadata&#40;metadata&#41;.setTags&#40;tags&#41;.setTier&#40;AccessTier.HOT&#41;
      *     .setRequestConditions&#40;requestConditions&#41;&#41;
      *     .doOnError&#40;throwable -&gt; System.err.printf&#40;&quot;Failed to upload from file %s%n&quot;, throwable.getMessage&#40;&#41;&#41;&#41;
@@ -963,58 +966,53 @@ public class BlobAsyncClient extends BlobAsyncClientBase {
         Long originalBlockSize = (options.getParallelTransferOptions() == null)
             ? null
             : options.getParallelTransferOptions().getBlockSizeLong();
-        final ParallelTransferOptions finalParallelTransferOptions =
-            ModelHelper.populateAndApplyDefaults(options.getParallelTransferOptions());
+        final ParallelTransferOptions finalParallelTransferOptions
+            = ModelHelper.populateAndApplyDefaults(options.getParallelTransferOptions());
         try {
-            return Mono.using(() -> UploadUtils.uploadFileResourceSupplier(options.getFilePath(), logger),
-                channel -> {
-                    try {
-                        BlockBlobAsyncClient blockBlobAsyncClient = getBlockBlobAsyncClient();
-                        long fileSize = channel.size();
+            Path filePath = Paths.get(options.getFilePath());
+            BlockBlobAsyncClient blockBlobAsyncClient = getBlockBlobAsyncClient();
+            // This will retrieve file length but won't read file body.
+            BinaryData fullFileData = BinaryData.fromFile(filePath, DEFAULT_FILE_READ_CHUNK_SIZE);
+            long fileSize = fullFileData.getLength();
 
-                        // If the file is larger than 256MB chunk it and stage it as blocks.
-                        if (UploadUtils.shouldUploadInChunks(options.getFilePath(),
-                            finalParallelTransferOptions.getMaxSingleUploadSizeLong(), logger)) {
-                            return uploadFileChunks(fileSize, finalParallelTransferOptions, originalBlockSize,
-                                options.getHeaders(), options.getMetadata(), options.getTags(),
-                                options.getTier(), options.getRequestConditions(), channel,
-                                blockBlobAsyncClient);
-                        } else {
-                            // Otherwise we know it can be sent in a single request reducing network overhead.
-                            Flux<ByteBuffer> data = FluxUtil.readFile(channel);
-                            if (finalParallelTransferOptions.getProgressReceiver() != null) {
-                                data = ProgressReporter.addProgressReporting(data,
-                                    finalParallelTransferOptions.getProgressReceiver());
-                            }
-                            return blockBlobAsyncClient.uploadWithResponse(
-                                new BlockBlobSimpleUploadOptions(data, fileSize).setHeaders(options.getHeaders())
-                                    .setMetadata(options.getMetadata()).setTags(options.getTags())
-                                    .setTier(options.getTier())
-                                    .setRequestConditions(options.getRequestConditions()));
-                        }
-                    } catch (IOException ex) {
-                        return Mono.error(ex);
-                    }
-                },
-                channel ->
-                UploadUtils.uploadFileCleanup(channel, logger));
+            // By default, if the file is larger than 256MB chunk it and stage it as blocks.
+            // But, this is configurable by the user passing options with max single upload size configured.
+            if (fileSize > finalParallelTransferOptions.getMaxSingleUploadSizeLong()) {
+                return uploadFileChunks(fileSize, finalParallelTransferOptions, originalBlockSize, options.getHeaders(),
+                    options.getMetadata(), options.getTags(), options.getTier(), options.getRequestConditions(),
+                    filePath, blockBlobAsyncClient);
+            } else {
+                // Otherwise, we know it can be sent in a single request reducing network overhead.
+                Mono<Response<BlockBlobItem>> responseMono = blockBlobAsyncClient
+                    .uploadWithResponse(new BlockBlobSimpleUploadOptions(fullFileData).setHeaders(options.getHeaders())
+                        .setMetadata(options.getMetadata())
+                        .setTags(options.getTags())
+                        .setTier(options.getTier())
+                        .setRequestConditions(options.getRequestConditions()));
+                if (finalParallelTransferOptions.getProgressListener() != null) {
+                    ProgressReporter progressReporter
+                        = ProgressReporter.withProgressListener(finalParallelTransferOptions.getProgressListener());
+                    responseMono = responseMono.contextWrite(FluxUtil.toReactorContext(
+                        Contexts.empty().setHttpRequestProgressReporter(progressReporter).getContext()));
+                }
+                return responseMono;
+            }
         } catch (RuntimeException ex) {
-            return monoError(logger, ex);
+            return monoError(LOGGER, ex);
         }
     }
 
-    private Mono<Response<BlockBlobItem>> uploadFileChunks(
-        long fileSize, ParallelTransferOptions parallelTransferOptions,
-        Long originalBlockSize, BlobHttpHeaders headers, Map<String, String> metadata, Map<String, String> tags,
-        AccessTier tier, BlobRequestConditions requestConditions, AsynchronousFileChannel channel,
-        BlockBlobAsyncClient client) {
-        final BlobRequestConditions finalRequestConditions = (requestConditions == null)
-            ? new BlobRequestConditions() : requestConditions;
+    private Mono<Response<BlockBlobItem>> uploadFileChunks(long fileSize,
+        ParallelTransferOptions parallelTransferOptions, Long originalBlockSize, BlobHttpHeaders headers,
+        Map<String, String> metadata, Map<String, String> tags, AccessTier tier,
+        BlobRequestConditions requestConditions, Path filePath, BlockBlobAsyncClient client) {
+        final BlobRequestConditions finalRequestConditions
+            = (requestConditions == null) ? new BlobRequestConditions() : requestConditions;
         // parallelTransferOptions are finalized in the calling method.
 
-        // See ProgressReporter for an explanation on why this lock is necessary and why we use AtomicLong.
-        AtomicLong totalProgress = new AtomicLong();
-        Lock progressLock = new ReentrantLock();
+        ProgressListener progressListener = parallelTransferOptions.getProgressListener();
+        ProgressReporter progressReporter
+            = progressListener == null ? null : ProgressReporter.withProgressListener(progressListener);
 
         final SortedMap<Long, String> blockIds = new TreeMap<>();
         return Flux.fromIterable(sliceFile(fileSize, originalBlockSize, parallelTransferOptions.getBlockSizeLong()))
@@ -1022,16 +1020,22 @@ public class BlobAsyncClient extends BlobAsyncClientBase {
                 String blockId = getBlockID();
                 blockIds.put(chunk.getOffset(), blockId);
 
-                Flux<ByteBuffer> progressData = ProgressReporter.addParallelProgressReporting(
-                    FluxUtil.readFile(channel, chunk.getOffset(), chunk.getCount()),
-                    parallelTransferOptions.getProgressReceiver(), progressLock, totalProgress);
+                BinaryData data
+                    = BinaryData.fromFile(filePath, chunk.getOffset(), chunk.getCount(), DEFAULT_FILE_READ_CHUNK_SIZE);
 
-                return client.stageBlockWithResponse(blockId, progressData, chunk.getCount(), null,
-                    finalRequestConditions.getLeaseId());
+                Mono<Response<Void>> responseMono = client.stageBlockWithResponse(
+                    new BlockBlobStageBlockOptions(blockId, data).setLeaseId(finalRequestConditions.getLeaseId()));
+                if (progressReporter != null) {
+                    responseMono = responseMono.contextWrite(FluxUtil.toReactorContext(
+                        Contexts.empty().setHttpRequestProgressReporter(progressReporter.createChild()).getContext()));
+                }
+                return responseMono;
             }, parallelTransferOptions.getMaxConcurrency())
             .then(Mono.defer(() -> client.commitBlockListWithResponse(
-                new BlockBlobCommitBlockListOptions(new ArrayList<>(blockIds.values()))
-                    .setHeaders(headers).setMetadata(metadata).setTags(tags).setTier(tier)
+                new BlockBlobCommitBlockListOptions(new ArrayList<>(blockIds.values())).setHeaders(headers)
+                    .setMetadata(metadata)
+                    .setTags(tags)
+                    .setTier(tier)
                     .setRequestConditions(finalRequestConditions))));
     }
 
@@ -1047,11 +1051,11 @@ public class BlobAsyncClient extends BlobAsyncClientBase {
      */
     @Deprecated
     protected AsynchronousFileChannel uploadFileResourceSupplier(String filePath) {
-        return UploadUtils.uploadFileResourceSupplier(filePath, logger);
+        return UploadUtils.uploadFileResourceSupplier(filePath, LOGGER);
     }
 
     private String getBlockID() {
-        return Base64.getEncoder().encodeToString(UUID.randomUUID().toString().getBytes(StandardCharsets.UTF_8));
+        return Base64.getEncoder().encodeToString(CoreUtils.randomUuid().toString().getBytes(StandardCharsets.UTF_8));
     }
 
     private List<BlobRange> sliceFile(long fileSize, Long originalBlockSize, long blockSize) {

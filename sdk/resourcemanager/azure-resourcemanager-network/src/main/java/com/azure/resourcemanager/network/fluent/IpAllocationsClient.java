@@ -22,78 +22,80 @@ import java.nio.ByteBuffer;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-/** An instance of this class provides access to all the operations defined in IpAllocationsClient. */
+/**
+ * An instance of this class provides access to all the operations defined in IpAllocationsClient.
+ */
 public interface IpAllocationsClient
     extends InnerSupportsGet<IpAllocationInner>, InnerSupportsListing<IpAllocationInner>, InnerSupportsDelete<Void> {
     /**
      * Deletes the specified IpAllocation.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param ipAllocationName The name of the IpAllocation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the completion.
+     * @return the {@link Response} on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
     Mono<Response<Flux<ByteBuffer>>> deleteWithResponseAsync(String resourceGroupName, String ipAllocationName);
 
     /**
      * Deletes the specified IpAllocation.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param ipAllocationName The name of the IpAllocation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the completion.
+     * @return the {@link PollerFlux} for polling of long-running operation.
      */
     @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
     PollerFlux<PollResult<Void>, Void> beginDeleteAsync(String resourceGroupName, String ipAllocationName);
 
     /**
      * Deletes the specified IpAllocation.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param ipAllocationName The name of the IpAllocation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the completion.
+     * @return the {@link SyncPoller} for polling of long-running operation.
      */
     @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
     SyncPoller<PollResult<Void>, Void> beginDelete(String resourceGroupName, String ipAllocationName);
 
     /**
      * Deletes the specified IpAllocation.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param ipAllocationName The name of the IpAllocation.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the completion.
+     * @return the {@link SyncPoller} for polling of long-running operation.
      */
     @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
     SyncPoller<PollResult<Void>, Void> beginDelete(String resourceGroupName, String ipAllocationName, Context context);
 
     /**
      * Deletes the specified IpAllocation.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param ipAllocationName The name of the IpAllocation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the completion.
+     * @return A {@link Mono} that completes when a successful response is received.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
     Mono<Void> deleteAsync(String resourceGroupName, String ipAllocationName);
 
     /**
      * Deletes the specified IpAllocation.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param ipAllocationName The name of the IpAllocation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
@@ -105,7 +107,7 @@ public interface IpAllocationsClient
 
     /**
      * Deletes the specified IpAllocation.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param ipAllocationName The name of the IpAllocation.
      * @param context The context to associate with this operation.
@@ -118,49 +120,52 @@ public interface IpAllocationsClient
 
     /**
      * Gets the specified IpAllocation by resource group.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param ipAllocationName The name of the IpAllocation.
      * @param expand Expands referenced resources.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the specified IpAllocation by resource group.
+     * @return the specified IpAllocation by resource group along with {@link Response} on successful completion of
+     * {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    Mono<Response<IpAllocationInner>> getByResourceGroupWithResponseAsync(
-        String resourceGroupName, String ipAllocationName, String expand);
+    Mono<Response<IpAllocationInner>> getByResourceGroupWithResponseAsync(String resourceGroupName,
+        String ipAllocationName, String expand);
 
     /**
      * Gets the specified IpAllocation by resource group.
-     *
-     * @param resourceGroupName The name of the resource group.
-     * @param ipAllocationName The name of the IpAllocation.
-     * @param expand Expands referenced resources.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the specified IpAllocation by resource group.
-     */
-    @ServiceMethod(returns = ReturnType.SINGLE)
-    Mono<IpAllocationInner> getByResourceGroupAsync(String resourceGroupName, String ipAllocationName, String expand);
-
-    /**
-     * Gets the specified IpAllocation by resource group.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param ipAllocationName The name of the IpAllocation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the specified IpAllocation by resource group.
+     * @return the specified IpAllocation by resource group on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
     Mono<IpAllocationInner> getByResourceGroupAsync(String resourceGroupName, String ipAllocationName);
 
     /**
      * Gets the specified IpAllocation by resource group.
-     *
+     * 
+     * @param resourceGroupName The name of the resource group.
+     * @param ipAllocationName The name of the IpAllocation.
+     * @param expand Expands referenced resources.
+     * @param context The context to associate with this operation.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return the specified IpAllocation by resource group along with {@link Response}.
+     */
+    @ServiceMethod(returns = ReturnType.SINGLE)
+    Response<IpAllocationInner> getByResourceGroupWithResponse(String resourceGroupName, String ipAllocationName,
+        String expand, Context context);
+
+    /**
+     * Gets the specified IpAllocation by resource group.
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param ipAllocationName The name of the IpAllocation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
@@ -172,69 +177,53 @@ public interface IpAllocationsClient
     IpAllocationInner getByResourceGroup(String resourceGroupName, String ipAllocationName);
 
     /**
-     * Gets the specified IpAllocation by resource group.
-     *
+     * Creates or updates an IpAllocation in the specified resource group.
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param ipAllocationName The name of the IpAllocation.
-     * @param expand Expands referenced resources.
-     * @param context The context to associate with this operation.
+     * @param parameters Parameters supplied to the create or update virtual network operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the specified IpAllocation by resource group.
+     * @return ipAllocation resource along with {@link Response} on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    Response<IpAllocationInner> getByResourceGroupWithResponse(
-        String resourceGroupName, String ipAllocationName, String expand, Context context);
+    Mono<Response<Flux<ByteBuffer>>> createOrUpdateWithResponseAsync(String resourceGroupName, String ipAllocationName,
+        IpAllocationInner parameters);
 
     /**
      * Creates or updates an IpAllocation in the specified resource group.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param ipAllocationName The name of the IpAllocation.
      * @param parameters Parameters supplied to the create or update virtual network operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return ipAllocation resource.
-     */
-    @ServiceMethod(returns = ReturnType.SINGLE)
-    Mono<Response<Flux<ByteBuffer>>> createOrUpdateWithResponseAsync(
-        String resourceGroupName, String ipAllocationName, IpAllocationInner parameters);
-
-    /**
-     * Creates or updates an IpAllocation in the specified resource group.
-     *
-     * @param resourceGroupName The name of the resource group.
-     * @param ipAllocationName The name of the IpAllocation.
-     * @param parameters Parameters supplied to the create or update virtual network operation.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return ipAllocation resource.
+     * @return the {@link PollerFlux} for polling of ipAllocation resource.
      */
     @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
-    PollerFlux<PollResult<IpAllocationInner>, IpAllocationInner> beginCreateOrUpdateAsync(
-        String resourceGroupName, String ipAllocationName, IpAllocationInner parameters);
+    PollerFlux<PollResult<IpAllocationInner>, IpAllocationInner> beginCreateOrUpdateAsync(String resourceGroupName,
+        String ipAllocationName, IpAllocationInner parameters);
 
     /**
      * Creates or updates an IpAllocation in the specified resource group.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param ipAllocationName The name of the IpAllocation.
      * @param parameters Parameters supplied to the create or update virtual network operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return ipAllocation resource.
+     * @return the {@link SyncPoller} for polling of ipAllocation resource.
      */
     @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
-    SyncPoller<PollResult<IpAllocationInner>, IpAllocationInner> beginCreateOrUpdate(
-        String resourceGroupName, String ipAllocationName, IpAllocationInner parameters);
+    SyncPoller<PollResult<IpAllocationInner>, IpAllocationInner> beginCreateOrUpdate(String resourceGroupName,
+        String ipAllocationName, IpAllocationInner parameters);
 
     /**
      * Creates or updates an IpAllocation in the specified resource group.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param ipAllocationName The name of the IpAllocation.
      * @param parameters Parameters supplied to the create or update virtual network operation.
@@ -242,30 +231,30 @@ public interface IpAllocationsClient
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return ipAllocation resource.
+     * @return the {@link SyncPoller} for polling of ipAllocation resource.
      */
     @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
-    SyncPoller<PollResult<IpAllocationInner>, IpAllocationInner> beginCreateOrUpdate(
-        String resourceGroupName, String ipAllocationName, IpAllocationInner parameters, Context context);
+    SyncPoller<PollResult<IpAllocationInner>, IpAllocationInner> beginCreateOrUpdate(String resourceGroupName,
+        String ipAllocationName, IpAllocationInner parameters, Context context);
 
     /**
      * Creates or updates an IpAllocation in the specified resource group.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param ipAllocationName The name of the IpAllocation.
      * @param parameters Parameters supplied to the create or update virtual network operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return ipAllocation resource.
+     * @return ipAllocation resource on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    Mono<IpAllocationInner> createOrUpdateAsync(
-        String resourceGroupName, String ipAllocationName, IpAllocationInner parameters);
+    Mono<IpAllocationInner> createOrUpdateAsync(String resourceGroupName, String ipAllocationName,
+        IpAllocationInner parameters);
 
     /**
      * Creates or updates an IpAllocation in the specified resource group.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param ipAllocationName The name of the IpAllocation.
      * @param parameters Parameters supplied to the create or update virtual network operation.
@@ -279,7 +268,7 @@ public interface IpAllocationsClient
 
     /**
      * Creates or updates an IpAllocation in the specified resource group.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param ipAllocationName The name of the IpAllocation.
      * @param parameters Parameters supplied to the create or update virtual network operation.
@@ -290,41 +279,57 @@ public interface IpAllocationsClient
      * @return ipAllocation resource.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    IpAllocationInner createOrUpdate(
-        String resourceGroupName, String ipAllocationName, IpAllocationInner parameters, Context context);
+    IpAllocationInner createOrUpdate(String resourceGroupName, String ipAllocationName, IpAllocationInner parameters,
+        Context context);
 
     /**
      * Updates a IpAllocation tags.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param ipAllocationName The name of the IpAllocation.
      * @param parameters Parameters supplied to update IpAllocation tags.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return ipAllocation resource.
+     * @return ipAllocation resource along with {@link Response} on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    Mono<Response<IpAllocationInner>> updateTagsWithResponseAsync(
-        String resourceGroupName, String ipAllocationName, TagsObject parameters);
+    Mono<Response<IpAllocationInner>> updateTagsWithResponseAsync(String resourceGroupName, String ipAllocationName,
+        TagsObject parameters);
 
     /**
      * Updates a IpAllocation tags.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param ipAllocationName The name of the IpAllocation.
      * @param parameters Parameters supplied to update IpAllocation tags.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return ipAllocation resource.
+     * @return ipAllocation resource on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
     Mono<IpAllocationInner> updateTagsAsync(String resourceGroupName, String ipAllocationName, TagsObject parameters);
 
     /**
      * Updates a IpAllocation tags.
-     *
+     * 
+     * @param resourceGroupName The name of the resource group.
+     * @param ipAllocationName The name of the IpAllocation.
+     * @param parameters Parameters supplied to update IpAllocation tags.
+     * @param context The context to associate with this operation.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return ipAllocation resource along with {@link Response}.
+     */
+    @ServiceMethod(returns = ReturnType.SINGLE)
+    Response<IpAllocationInner> updateTagsWithResponse(String resourceGroupName, String ipAllocationName,
+        TagsObject parameters, Context context);
+
+    /**
+     * Updates a IpAllocation tags.
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param ipAllocationName The name of the IpAllocation.
      * @param parameters Parameters supplied to update IpAllocation tags.
@@ -337,86 +342,70 @@ public interface IpAllocationsClient
     IpAllocationInner updateTags(String resourceGroupName, String ipAllocationName, TagsObject parameters);
 
     /**
-     * Updates a IpAllocation tags.
-     *
-     * @param resourceGroupName The name of the resource group.
-     * @param ipAllocationName The name of the IpAllocation.
-     * @param parameters Parameters supplied to update IpAllocation tags.
-     * @param context The context to associate with this operation.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return ipAllocation resource.
-     */
-    @ServiceMethod(returns = ReturnType.SINGLE)
-    Response<IpAllocationInner> updateTagsWithResponse(
-        String resourceGroupName, String ipAllocationName, TagsObject parameters, Context context);
-
-    /**
      * Gets all IpAllocations in a subscription.
-     *
+     * 
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return all IpAllocations in a subscription.
+     * @return all IpAllocations in a subscription as paginated response with {@link PagedFlux}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
     PagedFlux<IpAllocationInner> listAsync();
 
     /**
      * Gets all IpAllocations in a subscription.
-     *
+     * 
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return all IpAllocations in a subscription.
+     * @return all IpAllocations in a subscription as paginated response with {@link PagedIterable}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
     PagedIterable<IpAllocationInner> list();
 
     /**
      * Gets all IpAllocations in a subscription.
-     *
+     * 
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return all IpAllocations in a subscription.
+     * @return all IpAllocations in a subscription as paginated response with {@link PagedIterable}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
     PagedIterable<IpAllocationInner> list(Context context);
 
     /**
      * Gets all IpAllocations in a resource group.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return all IpAllocations in a resource group.
+     * @return all IpAllocations in a resource group as paginated response with {@link PagedFlux}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
     PagedFlux<IpAllocationInner> listByResourceGroupAsync(String resourceGroupName);
 
     /**
      * Gets all IpAllocations in a resource group.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return all IpAllocations in a resource group.
+     * @return all IpAllocations in a resource group as paginated response with {@link PagedIterable}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
     PagedIterable<IpAllocationInner> listByResourceGroup(String resourceGroupName);
 
     /**
      * Gets all IpAllocations in a resource group.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return all IpAllocations in a resource group.
+     * @return all IpAllocations in a resource group as paginated response with {@link PagedIterable}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
     PagedIterable<IpAllocationInner> listByResourceGroup(String resourceGroupName, Context context);

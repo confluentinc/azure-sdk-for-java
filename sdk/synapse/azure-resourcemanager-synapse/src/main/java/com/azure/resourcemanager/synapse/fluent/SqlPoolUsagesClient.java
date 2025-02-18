@@ -10,25 +10,31 @@ import com.azure.core.http.rest.PagedIterable;
 import com.azure.core.util.Context;
 import com.azure.resourcemanager.synapse.fluent.models.SqlPoolUsageInner;
 
-/** An instance of this class provides access to all the operations defined in SqlPoolUsagesClient. */
+/**
+ * An instance of this class provides access to all the operations defined in SqlPoolUsagesClient.
+ */
 public interface SqlPoolUsagesClient {
     /**
+     * Gets SQL pool usages
+     * 
      * Gets SQL pool usages.
-     *
+     * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
      * @param workspaceName The name of the workspace.
      * @param sqlPoolName SQL pool name.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return sQL pool usages.
+     * @return sQL pool usages as paginated response with {@link PagedIterable}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
     PagedIterable<SqlPoolUsageInner> list(String resourceGroupName, String workspaceName, String sqlPoolName);
 
     /**
+     * Gets SQL pool usages
+     * 
      * Gets SQL pool usages.
-     *
+     * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
      * @param workspaceName The name of the workspace.
      * @param sqlPoolName SQL pool name.
@@ -36,9 +42,9 @@ public interface SqlPoolUsagesClient {
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return sQL pool usages.
+     * @return sQL pool usages as paginated response with {@link PagedIterable}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
-    PagedIterable<SqlPoolUsageInner> list(
-        String resourceGroupName, String workspaceName, String sqlPoolName, Context context);
+    PagedIterable<SqlPoolUsageInner> list(String resourceGroupName, String workspaceName, String sqlPoolName,
+        Context context);
 }

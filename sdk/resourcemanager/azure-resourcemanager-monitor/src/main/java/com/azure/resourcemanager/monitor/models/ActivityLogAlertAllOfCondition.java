@@ -6,24 +6,32 @@ package com.azure.resourcemanager.monitor.models;
 
 import com.azure.core.annotation.Fluent;
 import com.azure.core.util.logging.ClientLogger;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.azure.json.JsonReader;
+import com.azure.json.JsonSerializable;
+import com.azure.json.JsonToken;
+import com.azure.json.JsonWriter;
+import java.io.IOException;
 import java.util.List;
 
-/** An Activity Log alert condition that is met when all its member conditions are met. */
+/**
+ * An Activity Log Alert rule condition that is met when all its member conditions are met.
+ */
 @Fluent
-public final class ActivityLogAlertAllOfCondition {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(ActivityLogAlertAllOfCondition.class);
-
+public final class ActivityLogAlertAllOfCondition implements JsonSerializable<ActivityLogAlertAllOfCondition> {
     /*
-     * The list of activity log alert conditions.
+     * The list of Activity Log Alert rule conditions.
      */
-    @JsonProperty(value = "allOf", required = true)
     private List<ActivityLogAlertLeafCondition> allOf;
 
     /**
-     * Get the allOf property: The list of activity log alert conditions.
-     *
+     * Creates an instance of ActivityLogAlertAllOfCondition class.
+     */
+    public ActivityLogAlertAllOfCondition() {
+    }
+
+    /**
+     * Get the allOf property: The list of Activity Log Alert rule conditions.
+     * 
      * @return the allOf value.
      */
     public List<ActivityLogAlertLeafCondition> allOf() {
@@ -31,8 +39,8 @@ public final class ActivityLogAlertAllOfCondition {
     }
 
     /**
-     * Set the allOf property: The list of activity log alert conditions.
-     *
+     * Set the allOf property: The list of Activity Log Alert rule conditions.
+     * 
      * @param allOf the allOf value to set.
      * @return the ActivityLogAlertAllOfCondition object itself.
      */
@@ -43,17 +51,58 @@ public final class ActivityLogAlertAllOfCondition {
 
     /**
      * Validates the instance.
-     *
+     * 
      * @throws IllegalArgumentException thrown if the instance is not valid.
      */
     public void validate() {
         if (allOf() == null) {
-            throw logger
-                .logExceptionAsError(
-                    new IllegalArgumentException(
-                        "Missing required property allOf in model ActivityLogAlertAllOfCondition"));
+            throw LOGGER.atError()
+                .log(new IllegalArgumentException(
+                    "Missing required property allOf in model ActivityLogAlertAllOfCondition"));
         } else {
             allOf().forEach(e -> e.validate());
         }
+    }
+
+    private static final ClientLogger LOGGER = new ClientLogger(ActivityLogAlertAllOfCondition.class);
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public JsonWriter toJson(JsonWriter jsonWriter) throws IOException {
+        jsonWriter.writeStartObject();
+        jsonWriter.writeArrayField("allOf", this.allOf, (writer, element) -> writer.writeJson(element));
+        return jsonWriter.writeEndObject();
+    }
+
+    /**
+     * Reads an instance of ActivityLogAlertAllOfCondition from the JsonReader.
+     * 
+     * @param jsonReader The JsonReader being read.
+     * @return An instance of ActivityLogAlertAllOfCondition if the JsonReader was pointing to an instance of it, or
+     * null if it was pointing to JSON null.
+     * @throws IllegalStateException If the deserialized JSON object was missing any required properties.
+     * @throws IOException If an error occurs while reading the ActivityLogAlertAllOfCondition.
+     */
+    public static ActivityLogAlertAllOfCondition fromJson(JsonReader jsonReader) throws IOException {
+        return jsonReader.readObject(reader -> {
+            ActivityLogAlertAllOfCondition deserializedActivityLogAlertAllOfCondition
+                = new ActivityLogAlertAllOfCondition();
+            while (reader.nextToken() != JsonToken.END_OBJECT) {
+                String fieldName = reader.getFieldName();
+                reader.nextToken();
+
+                if ("allOf".equals(fieldName)) {
+                    List<ActivityLogAlertLeafCondition> allOf
+                        = reader.readArray(reader1 -> ActivityLogAlertLeafCondition.fromJson(reader1));
+                    deserializedActivityLogAlertAllOfCondition.allOf = allOf;
+                } else {
+                    reader.skipChildren();
+                }
+            }
+
+            return deserializedActivityLogAlertAllOfCondition;
+        });
     }
 }

@@ -6,54 +6,57 @@ package com.azure.resourcemanager.recoveryservicesbackup.models;
 
 import com.azure.core.annotation.Fluent;
 import com.azure.core.util.logging.ClientLogger;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.azure.json.JsonReader;
+import com.azure.json.JsonSerializable;
+import com.azure.json.JsonToken;
+import com.azure.json.JsonWriter;
+import java.io.IOException;
 import java.util.List;
 
-/** Trigger DataMove Request. */
+/**
+ * Trigger DataMove Request.
+ */
 @Fluent
-public final class TriggerDataMoveRequest {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(TriggerDataMoveRequest.class);
-
+public final class TriggerDataMoveRequest implements JsonSerializable<TriggerDataMoveRequest> {
     /*
      * ARM Id of source vault
      */
-    @JsonProperty(value = "sourceResourceId", required = true)
     private String sourceResourceId;
 
     /*
      * Source Region
      */
-    @JsonProperty(value = "sourceRegion", required = true)
     private String sourceRegion;
 
     /*
      * DataMove Level
      */
-    @JsonProperty(value = "dataMoveLevel", required = true)
     private DataMoveLevel dataMoveLevel;
 
     /*
      * Correlation Id
      */
-    @JsonProperty(value = "correlationId", required = true)
     private String correlationId;
 
     /*
      * Source Container ArmIds
      */
-    @JsonProperty(value = "sourceContainerArmIds")
     private List<String> sourceContainerArmIds;
 
     /*
      * Pause GC
      */
-    @JsonProperty(value = "pauseGC")
     private Boolean pauseGC;
 
     /**
+     * Creates an instance of TriggerDataMoveRequest class.
+     */
+    public TriggerDataMoveRequest() {
+    }
+
+    /**
      * Get the sourceResourceId property: ARM Id of source vault.
-     *
+     * 
      * @return the sourceResourceId value.
      */
     public String sourceResourceId() {
@@ -62,7 +65,7 @@ public final class TriggerDataMoveRequest {
 
     /**
      * Set the sourceResourceId property: ARM Id of source vault.
-     *
+     * 
      * @param sourceResourceId the sourceResourceId value to set.
      * @return the TriggerDataMoveRequest object itself.
      */
@@ -73,7 +76,7 @@ public final class TriggerDataMoveRequest {
 
     /**
      * Get the sourceRegion property: Source Region.
-     *
+     * 
      * @return the sourceRegion value.
      */
     public String sourceRegion() {
@@ -82,7 +85,7 @@ public final class TriggerDataMoveRequest {
 
     /**
      * Set the sourceRegion property: Source Region.
-     *
+     * 
      * @param sourceRegion the sourceRegion value to set.
      * @return the TriggerDataMoveRequest object itself.
      */
@@ -93,7 +96,7 @@ public final class TriggerDataMoveRequest {
 
     /**
      * Get the dataMoveLevel property: DataMove Level.
-     *
+     * 
      * @return the dataMoveLevel value.
      */
     public DataMoveLevel dataMoveLevel() {
@@ -102,7 +105,7 @@ public final class TriggerDataMoveRequest {
 
     /**
      * Set the dataMoveLevel property: DataMove Level.
-     *
+     * 
      * @param dataMoveLevel the dataMoveLevel value to set.
      * @return the TriggerDataMoveRequest object itself.
      */
@@ -113,7 +116,7 @@ public final class TriggerDataMoveRequest {
 
     /**
      * Get the correlationId property: Correlation Id.
-     *
+     * 
      * @return the correlationId value.
      */
     public String correlationId() {
@@ -122,7 +125,7 @@ public final class TriggerDataMoveRequest {
 
     /**
      * Set the correlationId property: Correlation Id.
-     *
+     * 
      * @param correlationId the correlationId value to set.
      * @return the TriggerDataMoveRequest object itself.
      */
@@ -133,7 +136,7 @@ public final class TriggerDataMoveRequest {
 
     /**
      * Get the sourceContainerArmIds property: Source Container ArmIds.
-     *
+     * 
      * @return the sourceContainerArmIds value.
      */
     public List<String> sourceContainerArmIds() {
@@ -142,7 +145,7 @@ public final class TriggerDataMoveRequest {
 
     /**
      * Set the sourceContainerArmIds property: Source Container ArmIds.
-     *
+     * 
      * @param sourceContainerArmIds the sourceContainerArmIds value to set.
      * @return the TriggerDataMoveRequest object itself.
      */
@@ -153,7 +156,7 @@ public final class TriggerDataMoveRequest {
 
     /**
      * Get the pauseGC property: Pause GC.
-     *
+     * 
      * @return the pauseGC value.
      */
     public Boolean pauseGC() {
@@ -162,7 +165,7 @@ public final class TriggerDataMoveRequest {
 
     /**
      * Set the pauseGC property: Pause GC.
-     *
+     * 
      * @param pauseGC the pauseGC value to set.
      * @return the TriggerDataMoveRequest object itself.
      */
@@ -173,33 +176,85 @@ public final class TriggerDataMoveRequest {
 
     /**
      * Validates the instance.
-     *
+     * 
      * @throws IllegalArgumentException thrown if the instance is not valid.
      */
     public void validate() {
         if (sourceResourceId() == null) {
-            throw logger
-                .logExceptionAsError(
-                    new IllegalArgumentException(
-                        "Missing required property sourceResourceId in model TriggerDataMoveRequest"));
+            throw LOGGER.atError()
+                .log(new IllegalArgumentException(
+                    "Missing required property sourceResourceId in model TriggerDataMoveRequest"));
         }
         if (sourceRegion() == null) {
-            throw logger
-                .logExceptionAsError(
-                    new IllegalArgumentException(
-                        "Missing required property sourceRegion in model TriggerDataMoveRequest"));
+            throw LOGGER.atError()
+                .log(new IllegalArgumentException(
+                    "Missing required property sourceRegion in model TriggerDataMoveRequest"));
         }
         if (dataMoveLevel() == null) {
-            throw logger
-                .logExceptionAsError(
-                    new IllegalArgumentException(
-                        "Missing required property dataMoveLevel in model TriggerDataMoveRequest"));
+            throw LOGGER.atError()
+                .log(new IllegalArgumentException(
+                    "Missing required property dataMoveLevel in model TriggerDataMoveRequest"));
         }
         if (correlationId() == null) {
-            throw logger
-                .logExceptionAsError(
-                    new IllegalArgumentException(
-                        "Missing required property correlationId in model TriggerDataMoveRequest"));
+            throw LOGGER.atError()
+                .log(new IllegalArgumentException(
+                    "Missing required property correlationId in model TriggerDataMoveRequest"));
         }
+    }
+
+    private static final ClientLogger LOGGER = new ClientLogger(TriggerDataMoveRequest.class);
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public JsonWriter toJson(JsonWriter jsonWriter) throws IOException {
+        jsonWriter.writeStartObject();
+        jsonWriter.writeStringField("sourceResourceId", this.sourceResourceId);
+        jsonWriter.writeStringField("sourceRegion", this.sourceRegion);
+        jsonWriter.writeStringField("dataMoveLevel", this.dataMoveLevel == null ? null : this.dataMoveLevel.toString());
+        jsonWriter.writeStringField("correlationId", this.correlationId);
+        jsonWriter.writeArrayField("sourceContainerArmIds", this.sourceContainerArmIds,
+            (writer, element) -> writer.writeString(element));
+        jsonWriter.writeBooleanField("pauseGC", this.pauseGC);
+        return jsonWriter.writeEndObject();
+    }
+
+    /**
+     * Reads an instance of TriggerDataMoveRequest from the JsonReader.
+     * 
+     * @param jsonReader The JsonReader being read.
+     * @return An instance of TriggerDataMoveRequest if the JsonReader was pointing to an instance of it, or null if it
+     * was pointing to JSON null.
+     * @throws IllegalStateException If the deserialized JSON object was missing any required properties.
+     * @throws IOException If an error occurs while reading the TriggerDataMoveRequest.
+     */
+    public static TriggerDataMoveRequest fromJson(JsonReader jsonReader) throws IOException {
+        return jsonReader.readObject(reader -> {
+            TriggerDataMoveRequest deserializedTriggerDataMoveRequest = new TriggerDataMoveRequest();
+            while (reader.nextToken() != JsonToken.END_OBJECT) {
+                String fieldName = reader.getFieldName();
+                reader.nextToken();
+
+                if ("sourceResourceId".equals(fieldName)) {
+                    deserializedTriggerDataMoveRequest.sourceResourceId = reader.getString();
+                } else if ("sourceRegion".equals(fieldName)) {
+                    deserializedTriggerDataMoveRequest.sourceRegion = reader.getString();
+                } else if ("dataMoveLevel".equals(fieldName)) {
+                    deserializedTriggerDataMoveRequest.dataMoveLevel = DataMoveLevel.fromString(reader.getString());
+                } else if ("correlationId".equals(fieldName)) {
+                    deserializedTriggerDataMoveRequest.correlationId = reader.getString();
+                } else if ("sourceContainerArmIds".equals(fieldName)) {
+                    List<String> sourceContainerArmIds = reader.readArray(reader1 -> reader1.getString());
+                    deserializedTriggerDataMoveRequest.sourceContainerArmIds = sourceContainerArmIds;
+                } else if ("pauseGC".equals(fieldName)) {
+                    deserializedTriggerDataMoveRequest.pauseGC = reader.getNullable(JsonReader::getBoolean);
+                } else {
+                    reader.skipChildren();
+                }
+            }
+
+            return deserializedTriggerDataMoveRequest;
+        });
     }
 }

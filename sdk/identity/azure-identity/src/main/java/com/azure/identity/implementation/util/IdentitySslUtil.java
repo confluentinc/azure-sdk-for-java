@@ -33,32 +33,30 @@ public final class IdentitySslUtil {
         };
     }
 
-    private IdentitySslUtil() { }
+    private IdentitySslUtil() {
+    }
 
     /**
      *
      * Pins the specified HTTPS URL Connection to work against a specific server-side certificate with
      * the specified thumbprint only.
      *
-     * @param className The class calling the method.
      * @param httpsUrlConnection The https url connection to configure
      * @param certificateThumbprint The thumbprint of the certificate
+     * @param logger The {@link ClientLogger} used to log any errors that occur in this method call.
      */
-    public static void addTrustedCertificateThumbprint(String className, HttpsURLConnection httpsUrlConnection,
-                                                       String certificateThumbprint) {
-
-        ClientLogger logger = new ClientLogger(className);
-
-        //We expect the connection to work against a specific server side certificate only, so its safe to disable the
+    public static void addTrustedCertificateThumbprint(HttpsURLConnection httpsUrlConnection,
+        String certificateThumbprint, ClientLogger logger) {
+        //We expect the connection to work against a specific server side certificate only, so it's safe to disable the
         // host name verification.
         if (httpsUrlConnection.getHostnameVerifier() != ALL_HOSTS_ACCEPT_HOSTNAME_VERIFIER) {
             httpsUrlConnection.setHostnameVerifier(ALL_HOSTS_ACCEPT_HOSTNAME_VERIFIER);
         }
 
         // Create a Trust manager that trusts only certificate with specified thumbprint.
-        TrustManager[] certificateTrust = new TrustManager[]{new X509TrustManager() {
+        TrustManager[] certificateTrust = new TrustManager[] { new X509TrustManager() {
             public X509Certificate[] getAcceptedIssuers() {
-                return new X509Certificate[]{};
+                return new X509Certificate[] { };
             }
 
             public void checkClientTrusted(X509Certificate[] certificates, String authenticationType)
@@ -69,8 +67,8 @@ public final class IdentitySslUtil {
             public void checkServerTrusted(X509Certificate[] certificates, String authenticationType)
                 throws CertificateException {
                 if (certificates == null || certificates.length == 0) {
-                    throw logger.logExceptionAsError(
-                        new RuntimeException("Did not receive any certificate from the server."));
+                    throw logger
+                        .logExceptionAsError(new RuntimeException("Did not receive any certificate from the server."));
                 }
 
                 for (X509Certificate x509Certificate : certificates) {
@@ -79,12 +77,10 @@ public final class IdentitySslUtil {
                         return;
                     }
                 }
-                throw logger.logExceptionAsError(new RuntimeException(
-                    "Thumbprint of certificates receieved did not match the "
-                        + "expected thumbprint."));
+                throw logger.logExceptionAsError(
+                    new RuntimeException("Thumbprint of certificates received did not match the expected thumbprint."));
             }
-        }
-        };
+        } };
 
         SSLSocketFactory sslSocketFactory;
         try {
@@ -103,9 +99,8 @@ public final class IdentitySslUtil {
 
     private static String extractCertificateThumbprint(Certificate certificate, ClientLogger logger) {
         try {
-            StringBuffer thumbprint = new StringBuffer();
-            MessageDigest messageDigest;
-            messageDigest = MessageDigest.getInstance("SHA-1");
+            StringBuilder thumbprint = new StringBuilder();
+            MessageDigest messageDigest = MessageDigest.getInstance("SHA-1");
 
             byte[] encodedCertificate;
 
@@ -115,10 +110,10 @@ public final class IdentitySslUtil {
                 throw new RuntimeException(e);
             }
 
-            byte[]  updatedDigest = messageDigest.digest(encodedCertificate);
+            byte[] updatedDigest = messageDigest.digest(encodedCertificate);
 
-            for (int i = 0; i < updatedDigest.length; i++) {
-                int unsignedByte = updatedDigest[i] & 0xff;
+            for (byte b : updatedDigest) {
+                int unsignedByte = b & 0xff;
 
                 if (unsignedByte < 16) {
                     thumbprint.append("0");

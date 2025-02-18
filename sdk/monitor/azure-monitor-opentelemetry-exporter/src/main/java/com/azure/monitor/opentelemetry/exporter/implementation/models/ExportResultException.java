@@ -7,11 +7,13 @@ package com.azure.monitor.opentelemetry.exporter.implementation.models;
 import com.azure.core.exception.HttpResponseException;
 import com.azure.core.http.HttpResponse;
 
-/** Exception thrown for an invalid response with ExportResult information. */
+/**
+ * Exception thrown for an invalid response with ExportResult information.
+ */
 public final class ExportResultException extends HttpResponseException {
     /**
      * Initializes a new instance of the ExportResultException class.
-     *
+     * 
      * @param message the exception message or the response content if a message is not available.
      * @param response the HTTP response.
      */
@@ -21,7 +23,7 @@ public final class ExportResultException extends HttpResponseException {
 
     /**
      * Initializes a new instance of the ExportResultException class.
-     *
+     * 
      * @param message the exception message or the response content if a message is not available.
      * @param response the HTTP response.
      * @param value the deserialized response value.
@@ -30,6 +32,9 @@ public final class ExportResultException extends HttpResponseException {
         super(message, response, value);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public ExportResult getValue() {
         return (ExportResult) super.getValue();

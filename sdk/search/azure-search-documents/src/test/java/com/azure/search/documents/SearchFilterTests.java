@@ -11,6 +11,8 @@ import com.azure.core.models.GeoPoint;
 import com.azure.core.models.GeoPolygon;
 import com.azure.core.models.GeoPosition;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Execution;
+import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -29,6 +31,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 /**
  * Tests {@link SearchFilter}.
  */
+@Execution(ExecutionMode.CONCURRENT)
 public class SearchFilterTests {
     @Test
     public void noArguments() {
@@ -47,21 +50,19 @@ public class SearchFilterTests {
         assertEquals(expected, SearchFilter.create(formattableString, args));
     }
 
-    private static Stream<Arguments> manyArgumentsSupplier() {
-        return Stream.of(
-            Arguments.of("Foo eq 2 and Bar eq 3", "Foo eq %d and Bar eq %d", new Object[]{2, 3}),
+    static Stream<Arguments> manyArgumentsSupplier() {
+        return Stream.of(Arguments.of("Foo eq 2 and Bar eq 3", "Foo eq %d and Bar eq %d", new Object[] { 2, 3 }),
             Arguments.of("Foo eq 2 and Bar eq 3 and Baz eq 4", "Foo eq %d and Bar eq %d and Baz eq %d",
-                new Object[]{2, 3, 4}),
+                new Object[] { 2, 3, 4 }),
             Arguments.of("Foo eq 2 and Bar eq 3 and Baz eq 4 and Qux eq 5",
-                "Foo eq %d and Bar eq %d and Baz eq %d and Qux eq %d", new Object[]{2, 3, 4, 5}),
+                "Foo eq %d and Bar eq %d and Baz eq %d and Qux eq %d", new Object[] { 2, 3, 4, 5 }),
             Arguments.of("Foo eq 2 and Bar eq 3 and Baz eq 4 and Qux eq 5 and Quux eq 6",
-                "Foo eq %d and Bar eq %d and Baz eq %d and Qux eq %d and Quux eq %d", new Object[]{2, 3, 4, 5, 6})
-        );
+                "Foo eq %d and Bar eq %d and Baz eq %d and Qux eq %d and Quux eq %d", new Object[] { 2, 3, 4, 5, 6 }));
     }
 
     @Test
     public void nullArgument() {
-        assertEquals("Foo eq null", SearchFilter.create("Foo eq %s", new Object[]{null}));
+        assertEquals("Foo eq null", SearchFilter.create("Foo eq %s", new Object[] { null }));
     }
 
     @Test
@@ -77,56 +78,48 @@ public class SearchFilterTests {
         assertEquals(expected, SearchFilter.create(formattableString, arg));
     }
 
-    private static Stream<Arguments> numberArgumentSupplier() {
-        return Stream.of(
-            Arguments.of("Foo eq 0", "Foo eq %d", (byte) 0),
-            Arguments.of("Foo eq -2", "Foo eq %d", (byte) -2),
-            Arguments.of("Foo eq 2", "Foo eq %d", (byte) 2),
+    static Stream<Arguments> numberArgumentSupplier() {
+        return Stream.of(Arguments.of("Foo eq 0", "Foo eq %d", (byte) 0),
+            Arguments.of("Foo eq -2", "Foo eq %d", (byte) -2), Arguments.of("Foo eq 2", "Foo eq %d", (byte) 2),
 
             Arguments.of("Foo eq 0", "Foo eq %d", Byte.valueOf("0")),
             Arguments.of("Foo eq -2", "Foo eq %d", Byte.valueOf("-2")),
             Arguments.of("Foo eq 2", "Foo eq %d", Byte.valueOf("2")),
 
-            Arguments.of("Foo eq 0", "Foo eq %d", (short) 0),
-            Arguments.of("Foo eq -2", "Foo eq %d", (short) -2),
+            Arguments.of("Foo eq 0", "Foo eq %d", (short) 0), Arguments.of("Foo eq -2", "Foo eq %d", (short) -2),
             Arguments.of("Foo eq 2", "Foo eq %d", (short) 2),
 
             Arguments.of("Foo eq 0", "Foo eq %d", Short.valueOf("0")),
             Arguments.of("Foo eq -2", "Foo eq %d", Short.valueOf("-2")),
             Arguments.of("Foo eq 2", "Foo eq %d", Short.valueOf("2")),
 
-            Arguments.of("Foo eq 0", "Foo eq %d", 0),
-            Arguments.of("Foo eq -2", "Foo eq %d", -2),
+            Arguments.of("Foo eq 0", "Foo eq %d", 0), Arguments.of("Foo eq -2", "Foo eq %d", -2),
             Arguments.of("Foo eq 2", "Foo eq %d", 2),
 
             Arguments.of("Foo eq 0", "Foo eq %d", Integer.valueOf("0")),
             Arguments.of("Foo eq -2", "Foo eq %d", Integer.valueOf("-2")),
             Arguments.of("Foo eq 2", "Foo eq %d", Integer.valueOf("2")),
 
-            Arguments.of("Foo eq 0", "Foo eq %d", 0L),
-            Arguments.of("Foo eq -2", "Foo eq %d", -2L),
+            Arguments.of("Foo eq 0", "Foo eq %d", 0L), Arguments.of("Foo eq -2", "Foo eq %d", -2L),
             Arguments.of("Foo eq 2", "Foo eq %d", 2L),
 
             Arguments.of("Foo eq 0", "Foo eq %d", Long.valueOf("0")),
             Arguments.of("Foo eq -2", "Foo eq %d", Long.valueOf("-2")),
             Arguments.of("Foo eq 2", "Foo eq %d", Long.valueOf("2")),
 
-            Arguments.of("Foo eq 0", "Foo eq %.0f", 0F),
-            Arguments.of("Foo eq -2", "Foo eq %.0f", -2F),
+            Arguments.of("Foo eq 0", "Foo eq %.0f", 0F), Arguments.of("Foo eq -2", "Foo eq %.0f", -2F),
             Arguments.of("Foo eq 2", "Foo eq %.0f", 2F),
 
             Arguments.of("Foo eq 0", "Foo eq %.0f", Float.valueOf("0")),
             Arguments.of("Foo eq -2", "Foo eq %.0f", Float.valueOf("-2")),
             Arguments.of("Foo eq 2", "Foo eq %.0f", Float.valueOf("2")),
 
-            Arguments.of("Foo eq 0", "Foo eq %.0f", 0D),
-            Arguments.of("Foo eq -2", "Foo eq %.0f", -2D),
+            Arguments.of("Foo eq 0", "Foo eq %.0f", 0D), Arguments.of("Foo eq -2", "Foo eq %.0f", -2D),
             Arguments.of("Foo eq 2", "Foo eq %.0f", 2D),
 
             Arguments.of("Foo eq 0", "Foo eq %.0f", Double.valueOf("0")),
             Arguments.of("Foo eq -2", "Foo eq %.0f", Double.valueOf("-2")),
-            Arguments.of("Foo eq 2", "Foo eq %.0f", Double.valueOf("2"))
-        );
+            Arguments.of("Foo eq 2", "Foo eq %.0f", Double.valueOf("2")));
     }
 
     @Test
@@ -147,16 +140,14 @@ public class SearchFilterTests {
         assertEquals(expected, SearchFilter.create(formattableString, arg));
     }
 
-    private static Stream<Arguments> limitArgumentSupplier() {
-        return Stream.of(
-            Arguments.of("Foo eq NaN", "Foo eq %s", Float.NaN),
+    static Stream<Arguments> limitArgumentSupplier() {
+        return Stream.of(Arguments.of("Foo eq NaN", "Foo eq %s", Float.NaN),
             Arguments.of("Foo eq INF", "Foo eq %s", Float.POSITIVE_INFINITY),
             Arguments.of("Foo eq -INF", "Foo eq %s", Float.NEGATIVE_INFINITY),
 
             Arguments.of("Foo eq NaN", "Foo eq %s", Double.NaN),
             Arguments.of("Foo eq INF", "Foo eq %s", Double.POSITIVE_INFINITY),
-            Arguments.of("Foo eq -INF", "Foo eq %s", Double.NEGATIVE_INFINITY)
-        );
+            Arguments.of("Foo eq -INF", "Foo eq %s", Double.NEGATIVE_INFINITY));
     }
 
     @Test
@@ -174,24 +165,20 @@ public class SearchFilterTests {
     }
 
     @SuppressWarnings("UnnecessaryBoxing")
-    private static Stream<Arguments> textArgumentSupplier() {
-        return Stream.of(
-            Arguments.of("Foo eq 'x'", "Foo eq %s", 'x'),
-            Arguments.of("Foo eq ''''", "Foo eq %s", '\''),
+    static Stream<Arguments> textArgumentSupplier() {
+        return Stream.of(Arguments.of("Foo eq 'x'", "Foo eq %s", 'x'), Arguments.of("Foo eq ''''", "Foo eq %s", '\''),
             Arguments.of("Foo eq '\"'", "Foo eq %s", '"'),
 
             Arguments.of("Foo eq 'x'", "Foo eq %s", Character.valueOf('x')),
             Arguments.of("Foo eq ''''", "Foo eq %s", Character.valueOf('\'')),
             Arguments.of("Foo eq '\"'", "Foo eq %s", Character.valueOf('\"')),
 
-            Arguments.of("Foo eq 'bar'", "Foo eq %s", "bar"),
-            Arguments.of("Foo eq 'bar''s'", "Foo eq %s", "bar's"),
+            Arguments.of("Foo eq 'bar'", "Foo eq %s", "bar"), Arguments.of("Foo eq 'bar''s'", "Foo eq %s", "bar's"),
             Arguments.of("Foo eq '\"bar\"'", "Foo eq %s", "\"bar\""),
 
             Arguments.of("Foo eq 'bar'", "Foo eq %s", new StringBuilder("bar")),
             Arguments.of("Foo eq 'bar''s'", "Foo eq %s", new StringBuilder("bar's")),
-            Arguments.of("Foo eq '\"bar\"'", "Foo eq %s", new StringBuilder("\"bar\""))
-        );
+            Arguments.of("Foo eq '\"bar\"'", "Foo eq %s", new StringBuilder("\"bar\"")));
     }
 
     @Test
@@ -205,7 +192,7 @@ public class SearchFilterTests {
         assertEquals(expected, SearchFilter.create(formattableString, geography));
     }
 
-    private static Stream<Arguments> geographyArgumentSupplier() {
+    static Stream<Arguments> geographyArgumentSupplier() {
         final String formattableString = "Foo eq %s";
 
         final String expectedPointFilter = "Foo eq geography'POINT(0 0)'";
@@ -247,8 +234,9 @@ public class SearchFilterTests {
                 formattableString, expectedPolygonFilter),
             Arguments.of(new GeoPolygon(new GeoLinearRing(polygonCoordinatesWithAltitude)), formattableString,
                 expectedPolygonFilter),
-            Arguments.of(new GeoPolygon(new GeoLinearRing(polygonCoordinatesWithAltitude), boundingBox,
-                Collections.emptyMap()), formattableString, expectedPolygonFilter),
+            Arguments.of(
+                new GeoPolygon(new GeoLinearRing(polygonCoordinatesWithAltitude), boundingBox, Collections.emptyMap()),
+                formattableString, expectedPolygonFilter),
 
             Arguments.of(new GeoPolygon(Collections.singletonList(new GeoLinearRing(polygonCoordinates))),
                 formattableString, expectedPolygonFilter),

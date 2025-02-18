@@ -8,11 +8,26 @@ import com.azure.core.http.rest.PagedIterable;
 import com.azure.core.http.rest.Response;
 import com.azure.core.util.Context;
 
-/** Resource collection API of Webhooks. */
+/**
+ * Resource collection API of Webhooks.
+ */
 public interface Webhooks {
     /**
      * Generates a Uri for use in creating a webhook.
-     *
+     * 
+     * @param resourceGroupName Name of an Azure Resource group.
+     * @param automationAccountName The name of the automation account.
+     * @param context The context to associate with this operation.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return the response body along with {@link Response}.
+     */
+    Response<String> generateUriWithResponse(String resourceGroupName, String automationAccountName, Context context);
+
+    /**
+     * Generates a Uri for use in creating a webhook.
+     * 
      * @param resourceGroupName Name of an Azure Resource group.
      * @param automationAccountName The name of the automation account.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
@@ -23,21 +38,23 @@ public interface Webhooks {
     String generateUri(String resourceGroupName, String automationAccountName);
 
     /**
-     * Generates a Uri for use in creating a webhook.
-     *
+     * Delete the webhook by name.
+     * 
      * @param resourceGroupName Name of an Azure Resource group.
      * @param automationAccountName The name of the automation account.
+     * @param webhookName The webhook name.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the response.
+     * @return the {@link Response}.
      */
-    Response<String> generateUriWithResponse(String resourceGroupName, String automationAccountName, Context context);
+    Response<Void> deleteWithResponse(String resourceGroupName, String automationAccountName, String webhookName,
+        Context context);
 
     /**
      * Delete the webhook by name.
-     *
+     * 
      * @param resourceGroupName Name of an Azure Resource group.
      * @param automationAccountName The name of the automation account.
      * @param webhookName The webhook name.
@@ -48,8 +65,8 @@ public interface Webhooks {
     void delete(String resourceGroupName, String automationAccountName, String webhookName);
 
     /**
-     * Delete the webhook by name.
-     *
+     * Retrieve the webhook identified by webhook name.
+     * 
      * @param resourceGroupName Name of an Azure Resource group.
      * @param automationAccountName The name of the automation account.
      * @param webhookName The webhook name.
@@ -57,14 +74,14 @@ public interface Webhooks {
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the response.
+     * @return definition of the webhook type along with {@link Response}.
      */
-    Response<Void> deleteWithResponse(
-        String resourceGroupName, String automationAccountName, String webhookName, Context context);
+    Response<Webhook> getWithResponse(String resourceGroupName, String automationAccountName, String webhookName,
+        Context context);
 
     /**
      * Retrieve the webhook identified by webhook name.
-     *
+     * 
      * @param resourceGroupName Name of an Azure Resource group.
      * @param automationAccountName The name of the automation account.
      * @param webhookName The webhook name.
@@ -76,35 +93,20 @@ public interface Webhooks {
     Webhook get(String resourceGroupName, String automationAccountName, String webhookName);
 
     /**
-     * Retrieve the webhook identified by webhook name.
-     *
-     * @param resourceGroupName Name of an Azure Resource group.
-     * @param automationAccountName The name of the automation account.
-     * @param webhookName The webhook name.
-     * @param context The context to associate with this operation.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return definition of the webhook type.
-     */
-    Response<Webhook> getWithResponse(
-        String resourceGroupName, String automationAccountName, String webhookName, Context context);
-
-    /**
      * Retrieve a list of webhooks.
-     *
+     * 
      * @param resourceGroupName Name of an Azure Resource group.
      * @param automationAccountName The name of the automation account.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the response model for the list webhook operation.
+     * @return the response model for the list webhook operation as paginated response with {@link PagedIterable}.
      */
     PagedIterable<Webhook> listByAutomationAccount(String resourceGroupName, String automationAccountName);
 
     /**
      * Retrieve a list of webhooks.
-     *
+     * 
      * @param resourceGroupName Name of an Azure Resource group.
      * @param automationAccountName The name of the automation account.
      * @param filter The filter to apply on the operation.
@@ -112,37 +114,37 @@ public interface Webhooks {
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the response model for the list webhook operation.
+     * @return the response model for the list webhook operation as paginated response with {@link PagedIterable}.
      */
-    PagedIterable<Webhook> listByAutomationAccount(
-        String resourceGroupName, String automationAccountName, String filter, Context context);
+    PagedIterable<Webhook> listByAutomationAccount(String resourceGroupName, String automationAccountName,
+        String filter, Context context);
 
     /**
      * Retrieve the webhook identified by webhook name.
-     *
+     * 
      * @param id the resource ID.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return definition of the webhook type.
+     * @return definition of the webhook type along with {@link Response}.
      */
     Webhook getById(String id);
 
     /**
      * Retrieve the webhook identified by webhook name.
-     *
+     * 
      * @param id the resource ID.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return definition of the webhook type.
+     * @return definition of the webhook type along with {@link Response}.
      */
     Response<Webhook> getByIdWithResponse(String id, Context context);
 
     /**
      * Delete the webhook by name.
-     *
+     * 
      * @param id the resource ID.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
@@ -152,19 +154,19 @@ public interface Webhooks {
 
     /**
      * Delete the webhook by name.
-     *
+     * 
      * @param id the resource ID.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the response.
+     * @return the {@link Response}.
      */
     Response<Void> deleteByIdWithResponse(String id, Context context);
 
     /**
      * Begins definition for a new Webhook resource.
-     *
+     * 
      * @param name resource name.
      * @return the first stage of the new Webhook definition.
      */

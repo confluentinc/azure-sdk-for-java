@@ -4,21 +4,29 @@
 
 package com.azure.resourcemanager.compute.models;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonValue;
-
-/** Defines values for DedicatedHostLicenseTypes. */
+/**
+ * Specifies the software license type that will be applied to the VMs deployed on the dedicated host. Possible values
+ * are: **None,** **Windows_Server_Hybrid,** **Windows_Server_Perpetual.** The default value is: **None.**.
+ */
 public enum DedicatedHostLicenseTypes {
-    /** Enum value None. */
+    /**
+     * Enum value None.
+     */
     NONE("None"),
 
-    /** Enum value Windows_Server_Hybrid. */
+    /**
+     * Enum value Windows_Server_Hybrid.
+     */
     WINDOWS_SERVER_HYBRID("Windows_Server_Hybrid"),
 
-    /** Enum value Windows_Server_Perpetual. */
+    /**
+     * Enum value Windows_Server_Perpetual.
+     */
     WINDOWS_SERVER_PERPETUAL("Windows_Server_Perpetual");
 
-    /** The actual serialized value for a DedicatedHostLicenseTypes instance. */
+    /**
+     * The actual serialized value for a DedicatedHostLicenseTypes instance.
+     */
     private final String value;
 
     DedicatedHostLicenseTypes(String value) {
@@ -27,12 +35,14 @@ public enum DedicatedHostLicenseTypes {
 
     /**
      * Parses a serialized value to a DedicatedHostLicenseTypes instance.
-     *
+     * 
      * @param value the serialized value to parse.
      * @return the parsed DedicatedHostLicenseTypes object, or null if unable to parse.
      */
-    @JsonCreator
     public static DedicatedHostLicenseTypes fromString(String value) {
+        if (value == null) {
+            return null;
+        }
         DedicatedHostLicenseTypes[] items = DedicatedHostLicenseTypes.values();
         for (DedicatedHostLicenseTypes item : items) {
             if (item.toString().equalsIgnoreCase(value)) {
@@ -42,7 +52,9 @@ public enum DedicatedHostLicenseTypes {
         return null;
     }
 
-    @JsonValue
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String toString() {
         return this.value;

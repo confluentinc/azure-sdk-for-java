@@ -5,8 +5,8 @@ package com.azure.resourcemanager.compute.implementation;
 
 import com.azure.core.util.logging.ClientLogger;
 import com.azure.resourcemanager.compute.models.ResourceIdentityType;
+import com.azure.resourcemanager.compute.models.VirtualMachineIdentityUserAssignedIdentities;
 import com.azure.resourcemanager.compute.models.VirtualMachineScaleSetIdentity;
-import com.azure.resourcemanager.compute.models.VirtualMachineScaleSetIdentityUserAssignedIdentities;
 import com.azure.resourcemanager.compute.models.VirtualMachineScaleSetUpdate;
 import com.azure.resourcemanager.compute.fluent.models.VirtualMachineScaleSetInner;
 import com.azure.resourcemanager.authorization.AuthorizationManager;
@@ -32,7 +32,7 @@ class VirtualMachineScaleSetMsiHandler extends RoleAssignmentHelper {
     private final VirtualMachineScaleSetImpl scaleSet;
 
     private List<String> creatableIdentityKeys;
-    private Map<String, VirtualMachineScaleSetIdentityUserAssignedIdentities> userAssignedIdentities;
+    private Map<String, VirtualMachineIdentityUserAssignedIdentities> userAssignedIdentities;
     private final ClientLogger logger = new ClientLogger(VirtualMachineScaleSetMsiHandler.class);
 
     /**
@@ -71,9 +71,7 @@ class VirtualMachineScaleSetMsiHandler extends RoleAssignmentHelper {
             return this;
         } else if (this.scaleSet.innerModel().identity().type().equals(ResourceIdentityType.SYSTEM_ASSIGNED)) {
             this.scaleSet.innerModel().identity().withType(ResourceIdentityType.NONE);
-        } else if (this
-            .scaleSet
-            .innerModel()
+        } else if (this.scaleSet.innerModel()
             .identity()
             .type()
             .equals(ResourceIdentityType.SYSTEM_ASSIGNED_USER_ASSIGNED)) {
@@ -109,7 +107,7 @@ class VirtualMachineScaleSetMsiHandler extends RoleAssignmentHelper {
      */
     VirtualMachineScaleSetMsiHandler withExistingExternalManagedServiceIdentity(Identity identity) {
         this.initVMSSIdentity(ResourceIdentityType.USER_ASSIGNED);
-        this.userAssignedIdentities.put(identity.id(), new VirtualMachineScaleSetIdentityUserAssignedIdentities());
+        this.userAssignedIdentities.put(identity.id(), new VirtualMachineIdentityUserAssignedIdentities());
         return this;
     }
 
@@ -130,7 +128,7 @@ class VirtualMachineScaleSetMsiHandler extends RoleAssignmentHelper {
         for (String key : this.creatableIdentityKeys) {
             Identity identity = (Identity) this.scaleSet.taskGroup().taskResult(key);
             Objects.requireNonNull(identity);
-            this.userAssignedIdentities.put(identity.id(), new VirtualMachineScaleSetIdentityUserAssignedIdentities());
+            this.userAssignedIdentities.put(identity.id(), new VirtualMachineIdentityUserAssignedIdentities());
         }
         this.creatableIdentityKeys.clear();
     }
@@ -189,7 +187,7 @@ class VirtualMachineScaleSetMsiHandler extends RoleAssignmentHelper {
     private boolean handleRemoveAllExternalIdentitiesCase(VirtualMachineScaleSetUpdate vmssUpdate) {
         if (!this.userAssignedIdentities.isEmpty()) {
             int rmCount = 0;
-            for (VirtualMachineScaleSetIdentityUserAssignedIdentities v : this.userAssignedIdentities.values()) {
+            for (VirtualMachineIdentityUserAssignedIdentities v : this.userAssignedIdentities.values()) {
                 if (v == null) {
                     rmCount++;
                 } else {
@@ -207,15 +205,15 @@ class VirtualMachineScaleSetMsiHandler extends RoleAssignmentHelper {
                     }
                 }
                 Set<String> removeIds = new HashSet<>();
-                for (Map.Entry<String, VirtualMachineScaleSetIdentityUserAssignedIdentities> entrySet
-                    : this.userAssignedIdentities.entrySet()) {
+                for (Map.Entry<String, VirtualMachineIdentityUserAssignedIdentities> entrySet : this.userAssignedIdentities
+                    .entrySet()) {
                     if (entrySet.getValue() == null) {
                         removeIds.add(entrySet.getKey().toLowerCase(Locale.ROOT));
                     }
                 }
                 // If so check user want to remove all the identities
-                boolean removeAllCurrentIds =
-                    currentIds.size() == removeIds.size() && currentIds.containsAll(removeIds);
+                boolean removeAllCurrentIds
+                    = currentIds.size() == removeIds.size() && currentIds.containsAll(removeIds);
                 if (removeAllCurrentIds) {
                     // If so adjust  the identity type [Setting type to SYSTEM_ASSIGNED orNONE will remove all the
                     // identities]

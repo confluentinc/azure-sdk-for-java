@@ -36,7 +36,7 @@ class EventHubClient implements Closeable {
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
     EventHubProperties getProperties() {
-        return client.getProperties().block(retry.getTryTimeout());
+        return client.getProperties().block();
     }
 
     /**
@@ -58,7 +58,7 @@ class EventHubClient implements Closeable {
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
     PartitionProperties getPartitionProperties(String partitionId) {
-        return client.getPartitionProperties(partitionId).block(retry.getTryTimeout());
+        return client.getPartitionProperties(partitionId).block();
     }
 
     /**
@@ -69,7 +69,7 @@ class EventHubClient implements Closeable {
      */
     EventHubProducerClient createProducer() {
         final EventHubProducerAsyncClient producer = client.createProducer();
-        return new EventHubProducerClient(producer, retry.getTryTimeout());
+        return new EventHubProducerClient(producer);
     }
 
     /**
@@ -79,13 +79,13 @@ class EventHubClient implements Closeable {
      * @param consumerGroup The name of the consumer group this consumer is associated with. Events are read in the
      *     context of this group. The name of the consumer group that is created by default is {@link
      *     EventHubClientBuilder#DEFAULT_CONSUMER_GROUP_NAME "$Default"}.
-     * @param prefetchCount The set of options to apply when creating the consumer.
+     * @param prefetchCount The number of events to queue locally.
      * @return An new {@link EventHubConsumerClient} that receives events.
      * @throws NullPointerException If {@code consumerGroup} is null.
      * @throws IllegalArgumentException If {@code consumerGroup} is an empty string.
      */
     EventHubConsumerClient createConsumer(String consumerGroup, int prefetchCount) {
-        final EventHubConsumerAsyncClient consumer = client.createConsumer(consumerGroup, prefetchCount);
+        final EventHubConsumerAsyncClient consumer = client.createConsumer(consumerGroup, prefetchCount, true);
 
         return new EventHubConsumerClient(consumer, retry.getTryTimeout());
     }

@@ -7,11 +7,27 @@ package com.azure.resourcemanager.recoveryservicesbackup.models;
 import com.azure.core.http.rest.Response;
 import com.azure.core.util.Context;
 
-/** Resource collection API of FeatureSupports. */
+/**
+ * Resource collection API of FeatureSupports.
+ */
 public interface FeatureSupports {
     /**
      * It will validate if given feature with resource properties is supported in service.
-     *
+     * 
+     * @param azureRegion Azure region to hit Api.
+     * @param parameters Feature support request object.
+     * @param context The context to associate with this operation.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return response for feature support requests for Azure IaasVm along with {@link Response}.
+     */
+    Response<AzureVMResourceFeatureSupportResponse> validateWithResponse(String azureRegion,
+        FeatureSupportRequest parameters, Context context);
+
+    /**
+     * It will validate if given feature with resource properties is supported in service.
+     * 
      * @param azureRegion Azure region to hit Api.
      * @param parameters Feature support request object.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
@@ -20,18 +36,4 @@ public interface FeatureSupports {
      * @return response for feature support requests for Azure IaasVm.
      */
     AzureVMResourceFeatureSupportResponse validate(String azureRegion, FeatureSupportRequest parameters);
-
-    /**
-     * It will validate if given feature with resource properties is supported in service.
-     *
-     * @param azureRegion Azure region to hit Api.
-     * @param parameters Feature support request object.
-     * @param context The context to associate with this operation.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return response for feature support requests for Azure IaasVm.
-     */
-    Response<AzureVMResourceFeatureSupportResponse> validateWithResponse(
-        String azureRegion, FeatureSupportRequest parameters, Context context);
 }

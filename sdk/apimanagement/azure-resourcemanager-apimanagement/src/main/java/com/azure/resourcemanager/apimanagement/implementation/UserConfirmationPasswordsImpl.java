@@ -10,29 +10,27 @@ import com.azure.core.util.logging.ClientLogger;
 import com.azure.resourcemanager.apimanagement.fluent.UserConfirmationPasswordsClient;
 import com.azure.resourcemanager.apimanagement.models.AppType;
 import com.azure.resourcemanager.apimanagement.models.UserConfirmationPasswords;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 public final class UserConfirmationPasswordsImpl implements UserConfirmationPasswords {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(UserConfirmationPasswordsImpl.class);
+    private static final ClientLogger LOGGER = new ClientLogger(UserConfirmationPasswordsImpl.class);
 
     private final UserConfirmationPasswordsClient innerClient;
 
     private final com.azure.resourcemanager.apimanagement.ApiManagementManager serviceManager;
 
-    public UserConfirmationPasswordsImpl(
-        UserConfirmationPasswordsClient innerClient,
+    public UserConfirmationPasswordsImpl(UserConfirmationPasswordsClient innerClient,
         com.azure.resourcemanager.apimanagement.ApiManagementManager serviceManager) {
         this.innerClient = innerClient;
         this.serviceManager = serviceManager;
     }
 
-    public void send(String resourceGroupName, String serviceName, String userId) {
-        this.serviceClient().send(resourceGroupName, serviceName, userId);
+    public Response<Void> sendWithResponse(String resourceGroupName, String serviceName, String userId, AppType appType,
+        Context context) {
+        return this.serviceClient().sendWithResponse(resourceGroupName, serviceName, userId, appType, context);
     }
 
-    public Response<Void> sendWithResponse(
-        String resourceGroupName, String serviceName, String userId, AppType appType, Context context) {
-        return this.serviceClient().sendWithResponse(resourceGroupName, serviceName, userId, appType, context);
+    public void send(String resourceGroupName, String serviceName, String userId) {
+        this.serviceClient().send(resourceGroupName, serviceName, userId);
     }
 
     private UserConfirmationPasswordsClient serviceClient() {

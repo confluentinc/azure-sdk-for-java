@@ -9,6 +9,7 @@ import com.azure.core.management.Region;
 import com.azure.core.management.SystemData;
 import com.azure.core.util.Context;
 import com.azure.resourcemanager.mediaservices.fluent.models.MediaServiceInner;
+import com.azure.resourcemanager.mediaservices.fluent.models.PrivateEndpointConnectionInner;
 import com.azure.resourcemanager.mediaservices.models.AccountEncryption;
 import com.azure.resourcemanager.mediaservices.models.EdgePolicies;
 import com.azure.resourcemanager.mediaservices.models.KeyDelivery;
@@ -16,6 +17,9 @@ import com.azure.resourcemanager.mediaservices.models.ListEdgePoliciesInput;
 import com.azure.resourcemanager.mediaservices.models.MediaService;
 import com.azure.resourcemanager.mediaservices.models.MediaServiceIdentity;
 import com.azure.resourcemanager.mediaservices.models.MediaServiceUpdate;
+import com.azure.resourcemanager.mediaservices.models.MinimumTlsVersion;
+import com.azure.resourcemanager.mediaservices.models.PrivateEndpointConnection;
+import com.azure.resourcemanager.mediaservices.models.ProvisioningState;
 import com.azure.resourcemanager.mediaservices.models.PublicNetworkAccess;
 import com.azure.resourcemanager.mediaservices.models.StorageAccount;
 import com.azure.resourcemanager.mediaservices.models.StorageAuthentication;
@@ -24,6 +28,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 public final class MediaServiceImpl implements MediaService, MediaService.Definition, MediaService.Update {
     private MediaServiceInner innerObject;
@@ -55,12 +60,12 @@ public final class MediaServiceImpl implements MediaService, MediaService.Defini
         }
     }
 
-    public MediaServiceIdentity identity() {
-        return this.innerModel().identity();
-    }
-
     public SystemData systemData() {
         return this.innerModel().systemData();
+    }
+
+    public MediaServiceIdentity identity() {
+        return this.innerModel().identity();
     }
 
     public UUID mediaServiceId() {
@@ -92,12 +97,35 @@ public final class MediaServiceImpl implements MediaService, MediaService.Defini
         return this.innerModel().publicNetworkAccess();
     }
 
+    public ProvisioningState provisioningState() {
+        return this.innerModel().provisioningState();
+    }
+
+    public List<PrivateEndpointConnection> privateEndpointConnections() {
+        List<PrivateEndpointConnectionInner> inner = this.innerModel().privateEndpointConnections();
+        if (inner != null) {
+            return Collections.unmodifiableList(inner.stream()
+                .map(inner1 -> new PrivateEndpointConnectionImpl(inner1, this.manager()))
+                .collect(Collectors.toList()));
+        } else {
+            return Collections.emptyList();
+        }
+    }
+
+    public MinimumTlsVersion minimumTlsVersion() {
+        return this.innerModel().minimumTlsVersion();
+    }
+
     public Region region() {
         return Region.fromName(this.regionName());
     }
 
     public String regionName() {
         return this.location();
+    }
+
+    public String resourceGroupName() {
+        return resourceGroupName;
     }
 
     public MediaServiceInner innerModel() {
@@ -120,22 +148,16 @@ public final class MediaServiceImpl implements MediaService, MediaService.Defini
     }
 
     public MediaService create() {
-        this.innerObject =
-            serviceManager
-                .serviceClient()
-                .getMediaservices()
-                .createOrUpdateWithResponse(resourceGroupName, accountName, this.innerModel(), Context.NONE)
-                .getValue();
+        this.innerObject = serviceManager.serviceClient()
+            .getMediaservices()
+            .createOrUpdate(resourceGroupName, accountName, this.innerModel(), Context.NONE);
         return this;
     }
 
     public MediaService create(Context context) {
-        this.innerObject =
-            serviceManager
-                .serviceClient()
-                .getMediaservices()
-                .createOrUpdateWithResponse(resourceGroupName, accountName, this.innerModel(), context)
-                .getValue();
+        this.innerObject = serviceManager.serviceClient()
+            .getMediaservices()
+            .createOrUpdate(resourceGroupName, accountName, this.innerModel(), context);
         return this;
     }
 
@@ -151,71 +173,59 @@ public final class MediaServiceImpl implements MediaService, MediaService.Defini
     }
 
     public MediaService apply() {
-        this.innerObject =
-            serviceManager
-                .serviceClient()
-                .getMediaservices()
-                .updateWithResponse(resourceGroupName, accountName, updateParameters, Context.NONE)
-                .getValue();
+        this.innerObject = serviceManager.serviceClient()
+            .getMediaservices()
+            .update(resourceGroupName, accountName, updateParameters, Context.NONE);
         return this;
     }
 
     public MediaService apply(Context context) {
-        this.innerObject =
-            serviceManager
-                .serviceClient()
-                .getMediaservices()
-                .updateWithResponse(resourceGroupName, accountName, updateParameters, context)
-                .getValue();
+        this.innerObject = serviceManager.serviceClient()
+            .getMediaservices()
+            .update(resourceGroupName, accountName, updateParameters, context);
         return this;
     }
 
-    MediaServiceImpl(
-        MediaServiceInner innerObject, com.azure.resourcemanager.mediaservices.MediaServicesManager serviceManager) {
+    MediaServiceImpl(MediaServiceInner innerObject,
+        com.azure.resourcemanager.mediaservices.MediaServicesManager serviceManager) {
         this.innerObject = innerObject;
         this.serviceManager = serviceManager;
-        this.resourceGroupName = Utils.getValueFromIdByName(innerObject.id(), "resourceGroups");
-        this.accountName = Utils.getValueFromIdByName(innerObject.id(), "mediaservices");
+        this.resourceGroupName = ResourceManagerUtils.getValueFromIdByName(innerObject.id(), "resourceGroups");
+        this.accountName = ResourceManagerUtils.getValueFromIdByName(innerObject.id(), "mediaservices");
     }
 
     public MediaService refresh() {
-        this.innerObject =
-            serviceManager
-                .serviceClient()
-                .getMediaservices()
-                .getByResourceGroupWithResponse(resourceGroupName, accountName, Context.NONE)
-                .getValue();
+        this.innerObject = serviceManager.serviceClient()
+            .getMediaservices()
+            .getByResourceGroupWithResponse(resourceGroupName, accountName, Context.NONE)
+            .getValue();
         return this;
     }
 
     public MediaService refresh(Context context) {
-        this.innerObject =
-            serviceManager
-                .serviceClient()
-                .getMediaservices()
-                .getByResourceGroupWithResponse(resourceGroupName, accountName, context)
-                .getValue();
+        this.innerObject = serviceManager.serviceClient()
+            .getMediaservices()
+            .getByResourceGroupWithResponse(resourceGroupName, accountName, context)
+            .getValue();
         return this;
+    }
+
+    public Response<Void> syncStorageKeysWithResponse(SyncStorageKeysInput parameters, Context context) {
+        return serviceManager.mediaservices()
+            .syncStorageKeysWithResponse(resourceGroupName, accountName, parameters, context);
     }
 
     public void syncStorageKeys(SyncStorageKeysInput parameters) {
         serviceManager.mediaservices().syncStorageKeys(resourceGroupName, accountName, parameters);
     }
 
-    public Response<Void> syncStorageKeysWithResponse(SyncStorageKeysInput parameters, Context context) {
-        return serviceManager
-            .mediaservices()
-            .syncStorageKeysWithResponse(resourceGroupName, accountName, parameters, context);
+    public Response<EdgePolicies> listEdgePoliciesWithResponse(ListEdgePoliciesInput parameters, Context context) {
+        return serviceManager.mediaservices()
+            .listEdgePoliciesWithResponse(resourceGroupName, accountName, parameters, context);
     }
 
     public EdgePolicies listEdgePolicies(ListEdgePoliciesInput parameters) {
         return serviceManager.mediaservices().listEdgePolicies(resourceGroupName, accountName, parameters);
-    }
-
-    public Response<EdgePolicies> listEdgePoliciesWithResponse(ListEdgePoliciesInput parameters, Context context) {
-        return serviceManager
-            .mediaservices()
-            .listEdgePoliciesWithResponse(resourceGroupName, accountName, parameters, context);
     }
 
     public MediaServiceImpl withRegion(Region location) {
@@ -294,6 +304,16 @@ public final class MediaServiceImpl implements MediaService, MediaService.Defini
             return this;
         } else {
             this.updateParameters.withPublicNetworkAccess(publicNetworkAccess);
+            return this;
+        }
+    }
+
+    public MediaServiceImpl withMinimumTlsVersion(MinimumTlsVersion minimumTlsVersion) {
+        if (isInCreateMode()) {
+            this.innerModel().withMinimumTlsVersion(minimumTlsVersion);
+            return this;
+        } else {
+            this.updateParameters.withMinimumTlsVersion(minimumTlsVersion);
             return this;
         }
     }

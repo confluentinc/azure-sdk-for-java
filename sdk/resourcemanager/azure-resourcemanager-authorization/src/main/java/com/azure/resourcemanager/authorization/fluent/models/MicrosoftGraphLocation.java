@@ -5,75 +5,73 @@
 package com.azure.resourcemanager.authorization.fluent.models;
 
 import com.azure.core.annotation.Fluent;
-import com.azure.core.util.logging.ClientLogger;
-import com.fasterxml.jackson.annotation.JsonAnyGetter;
-import com.fasterxml.jackson.annotation.JsonAnySetter;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import java.util.HashMap;
+import com.azure.json.JsonReader;
+import com.azure.json.JsonSerializable;
+import com.azure.json.JsonToken;
+import com.azure.json.JsonWriter;
+import java.io.IOException;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
-/** location. */
+/**
+ * location.
+ */
 @Fluent
-public final class MicrosoftGraphLocation {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(MicrosoftGraphLocation.class);
-
+public final class MicrosoftGraphLocation implements JsonSerializable<MicrosoftGraphLocation> {
     /*
      * physicalAddress
      */
-    @JsonProperty(value = "address")
     private MicrosoftGraphPhysicalAddress address;
 
     /*
      * outlookGeoCoordinates
      */
-    @JsonProperty(value = "coordinates")
     private MicrosoftGraphOutlookGeoCoordinates coordinates;
 
     /*
      * The name associated with the location.
      */
-    @JsonProperty(value = "displayName")
     private String displayName;
 
     /*
      * Optional email address of the location.
      */
-    @JsonProperty(value = "locationEmailAddress")
     private String locationEmailAddress;
 
     /*
-     * The locationType property.
+     * locationType
      */
-    @JsonProperty(value = "locationType")
     private MicrosoftGraphLocationType locationType;
 
     /*
      * Optional URI representing the location.
      */
-    @JsonProperty(value = "locationUri")
     private String locationUri;
 
     /*
      * For internal use only.
      */
-    @JsonProperty(value = "uniqueId")
     private String uniqueId;
 
     /*
-     * The uniqueIdType property.
+     * locationUniqueIdType
      */
-    @JsonProperty(value = "uniqueIdType")
     private MicrosoftGraphLocationUniqueIdType uniqueIdType;
 
     /*
      * location
      */
-    @JsonIgnore private Map<String, Object> additionalProperties;
+    private Map<String, Object> additionalProperties;
+
+    /**
+     * Creates an instance of MicrosoftGraphLocation class.
+     */
+    public MicrosoftGraphLocation() {
+    }
 
     /**
      * Get the address property: physicalAddress.
-     *
+     * 
      * @return the address value.
      */
     public MicrosoftGraphPhysicalAddress address() {
@@ -82,7 +80,7 @@ public final class MicrosoftGraphLocation {
 
     /**
      * Set the address property: physicalAddress.
-     *
+     * 
      * @param address the address value to set.
      * @return the MicrosoftGraphLocation object itself.
      */
@@ -93,7 +91,7 @@ public final class MicrosoftGraphLocation {
 
     /**
      * Get the coordinates property: outlookGeoCoordinates.
-     *
+     * 
      * @return the coordinates value.
      */
     public MicrosoftGraphOutlookGeoCoordinates coordinates() {
@@ -102,7 +100,7 @@ public final class MicrosoftGraphLocation {
 
     /**
      * Set the coordinates property: outlookGeoCoordinates.
-     *
+     * 
      * @param coordinates the coordinates value to set.
      * @return the MicrosoftGraphLocation object itself.
      */
@@ -113,7 +111,7 @@ public final class MicrosoftGraphLocation {
 
     /**
      * Get the displayName property: The name associated with the location.
-     *
+     * 
      * @return the displayName value.
      */
     public String displayName() {
@@ -122,7 +120,7 @@ public final class MicrosoftGraphLocation {
 
     /**
      * Set the displayName property: The name associated with the location.
-     *
+     * 
      * @param displayName the displayName value to set.
      * @return the MicrosoftGraphLocation object itself.
      */
@@ -133,7 +131,7 @@ public final class MicrosoftGraphLocation {
 
     /**
      * Get the locationEmailAddress property: Optional email address of the location.
-     *
+     * 
      * @return the locationEmailAddress value.
      */
     public String locationEmailAddress() {
@@ -142,7 +140,7 @@ public final class MicrosoftGraphLocation {
 
     /**
      * Set the locationEmailAddress property: Optional email address of the location.
-     *
+     * 
      * @param locationEmailAddress the locationEmailAddress value to set.
      * @return the MicrosoftGraphLocation object itself.
      */
@@ -152,8 +150,8 @@ public final class MicrosoftGraphLocation {
     }
 
     /**
-     * Get the locationType property: The locationType property.
-     *
+     * Get the locationType property: locationType.
+     * 
      * @return the locationType value.
      */
     public MicrosoftGraphLocationType locationType() {
@@ -161,8 +159,8 @@ public final class MicrosoftGraphLocation {
     }
 
     /**
-     * Set the locationType property: The locationType property.
-     *
+     * Set the locationType property: locationType.
+     * 
      * @param locationType the locationType value to set.
      * @return the MicrosoftGraphLocation object itself.
      */
@@ -173,7 +171,7 @@ public final class MicrosoftGraphLocation {
 
     /**
      * Get the locationUri property: Optional URI representing the location.
-     *
+     * 
      * @return the locationUri value.
      */
     public String locationUri() {
@@ -182,7 +180,7 @@ public final class MicrosoftGraphLocation {
 
     /**
      * Set the locationUri property: Optional URI representing the location.
-     *
+     * 
      * @param locationUri the locationUri value to set.
      * @return the MicrosoftGraphLocation object itself.
      */
@@ -193,7 +191,7 @@ public final class MicrosoftGraphLocation {
 
     /**
      * Get the uniqueId property: For internal use only.
-     *
+     * 
      * @return the uniqueId value.
      */
     public String uniqueId() {
@@ -202,7 +200,7 @@ public final class MicrosoftGraphLocation {
 
     /**
      * Set the uniqueId property: For internal use only.
-     *
+     * 
      * @param uniqueId the uniqueId value to set.
      * @return the MicrosoftGraphLocation object itself.
      */
@@ -212,8 +210,8 @@ public final class MicrosoftGraphLocation {
     }
 
     /**
-     * Get the uniqueIdType property: The uniqueIdType property.
-     *
+     * Get the uniqueIdType property: locationUniqueIdType.
+     * 
      * @return the uniqueIdType value.
      */
     public MicrosoftGraphLocationUniqueIdType uniqueIdType() {
@@ -221,8 +219,8 @@ public final class MicrosoftGraphLocation {
     }
 
     /**
-     * Set the uniqueIdType property: The uniqueIdType property.
-     *
+     * Set the uniqueIdType property: locationUniqueIdType.
+     * 
      * @param uniqueIdType the uniqueIdType value to set.
      * @return the MicrosoftGraphLocation object itself.
      */
@@ -233,17 +231,16 @@ public final class MicrosoftGraphLocation {
 
     /**
      * Get the additionalProperties property: location.
-     *
+     * 
      * @return the additionalProperties value.
      */
-    @JsonAnyGetter
     public Map<String, Object> additionalProperties() {
         return this.additionalProperties;
     }
 
     /**
      * Set the additionalProperties property: location.
-     *
+     * 
      * @param additionalProperties the additionalProperties value to set.
      * @return the MicrosoftGraphLocation object itself.
      */
@@ -252,17 +249,9 @@ public final class MicrosoftGraphLocation {
         return this;
     }
 
-    @JsonAnySetter
-    void withAdditionalProperties(String key, Object value) {
-        if (additionalProperties == null) {
-            additionalProperties = new HashMap<>();
-        }
-        additionalProperties.put(key, value);
-    }
-
     /**
      * Validates the instance.
-     *
+     * 
      * @throws IllegalArgumentException thrown if the instance is not valid.
      */
     public void validate() {
@@ -272,5 +261,76 @@ public final class MicrosoftGraphLocation {
         if (coordinates() != null) {
             coordinates().validate();
         }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public JsonWriter toJson(JsonWriter jsonWriter) throws IOException {
+        jsonWriter.writeStartObject();
+        jsonWriter.writeJsonField("address", this.address);
+        jsonWriter.writeJsonField("coordinates", this.coordinates);
+        jsonWriter.writeStringField("displayName", this.displayName);
+        jsonWriter.writeStringField("locationEmailAddress", this.locationEmailAddress);
+        jsonWriter.writeStringField("locationType", this.locationType == null ? null : this.locationType.toString());
+        jsonWriter.writeStringField("locationUri", this.locationUri);
+        jsonWriter.writeStringField("uniqueId", this.uniqueId);
+        jsonWriter.writeStringField("uniqueIdType", this.uniqueIdType == null ? null : this.uniqueIdType.toString());
+        if (additionalProperties != null) {
+            for (Map.Entry<String, Object> additionalProperty : additionalProperties.entrySet()) {
+                jsonWriter.writeUntypedField(additionalProperty.getKey(), additionalProperty.getValue());
+            }
+        }
+        return jsonWriter.writeEndObject();
+    }
+
+    /**
+     * Reads an instance of MicrosoftGraphLocation from the JsonReader.
+     * 
+     * @param jsonReader The JsonReader being read.
+     * @return An instance of MicrosoftGraphLocation if the JsonReader was pointing to an instance of it, or null if it
+     * was pointing to JSON null.
+     * @throws IOException If an error occurs while reading the MicrosoftGraphLocation.
+     */
+    public static MicrosoftGraphLocation fromJson(JsonReader jsonReader) throws IOException {
+        return jsonReader.readObject(reader -> {
+            MicrosoftGraphLocation deserializedMicrosoftGraphLocation = new MicrosoftGraphLocation();
+            Map<String, Object> additionalProperties = null;
+            while (reader.nextToken() != JsonToken.END_OBJECT) {
+                String fieldName = reader.getFieldName();
+                reader.nextToken();
+
+                if ("address".equals(fieldName)) {
+                    deserializedMicrosoftGraphLocation.address = MicrosoftGraphPhysicalAddress.fromJson(reader);
+                } else if ("coordinates".equals(fieldName)) {
+                    deserializedMicrosoftGraphLocation.coordinates
+                        = MicrosoftGraphOutlookGeoCoordinates.fromJson(reader);
+                } else if ("displayName".equals(fieldName)) {
+                    deserializedMicrosoftGraphLocation.displayName = reader.getString();
+                } else if ("locationEmailAddress".equals(fieldName)) {
+                    deserializedMicrosoftGraphLocation.locationEmailAddress = reader.getString();
+                } else if ("locationType".equals(fieldName)) {
+                    deserializedMicrosoftGraphLocation.locationType
+                        = MicrosoftGraphLocationType.fromString(reader.getString());
+                } else if ("locationUri".equals(fieldName)) {
+                    deserializedMicrosoftGraphLocation.locationUri = reader.getString();
+                } else if ("uniqueId".equals(fieldName)) {
+                    deserializedMicrosoftGraphLocation.uniqueId = reader.getString();
+                } else if ("uniqueIdType".equals(fieldName)) {
+                    deserializedMicrosoftGraphLocation.uniqueIdType
+                        = MicrosoftGraphLocationUniqueIdType.fromString(reader.getString());
+                } else {
+                    if (additionalProperties == null) {
+                        additionalProperties = new LinkedHashMap<>();
+                    }
+
+                    additionalProperties.put(fieldName, reader.readUntyped());
+                }
+            }
+            deserializedMicrosoftGraphLocation.additionalProperties = additionalProperties;
+
+            return deserializedMicrosoftGraphLocation;
+        });
     }
 }

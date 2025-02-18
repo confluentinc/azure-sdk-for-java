@@ -5,133 +5,62 @@
 package com.azure.resourcemanager.security.fluent.models;
 
 import com.azure.core.annotation.Fluent;
-import com.azure.core.annotation.JsonFlatten;
 import com.azure.core.management.ProxyResource;
-import com.azure.core.util.logging.ClientLogger;
+import com.azure.json.JsonReader;
+import com.azure.json.JsonToken;
+import com.azure.json.JsonWriter;
 import com.azure.resourcemanager.security.models.ProvisioningState;
 import com.azure.resourcemanager.security.models.SecurityFamily;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import java.io.IOException;
 
-/** The SecuritySolution model. */
-@JsonFlatten
+/**
+ * The SecuritySolution model.
+ */
 @Fluent
-public class SecuritySolutionInner extends ProxyResource {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(SecuritySolutionInner.class);
-
+public final class SecuritySolutionInner extends ProxyResource {
     /*
-     * The security family of the security solution
+     * The properties property.
      */
-    @JsonProperty(value = "properties.securityFamily")
-    private SecurityFamily securityFamily;
-
-    /*
-     * The security family provisioning State
-     */
-    @JsonProperty(value = "properties.provisioningState")
-    private ProvisioningState provisioningState;
-
-    /*
-     * The security solutions' template
-     */
-    @JsonProperty(value = "properties.template")
-    private String template;
-
-    /*
-     * The security solutions' status
-     */
-    @JsonProperty(value = "properties.protectionStatus")
-    private String protectionStatus;
+    private SecuritySolutionProperties innerProperties;
 
     /*
      * Location where the resource is stored
      */
-    @JsonProperty(value = "location", access = JsonProperty.Access.WRITE_ONLY)
     private String location;
 
-    /**
-     * Get the securityFamily property: The security family of the security solution.
-     *
-     * @return the securityFamily value.
+    /*
+     * The type of the resource.
      */
-    public SecurityFamily securityFamily() {
-        return this.securityFamily;
+    private String type;
+
+    /*
+     * The name of the resource.
+     */
+    private String name;
+
+    /*
+     * Fully qualified resource Id for the resource.
+     */
+    private String id;
+
+    /**
+     * Creates an instance of SecuritySolutionInner class.
+     */
+    public SecuritySolutionInner() {
     }
 
     /**
-     * Set the securityFamily property: The security family of the security solution.
-     *
-     * @param securityFamily the securityFamily value to set.
-     * @return the SecuritySolutionInner object itself.
+     * Get the innerProperties property: The properties property.
+     * 
+     * @return the innerProperties value.
      */
-    public SecuritySolutionInner withSecurityFamily(SecurityFamily securityFamily) {
-        this.securityFamily = securityFamily;
-        return this;
-    }
-
-    /**
-     * Get the provisioningState property: The security family provisioning State.
-     *
-     * @return the provisioningState value.
-     */
-    public ProvisioningState provisioningState() {
-        return this.provisioningState;
-    }
-
-    /**
-     * Set the provisioningState property: The security family provisioning State.
-     *
-     * @param provisioningState the provisioningState value to set.
-     * @return the SecuritySolutionInner object itself.
-     */
-    public SecuritySolutionInner withProvisioningState(ProvisioningState provisioningState) {
-        this.provisioningState = provisioningState;
-        return this;
-    }
-
-    /**
-     * Get the template property: The security solutions' template.
-     *
-     * @return the template value.
-     */
-    public String template() {
-        return this.template;
-    }
-
-    /**
-     * Set the template property: The security solutions' template.
-     *
-     * @param template the template value to set.
-     * @return the SecuritySolutionInner object itself.
-     */
-    public SecuritySolutionInner withTemplate(String template) {
-        this.template = template;
-        return this;
-    }
-
-    /**
-     * Get the protectionStatus property: The security solutions' status.
-     *
-     * @return the protectionStatus value.
-     */
-    public String protectionStatus() {
-        return this.protectionStatus;
-    }
-
-    /**
-     * Set the protectionStatus property: The security solutions' status.
-     *
-     * @param protectionStatus the protectionStatus value to set.
-     * @return the SecuritySolutionInner object itself.
-     */
-    public SecuritySolutionInner withProtectionStatus(String protectionStatus) {
-        this.protectionStatus = protectionStatus;
-        return this;
+    private SecuritySolutionProperties innerProperties() {
+        return this.innerProperties;
     }
 
     /**
      * Get the location property: Location where the resource is stored.
-     *
+     * 
      * @return the location value.
      */
     public String location() {
@@ -139,10 +68,180 @@ public class SecuritySolutionInner extends ProxyResource {
     }
 
     /**
+     * Get the type property: The type of the resource.
+     * 
+     * @return the type value.
+     */
+    @Override
+    public String type() {
+        return this.type;
+    }
+
+    /**
+     * Get the name property: The name of the resource.
+     * 
+     * @return the name value.
+     */
+    @Override
+    public String name() {
+        return this.name;
+    }
+
+    /**
+     * Get the id property: Fully qualified resource Id for the resource.
+     * 
+     * @return the id value.
+     */
+    @Override
+    public String id() {
+        return this.id;
+    }
+
+    /**
+     * Get the securityFamily property: The security family of the security solution.
+     * 
+     * @return the securityFamily value.
+     */
+    public SecurityFamily securityFamily() {
+        return this.innerProperties() == null ? null : this.innerProperties().securityFamily();
+    }
+
+    /**
+     * Set the securityFamily property: The security family of the security solution.
+     * 
+     * @param securityFamily the securityFamily value to set.
+     * @return the SecuritySolutionInner object itself.
+     */
+    public SecuritySolutionInner withSecurityFamily(SecurityFamily securityFamily) {
+        if (this.innerProperties() == null) {
+            this.innerProperties = new SecuritySolutionProperties();
+        }
+        this.innerProperties().withSecurityFamily(securityFamily);
+        return this;
+    }
+
+    /**
+     * Get the provisioningState property: The security family provisioning State.
+     * 
+     * @return the provisioningState value.
+     */
+    public ProvisioningState provisioningState() {
+        return this.innerProperties() == null ? null : this.innerProperties().provisioningState();
+    }
+
+    /**
+     * Set the provisioningState property: The security family provisioning State.
+     * 
+     * @param provisioningState the provisioningState value to set.
+     * @return the SecuritySolutionInner object itself.
+     */
+    public SecuritySolutionInner withProvisioningState(ProvisioningState provisioningState) {
+        if (this.innerProperties() == null) {
+            this.innerProperties = new SecuritySolutionProperties();
+        }
+        this.innerProperties().withProvisioningState(provisioningState);
+        return this;
+    }
+
+    /**
+     * Get the template property: The security solutions' template.
+     * 
+     * @return the template value.
+     */
+    public String template() {
+        return this.innerProperties() == null ? null : this.innerProperties().template();
+    }
+
+    /**
+     * Set the template property: The security solutions' template.
+     * 
+     * @param template the template value to set.
+     * @return the SecuritySolutionInner object itself.
+     */
+    public SecuritySolutionInner withTemplate(String template) {
+        if (this.innerProperties() == null) {
+            this.innerProperties = new SecuritySolutionProperties();
+        }
+        this.innerProperties().withTemplate(template);
+        return this;
+    }
+
+    /**
+     * Get the protectionStatus property: The security solutions' status.
+     * 
+     * @return the protectionStatus value.
+     */
+    public String protectionStatus() {
+        return this.innerProperties() == null ? null : this.innerProperties().protectionStatus();
+    }
+
+    /**
+     * Set the protectionStatus property: The security solutions' status.
+     * 
+     * @param protectionStatus the protectionStatus value to set.
+     * @return the SecuritySolutionInner object itself.
+     */
+    public SecuritySolutionInner withProtectionStatus(String protectionStatus) {
+        if (this.innerProperties() == null) {
+            this.innerProperties = new SecuritySolutionProperties();
+        }
+        this.innerProperties().withProtectionStatus(protectionStatus);
+        return this;
+    }
+
+    /**
      * Validates the instance.
-     *
+     * 
      * @throws IllegalArgumentException thrown if the instance is not valid.
      */
     public void validate() {
+        if (innerProperties() != null) {
+            innerProperties().validate();
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public JsonWriter toJson(JsonWriter jsonWriter) throws IOException {
+        jsonWriter.writeStartObject();
+        jsonWriter.writeJsonField("properties", this.innerProperties);
+        return jsonWriter.writeEndObject();
+    }
+
+    /**
+     * Reads an instance of SecuritySolutionInner from the JsonReader.
+     * 
+     * @param jsonReader The JsonReader being read.
+     * @return An instance of SecuritySolutionInner if the JsonReader was pointing to an instance of it, or null if it
+     * was pointing to JSON null.
+     * @throws IllegalStateException If the deserialized JSON object was missing any required properties.
+     * @throws IOException If an error occurs while reading the SecuritySolutionInner.
+     */
+    public static SecuritySolutionInner fromJson(JsonReader jsonReader) throws IOException {
+        return jsonReader.readObject(reader -> {
+            SecuritySolutionInner deserializedSecuritySolutionInner = new SecuritySolutionInner();
+            while (reader.nextToken() != JsonToken.END_OBJECT) {
+                String fieldName = reader.getFieldName();
+                reader.nextToken();
+
+                if ("id".equals(fieldName)) {
+                    deserializedSecuritySolutionInner.id = reader.getString();
+                } else if ("name".equals(fieldName)) {
+                    deserializedSecuritySolutionInner.name = reader.getString();
+                } else if ("type".equals(fieldName)) {
+                    deserializedSecuritySolutionInner.type = reader.getString();
+                } else if ("properties".equals(fieldName)) {
+                    deserializedSecuritySolutionInner.innerProperties = SecuritySolutionProperties.fromJson(reader);
+                } else if ("location".equals(fieldName)) {
+                    deserializedSecuritySolutionInner.location = reader.getString();
+                } else {
+                    reader.skipChildren();
+                }
+            }
+
+            return deserializedSecuritySolutionInner;
+        });
     }
 }

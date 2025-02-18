@@ -4,18 +4,23 @@
 
 package com.azure.resourcemanager.cosmos.models;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonValue;
-
-/** Defines values for NetworkAclBypass. */
+/**
+ * Indicates what services are allowed to bypass firewall checks.
+ */
 public enum NetworkAclBypass {
-    /** Enum value None. */
+    /**
+     * Enum value None.
+     */
     NONE("None"),
 
-    /** Enum value AzureServices. */
+    /**
+     * Enum value AzureServices.
+     */
     AZURE_SERVICES("AzureServices");
 
-    /** The actual serialized value for a NetworkAclBypass instance. */
+    /**
+     * The actual serialized value for a NetworkAclBypass instance.
+     */
     private final String value;
 
     NetworkAclBypass(String value) {
@@ -24,12 +29,14 @@ public enum NetworkAclBypass {
 
     /**
      * Parses a serialized value to a NetworkAclBypass instance.
-     *
+     * 
      * @param value the serialized value to parse.
      * @return the parsed NetworkAclBypass object, or null if unable to parse.
      */
-    @JsonCreator
     public static NetworkAclBypass fromString(String value) {
+        if (value == null) {
+            return null;
+        }
         NetworkAclBypass[] items = NetworkAclBypass.values();
         for (NetworkAclBypass item : items) {
             if (item.toString().equalsIgnoreCase(value)) {
@@ -39,7 +46,9 @@ public enum NetworkAclBypass {
         return null;
     }
 
-    @JsonValue
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String toString() {
         return this.value;

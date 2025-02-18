@@ -12,49 +12,33 @@ import com.azure.resourcemanager.recoveryservicesbackup.fluent.models.RecoveryPo
 import com.azure.resourcemanager.recoveryservicesbackup.models.ListRecoveryPointsRecommendedForMoveRequest;
 import com.azure.resourcemanager.recoveryservicesbackup.models.RecoveryPointResource;
 import com.azure.resourcemanager.recoveryservicesbackup.models.RecoveryPointsRecommendedForMoves;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 public final class RecoveryPointsRecommendedForMovesImpl implements RecoveryPointsRecommendedForMoves {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(RecoveryPointsRecommendedForMovesImpl.class);
+    private static final ClientLogger LOGGER = new ClientLogger(RecoveryPointsRecommendedForMovesImpl.class);
 
     private final RecoveryPointsRecommendedForMovesClient innerClient;
 
     private final com.azure.resourcemanager.recoveryservicesbackup.RecoveryServicesBackupManager serviceManager;
 
-    public RecoveryPointsRecommendedForMovesImpl(
-        RecoveryPointsRecommendedForMovesClient innerClient,
+    public RecoveryPointsRecommendedForMovesImpl(RecoveryPointsRecommendedForMovesClient innerClient,
         com.azure.resourcemanager.recoveryservicesbackup.RecoveryServicesBackupManager serviceManager) {
         this.innerClient = innerClient;
         this.serviceManager = serviceManager;
     }
 
-    public PagedIterable<RecoveryPointResource> list(
-        String vaultName,
-        String resourceGroupName,
-        String fabricName,
-        String containerName,
-        String protectedItemName,
-        ListRecoveryPointsRecommendedForMoveRequest parameters) {
-        PagedIterable<RecoveryPointResourceInner> inner =
-            this
-                .serviceClient()
-                .list(vaultName, resourceGroupName, fabricName, containerName, protectedItemName, parameters);
-        return Utils.mapPage(inner, inner1 -> new RecoveryPointResourceImpl(inner1, this.manager()));
+    public PagedIterable<RecoveryPointResource> list(String vaultName, String resourceGroupName, String fabricName,
+        String containerName, String protectedItemName, ListRecoveryPointsRecommendedForMoveRequest parameters) {
+        PagedIterable<RecoveryPointResourceInner> inner = this.serviceClient()
+            .list(vaultName, resourceGroupName, fabricName, containerName, protectedItemName, parameters);
+        return ResourceManagerUtils.mapPage(inner, inner1 -> new RecoveryPointResourceImpl(inner1, this.manager()));
     }
 
-    public PagedIterable<RecoveryPointResource> list(
-        String vaultName,
-        String resourceGroupName,
-        String fabricName,
-        String containerName,
-        String protectedItemName,
-        ListRecoveryPointsRecommendedForMoveRequest parameters,
+    public PagedIterable<RecoveryPointResource> list(String vaultName, String resourceGroupName, String fabricName,
+        String containerName, String protectedItemName, ListRecoveryPointsRecommendedForMoveRequest parameters,
         Context context) {
-        PagedIterable<RecoveryPointResourceInner> inner =
-            this
-                .serviceClient()
-                .list(vaultName, resourceGroupName, fabricName, containerName, protectedItemName, parameters, context);
-        return Utils.mapPage(inner, inner1 -> new RecoveryPointResourceImpl(inner1, this.manager()));
+        PagedIterable<RecoveryPointResourceInner> inner = this.serviceClient()
+            .list(vaultName, resourceGroupName, fabricName, containerName, protectedItemName, parameters, context);
+        return ResourceManagerUtils.mapPage(inner, inner1 -> new RecoveryPointResourceImpl(inner1, this.manager()));
     }
 
     private RecoveryPointsRecommendedForMovesClient serviceClient() {

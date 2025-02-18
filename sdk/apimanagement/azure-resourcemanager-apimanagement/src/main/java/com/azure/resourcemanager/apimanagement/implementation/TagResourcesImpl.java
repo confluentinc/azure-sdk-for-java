@@ -11,32 +11,31 @@ import com.azure.resourcemanager.apimanagement.fluent.TagResourcesClient;
 import com.azure.resourcemanager.apimanagement.fluent.models.TagResourceContractInner;
 import com.azure.resourcemanager.apimanagement.models.TagResourceContract;
 import com.azure.resourcemanager.apimanagement.models.TagResources;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 public final class TagResourcesImpl implements TagResources {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(TagResourcesImpl.class);
+    private static final ClientLogger LOGGER = new ClientLogger(TagResourcesImpl.class);
 
     private final TagResourcesClient innerClient;
 
     private final com.azure.resourcemanager.apimanagement.ApiManagementManager serviceManager;
 
-    public TagResourcesImpl(
-        TagResourcesClient innerClient, com.azure.resourcemanager.apimanagement.ApiManagementManager serviceManager) {
+    public TagResourcesImpl(TagResourcesClient innerClient,
+        com.azure.resourcemanager.apimanagement.ApiManagementManager serviceManager) {
         this.innerClient = innerClient;
         this.serviceManager = serviceManager;
     }
 
     public PagedIterable<TagResourceContract> listByService(String resourceGroupName, String serviceName) {
-        PagedIterable<TagResourceContractInner> inner =
-            this.serviceClient().listByService(resourceGroupName, serviceName);
-        return Utils.mapPage(inner, inner1 -> new TagResourceContractImpl(inner1, this.manager()));
+        PagedIterable<TagResourceContractInner> inner
+            = this.serviceClient().listByService(resourceGroupName, serviceName);
+        return ResourceManagerUtils.mapPage(inner, inner1 -> new TagResourceContractImpl(inner1, this.manager()));
     }
 
-    public PagedIterable<TagResourceContract> listByService(
-        String resourceGroupName, String serviceName, String filter, Integer top, Integer skip, Context context) {
-        PagedIterable<TagResourceContractInner> inner =
-            this.serviceClient().listByService(resourceGroupName, serviceName, filter, top, skip, context);
-        return Utils.mapPage(inner, inner1 -> new TagResourceContractImpl(inner1, this.manager()));
+    public PagedIterable<TagResourceContract> listByService(String resourceGroupName, String serviceName, String filter,
+        Integer top, Integer skip, Context context) {
+        PagedIterable<TagResourceContractInner> inner
+            = this.serviceClient().listByService(resourceGroupName, serviceName, filter, top, skip, context);
+        return ResourceManagerUtils.mapPage(inner, inner1 -> new TagResourceContractImpl(inner1, this.manager()));
     }
 
     private TagResourcesClient serviceClient() {

@@ -17,7 +17,7 @@ import java.nio.ByteBuffer;
  * Provides an input stream to read a given storage file resource.
  */
 public class StorageFileInputStream extends StorageInputStream {
-    private final ClientLogger logger = new ClientLogger(StorageFileInputStream.class);
+    private static final ClientLogger LOGGER = new ClientLogger(StorageFileInputStream.class);
 
     private final ShareFileAsyncClient shareFileAsyncClient;
 
@@ -28,8 +28,7 @@ public class StorageFileInputStream extends StorageInputStream {
      * associated with.
      * @throws ShareStorageException An exception representing any error which occurred during the operation.
      */
-    StorageFileInputStream(final ShareFileAsyncClient shareFileAsyncClient)
-        throws ShareStorageException {
+    StorageFileInputStream(final ShareFileAsyncClient shareFileAsyncClient) throws ShareStorageException {
         this(shareFileAsyncClient, 0, null);
     }
 
@@ -58,8 +57,8 @@ public class StorageFileInputStream extends StorageInputStream {
     @Override
     protected synchronized ByteBuffer dispatchRead(final int readLength, final long offset) {
         try {
-            ByteBuffer currentBuffer = this.shareFileAsyncClient.downloadWithResponse(
-                new ShareFileRange(offset, offset + readLength - 1), false)
+            ByteBuffer currentBuffer = this.shareFileAsyncClient
+                .downloadWithResponse(new ShareFileRange(offset, offset + readLength - 1), false)
                 .flatMap(response -> FluxUtil.collectBytesInByteBufferStream(response.getValue()).map(ByteBuffer::wrap))
                 .block();
 
@@ -70,7 +69,7 @@ public class StorageFileInputStream extends StorageInputStream {
             this.streamFaulted = true;
             this.lastError = new IOException(e);
 
-            throw logger.logExceptionAsError(new RuntimeException(this.lastError.getMessage()));
+            throw LOGGER.logExceptionAsError(new RuntimeException(this.lastError.getMessage(), e));
         }
     }
 }

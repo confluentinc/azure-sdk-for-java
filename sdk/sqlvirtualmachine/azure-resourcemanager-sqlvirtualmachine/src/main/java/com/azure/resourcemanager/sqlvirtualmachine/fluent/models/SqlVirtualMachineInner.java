@@ -5,120 +5,71 @@
 package com.azure.resourcemanager.sqlvirtualmachine.fluent.models;
 
 import com.azure.core.annotation.Fluent;
-import com.azure.core.annotation.JsonFlatten;
 import com.azure.core.management.Resource;
-import com.azure.core.util.logging.ClientLogger;
+import com.azure.core.management.SystemData;
+import com.azure.json.JsonReader;
+import com.azure.json.JsonToken;
+import com.azure.json.JsonWriter;
+import com.azure.resourcemanager.sqlvirtualmachine.models.AssessmentSettings;
 import com.azure.resourcemanager.sqlvirtualmachine.models.AutoBackupSettings;
 import com.azure.resourcemanager.sqlvirtualmachine.models.AutoPatchingSettings;
 import com.azure.resourcemanager.sqlvirtualmachine.models.KeyVaultCredentialSettings;
+import com.azure.resourcemanager.sqlvirtualmachine.models.LeastPrivilegeMode;
 import com.azure.resourcemanager.sqlvirtualmachine.models.ResourceIdentity;
 import com.azure.resourcemanager.sqlvirtualmachine.models.ServerConfigurationsManagementSettings;
 import com.azure.resourcemanager.sqlvirtualmachine.models.SqlImageSku;
 import com.azure.resourcemanager.sqlvirtualmachine.models.SqlManagementMode;
 import com.azure.resourcemanager.sqlvirtualmachine.models.SqlServerLicenseType;
 import com.azure.resourcemanager.sqlvirtualmachine.models.StorageConfigurationSettings;
+import com.azure.resourcemanager.sqlvirtualmachine.models.TroubleshootingStatus;
 import com.azure.resourcemanager.sqlvirtualmachine.models.WsfcDomainCredentials;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import java.io.IOException;
 import java.util.Map;
 
-/** A SQL virtual machine. */
-@JsonFlatten
+/**
+ * A SQL virtual machine.
+ */
 @Fluent
-public class SqlVirtualMachineInner extends Resource {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(SqlVirtualMachineInner.class);
-
+public final class SqlVirtualMachineInner extends Resource {
     /*
      * Azure Active Directory identity of the server.
      */
-    @JsonProperty(value = "identity")
     private ResourceIdentity identity;
 
     /*
-     * ARM Resource id of underlying virtual machine created from SQL
-     * marketplace image.
+     * Resource properties.
      */
-    @JsonProperty(value = "properties.virtualMachineResourceId")
-    private String virtualMachineResourceId;
+    private SqlVirtualMachineProperties innerProperties;
 
     /*
-     * Provisioning state to track the async operation status.
+     * Metadata pertaining to creation and last modification of the resource.
      */
-    @JsonProperty(value = "properties.provisioningState", access = JsonProperty.Access.WRITE_ONLY)
-    private String provisioningState;
+    private SystemData systemData;
 
     /*
-     * SQL image offer. Examples include SQL2016-WS2016, SQL2017-WS2016.
+     * The type of the resource.
      */
-    @JsonProperty(value = "properties.sqlImageOffer")
-    private String sqlImageOffer;
+    private String type;
 
     /*
-     * SQL Server license type.
+     * The name of the resource.
      */
-    @JsonProperty(value = "properties.sqlServerLicenseType")
-    private SqlServerLicenseType sqlServerLicenseType;
+    private String name;
 
     /*
-     * SQL Server Management type.
+     * Fully qualified resource Id for the resource.
      */
-    @JsonProperty(value = "properties.sqlManagement")
-    private SqlManagementMode sqlManagement;
+    private String id;
 
-    /*
-     * SQL Server edition type.
+    /**
+     * Creates an instance of SqlVirtualMachineInner class.
      */
-    @JsonProperty(value = "properties.sqlImageSku")
-    private SqlImageSku sqlImageSku;
-
-    /*
-     * ARM resource id of the SQL virtual machine group this SQL virtual
-     * machine is or will be part of.
-     */
-    @JsonProperty(value = "properties.sqlVirtualMachineGroupResourceId")
-    private String sqlVirtualMachineGroupResourceId;
-
-    /*
-     * Domain credentials for setting up Windows Server Failover Cluster for
-     * SQL availability group.
-     */
-    @JsonProperty(value = "properties.wsfcDomainCredentials")
-    private WsfcDomainCredentials wsfcDomainCredentials;
-
-    /*
-     * Auto patching settings for applying critical security updates to SQL
-     * virtual machine.
-     */
-    @JsonProperty(value = "properties.autoPatchingSettings")
-    private AutoPatchingSettings autoPatchingSettings;
-
-    /*
-     * Auto backup settings for SQL Server.
-     */
-    @JsonProperty(value = "properties.autoBackupSettings")
-    private AutoBackupSettings autoBackupSettings;
-
-    /*
-     * Key vault credential settings.
-     */
-    @JsonProperty(value = "properties.keyVaultCredentialSettings")
-    private KeyVaultCredentialSettings keyVaultCredentialSettings;
-
-    /*
-     * SQL Server configuration management settings.
-     */
-    @JsonProperty(value = "properties.serverConfigurationsManagementSettings")
-    private ServerConfigurationsManagementSettings serverConfigurationsManagementSettings;
-
-    /*
-     * Storage Configuration Settings.
-     */
-    @JsonProperty(value = "properties.storageConfigurationSettings")
-    private StorageConfigurationSettings storageConfigurationSettings;
+    public SqlVirtualMachineInner() {
+    }
 
     /**
      * Get the identity property: Azure Active Directory identity of the server.
-     *
+     * 
      * @return the identity value.
      */
     public ResourceIdentity identity() {
@@ -127,7 +78,7 @@ public class SqlVirtualMachineInner extends Resource {
 
     /**
      * Set the identity property: Azure Active Directory identity of the server.
-     *
+     * 
      * @param identity the identity value to set.
      * @return the SqlVirtualMachineInner object itself.
      */
@@ -137,273 +88,65 @@ public class SqlVirtualMachineInner extends Resource {
     }
 
     /**
-     * Get the virtualMachineResourceId property: ARM Resource id of underlying virtual machine created from SQL
-     * marketplace image.
-     *
-     * @return the virtualMachineResourceId value.
+     * Get the innerProperties property: Resource properties.
+     * 
+     * @return the innerProperties value.
      */
-    public String virtualMachineResourceId() {
-        return this.virtualMachineResourceId;
+    private SqlVirtualMachineProperties innerProperties() {
+        return this.innerProperties;
     }
 
     /**
-     * Set the virtualMachineResourceId property: ARM Resource id of underlying virtual machine created from SQL
-     * marketplace image.
-     *
-     * @param virtualMachineResourceId the virtualMachineResourceId value to set.
-     * @return the SqlVirtualMachineInner object itself.
+     * Get the systemData property: Metadata pertaining to creation and last modification of the resource.
+     * 
+     * @return the systemData value.
      */
-    public SqlVirtualMachineInner withVirtualMachineResourceId(String virtualMachineResourceId) {
-        this.virtualMachineResourceId = virtualMachineResourceId;
-        return this;
+    public SystemData systemData() {
+        return this.systemData;
     }
 
     /**
-     * Get the provisioningState property: Provisioning state to track the async operation status.
-     *
-     * @return the provisioningState value.
+     * Get the type property: The type of the resource.
+     * 
+     * @return the type value.
      */
-    public String provisioningState() {
-        return this.provisioningState;
+    @Override
+    public String type() {
+        return this.type;
     }
 
     /**
-     * Get the sqlImageOffer property: SQL image offer. Examples include SQL2016-WS2016, SQL2017-WS2016.
-     *
-     * @return the sqlImageOffer value.
+     * Get the name property: The name of the resource.
+     * 
+     * @return the name value.
      */
-    public String sqlImageOffer() {
-        return this.sqlImageOffer;
+    @Override
+    public String name() {
+        return this.name;
     }
 
     /**
-     * Set the sqlImageOffer property: SQL image offer. Examples include SQL2016-WS2016, SQL2017-WS2016.
-     *
-     * @param sqlImageOffer the sqlImageOffer value to set.
-     * @return the SqlVirtualMachineInner object itself.
+     * Get the id property: Fully qualified resource Id for the resource.
+     * 
+     * @return the id value.
      */
-    public SqlVirtualMachineInner withSqlImageOffer(String sqlImageOffer) {
-        this.sqlImageOffer = sqlImageOffer;
-        return this;
+    @Override
+    public String id() {
+        return this.id;
     }
 
     /**
-     * Get the sqlServerLicenseType property: SQL Server license type.
-     *
-     * @return the sqlServerLicenseType value.
+     * {@inheritDoc}
      */
-    public SqlServerLicenseType sqlServerLicenseType() {
-        return this.sqlServerLicenseType;
-    }
-
-    /**
-     * Set the sqlServerLicenseType property: SQL Server license type.
-     *
-     * @param sqlServerLicenseType the sqlServerLicenseType value to set.
-     * @return the SqlVirtualMachineInner object itself.
-     */
-    public SqlVirtualMachineInner withSqlServerLicenseType(SqlServerLicenseType sqlServerLicenseType) {
-        this.sqlServerLicenseType = sqlServerLicenseType;
-        return this;
-    }
-
-    /**
-     * Get the sqlManagement property: SQL Server Management type.
-     *
-     * @return the sqlManagement value.
-     */
-    public SqlManagementMode sqlManagement() {
-        return this.sqlManagement;
-    }
-
-    /**
-     * Set the sqlManagement property: SQL Server Management type.
-     *
-     * @param sqlManagement the sqlManagement value to set.
-     * @return the SqlVirtualMachineInner object itself.
-     */
-    public SqlVirtualMachineInner withSqlManagement(SqlManagementMode sqlManagement) {
-        this.sqlManagement = sqlManagement;
-        return this;
-    }
-
-    /**
-     * Get the sqlImageSku property: SQL Server edition type.
-     *
-     * @return the sqlImageSku value.
-     */
-    public SqlImageSku sqlImageSku() {
-        return this.sqlImageSku;
-    }
-
-    /**
-     * Set the sqlImageSku property: SQL Server edition type.
-     *
-     * @param sqlImageSku the sqlImageSku value to set.
-     * @return the SqlVirtualMachineInner object itself.
-     */
-    public SqlVirtualMachineInner withSqlImageSku(SqlImageSku sqlImageSku) {
-        this.sqlImageSku = sqlImageSku;
-        return this;
-    }
-
-    /**
-     * Get the sqlVirtualMachineGroupResourceId property: ARM resource id of the SQL virtual machine group this SQL
-     * virtual machine is or will be part of.
-     *
-     * @return the sqlVirtualMachineGroupResourceId value.
-     */
-    public String sqlVirtualMachineGroupResourceId() {
-        return this.sqlVirtualMachineGroupResourceId;
-    }
-
-    /**
-     * Set the sqlVirtualMachineGroupResourceId property: ARM resource id of the SQL virtual machine group this SQL
-     * virtual machine is or will be part of.
-     *
-     * @param sqlVirtualMachineGroupResourceId the sqlVirtualMachineGroupResourceId value to set.
-     * @return the SqlVirtualMachineInner object itself.
-     */
-    public SqlVirtualMachineInner withSqlVirtualMachineGroupResourceId(String sqlVirtualMachineGroupResourceId) {
-        this.sqlVirtualMachineGroupResourceId = sqlVirtualMachineGroupResourceId;
-        return this;
-    }
-
-    /**
-     * Get the wsfcDomainCredentials property: Domain credentials for setting up Windows Server Failover Cluster for SQL
-     * availability group.
-     *
-     * @return the wsfcDomainCredentials value.
-     */
-    public WsfcDomainCredentials wsfcDomainCredentials() {
-        return this.wsfcDomainCredentials;
-    }
-
-    /**
-     * Set the wsfcDomainCredentials property: Domain credentials for setting up Windows Server Failover Cluster for SQL
-     * availability group.
-     *
-     * @param wsfcDomainCredentials the wsfcDomainCredentials value to set.
-     * @return the SqlVirtualMachineInner object itself.
-     */
-    public SqlVirtualMachineInner withWsfcDomainCredentials(WsfcDomainCredentials wsfcDomainCredentials) {
-        this.wsfcDomainCredentials = wsfcDomainCredentials;
-        return this;
-    }
-
-    /**
-     * Get the autoPatchingSettings property: Auto patching settings for applying critical security updates to SQL
-     * virtual machine.
-     *
-     * @return the autoPatchingSettings value.
-     */
-    public AutoPatchingSettings autoPatchingSettings() {
-        return this.autoPatchingSettings;
-    }
-
-    /**
-     * Set the autoPatchingSettings property: Auto patching settings for applying critical security updates to SQL
-     * virtual machine.
-     *
-     * @param autoPatchingSettings the autoPatchingSettings value to set.
-     * @return the SqlVirtualMachineInner object itself.
-     */
-    public SqlVirtualMachineInner withAutoPatchingSettings(AutoPatchingSettings autoPatchingSettings) {
-        this.autoPatchingSettings = autoPatchingSettings;
-        return this;
-    }
-
-    /**
-     * Get the autoBackupSettings property: Auto backup settings for SQL Server.
-     *
-     * @return the autoBackupSettings value.
-     */
-    public AutoBackupSettings autoBackupSettings() {
-        return this.autoBackupSettings;
-    }
-
-    /**
-     * Set the autoBackupSettings property: Auto backup settings for SQL Server.
-     *
-     * @param autoBackupSettings the autoBackupSettings value to set.
-     * @return the SqlVirtualMachineInner object itself.
-     */
-    public SqlVirtualMachineInner withAutoBackupSettings(AutoBackupSettings autoBackupSettings) {
-        this.autoBackupSettings = autoBackupSettings;
-        return this;
-    }
-
-    /**
-     * Get the keyVaultCredentialSettings property: Key vault credential settings.
-     *
-     * @return the keyVaultCredentialSettings value.
-     */
-    public KeyVaultCredentialSettings keyVaultCredentialSettings() {
-        return this.keyVaultCredentialSettings;
-    }
-
-    /**
-     * Set the keyVaultCredentialSettings property: Key vault credential settings.
-     *
-     * @param keyVaultCredentialSettings the keyVaultCredentialSettings value to set.
-     * @return the SqlVirtualMachineInner object itself.
-     */
-    public SqlVirtualMachineInner withKeyVaultCredentialSettings(
-        KeyVaultCredentialSettings keyVaultCredentialSettings) {
-        this.keyVaultCredentialSettings = keyVaultCredentialSettings;
-        return this;
-    }
-
-    /**
-     * Get the serverConfigurationsManagementSettings property: SQL Server configuration management settings.
-     *
-     * @return the serverConfigurationsManagementSettings value.
-     */
-    public ServerConfigurationsManagementSettings serverConfigurationsManagementSettings() {
-        return this.serverConfigurationsManagementSettings;
-    }
-
-    /**
-     * Set the serverConfigurationsManagementSettings property: SQL Server configuration management settings.
-     *
-     * @param serverConfigurationsManagementSettings the serverConfigurationsManagementSettings value to set.
-     * @return the SqlVirtualMachineInner object itself.
-     */
-    public SqlVirtualMachineInner withServerConfigurationsManagementSettings(
-        ServerConfigurationsManagementSettings serverConfigurationsManagementSettings) {
-        this.serverConfigurationsManagementSettings = serverConfigurationsManagementSettings;
-        return this;
-    }
-
-    /**
-     * Get the storageConfigurationSettings property: Storage Configuration Settings.
-     *
-     * @return the storageConfigurationSettings value.
-     */
-    public StorageConfigurationSettings storageConfigurationSettings() {
-        return this.storageConfigurationSettings;
-    }
-
-    /**
-     * Set the storageConfigurationSettings property: Storage Configuration Settings.
-     *
-     * @param storageConfigurationSettings the storageConfigurationSettings value to set.
-     * @return the SqlVirtualMachineInner object itself.
-     */
-    public SqlVirtualMachineInner withStorageConfigurationSettings(
-        StorageConfigurationSettings storageConfigurationSettings) {
-        this.storageConfigurationSettings = storageConfigurationSettings;
-        return this;
-    }
-
-    /** {@inheritDoc} */
     @Override
     public SqlVirtualMachineInner withLocation(String location) {
         super.withLocation(location);
         return this;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public SqlVirtualMachineInner withTags(Map<String, String> tags) {
         super.withTags(tags);
@@ -411,31 +154,470 @@ public class SqlVirtualMachineInner extends Resource {
     }
 
     /**
+     * Get the virtualMachineResourceId property: ARM Resource id of underlying virtual machine created from SQL
+     * marketplace image.
+     * 
+     * @return the virtualMachineResourceId value.
+     */
+    public String virtualMachineResourceId() {
+        return this.innerProperties() == null ? null : this.innerProperties().virtualMachineResourceId();
+    }
+
+    /**
+     * Set the virtualMachineResourceId property: ARM Resource id of underlying virtual machine created from SQL
+     * marketplace image.
+     * 
+     * @param virtualMachineResourceId the virtualMachineResourceId value to set.
+     * @return the SqlVirtualMachineInner object itself.
+     */
+    public SqlVirtualMachineInner withVirtualMachineResourceId(String virtualMachineResourceId) {
+        if (this.innerProperties() == null) {
+            this.innerProperties = new SqlVirtualMachineProperties();
+        }
+        this.innerProperties().withVirtualMachineResourceId(virtualMachineResourceId);
+        return this;
+    }
+
+    /**
+     * Get the provisioningState property: Provisioning state to track the async operation status.
+     * 
+     * @return the provisioningState value.
+     */
+    public String provisioningState() {
+        return this.innerProperties() == null ? null : this.innerProperties().provisioningState();
+    }
+
+    /**
+     * Get the sqlImageOffer property: SQL image offer. Examples include SQL2016-WS2016, SQL2017-WS2016.
+     * 
+     * @return the sqlImageOffer value.
+     */
+    public String sqlImageOffer() {
+        return this.innerProperties() == null ? null : this.innerProperties().sqlImageOffer();
+    }
+
+    /**
+     * Set the sqlImageOffer property: SQL image offer. Examples include SQL2016-WS2016, SQL2017-WS2016.
+     * 
+     * @param sqlImageOffer the sqlImageOffer value to set.
+     * @return the SqlVirtualMachineInner object itself.
+     */
+    public SqlVirtualMachineInner withSqlImageOffer(String sqlImageOffer) {
+        if (this.innerProperties() == null) {
+            this.innerProperties = new SqlVirtualMachineProperties();
+        }
+        this.innerProperties().withSqlImageOffer(sqlImageOffer);
+        return this;
+    }
+
+    /**
+     * Get the sqlServerLicenseType property: SQL Server license type.
+     * 
+     * @return the sqlServerLicenseType value.
+     */
+    public SqlServerLicenseType sqlServerLicenseType() {
+        return this.innerProperties() == null ? null : this.innerProperties().sqlServerLicenseType();
+    }
+
+    /**
+     * Set the sqlServerLicenseType property: SQL Server license type.
+     * 
+     * @param sqlServerLicenseType the sqlServerLicenseType value to set.
+     * @return the SqlVirtualMachineInner object itself.
+     */
+    public SqlVirtualMachineInner withSqlServerLicenseType(SqlServerLicenseType sqlServerLicenseType) {
+        if (this.innerProperties() == null) {
+            this.innerProperties = new SqlVirtualMachineProperties();
+        }
+        this.innerProperties().withSqlServerLicenseType(sqlServerLicenseType);
+        return this;
+    }
+
+    /**
+     * Get the sqlManagement property: SQL Server Management type.
+     * 
+     * @return the sqlManagement value.
+     */
+    public SqlManagementMode sqlManagement() {
+        return this.innerProperties() == null ? null : this.innerProperties().sqlManagement();
+    }
+
+    /**
+     * Set the sqlManagement property: SQL Server Management type.
+     * 
+     * @param sqlManagement the sqlManagement value to set.
+     * @return the SqlVirtualMachineInner object itself.
+     */
+    public SqlVirtualMachineInner withSqlManagement(SqlManagementMode sqlManagement) {
+        if (this.innerProperties() == null) {
+            this.innerProperties = new SqlVirtualMachineProperties();
+        }
+        this.innerProperties().withSqlManagement(sqlManagement);
+        return this;
+    }
+
+    /**
+     * Get the leastPrivilegeMode property: SQL IaaS Agent least privilege mode.
+     * 
+     * @return the leastPrivilegeMode value.
+     */
+    public LeastPrivilegeMode leastPrivilegeMode() {
+        return this.innerProperties() == null ? null : this.innerProperties().leastPrivilegeMode();
+    }
+
+    /**
+     * Set the leastPrivilegeMode property: SQL IaaS Agent least privilege mode.
+     * 
+     * @param leastPrivilegeMode the leastPrivilegeMode value to set.
+     * @return the SqlVirtualMachineInner object itself.
+     */
+    public SqlVirtualMachineInner withLeastPrivilegeMode(LeastPrivilegeMode leastPrivilegeMode) {
+        if (this.innerProperties() == null) {
+            this.innerProperties = new SqlVirtualMachineProperties();
+        }
+        this.innerProperties().withLeastPrivilegeMode(leastPrivilegeMode);
+        return this;
+    }
+
+    /**
+     * Get the sqlImageSku property: SQL Server edition type.
+     * 
+     * @return the sqlImageSku value.
+     */
+    public SqlImageSku sqlImageSku() {
+        return this.innerProperties() == null ? null : this.innerProperties().sqlImageSku();
+    }
+
+    /**
+     * Set the sqlImageSku property: SQL Server edition type.
+     * 
+     * @param sqlImageSku the sqlImageSku value to set.
+     * @return the SqlVirtualMachineInner object itself.
+     */
+    public SqlVirtualMachineInner withSqlImageSku(SqlImageSku sqlImageSku) {
+        if (this.innerProperties() == null) {
+            this.innerProperties = new SqlVirtualMachineProperties();
+        }
+        this.innerProperties().withSqlImageSku(sqlImageSku);
+        return this;
+    }
+
+    /**
+     * Get the sqlVirtualMachineGroupResourceId property: ARM resource id of the SQL virtual machine group this SQL
+     * virtual machine is or will be part of.
+     * 
+     * @return the sqlVirtualMachineGroupResourceId value.
+     */
+    public String sqlVirtualMachineGroupResourceId() {
+        return this.innerProperties() == null ? null : this.innerProperties().sqlVirtualMachineGroupResourceId();
+    }
+
+    /**
+     * Set the sqlVirtualMachineGroupResourceId property: ARM resource id of the SQL virtual machine group this SQL
+     * virtual machine is or will be part of.
+     * 
+     * @param sqlVirtualMachineGroupResourceId the sqlVirtualMachineGroupResourceId value to set.
+     * @return the SqlVirtualMachineInner object itself.
+     */
+    public SqlVirtualMachineInner withSqlVirtualMachineGroupResourceId(String sqlVirtualMachineGroupResourceId) {
+        if (this.innerProperties() == null) {
+            this.innerProperties = new SqlVirtualMachineProperties();
+        }
+        this.innerProperties().withSqlVirtualMachineGroupResourceId(sqlVirtualMachineGroupResourceId);
+        return this;
+    }
+
+    /**
+     * Get the wsfcDomainCredentials property: Domain credentials for setting up Windows Server Failover Cluster for SQL
+     * availability group.
+     * 
+     * @return the wsfcDomainCredentials value.
+     */
+    public WsfcDomainCredentials wsfcDomainCredentials() {
+        return this.innerProperties() == null ? null : this.innerProperties().wsfcDomainCredentials();
+    }
+
+    /**
+     * Set the wsfcDomainCredentials property: Domain credentials for setting up Windows Server Failover Cluster for SQL
+     * availability group.
+     * 
+     * @param wsfcDomainCredentials the wsfcDomainCredentials value to set.
+     * @return the SqlVirtualMachineInner object itself.
+     */
+    public SqlVirtualMachineInner withWsfcDomainCredentials(WsfcDomainCredentials wsfcDomainCredentials) {
+        if (this.innerProperties() == null) {
+            this.innerProperties = new SqlVirtualMachineProperties();
+        }
+        this.innerProperties().withWsfcDomainCredentials(wsfcDomainCredentials);
+        return this;
+    }
+
+    /**
+     * Get the wsfcStaticIp property: Domain credentials for setting up Windows Server Failover Cluster for SQL
+     * availability group.
+     * 
+     * @return the wsfcStaticIp value.
+     */
+    public String wsfcStaticIp() {
+        return this.innerProperties() == null ? null : this.innerProperties().wsfcStaticIp();
+    }
+
+    /**
+     * Set the wsfcStaticIp property: Domain credentials for setting up Windows Server Failover Cluster for SQL
+     * availability group.
+     * 
+     * @param wsfcStaticIp the wsfcStaticIp value to set.
+     * @return the SqlVirtualMachineInner object itself.
+     */
+    public SqlVirtualMachineInner withWsfcStaticIp(String wsfcStaticIp) {
+        if (this.innerProperties() == null) {
+            this.innerProperties = new SqlVirtualMachineProperties();
+        }
+        this.innerProperties().withWsfcStaticIp(wsfcStaticIp);
+        return this;
+    }
+
+    /**
+     * Get the autoPatchingSettings property: Auto patching settings for applying critical security updates to SQL
+     * virtual machine.
+     * 
+     * @return the autoPatchingSettings value.
+     */
+    public AutoPatchingSettings autoPatchingSettings() {
+        return this.innerProperties() == null ? null : this.innerProperties().autoPatchingSettings();
+    }
+
+    /**
+     * Set the autoPatchingSettings property: Auto patching settings for applying critical security updates to SQL
+     * virtual machine.
+     * 
+     * @param autoPatchingSettings the autoPatchingSettings value to set.
+     * @return the SqlVirtualMachineInner object itself.
+     */
+    public SqlVirtualMachineInner withAutoPatchingSettings(AutoPatchingSettings autoPatchingSettings) {
+        if (this.innerProperties() == null) {
+            this.innerProperties = new SqlVirtualMachineProperties();
+        }
+        this.innerProperties().withAutoPatchingSettings(autoPatchingSettings);
+        return this;
+    }
+
+    /**
+     * Get the autoBackupSettings property: Auto backup settings for SQL Server.
+     * 
+     * @return the autoBackupSettings value.
+     */
+    public AutoBackupSettings autoBackupSettings() {
+        return this.innerProperties() == null ? null : this.innerProperties().autoBackupSettings();
+    }
+
+    /**
+     * Set the autoBackupSettings property: Auto backup settings for SQL Server.
+     * 
+     * @param autoBackupSettings the autoBackupSettings value to set.
+     * @return the SqlVirtualMachineInner object itself.
+     */
+    public SqlVirtualMachineInner withAutoBackupSettings(AutoBackupSettings autoBackupSettings) {
+        if (this.innerProperties() == null) {
+            this.innerProperties = new SqlVirtualMachineProperties();
+        }
+        this.innerProperties().withAutoBackupSettings(autoBackupSettings);
+        return this;
+    }
+
+    /**
+     * Get the keyVaultCredentialSettings property: Key vault credential settings.
+     * 
+     * @return the keyVaultCredentialSettings value.
+     */
+    public KeyVaultCredentialSettings keyVaultCredentialSettings() {
+        return this.innerProperties() == null ? null : this.innerProperties().keyVaultCredentialSettings();
+    }
+
+    /**
+     * Set the keyVaultCredentialSettings property: Key vault credential settings.
+     * 
+     * @param keyVaultCredentialSettings the keyVaultCredentialSettings value to set.
+     * @return the SqlVirtualMachineInner object itself.
+     */
+    public SqlVirtualMachineInner
+        withKeyVaultCredentialSettings(KeyVaultCredentialSettings keyVaultCredentialSettings) {
+        if (this.innerProperties() == null) {
+            this.innerProperties = new SqlVirtualMachineProperties();
+        }
+        this.innerProperties().withKeyVaultCredentialSettings(keyVaultCredentialSettings);
+        return this;
+    }
+
+    /**
+     * Get the serverConfigurationsManagementSettings property: SQL Server configuration management settings.
+     * 
+     * @return the serverConfigurationsManagementSettings value.
+     */
+    public ServerConfigurationsManagementSettings serverConfigurationsManagementSettings() {
+        return this.innerProperties() == null ? null : this.innerProperties().serverConfigurationsManagementSettings();
+    }
+
+    /**
+     * Set the serverConfigurationsManagementSettings property: SQL Server configuration management settings.
+     * 
+     * @param serverConfigurationsManagementSettings the serverConfigurationsManagementSettings value to set.
+     * @return the SqlVirtualMachineInner object itself.
+     */
+    public SqlVirtualMachineInner withServerConfigurationsManagementSettings(
+        ServerConfigurationsManagementSettings serverConfigurationsManagementSettings) {
+        if (this.innerProperties() == null) {
+            this.innerProperties = new SqlVirtualMachineProperties();
+        }
+        this.innerProperties().withServerConfigurationsManagementSettings(serverConfigurationsManagementSettings);
+        return this;
+    }
+
+    /**
+     * Get the storageConfigurationSettings property: Storage Configuration Settings.
+     * 
+     * @return the storageConfigurationSettings value.
+     */
+    public StorageConfigurationSettings storageConfigurationSettings() {
+        return this.innerProperties() == null ? null : this.innerProperties().storageConfigurationSettings();
+    }
+
+    /**
+     * Set the storageConfigurationSettings property: Storage Configuration Settings.
+     * 
+     * @param storageConfigurationSettings the storageConfigurationSettings value to set.
+     * @return the SqlVirtualMachineInner object itself.
+     */
+    public SqlVirtualMachineInner
+        withStorageConfigurationSettings(StorageConfigurationSettings storageConfigurationSettings) {
+        if (this.innerProperties() == null) {
+            this.innerProperties = new SqlVirtualMachineProperties();
+        }
+        this.innerProperties().withStorageConfigurationSettings(storageConfigurationSettings);
+        return this;
+    }
+
+    /**
+     * Get the troubleshootingStatus property: Troubleshooting status.
+     * 
+     * @return the troubleshootingStatus value.
+     */
+    public TroubleshootingStatus troubleshootingStatus() {
+        return this.innerProperties() == null ? null : this.innerProperties().troubleshootingStatus();
+    }
+
+    /**
+     * Get the assessmentSettings property: SQL best practices Assessment Settings.
+     * 
+     * @return the assessmentSettings value.
+     */
+    public AssessmentSettings assessmentSettings() {
+        return this.innerProperties() == null ? null : this.innerProperties().assessmentSettings();
+    }
+
+    /**
+     * Set the assessmentSettings property: SQL best practices Assessment Settings.
+     * 
+     * @param assessmentSettings the assessmentSettings value to set.
+     * @return the SqlVirtualMachineInner object itself.
+     */
+    public SqlVirtualMachineInner withAssessmentSettings(AssessmentSettings assessmentSettings) {
+        if (this.innerProperties() == null) {
+            this.innerProperties = new SqlVirtualMachineProperties();
+        }
+        this.innerProperties().withAssessmentSettings(assessmentSettings);
+        return this;
+    }
+
+    /**
+     * Get the enableAutomaticUpgrade property: Enable automatic upgrade of Sql IaaS extension Agent.
+     * 
+     * @return the enableAutomaticUpgrade value.
+     */
+    public Boolean enableAutomaticUpgrade() {
+        return this.innerProperties() == null ? null : this.innerProperties().enableAutomaticUpgrade();
+    }
+
+    /**
+     * Set the enableAutomaticUpgrade property: Enable automatic upgrade of Sql IaaS extension Agent.
+     * 
+     * @param enableAutomaticUpgrade the enableAutomaticUpgrade value to set.
+     * @return the SqlVirtualMachineInner object itself.
+     */
+    public SqlVirtualMachineInner withEnableAutomaticUpgrade(Boolean enableAutomaticUpgrade) {
+        if (this.innerProperties() == null) {
+            this.innerProperties = new SqlVirtualMachineProperties();
+        }
+        this.innerProperties().withEnableAutomaticUpgrade(enableAutomaticUpgrade);
+        return this;
+    }
+
+    /**
      * Validates the instance.
-     *
+     * 
      * @throws IllegalArgumentException thrown if the instance is not valid.
      */
     public void validate() {
         if (identity() != null) {
             identity().validate();
         }
-        if (wsfcDomainCredentials() != null) {
-            wsfcDomainCredentials().validate();
+        if (innerProperties() != null) {
+            innerProperties().validate();
         }
-        if (autoPatchingSettings() != null) {
-            autoPatchingSettings().validate();
-        }
-        if (autoBackupSettings() != null) {
-            autoBackupSettings().validate();
-        }
-        if (keyVaultCredentialSettings() != null) {
-            keyVaultCredentialSettings().validate();
-        }
-        if (serverConfigurationsManagementSettings() != null) {
-            serverConfigurationsManagementSettings().validate();
-        }
-        if (storageConfigurationSettings() != null) {
-            storageConfigurationSettings().validate();
-        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public JsonWriter toJson(JsonWriter jsonWriter) throws IOException {
+        jsonWriter.writeStartObject();
+        jsonWriter.writeStringField("location", location());
+        jsonWriter.writeMapField("tags", tags(), (writer, element) -> writer.writeString(element));
+        jsonWriter.writeJsonField("identity", this.identity);
+        jsonWriter.writeJsonField("properties", this.innerProperties);
+        return jsonWriter.writeEndObject();
+    }
+
+    /**
+     * Reads an instance of SqlVirtualMachineInner from the JsonReader.
+     * 
+     * @param jsonReader The JsonReader being read.
+     * @return An instance of SqlVirtualMachineInner if the JsonReader was pointing to an instance of it, or null if it
+     * was pointing to JSON null.
+     * @throws IllegalStateException If the deserialized JSON object was missing any required properties.
+     * @throws IOException If an error occurs while reading the SqlVirtualMachineInner.
+     */
+    public static SqlVirtualMachineInner fromJson(JsonReader jsonReader) throws IOException {
+        return jsonReader.readObject(reader -> {
+            SqlVirtualMachineInner deserializedSqlVirtualMachineInner = new SqlVirtualMachineInner();
+            while (reader.nextToken() != JsonToken.END_OBJECT) {
+                String fieldName = reader.getFieldName();
+                reader.nextToken();
+
+                if ("id".equals(fieldName)) {
+                    deserializedSqlVirtualMachineInner.id = reader.getString();
+                } else if ("name".equals(fieldName)) {
+                    deserializedSqlVirtualMachineInner.name = reader.getString();
+                } else if ("type".equals(fieldName)) {
+                    deserializedSqlVirtualMachineInner.type = reader.getString();
+                } else if ("location".equals(fieldName)) {
+                    deserializedSqlVirtualMachineInner.withLocation(reader.getString());
+                } else if ("tags".equals(fieldName)) {
+                    Map<String, String> tags = reader.readMap(reader1 -> reader1.getString());
+                    deserializedSqlVirtualMachineInner.withTags(tags);
+                } else if ("identity".equals(fieldName)) {
+                    deserializedSqlVirtualMachineInner.identity = ResourceIdentity.fromJson(reader);
+                } else if ("properties".equals(fieldName)) {
+                    deserializedSqlVirtualMachineInner.innerProperties = SqlVirtualMachineProperties.fromJson(reader);
+                } else if ("systemData".equals(fieldName)) {
+                    deserializedSqlVirtualMachineInner.systemData = SystemData.fromJson(reader);
+                } else {
+                    reader.skipChildren();
+                }
+            }
+
+            return deserializedSqlVirtualMachineInner;
+        });
     }
 }

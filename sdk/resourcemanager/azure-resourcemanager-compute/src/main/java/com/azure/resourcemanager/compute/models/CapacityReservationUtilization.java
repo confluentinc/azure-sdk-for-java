@@ -5,27 +5,49 @@
 package com.azure.resourcemanager.compute.models;
 
 import com.azure.core.annotation.Immutable;
-import com.azure.core.util.logging.ClientLogger;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.azure.json.JsonReader;
+import com.azure.json.JsonSerializable;
+import com.azure.json.JsonToken;
+import com.azure.json.JsonWriter;
+import java.io.IOException;
 import java.util.List;
 
-/** Represents the capacity reservation utilization in terms of resources allocated. */
+/**
+ * Represents the capacity reservation utilization in terms of resources allocated.
+ */
 @Immutable
-public final class CapacityReservationUtilization {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(CapacityReservationUtilization.class);
+public final class CapacityReservationUtilization implements JsonSerializable<CapacityReservationUtilization> {
+    /*
+     * The value provides the current capacity of the VM size which was reserved successfully and for which the customer
+     * is getting billed. Minimum api-version: 2022-08-01.
+     */
+    private Integer currentCapacity;
 
     /*
-     * A list of all virtual machines resource ids allocated against the
-     * capacity reservation.
+     * A list of all virtual machines resource ids allocated against the capacity reservation.
      */
-    @JsonProperty(value = "virtualMachinesAllocated", access = JsonProperty.Access.WRITE_ONLY)
     private List<SubResourceReadOnly> virtualMachinesAllocated;
+
+    /**
+     * Creates an instance of CapacityReservationUtilization class.
+     */
+    public CapacityReservationUtilization() {
+    }
+
+    /**
+     * Get the currentCapacity property: The value provides the current capacity of the VM size which was reserved
+     * successfully and for which the customer is getting billed. Minimum api-version: 2022-08-01.
+     * 
+     * @return the currentCapacity value.
+     */
+    public Integer currentCapacity() {
+        return this.currentCapacity;
+    }
 
     /**
      * Get the virtualMachinesAllocated property: A list of all virtual machines resource ids allocated against the
      * capacity reservation.
-     *
+     * 
      * @return the virtualMachinesAllocated value.
      */
     public List<SubResourceReadOnly> virtualMachinesAllocated() {
@@ -34,12 +56,52 @@ public final class CapacityReservationUtilization {
 
     /**
      * Validates the instance.
-     *
+     * 
      * @throws IllegalArgumentException thrown if the instance is not valid.
      */
     public void validate() {
         if (virtualMachinesAllocated() != null) {
             virtualMachinesAllocated().forEach(e -> e.validate());
         }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public JsonWriter toJson(JsonWriter jsonWriter) throws IOException {
+        jsonWriter.writeStartObject();
+        return jsonWriter.writeEndObject();
+    }
+
+    /**
+     * Reads an instance of CapacityReservationUtilization from the JsonReader.
+     * 
+     * @param jsonReader The JsonReader being read.
+     * @return An instance of CapacityReservationUtilization if the JsonReader was pointing to an instance of it, or
+     * null if it was pointing to JSON null.
+     * @throws IOException If an error occurs while reading the CapacityReservationUtilization.
+     */
+    public static CapacityReservationUtilization fromJson(JsonReader jsonReader) throws IOException {
+        return jsonReader.readObject(reader -> {
+            CapacityReservationUtilization deserializedCapacityReservationUtilization
+                = new CapacityReservationUtilization();
+            while (reader.nextToken() != JsonToken.END_OBJECT) {
+                String fieldName = reader.getFieldName();
+                reader.nextToken();
+
+                if ("currentCapacity".equals(fieldName)) {
+                    deserializedCapacityReservationUtilization.currentCapacity = reader.getNullable(JsonReader::getInt);
+                } else if ("virtualMachinesAllocated".equals(fieldName)) {
+                    List<SubResourceReadOnly> virtualMachinesAllocated
+                        = reader.readArray(reader1 -> SubResourceReadOnly.fromJson(reader1));
+                    deserializedCapacityReservationUtilization.virtualMachinesAllocated = virtualMachinesAllocated;
+                } else {
+                    reader.skipChildren();
+                }
+            }
+
+            return deserializedCapacityReservationUtilization;
+        });
     }
 }

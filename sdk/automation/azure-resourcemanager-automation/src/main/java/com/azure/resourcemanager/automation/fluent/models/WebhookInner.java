@@ -5,319 +5,391 @@
 package com.azure.resourcemanager.automation.fluent.models;
 
 import com.azure.core.annotation.Fluent;
-import com.azure.core.annotation.JsonFlatten;
 import com.azure.core.management.ProxyResource;
-import com.azure.core.util.logging.ClientLogger;
+import com.azure.json.JsonReader;
+import com.azure.json.JsonToken;
+import com.azure.json.JsonWriter;
 import com.azure.resourcemanager.automation.models.RunbookAssociationProperty;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import java.io.IOException;
 import java.time.OffsetDateTime;
 import java.util.Map;
 
-/** Definition of the webhook type. */
-@JsonFlatten
+/**
+ * Definition of the webhook type.
+ */
 @Fluent
-public class WebhookInner extends ProxyResource {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(WebhookInner.class);
+public final class WebhookInner extends ProxyResource {
+    /*
+     * Gets or sets the webhook properties.
+     */
+    private WebhookProperties innerProperties;
 
     /*
-     * Gets or sets the value of the enabled flag of the webhook.
+     * The type of the resource.
      */
-    @JsonProperty(value = "properties.isEnabled")
-    private Boolean isEnabled;
+    private String type;
 
     /*
-     * Gets or sets the webhook uri.
+     * The name of the resource.
      */
-    @JsonProperty(value = "properties.uri")
-    private String uri;
+    private String name;
 
     /*
-     * Gets or sets the expiry time.
+     * Fully qualified resource Id for the resource.
      */
-    @JsonProperty(value = "properties.expiryTime")
-    private OffsetDateTime expiryTime;
+    private String id;
 
-    /*
-     * Gets or sets the last invoked time.
+    /**
+     * Creates an instance of WebhookInner class.
      */
-    @JsonProperty(value = "properties.lastInvokedTime")
-    private OffsetDateTime lastInvokedTime;
+    public WebhookInner() {
+    }
 
-    /*
-     * Gets or sets the parameters of the job that is created when the webhook
-     * calls the runbook it is associated with.
+    /**
+     * Get the innerProperties property: Gets or sets the webhook properties.
+     * 
+     * @return the innerProperties value.
      */
-    @JsonProperty(value = "properties.parameters")
-    private Map<String, String> parameters;
+    private WebhookProperties innerProperties() {
+        return this.innerProperties;
+    }
 
-    /*
-     * Gets or sets the runbook the webhook is associated with.
+    /**
+     * Get the type property: The type of the resource.
+     * 
+     * @return the type value.
      */
-    @JsonProperty(value = "properties.runbook")
-    private RunbookAssociationProperty runbook;
+    @Override
+    public String type() {
+        return this.type;
+    }
 
-    /*
-     * Gets or sets the name of the hybrid worker group the webhook job will
-     * run on.
+    /**
+     * Get the name property: The name of the resource.
+     * 
+     * @return the name value.
      */
-    @JsonProperty(value = "properties.runOn")
-    private String runOn;
+    @Override
+    public String name() {
+        return this.name;
+    }
 
-    /*
-     * Gets or sets the creation time.
+    /**
+     * Get the id property: Fully qualified resource Id for the resource.
+     * 
+     * @return the id value.
      */
-    @JsonProperty(value = "properties.creationTime")
-    private OffsetDateTime creationTime;
-
-    /*
-     * Gets or sets the last modified time.
-     */
-    @JsonProperty(value = "properties.lastModifiedTime")
-    private OffsetDateTime lastModifiedTime;
-
-    /*
-     * Details of the user who last modified the Webhook
-     */
-    @JsonProperty(value = "properties.lastModifiedBy")
-    private String lastModifiedBy;
-
-    /*
-     * Gets or sets the description.
-     */
-    @JsonProperty(value = "properties.description")
-    private String description;
+    @Override
+    public String id() {
+        return this.id;
+    }
 
     /**
      * Get the isEnabled property: Gets or sets the value of the enabled flag of the webhook.
-     *
+     * 
      * @return the isEnabled value.
      */
     public Boolean isEnabled() {
-        return this.isEnabled;
+        return this.innerProperties() == null ? null : this.innerProperties().isEnabled();
     }
 
     /**
      * Set the isEnabled property: Gets or sets the value of the enabled flag of the webhook.
-     *
+     * 
      * @param isEnabled the isEnabled value to set.
      * @return the WebhookInner object itself.
      */
     public WebhookInner withIsEnabled(Boolean isEnabled) {
-        this.isEnabled = isEnabled;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new WebhookProperties();
+        }
+        this.innerProperties().withIsEnabled(isEnabled);
         return this;
     }
 
     /**
      * Get the uri property: Gets or sets the webhook uri.
-     *
+     * 
      * @return the uri value.
      */
     public String uri() {
-        return this.uri;
+        return this.innerProperties() == null ? null : this.innerProperties().uri();
     }
 
     /**
      * Set the uri property: Gets or sets the webhook uri.
-     *
+     * 
      * @param uri the uri value to set.
      * @return the WebhookInner object itself.
      */
     public WebhookInner withUri(String uri) {
-        this.uri = uri;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new WebhookProperties();
+        }
+        this.innerProperties().withUri(uri);
         return this;
     }
 
     /**
      * Get the expiryTime property: Gets or sets the expiry time.
-     *
+     * 
      * @return the expiryTime value.
      */
     public OffsetDateTime expiryTime() {
-        return this.expiryTime;
+        return this.innerProperties() == null ? null : this.innerProperties().expiryTime();
     }
 
     /**
      * Set the expiryTime property: Gets or sets the expiry time.
-     *
+     * 
      * @param expiryTime the expiryTime value to set.
      * @return the WebhookInner object itself.
      */
     public WebhookInner withExpiryTime(OffsetDateTime expiryTime) {
-        this.expiryTime = expiryTime;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new WebhookProperties();
+        }
+        this.innerProperties().withExpiryTime(expiryTime);
         return this;
     }
 
     /**
      * Get the lastInvokedTime property: Gets or sets the last invoked time.
-     *
+     * 
      * @return the lastInvokedTime value.
      */
     public OffsetDateTime lastInvokedTime() {
-        return this.lastInvokedTime;
+        return this.innerProperties() == null ? null : this.innerProperties().lastInvokedTime();
     }
 
     /**
      * Set the lastInvokedTime property: Gets or sets the last invoked time.
-     *
+     * 
      * @param lastInvokedTime the lastInvokedTime value to set.
      * @return the WebhookInner object itself.
      */
     public WebhookInner withLastInvokedTime(OffsetDateTime lastInvokedTime) {
-        this.lastInvokedTime = lastInvokedTime;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new WebhookProperties();
+        }
+        this.innerProperties().withLastInvokedTime(lastInvokedTime);
         return this;
     }
 
     /**
      * Get the parameters property: Gets or sets the parameters of the job that is created when the webhook calls the
      * runbook it is associated with.
-     *
+     * 
      * @return the parameters value.
      */
     public Map<String, String> parameters() {
-        return this.parameters;
+        return this.innerProperties() == null ? null : this.innerProperties().parameters();
     }
 
     /**
      * Set the parameters property: Gets or sets the parameters of the job that is created when the webhook calls the
      * runbook it is associated with.
-     *
+     * 
      * @param parameters the parameters value to set.
      * @return the WebhookInner object itself.
      */
     public WebhookInner withParameters(Map<String, String> parameters) {
-        this.parameters = parameters;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new WebhookProperties();
+        }
+        this.innerProperties().withParameters(parameters);
         return this;
     }
 
     /**
      * Get the runbook property: Gets or sets the runbook the webhook is associated with.
-     *
+     * 
      * @return the runbook value.
      */
     public RunbookAssociationProperty runbook() {
-        return this.runbook;
+        return this.innerProperties() == null ? null : this.innerProperties().runbook();
     }
 
     /**
      * Set the runbook property: Gets or sets the runbook the webhook is associated with.
-     *
+     * 
      * @param runbook the runbook value to set.
      * @return the WebhookInner object itself.
      */
     public WebhookInner withRunbook(RunbookAssociationProperty runbook) {
-        this.runbook = runbook;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new WebhookProperties();
+        }
+        this.innerProperties().withRunbook(runbook);
         return this;
     }
 
     /**
      * Get the runOn property: Gets or sets the name of the hybrid worker group the webhook job will run on.
-     *
+     * 
      * @return the runOn value.
      */
     public String runOn() {
-        return this.runOn;
+        return this.innerProperties() == null ? null : this.innerProperties().runOn();
     }
 
     /**
      * Set the runOn property: Gets or sets the name of the hybrid worker group the webhook job will run on.
-     *
+     * 
      * @param runOn the runOn value to set.
      * @return the WebhookInner object itself.
      */
     public WebhookInner withRunOn(String runOn) {
-        this.runOn = runOn;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new WebhookProperties();
+        }
+        this.innerProperties().withRunOn(runOn);
         return this;
     }
 
     /**
      * Get the creationTime property: Gets or sets the creation time.
-     *
+     * 
      * @return the creationTime value.
      */
     public OffsetDateTime creationTime() {
-        return this.creationTime;
+        return this.innerProperties() == null ? null : this.innerProperties().creationTime();
     }
 
     /**
      * Set the creationTime property: Gets or sets the creation time.
-     *
+     * 
      * @param creationTime the creationTime value to set.
      * @return the WebhookInner object itself.
      */
     public WebhookInner withCreationTime(OffsetDateTime creationTime) {
-        this.creationTime = creationTime;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new WebhookProperties();
+        }
+        this.innerProperties().withCreationTime(creationTime);
         return this;
     }
 
     /**
      * Get the lastModifiedTime property: Gets or sets the last modified time.
-     *
+     * 
      * @return the lastModifiedTime value.
      */
     public OffsetDateTime lastModifiedTime() {
-        return this.lastModifiedTime;
+        return this.innerProperties() == null ? null : this.innerProperties().lastModifiedTime();
     }
 
     /**
      * Set the lastModifiedTime property: Gets or sets the last modified time.
-     *
+     * 
      * @param lastModifiedTime the lastModifiedTime value to set.
      * @return the WebhookInner object itself.
      */
     public WebhookInner withLastModifiedTime(OffsetDateTime lastModifiedTime) {
-        this.lastModifiedTime = lastModifiedTime;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new WebhookProperties();
+        }
+        this.innerProperties().withLastModifiedTime(lastModifiedTime);
         return this;
     }
 
     /**
      * Get the lastModifiedBy property: Details of the user who last modified the Webhook.
-     *
+     * 
      * @return the lastModifiedBy value.
      */
     public String lastModifiedBy() {
-        return this.lastModifiedBy;
+        return this.innerProperties() == null ? null : this.innerProperties().lastModifiedBy();
     }
 
     /**
      * Set the lastModifiedBy property: Details of the user who last modified the Webhook.
-     *
+     * 
      * @param lastModifiedBy the lastModifiedBy value to set.
      * @return the WebhookInner object itself.
      */
     public WebhookInner withLastModifiedBy(String lastModifiedBy) {
-        this.lastModifiedBy = lastModifiedBy;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new WebhookProperties();
+        }
+        this.innerProperties().withLastModifiedBy(lastModifiedBy);
         return this;
     }
 
     /**
      * Get the description property: Gets or sets the description.
-     *
+     * 
      * @return the description value.
      */
     public String description() {
-        return this.description;
+        return this.innerProperties() == null ? null : this.innerProperties().description();
     }
 
     /**
      * Set the description property: Gets or sets the description.
-     *
+     * 
      * @param description the description value to set.
      * @return the WebhookInner object itself.
      */
     public WebhookInner withDescription(String description) {
-        this.description = description;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new WebhookProperties();
+        }
+        this.innerProperties().withDescription(description);
         return this;
     }
 
     /**
      * Validates the instance.
-     *
+     * 
      * @throws IllegalArgumentException thrown if the instance is not valid.
      */
     public void validate() {
-        if (runbook() != null) {
-            runbook().validate();
+        if (innerProperties() != null) {
+            innerProperties().validate();
         }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public JsonWriter toJson(JsonWriter jsonWriter) throws IOException {
+        jsonWriter.writeStartObject();
+        jsonWriter.writeJsonField("properties", this.innerProperties);
+        return jsonWriter.writeEndObject();
+    }
+
+    /**
+     * Reads an instance of WebhookInner from the JsonReader.
+     * 
+     * @param jsonReader The JsonReader being read.
+     * @return An instance of WebhookInner if the JsonReader was pointing to an instance of it, or null if it was
+     * pointing to JSON null.
+     * @throws IllegalStateException If the deserialized JSON object was missing any required properties.
+     * @throws IOException If an error occurs while reading the WebhookInner.
+     */
+    public static WebhookInner fromJson(JsonReader jsonReader) throws IOException {
+        return jsonReader.readObject(reader -> {
+            WebhookInner deserializedWebhookInner = new WebhookInner();
+            while (reader.nextToken() != JsonToken.END_OBJECT) {
+                String fieldName = reader.getFieldName();
+                reader.nextToken();
+
+                if ("id".equals(fieldName)) {
+                    deserializedWebhookInner.id = reader.getString();
+                } else if ("name".equals(fieldName)) {
+                    deserializedWebhookInner.name = reader.getString();
+                } else if ("type".equals(fieldName)) {
+                    deserializedWebhookInner.type = reader.getString();
+                } else if ("properties".equals(fieldName)) {
+                    deserializedWebhookInner.innerProperties = WebhookProperties.fromJson(reader);
+                } else {
+                    reader.skipChildren();
+                }
+            }
+
+            return deserializedWebhookInner;
+        });
     }
 }

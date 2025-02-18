@@ -5,25 +5,31 @@
 package com.azure.resourcemanager.network.models;
 
 import com.azure.core.annotation.Fluent;
-import com.azure.core.util.logging.ClientLogger;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.azure.json.JsonReader;
+import com.azure.json.JsonSerializable;
+import com.azure.json.JsonToken;
+import com.azure.json.JsonWriter;
+import java.io.IOException;
 
-/** Describes the ICMP configuration. */
+/**
+ * Describes the ICMP configuration.
+ */
 @Fluent
-public final class ConnectionMonitorIcmpConfiguration {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(ConnectionMonitorIcmpConfiguration.class);
-
+public final class ConnectionMonitorIcmpConfiguration implements JsonSerializable<ConnectionMonitorIcmpConfiguration> {
     /*
-     * Value indicating whether path evaluation with trace route should be
-     * disabled.
+     * Value indicating whether path evaluation with trace route should be disabled.
      */
-    @JsonProperty(value = "disableTraceRoute")
     private Boolean disableTraceRoute;
 
     /**
+     * Creates an instance of ConnectionMonitorIcmpConfiguration class.
+     */
+    public ConnectionMonitorIcmpConfiguration() {
+    }
+
+    /**
      * Get the disableTraceRoute property: Value indicating whether path evaluation with trace route should be disabled.
-     *
+     * 
      * @return the disableTraceRoute value.
      */
     public Boolean disableTraceRoute() {
@@ -32,7 +38,7 @@ public final class ConnectionMonitorIcmpConfiguration {
 
     /**
      * Set the disableTraceRoute property: Value indicating whether path evaluation with trace route should be disabled.
-     *
+     * 
      * @param disableTraceRoute the disableTraceRoute value to set.
      * @return the ConnectionMonitorIcmpConfiguration object itself.
      */
@@ -43,9 +49,47 @@ public final class ConnectionMonitorIcmpConfiguration {
 
     /**
      * Validates the instance.
-     *
+     * 
      * @throws IllegalArgumentException thrown if the instance is not valid.
      */
     public void validate() {
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public JsonWriter toJson(JsonWriter jsonWriter) throws IOException {
+        jsonWriter.writeStartObject();
+        jsonWriter.writeBooleanField("disableTraceRoute", this.disableTraceRoute);
+        return jsonWriter.writeEndObject();
+    }
+
+    /**
+     * Reads an instance of ConnectionMonitorIcmpConfiguration from the JsonReader.
+     * 
+     * @param jsonReader The JsonReader being read.
+     * @return An instance of ConnectionMonitorIcmpConfiguration if the JsonReader was pointing to an instance of it, or
+     * null if it was pointing to JSON null.
+     * @throws IOException If an error occurs while reading the ConnectionMonitorIcmpConfiguration.
+     */
+    public static ConnectionMonitorIcmpConfiguration fromJson(JsonReader jsonReader) throws IOException {
+        return jsonReader.readObject(reader -> {
+            ConnectionMonitorIcmpConfiguration deserializedConnectionMonitorIcmpConfiguration
+                = new ConnectionMonitorIcmpConfiguration();
+            while (reader.nextToken() != JsonToken.END_OBJECT) {
+                String fieldName = reader.getFieldName();
+                reader.nextToken();
+
+                if ("disableTraceRoute".equals(fieldName)) {
+                    deserializedConnectionMonitorIcmpConfiguration.disableTraceRoute
+                        = reader.getNullable(JsonReader::getBoolean);
+                } else {
+                    reader.skipChildren();
+                }
+            }
+
+            return deserializedConnectionMonitorIcmpConfiguration;
+        });
     }
 }

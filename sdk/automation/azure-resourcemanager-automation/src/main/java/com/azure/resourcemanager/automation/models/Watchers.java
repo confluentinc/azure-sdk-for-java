@@ -8,11 +8,28 @@ import com.azure.core.http.rest.PagedIterable;
 import com.azure.core.http.rest.Response;
 import com.azure.core.util.Context;
 
-/** Resource collection API of Watchers. */
+/**
+ * Resource collection API of Watchers.
+ */
 public interface Watchers {
     /**
      * Retrieve the watcher identified by watcher name.
-     *
+     * 
+     * @param resourceGroupName Name of an Azure Resource group.
+     * @param automationAccountName The name of the automation account.
+     * @param watcherName The watcher name.
+     * @param context The context to associate with this operation.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return definition of the watcher type along with {@link Response}.
+     */
+    Response<Watcher> getWithResponse(String resourceGroupName, String automationAccountName, String watcherName,
+        Context context);
+
+    /**
+     * Retrieve the watcher identified by watcher name.
+     * 
      * @param resourceGroupName Name of an Azure Resource group.
      * @param automationAccountName The name of the automation account.
      * @param watcherName The watcher name.
@@ -24,8 +41,8 @@ public interface Watchers {
     Watcher get(String resourceGroupName, String automationAccountName, String watcherName);
 
     /**
-     * Retrieve the watcher identified by watcher name.
-     *
+     * Delete the watcher by name.
+     * 
      * @param resourceGroupName Name of an Azure Resource group.
      * @param automationAccountName The name of the automation account.
      * @param watcherName The watcher name.
@@ -33,14 +50,14 @@ public interface Watchers {
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return definition of the watcher type.
+     * @return the {@link Response}.
      */
-    Response<Watcher> getWithResponse(
-        String resourceGroupName, String automationAccountName, String watcherName, Context context);
+    Response<Void> deleteWithResponse(String resourceGroupName, String automationAccountName, String watcherName,
+        Context context);
 
     /**
      * Delete the watcher by name.
-     *
+     * 
      * @param resourceGroupName Name of an Azure Resource group.
      * @param automationAccountName The name of the automation account.
      * @param watcherName The watcher name.
@@ -51,8 +68,8 @@ public interface Watchers {
     void delete(String resourceGroupName, String automationAccountName, String watcherName);
 
     /**
-     * Delete the watcher by name.
-     *
+     * Resume the watcher identified by watcher name.
+     * 
      * @param resourceGroupName Name of an Azure Resource group.
      * @param automationAccountName The name of the automation account.
      * @param watcherName The watcher name.
@@ -60,14 +77,14 @@ public interface Watchers {
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the response.
+     * @return the {@link Response}.
      */
-    Response<Void> deleteWithResponse(
-        String resourceGroupName, String automationAccountName, String watcherName, Context context);
+    Response<Void> startWithResponse(String resourceGroupName, String automationAccountName, String watcherName,
+        Context context);
 
     /**
      * Resume the watcher identified by watcher name.
-     *
+     * 
      * @param resourceGroupName Name of an Azure Resource group.
      * @param automationAccountName The name of the automation account.
      * @param watcherName The watcher name.
@@ -79,7 +96,7 @@ public interface Watchers {
 
     /**
      * Resume the watcher identified by watcher name.
-     *
+     * 
      * @param resourceGroupName Name of an Azure Resource group.
      * @param automationAccountName The name of the automation account.
      * @param watcherName The watcher name.
@@ -87,14 +104,14 @@ public interface Watchers {
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the response.
+     * @return the {@link Response}.
      */
-    Response<Void> startWithResponse(
-        String resourceGroupName, String automationAccountName, String watcherName, Context context);
+    Response<Void> stopWithResponse(String resourceGroupName, String automationAccountName, String watcherName,
+        Context context);
 
     /**
      * Resume the watcher identified by watcher name.
-     *
+     * 
      * @param resourceGroupName Name of an Azure Resource group.
      * @param automationAccountName The name of the automation account.
      * @param watcherName The watcher name.
@@ -105,35 +122,20 @@ public interface Watchers {
     void stop(String resourceGroupName, String automationAccountName, String watcherName);
 
     /**
-     * Resume the watcher identified by watcher name.
-     *
-     * @param resourceGroupName Name of an Azure Resource group.
-     * @param automationAccountName The name of the automation account.
-     * @param watcherName The watcher name.
-     * @param context The context to associate with this operation.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the response.
-     */
-    Response<Void> stopWithResponse(
-        String resourceGroupName, String automationAccountName, String watcherName, Context context);
-
-    /**
      * Retrieve a list of watchers.
-     *
+     * 
      * @param resourceGroupName Name of an Azure Resource group.
      * @param automationAccountName The name of the automation account.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the response model for the list watcher operation.
+     * @return the response model for the list watcher operation as paginated response with {@link PagedIterable}.
      */
     PagedIterable<Watcher> listByAutomationAccount(String resourceGroupName, String automationAccountName);
 
     /**
      * Retrieve a list of watchers.
-     *
+     * 
      * @param resourceGroupName Name of an Azure Resource group.
      * @param automationAccountName The name of the automation account.
      * @param filter The filter to apply on the operation.
@@ -141,37 +143,37 @@ public interface Watchers {
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the response model for the list watcher operation.
+     * @return the response model for the list watcher operation as paginated response with {@link PagedIterable}.
      */
-    PagedIterable<Watcher> listByAutomationAccount(
-        String resourceGroupName, String automationAccountName, String filter, Context context);
+    PagedIterable<Watcher> listByAutomationAccount(String resourceGroupName, String automationAccountName,
+        String filter, Context context);
 
     /**
      * Retrieve the watcher identified by watcher name.
-     *
+     * 
      * @param id the resource ID.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return definition of the watcher type.
+     * @return definition of the watcher type along with {@link Response}.
      */
     Watcher getById(String id);
 
     /**
      * Retrieve the watcher identified by watcher name.
-     *
+     * 
      * @param id the resource ID.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return definition of the watcher type.
+     * @return definition of the watcher type along with {@link Response}.
      */
     Response<Watcher> getByIdWithResponse(String id, Context context);
 
     /**
      * Delete the watcher by name.
-     *
+     * 
      * @param id the resource ID.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
@@ -181,19 +183,19 @@ public interface Watchers {
 
     /**
      * Delete the watcher by name.
-     *
+     * 
      * @param id the resource ID.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the response.
+     * @return the {@link Response}.
      */
     Response<Void> deleteByIdWithResponse(String id, Context context);
 
     /**
      * Begins definition for a new Watcher resource.
-     *
+     * 
      * @param name resource name.
      * @return the first stage of the new Watcher definition.
      */

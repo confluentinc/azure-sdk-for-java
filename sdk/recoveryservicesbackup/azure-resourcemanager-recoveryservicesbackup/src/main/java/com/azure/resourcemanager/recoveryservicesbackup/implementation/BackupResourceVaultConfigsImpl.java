@@ -12,20 +12,30 @@ import com.azure.resourcemanager.recoveryservicesbackup.fluent.BackupResourceVau
 import com.azure.resourcemanager.recoveryservicesbackup.fluent.models.BackupResourceVaultConfigResourceInner;
 import com.azure.resourcemanager.recoveryservicesbackup.models.BackupResourceVaultConfigResource;
 import com.azure.resourcemanager.recoveryservicesbackup.models.BackupResourceVaultConfigs;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 public final class BackupResourceVaultConfigsImpl implements BackupResourceVaultConfigs {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(BackupResourceVaultConfigsImpl.class);
+    private static final ClientLogger LOGGER = new ClientLogger(BackupResourceVaultConfigsImpl.class);
 
     private final BackupResourceVaultConfigsClient innerClient;
 
     private final com.azure.resourcemanager.recoveryservicesbackup.RecoveryServicesBackupManager serviceManager;
 
-    public BackupResourceVaultConfigsImpl(
-        BackupResourceVaultConfigsClient innerClient,
+    public BackupResourceVaultConfigsImpl(BackupResourceVaultConfigsClient innerClient,
         com.azure.resourcemanager.recoveryservicesbackup.RecoveryServicesBackupManager serviceManager) {
         this.innerClient = innerClient;
         this.serviceManager = serviceManager;
+    }
+
+    public Response<BackupResourceVaultConfigResource> getWithResponse(String vaultName, String resourceGroupName,
+        Context context) {
+        Response<BackupResourceVaultConfigResourceInner> inner
+            = this.serviceClient().getWithResponse(vaultName, resourceGroupName, context);
+        if (inner != null) {
+            return new SimpleResponse<>(inner.getRequest(), inner.getStatusCode(), inner.getHeaders(),
+                new BackupResourceVaultConfigResourceImpl(inner.getValue(), this.manager()));
+        } else {
+            return null;
+        }
     }
 
     public BackupResourceVaultConfigResource get(String vaultName, String resourceGroupName) {
@@ -37,25 +47,22 @@ public final class BackupResourceVaultConfigsImpl implements BackupResourceVault
         }
     }
 
-    public Response<BackupResourceVaultConfigResource> getWithResponse(
-        String vaultName, String resourceGroupName, Context context) {
-        Response<BackupResourceVaultConfigResourceInner> inner =
-            this.serviceClient().getWithResponse(vaultName, resourceGroupName, context);
+    public Response<BackupResourceVaultConfigResource> updateWithResponse(String vaultName, String resourceGroupName,
+        BackupResourceVaultConfigResourceInner parameters, Context context) {
+        Response<BackupResourceVaultConfigResourceInner> inner
+            = this.serviceClient().updateWithResponse(vaultName, resourceGroupName, parameters, context);
         if (inner != null) {
-            return new SimpleResponse<>(
-                inner.getRequest(),
-                inner.getStatusCode(),
-                inner.getHeaders(),
+            return new SimpleResponse<>(inner.getRequest(), inner.getStatusCode(), inner.getHeaders(),
                 new BackupResourceVaultConfigResourceImpl(inner.getValue(), this.manager()));
         } else {
             return null;
         }
     }
 
-    public BackupResourceVaultConfigResource update(
-        String vaultName, String resourceGroupName, BackupResourceVaultConfigResourceInner parameters) {
-        BackupResourceVaultConfigResourceInner inner =
-            this.serviceClient().update(vaultName, resourceGroupName, parameters);
+    public BackupResourceVaultConfigResource update(String vaultName, String resourceGroupName,
+        BackupResourceVaultConfigResourceInner parameters) {
+        BackupResourceVaultConfigResourceInner inner
+            = this.serviceClient().update(vaultName, resourceGroupName, parameters);
         if (inner != null) {
             return new BackupResourceVaultConfigResourceImpl(inner, this.manager());
         } else {
@@ -63,48 +70,24 @@ public final class BackupResourceVaultConfigsImpl implements BackupResourceVault
         }
     }
 
-    public Response<BackupResourceVaultConfigResource> updateWithResponse(
-        String vaultName,
-        String resourceGroupName,
-        BackupResourceVaultConfigResourceInner parameters,
-        Context context) {
-        Response<BackupResourceVaultConfigResourceInner> inner =
-            this.serviceClient().updateWithResponse(vaultName, resourceGroupName, parameters, context);
+    public Response<BackupResourceVaultConfigResource> putWithResponse(String vaultName, String resourceGroupName,
+        BackupResourceVaultConfigResourceInner parameters, Context context) {
+        Response<BackupResourceVaultConfigResourceInner> inner
+            = this.serviceClient().putWithResponse(vaultName, resourceGroupName, parameters, context);
         if (inner != null) {
-            return new SimpleResponse<>(
-                inner.getRequest(),
-                inner.getStatusCode(),
-                inner.getHeaders(),
+            return new SimpleResponse<>(inner.getRequest(), inner.getStatusCode(), inner.getHeaders(),
                 new BackupResourceVaultConfigResourceImpl(inner.getValue(), this.manager()));
         } else {
             return null;
         }
     }
 
-    public BackupResourceVaultConfigResource put(
-        String vaultName, String resourceGroupName, BackupResourceVaultConfigResourceInner parameters) {
-        BackupResourceVaultConfigResourceInner inner =
-            this.serviceClient().put(vaultName, resourceGroupName, parameters);
+    public BackupResourceVaultConfigResource put(String vaultName, String resourceGroupName,
+        BackupResourceVaultConfigResourceInner parameters) {
+        BackupResourceVaultConfigResourceInner inner
+            = this.serviceClient().put(vaultName, resourceGroupName, parameters);
         if (inner != null) {
             return new BackupResourceVaultConfigResourceImpl(inner, this.manager());
-        } else {
-            return null;
-        }
-    }
-
-    public Response<BackupResourceVaultConfigResource> putWithResponse(
-        String vaultName,
-        String resourceGroupName,
-        BackupResourceVaultConfigResourceInner parameters,
-        Context context) {
-        Response<BackupResourceVaultConfigResourceInner> inner =
-            this.serviceClient().putWithResponse(vaultName, resourceGroupName, parameters, context);
-        if (inner != null) {
-            return new SimpleResponse<>(
-                inner.getRequest(),
-                inner.getStatusCode(),
-                inner.getHeaders(),
-                new BackupResourceVaultConfigResourceImpl(inner.getValue(), this.manager()));
         } else {
             return null;
         }

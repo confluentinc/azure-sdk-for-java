@@ -13,17 +13,15 @@ import com.azure.resourcemanager.security.fluent.ExternalSecuritySolutionsClient
 import com.azure.resourcemanager.security.fluent.models.ExternalSecuritySolutionInner;
 import com.azure.resourcemanager.security.models.ExternalSecuritySolution;
 import com.azure.resourcemanager.security.models.ExternalSecuritySolutions;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 public final class ExternalSecuritySolutionsImpl implements ExternalSecuritySolutions {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(ExternalSecuritySolutionsImpl.class);
+    private static final ClientLogger LOGGER = new ClientLogger(ExternalSecuritySolutionsImpl.class);
 
     private final ExternalSecuritySolutionsClient innerClient;
 
     private final com.azure.resourcemanager.security.SecurityManager serviceManager;
 
-    public ExternalSecuritySolutionsImpl(
-        ExternalSecuritySolutionsClient innerClient,
+    public ExternalSecuritySolutionsImpl(ExternalSecuritySolutionsClient innerClient,
         com.azure.resourcemanager.security.SecurityManager serviceManager) {
         this.innerClient = innerClient;
         this.serviceManager = serviceManager;
@@ -31,48 +29,43 @@ public final class ExternalSecuritySolutionsImpl implements ExternalSecuritySolu
 
     public PagedIterable<ExternalSecuritySolution> list() {
         PagedIterable<ExternalSecuritySolutionInner> inner = this.serviceClient().list();
-        return Utils.mapPage(inner, inner1 -> new ExternalSecuritySolutionImpl(inner1, this.manager()));
+        return ResourceManagerUtils.mapPage(inner, inner1 -> new ExternalSecuritySolutionImpl(inner1, this.manager()));
     }
 
     public PagedIterable<ExternalSecuritySolution> list(Context context) {
         PagedIterable<ExternalSecuritySolutionInner> inner = this.serviceClient().list(context);
-        return Utils.mapPage(inner, inner1 -> new ExternalSecuritySolutionImpl(inner1, this.manager()));
+        return ResourceManagerUtils.mapPage(inner, inner1 -> new ExternalSecuritySolutionImpl(inner1, this.manager()));
     }
 
     public PagedIterable<ExternalSecuritySolution> listByHomeRegion(String ascLocation) {
         PagedIterable<ExternalSecuritySolutionInner> inner = this.serviceClient().listByHomeRegion(ascLocation);
-        return Utils.mapPage(inner, inner1 -> new ExternalSecuritySolutionImpl(inner1, this.manager()));
+        return ResourceManagerUtils.mapPage(inner, inner1 -> new ExternalSecuritySolutionImpl(inner1, this.manager()));
     }
 
     public PagedIterable<ExternalSecuritySolution> listByHomeRegion(String ascLocation, Context context) {
-        PagedIterable<ExternalSecuritySolutionInner> inner =
-            this.serviceClient().listByHomeRegion(ascLocation, context);
-        return Utils.mapPage(inner, inner1 -> new ExternalSecuritySolutionImpl(inner1, this.manager()));
+        PagedIterable<ExternalSecuritySolutionInner> inner
+            = this.serviceClient().listByHomeRegion(ascLocation, context);
+        return ResourceManagerUtils.mapPage(inner, inner1 -> new ExternalSecuritySolutionImpl(inner1, this.manager()));
     }
 
-    public ExternalSecuritySolution get(
-        String resourceGroupName, String ascLocation, String externalSecuritySolutionsName) {
-        ExternalSecuritySolutionInner inner =
-            this.serviceClient().get(resourceGroupName, ascLocation, externalSecuritySolutionsName);
+    public Response<ExternalSecuritySolution> getWithResponse(String resourceGroupName, String ascLocation,
+        String externalSecuritySolutionsName, Context context) {
+        Response<ExternalSecuritySolutionInner> inner = this.serviceClient()
+            .getWithResponse(resourceGroupName, ascLocation, externalSecuritySolutionsName, context);
         if (inner != null) {
-            return new ExternalSecuritySolutionImpl(inner, this.manager());
+            return new SimpleResponse<>(inner.getRequest(), inner.getStatusCode(), inner.getHeaders(),
+                new ExternalSecuritySolutionImpl(inner.getValue(), this.manager()));
         } else {
             return null;
         }
     }
 
-    public Response<ExternalSecuritySolution> getWithResponse(
-        String resourceGroupName, String ascLocation, String externalSecuritySolutionsName, Context context) {
-        Response<ExternalSecuritySolutionInner> inner =
-            this
-                .serviceClient()
-                .getWithResponse(resourceGroupName, ascLocation, externalSecuritySolutionsName, context);
+    public ExternalSecuritySolution get(String resourceGroupName, String ascLocation,
+        String externalSecuritySolutionsName) {
+        ExternalSecuritySolutionInner inner
+            = this.serviceClient().get(resourceGroupName, ascLocation, externalSecuritySolutionsName);
         if (inner != null) {
-            return new SimpleResponse<>(
-                inner.getRequest(),
-                inner.getStatusCode(),
-                inner.getHeaders(),
-                new ExternalSecuritySolutionImpl(inner.getValue(), this.manager()));
+            return new ExternalSecuritySolutionImpl(inner, this.manager());
         } else {
             return null;
         }

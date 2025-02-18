@@ -4,24 +4,44 @@
 
 package com.azure.resourcemanager.compute.generated;
 
-import com.azure.core.util.Context;
-
-/** Samples for Snapshots GetByResourceGroup. */
+/**
+ * Samples for Snapshots GetByResourceGroup.
+ */
 public final class SnapshotsGetByResourceGroupSamples {
     /*
-     * x-ms-original-file: specification/compute/resource-manager/Microsoft.Compute/stable/2021-08-01/examples/GetInformationAboutASnapshot.json
+     * x-ms-original-file:
+     * specification/compute/resource-manager/Microsoft.Compute/DiskRP/stable/2024-03-02/examples/snapshotExamples/
+     * Snapshot_GetIncrementalSnapshot.json
      */
     /**
-     * Sample code: Get information about a snapshot.
-     *
+     * Sample code: Get information about an incremental snapshot.
+     * 
      * @param azure The entry point for accessing resource management APIs in Azure.
      */
-    public static void getInformationAboutASnapshot(com.azure.resourcemanager.AzureResourceManager azure) {
-        azure
-            .virtualMachines()
+    public static void getInformationAboutAnIncrementalSnapshot(com.azure.resourcemanager.AzureResourceManager azure) {
+        azure.virtualMachines()
             .manager()
             .serviceClient()
             .getSnapshots()
-            .getByResourceGroupWithResponse("myResourceGroup", "mySnapshot", Context.NONE);
+            .getByResourceGroupWithResponse("myResourceGroup", "myIncrementalSnapshot",
+                com.azure.core.util.Context.NONE);
+    }
+
+    /*
+     * x-ms-original-file:
+     * specification/compute/resource-manager/Microsoft.Compute/DiskRP/stable/2024-03-02/examples/snapshotExamples/
+     * Snapshot_Get.json
+     */
+    /**
+     * Sample code: Get information about a snapshot.
+     * 
+     * @param azure The entry point for accessing resource management APIs in Azure.
+     */
+    public static void getInformationAboutASnapshot(com.azure.resourcemanager.AzureResourceManager azure) {
+        azure.virtualMachines()
+            .manager()
+            .serviceClient()
+            .getSnapshots()
+            .getByResourceGroupWithResponse("myResourceGroup", "mySnapshot", com.azure.core.util.Context.NONE);
     }
 }

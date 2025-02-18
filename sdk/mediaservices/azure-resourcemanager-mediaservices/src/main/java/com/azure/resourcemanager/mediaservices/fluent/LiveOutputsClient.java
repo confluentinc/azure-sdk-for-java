@@ -11,27 +11,34 @@ import com.azure.core.http.rest.Response;
 import com.azure.core.management.polling.PollResult;
 import com.azure.core.util.Context;
 import com.azure.core.util.polling.SyncPoller;
+import com.azure.resourcemanager.mediaservices.fluent.models.AsyncOperationResultInner;
 import com.azure.resourcemanager.mediaservices.fluent.models.LiveOutputInner;
 
-/** An instance of this class provides access to all the operations defined in LiveOutputsClient. */
+/**
+ * An instance of this class provides access to all the operations defined in LiveOutputsClient.
+ */
 public interface LiveOutputsClient {
     /**
+     * List Live Outputs
+     * 
      * Lists the live outputs of a live event.
-     *
+     * 
      * @param resourceGroupName The name of the resource group within the Azure subscription.
      * @param accountName The Media Services account name.
      * @param liveEventName The name of the live event, maximum length is 32.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the LiveOutput list result.
+     * @return liveOutputListResult as paginated response with {@link PagedIterable}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
     PagedIterable<LiveOutputInner> list(String resourceGroupName, String accountName, String liveEventName);
 
     /**
+     * List Live Outputs
+     * 
      * Lists the live outputs of a live event.
-     *
+     * 
      * @param resourceGroupName The name of the resource group within the Azure subscription.
      * @param accountName The Media Services account name.
      * @param liveEventName The name of the live event, maximum length is 32.
@@ -39,15 +46,36 @@ public interface LiveOutputsClient {
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the LiveOutput list result.
+     * @return liveOutputListResult as paginated response with {@link PagedIterable}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
-    PagedIterable<LiveOutputInner> list(
-        String resourceGroupName, String accountName, String liveEventName, Context context);
+    PagedIterable<LiveOutputInner> list(String resourceGroupName, String accountName, String liveEventName,
+        Context context);
 
     /**
+     * Get Live Output
+     * 
      * Gets a live output.
-     *
+     * 
+     * @param resourceGroupName The name of the resource group within the Azure subscription.
+     * @param accountName The Media Services account name.
+     * @param liveEventName The name of the live event, maximum length is 32.
+     * @param liveOutputName The name of the live output.
+     * @param context The context to associate with this operation.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return a live output along with {@link Response}.
+     */
+    @ServiceMethod(returns = ReturnType.SINGLE)
+    Response<LiveOutputInner> getWithResponse(String resourceGroupName, String accountName, String liveEventName,
+        String liveOutputName, Context context);
+
+    /**
+     * Get Live Output
+     * 
+     * Gets a live output.
+     * 
      * @param resourceGroupName The name of the resource group within the Azure subscription.
      * @param accountName The Media Services account name.
      * @param liveEventName The name of the live event, maximum length is 32.
@@ -61,25 +89,49 @@ public interface LiveOutputsClient {
     LiveOutputInner get(String resourceGroupName, String accountName, String liveEventName, String liveOutputName);
 
     /**
-     * Gets a live output.
-     *
+     * Create Live Output
+     * 
+     * Creates a new live output.
+     * 
      * @param resourceGroupName The name of the resource group within the Azure subscription.
      * @param accountName The Media Services account name.
      * @param liveEventName The name of the live event, maximum length is 32.
      * @param liveOutputName The name of the live output.
+     * @param parameters Live Output properties needed for creation.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return the {@link SyncPoller} for polling of the Live Output.
+     */
+    @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
+    SyncPoller<PollResult<LiveOutputInner>, LiveOutputInner> beginCreate(String resourceGroupName, String accountName,
+        String liveEventName, String liveOutputName, LiveOutputInner parameters);
+
+    /**
+     * Create Live Output
+     * 
+     * Creates a new live output.
+     * 
+     * @param resourceGroupName The name of the resource group within the Azure subscription.
+     * @param accountName The Media Services account name.
+     * @param liveEventName The name of the live event, maximum length is 32.
+     * @param liveOutputName The name of the live output.
+     * @param parameters Live Output properties needed for creation.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return a live output.
+     * @return the {@link SyncPoller} for polling of the Live Output.
      */
-    @ServiceMethod(returns = ReturnType.SINGLE)
-    Response<LiveOutputInner> getWithResponse(
-        String resourceGroupName, String accountName, String liveEventName, String liveOutputName, Context context);
+    @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
+    SyncPoller<PollResult<LiveOutputInner>, LiveOutputInner> beginCreate(String resourceGroupName, String accountName,
+        String liveEventName, String liveOutputName, LiveOutputInner parameters, Context context);
 
     /**
+     * Create Live Output
+     * 
      * Creates a new live output.
-     *
+     * 
      * @param resourceGroupName The name of the resource group within the Azure subscription.
      * @param accountName The Media Services account name.
      * @param liveEventName The name of the live event, maximum length is 32.
@@ -91,16 +143,14 @@ public interface LiveOutputsClient {
      * @return the Live Output.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    SyncPoller<PollResult<LiveOutputInner>, LiveOutputInner> beginCreate(
-        String resourceGroupName,
-        String accountName,
-        String liveEventName,
-        String liveOutputName,
+    LiveOutputInner create(String resourceGroupName, String accountName, String liveEventName, String liveOutputName,
         LiveOutputInner parameters);
 
     /**
+     * Create Live Output
+     * 
      * Creates a new live output.
-     *
+     * 
      * @param resourceGroupName The name of the resource group within the Azure subscription.
      * @param accountName The Media Services account name.
      * @param liveEventName The name of the live event, maximum length is 32.
@@ -113,61 +163,14 @@ public interface LiveOutputsClient {
      * @return the Live Output.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    SyncPoller<PollResult<LiveOutputInner>, LiveOutputInner> beginCreate(
-        String resourceGroupName,
-        String accountName,
-        String liveEventName,
-        String liveOutputName,
-        LiveOutputInner parameters,
-        Context context);
+    LiveOutputInner create(String resourceGroupName, String accountName, String liveEventName, String liveOutputName,
+        LiveOutputInner parameters, Context context);
 
     /**
-     * Creates a new live output.
-     *
-     * @param resourceGroupName The name of the resource group within the Azure subscription.
-     * @param accountName The Media Services account name.
-     * @param liveEventName The name of the live event, maximum length is 32.
-     * @param liveOutputName The name of the live output.
-     * @param parameters Live Output properties needed for creation.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the Live Output.
-     */
-    @ServiceMethod(returns = ReturnType.SINGLE)
-    LiveOutputInner create(
-        String resourceGroupName,
-        String accountName,
-        String liveEventName,
-        String liveOutputName,
-        LiveOutputInner parameters);
-
-    /**
-     * Creates a new live output.
-     *
-     * @param resourceGroupName The name of the resource group within the Azure subscription.
-     * @param accountName The Media Services account name.
-     * @param liveEventName The name of the live event, maximum length is 32.
-     * @param liveOutputName The name of the live output.
-     * @param parameters Live Output properties needed for creation.
-     * @param context The context to associate with this operation.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the Live Output.
-     */
-    @ServiceMethod(returns = ReturnType.SINGLE)
-    LiveOutputInner create(
-        String resourceGroupName,
-        String accountName,
-        String liveEventName,
-        String liveOutputName,
-        LiveOutputInner parameters,
-        Context context);
-
-    /**
+     * Delete Live Output
+     * 
      * Deletes a live output. Deleting a live output does not delete the asset the live output is writing to.
-     *
+     * 
      * @param resourceGroupName The name of the resource group within the Azure subscription.
      * @param accountName The Media Services account name.
      * @param liveEventName The name of the live event, maximum length is 32.
@@ -175,15 +178,17 @@ public interface LiveOutputsClient {
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the completion.
+     * @return the {@link SyncPoller} for polling of long-running operation.
      */
-    @ServiceMethod(returns = ReturnType.SINGLE)
-    SyncPoller<PollResult<Void>, Void> beginDelete(
-        String resourceGroupName, String accountName, String liveEventName, String liveOutputName);
+    @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
+    SyncPoller<PollResult<Void>, Void> beginDelete(String resourceGroupName, String accountName, String liveEventName,
+        String liveOutputName);
 
     /**
+     * Delete Live Output
+     * 
      * Deletes a live output. Deleting a live output does not delete the asset the live output is writing to.
-     *
+     * 
      * @param resourceGroupName The name of the resource group within the Azure subscription.
      * @param accountName The Media Services account name.
      * @param liveEventName The name of the live event, maximum length is 32.
@@ -192,15 +197,17 @@ public interface LiveOutputsClient {
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the completion.
+     * @return the {@link SyncPoller} for polling of long-running operation.
      */
-    @ServiceMethod(returns = ReturnType.SINGLE)
-    SyncPoller<PollResult<Void>, Void> beginDelete(
-        String resourceGroupName, String accountName, String liveEventName, String liveOutputName, Context context);
+    @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
+    SyncPoller<PollResult<Void>, Void> beginDelete(String resourceGroupName, String accountName, String liveEventName,
+        String liveOutputName, Context context);
 
     /**
+     * Delete Live Output
+     * 
      * Deletes a live output. Deleting a live output does not delete the asset the live output is writing to.
-     *
+     * 
      * @param resourceGroupName The name of the resource group within the Azure subscription.
      * @param accountName The Media Services account name.
      * @param liveEventName The name of the live event, maximum length is 32.
@@ -213,8 +220,10 @@ public interface LiveOutputsClient {
     void delete(String resourceGroupName, String accountName, String liveEventName, String liveOutputName);
 
     /**
+     * Delete Live Output
+     * 
      * Deletes a live output. Deleting a live output does not delete the asset the live output is writing to.
-     *
+     * 
      * @param resourceGroupName The name of the resource group within the Azure subscription.
      * @param accountName The Media Services account name.
      * @param liveEventName The name of the live event, maximum length is 32.
@@ -225,6 +234,79 @@ public interface LiveOutputsClient {
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    void delete(
-        String resourceGroupName, String accountName, String liveEventName, String liveOutputName, Context context);
+    void delete(String resourceGroupName, String accountName, String liveEventName, String liveOutputName,
+        Context context);
+
+    /**
+     * Get operation status.
+     * 
+     * Get a Live Output operation status.
+     * 
+     * @param resourceGroupName The name of the resource group within the Azure subscription.
+     * @param accountName The Media Services account name.
+     * @param operationId The ID of an ongoing async operation.
+     * @param context The context to associate with this operation.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return a Live Output operation status along with {@link Response}.
+     */
+    @ServiceMethod(returns = ReturnType.SINGLE)
+    Response<AsyncOperationResultInner> asyncOperationWithResponse(String resourceGroupName, String accountName,
+        String operationId, Context context);
+
+    /**
+     * Get operation status.
+     * 
+     * Get a Live Output operation status.
+     * 
+     * @param resourceGroupName The name of the resource group within the Azure subscription.
+     * @param accountName The Media Services account name.
+     * @param operationId The ID of an ongoing async operation.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return a Live Output operation status.
+     */
+    @ServiceMethod(returns = ReturnType.SINGLE)
+    AsyncOperationResultInner asyncOperation(String resourceGroupName, String accountName, String operationId);
+
+    /**
+     * Get operation status.
+     * 
+     * Get a Live Output operation status.
+     * 
+     * @param resourceGroupName The name of the resource group within the Azure subscription.
+     * @param accountName The Media Services account name.
+     * @param liveEventName The name of the live event, maximum length is 32.
+     * @param liveOutputName The name of the live output.
+     * @param operationId The ID of an ongoing async operation.
+     * @param context The context to associate with this operation.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return a Live Output operation status along with {@link Response}.
+     */
+    @ServiceMethod(returns = ReturnType.SINGLE)
+    Response<LiveOutputInner> operationLocationWithResponse(String resourceGroupName, String accountName,
+        String liveEventName, String liveOutputName, String operationId, Context context);
+
+    /**
+     * Get operation status.
+     * 
+     * Get a Live Output operation status.
+     * 
+     * @param resourceGroupName The name of the resource group within the Azure subscription.
+     * @param accountName The Media Services account name.
+     * @param liveEventName The name of the live event, maximum length is 32.
+     * @param liveOutputName The name of the live output.
+     * @param operationId The ID of an ongoing async operation.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return a Live Output operation status.
+     */
+    @ServiceMethod(returns = ReturnType.SINGLE)
+    LiveOutputInner operationLocation(String resourceGroupName, String accountName, String liveEventName,
+        String liveOutputName, String operationId);
 }

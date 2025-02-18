@@ -11,17 +11,15 @@ import com.azure.resourcemanager.recoveryservicesbackup.fluent.OperationsClient;
 import com.azure.resourcemanager.recoveryservicesbackup.fluent.models.ClientDiscoveryValueForSingleApiInner;
 import com.azure.resourcemanager.recoveryservicesbackup.models.ClientDiscoveryValueForSingleApi;
 import com.azure.resourcemanager.recoveryservicesbackup.models.Operations;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 public final class OperationsImpl implements Operations {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(OperationsImpl.class);
+    private static final ClientLogger LOGGER = new ClientLogger(OperationsImpl.class);
 
     private final OperationsClient innerClient;
 
     private final com.azure.resourcemanager.recoveryservicesbackup.RecoveryServicesBackupManager serviceManager;
 
-    public OperationsImpl(
-        OperationsClient innerClient,
+    public OperationsImpl(OperationsClient innerClient,
         com.azure.resourcemanager.recoveryservicesbackup.RecoveryServicesBackupManager serviceManager) {
         this.innerClient = innerClient;
         this.serviceManager = serviceManager;
@@ -29,12 +27,14 @@ public final class OperationsImpl implements Operations {
 
     public PagedIterable<ClientDiscoveryValueForSingleApi> list() {
         PagedIterable<ClientDiscoveryValueForSingleApiInner> inner = this.serviceClient().list();
-        return Utils.mapPage(inner, inner1 -> new ClientDiscoveryValueForSingleApiImpl(inner1, this.manager()));
+        return ResourceManagerUtils.mapPage(inner,
+            inner1 -> new ClientDiscoveryValueForSingleApiImpl(inner1, this.manager()));
     }
 
     public PagedIterable<ClientDiscoveryValueForSingleApi> list(Context context) {
         PagedIterable<ClientDiscoveryValueForSingleApiInner> inner = this.serviceClient().list(context);
-        return Utils.mapPage(inner, inner1 -> new ClientDiscoveryValueForSingleApiImpl(inner1, this.manager()));
+        return ResourceManagerUtils.mapPage(inner,
+            inner1 -> new ClientDiscoveryValueForSingleApiImpl(inner1, this.manager()));
     }
 
     private OperationsClient serviceClient() {

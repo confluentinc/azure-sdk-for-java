@@ -17,33 +17,50 @@ import com.azure.resourcemanager.datafactory.models.FactoryUpdateParameters;
 import com.azure.resourcemanager.datafactory.models.GitHubAccessTokenRequest;
 import com.azure.resourcemanager.datafactory.models.UserAccessPolicy;
 
-/** An instance of this class provides access to all the operations defined in FactoriesClient. */
+/**
+ * An instance of this class provides access to all the operations defined in FactoriesClient.
+ */
 public interface FactoriesClient {
     /**
      * Lists factories under the specified subscription.
-     *
+     * 
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return a list of factory resources.
+     * @return a list of factory resources as paginated response with {@link PagedIterable}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
     PagedIterable<FactoryInner> list();
 
     /**
      * Lists factories under the specified subscription.
-     *
+     * 
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return a list of factory resources.
+     * @return a list of factory resources as paginated response with {@link PagedIterable}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
     PagedIterable<FactoryInner> list(Context context);
 
     /**
      * Updates a factory's repo information.
-     *
+     * 
+     * @param locationId The location identifier.
+     * @param factoryRepoUpdate Update factory repo request definition.
+     * @param context The context to associate with this operation.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return factory resource type along with {@link Response}.
+     */
+    @ServiceMethod(returns = ReturnType.SINGLE)
+    Response<FactoryInner> configureFactoryRepoWithResponse(String locationId, FactoryRepoUpdate factoryRepoUpdate,
+        Context context);
+
+    /**
+     * Updates a factory's repo information.
+     * 
      * @param locationId The location identifier.
      * @param factoryRepoUpdate Update factory repo request definition.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
@@ -55,10 +72,38 @@ public interface FactoriesClient {
     FactoryInner configureFactoryRepo(String locationId, FactoryRepoUpdate factoryRepoUpdate);
 
     /**
-     * Updates a factory's repo information.
-     *
-     * @param locationId The location identifier.
-     * @param factoryRepoUpdate Update factory repo request definition.
+     * Lists factories.
+     * 
+     * @param resourceGroupName The resource group name.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return a list of factory resources as paginated response with {@link PagedIterable}.
+     */
+    @ServiceMethod(returns = ReturnType.COLLECTION)
+    PagedIterable<FactoryInner> listByResourceGroup(String resourceGroupName);
+
+    /**
+     * Lists factories.
+     * 
+     * @param resourceGroupName The resource group name.
+     * @param context The context to associate with this operation.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return a list of factory resources as paginated response with {@link PagedIterable}.
+     */
+    @ServiceMethod(returns = ReturnType.COLLECTION)
+    PagedIterable<FactoryInner> listByResourceGroup(String resourceGroupName, Context context);
+
+    /**
+     * Creates or updates a factory.
+     * 
+     * @param resourceGroupName The resource group name.
+     * @param factoryName The factory name.
+     * @param factory Factory resource definition.
+     * @param ifMatch ETag of the factory entity. Should only be specified for update, for which it should match
+     * existing entity or can be * for unconditional update.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
@@ -66,37 +111,12 @@ public interface FactoriesClient {
      * @return factory resource type along with {@link Response}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    Response<FactoryInner> configureFactoryRepoWithResponse(
-        String locationId, FactoryRepoUpdate factoryRepoUpdate, Context context);
-
-    /**
-     * Lists factories.
-     *
-     * @param resourceGroupName The resource group name.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return a list of factory resources.
-     */
-    @ServiceMethod(returns = ReturnType.COLLECTION)
-    PagedIterable<FactoryInner> listByResourceGroup(String resourceGroupName);
-
-    /**
-     * Lists factories.
-     *
-     * @param resourceGroupName The resource group name.
-     * @param context The context to associate with this operation.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return a list of factory resources.
-     */
-    @ServiceMethod(returns = ReturnType.COLLECTION)
-    PagedIterable<FactoryInner> listByResourceGroup(String resourceGroupName, Context context);
+    Response<FactoryInner> createOrUpdateWithResponse(String resourceGroupName, String factoryName,
+        FactoryInner factory, String ifMatch, Context context);
 
     /**
      * Creates or updates a factory.
-     *
+     * 
      * @param resourceGroupName The resource group name.
      * @param factoryName The factory name.
      * @param factory Factory resource definition.
@@ -109,13 +129,11 @@ public interface FactoriesClient {
     FactoryInner createOrUpdate(String resourceGroupName, String factoryName, FactoryInner factory);
 
     /**
-     * Creates or updates a factory.
-     *
+     * Updates a factory.
+     * 
      * @param resourceGroupName The resource group name.
      * @param factoryName The factory name.
-     * @param factory Factory resource definition.
-     * @param ifMatch ETag of the factory entity. Should only be specified for update, for which it should match
-     *     existing entity or can be * for unconditional update.
+     * @param factoryUpdateParameters The parameters for updating a factory.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
@@ -123,12 +141,12 @@ public interface FactoriesClient {
      * @return factory resource type along with {@link Response}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    Response<FactoryInner> createOrUpdateWithResponse(
-        String resourceGroupName, String factoryName, FactoryInner factory, String ifMatch, Context context);
+    Response<FactoryInner> updateWithResponse(String resourceGroupName, String factoryName,
+        FactoryUpdateParameters factoryUpdateParameters, Context context);
 
     /**
      * Updates a factory.
-     *
+     * 
      * @param resourceGroupName The resource group name.
      * @param factoryName The factory name.
      * @param factoryUpdateParameters The parameters for updating a factory.
@@ -141,24 +159,25 @@ public interface FactoriesClient {
     FactoryInner update(String resourceGroupName, String factoryName, FactoryUpdateParameters factoryUpdateParameters);
 
     /**
-     * Updates a factory.
-     *
+     * Gets a factory.
+     * 
      * @param resourceGroupName The resource group name.
      * @param factoryName The factory name.
-     * @param factoryUpdateParameters The parameters for updating a factory.
+     * @param ifNoneMatch ETag of the factory entity. Should only be specified for get. If the ETag matches the existing
+     * entity tag, or if * was provided, then no content will be returned.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return factory resource type along with {@link Response}.
+     * @return a factory along with {@link Response}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    Response<FactoryInner> updateWithResponse(
-        String resourceGroupName, String factoryName, FactoryUpdateParameters factoryUpdateParameters, Context context);
+    Response<FactoryInner> getByResourceGroupWithResponse(String resourceGroupName, String factoryName,
+        String ifNoneMatch, Context context);
 
     /**
      * Gets a factory.
-     *
+     * 
      * @param resourceGroupName The resource group name.
      * @param factoryName The factory name.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
@@ -170,37 +189,8 @@ public interface FactoriesClient {
     FactoryInner getByResourceGroup(String resourceGroupName, String factoryName);
 
     /**
-     * Gets a factory.
-     *
-     * @param resourceGroupName The resource group name.
-     * @param factoryName The factory name.
-     * @param ifNoneMatch ETag of the factory entity. Should only be specified for get. If the ETag matches the existing
-     *     entity tag, or if * was provided, then no content will be returned.
-     * @param context The context to associate with this operation.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return a factory along with {@link Response}.
-     */
-    @ServiceMethod(returns = ReturnType.SINGLE)
-    Response<FactoryInner> getByResourceGroupWithResponse(
-        String resourceGroupName, String factoryName, String ifNoneMatch, Context context);
-
-    /**
      * Deletes a factory.
-     *
-     * @param resourceGroupName The resource group name.
-     * @param factoryName The factory name.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     */
-    @ServiceMethod(returns = ReturnType.SINGLE)
-    void delete(String resourceGroupName, String factoryName);
-
-    /**
-     * Deletes a factory.
-     *
+     * 
      * @param resourceGroupName The resource group name.
      * @param factoryName The factory name.
      * @param context The context to associate with this operation.
@@ -213,23 +203,20 @@ public interface FactoriesClient {
     Response<Void> deleteWithResponse(String resourceGroupName, String factoryName, Context context);
 
     /**
-     * Get GitHub Access Token.
-     *
+     * Deletes a factory.
+     * 
      * @param resourceGroupName The resource group name.
      * @param factoryName The factory name.
-     * @param gitHubAccessTokenRequest Get GitHub access token request definition.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return gitHub Access Token.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    GitHubAccessTokenResponseInner getGitHubAccessToken(
-        String resourceGroupName, String factoryName, GitHubAccessTokenRequest gitHubAccessTokenRequest);
+    void delete(String resourceGroupName, String factoryName);
 
     /**
      * Get GitHub Access Token.
-     *
+     * 
      * @param resourceGroupName The resource group name.
      * @param factoryName The factory name.
      * @param gitHubAccessTokenRequest Get GitHub access token request definition.
@@ -240,29 +227,27 @@ public interface FactoriesClient {
      * @return gitHub Access Token along with {@link Response}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    Response<GitHubAccessTokenResponseInner> getGitHubAccessTokenWithResponse(
-        String resourceGroupName,
-        String factoryName,
-        GitHubAccessTokenRequest gitHubAccessTokenRequest,
-        Context context);
+    Response<GitHubAccessTokenResponseInner> getGitHubAccessTokenWithResponse(String resourceGroupName,
+        String factoryName, GitHubAccessTokenRequest gitHubAccessTokenRequest, Context context);
 
     /**
-     * Get Data Plane access.
-     *
+     * Get GitHub Access Token.
+     * 
      * @param resourceGroupName The resource group name.
      * @param factoryName The factory name.
-     * @param policy Data Plane user access policy definition.
+     * @param gitHubAccessTokenRequest Get GitHub access token request definition.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return data Plane access.
+     * @return gitHub Access Token.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    AccessPolicyResponseInner getDataPlaneAccess(String resourceGroupName, String factoryName, UserAccessPolicy policy);
+    GitHubAccessTokenResponseInner getGitHubAccessToken(String resourceGroupName, String factoryName,
+        GitHubAccessTokenRequest gitHubAccessTokenRequest);
 
     /**
      * Get Data Plane access.
-     *
+     * 
      * @param resourceGroupName The resource group name.
      * @param factoryName The factory name.
      * @param policy Data Plane user access policy definition.
@@ -273,6 +258,20 @@ public interface FactoriesClient {
      * @return data Plane access along with {@link Response}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    Response<AccessPolicyResponseInner> getDataPlaneAccessWithResponse(
-        String resourceGroupName, String factoryName, UserAccessPolicy policy, Context context);
+    Response<AccessPolicyResponseInner> getDataPlaneAccessWithResponse(String resourceGroupName, String factoryName,
+        UserAccessPolicy policy, Context context);
+
+    /**
+     * Get Data Plane access.
+     * 
+     * @param resourceGroupName The resource group name.
+     * @param factoryName The factory name.
+     * @param policy Data Plane user access policy definition.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return data Plane access.
+     */
+    @ServiceMethod(returns = ReturnType.SINGLE)
+    AccessPolicyResponseInner getDataPlaneAccess(String resourceGroupName, String factoryName, UserAccessPolicy policy);
 }

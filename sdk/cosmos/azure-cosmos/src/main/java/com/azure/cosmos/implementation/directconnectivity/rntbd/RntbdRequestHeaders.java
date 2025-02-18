@@ -8,6 +8,7 @@ import com.azure.cosmos.ConsistencyLevel;
 import com.azure.cosmos.implementation.ContentSerializationFormat;
 import com.azure.cosmos.implementation.EnumerationDirection;
 import com.azure.cosmos.implementation.FanoutOperationState;
+import com.azure.cosmos.implementation.ImplementationBridgeHelpers;
 import com.azure.cosmos.implementation.MigrateCollectionDirective;
 import com.azure.cosmos.implementation.Paths;
 import com.azure.cosmos.implementation.RMResources;
@@ -18,6 +19,7 @@ import com.azure.cosmos.implementation.RxDocumentServiceRequest;
 import com.azure.cosmos.implementation.apachecommons.lang.EnumUtils;
 import com.azure.cosmos.implementation.apachecommons.lang.StringUtils;
 import com.azure.cosmos.models.IndexingDirective;
+import com.azure.cosmos.models.PriorityLevel;
 import com.fasterxml.jackson.annotation.JsonFilter;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
@@ -26,6 +28,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 import java.util.Locale;
 import java.util.Map;
+import java.util.UUID;
 import java.util.function.Supplier;
 
 import static com.azure.cosmos.implementation.HttpConstants.HeaderValues;
@@ -117,6 +120,10 @@ final class RntbdRequestHeaders extends RntbdTokenStream<RntbdRequestHeader> {
         this.addPopulateIndexMetrics(headers);
         this.addIsClientEncrypted(headers);
         this.addIntendedCollectionRid(headers);
+        this.addCorrelatedActivityId(headers);
+        this.addSDKSupportedCapabilities(headers);
+        this.addChangeFeedWireFormatVersion(headers);
+        this.addPriorityLevel(headers);
 
         // Normal headers (Strings, Ints, Longs, etc.)
 
@@ -158,6 +165,9 @@ final class RntbdRequestHeaders extends RntbdTokenStream<RntbdRequestHeader> {
         this.fillTokenFromHeader(headers, this::isBatchAtomic, HttpHeaders.IS_BATCH_ATOMIC);
         this.fillTokenFromHeader(headers, this::shouldBatchContinueOnError, HttpHeaders.SHOULD_BATCH_CONTINUE_ON_ERROR);
         this.fillTokenFromHeader(headers, this::isBatchOrdered, HttpHeaders.IS_BATCH_ORDERED);
+        this.fillTokenFromHeader(headers, this::getCorrelatedActivityId, HttpHeaders.CORRELATED_ACTIVITY_ID);
+        this.fillTokenFromHeader(headers, this::getSDKSupportedCapabilities, HttpHeaders.SDK_SUPPORTED_CAPABILITIES);
+        this.fillTokenFromHeader(headers, this::getChangeFeedWireFormatVersion, HttpHeaders.CHANGE_FEED_WIRE_FORMAT_VERSION);
 
         // Will be null in case of direct, which is fine - BE will use the value slice the connection context this.
         // When this is used in Gateway, the header value will be populated with the proxied HTTP request's header,
@@ -167,7 +177,7 @@ final class RntbdRequestHeaders extends RntbdTokenStream<RntbdRequestHeader> {
     }
 
     private RntbdRequestHeaders(ByteBuf in) {
-        super(RntbdRequestHeader.set, RntbdRequestHeader.map, in);
+        super(RntbdRequestHeader.set, RntbdRequestHeader.map, in, RntbdRequestHeader.class);
     }
 
     // endregion
@@ -266,6 +276,12 @@ final class RntbdRequestHeaders extends RntbdTokenStream<RntbdRequestHeader> {
     private RntbdToken getContinuationToken() {
         return this.get(RntbdRequestHeader.ContinuationToken);
     }
+
+    private RntbdToken getCorrelatedActivityId() {
+        return this.get(RntbdRequestHeader.CorrelatedActivityId);
+    }
+
+    private RntbdToken getPriorityLevel() { return this.get(RntbdRequestHeader.PriorityLevel); }
 
     private RntbdToken getDatabaseName() {
         return this.get(RntbdRequestHeader.DatabaseName);
@@ -596,6 +612,14 @@ final class RntbdRequestHeaders extends RntbdTokenStream<RntbdRequestHeader> {
         return this.get(RntbdRequestHeader.IsBatchOrdered);
     }
 
+    private RntbdToken getSDKSupportedCapabilities() {
+        return this.get(RntbdRequestHeader.SDKSupportedCapabilities);
+    }
+
+    private RntbdToken getChangeFeedWireFormatVersion() {
+        return this.get(RntbdRequestHeader.ChangeFeedWireFormatVersion);
+    }
+
     private void addAimHeader(final Map<String, String> headers) {
 
         final String value = headers.get(HttpHeaders.A_IM);
@@ -719,6 +743,36 @@ final class RntbdRequestHeaders extends RntbdTokenStream<RntbdRequestHeader> {
         final String value = request.getContinuation();
         if (StringUtils.isNotEmpty(value)) {
             this.getContinuationToken().setValue(value);
+        }
+    }
+
+    private void addCorrelatedActivityId(final Map<String, String> headers) {
+        final String value = headers.get(HttpHeaders.CORRELATED_ACTIVITY_ID);
+        if (StringUtils.isNotEmpty(value)) {
+            this.getCorrelatedActivityId().setValue(UUID.fromString(value));
+        }
+    }
+
+    private void addPriorityLevel(final Map<String, String> headers)
+    {
+        final String value = headers.get(HttpHeaders.PRIORITY_LEVEL);
+
+        if (StringUtils.isNotEmpty(value)) {
+            final PriorityLevel priorityLevel = PriorityLevel.fromString(value);
+
+            if (priorityLevel == null) {
+                final String reason = String.format(Locale.ROOT, RMResources.InvalidRequestHeaderValue,
+                    HttpHeaders.PRIORITY_LEVEL,
+                    value);
+                throw new IllegalStateException(reason);
+            }
+
+            this.getPriorityLevel().setValue(
+                ImplementationBridgeHelpers
+                    .PriorityLevelHelper
+                    .getPriorityLevelAccessor()
+                    .getPriorityValue(priorityLevel)
+            );
         }
     }
 
@@ -1092,6 +1146,10 @@ final class RntbdRequestHeaders extends RntbdTokenStream<RntbdRequestHeader> {
                     case Paths.USER_DEFINED_TYPES_PATH_SEGMENT:
                         this.getUserDefinedTypeName().setValue(fragments[3]);
                         break;
+                    default:
+                        final String reason = String.format(Locale.ROOT, RMResources.InvalidResourceAddress,
+                            value, address);
+                        throw new IllegalStateException(reason);
                 }
             }
 
@@ -1121,6 +1179,10 @@ final class RntbdRequestHeaders extends RntbdTokenStream<RntbdRequestHeader> {
                     case Paths.SCHEMAS_PATH_SEGMENT:
                         this.getSchemaName().setValue(fragments[5]);
                         break;
+                    default:
+                        final String reason = String.format(Locale.ROOT, RMResources.InvalidResourceAddress,
+                            value, address);
+                        throw new IllegalStateException(reason);
                 }
             }
 
@@ -1129,6 +1191,10 @@ final class RntbdRequestHeaders extends RntbdTokenStream<RntbdRequestHeader> {
                     case Paths.ATTACHMENTS_PATH_SEGMENT:
                         this.getAttachmentName().setValue(fragments[7]);
                         break;
+                    default:
+                        final String reason = String.format(Locale.ROOT, RMResources.InvalidResourceAddress,
+                            value, address);
+                        throw new IllegalStateException(reason);
                 }
             }
         }
@@ -1229,6 +1295,20 @@ final class RntbdRequestHeaders extends RntbdTokenStream<RntbdRequestHeader> {
         }
     }
 
+    private void addSDKSupportedCapabilities(final Map<String, String> headers) {
+        final String value = headers.get(HttpHeaders.SDK_SUPPORTED_CAPABILITIES);
+        if (StringUtils.isNotEmpty(value)) {
+            this.getSDKSupportedCapabilities().setValue(Long.valueOf(value));
+        }
+    }
+
+    private void addChangeFeedWireFormatVersion(final Map<String, String> headers) {
+        final String value = headers.get(HttpHeaders.CHANGE_FEED_WIRE_FORMAT_VERSION);
+        if (StringUtils.isNotEmpty(value)) {
+            this.getChangeFeedWireFormatVersion().setValue(value);
+        }
+    }
+
     private void fillTokenFromHeader(final Map<String, String> headers, final Supplier<RntbdToken> supplier, final String name) {
 
         final String value = headers.get(name);
@@ -1272,6 +1352,11 @@ final class RntbdRequestHeaders extends RntbdTokenStream<RntbdRequestHeader> {
 
                     final long aLong = parseLong(name, value);
                     token.setValue(aLong);
+                    break;
+                }
+                case Guid: {
+                    final UUID uuid = UUID.fromString(value);
+                    token.setValue(uuid);
                     break;
                 }
                 default: {

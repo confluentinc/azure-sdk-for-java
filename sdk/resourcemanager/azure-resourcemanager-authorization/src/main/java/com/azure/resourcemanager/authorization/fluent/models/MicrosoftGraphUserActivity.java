@@ -5,136 +5,111 @@
 package com.azure.resourcemanager.authorization.fluent.models;
 
 import com.azure.core.annotation.Fluent;
-import com.azure.core.util.logging.ClientLogger;
-import com.fasterxml.jackson.annotation.JsonAnyGetter;
-import com.fasterxml.jackson.annotation.JsonAnySetter;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.azure.core.util.CoreUtils;
+import com.azure.json.JsonReader;
+import com.azure.json.JsonToken;
+import com.azure.json.JsonWriter;
+import java.io.IOException;
 import java.time.OffsetDateTime;
-import java.util.HashMap;
+import java.time.format.DateTimeFormatter;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-/** userActivity. */
+/**
+ * userActivity.
+ */
 @Fluent
 public final class MicrosoftGraphUserActivity extends MicrosoftGraphEntity {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(MicrosoftGraphUserActivity.class);
-
     /*
-     * Required. URL used to launch the activity in the best native experience
-     * represented by the appId. Might launch a web-based app if no native app
-     * exists.
+     * Required. URL used to launch the activity in the best native experience represented by the appId. Might launch a
+     * web-based app if no native app exists.
      */
-    @JsonProperty(value = "activationUrl")
     private String activationUrl;
 
     /*
-     * Required. URL for the domain representing the cross-platform identity
-     * mapping for the app. Mapping is stored either as a JSON file hosted on
-     * the domain or configurable via Windows Dev Center. The JSON file is
-     * named cross-platform-app-identifiers and is hosted at root of your HTTPS
-     * domain, either at the top level domain or include a sub domain. For
-     * example: https://contoso.com or https://myapp.contoso.com but NOT
-     * https://myapp.contoso.com/somepath. You must have a unique file and
-     * domain (or sub domain) per cross-platform app identity. For example, a
-     * separate file and domain is needed for Word vs. PowerPoint.
+     * The activitySourceHost property.
      */
-    @JsonProperty(value = "activitySourceHost")
     private String activitySourceHost;
 
     /*
-     * Required. The unique activity ID in the context of the app - supplied by
-     * caller and immutable thereafter.
+     * Required. The unique activity ID in the context of the app - supplied by caller and immutable thereafter.
      */
-    @JsonProperty(value = "appActivityId")
     private String appActivityId;
 
     /*
-     * Optional. Short text description of the app used to generate the
-     * activity for use in cases when the app is not installed on the user’s
-     * local device.
+     * Optional. Short text description of the app used to generate the activity for use in cases when the app is not
+     * installed on the user’s local device.
      */
-    @JsonProperty(value = "appDisplayName")
     private String appDisplayName;
 
     /*
      * Json
      */
-    @JsonProperty(value = "contentInfo")
     private Map<String, Object> contentInfo;
 
     /*
-     * Optional. Used in the event the content can be rendered outside of a
-     * native or web-based app experience (for example, a pointer to an item in
-     * an RSS feed).
+     * Optional. Used in the event the content can be rendered outside of a native or web-based app experience (for
+     * example, a pointer to an item in an RSS feed).
      */
-    @JsonProperty(value = "contentUrl")
     private String contentUrl;
 
     /*
-     * Set by the server. DateTime in UTC when the object was created on the
-     * server.
+     * Set by the server. DateTime in UTC when the object was created on the server.
      */
-    @JsonProperty(value = "createdDateTime")
     private OffsetDateTime createdDateTime;
 
     /*
-     * Set by the server. DateTime in UTC when the object expired on the
-     * server.
+     * Set by the server. DateTime in UTC when the object expired on the server.
      */
-    @JsonProperty(value = "expirationDateTime")
     private OffsetDateTime expirationDateTime;
 
     /*
-     * Optional. URL used to launch the activity in a web-based app, if
-     * available.
+     * Optional. URL used to launch the activity in a web-based app, if available.
      */
-    @JsonProperty(value = "fallbackUrl")
     private String fallbackUrl;
 
     /*
-     * Set by the server. DateTime in UTC when the object was modified on the
-     * server.
+     * Set by the server. DateTime in UTC when the object was modified on the server.
      */
-    @JsonProperty(value = "lastModifiedDateTime")
     private OffsetDateTime lastModifiedDateTime;
 
     /*
-     * The status property.
+     * status
      */
-    @JsonProperty(value = "status")
     private MicrosoftGraphStatus status;
 
     /*
-     * Optional. The timezone in which the user's device used to generate the
-     * activity was located at activity creation time; values supplied as Olson
-     * IDs in order to support cross-platform representation.
+     * Optional. The timezone in which the user's device used to generate the activity was located at activity creation
+     * time; values supplied as Olson IDs in order to support cross-platform representation.
      */
-    @JsonProperty(value = "userTimezone")
     private String userTimezone;
 
     /*
      * visualInfo
      */
-    @JsonProperty(value = "visualElements")
     private MicrosoftGraphVisualInfo visualElements;
 
     /*
-     * Optional. NavigationProperty/Containment; navigation property to the
-     * activity's historyItems.
+     * Optional. NavigationProperty/Containment; navigation property to the activity's historyItems.
      */
-    @JsonProperty(value = "historyItems")
     private List<MicrosoftGraphActivityHistoryItem> historyItems;
 
     /*
      * userActivity
      */
-    @JsonIgnore private Map<String, Object> additionalProperties;
+    private Map<String, Object> additionalProperties;
+
+    /**
+     * Creates an instance of MicrosoftGraphUserActivity class.
+     */
+    public MicrosoftGraphUserActivity() {
+    }
 
     /**
      * Get the activationUrl property: Required. URL used to launch the activity in the best native experience
      * represented by the appId. Might launch a web-based app if no native app exists.
-     *
+     * 
      * @return the activationUrl value.
      */
     public String activationUrl() {
@@ -144,7 +119,7 @@ public final class MicrosoftGraphUserActivity extends MicrosoftGraphEntity {
     /**
      * Set the activationUrl property: Required. URL used to launch the activity in the best native experience
      * represented by the appId. Might launch a web-based app if no native app exists.
-     *
+     * 
      * @param activationUrl the activationUrl value to set.
      * @return the MicrosoftGraphUserActivity object itself.
      */
@@ -154,13 +129,8 @@ public final class MicrosoftGraphUserActivity extends MicrosoftGraphEntity {
     }
 
     /**
-     * Get the activitySourceHost property: Required. URL for the domain representing the cross-platform identity
-     * mapping for the app. Mapping is stored either as a JSON file hosted on the domain or configurable via Windows Dev
-     * Center. The JSON file is named cross-platform-app-identifiers and is hosted at root of your HTTPS domain, either
-     * at the top level domain or include a sub domain. For example: https://contoso.com or https://myapp.contoso.com
-     * but NOT https://myapp.contoso.com/somepath. You must have a unique file and domain (or sub domain) per
-     * cross-platform app identity. For example, a separate file and domain is needed for Word vs. PowerPoint.
-     *
+     * Get the activitySourceHost property: The activitySourceHost property.
+     * 
      * @return the activitySourceHost value.
      */
     public String activitySourceHost() {
@@ -168,13 +138,8 @@ public final class MicrosoftGraphUserActivity extends MicrosoftGraphEntity {
     }
 
     /**
-     * Set the activitySourceHost property: Required. URL for the domain representing the cross-platform identity
-     * mapping for the app. Mapping is stored either as a JSON file hosted on the domain or configurable via Windows Dev
-     * Center. The JSON file is named cross-platform-app-identifiers and is hosted at root of your HTTPS domain, either
-     * at the top level domain or include a sub domain. For example: https://contoso.com or https://myapp.contoso.com
-     * but NOT https://myapp.contoso.com/somepath. You must have a unique file and domain (or sub domain) per
-     * cross-platform app identity. For example, a separate file and domain is needed for Word vs. PowerPoint.
-     *
+     * Set the activitySourceHost property: The activitySourceHost property.
+     * 
      * @param activitySourceHost the activitySourceHost value to set.
      * @return the MicrosoftGraphUserActivity object itself.
      */
@@ -186,7 +151,7 @@ public final class MicrosoftGraphUserActivity extends MicrosoftGraphEntity {
     /**
      * Get the appActivityId property: Required. The unique activity ID in the context of the app - supplied by caller
      * and immutable thereafter.
-     *
+     * 
      * @return the appActivityId value.
      */
     public String appActivityId() {
@@ -196,7 +161,7 @@ public final class MicrosoftGraphUserActivity extends MicrosoftGraphEntity {
     /**
      * Set the appActivityId property: Required. The unique activity ID in the context of the app - supplied by caller
      * and immutable thereafter.
-     *
+     * 
      * @param appActivityId the appActivityId value to set.
      * @return the MicrosoftGraphUserActivity object itself.
      */
@@ -208,7 +173,7 @@ public final class MicrosoftGraphUserActivity extends MicrosoftGraphEntity {
     /**
      * Get the appDisplayName property: Optional. Short text description of the app used to generate the activity for
      * use in cases when the app is not installed on the user’s local device.
-     *
+     * 
      * @return the appDisplayName value.
      */
     public String appDisplayName() {
@@ -218,7 +183,7 @@ public final class MicrosoftGraphUserActivity extends MicrosoftGraphEntity {
     /**
      * Set the appDisplayName property: Optional. Short text description of the app used to generate the activity for
      * use in cases when the app is not installed on the user’s local device.
-     *
+     * 
      * @param appDisplayName the appDisplayName value to set.
      * @return the MicrosoftGraphUserActivity object itself.
      */
@@ -229,7 +194,7 @@ public final class MicrosoftGraphUserActivity extends MicrosoftGraphEntity {
 
     /**
      * Get the contentInfo property: Json.
-     *
+     * 
      * @return the contentInfo value.
      */
     public Map<String, Object> contentInfo() {
@@ -238,7 +203,7 @@ public final class MicrosoftGraphUserActivity extends MicrosoftGraphEntity {
 
     /**
      * Set the contentInfo property: Json.
-     *
+     * 
      * @param contentInfo the contentInfo value to set.
      * @return the MicrosoftGraphUserActivity object itself.
      */
@@ -250,7 +215,7 @@ public final class MicrosoftGraphUserActivity extends MicrosoftGraphEntity {
     /**
      * Get the contentUrl property: Optional. Used in the event the content can be rendered outside of a native or
      * web-based app experience (for example, a pointer to an item in an RSS feed).
-     *
+     * 
      * @return the contentUrl value.
      */
     public String contentUrl() {
@@ -260,7 +225,7 @@ public final class MicrosoftGraphUserActivity extends MicrosoftGraphEntity {
     /**
      * Set the contentUrl property: Optional. Used in the event the content can be rendered outside of a native or
      * web-based app experience (for example, a pointer to an item in an RSS feed).
-     *
+     * 
      * @param contentUrl the contentUrl value to set.
      * @return the MicrosoftGraphUserActivity object itself.
      */
@@ -271,7 +236,7 @@ public final class MicrosoftGraphUserActivity extends MicrosoftGraphEntity {
 
     /**
      * Get the createdDateTime property: Set by the server. DateTime in UTC when the object was created on the server.
-     *
+     * 
      * @return the createdDateTime value.
      */
     public OffsetDateTime createdDateTime() {
@@ -280,7 +245,7 @@ public final class MicrosoftGraphUserActivity extends MicrosoftGraphEntity {
 
     /**
      * Set the createdDateTime property: Set by the server. DateTime in UTC when the object was created on the server.
-     *
+     * 
      * @param createdDateTime the createdDateTime value to set.
      * @return the MicrosoftGraphUserActivity object itself.
      */
@@ -291,7 +256,7 @@ public final class MicrosoftGraphUserActivity extends MicrosoftGraphEntity {
 
     /**
      * Get the expirationDateTime property: Set by the server. DateTime in UTC when the object expired on the server.
-     *
+     * 
      * @return the expirationDateTime value.
      */
     public OffsetDateTime expirationDateTime() {
@@ -300,7 +265,7 @@ public final class MicrosoftGraphUserActivity extends MicrosoftGraphEntity {
 
     /**
      * Set the expirationDateTime property: Set by the server. DateTime in UTC when the object expired on the server.
-     *
+     * 
      * @param expirationDateTime the expirationDateTime value to set.
      * @return the MicrosoftGraphUserActivity object itself.
      */
@@ -311,7 +276,7 @@ public final class MicrosoftGraphUserActivity extends MicrosoftGraphEntity {
 
     /**
      * Get the fallbackUrl property: Optional. URL used to launch the activity in a web-based app, if available.
-     *
+     * 
      * @return the fallbackUrl value.
      */
     public String fallbackUrl() {
@@ -320,7 +285,7 @@ public final class MicrosoftGraphUserActivity extends MicrosoftGraphEntity {
 
     /**
      * Set the fallbackUrl property: Optional. URL used to launch the activity in a web-based app, if available.
-     *
+     * 
      * @param fallbackUrl the fallbackUrl value to set.
      * @return the MicrosoftGraphUserActivity object itself.
      */
@@ -332,7 +297,7 @@ public final class MicrosoftGraphUserActivity extends MicrosoftGraphEntity {
     /**
      * Get the lastModifiedDateTime property: Set by the server. DateTime in UTC when the object was modified on the
      * server.
-     *
+     * 
      * @return the lastModifiedDateTime value.
      */
     public OffsetDateTime lastModifiedDateTime() {
@@ -342,7 +307,7 @@ public final class MicrosoftGraphUserActivity extends MicrosoftGraphEntity {
     /**
      * Set the lastModifiedDateTime property: Set by the server. DateTime in UTC when the object was modified on the
      * server.
-     *
+     * 
      * @param lastModifiedDateTime the lastModifiedDateTime value to set.
      * @return the MicrosoftGraphUserActivity object itself.
      */
@@ -352,8 +317,8 @@ public final class MicrosoftGraphUserActivity extends MicrosoftGraphEntity {
     }
 
     /**
-     * Get the status property: The status property.
-     *
+     * Get the status property: status.
+     * 
      * @return the status value.
      */
     public MicrosoftGraphStatus status() {
@@ -361,8 +326,8 @@ public final class MicrosoftGraphUserActivity extends MicrosoftGraphEntity {
     }
 
     /**
-     * Set the status property: The status property.
-     *
+     * Set the status property: status.
+     * 
      * @param status the status value to set.
      * @return the MicrosoftGraphUserActivity object itself.
      */
@@ -375,7 +340,7 @@ public final class MicrosoftGraphUserActivity extends MicrosoftGraphEntity {
      * Get the userTimezone property: Optional. The timezone in which the user's device used to generate the activity
      * was located at activity creation time; values supplied as Olson IDs in order to support cross-platform
      * representation.
-     *
+     * 
      * @return the userTimezone value.
      */
     public String userTimezone() {
@@ -386,7 +351,7 @@ public final class MicrosoftGraphUserActivity extends MicrosoftGraphEntity {
      * Set the userTimezone property: Optional. The timezone in which the user's device used to generate the activity
      * was located at activity creation time; values supplied as Olson IDs in order to support cross-platform
      * representation.
-     *
+     * 
      * @param userTimezone the userTimezone value to set.
      * @return the MicrosoftGraphUserActivity object itself.
      */
@@ -397,7 +362,7 @@ public final class MicrosoftGraphUserActivity extends MicrosoftGraphEntity {
 
     /**
      * Get the visualElements property: visualInfo.
-     *
+     * 
      * @return the visualElements value.
      */
     public MicrosoftGraphVisualInfo visualElements() {
@@ -406,7 +371,7 @@ public final class MicrosoftGraphUserActivity extends MicrosoftGraphEntity {
 
     /**
      * Set the visualElements property: visualInfo.
-     *
+     * 
      * @param visualElements the visualElements value to set.
      * @return the MicrosoftGraphUserActivity object itself.
      */
@@ -418,7 +383,7 @@ public final class MicrosoftGraphUserActivity extends MicrosoftGraphEntity {
     /**
      * Get the historyItems property: Optional. NavigationProperty/Containment; navigation property to the activity's
      * historyItems.
-     *
+     * 
      * @return the historyItems value.
      */
     public List<MicrosoftGraphActivityHistoryItem> historyItems() {
@@ -428,7 +393,7 @@ public final class MicrosoftGraphUserActivity extends MicrosoftGraphEntity {
     /**
      * Set the historyItems property: Optional. NavigationProperty/Containment; navigation property to the activity's
      * historyItems.
-     *
+     * 
      * @param historyItems the historyItems value to set.
      * @return the MicrosoftGraphUserActivity object itself.
      */
@@ -439,17 +404,16 @@ public final class MicrosoftGraphUserActivity extends MicrosoftGraphEntity {
 
     /**
      * Get the additionalProperties property: userActivity.
-     *
+     * 
      * @return the additionalProperties value.
      */
-    @JsonAnyGetter
     public Map<String, Object> additionalProperties() {
         return this.additionalProperties;
     }
 
     /**
      * Set the additionalProperties property: userActivity.
-     *
+     * 
      * @param additionalProperties the additionalProperties value to set.
      * @return the MicrosoftGraphUserActivity object itself.
      */
@@ -458,15 +422,9 @@ public final class MicrosoftGraphUserActivity extends MicrosoftGraphEntity {
         return this;
     }
 
-    @JsonAnySetter
-    void withAdditionalProperties(String key, Object value) {
-        if (additionalProperties == null) {
-            additionalProperties = new HashMap<>();
-        }
-        additionalProperties.put(key, value);
-    }
-
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public MicrosoftGraphUserActivity withId(String id) {
         super.withId(id);
@@ -475,7 +433,7 @@ public final class MicrosoftGraphUserActivity extends MicrosoftGraphEntity {
 
     /**
      * Validates the instance.
-     *
+     * 
      * @throws IllegalArgumentException thrown if the instance is not valid.
      */
     @Override
@@ -487,5 +445,107 @@ public final class MicrosoftGraphUserActivity extends MicrosoftGraphEntity {
         if (historyItems() != null) {
             historyItems().forEach(e -> e.validate());
         }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public JsonWriter toJson(JsonWriter jsonWriter) throws IOException {
+        jsonWriter.writeStartObject();
+        jsonWriter.writeStringField("id", id());
+        jsonWriter.writeStringField("activationUrl", this.activationUrl);
+        jsonWriter.writeStringField("activitySourceHost", this.activitySourceHost);
+        jsonWriter.writeStringField("appActivityId", this.appActivityId);
+        jsonWriter.writeStringField("appDisplayName", this.appDisplayName);
+        jsonWriter.writeMapField("contentInfo", this.contentInfo, (writer, element) -> writer.writeUntyped(element));
+        jsonWriter.writeStringField("contentUrl", this.contentUrl);
+        jsonWriter.writeStringField("createdDateTime",
+            this.createdDateTime == null ? null : DateTimeFormatter.ISO_OFFSET_DATE_TIME.format(this.createdDateTime));
+        jsonWriter.writeStringField("expirationDateTime",
+            this.expirationDateTime == null
+                ? null
+                : DateTimeFormatter.ISO_OFFSET_DATE_TIME.format(this.expirationDateTime));
+        jsonWriter.writeStringField("fallbackUrl", this.fallbackUrl);
+        jsonWriter.writeStringField("lastModifiedDateTime",
+            this.lastModifiedDateTime == null
+                ? null
+                : DateTimeFormatter.ISO_OFFSET_DATE_TIME.format(this.lastModifiedDateTime));
+        jsonWriter.writeStringField("status", this.status == null ? null : this.status.toString());
+        jsonWriter.writeStringField("userTimezone", this.userTimezone);
+        jsonWriter.writeJsonField("visualElements", this.visualElements);
+        jsonWriter.writeArrayField("historyItems", this.historyItems, (writer, element) -> writer.writeJson(element));
+        if (additionalProperties != null) {
+            for (Map.Entry<String, Object> additionalProperty : additionalProperties.entrySet()) {
+                jsonWriter.writeUntypedField(additionalProperty.getKey(), additionalProperty.getValue());
+            }
+        }
+        return jsonWriter.writeEndObject();
+    }
+
+    /**
+     * Reads an instance of MicrosoftGraphUserActivity from the JsonReader.
+     * 
+     * @param jsonReader The JsonReader being read.
+     * @return An instance of MicrosoftGraphUserActivity if the JsonReader was pointing to an instance of it, or null if
+     * it was pointing to JSON null.
+     * @throws IOException If an error occurs while reading the MicrosoftGraphUserActivity.
+     */
+    public static MicrosoftGraphUserActivity fromJson(JsonReader jsonReader) throws IOException {
+        return jsonReader.readObject(reader -> {
+            MicrosoftGraphUserActivity deserializedMicrosoftGraphUserActivity = new MicrosoftGraphUserActivity();
+            Map<String, Object> additionalProperties = null;
+            while (reader.nextToken() != JsonToken.END_OBJECT) {
+                String fieldName = reader.getFieldName();
+                reader.nextToken();
+
+                if ("id".equals(fieldName)) {
+                    deserializedMicrosoftGraphUserActivity.withId(reader.getString());
+                } else if ("activationUrl".equals(fieldName)) {
+                    deserializedMicrosoftGraphUserActivity.activationUrl = reader.getString();
+                } else if ("activitySourceHost".equals(fieldName)) {
+                    deserializedMicrosoftGraphUserActivity.activitySourceHost = reader.getString();
+                } else if ("appActivityId".equals(fieldName)) {
+                    deserializedMicrosoftGraphUserActivity.appActivityId = reader.getString();
+                } else if ("appDisplayName".equals(fieldName)) {
+                    deserializedMicrosoftGraphUserActivity.appDisplayName = reader.getString();
+                } else if ("contentInfo".equals(fieldName)) {
+                    Map<String, Object> contentInfo = reader.readMap(reader1 -> reader1.readUntyped());
+                    deserializedMicrosoftGraphUserActivity.contentInfo = contentInfo;
+                } else if ("contentUrl".equals(fieldName)) {
+                    deserializedMicrosoftGraphUserActivity.contentUrl = reader.getString();
+                } else if ("createdDateTime".equals(fieldName)) {
+                    deserializedMicrosoftGraphUserActivity.createdDateTime = reader
+                        .getNullable(nonNullReader -> CoreUtils.parseBestOffsetDateTime(nonNullReader.getString()));
+                } else if ("expirationDateTime".equals(fieldName)) {
+                    deserializedMicrosoftGraphUserActivity.expirationDateTime = reader
+                        .getNullable(nonNullReader -> CoreUtils.parseBestOffsetDateTime(nonNullReader.getString()));
+                } else if ("fallbackUrl".equals(fieldName)) {
+                    deserializedMicrosoftGraphUserActivity.fallbackUrl = reader.getString();
+                } else if ("lastModifiedDateTime".equals(fieldName)) {
+                    deserializedMicrosoftGraphUserActivity.lastModifiedDateTime = reader
+                        .getNullable(nonNullReader -> CoreUtils.parseBestOffsetDateTime(nonNullReader.getString()));
+                } else if ("status".equals(fieldName)) {
+                    deserializedMicrosoftGraphUserActivity.status = MicrosoftGraphStatus.fromString(reader.getString());
+                } else if ("userTimezone".equals(fieldName)) {
+                    deserializedMicrosoftGraphUserActivity.userTimezone = reader.getString();
+                } else if ("visualElements".equals(fieldName)) {
+                    deserializedMicrosoftGraphUserActivity.visualElements = MicrosoftGraphVisualInfo.fromJson(reader);
+                } else if ("historyItems".equals(fieldName)) {
+                    List<MicrosoftGraphActivityHistoryItem> historyItems
+                        = reader.readArray(reader1 -> MicrosoftGraphActivityHistoryItem.fromJson(reader1));
+                    deserializedMicrosoftGraphUserActivity.historyItems = historyItems;
+                } else {
+                    if (additionalProperties == null) {
+                        additionalProperties = new LinkedHashMap<>();
+                    }
+
+                    additionalProperties.put(fieldName, reader.readUntyped());
+                }
+            }
+            deserializedMicrosoftGraphUserActivity.additionalProperties = additionalProperties;
+
+            return deserializedMicrosoftGraphUserActivity;
+        });
     }
 }

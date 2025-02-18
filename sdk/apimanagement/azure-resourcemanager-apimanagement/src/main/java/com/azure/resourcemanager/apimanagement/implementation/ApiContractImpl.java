@@ -6,9 +6,11 @@ package com.azure.resourcemanager.apimanagement.implementation;
 
 import com.azure.core.util.Context;
 import com.azure.resourcemanager.apimanagement.fluent.models.ApiContractInner;
+import com.azure.resourcemanager.apimanagement.models.ApiContactInformation;
 import com.azure.resourcemanager.apimanagement.models.ApiContract;
 import com.azure.resourcemanager.apimanagement.models.ApiCreateOrUpdateParameter;
 import com.azure.resourcemanager.apimanagement.models.ApiCreateOrUpdatePropertiesWsdlSelector;
+import com.azure.resourcemanager.apimanagement.models.ApiLicenseInformation;
 import com.azure.resourcemanager.apimanagement.models.ApiType;
 import com.azure.resourcemanager.apimanagement.models.ApiUpdateContract;
 import com.azure.resourcemanager.apimanagement.models.ApiVersionSetContractDetails;
@@ -17,6 +19,7 @@ import com.azure.resourcemanager.apimanagement.models.ContentFormat;
 import com.azure.resourcemanager.apimanagement.models.Protocol;
 import com.azure.resourcemanager.apimanagement.models.SoapApiType;
 import com.azure.resourcemanager.apimanagement.models.SubscriptionKeyParameterNamesContract;
+import com.azure.resourcemanager.apimanagement.models.TranslateRequiredQueryParametersConduct;
 import java.util.Collections;
 import java.util.List;
 
@@ -114,6 +117,22 @@ public final class ApiContractImpl implements ApiContract, ApiContract.Definitio
         return this.innerModel().subscriptionRequired();
     }
 
+    public String termsOfServiceUrl() {
+        return this.innerModel().termsOfServiceUrl();
+    }
+
+    public ApiContactInformation contact() {
+        return this.innerModel().contact();
+    }
+
+    public ApiLicenseInformation license() {
+        return this.innerModel().license();
+    }
+
+    public String resourceGroupName() {
+        return resourceGroupName;
+    }
+
     public ApiContractInner innerModel() {
         return this.innerObject;
     }
@@ -143,20 +162,16 @@ public final class ApiContractImpl implements ApiContract, ApiContract.Definitio
     }
 
     public ApiContract create() {
-        this.innerObject =
-            serviceManager
-                .serviceClient()
-                .getApis()
-                .createOrUpdate(resourceGroupName, serviceName, apiId, createParameters, createIfMatch, Context.NONE);
+        this.innerObject = serviceManager.serviceClient()
+            .getApis()
+            .createOrUpdate(resourceGroupName, serviceName, apiId, createParameters, createIfMatch, Context.NONE);
         return this;
     }
 
     public ApiContract create(Context context) {
-        this.innerObject =
-            serviceManager
-                .serviceClient()
-                .getApis()
-                .createOrUpdate(resourceGroupName, serviceName, apiId, createParameters, createIfMatch, context);
+        this.innerObject = serviceManager.serviceClient()
+            .getApis()
+            .createOrUpdate(resourceGroupName, serviceName, apiId, createParameters, createIfMatch, context);
         return this;
     }
 
@@ -175,52 +190,43 @@ public final class ApiContractImpl implements ApiContract, ApiContract.Definitio
     }
 
     public ApiContract apply() {
-        this.innerObject =
-            serviceManager
-                .serviceClient()
-                .getApis()
-                .updateWithResponse(
-                    resourceGroupName, serviceName, apiId, updateIfMatch, updateParameters, Context.NONE)
-                .getValue();
+        this.innerObject = serviceManager.serviceClient()
+            .getApis()
+            .updateWithResponse(resourceGroupName, serviceName, apiId, updateIfMatch, updateParameters, Context.NONE)
+            .getValue();
         return this;
     }
 
     public ApiContract apply(Context context) {
-        this.innerObject =
-            serviceManager
-                .serviceClient()
-                .getApis()
-                .updateWithResponse(resourceGroupName, serviceName, apiId, updateIfMatch, updateParameters, context)
-                .getValue();
+        this.innerObject = serviceManager.serviceClient()
+            .getApis()
+            .updateWithResponse(resourceGroupName, serviceName, apiId, updateIfMatch, updateParameters, context)
+            .getValue();
         return this;
     }
 
-    ApiContractImpl(
-        ApiContractInner innerObject, com.azure.resourcemanager.apimanagement.ApiManagementManager serviceManager) {
+    ApiContractImpl(ApiContractInner innerObject,
+        com.azure.resourcemanager.apimanagement.ApiManagementManager serviceManager) {
         this.innerObject = innerObject;
         this.serviceManager = serviceManager;
-        this.resourceGroupName = Utils.getValueFromIdByName(innerObject.id(), "resourceGroups");
-        this.serviceName = Utils.getValueFromIdByName(innerObject.id(), "service");
-        this.apiId = Utils.getValueFromIdByName(innerObject.id(), "apis");
+        this.resourceGroupName = ResourceManagerUtils.getValueFromIdByName(innerObject.id(), "resourceGroups");
+        this.serviceName = ResourceManagerUtils.getValueFromIdByName(innerObject.id(), "service");
+        this.apiId = ResourceManagerUtils.getValueFromIdByName(innerObject.id(), "apis");
     }
 
     public ApiContract refresh() {
-        this.innerObject =
-            serviceManager
-                .serviceClient()
-                .getApis()
-                .getWithResponse(resourceGroupName, serviceName, apiId, Context.NONE)
-                .getValue();
+        this.innerObject = serviceManager.serviceClient()
+            .getApis()
+            .getWithResponse(resourceGroupName, serviceName, apiId, Context.NONE)
+            .getValue();
         return this;
     }
 
     public ApiContract refresh(Context context) {
-        this.innerObject =
-            serviceManager
-                .serviceClient()
-                .getApis()
-                .getWithResponse(resourceGroupName, serviceName, apiId, context)
-                .getValue();
+        this.innerObject = serviceManager.serviceClient()
+            .getApis()
+            .getWithResponse(resourceGroupName, serviceName, apiId, context)
+            .getValue();
         return this;
     }
 
@@ -241,6 +247,12 @@ public final class ApiContractImpl implements ApiContract, ApiContract.Definitio
 
     public ApiContractImpl withSoapApiType(SoapApiType soapApiType) {
         this.createParameters.withSoapApiType(soapApiType);
+        return this;
+    }
+
+    public ApiContractImpl withTranslateRequiredQueryParametersConduct(
+        TranslateRequiredQueryParametersConduct translateRequiredQueryParametersConduct) {
+        this.createParameters.withTranslateRequiredQueryParametersConduct(translateRequiredQueryParametersConduct);
         return this;
     }
 
@@ -314,8 +326,8 @@ public final class ApiContractImpl implements ApiContract, ApiContract.Definitio
         }
     }
 
-    public ApiContractImpl withSubscriptionKeyParameterNames(
-        SubscriptionKeyParameterNamesContract subscriptionKeyParameterNames) {
+    public ApiContractImpl
+        withSubscriptionKeyParameterNames(SubscriptionKeyParameterNamesContract subscriptionKeyParameterNames) {
         if (isInCreateMode()) {
             this.createParameters.withSubscriptionKeyParameterNames(subscriptionKeyParameterNames);
             return this;
@@ -401,6 +413,36 @@ public final class ApiContractImpl implements ApiContract, ApiContract.Definitio
             return this;
         } else {
             this.updateParameters.withSubscriptionRequired(subscriptionRequired);
+            return this;
+        }
+    }
+
+    public ApiContractImpl withTermsOfServiceUrl(String termsOfServiceUrl) {
+        if (isInCreateMode()) {
+            this.createParameters.withTermsOfServiceUrl(termsOfServiceUrl);
+            return this;
+        } else {
+            this.updateParameters.withTermsOfServiceUrl(termsOfServiceUrl);
+            return this;
+        }
+    }
+
+    public ApiContractImpl withContact(ApiContactInformation contact) {
+        if (isInCreateMode()) {
+            this.createParameters.withContact(contact);
+            return this;
+        } else {
+            this.updateParameters.withContact(contact);
+            return this;
+        }
+    }
+
+    public ApiContractImpl withLicense(ApiLicenseInformation license) {
+        if (isInCreateMode()) {
+            this.createParameters.withLicense(license);
+            return this;
+        } else {
+            this.updateParameters.withLicense(license);
             return this;
         }
     }

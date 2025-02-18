@@ -8,11 +8,13 @@ import com.azure.core.http.rest.PagedIterable;
 import com.azure.core.http.rest.Response;
 import com.azure.core.util.Context;
 
-/** Resource collection API of DataFlowDebugSessions. */
+/**
+ * Resource collection API of DataFlowDebugSessions.
+ */
 public interface DataFlowDebugSessions {
     /**
      * Creates a data flow debug session.
-     *
+     * 
      * @param resourceGroupName The resource group name.
      * @param factoryName The factory name.
      * @param request Data flow debug session definition.
@@ -21,12 +23,12 @@ public interface DataFlowDebugSessions {
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
      * @return response body structure for creating data flow debug session.
      */
-    CreateDataFlowDebugSessionResponse create(
-        String resourceGroupName, String factoryName, CreateDataFlowDebugSessionRequest request);
+    CreateDataFlowDebugSessionResponse create(String resourceGroupName, String factoryName,
+        CreateDataFlowDebugSessionRequest request);
 
     /**
      * Creates a data flow debug session.
-     *
+     * 
      * @param resourceGroupName The resource group name.
      * @param factoryName The factory name.
      * @param request Data flow debug session definition.
@@ -36,52 +38,38 @@ public interface DataFlowDebugSessions {
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
      * @return response body structure for creating data flow debug session.
      */
-    CreateDataFlowDebugSessionResponse create(
-        String resourceGroupName, String factoryName, CreateDataFlowDebugSessionRequest request, Context context);
+    CreateDataFlowDebugSessionResponse create(String resourceGroupName, String factoryName,
+        CreateDataFlowDebugSessionRequest request, Context context);
 
     /**
      * Query all active data flow debug sessions.
-     *
+     * 
      * @param resourceGroupName The resource group name.
      * @param factoryName The factory name.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return a list of active debug sessions.
+     * @return a list of active debug sessions as paginated response with {@link PagedIterable}.
      */
     PagedIterable<DataFlowDebugSessionInfo> queryByFactory(String resourceGroupName, String factoryName);
 
     /**
      * Query all active data flow debug sessions.
-     *
+     * 
      * @param resourceGroupName The resource group name.
      * @param factoryName The factory name.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return a list of active debug sessions.
+     * @return a list of active debug sessions as paginated response with {@link PagedIterable}.
      */
-    PagedIterable<DataFlowDebugSessionInfo> queryByFactory(
-        String resourceGroupName, String factoryName, Context context);
+    PagedIterable<DataFlowDebugSessionInfo> queryByFactory(String resourceGroupName, String factoryName,
+        Context context);
 
     /**
      * Add a data flow into debug session.
-     *
-     * @param resourceGroupName The resource group name.
-     * @param factoryName The factory name.
-     * @param request Data flow debug session definition with debug content.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return response body structure for starting data flow debug session.
-     */
-    AddDataFlowToDebugSessionResponse addDataFlow(
-        String resourceGroupName, String factoryName, DataFlowDebugPackage request);
-
-    /**
-     * Add a data flow into debug session.
-     *
+     * 
      * @param resourceGroupName The resource group name.
      * @param factoryName The factory name.
      * @param request Data flow debug session definition with debug content.
@@ -91,12 +79,41 @@ public interface DataFlowDebugSessions {
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
      * @return response body structure for starting data flow debug session along with {@link Response}.
      */
-    Response<AddDataFlowToDebugSessionResponse> addDataFlowWithResponse(
-        String resourceGroupName, String factoryName, DataFlowDebugPackage request, Context context);
+    Response<AddDataFlowToDebugSessionResponse> addDataFlowWithResponse(String resourceGroupName, String factoryName,
+        DataFlowDebugPackage request, Context context);
+
+    /**
+     * Add a data flow into debug session.
+     * 
+     * @param resourceGroupName The resource group name.
+     * @param factoryName The factory name.
+     * @param request Data flow debug session definition with debug content.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return response body structure for starting data flow debug session.
+     */
+    AddDataFlowToDebugSessionResponse addDataFlow(String resourceGroupName, String factoryName,
+        DataFlowDebugPackage request);
 
     /**
      * Deletes a data flow debug session.
-     *
+     * 
+     * @param resourceGroupName The resource group name.
+     * @param factoryName The factory name.
+     * @param request Data flow debug session definition for deletion.
+     * @param context The context to associate with this operation.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return the {@link Response}.
+     */
+    Response<Void> deleteWithResponse(String resourceGroupName, String factoryName,
+        DeleteDataFlowDebugSessionRequest request, Context context);
+
+    /**
+     * Deletes a data flow debug session.
+     * 
      * @param resourceGroupName The resource group name.
      * @param factoryName The factory name.
      * @param request Data flow debug session definition for deletion.
@@ -107,23 +124,8 @@ public interface DataFlowDebugSessions {
     void delete(String resourceGroupName, String factoryName, DeleteDataFlowDebugSessionRequest request);
 
     /**
-     * Deletes a data flow debug session.
-     *
-     * @param resourceGroupName The resource group name.
-     * @param factoryName The factory name.
-     * @param request Data flow debug session definition for deletion.
-     * @param context The context to associate with this operation.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the {@link Response}.
-     */
-    Response<Void> deleteWithResponse(
-        String resourceGroupName, String factoryName, DeleteDataFlowDebugSessionRequest request, Context context);
-
-    /**
      * Execute a data flow debug command.
-     *
+     * 
      * @param resourceGroupName The resource group name.
      * @param factoryName The factory name.
      * @param request Data flow debug command definition.
@@ -132,12 +134,12 @@ public interface DataFlowDebugSessions {
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
      * @return response body structure of data flow result for data preview, statistics or expression preview.
      */
-    DataFlowDebugCommandResponse executeCommand(
-        String resourceGroupName, String factoryName, DataFlowDebugCommandRequest request);
+    DataFlowDebugCommandResponse executeCommand(String resourceGroupName, String factoryName,
+        DataFlowDebugCommandRequest request);
 
     /**
      * Execute a data flow debug command.
-     *
+     * 
      * @param resourceGroupName The resource group name.
      * @param factoryName The factory name.
      * @param request Data flow debug command definition.
@@ -147,6 +149,6 @@ public interface DataFlowDebugSessions {
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
      * @return response body structure of data flow result for data preview, statistics or expression preview.
      */
-    DataFlowDebugCommandResponse executeCommand(
-        String resourceGroupName, String factoryName, DataFlowDebugCommandRequest request, Context context);
+    DataFlowDebugCommandResponse executeCommand(String resourceGroupName, String factoryName,
+        DataFlowDebugCommandRequest request, Context context);
 }

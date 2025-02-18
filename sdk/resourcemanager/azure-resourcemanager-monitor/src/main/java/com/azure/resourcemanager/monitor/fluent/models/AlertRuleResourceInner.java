@@ -5,235 +5,100 @@
 package com.azure.resourcemanager.monitor.fluent.models;
 
 import com.azure.core.annotation.Fluent;
-import com.azure.core.annotation.JsonFlatten;
 import com.azure.core.management.Resource;
 import com.azure.core.util.logging.ClientLogger;
+import com.azure.json.JsonReader;
+import com.azure.json.JsonToken;
+import com.azure.json.JsonWriter;
 import com.azure.resourcemanager.monitor.models.RuleAction;
 import com.azure.resourcemanager.monitor.models.RuleCondition;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import java.io.IOException;
 import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Map;
 
-/** The alert rule resource. */
-@JsonFlatten
+/**
+ * The alert rule resource.
+ */
 @Fluent
-public class AlertRuleResourceInner extends Resource {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(AlertRuleResourceInner.class);
+public final class AlertRuleResourceInner extends Resource {
+    /*
+     * The alert rule properties of the resource.
+     */
+    private AlertRule innerProperties = new AlertRule();
 
     /*
-     * the name of the alert rule.
+     * Fully qualified resource Id for the resource.
      */
-    @JsonProperty(value = "properties.name", required = true)
-    private String namePropertiesName;
+    private String id;
 
     /*
-     * the description of the alert rule that will be included in the alert
-     * email.
+     * The name of the resource.
      */
-    @JsonProperty(value = "properties.description")
-    private String description;
+    private String name;
 
     /*
-     * the provisioning state.
+     * The type of the resource.
      */
-    @JsonProperty(value = "properties.provisioningState")
-    private String provisioningState;
-
-    /*
-     * the flag that indicates whether the alert rule is enabled.
-     */
-    @JsonProperty(value = "properties.isEnabled", required = true)
-    private boolean isEnabled;
-
-    /*
-     * the condition that results in the alert rule being activated.
-     */
-    @JsonProperty(value = "properties.condition", required = true)
-    private RuleCondition condition;
-
-    /*
-     * action that is performed when the alert rule becomes active, and when an
-     * alert condition is resolved.
-     */
-    @JsonProperty(value = "properties.action")
-    private RuleAction action;
-
-    /*
-     * the array of actions that are performed when the alert rule becomes
-     * active, and when an alert condition is resolved.
-     */
-    @JsonProperty(value = "properties.actions")
-    private List<RuleAction> actions;
-
-    /*
-     * Last time the rule was updated in ISO8601 format.
-     */
-    @JsonProperty(value = "properties.lastUpdatedTime", access = JsonProperty.Access.WRITE_ONLY)
-    private OffsetDateTime lastUpdatedTime;
+    private String type;
 
     /**
-     * Get the namePropertiesName property: the name of the alert rule.
-     *
-     * @return the namePropertiesName value.
+     * Creates an instance of AlertRuleResourceInner class.
      */
-    public String namePropertiesName() {
-        return this.namePropertiesName;
+    public AlertRuleResourceInner() {
     }
 
     /**
-     * Set the namePropertiesName property: the name of the alert rule.
-     *
-     * @param namePropertiesName the namePropertiesName value to set.
-     * @return the AlertRuleResourceInner object itself.
+     * Get the innerProperties property: The alert rule properties of the resource.
+     * 
+     * @return the innerProperties value.
      */
-    public AlertRuleResourceInner withNamePropertiesName(String namePropertiesName) {
-        this.namePropertiesName = namePropertiesName;
-        return this;
+    private AlertRule innerProperties() {
+        return this.innerProperties;
     }
 
     /**
-     * Get the description property: the description of the alert rule that will be included in the alert email.
-     *
-     * @return the description value.
+     * Get the id property: Fully qualified resource Id for the resource.
+     * 
+     * @return the id value.
      */
-    public String description() {
-        return this.description;
+    @Override
+    public String id() {
+        return this.id;
     }
 
     /**
-     * Set the description property: the description of the alert rule that will be included in the alert email.
-     *
-     * @param description the description value to set.
-     * @return the AlertRuleResourceInner object itself.
+     * Get the name property: The name of the resource.
+     * 
+     * @return the name value.
      */
-    public AlertRuleResourceInner withDescription(String description) {
-        this.description = description;
-        return this;
+    @Override
+    public String name() {
+        return this.name;
     }
 
     /**
-     * Get the provisioningState property: the provisioning state.
-     *
-     * @return the provisioningState value.
+     * Get the type property: The type of the resource.
+     * 
+     * @return the type value.
      */
-    public String provisioningState() {
-        return this.provisioningState;
+    @Override
+    public String type() {
+        return this.type;
     }
 
     /**
-     * Set the provisioningState property: the provisioning state.
-     *
-     * @param provisioningState the provisioningState value to set.
-     * @return the AlertRuleResourceInner object itself.
+     * {@inheritDoc}
      */
-    public AlertRuleResourceInner withProvisioningState(String provisioningState) {
-        this.provisioningState = provisioningState;
-        return this;
-    }
-
-    /**
-     * Get the isEnabled property: the flag that indicates whether the alert rule is enabled.
-     *
-     * @return the isEnabled value.
-     */
-    public boolean isEnabled() {
-        return this.isEnabled;
-    }
-
-    /**
-     * Set the isEnabled property: the flag that indicates whether the alert rule is enabled.
-     *
-     * @param isEnabled the isEnabled value to set.
-     * @return the AlertRuleResourceInner object itself.
-     */
-    public AlertRuleResourceInner withIsEnabled(boolean isEnabled) {
-        this.isEnabled = isEnabled;
-        return this;
-    }
-
-    /**
-     * Get the condition property: the condition that results in the alert rule being activated.
-     *
-     * @return the condition value.
-     */
-    public RuleCondition condition() {
-        return this.condition;
-    }
-
-    /**
-     * Set the condition property: the condition that results in the alert rule being activated.
-     *
-     * @param condition the condition value to set.
-     * @return the AlertRuleResourceInner object itself.
-     */
-    public AlertRuleResourceInner withCondition(RuleCondition condition) {
-        this.condition = condition;
-        return this;
-    }
-
-    /**
-     * Get the action property: action that is performed when the alert rule becomes active, and when an alert condition
-     * is resolved.
-     *
-     * @return the action value.
-     */
-    public RuleAction action() {
-        return this.action;
-    }
-
-    /**
-     * Set the action property: action that is performed when the alert rule becomes active, and when an alert condition
-     * is resolved.
-     *
-     * @param action the action value to set.
-     * @return the AlertRuleResourceInner object itself.
-     */
-    public AlertRuleResourceInner withAction(RuleAction action) {
-        this.action = action;
-        return this;
-    }
-
-    /**
-     * Get the actions property: the array of actions that are performed when the alert rule becomes active, and when an
-     * alert condition is resolved.
-     *
-     * @return the actions value.
-     */
-    public List<RuleAction> actions() {
-        return this.actions;
-    }
-
-    /**
-     * Set the actions property: the array of actions that are performed when the alert rule becomes active, and when an
-     * alert condition is resolved.
-     *
-     * @param actions the actions value to set.
-     * @return the AlertRuleResourceInner object itself.
-     */
-    public AlertRuleResourceInner withActions(List<RuleAction> actions) {
-        this.actions = actions;
-        return this;
-    }
-
-    /**
-     * Get the lastUpdatedTime property: Last time the rule was updated in ISO8601 format.
-     *
-     * @return the lastUpdatedTime value.
-     */
-    public OffsetDateTime lastUpdatedTime() {
-        return this.lastUpdatedTime;
-    }
-
-    /** {@inheritDoc} */
     @Override
     public AlertRuleResourceInner withLocation(String location) {
         super.withLocation(location);
         return this;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public AlertRuleResourceInner withTags(Map<String, String> tags) {
         super.withTags(tags);
@@ -241,30 +106,243 @@ public class AlertRuleResourceInner extends Resource {
     }
 
     /**
+     * Get the name property: the name of the alert rule.
+     * 
+     * @return the name value.
+     */
+    public String namePropertiesName() {
+        return this.innerProperties() == null ? null : this.innerProperties().name();
+    }
+
+    /**
+     * Set the name property: the name of the alert rule.
+     * 
+     * @param name the name value to set.
+     * @return the AlertRuleResourceInner object itself.
+     */
+    public AlertRuleResourceInner withNamePropertiesName(String name) {
+        if (this.innerProperties() == null) {
+            this.innerProperties = new AlertRule();
+        }
+        this.innerProperties().withName(name);
+        return this;
+    }
+
+    /**
+     * Get the description property: the description of the alert rule that will be included in the alert email.
+     * 
+     * @return the description value.
+     */
+    public String description() {
+        return this.innerProperties() == null ? null : this.innerProperties().description();
+    }
+
+    /**
+     * Set the description property: the description of the alert rule that will be included in the alert email.
+     * 
+     * @param description the description value to set.
+     * @return the AlertRuleResourceInner object itself.
+     */
+    public AlertRuleResourceInner withDescription(String description) {
+        if (this.innerProperties() == null) {
+            this.innerProperties = new AlertRule();
+        }
+        this.innerProperties().withDescription(description);
+        return this;
+    }
+
+    /**
+     * Get the provisioningState property: the provisioning state.
+     * 
+     * @return the provisioningState value.
+     */
+    public String provisioningState() {
+        return this.innerProperties() == null ? null : this.innerProperties().provisioningState();
+    }
+
+    /**
+     * Set the provisioningState property: the provisioning state.
+     * 
+     * @param provisioningState the provisioningState value to set.
+     * @return the AlertRuleResourceInner object itself.
+     */
+    public AlertRuleResourceInner withProvisioningState(String provisioningState) {
+        if (this.innerProperties() == null) {
+            this.innerProperties = new AlertRule();
+        }
+        this.innerProperties().withProvisioningState(provisioningState);
+        return this;
+    }
+
+    /**
+     * Get the isEnabled property: the flag that indicates whether the alert rule is enabled.
+     * 
+     * @return the isEnabled value.
+     */
+    public boolean isEnabled() {
+        return this.innerProperties() == null ? false : this.innerProperties().isEnabled();
+    }
+
+    /**
+     * Set the isEnabled property: the flag that indicates whether the alert rule is enabled.
+     * 
+     * @param isEnabled the isEnabled value to set.
+     * @return the AlertRuleResourceInner object itself.
+     */
+    public AlertRuleResourceInner withIsEnabled(boolean isEnabled) {
+        if (this.innerProperties() == null) {
+            this.innerProperties = new AlertRule();
+        }
+        this.innerProperties().withIsEnabled(isEnabled);
+        return this;
+    }
+
+    /**
+     * Get the condition property: the condition that results in the alert rule being activated.
+     * 
+     * @return the condition value.
+     */
+    public RuleCondition condition() {
+        return this.innerProperties() == null ? null : this.innerProperties().condition();
+    }
+
+    /**
+     * Set the condition property: the condition that results in the alert rule being activated.
+     * 
+     * @param condition the condition value to set.
+     * @return the AlertRuleResourceInner object itself.
+     */
+    public AlertRuleResourceInner withCondition(RuleCondition condition) {
+        if (this.innerProperties() == null) {
+            this.innerProperties = new AlertRule();
+        }
+        this.innerProperties().withCondition(condition);
+        return this;
+    }
+
+    /**
+     * Get the action property: action that is performed when the alert rule becomes active, and when an alert condition
+     * is resolved.
+     * 
+     * @return the action value.
+     */
+    public RuleAction action() {
+        return this.innerProperties() == null ? null : this.innerProperties().action();
+    }
+
+    /**
+     * Set the action property: action that is performed when the alert rule becomes active, and when an alert condition
+     * is resolved.
+     * 
+     * @param action the action value to set.
+     * @return the AlertRuleResourceInner object itself.
+     */
+    public AlertRuleResourceInner withAction(RuleAction action) {
+        if (this.innerProperties() == null) {
+            this.innerProperties = new AlertRule();
+        }
+        this.innerProperties().withAction(action);
+        return this;
+    }
+
+    /**
+     * Get the actions property: the array of actions that are performed when the alert rule becomes active, and when an
+     * alert condition is resolved.
+     * 
+     * @return the actions value.
+     */
+    public List<RuleAction> actions() {
+        return this.innerProperties() == null ? null : this.innerProperties().actions();
+    }
+
+    /**
+     * Set the actions property: the array of actions that are performed when the alert rule becomes active, and when an
+     * alert condition is resolved.
+     * 
+     * @param actions the actions value to set.
+     * @return the AlertRuleResourceInner object itself.
+     */
+    public AlertRuleResourceInner withActions(List<RuleAction> actions) {
+        if (this.innerProperties() == null) {
+            this.innerProperties = new AlertRule();
+        }
+        this.innerProperties().withActions(actions);
+        return this;
+    }
+
+    /**
+     * Get the lastUpdatedTime property: Last time the rule was updated in ISO8601 format.
+     * 
+     * @return the lastUpdatedTime value.
+     */
+    public OffsetDateTime lastUpdatedTime() {
+        return this.innerProperties() == null ? null : this.innerProperties().lastUpdatedTime();
+    }
+
+    /**
      * Validates the instance.
-     *
+     * 
      * @throws IllegalArgumentException thrown if the instance is not valid.
      */
     public void validate() {
-        if (namePropertiesName() == null) {
-            throw logger
-                .logExceptionAsError(
-                    new IllegalArgumentException(
-                        "Missing required property namePropertiesName in model AlertRuleResourceInner"));
-        }
-        if (condition() == null) {
-            throw logger
-                .logExceptionAsError(
-                    new IllegalArgumentException(
-                        "Missing required property condition in model AlertRuleResourceInner"));
+        if (innerProperties() == null) {
+            throw LOGGER.atError()
+                .log(new IllegalArgumentException(
+                    "Missing required property innerProperties in model AlertRuleResourceInner"));
         } else {
-            condition().validate();
+            innerProperties().validate();
         }
-        if (action() != null) {
-            action().validate();
-        }
-        if (actions() != null) {
-            actions().forEach(e -> e.validate());
-        }
+    }
+
+    private static final ClientLogger LOGGER = new ClientLogger(AlertRuleResourceInner.class);
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public JsonWriter toJson(JsonWriter jsonWriter) throws IOException {
+        jsonWriter.writeStartObject();
+        jsonWriter.writeStringField("location", location());
+        jsonWriter.writeMapField("tags", tags(), (writer, element) -> writer.writeString(element));
+        jsonWriter.writeJsonField("properties", this.innerProperties);
+        return jsonWriter.writeEndObject();
+    }
+
+    /**
+     * Reads an instance of AlertRuleResourceInner from the JsonReader.
+     * 
+     * @param jsonReader The JsonReader being read.
+     * @return An instance of AlertRuleResourceInner if the JsonReader was pointing to an instance of it, or null if it
+     * was pointing to JSON null.
+     * @throws IllegalStateException If the deserialized JSON object was missing any required properties.
+     * @throws IOException If an error occurs while reading the AlertRuleResourceInner.
+     */
+    public static AlertRuleResourceInner fromJson(JsonReader jsonReader) throws IOException {
+        return jsonReader.readObject(reader -> {
+            AlertRuleResourceInner deserializedAlertRuleResourceInner = new AlertRuleResourceInner();
+            while (reader.nextToken() != JsonToken.END_OBJECT) {
+                String fieldName = reader.getFieldName();
+                reader.nextToken();
+
+                if ("id".equals(fieldName)) {
+                    deserializedAlertRuleResourceInner.id = reader.getString();
+                } else if ("name".equals(fieldName)) {
+                    deserializedAlertRuleResourceInner.name = reader.getString();
+                } else if ("type".equals(fieldName)) {
+                    deserializedAlertRuleResourceInner.type = reader.getString();
+                } else if ("location".equals(fieldName)) {
+                    deserializedAlertRuleResourceInner.withLocation(reader.getString());
+                } else if ("tags".equals(fieldName)) {
+                    Map<String, String> tags = reader.readMap(reader1 -> reader1.getString());
+                    deserializedAlertRuleResourceInner.withTags(tags);
+                } else if ("properties".equals(fieldName)) {
+                    deserializedAlertRuleResourceInner.innerProperties = AlertRule.fromJson(reader);
+                } else {
+                    reader.skipChildren();
+                }
+            }
+
+            return deserializedAlertRuleResourceInner;
+        });
     }
 }

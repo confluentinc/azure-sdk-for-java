@@ -5,36 +5,43 @@
 package com.azure.resourcemanager.compute.models;
 
 import com.azure.core.annotation.Fluent;
-import com.azure.core.util.logging.ClientLogger;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.azure.json.JsonReader;
+import com.azure.json.JsonSerializable;
+import com.azure.json.JsonToken;
+import com.azure.json.JsonWriter;
+import java.io.IOException;
 
-/** Specifies settings related to VM Guest Patching on Linux. */
+/**
+ * Specifies settings related to VM Guest Patching on Linux.
+ */
 @Fluent
-public final class LinuxPatchSettings {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(LinuxPatchSettings.class);
-
+public final class LinuxPatchSettings implements JsonSerializable<LinuxPatchSettings> {
     /*
-     * Specifies the mode of VM Guest Patching to IaaS virtual machine or
-     * virtual machines associated to virtual machine scale set with
-     * OrchestrationMode as Flexible.<br /><br /> Possible values are:<br /><br
-     * /> **ImageDefault** - The virtual machine's default patching
-     * configuration is used. <br /><br /> **AutomaticByPlatform** - The
-     * virtual machine will be automatically updated by the platform. The
-     * property provisionVMAgent must be true
+     * Specifies the mode of VM Guest Patching to IaaS virtual machine or virtual machines associated to virtual machine
+     * scale set with OrchestrationMode as Flexible.<br /><br /> Possible values are:<br /><br /> **ImageDefault** - The
+     * virtual machine's default patching configuration is used. <br /><br /> **AutomaticByPlatform** - The virtual
+     * machine will be automatically updated by the platform. The property provisionVMAgent must be true
      */
-    @JsonProperty(value = "patchMode")
     private LinuxVMGuestPatchMode patchMode;
 
     /*
-     * Specifies the mode of VM Guest Patch Assessment for the IaaS virtual
-     * machine.<br /><br /> Possible values are:<br /><br /> **ImageDefault** -
-     * You control the timing of patch assessments on a virtual machine. <br
-     * /><br /> **AutomaticByPlatform** - The platform will trigger periodic
-     * patch assessments. The property provisionVMAgent must be true.
+     * Specifies the mode of VM Guest Patch Assessment for the IaaS virtual machine.<br /><br /> Possible values are:<br
+     * /><br /> **ImageDefault** - You control the timing of patch assessments on a virtual machine. <br /><br />
+     * **AutomaticByPlatform** - The platform will trigger periodic patch assessments. The property provisionVMAgent
+     * must be true.
      */
-    @JsonProperty(value = "assessmentMode")
     private LinuxPatchAssessmentMode assessmentMode;
+
+    /*
+     * Specifies additional settings for patch mode AutomaticByPlatform in VM Guest Patching on Linux.
+     */
+    private LinuxVMGuestPatchAutomaticByPlatformSettings automaticByPlatformSettings;
+
+    /**
+     * Creates an instance of LinuxPatchSettings class.
+     */
+    public LinuxPatchSettings() {
+    }
 
     /**
      * Get the patchMode property: Specifies the mode of VM Guest Patching to IaaS virtual machine or virtual machines
@@ -42,7 +49,7 @@ public final class LinuxPatchSettings {
      * values are:&lt;br /&gt;&lt;br /&gt; **ImageDefault** - The virtual machine's default patching configuration is
      * used. &lt;br /&gt;&lt;br /&gt; **AutomaticByPlatform** - The virtual machine will be automatically updated by the
      * platform. The property provisionVMAgent must be true.
-     *
+     * 
      * @return the patchMode value.
      */
     public LinuxVMGuestPatchMode patchMode() {
@@ -55,7 +62,7 @@ public final class LinuxPatchSettings {
      * values are:&lt;br /&gt;&lt;br /&gt; **ImageDefault** - The virtual machine's default patching configuration is
      * used. &lt;br /&gt;&lt;br /&gt; **AutomaticByPlatform** - The virtual machine will be automatically updated by the
      * platform. The property provisionVMAgent must be true.
-     *
+     * 
      * @param patchMode the patchMode value to set.
      * @return the LinuxPatchSettings object itself.
      */
@@ -69,7 +76,7 @@ public final class LinuxPatchSettings {
      * machine.&lt;br /&gt;&lt;br /&gt; Possible values are:&lt;br /&gt;&lt;br /&gt; **ImageDefault** - You control the
      * timing of patch assessments on a virtual machine. &lt;br /&gt;&lt;br /&gt; **AutomaticByPlatform** - The platform
      * will trigger periodic patch assessments. The property provisionVMAgent must be true.
-     *
+     * 
      * @return the assessmentMode value.
      */
     public LinuxPatchAssessmentMode assessmentMode() {
@@ -81,7 +88,7 @@ public final class LinuxPatchSettings {
      * machine.&lt;br /&gt;&lt;br /&gt; Possible values are:&lt;br /&gt;&lt;br /&gt; **ImageDefault** - You control the
      * timing of patch assessments on a virtual machine. &lt;br /&gt;&lt;br /&gt; **AutomaticByPlatform** - The platform
      * will trigger periodic patch assessments. The property provisionVMAgent must be true.
-     *
+     * 
      * @param assessmentMode the assessmentMode value to set.
      * @return the LinuxPatchSettings object itself.
      */
@@ -91,10 +98,81 @@ public final class LinuxPatchSettings {
     }
 
     /**
+     * Get the automaticByPlatformSettings property: Specifies additional settings for patch mode AutomaticByPlatform in
+     * VM Guest Patching on Linux.
+     * 
+     * @return the automaticByPlatformSettings value.
+     */
+    public LinuxVMGuestPatchAutomaticByPlatformSettings automaticByPlatformSettings() {
+        return this.automaticByPlatformSettings;
+    }
+
+    /**
+     * Set the automaticByPlatformSettings property: Specifies additional settings for patch mode AutomaticByPlatform in
+     * VM Guest Patching on Linux.
+     * 
+     * @param automaticByPlatformSettings the automaticByPlatformSettings value to set.
+     * @return the LinuxPatchSettings object itself.
+     */
+    public LinuxPatchSettings
+        withAutomaticByPlatformSettings(LinuxVMGuestPatchAutomaticByPlatformSettings automaticByPlatformSettings) {
+        this.automaticByPlatformSettings = automaticByPlatformSettings;
+        return this;
+    }
+
+    /**
      * Validates the instance.
-     *
+     * 
      * @throws IllegalArgumentException thrown if the instance is not valid.
      */
     public void validate() {
+        if (automaticByPlatformSettings() != null) {
+            automaticByPlatformSettings().validate();
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public JsonWriter toJson(JsonWriter jsonWriter) throws IOException {
+        jsonWriter.writeStartObject();
+        jsonWriter.writeStringField("patchMode", this.patchMode == null ? null : this.patchMode.toString());
+        jsonWriter.writeStringField("assessmentMode",
+            this.assessmentMode == null ? null : this.assessmentMode.toString());
+        jsonWriter.writeJsonField("automaticByPlatformSettings", this.automaticByPlatformSettings);
+        return jsonWriter.writeEndObject();
+    }
+
+    /**
+     * Reads an instance of LinuxPatchSettings from the JsonReader.
+     * 
+     * @param jsonReader The JsonReader being read.
+     * @return An instance of LinuxPatchSettings if the JsonReader was pointing to an instance of it, or null if it was
+     * pointing to JSON null.
+     * @throws IOException If an error occurs while reading the LinuxPatchSettings.
+     */
+    public static LinuxPatchSettings fromJson(JsonReader jsonReader) throws IOException {
+        return jsonReader.readObject(reader -> {
+            LinuxPatchSettings deserializedLinuxPatchSettings = new LinuxPatchSettings();
+            while (reader.nextToken() != JsonToken.END_OBJECT) {
+                String fieldName = reader.getFieldName();
+                reader.nextToken();
+
+                if ("patchMode".equals(fieldName)) {
+                    deserializedLinuxPatchSettings.patchMode = LinuxVMGuestPatchMode.fromString(reader.getString());
+                } else if ("assessmentMode".equals(fieldName)) {
+                    deserializedLinuxPatchSettings.assessmentMode
+                        = LinuxPatchAssessmentMode.fromString(reader.getString());
+                } else if ("automaticByPlatformSettings".equals(fieldName)) {
+                    deserializedLinuxPatchSettings.automaticByPlatformSettings
+                        = LinuxVMGuestPatchAutomaticByPlatformSettings.fromJson(reader);
+                } else {
+                    reader.skipChildren();
+                }
+            }
+
+            return deserializedLinuxPatchSettings;
+        });
     }
 }

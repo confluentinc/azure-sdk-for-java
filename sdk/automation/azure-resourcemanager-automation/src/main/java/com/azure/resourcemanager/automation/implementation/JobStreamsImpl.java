@@ -13,19 +13,30 @@ import com.azure.resourcemanager.automation.fluent.JobStreamsClient;
 import com.azure.resourcemanager.automation.fluent.models.JobStreamInner;
 import com.azure.resourcemanager.automation.models.JobStream;
 import com.azure.resourcemanager.automation.models.JobStreams;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 public final class JobStreamsImpl implements JobStreams {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(JobStreamsImpl.class);
+    private static final ClientLogger LOGGER = new ClientLogger(JobStreamsImpl.class);
 
     private final JobStreamsClient innerClient;
 
     private final com.azure.resourcemanager.automation.AutomationManager serviceManager;
 
-    public JobStreamsImpl(
-        JobStreamsClient innerClient, com.azure.resourcemanager.automation.AutomationManager serviceManager) {
+    public JobStreamsImpl(JobStreamsClient innerClient,
+        com.azure.resourcemanager.automation.AutomationManager serviceManager) {
         this.innerClient = innerClient;
         this.serviceManager = serviceManager;
+    }
+
+    public Response<JobStream> getWithResponse(String resourceGroupName, String automationAccountName, String jobName,
+        String jobStreamId, String clientRequestId, Context context) {
+        Response<JobStreamInner> inner = this.serviceClient()
+            .getWithResponse(resourceGroupName, automationAccountName, jobName, jobStreamId, clientRequestId, context);
+        if (inner != null) {
+            return new SimpleResponse<>(inner.getRequest(), inner.getStatusCode(), inner.getHeaders(),
+                new JobStreamImpl(inner.getValue(), this.manager()));
+        } else {
+            return null;
+        }
     }
 
     public JobStream get(String resourceGroupName, String automationAccountName, String jobName, String jobStreamId) {
@@ -37,47 +48,17 @@ public final class JobStreamsImpl implements JobStreams {
         }
     }
 
-    public Response<JobStream> getWithResponse(
-        String resourceGroupName,
-        String automationAccountName,
-        String jobName,
-        String jobStreamId,
-        String clientRequestId,
-        Context context) {
-        Response<JobStreamInner> inner =
-            this
-                .serviceClient()
-                .getWithResponse(
-                    resourceGroupName, automationAccountName, jobName, jobStreamId, clientRequestId, context);
-        if (inner != null) {
-            return new SimpleResponse<>(
-                inner.getRequest(),
-                inner.getStatusCode(),
-                inner.getHeaders(),
-                new JobStreamImpl(inner.getValue(), this.manager()));
-        } else {
-            return null;
-        }
-    }
-
     public PagedIterable<JobStream> listByJob(String resourceGroupName, String automationAccountName, String jobName) {
-        PagedIterable<JobStreamInner> inner =
-            this.serviceClient().listByJob(resourceGroupName, automationAccountName, jobName);
-        return Utils.mapPage(inner, inner1 -> new JobStreamImpl(inner1, this.manager()));
+        PagedIterable<JobStreamInner> inner
+            = this.serviceClient().listByJob(resourceGroupName, automationAccountName, jobName);
+        return ResourceManagerUtils.mapPage(inner, inner1 -> new JobStreamImpl(inner1, this.manager()));
     }
 
-    public PagedIterable<JobStream> listByJob(
-        String resourceGroupName,
-        String automationAccountName,
-        String jobName,
-        String filter,
-        String clientRequestId,
-        Context context) {
-        PagedIterable<JobStreamInner> inner =
-            this
-                .serviceClient()
-                .listByJob(resourceGroupName, automationAccountName, jobName, filter, clientRequestId, context);
-        return Utils.mapPage(inner, inner1 -> new JobStreamImpl(inner1, this.manager()));
+    public PagedIterable<JobStream> listByJob(String resourceGroupName, String automationAccountName, String jobName,
+        String filter, String clientRequestId, Context context) {
+        PagedIterable<JobStreamInner> inner = this.serviceClient()
+            .listByJob(resourceGroupName, automationAccountName, jobName, filter, clientRequestId, context);
+        return ResourceManagerUtils.mapPage(inner, inner1 -> new JobStreamImpl(inner1, this.manager()));
     }
 
     private JobStreamsClient serviceClient() {

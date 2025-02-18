@@ -18,7 +18,6 @@ import reactor.core.publisher.Mono;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
-import java.time.Duration;
 import java.util.concurrent.TimeoutException;
 import java.util.function.BiFunction;
 import java.util.function.Function;
@@ -36,9 +35,8 @@ import java.util.function.Supplier;
  */
 @Deprecated
 final class ReliableDownload {
-    private final ClientLogger logger = new ClientLogger(ReliableDownload.class);
+    private static final ClientLogger LOGGER = new ClientLogger(ReliableDownload.class);
 
-    private static final Duration TIMEOUT_VALUE = Duration.ofSeconds(60);
     private final StreamResponse rawResponse;
     private final BlobsDownloadHeaders deserializedHeaders;
     private final DownloadRetryOptions options;
@@ -46,7 +44,7 @@ final class ReliableDownload {
     private final Function<HttpGetterInfo, Mono<ReliableDownload>> getter;
 
     ReliableDownload(StreamResponse rawResponse, DownloadRetryOptions options, HttpGetterInfo info,
-                     Function<HttpGetterInfo, Mono<ReliableDownload>> getter) {
+        Function<HttpGetterInfo, Mono<ReliableDownload>> getter) {
         StorageImplUtils.assertNotNull("getter", getter);
         StorageImplUtils.assertNotNull("info", info);
         // Note: We do not check for eTag since it is possible for the service to not return the etag on large downloads.
@@ -58,12 +56,11 @@ final class ReliableDownload {
         this.getter = getter;
         /*
         If the customer did not specify a count, they are reading to the end of the blob. Extract this value
-        from the response for better book keeping towards the end.
+        from the response for better book-keeping towards the end.
          */
         if (this.info.getCount() == null) {
-            long blobLength = ModelHelper.getBlobLength(
-                ModelHelper.populateBlobDownloadHeaders(deserializedHeaders,
-                    ModelHelper.getErrorCode(rawResponse.getHeaders())));
+            long blobLength = ModelHelper.getBlobLength(ModelHelper.populateBlobDownloadHeaders(deserializedHeaders,
+                ModelHelper.getErrorCode(rawResponse.getHeaders())));
             info.setCount(blobLength - info.getOffset());
         }
     }
@@ -81,7 +78,8 @@ final class ReliableDownload {
     }
 
     BlobDownloadHeaders getDeserializedHeaders() {
-        return ModelHelper.populateBlobDownloadHeaders(deserializedHeaders, ModelHelper.getErrorCode(rawResponse.getHeaders()));
+        return ModelHelper.populateBlobDownloadHeaders(deserializedHeaders,
+            ModelHelper.getErrorCode(rawResponse.getHeaders()));
     }
 
     Flux<ByteBuffer> getValue() {
@@ -91,7 +89,7 @@ final class ReliableDownload {
         add 1 before calling into tryContinueFlux, we set the initial value to -1.
          */
         Flux<ByteBuffer> value = (options.getMaxRetryRequests() == 0)
-            ? rawResponse.getValue().timeout(TIMEOUT_VALUE)
+            ? rawResponse.getValue()
             : applyReliableDownload(rawResponse.getValue(), -1, options);
 
         return value.switchIfEmpty(Flux.defer(() -> Flux.just(ByteBuffer.wrap(new byte[0]))));
@@ -115,8 +113,8 @@ final class ReliableDownload {
                 the raw body.
                 */
                 return getter.apply(info)
-                    .flatMapMany(newResponse ->
-                        applyReliableDownload(newResponse.rawResponse.getValue(), retryCount, options));
+                    .flatMapMany(
+                        newResponse -> applyReliableDownload(newResponse.rawResponse.getValue(), retryCount, options));
             } catch (Exception e) {
                 // If the getter fails, return the getter failure to the user.
                 return Flux.error(e);
@@ -126,32 +124,30 @@ final class ReliableDownload {
 
     private Flux<ByteBuffer> applyReliableDownload(Flux<ByteBuffer> data, int currentRetryCount,
         DownloadRetryOptions options) {
-        return data
-            .timeout(TIMEOUT_VALUE)
-            .doOnNext(buffer -> {
-                /*
-                Update how much data we have received in case we need to retry and propagate to the user the data we
-                have received.
-                 */
-                this.info.setOffset(this.info.getOffset() + buffer.remaining());
-                if (this.info.getCount() != null) {
-                    this.info.setCount(this.info.getCount() - buffer.remaining());
-                }
-            }).onErrorResume(t2 -> {
-                /*
-                 It is possible that the network stream will throw an error after emitting all data but before
-                 completing. Issuing a retry at this stage would leave the download in a bad state with incorrect count
-                 and offset values. Because we have read the intended amount of data, we can ignore the error at the end
-                 of the stream.
-                 */
-                if (this.info.getCount() != null && this.info.getCount() == 0) {
-                    logger.warning("Exception encountered in ReliableDownload after all data read from the network but "
-                        + "but before stream signaled completion. Returning success as all data was downloaded. "
-                        + "Exception message: " + t2.getMessage());
-                    return Flux.empty();
-                }
-                // Increment the retry count and try again with the new exception.
-                return tryContinueFlux(t2, currentRetryCount + 1, options);
-            });
+        return data.doOnNext(buffer -> {
+            /*
+            Update how much data we have received in case we need to retry and propagate to the user the data we
+            have received.
+             */
+            this.info.setOffset(this.info.getOffset() + buffer.remaining());
+            if (this.info.getCount() != null) {
+                this.info.setCount(this.info.getCount() - buffer.remaining());
+            }
+        }).onErrorResume(t2 -> {
+            /*
+             It is possible that the network stream will throw an error after emitting all data but before
+             completing. Issuing a retry at this stage would leave the download in a bad state with incorrect count
+             and offset values. Because we have read the intended amount of data, we can ignore the error at the end
+             of the stream.
+             */
+            if (this.info.getCount() != null && this.info.getCount() == 0) {
+                LOGGER.warning("Exception encountered in ReliableDownload after all data read from the network but "
+                    + "but before stream signaled completion. Returning success as all data was downloaded. "
+                    + "Exception message: " + t2.getMessage());
+                return Flux.empty();
+            }
+            // Increment the retry count and try again with the new exception.
+            return tryContinueFlux(t2, currentRetryCount + 1, options);
+        });
     }
 }

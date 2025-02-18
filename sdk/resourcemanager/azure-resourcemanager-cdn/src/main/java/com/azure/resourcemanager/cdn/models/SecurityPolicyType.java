@@ -5,26 +5,41 @@
 package com.azure.resourcemanager.cdn.models;
 
 import com.azure.core.util.ExpandableStringEnum;
-import com.fasterxml.jackson.annotation.JsonCreator;
 import java.util.Collection;
 
-/** Defines values for SecurityPolicyType. */
+/**
+ * The type of the Security policy to create.
+ */
 public final class SecurityPolicyType extends ExpandableStringEnum<SecurityPolicyType> {
-    /** Static value WebApplicationFirewall for SecurityPolicyType. */
+    /**
+     * Static value WebApplicationFirewall for SecurityPolicyType.
+     */
     public static final SecurityPolicyType WEB_APPLICATION_FIREWALL = fromString("WebApplicationFirewall");
 
     /**
+     * Creates a new instance of SecurityPolicyType value.
+     * 
+     * @deprecated Use the {@link #fromString(String)} factory method.
+     */
+    @Deprecated
+    public SecurityPolicyType() {
+    }
+
+    /**
      * Creates or finds a SecurityPolicyType from its string representation.
-     *
+     * 
      * @param name a name to look for.
      * @return the corresponding SecurityPolicyType.
      */
-    @JsonCreator
     public static SecurityPolicyType fromString(String name) {
         return fromString(name, SecurityPolicyType.class);
     }
 
-    /** @return known SecurityPolicyType values. */
+    /**
+     * Gets known SecurityPolicyType values.
+     * 
+     * @return known SecurityPolicyType values.
+     */
     public static Collection<SecurityPolicyType> values() {
         return values(SecurityPolicyType.class);
     }

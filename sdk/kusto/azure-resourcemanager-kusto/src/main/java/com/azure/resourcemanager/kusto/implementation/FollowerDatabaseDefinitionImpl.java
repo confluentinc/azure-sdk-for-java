@@ -5,15 +5,17 @@
 package com.azure.resourcemanager.kusto.implementation;
 
 import com.azure.resourcemanager.kusto.fluent.models.FollowerDatabaseDefinitionInner;
+import com.azure.resourcemanager.kusto.models.DatabaseShareOrigin;
 import com.azure.resourcemanager.kusto.models.FollowerDatabaseDefinition;
+import com.azure.resourcemanager.kusto.models.TableLevelSharingProperties;
 
 public final class FollowerDatabaseDefinitionImpl implements FollowerDatabaseDefinition {
     private FollowerDatabaseDefinitionInner innerObject;
 
     private final com.azure.resourcemanager.kusto.KustoManager serviceManager;
 
-    FollowerDatabaseDefinitionImpl(
-        FollowerDatabaseDefinitionInner innerObject, com.azure.resourcemanager.kusto.KustoManager serviceManager) {
+    FollowerDatabaseDefinitionImpl(FollowerDatabaseDefinitionInner innerObject,
+        com.azure.resourcemanager.kusto.KustoManager serviceManager) {
         this.innerObject = innerObject;
         this.serviceManager = serviceManager;
     }
@@ -28,6 +30,14 @@ public final class FollowerDatabaseDefinitionImpl implements FollowerDatabaseDef
 
     public String databaseName() {
         return this.innerModel().databaseName();
+    }
+
+    public TableLevelSharingProperties tableLevelSharingProperties() {
+        return this.innerModel().tableLevelSharingProperties();
+    }
+
+    public DatabaseShareOrigin databaseShareOrigin() {
+        return this.innerModel().databaseShareOrigin();
     }
 
     public FollowerDatabaseDefinitionInner innerModel() {

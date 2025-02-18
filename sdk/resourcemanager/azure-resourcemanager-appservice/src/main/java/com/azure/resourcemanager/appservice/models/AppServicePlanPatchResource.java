@@ -5,33 +5,86 @@
 package com.azure.resourcemanager.appservice.models;
 
 import com.azure.core.annotation.Fluent;
-import com.azure.core.util.logging.ClientLogger;
+import com.azure.json.JsonReader;
+import com.azure.json.JsonToken;
+import com.azure.json.JsonWriter;
 import com.azure.resourcemanager.appservice.fluent.models.AppServicePlanPatchResourceProperties;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import java.io.IOException;
 import java.time.OffsetDateTime;
 
-/** ARM resource for a app service plan. */
+/**
+ * ARM resource for a app service plan.
+ */
 @Fluent
 public final class AppServicePlanPatchResource extends ProxyOnlyResource {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(AppServicePlanPatchResource.class);
-
     /*
      * AppServicePlanPatchResource resource specific properties
      */
-    @JsonProperty(value = "properties")
     private AppServicePlanPatchResourceProperties innerProperties;
+
+    /*
+     * The type of the resource.
+     */
+    private String type;
+
+    /*
+     * The name of the resource.
+     */
+    private String name;
+
+    /*
+     * Fully qualified resource Id for the resource.
+     */
+    private String id;
+
+    /**
+     * Creates an instance of AppServicePlanPatchResource class.
+     */
+    public AppServicePlanPatchResource() {
+    }
 
     /**
      * Get the innerProperties property: AppServicePlanPatchResource resource specific properties.
-     *
+     * 
      * @return the innerProperties value.
      */
     private AppServicePlanPatchResourceProperties innerProperties() {
         return this.innerProperties;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * Get the type property: The type of the resource.
+     * 
+     * @return the type value.
+     */
+    @Override
+    public String type() {
+        return this.type;
+    }
+
+    /**
+     * Get the name property: The name of the resource.
+     * 
+     * @return the name value.
+     */
+    @Override
+    public String name() {
+        return this.name;
+    }
+
+    /**
+     * Get the id property: Fully qualified resource Id for the resource.
+     * 
+     * @return the id value.
+     */
+    @Override
+    public String id() {
+        return this.id;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public AppServicePlanPatchResource withKind(String kind) {
         super.withKind(kind);
@@ -40,7 +93,7 @@ public final class AppServicePlanPatchResource extends ProxyOnlyResource {
 
     /**
      * Get the workerTierName property: Target worker tier assigned to the App Service plan.
-     *
+     * 
      * @return the workerTierName value.
      */
     public String workerTierName() {
@@ -49,7 +102,7 @@ public final class AppServicePlanPatchResource extends ProxyOnlyResource {
 
     /**
      * Set the workerTierName property: Target worker tier assigned to the App Service plan.
-     *
+     * 
      * @param workerTierName the workerTierName value to set.
      * @return the AppServicePlanPatchResource object itself.
      */
@@ -63,7 +116,7 @@ public final class AppServicePlanPatchResource extends ProxyOnlyResource {
 
     /**
      * Get the status property: App Service plan status.
-     *
+     * 
      * @return the status value.
      */
     public StatusOptions status() {
@@ -72,7 +125,7 @@ public final class AppServicePlanPatchResource extends ProxyOnlyResource {
 
     /**
      * Get the subscription property: App Service plan subscription.
-     *
+     * 
      * @return the subscription value.
      */
     public String subscription() {
@@ -82,7 +135,7 @@ public final class AppServicePlanPatchResource extends ProxyOnlyResource {
     /**
      * Get the hostingEnvironmentProfile property: Specification for the App Service Environment to use for the App
      * Service plan.
-     *
+     * 
      * @return the hostingEnvironmentProfile value.
      */
     public HostingEnvironmentProfile hostingEnvironmentProfile() {
@@ -92,12 +145,12 @@ public final class AppServicePlanPatchResource extends ProxyOnlyResource {
     /**
      * Set the hostingEnvironmentProfile property: Specification for the App Service Environment to use for the App
      * Service plan.
-     *
+     * 
      * @param hostingEnvironmentProfile the hostingEnvironmentProfile value to set.
      * @return the AppServicePlanPatchResource object itself.
      */
-    public AppServicePlanPatchResource withHostingEnvironmentProfile(
-        HostingEnvironmentProfile hostingEnvironmentProfile) {
+    public AppServicePlanPatchResource
+        withHostingEnvironmentProfile(HostingEnvironmentProfile hostingEnvironmentProfile) {
         if (this.innerProperties() == null) {
             this.innerProperties = new AppServicePlanPatchResourceProperties();
         }
@@ -108,7 +161,7 @@ public final class AppServicePlanPatchResource extends ProxyOnlyResource {
     /**
      * Get the maximumNumberOfWorkers property: Maximum number of instances that can be assigned to this App Service
      * plan.
-     *
+     * 
      * @return the maximumNumberOfWorkers value.
      */
     public Integer maximumNumberOfWorkers() {
@@ -116,8 +169,17 @@ public final class AppServicePlanPatchResource extends ProxyOnlyResource {
     }
 
     /**
+     * Get the numberOfWorkers property: The number of instances that are assigned to this App Service plan.
+     * 
+     * @return the numberOfWorkers value.
+     */
+    public Integer numberOfWorkers() {
+        return this.innerProperties() == null ? null : this.innerProperties().numberOfWorkers();
+    }
+
+    /**
      * Get the geoRegion property: Geographical location for the App Service plan.
-     *
+     * 
      * @return the geoRegion value.
      */
     public String geoRegion() {
@@ -126,9 +188,10 @@ public final class AppServicePlanPatchResource extends ProxyOnlyResource {
 
     /**
      * Get the perSiteScaling property: If &lt;code&gt;true&lt;/code&gt;, apps assigned to this App Service plan can be
-     * scaled independently. If &lt;code&gt;false&lt;/code&gt;, apps assigned to this App Service plan will scale to all
-     * instances of the plan.
-     *
+     * scaled independently.
+     * If &lt;code&gt;false&lt;/code&gt;, apps assigned to this App Service plan will scale to all instances of the
+     * plan.
+     * 
      * @return the perSiteScaling value.
      */
     public Boolean perSiteScaling() {
@@ -137,9 +200,10 @@ public final class AppServicePlanPatchResource extends ProxyOnlyResource {
 
     /**
      * Set the perSiteScaling property: If &lt;code&gt;true&lt;/code&gt;, apps assigned to this App Service plan can be
-     * scaled independently. If &lt;code&gt;false&lt;/code&gt;, apps assigned to this App Service plan will scale to all
-     * instances of the plan.
-     *
+     * scaled independently.
+     * If &lt;code&gt;false&lt;/code&gt;, apps assigned to this App Service plan will scale to all instances of the
+     * plan.
+     * 
      * @param perSiteScaling the perSiteScaling value to set.
      * @return the AppServicePlanPatchResource object itself.
      */
@@ -154,7 +218,7 @@ public final class AppServicePlanPatchResource extends ProxyOnlyResource {
     /**
      * Get the elasticScaleEnabled property: ServerFarm supports ElasticScale. Apps in this plan will scale as if the
      * ServerFarm was ElasticPremium sku.
-     *
+     * 
      * @return the elasticScaleEnabled value.
      */
     public Boolean elasticScaleEnabled() {
@@ -164,7 +228,7 @@ public final class AppServicePlanPatchResource extends ProxyOnlyResource {
     /**
      * Set the elasticScaleEnabled property: ServerFarm supports ElasticScale. Apps in this plan will scale as if the
      * ServerFarm was ElasticPremium sku.
-     *
+     * 
      * @param elasticScaleEnabled the elasticScaleEnabled value to set.
      * @return the AppServicePlanPatchResource object itself.
      */
@@ -179,7 +243,7 @@ public final class AppServicePlanPatchResource extends ProxyOnlyResource {
     /**
      * Get the maximumElasticWorkerCount property: Maximum number of total workers allowed for this ElasticScaleEnabled
      * App Service Plan.
-     *
+     * 
      * @return the maximumElasticWorkerCount value.
      */
     public Integer maximumElasticWorkerCount() {
@@ -189,7 +253,7 @@ public final class AppServicePlanPatchResource extends ProxyOnlyResource {
     /**
      * Set the maximumElasticWorkerCount property: Maximum number of total workers allowed for this ElasticScaleEnabled
      * App Service Plan.
-     *
+     * 
      * @param maximumElasticWorkerCount the maximumElasticWorkerCount value to set.
      * @return the AppServicePlanPatchResource object itself.
      */
@@ -203,7 +267,7 @@ public final class AppServicePlanPatchResource extends ProxyOnlyResource {
 
     /**
      * Get the numberOfSites property: Number of apps assigned to this App Service plan.
-     *
+     * 
      * @return the numberOfSites value.
      */
     public Integer numberOfSites() {
@@ -212,7 +276,7 @@ public final class AppServicePlanPatchResource extends ProxyOnlyResource {
 
     /**
      * Get the isSpot property: If &lt;code&gt;true&lt;/code&gt;, this App Service Plan owns spot instances.
-     *
+     * 
      * @return the isSpot value.
      */
     public Boolean isSpot() {
@@ -221,7 +285,7 @@ public final class AppServicePlanPatchResource extends ProxyOnlyResource {
 
     /**
      * Set the isSpot property: If &lt;code&gt;true&lt;/code&gt;, this App Service Plan owns spot instances.
-     *
+     * 
      * @param isSpot the isSpot value to set.
      * @return the AppServicePlanPatchResource object itself.
      */
@@ -236,7 +300,7 @@ public final class AppServicePlanPatchResource extends ProxyOnlyResource {
     /**
      * Get the spotExpirationTime property: The time when the server farm expires. Valid only if it is a spot server
      * farm.
-     *
+     * 
      * @return the spotExpirationTime value.
      */
     public OffsetDateTime spotExpirationTime() {
@@ -246,7 +310,7 @@ public final class AppServicePlanPatchResource extends ProxyOnlyResource {
     /**
      * Set the spotExpirationTime property: The time when the server farm expires. Valid only if it is a spot server
      * farm.
-     *
+     * 
      * @param spotExpirationTime the spotExpirationTime value to set.
      * @return the AppServicePlanPatchResource object itself.
      */
@@ -260,7 +324,7 @@ public final class AppServicePlanPatchResource extends ProxyOnlyResource {
 
     /**
      * Get the freeOfferExpirationTime property: The time when the server farm free offer expires.
-     *
+     * 
      * @return the freeOfferExpirationTime value.
      */
     public OffsetDateTime freeOfferExpirationTime() {
@@ -269,7 +333,7 @@ public final class AppServicePlanPatchResource extends ProxyOnlyResource {
 
     /**
      * Set the freeOfferExpirationTime property: The time when the server farm free offer expires.
-     *
+     * 
      * @param freeOfferExpirationTime the freeOfferExpirationTime value to set.
      * @return the AppServicePlanPatchResource object itself.
      */
@@ -283,7 +347,7 @@ public final class AppServicePlanPatchResource extends ProxyOnlyResource {
 
     /**
      * Get the resourceGroup property: Resource group of the App Service plan.
-     *
+     * 
      * @return the resourceGroup value.
      */
     public String resourceGroup() {
@@ -293,7 +357,7 @@ public final class AppServicePlanPatchResource extends ProxyOnlyResource {
     /**
      * Get the reserved property: If Linux app service plan &lt;code&gt;true&lt;/code&gt;,
      * &lt;code&gt;false&lt;/code&gt; otherwise.
-     *
+     * 
      * @return the reserved value.
      */
     public Boolean reserved() {
@@ -303,7 +367,7 @@ public final class AppServicePlanPatchResource extends ProxyOnlyResource {
     /**
      * Set the reserved property: If Linux app service plan &lt;code&gt;true&lt;/code&gt;,
      * &lt;code&gt;false&lt;/code&gt; otherwise.
-     *
+     * 
      * @param reserved the reserved value to set.
      * @return the AppServicePlanPatchResource object itself.
      */
@@ -318,7 +382,7 @@ public final class AppServicePlanPatchResource extends ProxyOnlyResource {
     /**
      * Get the isXenon property: Obsolete: If Hyper-V container app service plan &lt;code&gt;true&lt;/code&gt;,
      * &lt;code&gt;false&lt;/code&gt; otherwise.
-     *
+     * 
      * @return the isXenon value.
      */
     public Boolean isXenon() {
@@ -328,7 +392,7 @@ public final class AppServicePlanPatchResource extends ProxyOnlyResource {
     /**
      * Set the isXenon property: Obsolete: If Hyper-V container app service plan &lt;code&gt;true&lt;/code&gt;,
      * &lt;code&gt;false&lt;/code&gt; otherwise.
-     *
+     * 
      * @param isXenon the isXenon value to set.
      * @return the AppServicePlanPatchResource object itself.
      */
@@ -343,7 +407,7 @@ public final class AppServicePlanPatchResource extends ProxyOnlyResource {
     /**
      * Get the hyperV property: If Hyper-V container app service plan &lt;code&gt;true&lt;/code&gt;,
      * &lt;code&gt;false&lt;/code&gt; otherwise.
-     *
+     * 
      * @return the hyperV value.
      */
     public Boolean hyperV() {
@@ -353,7 +417,7 @@ public final class AppServicePlanPatchResource extends ProxyOnlyResource {
     /**
      * Set the hyperV property: If Hyper-V container app service plan &lt;code&gt;true&lt;/code&gt;,
      * &lt;code&gt;false&lt;/code&gt; otherwise.
-     *
+     * 
      * @param hyperV the hyperV value to set.
      * @return the AppServicePlanPatchResource object itself.
      */
@@ -367,7 +431,7 @@ public final class AppServicePlanPatchResource extends ProxyOnlyResource {
 
     /**
      * Get the targetWorkerCount property: Scaling worker count.
-     *
+     * 
      * @return the targetWorkerCount value.
      */
     public Integer targetWorkerCount() {
@@ -376,7 +440,7 @@ public final class AppServicePlanPatchResource extends ProxyOnlyResource {
 
     /**
      * Set the targetWorkerCount property: Scaling worker count.
-     *
+     * 
      * @param targetWorkerCount the targetWorkerCount value to set.
      * @return the AppServicePlanPatchResource object itself.
      */
@@ -390,7 +454,7 @@ public final class AppServicePlanPatchResource extends ProxyOnlyResource {
 
     /**
      * Get the targetWorkerSizeId property: Scaling worker size ID.
-     *
+     * 
      * @return the targetWorkerSizeId value.
      */
     public Integer targetWorkerSizeId() {
@@ -399,7 +463,7 @@ public final class AppServicePlanPatchResource extends ProxyOnlyResource {
 
     /**
      * Set the targetWorkerSizeId property: Scaling worker size ID.
-     *
+     * 
      * @param targetWorkerSizeId the targetWorkerSizeId value to set.
      * @return the AppServicePlanPatchResource object itself.
      */
@@ -413,7 +477,7 @@ public final class AppServicePlanPatchResource extends ProxyOnlyResource {
 
     /**
      * Get the provisioningState property: Provisioning state of the App Service Plan.
-     *
+     * 
      * @return the provisioningState value.
      */
     public ProvisioningState provisioningState() {
@@ -423,7 +487,7 @@ public final class AppServicePlanPatchResource extends ProxyOnlyResource {
     /**
      * Get the kubeEnvironmentProfile property: Specification for the Kubernetes Environment to use for the App Service
      * plan.
-     *
+     * 
      * @return the kubeEnvironmentProfile value.
      */
     public KubeEnvironmentProfile kubeEnvironmentProfile() {
@@ -433,7 +497,7 @@ public final class AppServicePlanPatchResource extends ProxyOnlyResource {
     /**
      * Set the kubeEnvironmentProfile property: Specification for the Kubernetes Environment to use for the App Service
      * plan.
-     *
+     * 
      * @param kubeEnvironmentProfile the kubeEnvironmentProfile value to set.
      * @return the AppServicePlanPatchResource object itself.
      */
@@ -447,9 +511,9 @@ public final class AppServicePlanPatchResource extends ProxyOnlyResource {
 
     /**
      * Get the zoneRedundant property: If &lt;code&gt;true&lt;/code&gt;, this App Service Plan will perform availability
-     * zone balancing. If &lt;code&gt;false&lt;/code&gt;, this App Service Plan will not perform availability zone
-     * balancing.
-     *
+     * zone balancing.
+     * If &lt;code&gt;false&lt;/code&gt;, this App Service Plan will not perform availability zone balancing.
+     * 
      * @return the zoneRedundant value.
      */
     public Boolean zoneRedundant() {
@@ -458,9 +522,9 @@ public final class AppServicePlanPatchResource extends ProxyOnlyResource {
 
     /**
      * Set the zoneRedundant property: If &lt;code&gt;true&lt;/code&gt;, this App Service Plan will perform availability
-     * zone balancing. If &lt;code&gt;false&lt;/code&gt;, this App Service Plan will not perform availability zone
-     * balancing.
-     *
+     * zone balancing.
+     * If &lt;code&gt;false&lt;/code&gt;, this App Service Plan will not perform availability zone balancing.
+     * 
      * @param zoneRedundant the zoneRedundant value to set.
      * @return the AppServicePlanPatchResource object itself.
      */
@@ -474,14 +538,60 @@ public final class AppServicePlanPatchResource extends ProxyOnlyResource {
 
     /**
      * Validates the instance.
-     *
+     * 
      * @throws IllegalArgumentException thrown if the instance is not valid.
      */
     @Override
     public void validate() {
-        super.validate();
         if (innerProperties() != null) {
             innerProperties().validate();
         }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public JsonWriter toJson(JsonWriter jsonWriter) throws IOException {
+        jsonWriter.writeStartObject();
+        jsonWriter.writeStringField("kind", kind());
+        jsonWriter.writeJsonField("properties", this.innerProperties);
+        return jsonWriter.writeEndObject();
+    }
+
+    /**
+     * Reads an instance of AppServicePlanPatchResource from the JsonReader.
+     * 
+     * @param jsonReader The JsonReader being read.
+     * @return An instance of AppServicePlanPatchResource if the JsonReader was pointing to an instance of it, or null
+     * if it was pointing to JSON null.
+     * @throws IllegalStateException If the deserialized JSON object was missing any required properties.
+     * @throws IOException If an error occurs while reading the AppServicePlanPatchResource.
+     */
+    public static AppServicePlanPatchResource fromJson(JsonReader jsonReader) throws IOException {
+        return jsonReader.readObject(reader -> {
+            AppServicePlanPatchResource deserializedAppServicePlanPatchResource = new AppServicePlanPatchResource();
+            while (reader.nextToken() != JsonToken.END_OBJECT) {
+                String fieldName = reader.getFieldName();
+                reader.nextToken();
+
+                if ("id".equals(fieldName)) {
+                    deserializedAppServicePlanPatchResource.id = reader.getString();
+                } else if ("name".equals(fieldName)) {
+                    deserializedAppServicePlanPatchResource.name = reader.getString();
+                } else if ("type".equals(fieldName)) {
+                    deserializedAppServicePlanPatchResource.type = reader.getString();
+                } else if ("kind".equals(fieldName)) {
+                    deserializedAppServicePlanPatchResource.withKind(reader.getString());
+                } else if ("properties".equals(fieldName)) {
+                    deserializedAppServicePlanPatchResource.innerProperties
+                        = AppServicePlanPatchResourceProperties.fromJson(reader);
+                } else {
+                    reader.skipChildren();
+                }
+            }
+
+            return deserializedAppServicePlanPatchResource;
+        });
     }
 }

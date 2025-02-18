@@ -3,12 +3,14 @@
 
 package com.azure.ai.textanalytics.implementation;
 
+import com.azure.ai.textanalytics.models.AbstractiveSummaryActionResult;
 import com.azure.ai.textanalytics.models.AnalyzeActionsResult;
+import com.azure.ai.textanalytics.models.AnalyzeHealthcareEntitiesActionResult;
 import com.azure.ai.textanalytics.models.AnalyzeSentimentActionResult;
 import com.azure.ai.textanalytics.models.ExtractKeyPhrasesActionResult;
-import com.azure.ai.textanalytics.models.ExtractSummaryActionResult;
-import com.azure.ai.textanalytics.models.SingleCategoryClassifyActionResult;
-import com.azure.ai.textanalytics.models.MultiCategoryClassifyActionResult;
+import com.azure.ai.textanalytics.models.ExtractiveSummaryActionResult;
+import com.azure.ai.textanalytics.models.SingleLabelClassifyActionResult;
+import com.azure.ai.textanalytics.models.MultiLabelClassifyActionResult;
 import com.azure.ai.textanalytics.models.RecognizeCustomEntitiesActionResult;
 import com.azure.ai.textanalytics.models.RecognizeEntitiesActionResult;
 import com.azure.ai.textanalytics.models.RecognizeLinkedEntitiesActionResult;
@@ -21,7 +23,8 @@ import com.azure.core.util.IterableStream;
 public final class AnalyzeActionsResultPropertiesHelper {
     private static AnalyzeActionsResultAccessor accessor;
 
-    private AnalyzeActionsResultPropertiesHelper() { }
+    private AnalyzeActionsResultPropertiesHelper() {
+    }
 
     /**
      * Type defining the methods to set the non-public properties of an {@link AnalyzeActionsResult} instance.
@@ -29,22 +32,37 @@ public final class AnalyzeActionsResultPropertiesHelper {
     public interface AnalyzeActionsResultAccessor {
         void setRecognizeEntitiesResults(AnalyzeActionsResult analyzeActionsResult,
             IterableStream<RecognizeEntitiesActionResult> recognizeEntitiesResults);
+
         void setRecognizeLinkedEntitiesResults(AnalyzeActionsResult analyzeActionsResult,
             IterableStream<RecognizeLinkedEntitiesActionResult> recognizeLinkedEntitiesResults);
+
         void setRecognizePiiEntitiesResults(AnalyzeActionsResult analyzeActionsResult,
             IterableStream<RecognizePiiEntitiesActionResult> recognizePiiEntitiesResults);
+
+        void setAnalyzeHealthcareEntitiesResults(AnalyzeActionsResult analyzeActionsResult,
+            IterableStream<AnalyzeHealthcareEntitiesActionResult> analyzeHealthcareEntitiesActionResults);
+
         void setExtractKeyPhrasesResults(AnalyzeActionsResult analyzeActionsResult,
             IterableStream<ExtractKeyPhrasesActionResult> extractKeyPhrasesResults);
+
         void setAnalyzeSentimentResults(AnalyzeActionsResult analyzeActionsResult,
             IterableStream<AnalyzeSentimentActionResult> analyzeSentimentResults);
-        void setExtractSummaryResults(AnalyzeActionsResult analyzeActionsResult,
-            IterableStream<ExtractSummaryActionResult> extractSummaryResults);
+
         void setRecognizeCustomEntitiesResults(AnalyzeActionsResult analyzeActionsResult,
             IterableStream<RecognizeCustomEntitiesActionResult> recognizeCustomEntitiesResults);
+
         void setSingleCategoryClassifyResults(AnalyzeActionsResult analyzeActionsResult,
-            IterableStream<SingleCategoryClassifyActionResult> singleCategoryClassifyResults);
+            IterableStream<SingleLabelClassifyActionResult> singleCategoryClassifyResults);
+
         void setMultiCategoryClassifyResults(AnalyzeActionsResult analyzeActionsResult,
-            IterableStream<MultiCategoryClassifyActionResult> multiCategoryClassifyResults);
+            IterableStream<MultiLabelClassifyActionResult> multiCategoryClassifyResults);
+
+        void setAbstractiveSummaryResults(AnalyzeActionsResult analyzeActionsResult,
+            IterableStream<AbstractiveSummaryActionResult> abstractiveSummaryResults);
+
+        void setExtractiveSummaryResults(AnalyzeActionsResult analyzeActionsResult,
+            IterableStream<ExtractiveSummaryActionResult> extractiveSummaryResults);
+
     }
 
     /**
@@ -63,13 +81,17 @@ public final class AnalyzeActionsResultPropertiesHelper {
 
     public static void setRecognizeLinkedEntitiesResults(AnalyzeActionsResult analyzeActionsResult,
         IterableStream<RecognizeLinkedEntitiesActionResult> recognizeLinkedEntitiesResults) {
-        accessor.setRecognizeLinkedEntitiesResults(analyzeActionsResult,
-            recognizeLinkedEntitiesResults);
+        accessor.setRecognizeLinkedEntitiesResults(analyzeActionsResult, recognizeLinkedEntitiesResults);
     }
 
     public static void setRecognizePiiEntitiesResults(AnalyzeActionsResult analyzeActionsResult,
         IterableStream<RecognizePiiEntitiesActionResult> recognizePiiEntitiesResults) {
         accessor.setRecognizePiiEntitiesResults(analyzeActionsResult, recognizePiiEntitiesResults);
+    }
+
+    public static void setAnalyzeHealthcareEntitiesResults(AnalyzeActionsResult analyzeActionsResult,
+        IterableStream<AnalyzeHealthcareEntitiesActionResult> analyzeHealthcareEntitiesActionResults) {
+        accessor.setAnalyzeHealthcareEntitiesResults(analyzeActionsResult, analyzeHealthcareEntitiesActionResults);
     }
 
     public static void setExtractKeyPhrasesResults(AnalyzeActionsResult analyzeActionsResult,
@@ -82,23 +104,28 @@ public final class AnalyzeActionsResultPropertiesHelper {
         accessor.setAnalyzeSentimentResults(analyzeActionsResult, analyzeSentimentResults);
     }
 
-    public static void setExtractSummaryResults(AnalyzeActionsResult analyzeActionsResult,
-        IterableStream<ExtractSummaryActionResult> extractSummaryResults) {
-        accessor.setExtractSummaryResults(analyzeActionsResult, extractSummaryResults);
-    }
-
     public static void setRecognizeCustomEntitiesResults(AnalyzeActionsResult analyzeActionsResult,
         IterableStream<RecognizeCustomEntitiesActionResult> recognizeCustomEntitiesResults) {
         accessor.setRecognizeCustomEntitiesResults(analyzeActionsResult, recognizeCustomEntitiesResults);
     }
 
     public static void setClassifySingleCategoryResults(AnalyzeActionsResult analyzeActionsResult,
-        IterableStream<SingleCategoryClassifyActionResult> classifyCustomCategoryResults) {
+        IterableStream<SingleLabelClassifyActionResult> classifyCustomCategoryResults) {
         accessor.setSingleCategoryClassifyResults(analyzeActionsResult, classifyCustomCategoryResults);
     }
 
     public static void setClassifyMultiCategoryResults(AnalyzeActionsResult analyzeActionsResult,
-        IterableStream<MultiCategoryClassifyActionResult> classifyCustomCategoriesResults) {
+        IterableStream<MultiLabelClassifyActionResult> classifyCustomCategoriesResults) {
         accessor.setMultiCategoryClassifyResults(analyzeActionsResult, classifyCustomCategoriesResults);
+    }
+
+    public static void setAbstractiveSummaryResults(AnalyzeActionsResult analyzeActionsResult,
+        IterableStream<AbstractiveSummaryActionResult> abstractiveSummaryResults) {
+        accessor.setAbstractiveSummaryResults(analyzeActionsResult, abstractiveSummaryResults);
+    }
+
+    public static void setExtractiveSummaryResults(AnalyzeActionsResult analyzeActionsResult,
+        IterableStream<ExtractiveSummaryActionResult> extractiveSummaryResults) {
+        accessor.setExtractiveSummaryResults(analyzeActionsResult, extractiveSummaryResults);
     }
 }

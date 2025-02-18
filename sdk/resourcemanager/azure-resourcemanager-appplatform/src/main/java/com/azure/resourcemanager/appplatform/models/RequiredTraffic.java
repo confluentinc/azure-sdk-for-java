@@ -5,49 +5,52 @@
 package com.azure.resourcemanager.appplatform.models;
 
 import com.azure.core.annotation.Immutable;
-import com.azure.core.util.logging.ClientLogger;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.azure.json.JsonReader;
+import com.azure.json.JsonSerializable;
+import com.azure.json.JsonToken;
+import com.azure.json.JsonWriter;
+import java.io.IOException;
 import java.util.List;
 
-/** Required inbound or outbound traffic for Azure Spring Cloud instance. */
+/**
+ * Required inbound or outbound traffic for Azure Spring Apps resource.
+ */
 @Immutable
-public final class RequiredTraffic {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(RequiredTraffic.class);
-
+public final class RequiredTraffic implements JsonSerializable<RequiredTraffic> {
     /*
      * The protocol of required traffic
      */
-    @JsonProperty(value = "protocol", access = JsonProperty.Access.WRITE_ONLY)
     private String protocol;
 
     /*
      * The port of required traffic
      */
-    @JsonProperty(value = "port", access = JsonProperty.Access.WRITE_ONLY)
     private Integer port;
 
     /*
      * The ip list of required traffic
      */
-    @JsonProperty(value = "ips", access = JsonProperty.Access.WRITE_ONLY)
     private List<String> ips;
 
     /*
      * The FQDN list of required traffic
      */
-    @JsonProperty(value = "fqdns", access = JsonProperty.Access.WRITE_ONLY)
     private List<String> fqdns;
 
     /*
      * The direction of required traffic
      */
-    @JsonProperty(value = "direction", access = JsonProperty.Access.WRITE_ONLY)
     private TrafficDirection direction;
 
     /**
+     * Creates an instance of RequiredTraffic class.
+     */
+    public RequiredTraffic() {
+    }
+
+    /**
      * Get the protocol property: The protocol of required traffic.
-     *
+     * 
      * @return the protocol value.
      */
     public String protocol() {
@@ -56,7 +59,7 @@ public final class RequiredTraffic {
 
     /**
      * Get the port property: The port of required traffic.
-     *
+     * 
      * @return the port value.
      */
     public Integer port() {
@@ -65,7 +68,7 @@ public final class RequiredTraffic {
 
     /**
      * Get the ips property: The ip list of required traffic.
-     *
+     * 
      * @return the ips value.
      */
     public List<String> ips() {
@@ -74,7 +77,7 @@ public final class RequiredTraffic {
 
     /**
      * Get the fqdns property: The FQDN list of required traffic.
-     *
+     * 
      * @return the fqdns value.
      */
     public List<String> fqdns() {
@@ -83,7 +86,7 @@ public final class RequiredTraffic {
 
     /**
      * Get the direction property: The direction of required traffic.
-     *
+     * 
      * @return the direction value.
      */
     public TrafficDirection direction() {
@@ -92,9 +95,54 @@ public final class RequiredTraffic {
 
     /**
      * Validates the instance.
-     *
+     * 
      * @throws IllegalArgumentException thrown if the instance is not valid.
      */
     public void validate() {
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public JsonWriter toJson(JsonWriter jsonWriter) throws IOException {
+        jsonWriter.writeStartObject();
+        return jsonWriter.writeEndObject();
+    }
+
+    /**
+     * Reads an instance of RequiredTraffic from the JsonReader.
+     * 
+     * @param jsonReader The JsonReader being read.
+     * @return An instance of RequiredTraffic if the JsonReader was pointing to an instance of it, or null if it was
+     * pointing to JSON null.
+     * @throws IOException If an error occurs while reading the RequiredTraffic.
+     */
+    public static RequiredTraffic fromJson(JsonReader jsonReader) throws IOException {
+        return jsonReader.readObject(reader -> {
+            RequiredTraffic deserializedRequiredTraffic = new RequiredTraffic();
+            while (reader.nextToken() != JsonToken.END_OBJECT) {
+                String fieldName = reader.getFieldName();
+                reader.nextToken();
+
+                if ("protocol".equals(fieldName)) {
+                    deserializedRequiredTraffic.protocol = reader.getString();
+                } else if ("port".equals(fieldName)) {
+                    deserializedRequiredTraffic.port = reader.getNullable(JsonReader::getInt);
+                } else if ("ips".equals(fieldName)) {
+                    List<String> ips = reader.readArray(reader1 -> reader1.getString());
+                    deserializedRequiredTraffic.ips = ips;
+                } else if ("fqdns".equals(fieldName)) {
+                    List<String> fqdns = reader.readArray(reader1 -> reader1.getString());
+                    deserializedRequiredTraffic.fqdns = fqdns;
+                } else if ("direction".equals(fieldName)) {
+                    deserializedRequiredTraffic.direction = TrafficDirection.fromString(reader.getString());
+                } else {
+                    reader.skipChildren();
+                }
+            }
+
+            return deserializedRequiredTraffic;
+        });
     }
 }

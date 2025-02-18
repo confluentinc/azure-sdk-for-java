@@ -5,31 +5,52 @@
 package com.azure.resourcemanager.servicebus.fluent.models;
 
 import com.azure.core.annotation.Fluent;
-import com.azure.core.util.logging.ClientLogger;
+import com.azure.json.JsonReader;
+import com.azure.json.JsonSerializable;
+import com.azure.json.JsonToken;
+import com.azure.json.JsonWriter;
 import com.azure.resourcemanager.servicebus.models.OperationDisplay;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import java.io.IOException;
 
-/** A ServiceBus REST API operation. */
+/**
+ * A Service Bus REST API operation.
+ */
 @Fluent
-public final class OperationInner {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(OperationInner.class);
-
+public final class OperationInner implements JsonSerializable<OperationInner> {
     /*
      * Operation name: {provider}/{resource}/{operation}
      */
-    @JsonProperty(value = "name", access = JsonProperty.Access.WRITE_ONLY)
     private String name;
 
     /*
-     * The object that represents the operation.
+     * Indicates whether the operation is a data action
      */
-    @JsonProperty(value = "display")
+    private Boolean isDataAction;
+
+    /*
+     * Display of the operation
+     */
     private OperationDisplay display;
+
+    /*
+     * Origin of the operation
+     */
+    private String origin;
+
+    /*
+     * Properties of the operation
+     */
+    private Object properties;
+
+    /**
+     * Creates an instance of OperationInner class.
+     */
+    public OperationInner() {
+    }
 
     /**
      * Get the name property: Operation name: {provider}/{resource}/{operation}.
-     *
+     * 
      * @return the name value.
      */
     public String name() {
@@ -37,8 +58,28 @@ public final class OperationInner {
     }
 
     /**
-     * Get the display property: The object that represents the operation.
-     *
+     * Get the isDataAction property: Indicates whether the operation is a data action.
+     * 
+     * @return the isDataAction value.
+     */
+    public Boolean isDataAction() {
+        return this.isDataAction;
+    }
+
+    /**
+     * Set the isDataAction property: Indicates whether the operation is a data action.
+     * 
+     * @param isDataAction the isDataAction value to set.
+     * @return the OperationInner object itself.
+     */
+    public OperationInner withIsDataAction(Boolean isDataAction) {
+        this.isDataAction = isDataAction;
+        return this;
+    }
+
+    /**
+     * Get the display property: Display of the operation.
+     * 
      * @return the display value.
      */
     public OperationDisplay display() {
@@ -46,8 +87,8 @@ public final class OperationInner {
     }
 
     /**
-     * Set the display property: The object that represents the operation.
-     *
+     * Set the display property: Display of the operation.
+     * 
      * @param display the display value to set.
      * @return the OperationInner object itself.
      */
@@ -57,13 +98,100 @@ public final class OperationInner {
     }
 
     /**
+     * Get the origin property: Origin of the operation.
+     * 
+     * @return the origin value.
+     */
+    public String origin() {
+        return this.origin;
+    }
+
+    /**
+     * Set the origin property: Origin of the operation.
+     * 
+     * @param origin the origin value to set.
+     * @return the OperationInner object itself.
+     */
+    public OperationInner withOrigin(String origin) {
+        this.origin = origin;
+        return this;
+    }
+
+    /**
+     * Get the properties property: Properties of the operation.
+     * 
+     * @return the properties value.
+     */
+    public Object properties() {
+        return this.properties;
+    }
+
+    /**
+     * Set the properties property: Properties of the operation.
+     * 
+     * @param properties the properties value to set.
+     * @return the OperationInner object itself.
+     */
+    public OperationInner withProperties(Object properties) {
+        this.properties = properties;
+        return this;
+    }
+
+    /**
      * Validates the instance.
-     *
+     * 
      * @throws IllegalArgumentException thrown if the instance is not valid.
      */
     public void validate() {
         if (display() != null) {
             display().validate();
         }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public JsonWriter toJson(JsonWriter jsonWriter) throws IOException {
+        jsonWriter.writeStartObject();
+        jsonWriter.writeBooleanField("isDataAction", this.isDataAction);
+        jsonWriter.writeJsonField("display", this.display);
+        jsonWriter.writeStringField("origin", this.origin);
+        jsonWriter.writeUntypedField("properties", this.properties);
+        return jsonWriter.writeEndObject();
+    }
+
+    /**
+     * Reads an instance of OperationInner from the JsonReader.
+     * 
+     * @param jsonReader The JsonReader being read.
+     * @return An instance of OperationInner if the JsonReader was pointing to an instance of it, or null if it was
+     * pointing to JSON null.
+     * @throws IOException If an error occurs while reading the OperationInner.
+     */
+    public static OperationInner fromJson(JsonReader jsonReader) throws IOException {
+        return jsonReader.readObject(reader -> {
+            OperationInner deserializedOperationInner = new OperationInner();
+            while (reader.nextToken() != JsonToken.END_OBJECT) {
+                String fieldName = reader.getFieldName();
+                reader.nextToken();
+
+                if ("name".equals(fieldName)) {
+                    deserializedOperationInner.name = reader.getString();
+                } else if ("isDataAction".equals(fieldName)) {
+                    deserializedOperationInner.isDataAction = reader.getNullable(JsonReader::getBoolean);
+                } else if ("display".equals(fieldName)) {
+                    deserializedOperationInner.display = OperationDisplay.fromJson(reader);
+                } else if ("origin".equals(fieldName)) {
+                    deserializedOperationInner.origin = reader.getString();
+                } else if ("properties".equals(fieldName)) {
+                    deserializedOperationInner.properties = reader.readUntyped();
+                } else {
+                    reader.skipChildren();
+                }
+            }
+
+            return deserializedOperationInner;
+        });
     }
 }

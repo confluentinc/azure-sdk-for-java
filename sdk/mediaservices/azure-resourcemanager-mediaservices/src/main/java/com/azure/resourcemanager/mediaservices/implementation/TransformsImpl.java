@@ -13,31 +13,42 @@ import com.azure.resourcemanager.mediaservices.fluent.TransformsClient;
 import com.azure.resourcemanager.mediaservices.fluent.models.TransformInner;
 import com.azure.resourcemanager.mediaservices.models.Transform;
 import com.azure.resourcemanager.mediaservices.models.Transforms;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 public final class TransformsImpl implements Transforms {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(TransformsImpl.class);
+    private static final ClientLogger LOGGER = new ClientLogger(TransformsImpl.class);
 
     private final TransformsClient innerClient;
 
     private final com.azure.resourcemanager.mediaservices.MediaServicesManager serviceManager;
 
-    public TransformsImpl(
-        TransformsClient innerClient, com.azure.resourcemanager.mediaservices.MediaServicesManager serviceManager) {
+    public TransformsImpl(TransformsClient innerClient,
+        com.azure.resourcemanager.mediaservices.MediaServicesManager serviceManager) {
         this.innerClient = innerClient;
         this.serviceManager = serviceManager;
     }
 
     public PagedIterable<Transform> list(String resourceGroupName, String accountName) {
         PagedIterable<TransformInner> inner = this.serviceClient().list(resourceGroupName, accountName);
-        return Utils.mapPage(inner, inner1 -> new TransformImpl(inner1, this.manager()));
+        return ResourceManagerUtils.mapPage(inner, inner1 -> new TransformImpl(inner1, this.manager()));
     }
 
-    public PagedIterable<Transform> list(
-        String resourceGroupName, String accountName, String filter, String orderby, Context context) {
-        PagedIterable<TransformInner> inner =
-            this.serviceClient().list(resourceGroupName, accountName, filter, orderby, context);
-        return Utils.mapPage(inner, inner1 -> new TransformImpl(inner1, this.manager()));
+    public PagedIterable<Transform> list(String resourceGroupName, String accountName, String filter, String orderby,
+        Context context) {
+        PagedIterable<TransformInner> inner
+            = this.serviceClient().list(resourceGroupName, accountName, filter, orderby, context);
+        return ResourceManagerUtils.mapPage(inner, inner1 -> new TransformImpl(inner1, this.manager()));
+    }
+
+    public Response<Transform> getWithResponse(String resourceGroupName, String accountName, String transformName,
+        Context context) {
+        Response<TransformInner> inner
+            = this.serviceClient().getWithResponse(resourceGroupName, accountName, transformName, context);
+        if (inner != null) {
+            return new SimpleResponse<>(inner.getRequest(), inner.getStatusCode(), inner.getHeaders(),
+                new TransformImpl(inner.getValue(), this.manager()));
+        } else {
+            return null;
+        }
     }
 
     public Transform get(String resourceGroupName, String accountName, String transformName) {
@@ -49,130 +60,87 @@ public final class TransformsImpl implements Transforms {
         }
     }
 
-    public Response<Transform> getWithResponse(
-        String resourceGroupName, String accountName, String transformName, Context context) {
-        Response<TransformInner> inner =
-            this.serviceClient().getWithResponse(resourceGroupName, accountName, transformName, context);
-        if (inner != null) {
-            return new SimpleResponse<>(
-                inner.getRequest(),
-                inner.getStatusCode(),
-                inner.getHeaders(),
-                new TransformImpl(inner.getValue(), this.manager()));
-        } else {
-            return null;
-        }
+    public Response<Void> deleteWithResponse(String resourceGroupName, String accountName, String transformName,
+        Context context) {
+        return this.serviceClient().deleteWithResponse(resourceGroupName, accountName, transformName, context);
     }
 
     public void delete(String resourceGroupName, String accountName, String transformName) {
         this.serviceClient().delete(resourceGroupName, accountName, transformName);
     }
 
-    public Response<Void> deleteWithResponse(
-        String resourceGroupName, String accountName, String transformName, Context context) {
-        return this.serviceClient().deleteWithResponse(resourceGroupName, accountName, transformName, context);
-    }
-
     public Transform getById(String id) {
-        String resourceGroupName = Utils.getValueFromIdByName(id, "resourceGroups");
+        String resourceGroupName = ResourceManagerUtils.getValueFromIdByName(id, "resourceGroups");
         if (resourceGroupName == null) {
-            throw logger
-                .logExceptionAsError(
-                    new IllegalArgumentException(
-                        String
-                            .format("The resource ID '%s' is not valid. Missing path segment 'resourceGroups'.", id)));
+            throw LOGGER.logExceptionAsError(new IllegalArgumentException(
+                String.format("The resource ID '%s' is not valid. Missing path segment 'resourceGroups'.", id)));
         }
-        String accountName = Utils.getValueFromIdByName(id, "mediaServices");
+        String accountName = ResourceManagerUtils.getValueFromIdByName(id, "mediaServices");
         if (accountName == null) {
-            throw logger
-                .logExceptionAsError(
-                    new IllegalArgumentException(
-                        String.format("The resource ID '%s' is not valid. Missing path segment 'mediaServices'.", id)));
+            throw LOGGER.logExceptionAsError(new IllegalArgumentException(
+                String.format("The resource ID '%s' is not valid. Missing path segment 'mediaServices'.", id)));
         }
-        String transformName = Utils.getValueFromIdByName(id, "transforms");
+        String transformName = ResourceManagerUtils.getValueFromIdByName(id, "transforms");
         if (transformName == null) {
-            throw logger
-                .logExceptionAsError(
-                    new IllegalArgumentException(
-                        String.format("The resource ID '%s' is not valid. Missing path segment 'transforms'.", id)));
+            throw LOGGER.logExceptionAsError(new IllegalArgumentException(
+                String.format("The resource ID '%s' is not valid. Missing path segment 'transforms'.", id)));
         }
         return this.getWithResponse(resourceGroupName, accountName, transformName, Context.NONE).getValue();
     }
 
     public Response<Transform> getByIdWithResponse(String id, Context context) {
-        String resourceGroupName = Utils.getValueFromIdByName(id, "resourceGroups");
+        String resourceGroupName = ResourceManagerUtils.getValueFromIdByName(id, "resourceGroups");
         if (resourceGroupName == null) {
-            throw logger
-                .logExceptionAsError(
-                    new IllegalArgumentException(
-                        String
-                            .format("The resource ID '%s' is not valid. Missing path segment 'resourceGroups'.", id)));
+            throw LOGGER.logExceptionAsError(new IllegalArgumentException(
+                String.format("The resource ID '%s' is not valid. Missing path segment 'resourceGroups'.", id)));
         }
-        String accountName = Utils.getValueFromIdByName(id, "mediaServices");
+        String accountName = ResourceManagerUtils.getValueFromIdByName(id, "mediaServices");
         if (accountName == null) {
-            throw logger
-                .logExceptionAsError(
-                    new IllegalArgumentException(
-                        String.format("The resource ID '%s' is not valid. Missing path segment 'mediaServices'.", id)));
+            throw LOGGER.logExceptionAsError(new IllegalArgumentException(
+                String.format("The resource ID '%s' is not valid. Missing path segment 'mediaServices'.", id)));
         }
-        String transformName = Utils.getValueFromIdByName(id, "transforms");
+        String transformName = ResourceManagerUtils.getValueFromIdByName(id, "transforms");
         if (transformName == null) {
-            throw logger
-                .logExceptionAsError(
-                    new IllegalArgumentException(
-                        String.format("The resource ID '%s' is not valid. Missing path segment 'transforms'.", id)));
+            throw LOGGER.logExceptionAsError(new IllegalArgumentException(
+                String.format("The resource ID '%s' is not valid. Missing path segment 'transforms'.", id)));
         }
         return this.getWithResponse(resourceGroupName, accountName, transformName, context);
     }
 
     public void deleteById(String id) {
-        String resourceGroupName = Utils.getValueFromIdByName(id, "resourceGroups");
+        String resourceGroupName = ResourceManagerUtils.getValueFromIdByName(id, "resourceGroups");
         if (resourceGroupName == null) {
-            throw logger
-                .logExceptionAsError(
-                    new IllegalArgumentException(
-                        String
-                            .format("The resource ID '%s' is not valid. Missing path segment 'resourceGroups'.", id)));
+            throw LOGGER.logExceptionAsError(new IllegalArgumentException(
+                String.format("The resource ID '%s' is not valid. Missing path segment 'resourceGroups'.", id)));
         }
-        String accountName = Utils.getValueFromIdByName(id, "mediaServices");
+        String accountName = ResourceManagerUtils.getValueFromIdByName(id, "mediaServices");
         if (accountName == null) {
-            throw logger
-                .logExceptionAsError(
-                    new IllegalArgumentException(
-                        String.format("The resource ID '%s' is not valid. Missing path segment 'mediaServices'.", id)));
+            throw LOGGER.logExceptionAsError(new IllegalArgumentException(
+                String.format("The resource ID '%s' is not valid. Missing path segment 'mediaServices'.", id)));
         }
-        String transformName = Utils.getValueFromIdByName(id, "transforms");
+        String transformName = ResourceManagerUtils.getValueFromIdByName(id, "transforms");
         if (transformName == null) {
-            throw logger
-                .logExceptionAsError(
-                    new IllegalArgumentException(
-                        String.format("The resource ID '%s' is not valid. Missing path segment 'transforms'.", id)));
+            throw LOGGER.logExceptionAsError(new IllegalArgumentException(
+                String.format("The resource ID '%s' is not valid. Missing path segment 'transforms'.", id)));
         }
-        this.deleteWithResponse(resourceGroupName, accountName, transformName, Context.NONE).getValue();
+        this.deleteWithResponse(resourceGroupName, accountName, transformName, Context.NONE);
     }
 
     public Response<Void> deleteByIdWithResponse(String id, Context context) {
-        String resourceGroupName = Utils.getValueFromIdByName(id, "resourceGroups");
+        String resourceGroupName = ResourceManagerUtils.getValueFromIdByName(id, "resourceGroups");
         if (resourceGroupName == null) {
-            throw logger
-                .logExceptionAsError(
-                    new IllegalArgumentException(
-                        String
-                            .format("The resource ID '%s' is not valid. Missing path segment 'resourceGroups'.", id)));
+            throw LOGGER.logExceptionAsError(new IllegalArgumentException(
+                String.format("The resource ID '%s' is not valid. Missing path segment 'resourceGroups'.", id)));
         }
-        String accountName = Utils.getValueFromIdByName(id, "mediaServices");
+        String accountName = ResourceManagerUtils.getValueFromIdByName(id, "mediaServices");
         if (accountName == null) {
-            throw logger
-                .logExceptionAsError(
-                    new IllegalArgumentException(
-                        String.format("The resource ID '%s' is not valid. Missing path segment 'mediaServices'.", id)));
+            throw LOGGER.logExceptionAsError(new IllegalArgumentException(
+                String.format("The resource ID '%s' is not valid. Missing path segment 'mediaServices'.", id)));
         }
-        String transformName = Utils.getValueFromIdByName(id, "transforms");
+        String transformName = ResourceManagerUtils.getValueFromIdByName(id, "transforms");
         if (transformName == null) {
-            throw logger
-                .logExceptionAsError(
-                    new IllegalArgumentException(
-                        String.format("The resource ID '%s' is not valid. Missing path segment 'transforms'.", id)));
+            throw LOGGER.logExceptionAsError(new IllegalArgumentException(
+                String.format("The resource ID '%s' is not valid. Missing path segment 'transforms'.", id)));
         }
         return this.deleteWithResponse(resourceGroupName, accountName, transformName, context);
     }

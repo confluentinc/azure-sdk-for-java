@@ -4,6 +4,7 @@
 package com.azure.perf.test.core;
 
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -16,8 +17,8 @@ import java.util.Random;
  * Utility class to help with data creation for perf testing.
  */
 public class TestDataCreationHelper {
-    private static final int RANDOM_BYTES_LENGTH = Integer.parseInt(
-        System.getProperty("azure.core.perf.test.data.buffer.size", "1048576")); // 1MB default;
+    private static final int RANDOM_BYTES_LENGTH
+        = Integer.parseInt(System.getProperty("azure.core.perf.test.data.buffer.size", "1048576")); // 1MB default;
     private static final byte[] RANDOM_BYTES;
 
     static {
@@ -38,9 +39,11 @@ public class TestDataCreationHelper {
         int remainder = (int) (size % array.length);
 
         if (quotient == 0) {
-            return Flux.just(allocateByteBuffer(array, remainder));
+            // Must allocate buffer each time it's consumed otherwise buffers get empty on 2+ consumption.
+            return Mono.fromSupplier(() -> allocateByteBuffer(array, remainder)).flux();
         } else {
-            return Flux.just(Boolean.TRUE).repeat(quotient - 1)
+            return Flux.just(Boolean.TRUE)
+                .repeat(quotient - 1)
                 .map(i -> allocateByteBuffer(array, array.length))
                 .concatWithValues(allocateByteBuffer(array, remainder));
         }
@@ -102,7 +105,8 @@ public class TestDataCreationHelper {
      * @throws IOException If an IO error occurs.
      * @return the number of bytes transferred.
      */
-    public static long copyStream(InputStream inputStream, OutputStream outputStream, int bufferSize) throws IOException {
+    public static long copyStream(InputStream inputStream, OutputStream outputStream, int bufferSize)
+        throws IOException {
         long transferred = 0;
         byte[] buffer = new byte[bufferSize];
         int read;
@@ -113,7 +117,6 @@ public class TestDataCreationHelper {
         }
         return transferred;
     }
-
 
     /**
      * Generate random string of given {@code targetLength length}. The string will only have lower case alphabets.

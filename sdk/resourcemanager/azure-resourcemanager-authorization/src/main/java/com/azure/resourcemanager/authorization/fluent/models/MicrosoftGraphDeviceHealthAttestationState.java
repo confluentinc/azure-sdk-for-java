@@ -5,236 +5,199 @@
 package com.azure.resourcemanager.authorization.fluent.models;
 
 import com.azure.core.annotation.Fluent;
-import com.azure.core.util.logging.ClientLogger;
-import com.fasterxml.jackson.annotation.JsonAnyGetter;
-import com.fasterxml.jackson.annotation.JsonAnySetter;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.azure.core.util.CoreUtils;
+import com.azure.json.JsonReader;
+import com.azure.json.JsonSerializable;
+import com.azure.json.JsonToken;
+import com.azure.json.JsonWriter;
+import java.io.IOException;
 import java.time.OffsetDateTime;
-import java.util.HashMap;
+import java.time.format.DateTimeFormatter;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
-/** deviceHealthAttestationState. */
+/**
+ * deviceHealthAttestationState.
+ */
 @Fluent
-public final class MicrosoftGraphDeviceHealthAttestationState {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(MicrosoftGraphDeviceHealthAttestationState.class);
-
+public final class MicrosoftGraphDeviceHealthAttestationState
+    implements JsonSerializable<MicrosoftGraphDeviceHealthAttestationState> {
     /*
-     * TWhen an Attestation Identity Key (AIK) is present on a device, it
-     * indicates that the device has an endorsement key (EK) certificate.
+     * TWhen an Attestation Identity Key (AIK) is present on a device, it indicates that the device has an endorsement
+     * key (EK) certificate.
      */
-    @JsonProperty(value = "attestationIdentityKey")
     private String attestationIdentityKey;
 
     /*
      * On or Off of BitLocker Drive Encryption
      */
-    @JsonProperty(value = "bitLockerStatus")
     private String bitLockerStatus;
 
     /*
      * The security version number of the Boot Application
      */
-    @JsonProperty(value = "bootAppSecurityVersion")
     private String bootAppSecurityVersion;
 
     /*
-     * When bootDebugging is enabled, the device is used in development and
-     * testing
+     * When bootDebugging is enabled, the device is used in development and testing
      */
-    @JsonProperty(value = "bootDebugging")
     private String bootDebugging;
 
     /*
      * The security version number of the Boot Application
      */
-    @JsonProperty(value = "bootManagerSecurityVersion")
     private String bootManagerSecurityVersion;
 
     /*
      * The version of the Boot Manager
      */
-    @JsonProperty(value = "bootManagerVersion")
     private String bootManagerVersion;
 
     /*
-     * The Boot Revision List that was loaded during initial boot on the
-     * attested device
+     * The Boot Revision List that was loaded during initial boot on the attested device
      */
-    @JsonProperty(value = "bootRevisionListInfo")
     private String bootRevisionListInfo;
 
     /*
-     * When code integrity is enabled, code execution is restricted to
-     * integrity verified code
+     * When code integrity is enabled, code execution is restricted to integrity verified code
      */
-    @JsonProperty(value = "codeIntegrity")
     private String codeIntegrity;
 
     /*
      * The version of the Boot Manager
      */
-    @JsonProperty(value = "codeIntegrityCheckVersion")
     private String codeIntegrityCheckVersion;
 
     /*
-     * The Code Integrity policy that is controlling the security of the boot
-     * environment
+     * The Code Integrity policy that is controlling the security of the boot environment
      */
-    @JsonProperty(value = "codeIntegrityPolicy")
     private String codeIntegrityPolicy;
 
     /*
      * The DHA report version. (Namespace version)
      */
-    @JsonProperty(value = "contentNamespaceUrl")
     private String contentNamespaceUrl;
 
     /*
      * The HealthAttestation state schema version
      */
-    @JsonProperty(value = "contentVersion")
     private String contentVersion;
 
     /*
-     * DEP Policy defines a set of hardware and software technologies that
-     * perform additional checks on memory
+     * DEP Policy defines a set of hardware and software technologies that perform additional checks on memory
      */
-    @JsonProperty(value = "dataExcutionPolicy")
     private String dataExcutionPolicy;
 
     /*
      * The DHA report version. (Namespace version)
      */
-    @JsonProperty(value = "deviceHealthAttestationStatus")
     private String deviceHealthAttestationStatus;
 
     /*
-     * ELAM provides protection for the computers in your network when they
-     * start up
+     * ELAM provides protection for the computers in your network when they start up
      */
-    @JsonProperty(value = "earlyLaunchAntiMalwareDriverProtection")
     private String earlyLaunchAntiMalwareDriverProtection;
 
     /*
      * This attribute indicates if DHA is supported for the device
      */
-    @JsonProperty(value = "healthAttestationSupportedStatus")
     private String healthAttestationSupportedStatus;
 
     /*
      * This attribute appears if DHA-Service detects an integrity issue
      */
-    @JsonProperty(value = "healthStatusMismatchInfo")
     private String healthStatusMismatchInfo;
 
     /*
      * The DateTime when device was evaluated or issued to MDM
      */
-    @JsonProperty(value = "issuedDateTime")
     private OffsetDateTime issuedDateTime;
 
     /*
      * The Timestamp of the last update.
      */
-    @JsonProperty(value = "lastUpdateDateTime")
     private String lastUpdateDateTime;
 
     /*
-     * When operatingSystemKernelDebugging is enabled, the device is used in
-     * development and testing
+     * When operatingSystemKernelDebugging is enabled, the device is used in development and testing
      */
-    @JsonProperty(value = "operatingSystemKernelDebugging")
     private String operatingSystemKernelDebugging;
 
     /*
-     * The Operating System Revision List that was loaded during initial boot
-     * on the attested device
+     * The Operating System Revision List that was loaded during initial boot on the attested device
      */
-    @JsonProperty(value = "operatingSystemRevListInfo")
     private String operatingSystemRevListInfo;
 
     /*
      * The measurement that is captured in PCR[0]
      */
-    @JsonProperty(value = "pcr0")
     private String pcr0;
 
     /*
-     * Informational attribute that identifies the HASH algorithm that was used
-     * by TPM
+     * Informational attribute that identifies the HASH algorithm that was used by TPM
      */
-    @JsonProperty(value = "pcrHashAlgorithm")
     private String pcrHashAlgorithm;
 
     /*
      * The number of times a PC device has hibernated or resumed
      */
-    @JsonProperty(value = "resetCount")
     private Long resetCount;
 
     /*
      * The number of times a PC device has rebooted
      */
-    @JsonProperty(value = "restartCount")
     private Long restartCount;
 
     /*
-     * Safe mode is a troubleshooting option for Windows that starts your
-     * computer in a limited state
+     * Safe mode is a troubleshooting option for Windows that starts your computer in a limited state
      */
-    @JsonProperty(value = "safeMode")
     private String safeMode;
 
     /*
-     * When Secure Boot is enabled, the core components must have the correct
-     * cryptographic signatures
+     * When Secure Boot is enabled, the core components must have the correct cryptographic signatures
      */
-    @JsonProperty(value = "secureBoot")
     private String secureBoot;
 
     /*
      * Fingerprint of the Custom Secure Boot Configuration Policy
      */
-    @JsonProperty(value = "secureBootConfigurationPolicyFingerPrint")
     private String secureBootConfigurationPolicyFingerPrint;
 
     /*
-     * When test signing is allowed, the device does not enforce signature
-     * validation during boot
+     * When test signing is allowed, the device does not enforce signature validation during boot
      */
-    @JsonProperty(value = "testSigning")
     private String testSigning;
 
     /*
      * The security version number of the Boot Application
      */
-    @JsonProperty(value = "tpmVersion")
     private String tpmVersion;
 
     /*
-     * VSM is a container that protects high value assets from a compromised
-     * kernel
+     * VSM is a container that protects high value assets from a compromised kernel
      */
-    @JsonProperty(value = "virtualSecureMode")
     private String virtualSecureMode;
 
     /*
-     * Operating system running with limited services that is used to prepare a
-     * computer for Windows
+     * Operating system running with limited services that is used to prepare a computer for Windows
      */
-    @JsonProperty(value = "windowsPE")
     private String windowsPE;
 
     /*
      * deviceHealthAttestationState
      */
-    @JsonIgnore private Map<String, Object> additionalProperties;
+    private Map<String, Object> additionalProperties;
+
+    /**
+     * Creates an instance of MicrosoftGraphDeviceHealthAttestationState class.
+     */
+    public MicrosoftGraphDeviceHealthAttestationState() {
+    }
 
     /**
      * Get the attestationIdentityKey property: TWhen an Attestation Identity Key (AIK) is present on a device, it
      * indicates that the device has an endorsement key (EK) certificate.
-     *
+     * 
      * @return the attestationIdentityKey value.
      */
     public String attestationIdentityKey() {
@@ -244,7 +207,7 @@ public final class MicrosoftGraphDeviceHealthAttestationState {
     /**
      * Set the attestationIdentityKey property: TWhen an Attestation Identity Key (AIK) is present on a device, it
      * indicates that the device has an endorsement key (EK) certificate.
-     *
+     * 
      * @param attestationIdentityKey the attestationIdentityKey value to set.
      * @return the MicrosoftGraphDeviceHealthAttestationState object itself.
      */
@@ -255,7 +218,7 @@ public final class MicrosoftGraphDeviceHealthAttestationState {
 
     /**
      * Get the bitLockerStatus property: On or Off of BitLocker Drive Encryption.
-     *
+     * 
      * @return the bitLockerStatus value.
      */
     public String bitLockerStatus() {
@@ -264,7 +227,7 @@ public final class MicrosoftGraphDeviceHealthAttestationState {
 
     /**
      * Set the bitLockerStatus property: On or Off of BitLocker Drive Encryption.
-     *
+     * 
      * @param bitLockerStatus the bitLockerStatus value to set.
      * @return the MicrosoftGraphDeviceHealthAttestationState object itself.
      */
@@ -275,7 +238,7 @@ public final class MicrosoftGraphDeviceHealthAttestationState {
 
     /**
      * Get the bootAppSecurityVersion property: The security version number of the Boot Application.
-     *
+     * 
      * @return the bootAppSecurityVersion value.
      */
     public String bootAppSecurityVersion() {
@@ -284,7 +247,7 @@ public final class MicrosoftGraphDeviceHealthAttestationState {
 
     /**
      * Set the bootAppSecurityVersion property: The security version number of the Boot Application.
-     *
+     * 
      * @param bootAppSecurityVersion the bootAppSecurityVersion value to set.
      * @return the MicrosoftGraphDeviceHealthAttestationState object itself.
      */
@@ -295,7 +258,7 @@ public final class MicrosoftGraphDeviceHealthAttestationState {
 
     /**
      * Get the bootDebugging property: When bootDebugging is enabled, the device is used in development and testing.
-     *
+     * 
      * @return the bootDebugging value.
      */
     public String bootDebugging() {
@@ -304,7 +267,7 @@ public final class MicrosoftGraphDeviceHealthAttestationState {
 
     /**
      * Set the bootDebugging property: When bootDebugging is enabled, the device is used in development and testing.
-     *
+     * 
      * @param bootDebugging the bootDebugging value to set.
      * @return the MicrosoftGraphDeviceHealthAttestationState object itself.
      */
@@ -315,7 +278,7 @@ public final class MicrosoftGraphDeviceHealthAttestationState {
 
     /**
      * Get the bootManagerSecurityVersion property: The security version number of the Boot Application.
-     *
+     * 
      * @return the bootManagerSecurityVersion value.
      */
     public String bootManagerSecurityVersion() {
@@ -324,19 +287,19 @@ public final class MicrosoftGraphDeviceHealthAttestationState {
 
     /**
      * Set the bootManagerSecurityVersion property: The security version number of the Boot Application.
-     *
+     * 
      * @param bootManagerSecurityVersion the bootManagerSecurityVersion value to set.
      * @return the MicrosoftGraphDeviceHealthAttestationState object itself.
      */
-    public MicrosoftGraphDeviceHealthAttestationState withBootManagerSecurityVersion(
-        String bootManagerSecurityVersion) {
+    public MicrosoftGraphDeviceHealthAttestationState
+        withBootManagerSecurityVersion(String bootManagerSecurityVersion) {
         this.bootManagerSecurityVersion = bootManagerSecurityVersion;
         return this;
     }
 
     /**
      * Get the bootManagerVersion property: The version of the Boot Manager.
-     *
+     * 
      * @return the bootManagerVersion value.
      */
     public String bootManagerVersion() {
@@ -345,7 +308,7 @@ public final class MicrosoftGraphDeviceHealthAttestationState {
 
     /**
      * Set the bootManagerVersion property: The version of the Boot Manager.
-     *
+     * 
      * @param bootManagerVersion the bootManagerVersion value to set.
      * @return the MicrosoftGraphDeviceHealthAttestationState object itself.
      */
@@ -357,7 +320,7 @@ public final class MicrosoftGraphDeviceHealthAttestationState {
     /**
      * Get the bootRevisionListInfo property: The Boot Revision List that was loaded during initial boot on the attested
      * device.
-     *
+     * 
      * @return the bootRevisionListInfo value.
      */
     public String bootRevisionListInfo() {
@@ -367,7 +330,7 @@ public final class MicrosoftGraphDeviceHealthAttestationState {
     /**
      * Set the bootRevisionListInfo property: The Boot Revision List that was loaded during initial boot on the attested
      * device.
-     *
+     * 
      * @param bootRevisionListInfo the bootRevisionListInfo value to set.
      * @return the MicrosoftGraphDeviceHealthAttestationState object itself.
      */
@@ -379,7 +342,7 @@ public final class MicrosoftGraphDeviceHealthAttestationState {
     /**
      * Get the codeIntegrity property: When code integrity is enabled, code execution is restricted to integrity
      * verified code.
-     *
+     * 
      * @return the codeIntegrity value.
      */
     public String codeIntegrity() {
@@ -389,7 +352,7 @@ public final class MicrosoftGraphDeviceHealthAttestationState {
     /**
      * Set the codeIntegrity property: When code integrity is enabled, code execution is restricted to integrity
      * verified code.
-     *
+     * 
      * @param codeIntegrity the codeIntegrity value to set.
      * @return the MicrosoftGraphDeviceHealthAttestationState object itself.
      */
@@ -400,7 +363,7 @@ public final class MicrosoftGraphDeviceHealthAttestationState {
 
     /**
      * Get the codeIntegrityCheckVersion property: The version of the Boot Manager.
-     *
+     * 
      * @return the codeIntegrityCheckVersion value.
      */
     public String codeIntegrityCheckVersion() {
@@ -409,7 +372,7 @@ public final class MicrosoftGraphDeviceHealthAttestationState {
 
     /**
      * Set the codeIntegrityCheckVersion property: The version of the Boot Manager.
-     *
+     * 
      * @param codeIntegrityCheckVersion the codeIntegrityCheckVersion value to set.
      * @return the MicrosoftGraphDeviceHealthAttestationState object itself.
      */
@@ -421,7 +384,7 @@ public final class MicrosoftGraphDeviceHealthAttestationState {
     /**
      * Get the codeIntegrityPolicy property: The Code Integrity policy that is controlling the security of the boot
      * environment.
-     *
+     * 
      * @return the codeIntegrityPolicy value.
      */
     public String codeIntegrityPolicy() {
@@ -431,7 +394,7 @@ public final class MicrosoftGraphDeviceHealthAttestationState {
     /**
      * Set the codeIntegrityPolicy property: The Code Integrity policy that is controlling the security of the boot
      * environment.
-     *
+     * 
      * @param codeIntegrityPolicy the codeIntegrityPolicy value to set.
      * @return the MicrosoftGraphDeviceHealthAttestationState object itself.
      */
@@ -442,7 +405,7 @@ public final class MicrosoftGraphDeviceHealthAttestationState {
 
     /**
      * Get the contentNamespaceUrl property: The DHA report version. (Namespace version).
-     *
+     * 
      * @return the contentNamespaceUrl value.
      */
     public String contentNamespaceUrl() {
@@ -451,7 +414,7 @@ public final class MicrosoftGraphDeviceHealthAttestationState {
 
     /**
      * Set the contentNamespaceUrl property: The DHA report version. (Namespace version).
-     *
+     * 
      * @param contentNamespaceUrl the contentNamespaceUrl value to set.
      * @return the MicrosoftGraphDeviceHealthAttestationState object itself.
      */
@@ -462,7 +425,7 @@ public final class MicrosoftGraphDeviceHealthAttestationState {
 
     /**
      * Get the contentVersion property: The HealthAttestation state schema version.
-     *
+     * 
      * @return the contentVersion value.
      */
     public String contentVersion() {
@@ -471,7 +434,7 @@ public final class MicrosoftGraphDeviceHealthAttestationState {
 
     /**
      * Set the contentVersion property: The HealthAttestation state schema version.
-     *
+     * 
      * @param contentVersion the contentVersion value to set.
      * @return the MicrosoftGraphDeviceHealthAttestationState object itself.
      */
@@ -483,7 +446,7 @@ public final class MicrosoftGraphDeviceHealthAttestationState {
     /**
      * Get the dataExcutionPolicy property: DEP Policy defines a set of hardware and software technologies that perform
      * additional checks on memory.
-     *
+     * 
      * @return the dataExcutionPolicy value.
      */
     public String dataExcutionPolicy() {
@@ -493,7 +456,7 @@ public final class MicrosoftGraphDeviceHealthAttestationState {
     /**
      * Set the dataExcutionPolicy property: DEP Policy defines a set of hardware and software technologies that perform
      * additional checks on memory.
-     *
+     * 
      * @param dataExcutionPolicy the dataExcutionPolicy value to set.
      * @return the MicrosoftGraphDeviceHealthAttestationState object itself.
      */
@@ -504,7 +467,7 @@ public final class MicrosoftGraphDeviceHealthAttestationState {
 
     /**
      * Get the deviceHealthAttestationStatus property: The DHA report version. (Namespace version).
-     *
+     * 
      * @return the deviceHealthAttestationStatus value.
      */
     public String deviceHealthAttestationStatus() {
@@ -513,12 +476,12 @@ public final class MicrosoftGraphDeviceHealthAttestationState {
 
     /**
      * Set the deviceHealthAttestationStatus property: The DHA report version. (Namespace version).
-     *
+     * 
      * @param deviceHealthAttestationStatus the deviceHealthAttestationStatus value to set.
      * @return the MicrosoftGraphDeviceHealthAttestationState object itself.
      */
-    public MicrosoftGraphDeviceHealthAttestationState withDeviceHealthAttestationStatus(
-        String deviceHealthAttestationStatus) {
+    public MicrosoftGraphDeviceHealthAttestationState
+        withDeviceHealthAttestationStatus(String deviceHealthAttestationStatus) {
         this.deviceHealthAttestationStatus = deviceHealthAttestationStatus;
         return this;
     }
@@ -526,7 +489,7 @@ public final class MicrosoftGraphDeviceHealthAttestationState {
     /**
      * Get the earlyLaunchAntiMalwareDriverProtection property: ELAM provides protection for the computers in your
      * network when they start up.
-     *
+     * 
      * @return the earlyLaunchAntiMalwareDriverProtection value.
      */
     public String earlyLaunchAntiMalwareDriverProtection() {
@@ -536,19 +499,19 @@ public final class MicrosoftGraphDeviceHealthAttestationState {
     /**
      * Set the earlyLaunchAntiMalwareDriverProtection property: ELAM provides protection for the computers in your
      * network when they start up.
-     *
+     * 
      * @param earlyLaunchAntiMalwareDriverProtection the earlyLaunchAntiMalwareDriverProtection value to set.
      * @return the MicrosoftGraphDeviceHealthAttestationState object itself.
      */
-    public MicrosoftGraphDeviceHealthAttestationState withEarlyLaunchAntiMalwareDriverProtection(
-        String earlyLaunchAntiMalwareDriverProtection) {
+    public MicrosoftGraphDeviceHealthAttestationState
+        withEarlyLaunchAntiMalwareDriverProtection(String earlyLaunchAntiMalwareDriverProtection) {
         this.earlyLaunchAntiMalwareDriverProtection = earlyLaunchAntiMalwareDriverProtection;
         return this;
     }
 
     /**
      * Get the healthAttestationSupportedStatus property: This attribute indicates if DHA is supported for the device.
-     *
+     * 
      * @return the healthAttestationSupportedStatus value.
      */
     public String healthAttestationSupportedStatus() {
@@ -557,19 +520,19 @@ public final class MicrosoftGraphDeviceHealthAttestationState {
 
     /**
      * Set the healthAttestationSupportedStatus property: This attribute indicates if DHA is supported for the device.
-     *
+     * 
      * @param healthAttestationSupportedStatus the healthAttestationSupportedStatus value to set.
      * @return the MicrosoftGraphDeviceHealthAttestationState object itself.
      */
-    public MicrosoftGraphDeviceHealthAttestationState withHealthAttestationSupportedStatus(
-        String healthAttestationSupportedStatus) {
+    public MicrosoftGraphDeviceHealthAttestationState
+        withHealthAttestationSupportedStatus(String healthAttestationSupportedStatus) {
         this.healthAttestationSupportedStatus = healthAttestationSupportedStatus;
         return this;
     }
 
     /**
      * Get the healthStatusMismatchInfo property: This attribute appears if DHA-Service detects an integrity issue.
-     *
+     * 
      * @return the healthStatusMismatchInfo value.
      */
     public String healthStatusMismatchInfo() {
@@ -578,7 +541,7 @@ public final class MicrosoftGraphDeviceHealthAttestationState {
 
     /**
      * Set the healthStatusMismatchInfo property: This attribute appears if DHA-Service detects an integrity issue.
-     *
+     * 
      * @param healthStatusMismatchInfo the healthStatusMismatchInfo value to set.
      * @return the MicrosoftGraphDeviceHealthAttestationState object itself.
      */
@@ -589,7 +552,7 @@ public final class MicrosoftGraphDeviceHealthAttestationState {
 
     /**
      * Get the issuedDateTime property: The DateTime when device was evaluated or issued to MDM.
-     *
+     * 
      * @return the issuedDateTime value.
      */
     public OffsetDateTime issuedDateTime() {
@@ -598,7 +561,7 @@ public final class MicrosoftGraphDeviceHealthAttestationState {
 
     /**
      * Set the issuedDateTime property: The DateTime when device was evaluated or issued to MDM.
-     *
+     * 
      * @param issuedDateTime the issuedDateTime value to set.
      * @return the MicrosoftGraphDeviceHealthAttestationState object itself.
      */
@@ -609,7 +572,7 @@ public final class MicrosoftGraphDeviceHealthAttestationState {
 
     /**
      * Get the lastUpdateDateTime property: The Timestamp of the last update.
-     *
+     * 
      * @return the lastUpdateDateTime value.
      */
     public String lastUpdateDateTime() {
@@ -618,7 +581,7 @@ public final class MicrosoftGraphDeviceHealthAttestationState {
 
     /**
      * Set the lastUpdateDateTime property: The Timestamp of the last update.
-     *
+     * 
      * @param lastUpdateDateTime the lastUpdateDateTime value to set.
      * @return the MicrosoftGraphDeviceHealthAttestationState object itself.
      */
@@ -630,7 +593,7 @@ public final class MicrosoftGraphDeviceHealthAttestationState {
     /**
      * Get the operatingSystemKernelDebugging property: When operatingSystemKernelDebugging is enabled, the device is
      * used in development and testing.
-     *
+     * 
      * @return the operatingSystemKernelDebugging value.
      */
     public String operatingSystemKernelDebugging() {
@@ -640,12 +603,12 @@ public final class MicrosoftGraphDeviceHealthAttestationState {
     /**
      * Set the operatingSystemKernelDebugging property: When operatingSystemKernelDebugging is enabled, the device is
      * used in development and testing.
-     *
+     * 
      * @param operatingSystemKernelDebugging the operatingSystemKernelDebugging value to set.
      * @return the MicrosoftGraphDeviceHealthAttestationState object itself.
      */
-    public MicrosoftGraphDeviceHealthAttestationState withOperatingSystemKernelDebugging(
-        String operatingSystemKernelDebugging) {
+    public MicrosoftGraphDeviceHealthAttestationState
+        withOperatingSystemKernelDebugging(String operatingSystemKernelDebugging) {
         this.operatingSystemKernelDebugging = operatingSystemKernelDebugging;
         return this;
     }
@@ -653,7 +616,7 @@ public final class MicrosoftGraphDeviceHealthAttestationState {
     /**
      * Get the operatingSystemRevListInfo property: The Operating System Revision List that was loaded during initial
      * boot on the attested device.
-     *
+     * 
      * @return the operatingSystemRevListInfo value.
      */
     public String operatingSystemRevListInfo() {
@@ -663,19 +626,19 @@ public final class MicrosoftGraphDeviceHealthAttestationState {
     /**
      * Set the operatingSystemRevListInfo property: The Operating System Revision List that was loaded during initial
      * boot on the attested device.
-     *
+     * 
      * @param operatingSystemRevListInfo the operatingSystemRevListInfo value to set.
      * @return the MicrosoftGraphDeviceHealthAttestationState object itself.
      */
-    public MicrosoftGraphDeviceHealthAttestationState withOperatingSystemRevListInfo(
-        String operatingSystemRevListInfo) {
+    public MicrosoftGraphDeviceHealthAttestationState
+        withOperatingSystemRevListInfo(String operatingSystemRevListInfo) {
         this.operatingSystemRevListInfo = operatingSystemRevListInfo;
         return this;
     }
 
     /**
      * Get the pcr0 property: The measurement that is captured in PCR[0].
-     *
+     * 
      * @return the pcr0 value.
      */
     public String pcr0() {
@@ -684,7 +647,7 @@ public final class MicrosoftGraphDeviceHealthAttestationState {
 
     /**
      * Set the pcr0 property: The measurement that is captured in PCR[0].
-     *
+     * 
      * @param pcr0 the pcr0 value to set.
      * @return the MicrosoftGraphDeviceHealthAttestationState object itself.
      */
@@ -696,7 +659,7 @@ public final class MicrosoftGraphDeviceHealthAttestationState {
     /**
      * Get the pcrHashAlgorithm property: Informational attribute that identifies the HASH algorithm that was used by
      * TPM.
-     *
+     * 
      * @return the pcrHashAlgorithm value.
      */
     public String pcrHashAlgorithm() {
@@ -706,7 +669,7 @@ public final class MicrosoftGraphDeviceHealthAttestationState {
     /**
      * Set the pcrHashAlgorithm property: Informational attribute that identifies the HASH algorithm that was used by
      * TPM.
-     *
+     * 
      * @param pcrHashAlgorithm the pcrHashAlgorithm value to set.
      * @return the MicrosoftGraphDeviceHealthAttestationState object itself.
      */
@@ -717,7 +680,7 @@ public final class MicrosoftGraphDeviceHealthAttestationState {
 
     /**
      * Get the resetCount property: The number of times a PC device has hibernated or resumed.
-     *
+     * 
      * @return the resetCount value.
      */
     public Long resetCount() {
@@ -726,7 +689,7 @@ public final class MicrosoftGraphDeviceHealthAttestationState {
 
     /**
      * Set the resetCount property: The number of times a PC device has hibernated or resumed.
-     *
+     * 
      * @param resetCount the resetCount value to set.
      * @return the MicrosoftGraphDeviceHealthAttestationState object itself.
      */
@@ -737,7 +700,7 @@ public final class MicrosoftGraphDeviceHealthAttestationState {
 
     /**
      * Get the restartCount property: The number of times a PC device has rebooted.
-     *
+     * 
      * @return the restartCount value.
      */
     public Long restartCount() {
@@ -746,7 +709,7 @@ public final class MicrosoftGraphDeviceHealthAttestationState {
 
     /**
      * Set the restartCount property: The number of times a PC device has rebooted.
-     *
+     * 
      * @param restartCount the restartCount value to set.
      * @return the MicrosoftGraphDeviceHealthAttestationState object itself.
      */
@@ -758,7 +721,7 @@ public final class MicrosoftGraphDeviceHealthAttestationState {
     /**
      * Get the safeMode property: Safe mode is a troubleshooting option for Windows that starts your computer in a
      * limited state.
-     *
+     * 
      * @return the safeMode value.
      */
     public String safeMode() {
@@ -768,7 +731,7 @@ public final class MicrosoftGraphDeviceHealthAttestationState {
     /**
      * Set the safeMode property: Safe mode is a troubleshooting option for Windows that starts your computer in a
      * limited state.
-     *
+     * 
      * @param safeMode the safeMode value to set.
      * @return the MicrosoftGraphDeviceHealthAttestationState object itself.
      */
@@ -780,7 +743,7 @@ public final class MicrosoftGraphDeviceHealthAttestationState {
     /**
      * Get the secureBoot property: When Secure Boot is enabled, the core components must have the correct cryptographic
      * signatures.
-     *
+     * 
      * @return the secureBoot value.
      */
     public String secureBoot() {
@@ -790,7 +753,7 @@ public final class MicrosoftGraphDeviceHealthAttestationState {
     /**
      * Set the secureBoot property: When Secure Boot is enabled, the core components must have the correct cryptographic
      * signatures.
-     *
+     * 
      * @param secureBoot the secureBoot value to set.
      * @return the MicrosoftGraphDeviceHealthAttestationState object itself.
      */
@@ -802,7 +765,7 @@ public final class MicrosoftGraphDeviceHealthAttestationState {
     /**
      * Get the secureBootConfigurationPolicyFingerPrint property: Fingerprint of the Custom Secure Boot Configuration
      * Policy.
-     *
+     * 
      * @return the secureBootConfigurationPolicyFingerPrint value.
      */
     public String secureBootConfigurationPolicyFingerPrint() {
@@ -812,12 +775,12 @@ public final class MicrosoftGraphDeviceHealthAttestationState {
     /**
      * Set the secureBootConfigurationPolicyFingerPrint property: Fingerprint of the Custom Secure Boot Configuration
      * Policy.
-     *
+     * 
      * @param secureBootConfigurationPolicyFingerPrint the secureBootConfigurationPolicyFingerPrint value to set.
      * @return the MicrosoftGraphDeviceHealthAttestationState object itself.
      */
-    public MicrosoftGraphDeviceHealthAttestationState withSecureBootConfigurationPolicyFingerPrint(
-        String secureBootConfigurationPolicyFingerPrint) {
+    public MicrosoftGraphDeviceHealthAttestationState
+        withSecureBootConfigurationPolicyFingerPrint(String secureBootConfigurationPolicyFingerPrint) {
         this.secureBootConfigurationPolicyFingerPrint = secureBootConfigurationPolicyFingerPrint;
         return this;
     }
@@ -825,7 +788,7 @@ public final class MicrosoftGraphDeviceHealthAttestationState {
     /**
      * Get the testSigning property: When test signing is allowed, the device does not enforce signature validation
      * during boot.
-     *
+     * 
      * @return the testSigning value.
      */
     public String testSigning() {
@@ -835,7 +798,7 @@ public final class MicrosoftGraphDeviceHealthAttestationState {
     /**
      * Set the testSigning property: When test signing is allowed, the device does not enforce signature validation
      * during boot.
-     *
+     * 
      * @param testSigning the testSigning value to set.
      * @return the MicrosoftGraphDeviceHealthAttestationState object itself.
      */
@@ -846,7 +809,7 @@ public final class MicrosoftGraphDeviceHealthAttestationState {
 
     /**
      * Get the tpmVersion property: The security version number of the Boot Application.
-     *
+     * 
      * @return the tpmVersion value.
      */
     public String tpmVersion() {
@@ -855,7 +818,7 @@ public final class MicrosoftGraphDeviceHealthAttestationState {
 
     /**
      * Set the tpmVersion property: The security version number of the Boot Application.
-     *
+     * 
      * @param tpmVersion the tpmVersion value to set.
      * @return the MicrosoftGraphDeviceHealthAttestationState object itself.
      */
@@ -866,7 +829,7 @@ public final class MicrosoftGraphDeviceHealthAttestationState {
 
     /**
      * Get the virtualSecureMode property: VSM is a container that protects high value assets from a compromised kernel.
-     *
+     * 
      * @return the virtualSecureMode value.
      */
     public String virtualSecureMode() {
@@ -875,7 +838,7 @@ public final class MicrosoftGraphDeviceHealthAttestationState {
 
     /**
      * Set the virtualSecureMode property: VSM is a container that protects high value assets from a compromised kernel.
-     *
+     * 
      * @param virtualSecureMode the virtualSecureMode value to set.
      * @return the MicrosoftGraphDeviceHealthAttestationState object itself.
      */
@@ -887,7 +850,7 @@ public final class MicrosoftGraphDeviceHealthAttestationState {
     /**
      * Get the windowsPE property: Operating system running with limited services that is used to prepare a computer for
      * Windows.
-     *
+     * 
      * @return the windowsPE value.
      */
     public String windowsPE() {
@@ -897,7 +860,7 @@ public final class MicrosoftGraphDeviceHealthAttestationState {
     /**
      * Set the windowsPE property: Operating system running with limited services that is used to prepare a computer for
      * Windows.
-     *
+     * 
      * @param windowsPE the windowsPE value to set.
      * @return the MicrosoftGraphDeviceHealthAttestationState object itself.
      */
@@ -908,39 +871,186 @@ public final class MicrosoftGraphDeviceHealthAttestationState {
 
     /**
      * Get the additionalProperties property: deviceHealthAttestationState.
-     *
+     * 
      * @return the additionalProperties value.
      */
-    @JsonAnyGetter
     public Map<String, Object> additionalProperties() {
         return this.additionalProperties;
     }
 
     /**
      * Set the additionalProperties property: deviceHealthAttestationState.
-     *
+     * 
      * @param additionalProperties the additionalProperties value to set.
      * @return the MicrosoftGraphDeviceHealthAttestationState object itself.
      */
-    public MicrosoftGraphDeviceHealthAttestationState withAdditionalProperties(
-        Map<String, Object> additionalProperties) {
+    public MicrosoftGraphDeviceHealthAttestationState
+        withAdditionalProperties(Map<String, Object> additionalProperties) {
         this.additionalProperties = additionalProperties;
         return this;
     }
 
-    @JsonAnySetter
-    void withAdditionalProperties(String key, Object value) {
-        if (additionalProperties == null) {
-            additionalProperties = new HashMap<>();
-        }
-        additionalProperties.put(key, value);
-    }
-
     /**
      * Validates the instance.
-     *
+     * 
      * @throws IllegalArgumentException thrown if the instance is not valid.
      */
     public void validate() {
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public JsonWriter toJson(JsonWriter jsonWriter) throws IOException {
+        jsonWriter.writeStartObject();
+        jsonWriter.writeStringField("attestationIdentityKey", this.attestationIdentityKey);
+        jsonWriter.writeStringField("bitLockerStatus", this.bitLockerStatus);
+        jsonWriter.writeStringField("bootAppSecurityVersion", this.bootAppSecurityVersion);
+        jsonWriter.writeStringField("bootDebugging", this.bootDebugging);
+        jsonWriter.writeStringField("bootManagerSecurityVersion", this.bootManagerSecurityVersion);
+        jsonWriter.writeStringField("bootManagerVersion", this.bootManagerVersion);
+        jsonWriter.writeStringField("bootRevisionListInfo", this.bootRevisionListInfo);
+        jsonWriter.writeStringField("codeIntegrity", this.codeIntegrity);
+        jsonWriter.writeStringField("codeIntegrityCheckVersion", this.codeIntegrityCheckVersion);
+        jsonWriter.writeStringField("codeIntegrityPolicy", this.codeIntegrityPolicy);
+        jsonWriter.writeStringField("contentNamespaceUrl", this.contentNamespaceUrl);
+        jsonWriter.writeStringField("contentVersion", this.contentVersion);
+        jsonWriter.writeStringField("dataExcutionPolicy", this.dataExcutionPolicy);
+        jsonWriter.writeStringField("deviceHealthAttestationStatus", this.deviceHealthAttestationStatus);
+        jsonWriter.writeStringField("earlyLaunchAntiMalwareDriverProtection",
+            this.earlyLaunchAntiMalwareDriverProtection);
+        jsonWriter.writeStringField("healthAttestationSupportedStatus", this.healthAttestationSupportedStatus);
+        jsonWriter.writeStringField("healthStatusMismatchInfo", this.healthStatusMismatchInfo);
+        jsonWriter.writeStringField("issuedDateTime",
+            this.issuedDateTime == null ? null : DateTimeFormatter.ISO_OFFSET_DATE_TIME.format(this.issuedDateTime));
+        jsonWriter.writeStringField("lastUpdateDateTime", this.lastUpdateDateTime);
+        jsonWriter.writeStringField("operatingSystemKernelDebugging", this.operatingSystemKernelDebugging);
+        jsonWriter.writeStringField("operatingSystemRevListInfo", this.operatingSystemRevListInfo);
+        jsonWriter.writeStringField("pcr0", this.pcr0);
+        jsonWriter.writeStringField("pcrHashAlgorithm", this.pcrHashAlgorithm);
+        jsonWriter.writeNumberField("resetCount", this.resetCount);
+        jsonWriter.writeNumberField("restartCount", this.restartCount);
+        jsonWriter.writeStringField("safeMode", this.safeMode);
+        jsonWriter.writeStringField("secureBoot", this.secureBoot);
+        jsonWriter.writeStringField("secureBootConfigurationPolicyFingerPrint",
+            this.secureBootConfigurationPolicyFingerPrint);
+        jsonWriter.writeStringField("testSigning", this.testSigning);
+        jsonWriter.writeStringField("tpmVersion", this.tpmVersion);
+        jsonWriter.writeStringField("virtualSecureMode", this.virtualSecureMode);
+        jsonWriter.writeStringField("windowsPE", this.windowsPE);
+        if (additionalProperties != null) {
+            for (Map.Entry<String, Object> additionalProperty : additionalProperties.entrySet()) {
+                jsonWriter.writeUntypedField(additionalProperty.getKey(), additionalProperty.getValue());
+            }
+        }
+        return jsonWriter.writeEndObject();
+    }
+
+    /**
+     * Reads an instance of MicrosoftGraphDeviceHealthAttestationState from the JsonReader.
+     * 
+     * @param jsonReader The JsonReader being read.
+     * @return An instance of MicrosoftGraphDeviceHealthAttestationState if the JsonReader was pointing to an instance
+     * of it, or null if it was pointing to JSON null.
+     * @throws IOException If an error occurs while reading the MicrosoftGraphDeviceHealthAttestationState.
+     */
+    public static MicrosoftGraphDeviceHealthAttestationState fromJson(JsonReader jsonReader) throws IOException {
+        return jsonReader.readObject(reader -> {
+            MicrosoftGraphDeviceHealthAttestationState deserializedMicrosoftGraphDeviceHealthAttestationState
+                = new MicrosoftGraphDeviceHealthAttestationState();
+            Map<String, Object> additionalProperties = null;
+            while (reader.nextToken() != JsonToken.END_OBJECT) {
+                String fieldName = reader.getFieldName();
+                reader.nextToken();
+
+                if ("attestationIdentityKey".equals(fieldName)) {
+                    deserializedMicrosoftGraphDeviceHealthAttestationState.attestationIdentityKey = reader.getString();
+                } else if ("bitLockerStatus".equals(fieldName)) {
+                    deserializedMicrosoftGraphDeviceHealthAttestationState.bitLockerStatus = reader.getString();
+                } else if ("bootAppSecurityVersion".equals(fieldName)) {
+                    deserializedMicrosoftGraphDeviceHealthAttestationState.bootAppSecurityVersion = reader.getString();
+                } else if ("bootDebugging".equals(fieldName)) {
+                    deserializedMicrosoftGraphDeviceHealthAttestationState.bootDebugging = reader.getString();
+                } else if ("bootManagerSecurityVersion".equals(fieldName)) {
+                    deserializedMicrosoftGraphDeviceHealthAttestationState.bootManagerSecurityVersion
+                        = reader.getString();
+                } else if ("bootManagerVersion".equals(fieldName)) {
+                    deserializedMicrosoftGraphDeviceHealthAttestationState.bootManagerVersion = reader.getString();
+                } else if ("bootRevisionListInfo".equals(fieldName)) {
+                    deserializedMicrosoftGraphDeviceHealthAttestationState.bootRevisionListInfo = reader.getString();
+                } else if ("codeIntegrity".equals(fieldName)) {
+                    deserializedMicrosoftGraphDeviceHealthAttestationState.codeIntegrity = reader.getString();
+                } else if ("codeIntegrityCheckVersion".equals(fieldName)) {
+                    deserializedMicrosoftGraphDeviceHealthAttestationState.codeIntegrityCheckVersion
+                        = reader.getString();
+                } else if ("codeIntegrityPolicy".equals(fieldName)) {
+                    deserializedMicrosoftGraphDeviceHealthAttestationState.codeIntegrityPolicy = reader.getString();
+                } else if ("contentNamespaceUrl".equals(fieldName)) {
+                    deserializedMicrosoftGraphDeviceHealthAttestationState.contentNamespaceUrl = reader.getString();
+                } else if ("contentVersion".equals(fieldName)) {
+                    deserializedMicrosoftGraphDeviceHealthAttestationState.contentVersion = reader.getString();
+                } else if ("dataExcutionPolicy".equals(fieldName)) {
+                    deserializedMicrosoftGraphDeviceHealthAttestationState.dataExcutionPolicy = reader.getString();
+                } else if ("deviceHealthAttestationStatus".equals(fieldName)) {
+                    deserializedMicrosoftGraphDeviceHealthAttestationState.deviceHealthAttestationStatus
+                        = reader.getString();
+                } else if ("earlyLaunchAntiMalwareDriverProtection".equals(fieldName)) {
+                    deserializedMicrosoftGraphDeviceHealthAttestationState.earlyLaunchAntiMalwareDriverProtection
+                        = reader.getString();
+                } else if ("healthAttestationSupportedStatus".equals(fieldName)) {
+                    deserializedMicrosoftGraphDeviceHealthAttestationState.healthAttestationSupportedStatus
+                        = reader.getString();
+                } else if ("healthStatusMismatchInfo".equals(fieldName)) {
+                    deserializedMicrosoftGraphDeviceHealthAttestationState.healthStatusMismatchInfo
+                        = reader.getString();
+                } else if ("issuedDateTime".equals(fieldName)) {
+                    deserializedMicrosoftGraphDeviceHealthAttestationState.issuedDateTime = reader
+                        .getNullable(nonNullReader -> CoreUtils.parseBestOffsetDateTime(nonNullReader.getString()));
+                } else if ("lastUpdateDateTime".equals(fieldName)) {
+                    deserializedMicrosoftGraphDeviceHealthAttestationState.lastUpdateDateTime = reader.getString();
+                } else if ("operatingSystemKernelDebugging".equals(fieldName)) {
+                    deserializedMicrosoftGraphDeviceHealthAttestationState.operatingSystemKernelDebugging
+                        = reader.getString();
+                } else if ("operatingSystemRevListInfo".equals(fieldName)) {
+                    deserializedMicrosoftGraphDeviceHealthAttestationState.operatingSystemRevListInfo
+                        = reader.getString();
+                } else if ("pcr0".equals(fieldName)) {
+                    deserializedMicrosoftGraphDeviceHealthAttestationState.pcr0 = reader.getString();
+                } else if ("pcrHashAlgorithm".equals(fieldName)) {
+                    deserializedMicrosoftGraphDeviceHealthAttestationState.pcrHashAlgorithm = reader.getString();
+                } else if ("resetCount".equals(fieldName)) {
+                    deserializedMicrosoftGraphDeviceHealthAttestationState.resetCount
+                        = reader.getNullable(JsonReader::getLong);
+                } else if ("restartCount".equals(fieldName)) {
+                    deserializedMicrosoftGraphDeviceHealthAttestationState.restartCount
+                        = reader.getNullable(JsonReader::getLong);
+                } else if ("safeMode".equals(fieldName)) {
+                    deserializedMicrosoftGraphDeviceHealthAttestationState.safeMode = reader.getString();
+                } else if ("secureBoot".equals(fieldName)) {
+                    deserializedMicrosoftGraphDeviceHealthAttestationState.secureBoot = reader.getString();
+                } else if ("secureBootConfigurationPolicyFingerPrint".equals(fieldName)) {
+                    deserializedMicrosoftGraphDeviceHealthAttestationState.secureBootConfigurationPolicyFingerPrint
+                        = reader.getString();
+                } else if ("testSigning".equals(fieldName)) {
+                    deserializedMicrosoftGraphDeviceHealthAttestationState.testSigning = reader.getString();
+                } else if ("tpmVersion".equals(fieldName)) {
+                    deserializedMicrosoftGraphDeviceHealthAttestationState.tpmVersion = reader.getString();
+                } else if ("virtualSecureMode".equals(fieldName)) {
+                    deserializedMicrosoftGraphDeviceHealthAttestationState.virtualSecureMode = reader.getString();
+                } else if ("windowsPE".equals(fieldName)) {
+                    deserializedMicrosoftGraphDeviceHealthAttestationState.windowsPE = reader.getString();
+                } else {
+                    if (additionalProperties == null) {
+                        additionalProperties = new LinkedHashMap<>();
+                    }
+
+                    additionalProperties.put(fieldName, reader.readUntyped());
+                }
+            }
+            deserializedMicrosoftGraphDeviceHealthAttestationState.additionalProperties = additionalProperties;
+
+            return deserializedMicrosoftGraphDeviceHealthAttestationState;
+        });
     }
 }

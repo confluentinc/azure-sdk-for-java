@@ -21,7 +21,6 @@ import com.azure.core.http.rest.RestProxy;
 import com.azure.core.management.exception.ManagementException;
 import com.azure.core.util.Context;
 import com.azure.core.util.FluxUtil;
-import com.azure.core.util.logging.ClientLogger;
 import com.azure.resourcemanager.recoveryservicesbackup.fluent.ProtectionPolicyOperationStatusesClient;
 import com.azure.resourcemanager.recoveryservicesbackup.fluent.models.OperationStatusInner;
 import reactor.core.publisher.Mono;
@@ -30,26 +29,24 @@ import reactor.core.publisher.Mono;
  * An instance of this class provides access to all the operations defined in ProtectionPolicyOperationStatusesClient.
  */
 public final class ProtectionPolicyOperationStatusesClientImpl implements ProtectionPolicyOperationStatusesClient {
-    private final ClientLogger logger = new ClientLogger(ProtectionPolicyOperationStatusesClientImpl.class);
-
-    /** The proxy service used to perform REST calls. */
+    /**
+     * The proxy service used to perform REST calls.
+     */
     private final ProtectionPolicyOperationStatusesService service;
 
-    /** The service client containing this operation class. */
+    /**
+     * The service client containing this operation class.
+     */
     private final RecoveryServicesBackupClientImpl client;
 
     /**
      * Initializes an instance of ProtectionPolicyOperationStatusesClientImpl.
-     *
+     * 
      * @param client the instance of the service client containing this operation class.
      */
     ProtectionPolicyOperationStatusesClientImpl(RecoveryServicesBackupClientImpl client) {
-        this.service =
-            RestProxy
-                .create(
-                    ProtectionPolicyOperationStatusesService.class,
-                    client.getHttpPipeline(),
-                    client.getSerializerAdapter());
+        this.service = RestProxy.create(ProtectionPolicyOperationStatusesService.class, client.getHttpPipeline(),
+            client.getSerializerAdapter());
         this.client = client;
     }
 
@@ -59,30 +56,24 @@ public final class ProtectionPolicyOperationStatusesClientImpl implements Protec
      */
     @Host("{$host}")
     @ServiceInterface(name = "RecoveryServicesBack")
-    private interface ProtectionPolicyOperationStatusesService {
-        @Headers({"Content-Type: application/json"})
-        @Get(
-            "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices"
-                + "/vaults/{vaultName}/backupPolicies/{policyName}/operations/{operationId}")
-        @ExpectedResponses({200})
+    public interface ProtectionPolicyOperationStatusesService {
+        @Headers({ "Content-Type: application/json" })
+        @Get("/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{vaultName}/backupPolicies/{policyName}/operations/{operationId}")
+        @ExpectedResponses({ 200 })
         @UnexpectedResponseExceptionType(ManagementException.class)
-        Mono<Response<OperationStatusInner>> get(
-            @HostParam("$host") String endpoint,
-            @QueryParam("api-version") String apiVersion,
-            @PathParam("vaultName") String vaultName,
+        Mono<Response<OperationStatusInner>> get(@HostParam("$host") String endpoint,
+            @QueryParam("api-version") String apiVersion, @PathParam("vaultName") String vaultName,
             @PathParam("resourceGroupName") String resourceGroupName,
-            @PathParam("subscriptionId") String subscriptionId,
-            @PathParam("policyName") String policyName,
-            @PathParam("operationId") String operationId,
-            @HeaderParam("Accept") String accept,
-            Context context);
+            @PathParam("subscriptionId") String subscriptionId, @PathParam("policyName") String policyName,
+            @PathParam("operationId") String operationId, @HeaderParam("Accept") String accept, Context context);
     }
 
     /**
      * Provides the status of the asynchronous operations like backup, restore. The status can be in progress, completed
      * or failed. You can refer to the Operation Status enum for all the possible states of an operation. Some
-     * operations create jobs. This method returns the list of jobs associated with operation.
-     *
+     * operations
+     * create jobs. This method returns the list of jobs associated with operation.
+     * 
      * @param vaultName The name of the recovery services vault.
      * @param resourceGroupName The name of the resource group where the recovery services vault is present.
      * @param policyName Backup policy name whose operation's status needs to be fetched.
@@ -90,16 +81,14 @@ public final class ProtectionPolicyOperationStatusesClientImpl implements Protec
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return operation status.
+     * @return operation status along with {@link Response} on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    private Mono<Response<OperationStatusInner>> getWithResponseAsync(
-        String vaultName, String resourceGroupName, String policyName, String operationId) {
+    private Mono<Response<OperationStatusInner>> getWithResponseAsync(String vaultName, String resourceGroupName,
+        String policyName, String operationId) {
         if (this.client.getEndpoint() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getEndpoint() is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
         }
         if (vaultName == null) {
             return Mono.error(new IllegalArgumentException("Parameter vaultName is required and cannot be null."));
@@ -109,10 +98,8 @@ public final class ProtectionPolicyOperationStatusesClientImpl implements Protec
                 .error(new IllegalArgumentException("Parameter resourceGroupName is required and cannot be null."));
         }
         if (this.client.getSubscriptionId() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getSubscriptionId() is required and cannot be null."));
+            return Mono.error(new IllegalArgumentException(
+                "Parameter this.client.getSubscriptionId() is required and cannot be null."));
         }
         if (policyName == null) {
             return Mono.error(new IllegalArgumentException("Parameter policyName is required and cannot be null."));
@@ -122,27 +109,17 @@ public final class ProtectionPolicyOperationStatusesClientImpl implements Protec
         }
         final String accept = "application/json";
         return FluxUtil
-            .withContext(
-                context ->
-                    service
-                        .get(
-                            this.client.getEndpoint(),
-                            this.client.getApiVersion(),
-                            vaultName,
-                            resourceGroupName,
-                            this.client.getSubscriptionId(),
-                            policyName,
-                            operationId,
-                            accept,
-                            context))
+            .withContext(context -> service.get(this.client.getEndpoint(), this.client.getApiVersion(), vaultName,
+                resourceGroupName, this.client.getSubscriptionId(), policyName, operationId, accept, context))
             .contextWrite(context -> context.putAll(FluxUtil.toReactorContext(this.client.getContext()).readOnly()));
     }
 
     /**
      * Provides the status of the asynchronous operations like backup, restore. The status can be in progress, completed
      * or failed. You can refer to the Operation Status enum for all the possible states of an operation. Some
-     * operations create jobs. This method returns the list of jobs associated with operation.
-     *
+     * operations
+     * create jobs. This method returns the list of jobs associated with operation.
+     * 
      * @param vaultName The name of the recovery services vault.
      * @param resourceGroupName The name of the resource group where the recovery services vault is present.
      * @param policyName Backup policy name whose operation's status needs to be fetched.
@@ -151,16 +128,14 @@ public final class ProtectionPolicyOperationStatusesClientImpl implements Protec
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return operation status.
+     * @return operation status along with {@link Response} on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    private Mono<Response<OperationStatusInner>> getWithResponseAsync(
-        String vaultName, String resourceGroupName, String policyName, String operationId, Context context) {
+    private Mono<Response<OperationStatusInner>> getWithResponseAsync(String vaultName, String resourceGroupName,
+        String policyName, String operationId, Context context) {
         if (this.client.getEndpoint() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getEndpoint() is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
         }
         if (vaultName == null) {
             return Mono.error(new IllegalArgumentException("Parameter vaultName is required and cannot be null."));
@@ -170,10 +145,8 @@ public final class ProtectionPolicyOperationStatusesClientImpl implements Protec
                 .error(new IllegalArgumentException("Parameter resourceGroupName is required and cannot be null."));
         }
         if (this.client.getSubscriptionId() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getSubscriptionId() is required and cannot be null."));
+            return Mono.error(new IllegalArgumentException(
+                "Parameter this.client.getSubscriptionId() is required and cannot be null."));
         }
         if (policyName == null) {
             return Mono.error(new IllegalArgumentException("Parameter policyName is required and cannot be null."));
@@ -183,24 +156,16 @@ public final class ProtectionPolicyOperationStatusesClientImpl implements Protec
         }
         final String accept = "application/json";
         context = this.client.mergeContext(context);
-        return service
-            .get(
-                this.client.getEndpoint(),
-                this.client.getApiVersion(),
-                vaultName,
-                resourceGroupName,
-                this.client.getSubscriptionId(),
-                policyName,
-                operationId,
-                accept,
-                context);
+        return service.get(this.client.getEndpoint(), this.client.getApiVersion(), vaultName, resourceGroupName,
+            this.client.getSubscriptionId(), policyName, operationId, accept, context);
     }
 
     /**
      * Provides the status of the asynchronous operations like backup, restore. The status can be in progress, completed
      * or failed. You can refer to the Operation Status enum for all the possible states of an operation. Some
-     * operations create jobs. This method returns the list of jobs associated with operation.
-     *
+     * operations
+     * create jobs. This method returns the list of jobs associated with operation.
+     * 
      * @param vaultName The name of the recovery services vault.
      * @param resourceGroupName The name of the resource group where the recovery services vault is present.
      * @param policyName Backup policy name whose operation's status needs to be fetched.
@@ -208,27 +173,43 @@ public final class ProtectionPolicyOperationStatusesClientImpl implements Protec
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return operation status.
+     * @return operation status on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    private Mono<OperationStatusInner> getAsync(
-        String vaultName, String resourceGroupName, String policyName, String operationId) {
+    private Mono<OperationStatusInner> getAsync(String vaultName, String resourceGroupName, String policyName,
+        String operationId) {
         return getWithResponseAsync(vaultName, resourceGroupName, policyName, operationId)
-            .flatMap(
-                (Response<OperationStatusInner> res) -> {
-                    if (res.getValue() != null) {
-                        return Mono.just(res.getValue());
-                    } else {
-                        return Mono.empty();
-                    }
-                });
+            .flatMap(res -> Mono.justOrEmpty(res.getValue()));
     }
 
     /**
      * Provides the status of the asynchronous operations like backup, restore. The status can be in progress, completed
      * or failed. You can refer to the Operation Status enum for all the possible states of an operation. Some
-     * operations create jobs. This method returns the list of jobs associated with operation.
-     *
+     * operations
+     * create jobs. This method returns the list of jobs associated with operation.
+     * 
+     * @param vaultName The name of the recovery services vault.
+     * @param resourceGroupName The name of the resource group where the recovery services vault is present.
+     * @param policyName Backup policy name whose operation's status needs to be fetched.
+     * @param operationId Operation ID which represents an operation whose status needs to be fetched.
+     * @param context The context to associate with this operation.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return operation status along with {@link Response}.
+     */
+    @ServiceMethod(returns = ReturnType.SINGLE)
+    public Response<OperationStatusInner> getWithResponse(String vaultName, String resourceGroupName, String policyName,
+        String operationId, Context context) {
+        return getWithResponseAsync(vaultName, resourceGroupName, policyName, operationId, context).block();
+    }
+
+    /**
+     * Provides the status of the asynchronous operations like backup, restore. The status can be in progress, completed
+     * or failed. You can refer to the Operation Status enum for all the possible states of an operation. Some
+     * operations
+     * create jobs. This method returns the list of jobs associated with operation.
+     * 
      * @param vaultName The name of the recovery services vault.
      * @param resourceGroupName The name of the resource group where the recovery services vault is present.
      * @param policyName Backup policy name whose operation's status needs to be fetched.
@@ -240,27 +221,6 @@ public final class ProtectionPolicyOperationStatusesClientImpl implements Protec
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
     public OperationStatusInner get(String vaultName, String resourceGroupName, String policyName, String operationId) {
-        return getAsync(vaultName, resourceGroupName, policyName, operationId).block();
-    }
-
-    /**
-     * Provides the status of the asynchronous operations like backup, restore. The status can be in progress, completed
-     * or failed. You can refer to the Operation Status enum for all the possible states of an operation. Some
-     * operations create jobs. This method returns the list of jobs associated with operation.
-     *
-     * @param vaultName The name of the recovery services vault.
-     * @param resourceGroupName The name of the resource group where the recovery services vault is present.
-     * @param policyName Backup policy name whose operation's status needs to be fetched.
-     * @param operationId Operation ID which represents an operation whose status needs to be fetched.
-     * @param context The context to associate with this operation.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return operation status.
-     */
-    @ServiceMethod(returns = ReturnType.SINGLE)
-    public Response<OperationStatusInner> getWithResponse(
-        String vaultName, String resourceGroupName, String policyName, String operationId, Context context) {
-        return getWithResponseAsync(vaultName, resourceGroupName, policyName, operationId, context).block();
+        return getWithResponse(vaultName, resourceGroupName, policyName, operationId, Context.NONE).getValue();
     }
 }

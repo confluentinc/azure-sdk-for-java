@@ -5,46 +5,48 @@
 package com.azure.resourcemanager.authorization.fluent.models;
 
 import com.azure.core.annotation.Fluent;
-import com.azure.core.util.logging.ClientLogger;
-import com.fasterxml.jackson.annotation.JsonAnyGetter;
-import com.fasterxml.jackson.annotation.JsonAnySetter;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import java.util.HashMap;
+import com.azure.json.JsonReader;
+import com.azure.json.JsonToken;
+import com.azure.json.JsonWriter;
+import java.io.IOException;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-/** workbookChartSeries. */
+/**
+ * workbookChartSeries.
+ */
 @Fluent
 public final class MicrosoftGraphWorkbookChartSeries extends MicrosoftGraphEntity {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(MicrosoftGraphWorkbookChartSeries.class);
-
     /*
      * Represents the name of a series in a chart.
      */
-    @JsonProperty(value = "name")
     private String name;
 
     /*
      * workbookChartSeriesFormat
      */
-    @JsonProperty(value = "format")
     private MicrosoftGraphWorkbookChartSeriesFormat format;
 
     /*
      * Represents a collection of all points in the series. Read-only.
      */
-    @JsonProperty(value = "points")
     private List<MicrosoftGraphWorkbookChartPoint> points;
 
     /*
      * workbookChartSeries
      */
-    @JsonIgnore private Map<String, Object> additionalProperties;
+    private Map<String, Object> additionalProperties;
+
+    /**
+     * Creates an instance of MicrosoftGraphWorkbookChartSeries class.
+     */
+    public MicrosoftGraphWorkbookChartSeries() {
+    }
 
     /**
      * Get the name property: Represents the name of a series in a chart.
-     *
+     * 
      * @return the name value.
      */
     public String name() {
@@ -53,7 +55,7 @@ public final class MicrosoftGraphWorkbookChartSeries extends MicrosoftGraphEntit
 
     /**
      * Set the name property: Represents the name of a series in a chart.
-     *
+     * 
      * @param name the name value to set.
      * @return the MicrosoftGraphWorkbookChartSeries object itself.
      */
@@ -64,7 +66,7 @@ public final class MicrosoftGraphWorkbookChartSeries extends MicrosoftGraphEntit
 
     /**
      * Get the format property: workbookChartSeriesFormat.
-     *
+     * 
      * @return the format value.
      */
     public MicrosoftGraphWorkbookChartSeriesFormat format() {
@@ -73,7 +75,7 @@ public final class MicrosoftGraphWorkbookChartSeries extends MicrosoftGraphEntit
 
     /**
      * Set the format property: workbookChartSeriesFormat.
-     *
+     * 
      * @param format the format value to set.
      * @return the MicrosoftGraphWorkbookChartSeries object itself.
      */
@@ -84,7 +86,7 @@ public final class MicrosoftGraphWorkbookChartSeries extends MicrosoftGraphEntit
 
     /**
      * Get the points property: Represents a collection of all points in the series. Read-only.
-     *
+     * 
      * @return the points value.
      */
     public List<MicrosoftGraphWorkbookChartPoint> points() {
@@ -93,7 +95,7 @@ public final class MicrosoftGraphWorkbookChartSeries extends MicrosoftGraphEntit
 
     /**
      * Set the points property: Represents a collection of all points in the series. Read-only.
-     *
+     * 
      * @param points the points value to set.
      * @return the MicrosoftGraphWorkbookChartSeries object itself.
      */
@@ -104,17 +106,16 @@ public final class MicrosoftGraphWorkbookChartSeries extends MicrosoftGraphEntit
 
     /**
      * Get the additionalProperties property: workbookChartSeries.
-     *
+     * 
      * @return the additionalProperties value.
      */
-    @JsonAnyGetter
     public Map<String, Object> additionalProperties() {
         return this.additionalProperties;
     }
 
     /**
      * Set the additionalProperties property: workbookChartSeries.
-     *
+     * 
      * @param additionalProperties the additionalProperties value to set.
      * @return the MicrosoftGraphWorkbookChartSeries object itself.
      */
@@ -123,15 +124,9 @@ public final class MicrosoftGraphWorkbookChartSeries extends MicrosoftGraphEntit
         return this;
     }
 
-    @JsonAnySetter
-    void withAdditionalProperties(String key, Object value) {
-        if (additionalProperties == null) {
-            additionalProperties = new HashMap<>();
-        }
-        additionalProperties.put(key, value);
-    }
-
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public MicrosoftGraphWorkbookChartSeries withId(String id) {
         super.withId(id);
@@ -140,7 +135,7 @@ public final class MicrosoftGraphWorkbookChartSeries extends MicrosoftGraphEntit
 
     /**
      * Validates the instance.
-     *
+     * 
      * @throws IllegalArgumentException thrown if the instance is not valid.
      */
     @Override
@@ -152,5 +147,65 @@ public final class MicrosoftGraphWorkbookChartSeries extends MicrosoftGraphEntit
         if (points() != null) {
             points().forEach(e -> e.validate());
         }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public JsonWriter toJson(JsonWriter jsonWriter) throws IOException {
+        jsonWriter.writeStartObject();
+        jsonWriter.writeStringField("id", id());
+        jsonWriter.writeStringField("name", this.name);
+        jsonWriter.writeJsonField("format", this.format);
+        jsonWriter.writeArrayField("points", this.points, (writer, element) -> writer.writeJson(element));
+        if (additionalProperties != null) {
+            for (Map.Entry<String, Object> additionalProperty : additionalProperties.entrySet()) {
+                jsonWriter.writeUntypedField(additionalProperty.getKey(), additionalProperty.getValue());
+            }
+        }
+        return jsonWriter.writeEndObject();
+    }
+
+    /**
+     * Reads an instance of MicrosoftGraphWorkbookChartSeries from the JsonReader.
+     * 
+     * @param jsonReader The JsonReader being read.
+     * @return An instance of MicrosoftGraphWorkbookChartSeries if the JsonReader was pointing to an instance of it, or
+     * null if it was pointing to JSON null.
+     * @throws IOException If an error occurs while reading the MicrosoftGraphWorkbookChartSeries.
+     */
+    public static MicrosoftGraphWorkbookChartSeries fromJson(JsonReader jsonReader) throws IOException {
+        return jsonReader.readObject(reader -> {
+            MicrosoftGraphWorkbookChartSeries deserializedMicrosoftGraphWorkbookChartSeries
+                = new MicrosoftGraphWorkbookChartSeries();
+            Map<String, Object> additionalProperties = null;
+            while (reader.nextToken() != JsonToken.END_OBJECT) {
+                String fieldName = reader.getFieldName();
+                reader.nextToken();
+
+                if ("id".equals(fieldName)) {
+                    deserializedMicrosoftGraphWorkbookChartSeries.withId(reader.getString());
+                } else if ("name".equals(fieldName)) {
+                    deserializedMicrosoftGraphWorkbookChartSeries.name = reader.getString();
+                } else if ("format".equals(fieldName)) {
+                    deserializedMicrosoftGraphWorkbookChartSeries.format
+                        = MicrosoftGraphWorkbookChartSeriesFormat.fromJson(reader);
+                } else if ("points".equals(fieldName)) {
+                    List<MicrosoftGraphWorkbookChartPoint> points
+                        = reader.readArray(reader1 -> MicrosoftGraphWorkbookChartPoint.fromJson(reader1));
+                    deserializedMicrosoftGraphWorkbookChartSeries.points = points;
+                } else {
+                    if (additionalProperties == null) {
+                        additionalProperties = new LinkedHashMap<>();
+                    }
+
+                    additionalProperties.put(fieldName, reader.readUntyped());
+                }
+            }
+            deserializedMicrosoftGraphWorkbookChartSeries.additionalProperties = additionalProperties;
+
+            return deserializedMicrosoftGraphWorkbookChartSeries;
+        });
     }
 }

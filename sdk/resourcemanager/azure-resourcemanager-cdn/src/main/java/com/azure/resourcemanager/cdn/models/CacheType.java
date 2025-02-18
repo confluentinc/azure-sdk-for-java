@@ -5,26 +5,41 @@
 package com.azure.resourcemanager.cdn.models;
 
 import com.azure.core.util.ExpandableStringEnum;
-import com.fasterxml.jackson.annotation.JsonCreator;
 import java.util.Collection;
 
-/** Defines values for CacheType. */
+/**
+ * The level at which the content needs to be cached.
+ */
 public final class CacheType extends ExpandableStringEnum<CacheType> {
-    /** Static value All for CacheType. */
+    /**
+     * Static value All for CacheType.
+     */
     public static final CacheType ALL = fromString("All");
 
     /**
+     * Creates a new instance of CacheType value.
+     * 
+     * @deprecated Use the {@link #fromString(String)} factory method.
+     */
+    @Deprecated
+    public CacheType() {
+    }
+
+    /**
      * Creates or finds a CacheType from its string representation.
-     *
+     * 
      * @param name a name to look for.
      * @return the corresponding CacheType.
      */
-    @JsonCreator
     public static CacheType fromString(String name) {
         return fromString(name, CacheType.class);
     }
 
-    /** @return known CacheType values. */
+    /**
+     * Gets known CacheType values.
+     * 
+     * @return known CacheType values.
+     */
     public static Collection<CacheType> values() {
         return values(CacheType.class);
     }

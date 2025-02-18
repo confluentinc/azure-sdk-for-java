@@ -5,39 +5,38 @@
 package com.azure.resourcemanager.automation.models;
 
 import com.azure.core.annotation.Fluent;
-import com.azure.core.annotation.JsonFlatten;
-import com.azure.core.util.logging.ClientLogger;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.azure.json.JsonReader;
+import com.azure.json.JsonSerializable;
+import com.azure.json.JsonToken;
+import com.azure.json.JsonWriter;
+import com.azure.resourcemanager.automation.fluent.models.ConnectionUpdateProperties;
+import java.io.IOException;
 import java.util.Map;
 
-/** The parameters supplied to the update connection operation. */
-@JsonFlatten
+/**
+ * The parameters supplied to the update connection operation.
+ */
 @Fluent
-public class ConnectionUpdateParameters {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(ConnectionUpdateParameters.class);
-
+public final class ConnectionUpdateParameters implements JsonSerializable<ConnectionUpdateParameters> {
     /*
      * Gets or sets the name of the connection.
      */
-    @JsonProperty(value = "name")
     private String name;
 
     /*
-     * Gets or sets the description of the connection.
+     * Gets or sets the properties of the connection.
      */
-    @JsonProperty(value = "properties.description")
-    private String description;
+    private ConnectionUpdateProperties innerProperties;
 
-    /*
-     * Gets or sets the field definition values of the connection.
+    /**
+     * Creates an instance of ConnectionUpdateParameters class.
      */
-    @JsonProperty(value = "properties.fieldDefinitionValues")
-    private Map<String, String> fieldDefinitionValues;
+    public ConnectionUpdateParameters() {
+    }
 
     /**
      * Get the name property: Gets or sets the name of the connection.
-     *
+     * 
      * @return the name value.
      */
     public String name() {
@@ -46,7 +45,7 @@ public class ConnectionUpdateParameters {
 
     /**
      * Set the name property: Gets or sets the name of the connection.
-     *
+     * 
      * @param name the name value to set.
      * @return the ConnectionUpdateParameters object itself.
      */
@@ -56,50 +55,108 @@ public class ConnectionUpdateParameters {
     }
 
     /**
+     * Get the innerProperties property: Gets or sets the properties of the connection.
+     * 
+     * @return the innerProperties value.
+     */
+    private ConnectionUpdateProperties innerProperties() {
+        return this.innerProperties;
+    }
+
+    /**
      * Get the description property: Gets or sets the description of the connection.
-     *
+     * 
      * @return the description value.
      */
     public String description() {
-        return this.description;
+        return this.innerProperties() == null ? null : this.innerProperties().description();
     }
 
     /**
      * Set the description property: Gets or sets the description of the connection.
-     *
+     * 
      * @param description the description value to set.
      * @return the ConnectionUpdateParameters object itself.
      */
     public ConnectionUpdateParameters withDescription(String description) {
-        this.description = description;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new ConnectionUpdateProperties();
+        }
+        this.innerProperties().withDescription(description);
         return this;
     }
 
     /**
      * Get the fieldDefinitionValues property: Gets or sets the field definition values of the connection.
-     *
+     * 
      * @return the fieldDefinitionValues value.
      */
     public Map<String, String> fieldDefinitionValues() {
-        return this.fieldDefinitionValues;
+        return this.innerProperties() == null ? null : this.innerProperties().fieldDefinitionValues();
     }
 
     /**
      * Set the fieldDefinitionValues property: Gets or sets the field definition values of the connection.
-     *
+     * 
      * @param fieldDefinitionValues the fieldDefinitionValues value to set.
      * @return the ConnectionUpdateParameters object itself.
      */
     public ConnectionUpdateParameters withFieldDefinitionValues(Map<String, String> fieldDefinitionValues) {
-        this.fieldDefinitionValues = fieldDefinitionValues;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new ConnectionUpdateProperties();
+        }
+        this.innerProperties().withFieldDefinitionValues(fieldDefinitionValues);
         return this;
     }
 
     /**
      * Validates the instance.
-     *
+     * 
      * @throws IllegalArgumentException thrown if the instance is not valid.
      */
     public void validate() {
+        if (innerProperties() != null) {
+            innerProperties().validate();
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public JsonWriter toJson(JsonWriter jsonWriter) throws IOException {
+        jsonWriter.writeStartObject();
+        jsonWriter.writeStringField("name", this.name);
+        jsonWriter.writeJsonField("properties", this.innerProperties);
+        return jsonWriter.writeEndObject();
+    }
+
+    /**
+     * Reads an instance of ConnectionUpdateParameters from the JsonReader.
+     * 
+     * @param jsonReader The JsonReader being read.
+     * @return An instance of ConnectionUpdateParameters if the JsonReader was pointing to an instance of it, or null if
+     * it was pointing to JSON null.
+     * @throws IOException If an error occurs while reading the ConnectionUpdateParameters.
+     */
+    public static ConnectionUpdateParameters fromJson(JsonReader jsonReader) throws IOException {
+        return jsonReader.readObject(reader -> {
+            ConnectionUpdateParameters deserializedConnectionUpdateParameters = new ConnectionUpdateParameters();
+            while (reader.nextToken() != JsonToken.END_OBJECT) {
+                String fieldName = reader.getFieldName();
+                reader.nextToken();
+
+                if ("name".equals(fieldName)) {
+                    deserializedConnectionUpdateParameters.name = reader.getString();
+                } else if ("properties".equals(fieldName)) {
+                    deserializedConnectionUpdateParameters.innerProperties
+                        = ConnectionUpdateProperties.fromJson(reader);
+                } else {
+                    reader.skipChildren();
+                }
+            }
+
+            return deserializedConnectionUpdateParameters;
+        });
     }
 }

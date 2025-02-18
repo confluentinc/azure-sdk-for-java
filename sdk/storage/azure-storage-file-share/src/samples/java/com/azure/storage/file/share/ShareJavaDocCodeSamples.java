@@ -5,9 +5,11 @@ package com.azure.storage.file.share;
 import com.azure.core.http.rest.Response;
 import com.azure.core.util.Context;
 import com.azure.storage.common.StorageSharedKeyCredential;
+import com.azure.storage.file.share.models.FilePermissionFormat;
 import com.azure.storage.file.share.models.ShareAccessPolicy;
 import com.azure.storage.file.share.models.ShareAccessTier;
 import com.azure.storage.file.share.models.ShareFileHttpHeaders;
+import com.azure.storage.file.share.models.ShareFilePermission;
 import com.azure.storage.file.share.models.ShareRequestConditions;
 import com.azure.storage.file.share.models.ShareSignedIdentifier;
 import com.azure.storage.file.share.models.NtfsFileAttributes;
@@ -17,6 +19,7 @@ import com.azure.storage.file.share.models.ShareSnapshotInfo;
 import com.azure.storage.file.share.models.ShareStatistics;
 import com.azure.storage.file.share.options.ShareCreateOptions;
 import com.azure.storage.file.share.options.ShareDeleteOptions;
+import com.azure.storage.file.share.options.ShareDirectoryCreateOptions;
 import com.azure.storage.file.share.options.ShareGetAccessPolicyOptions;
 import com.azure.storage.file.share.options.ShareGetPropertiesOptions;
 import com.azure.storage.file.share.options.ShareGetStatisticsOptions;
@@ -648,7 +651,8 @@ public class ShareJavaDocCodeSamples {
     }
 
     /**
-     * Generates a code sample for using {@link ShareClient#createPermission(String)}
+     * Generates a code sample for using {@link ShareClient#createPermission(String)} and
+     * {@link ShareClient#createPermission(ShareFilePermission)}
      */
     public void createPermissionAsync() {
         ShareClient shareClient = createClientWithSASToken();
@@ -656,10 +660,18 @@ public class ShareJavaDocCodeSamples {
         String response = shareClient.createPermission("filePermission");
         System.out.printf("The file permission key is %s", response);
         // END: com.azure.storage.file.share.ShareClient.createPermission#string
+
+        // BEGIN: com.azure.storage.file.share.ShareClient.createPermission#ShareFilePermission
+        ShareFilePermission permission = new ShareFilePermission().setPermission("filePermission")
+            .setPermissionFormat(FilePermissionFormat.BINARY);
+        String response1 = shareClient.createPermission(permission);
+        System.out.printf("The file permission key is %s", response1);
+        // END: com.azure.storage.file.share.ShareClient.createPermission#ShareFilePermission
     }
 
     /**
-     * Generates a code sample for using {@link ShareClient#createPermissionWithResponse(String, Context)}
+     * Generates a code sample for using {@link ShareClient#createPermissionWithResponse(String, Context)} and
+     * {@link ShareClient#createPermissionWithResponse(ShareFilePermission, Duration, Context)}
      */
     public void createPermissionWithResponse() {
         ShareClient shareClient = createClientWithSASToken();
@@ -667,10 +679,18 @@ public class ShareJavaDocCodeSamples {
         Response<String> response = shareClient.createPermissionWithResponse("filePermission", Context.NONE);
         System.out.printf("The file permission key is %s", response.getValue());
         // END: com.azure.storage.file.share.ShareClient.createPermissionWithResponse#string-context
+
+        // BEGIN: com.azure.storage.file.share.ShareClient.createPermissionWithResponse#ShareFilePermission-context
+        ShareFilePermission permission = new ShareFilePermission().setPermission("filePermission")
+            .setPermissionFormat(FilePermissionFormat.BINARY);
+        Response<String> response1 = shareClient.createPermissionWithResponse(permission, null, Context.NONE);
+        System.out.printf("The file permission key is %s", response1.getValue());
+        // END: com.azure.storage.file.share.ShareClient.createPermissionWithResponse#ShareFilePermission-context
     }
 
     /**
-     * Generates a code sample for using {@link ShareClient#getPermission(String)}
+     * Generates a code sample for using {@link ShareClient#getPermission(String)} and
+     * {@link ShareClient#getPermission(String, FilePermissionFormat)}
      */
     public void getPermission() {
         ShareClient shareClient = createClientWithSASToken();
@@ -678,10 +698,17 @@ public class ShareJavaDocCodeSamples {
         String response = shareClient.getPermission("filePermissionKey");
         System.out.printf("The file permission is %s", response);
         // END: com.azure.storage.file.share.ShareClient.getPermission#string
+
+        // BEGIN: com.azure.storage.file.share.ShareClient.getPermission#string-FilePermissionFormat
+        FilePermissionFormat filePermissionFormat = FilePermissionFormat.BINARY;
+        String response2 = shareClient.getPermission("filePermissionKey", filePermissionFormat);
+        System.out.printf("The file permission is %s", response2);
+        // END: com.azure.storage.file.share.ShareClient.getPermission#string-FilePermissionFormat
     }
 
     /**
-     * Generates a code sample for using {@link ShareClient#getPermissionWithResponse(String, Context)}
+     * Generates a code sample for using {@link ShareClient#getPermissionWithResponse(String, Context)} and
+     * {@link ShareClient#getPermissionWithResponse(String, FilePermissionFormat, Duration, Context)}
      */
     public void getPermissionWithResponse() {
         ShareClient shareClient = createClientWithSASToken();
@@ -689,6 +716,13 @@ public class ShareJavaDocCodeSamples {
         Response<String> response = shareClient.getPermissionWithResponse("filePermissionKey", Context.NONE);
         System.out.printf("The file permission is %s", response.getValue());
         // END: com.azure.storage.file.share.ShareClient.getPermissionWithResponse#string-context
+
+        // BEGIN: com.azure.storage.file.share.ShareClient.getPermissionWithResponse#string-FilePermissionFormat-context
+        FilePermissionFormat filePermissionFormat = FilePermissionFormat.BINARY;
+        Response<String> response1 = shareClient.getPermissionWithResponse("filePermissionKey",
+            filePermissionFormat, null, Context.NONE);
+        System.out.printf("The file permission is %s", response1.getValue());
+        // END: com.azure.storage.file.share.ShareClient.getPermissionWithResponse#string-FilePermissionFormat-context
     }
 
     /**
@@ -750,4 +784,126 @@ public class ShareJavaDocCodeSamples {
         shareClient.generateSas(values, new Context("key", "value"));
         // END: com.azure.storage.file.share.ShareClient.generateSas#ShareServiceSasSignatureValues-Context
     }
+
+    /**
+     * Generates a code sample for using {@link ShareClient#createIfNotExists()} and
+     * {@link ShareClient#createIfNotExistsWithResponse(ShareCreateOptions, Duration, Context)}
+     */
+    public void createIfNotExistsCodeSnippets() {
+        ShareClient shareClient = createClientWithSASToken();
+        // BEGIN: com.azure.storage.file.share.ShareClient.createIfNotExists
+        shareClient.createIfNotExists();
+        System.out.println("Completed creating the share.");
+        // END: com.azure.storage.file.share.ShareClient.createIfNotExists
+
+        // BEGIN: ShareClient.createIfNotExistsWithResponse#ShareCreateOptions-Duration-Context
+        Response<ShareInfo> response = shareClient.createIfNotExistsWithResponse(new ShareCreateOptions()
+            .setMetadata(Collections.singletonMap("share", "metadata")).setQuotaInGb(1)
+            .setAccessTier(ShareAccessTier.HOT), Duration.ofSeconds(1), new Context(key1, value1));
+
+        if (response.getStatusCode() == 409) {
+            System.out.println("Already existed.");
+        } else {
+            System.out.printf("Create completed with status %d%n", response.getStatusCode());
+        }
+        // END: ShareClient.createIfNotExistsWithResponse#ShareCreateOptions-Duration-Context
+    }
+
+    /**
+     * Generates a code sample for using {@link ShareClient#deleteIfExists()} and
+     * {@link ShareClient#deleteIfExistsWithResponse(ShareDeleteOptions, Duration, Context)}
+     */
+    public void deleteIfExistsCodeSnippets() {
+        ShareClient shareClient = createClientWithSASToken();
+        // BEGIN: com.azure.storage.file.share.ShareClient.deleteIfExists
+        boolean result = shareClient.deleteIfExists();
+        System.out.println("Share deleted: " + result);
+        // END: com.azure.storage.file.share.ShareClient.deleteIfExists
+
+        // BEGIN: com.azure.storage.file.share.ShareClient.deleteIfExistsWithResponse#ShareDeleteOptions-Duration-Context
+        Response<Boolean> response = shareClient.deleteIfExistsWithResponse(new ShareDeleteOptions()
+                .setRequestConditions(new ShareRequestConditions().setLeaseId(leaseId)),
+            Duration.ofSeconds(1), new Context(key1, value1));
+        if (response.getStatusCode() == 404) {
+            System.out.println("Does not exist.");
+        } else {
+            System.out.printf("Delete completed with status %d%n", response.getStatusCode());
+        }
+        // END: com.azure.storage.file.share.ShareClient.deleteIfExistsWithResponse#ShareDeleteOptions-Duration-Context
+    }
+
+    /**
+     * Generates a code sample for using {@link ShareClient#createDirectoryIfNotExists(String)} and
+     * {@link ShareClient#createDirectoryIfNotExistsWithResponse(String, ShareDirectoryCreateOptions, Duration, Context)}
+     */
+    public void createDirectoryIfNotExistsCodeSnippets() {
+        ShareClient shareClient = createClientWithSASToken();
+        // BEGIN: com.azure.storage.file.share.ShareClient.createDirectoryIfNotExists#string
+        ShareDirectoryClient directoryClient = shareClient.createDirectoryIfNotExists("mydirectory");
+        System.out.println("Complete creating the directory.");
+        // END: com.azure.storage.file.share.ShareClient.createDirectoryIfNotExists#string
+
+        // BEGIN: com.azure.storage.file.share.ShareClient.createDirectoryIfNotExistsWithResponse#String-ShareDirectoryCreateOptions-Duration-Context
+        FileSmbProperties smbProperties = new FileSmbProperties();
+        String filePermission = "filePermission";
+        Map<String, String> metadata = Collections.singletonMap("directory", "metadata");
+        ShareDirectoryCreateOptions options = new ShareDirectoryCreateOptions().setSmbProperties(smbProperties).
+            setFilePermission(filePermission).setMetadata(metadata);
+        Response<ShareDirectoryClient> response = shareClient.createDirectoryIfNotExistsWithResponse("documents",
+            options, Duration.ofSeconds(1), new Context(key1, value1));
+
+        if (response.getStatusCode() == 409) {
+            System.out.println("Already existed.");
+        } else {
+            System.out.printf("Create completed with status %d%n", response.getStatusCode());
+        }
+        // END: com.azure.storage.file.share.ShareClient.createDirectoryIfNotExistsWithResponse#String-ShareDirectoryCreateOptions-Duration-Context
+    }
+
+    /**
+     * Generates a code sample for using {@link ShareClient#deleteDirectoryIfExists(String)} and
+     * {@link ShareClient#deleteDirectoryIfExistsWithResponse(String, Duration, Context)}
+     */
+    public void deleteDirectoryIfExistsCodeSnippets() {
+        ShareClient shareClient = createClientWithSASToken();
+        // BEGIN: com.azure.storage.file.share.ShareClient.deleteDirectoryIfExists#string
+        boolean result = shareClient.deleteDirectoryIfExists("mydirectory");
+        System.out.println("Directory deleted: " + result);
+        // END: com.azure.storage.file.share.ShareClient.deleteDirectoryIfExists#string
+
+        // BEGIN: com.azure.storage.file.share.ShareClient.deleteDirectoryIfExistsWithResponse#string-duration-context
+        Response<Boolean> response = shareClient.deleteDirectoryIfExistsWithResponse("mydirectory",
+            Duration.ofSeconds(1), new Context(key1, value1));
+        if (response.getStatusCode() == 404) {
+            System.out.println("Does not exist.");
+        } else {
+            System.out.printf("Delete completed with status %d%n", response.getStatusCode());
+        }
+        // END: com.azure.storage.file.share.ShareClient.deleteDirectoryIfExistsWithResponse#string-duration-context
+    }
+
+    /**
+     * Generates a code sample for using {@link ShareClient#deleteFileIfExists(String)} and
+     * {@link ShareClient#deleteFileIfExistsWithResponse(String, ShareRequestConditions, Duration, Context)}
+     */
+    public void deleteFileIfExistsCodeSnippets() {
+        ShareClient shareClient = createClientWithSASToken();
+        // BEGIN: com.azure.storage.file.share.ShareClient.deleteFileIfExists#string
+        boolean result = shareClient.deleteFileIfExists("myfile");
+        System.out.println("File deleted: " + result);
+        // END: com.azure.storage.file.share.ShareClient.deleteFileIfExists#string
+
+        // BEGIN: com.azure.storage.file.share.ShareClient.deleteFileIfExistsWithResponse#string-ShareRequestConditions-duration-context
+        ShareRequestConditions requestConditions = new ShareRequestConditions().setLeaseId(leaseId);
+
+        Response<Boolean> response = shareClient.deleteFileIfExistsWithResponse("myfile", requestConditions,
+            Duration.ofSeconds(1), new Context(key1, value1));
+        if (response.getStatusCode() == 404) {
+            System.out.println("Does not exist.");
+        } else {
+            System.out.printf("Delete completed with status %d%n", response.getStatusCode());
+        }
+        // END: com.azure.storage.file.share.ShareClient.deleteFileIfExistsWithResponse#string-ShareRequestConditions-duration-context
+    }
+
 }

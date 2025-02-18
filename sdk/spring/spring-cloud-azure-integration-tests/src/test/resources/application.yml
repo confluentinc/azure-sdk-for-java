@@ -1,0 +1,19 @@
+spring:
+  main:
+    banner-mode: off
+  jms:
+    servicebus:
+      enabled: false     # default not to create jmsConnectionFactory bean
+  cloud:
+    azure:
+      profile:
+        tenant-id: ${AZURE_SPRING_TENANT_ID}
+logging:
+  level:
+    com.azure:
+      core:
+        amqp: WARN
+      messaging:
+        servicebus: WARN
+        eventhubs: WARN
+      identity: WARN

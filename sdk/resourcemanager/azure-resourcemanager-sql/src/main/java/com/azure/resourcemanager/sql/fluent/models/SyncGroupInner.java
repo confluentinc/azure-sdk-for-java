@@ -5,216 +5,404 @@
 package com.azure.resourcemanager.sql.fluent.models;
 
 import com.azure.core.annotation.Fluent;
-import com.azure.core.annotation.JsonFlatten;
 import com.azure.core.management.ProxyResource;
-import com.azure.core.util.logging.ClientLogger;
+import com.azure.json.JsonReader;
+import com.azure.json.JsonToken;
+import com.azure.json.JsonWriter;
+import com.azure.resourcemanager.sql.models.Sku;
 import com.azure.resourcemanager.sql.models.SyncConflictResolutionPolicy;
 import com.azure.resourcemanager.sql.models.SyncGroupSchema;
 import com.azure.resourcemanager.sql.models.SyncGroupState;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import java.io.IOException;
 import java.time.OffsetDateTime;
 
-/** An Azure SQL Database sync group. */
-@JsonFlatten
+/**
+ * An Azure SQL Database sync group.
+ */
 @Fluent
-public class SyncGroupInner extends ProxyResource {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(SyncGroupInner.class);
+public final class SyncGroupInner extends ProxyResource {
+    /*
+     * The name and capacity of the SKU.
+     */
+    private Sku sku;
 
     /*
-     * Sync interval of the sync group.
+     * Resource properties.
      */
-    @JsonProperty(value = "properties.interval")
-    private Integer interval;
+    private SyncGroupProperties innerProperties;
 
     /*
-     * Last sync time of the sync group.
+     * The type of the resource.
      */
-    @JsonProperty(value = "properties.lastSyncTime", access = JsonProperty.Access.WRITE_ONLY)
-    private OffsetDateTime lastSyncTime;
+    private String type;
 
     /*
-     * Conflict resolution policy of the sync group.
+     * The name of the resource.
      */
-    @JsonProperty(value = "properties.conflictResolutionPolicy")
-    private SyncConflictResolutionPolicy conflictResolutionPolicy;
+    private String name;
 
     /*
-     * ARM resource id of the sync database in the sync group.
+     * Fully qualified resource Id for the resource.
      */
-    @JsonProperty(value = "properties.syncDatabaseId")
-    private String syncDatabaseId;
+    private String id;
 
-    /*
-     * User name for the sync group hub database credential.
+    /**
+     * Creates an instance of SyncGroupInner class.
      */
-    @JsonProperty(value = "properties.hubDatabaseUserName")
-    private String hubDatabaseUsername;
+    public SyncGroupInner() {
+    }
 
-    /*
-     * Password for the sync group hub database credential.
+    /**
+     * Get the sku property: The name and capacity of the SKU.
+     * 
+     * @return the sku value.
      */
-    @JsonProperty(value = "properties.hubDatabasePassword")
-    private String hubDatabasePassword;
+    public Sku sku() {
+        return this.sku;
+    }
 
-    /*
-     * Sync state of the sync group.
+    /**
+     * Set the sku property: The name and capacity of the SKU.
+     * 
+     * @param sku the sku value to set.
+     * @return the SyncGroupInner object itself.
      */
-    @JsonProperty(value = "properties.syncState", access = JsonProperty.Access.WRITE_ONLY)
-    private SyncGroupState syncState;
+    public SyncGroupInner withSku(Sku sku) {
+        this.sku = sku;
+        return this;
+    }
 
-    /*
-     * Sync schema of the sync group.
+    /**
+     * Get the innerProperties property: Resource properties.
+     * 
+     * @return the innerProperties value.
      */
-    @JsonProperty(value = "properties.schema")
-    private SyncGroupSchema schema;
+    private SyncGroupProperties innerProperties() {
+        return this.innerProperties;
+    }
+
+    /**
+     * Get the type property: The type of the resource.
+     * 
+     * @return the type value.
+     */
+    @Override
+    public String type() {
+        return this.type;
+    }
+
+    /**
+     * Get the name property: The name of the resource.
+     * 
+     * @return the name value.
+     */
+    @Override
+    public String name() {
+        return this.name;
+    }
+
+    /**
+     * Get the id property: Fully qualified resource Id for the resource.
+     * 
+     * @return the id value.
+     */
+    @Override
+    public String id() {
+        return this.id;
+    }
 
     /**
      * Get the interval property: Sync interval of the sync group.
-     *
+     * 
      * @return the interval value.
      */
     public Integer interval() {
-        return this.interval;
+        return this.innerProperties() == null ? null : this.innerProperties().interval();
     }
 
     /**
      * Set the interval property: Sync interval of the sync group.
-     *
+     * 
      * @param interval the interval value to set.
      * @return the SyncGroupInner object itself.
      */
     public SyncGroupInner withInterval(Integer interval) {
-        this.interval = interval;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new SyncGroupProperties();
+        }
+        this.innerProperties().withInterval(interval);
         return this;
     }
 
     /**
      * Get the lastSyncTime property: Last sync time of the sync group.
-     *
+     * 
      * @return the lastSyncTime value.
      */
     public OffsetDateTime lastSyncTime() {
-        return this.lastSyncTime;
+        return this.innerProperties() == null ? null : this.innerProperties().lastSyncTime();
     }
 
     /**
      * Get the conflictResolutionPolicy property: Conflict resolution policy of the sync group.
-     *
+     * 
      * @return the conflictResolutionPolicy value.
      */
     public SyncConflictResolutionPolicy conflictResolutionPolicy() {
-        return this.conflictResolutionPolicy;
+        return this.innerProperties() == null ? null : this.innerProperties().conflictResolutionPolicy();
     }
 
     /**
      * Set the conflictResolutionPolicy property: Conflict resolution policy of the sync group.
-     *
+     * 
      * @param conflictResolutionPolicy the conflictResolutionPolicy value to set.
      * @return the SyncGroupInner object itself.
      */
     public SyncGroupInner withConflictResolutionPolicy(SyncConflictResolutionPolicy conflictResolutionPolicy) {
-        this.conflictResolutionPolicy = conflictResolutionPolicy;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new SyncGroupProperties();
+        }
+        this.innerProperties().withConflictResolutionPolicy(conflictResolutionPolicy);
         return this;
     }
 
     /**
      * Get the syncDatabaseId property: ARM resource id of the sync database in the sync group.
-     *
+     * 
      * @return the syncDatabaseId value.
      */
     public String syncDatabaseId() {
-        return this.syncDatabaseId;
+        return this.innerProperties() == null ? null : this.innerProperties().syncDatabaseId();
     }
 
     /**
      * Set the syncDatabaseId property: ARM resource id of the sync database in the sync group.
-     *
+     * 
      * @param syncDatabaseId the syncDatabaseId value to set.
      * @return the SyncGroupInner object itself.
      */
     public SyncGroupInner withSyncDatabaseId(String syncDatabaseId) {
-        this.syncDatabaseId = syncDatabaseId;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new SyncGroupProperties();
+        }
+        this.innerProperties().withSyncDatabaseId(syncDatabaseId);
         return this;
     }
 
     /**
      * Get the hubDatabaseUsername property: User name for the sync group hub database credential.
-     *
+     * 
      * @return the hubDatabaseUsername value.
      */
     public String hubDatabaseUsername() {
-        return this.hubDatabaseUsername;
+        return this.innerProperties() == null ? null : this.innerProperties().hubDatabaseUsername();
     }
 
     /**
      * Set the hubDatabaseUsername property: User name for the sync group hub database credential.
-     *
+     * 
      * @param hubDatabaseUsername the hubDatabaseUsername value to set.
      * @return the SyncGroupInner object itself.
      */
     public SyncGroupInner withHubDatabaseUsername(String hubDatabaseUsername) {
-        this.hubDatabaseUsername = hubDatabaseUsername;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new SyncGroupProperties();
+        }
+        this.innerProperties().withHubDatabaseUsername(hubDatabaseUsername);
         return this;
     }
 
     /**
      * Get the hubDatabasePassword property: Password for the sync group hub database credential.
-     *
+     * 
      * @return the hubDatabasePassword value.
      */
     public String hubDatabasePassword() {
-        return this.hubDatabasePassword;
+        return this.innerProperties() == null ? null : this.innerProperties().hubDatabasePassword();
     }
 
     /**
      * Set the hubDatabasePassword property: Password for the sync group hub database credential.
-     *
+     * 
      * @param hubDatabasePassword the hubDatabasePassword value to set.
      * @return the SyncGroupInner object itself.
      */
     public SyncGroupInner withHubDatabasePassword(String hubDatabasePassword) {
-        this.hubDatabasePassword = hubDatabasePassword;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new SyncGroupProperties();
+        }
+        this.innerProperties().withHubDatabasePassword(hubDatabasePassword);
         return this;
     }
 
     /**
      * Get the syncState property: Sync state of the sync group.
-     *
+     * 
      * @return the syncState value.
      */
     public SyncGroupState syncState() {
-        return this.syncState;
+        return this.innerProperties() == null ? null : this.innerProperties().syncState();
     }
 
     /**
      * Get the schema property: Sync schema of the sync group.
-     *
+     * 
      * @return the schema value.
      */
     public SyncGroupSchema schema() {
-        return this.schema;
+        return this.innerProperties() == null ? null : this.innerProperties().schema();
     }
 
     /**
      * Set the schema property: Sync schema of the sync group.
-     *
+     * 
      * @param schema the schema value to set.
      * @return the SyncGroupInner object itself.
      */
     public SyncGroupInner withSchema(SyncGroupSchema schema) {
-        this.schema = schema;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new SyncGroupProperties();
+        }
+        this.innerProperties().withSchema(schema);
         return this;
     }
 
     /**
+     * Get the enableConflictLogging property: If conflict logging is enabled.
+     * 
+     * @return the enableConflictLogging value.
+     */
+    public Boolean enableConflictLogging() {
+        return this.innerProperties() == null ? null : this.innerProperties().enableConflictLogging();
+    }
+
+    /**
+     * Set the enableConflictLogging property: If conflict logging is enabled.
+     * 
+     * @param enableConflictLogging the enableConflictLogging value to set.
+     * @return the SyncGroupInner object itself.
+     */
+    public SyncGroupInner withEnableConflictLogging(Boolean enableConflictLogging) {
+        if (this.innerProperties() == null) {
+            this.innerProperties = new SyncGroupProperties();
+        }
+        this.innerProperties().withEnableConflictLogging(enableConflictLogging);
+        return this;
+    }
+
+    /**
+     * Get the conflictLoggingRetentionInDays property: Conflict logging retention period.
+     * 
+     * @return the conflictLoggingRetentionInDays value.
+     */
+    public Integer conflictLoggingRetentionInDays() {
+        return this.innerProperties() == null ? null : this.innerProperties().conflictLoggingRetentionInDays();
+    }
+
+    /**
+     * Set the conflictLoggingRetentionInDays property: Conflict logging retention period.
+     * 
+     * @param conflictLoggingRetentionInDays the conflictLoggingRetentionInDays value to set.
+     * @return the SyncGroupInner object itself.
+     */
+    public SyncGroupInner withConflictLoggingRetentionInDays(Integer conflictLoggingRetentionInDays) {
+        if (this.innerProperties() == null) {
+            this.innerProperties = new SyncGroupProperties();
+        }
+        this.innerProperties().withConflictLoggingRetentionInDays(conflictLoggingRetentionInDays);
+        return this;
+    }
+
+    /**
+     * Get the usePrivateLinkConnection property: If use private link connection is enabled.
+     * 
+     * @return the usePrivateLinkConnection value.
+     */
+    public Boolean usePrivateLinkConnection() {
+        return this.innerProperties() == null ? null : this.innerProperties().usePrivateLinkConnection();
+    }
+
+    /**
+     * Set the usePrivateLinkConnection property: If use private link connection is enabled.
+     * 
+     * @param usePrivateLinkConnection the usePrivateLinkConnection value to set.
+     * @return the SyncGroupInner object itself.
+     */
+    public SyncGroupInner withUsePrivateLinkConnection(Boolean usePrivateLinkConnection) {
+        if (this.innerProperties() == null) {
+            this.innerProperties = new SyncGroupProperties();
+        }
+        this.innerProperties().withUsePrivateLinkConnection(usePrivateLinkConnection);
+        return this;
+    }
+
+    /**
+     * Get the privateEndpointName property: Private endpoint name of the sync group if use private link connection is
+     * enabled.
+     * 
+     * @return the privateEndpointName value.
+     */
+    public String privateEndpointName() {
+        return this.innerProperties() == null ? null : this.innerProperties().privateEndpointName();
+    }
+
+    /**
      * Validates the instance.
-     *
+     * 
      * @throws IllegalArgumentException thrown if the instance is not valid.
      */
     public void validate() {
-        if (schema() != null) {
-            schema().validate();
+        if (sku() != null) {
+            sku().validate();
         }
+        if (innerProperties() != null) {
+            innerProperties().validate();
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public JsonWriter toJson(JsonWriter jsonWriter) throws IOException {
+        jsonWriter.writeStartObject();
+        jsonWriter.writeJsonField("sku", this.sku);
+        jsonWriter.writeJsonField("properties", this.innerProperties);
+        return jsonWriter.writeEndObject();
+    }
+
+    /**
+     * Reads an instance of SyncGroupInner from the JsonReader.
+     * 
+     * @param jsonReader The JsonReader being read.
+     * @return An instance of SyncGroupInner if the JsonReader was pointing to an instance of it, or null if it was
+     * pointing to JSON null.
+     * @throws IllegalStateException If the deserialized JSON object was missing any required properties.
+     * @throws IOException If an error occurs while reading the SyncGroupInner.
+     */
+    public static SyncGroupInner fromJson(JsonReader jsonReader) throws IOException {
+        return jsonReader.readObject(reader -> {
+            SyncGroupInner deserializedSyncGroupInner = new SyncGroupInner();
+            while (reader.nextToken() != JsonToken.END_OBJECT) {
+                String fieldName = reader.getFieldName();
+                reader.nextToken();
+
+                if ("id".equals(fieldName)) {
+                    deserializedSyncGroupInner.id = reader.getString();
+                } else if ("name".equals(fieldName)) {
+                    deserializedSyncGroupInner.name = reader.getString();
+                } else if ("type".equals(fieldName)) {
+                    deserializedSyncGroupInner.type = reader.getString();
+                } else if ("sku".equals(fieldName)) {
+                    deserializedSyncGroupInner.sku = Sku.fromJson(reader);
+                } else if ("properties".equals(fieldName)) {
+                    deserializedSyncGroupInner.innerProperties = SyncGroupProperties.fromJson(reader);
+                } else {
+                    reader.skipChildren();
+                }
+            }
+
+            return deserializedSyncGroupInner;
+        });
     }
 }

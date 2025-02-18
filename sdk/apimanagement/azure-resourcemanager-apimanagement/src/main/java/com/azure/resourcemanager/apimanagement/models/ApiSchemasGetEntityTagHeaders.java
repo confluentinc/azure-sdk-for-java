@@ -5,24 +5,32 @@
 package com.azure.resourcemanager.apimanagement.models;
 
 import com.azure.core.annotation.Fluent;
-import com.azure.core.util.logging.ClientLogger;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.azure.core.http.HttpHeaderName;
+import com.azure.core.http.HttpHeaders;
 
-/** The ApiSchemasGetEntityTagHeaders model. */
+/**
+ * The ApiSchemasGetEntityTagHeaders model.
+ */
 @Fluent
 public final class ApiSchemasGetEntityTagHeaders {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(ApiSchemasGetEntityTagHeaders.class);
-
     /*
      * The Etag property.
      */
-    @JsonProperty(value = "Etag")
     private String etag;
+
+    // HttpHeaders containing the raw property values.
+    /**
+     * Creates an instance of ApiSchemasGetEntityTagHeaders class.
+     * 
+     * @param rawHeaders The raw HttpHeaders that will be used to create the property values.
+     */
+    public ApiSchemasGetEntityTagHeaders(HttpHeaders rawHeaders) {
+        this.etag = rawHeaders.getValue(HttpHeaderName.ETAG);
+    }
 
     /**
      * Get the etag property: The Etag property.
-     *
+     * 
      * @return the etag value.
      */
     public String etag() {
@@ -31,7 +39,7 @@ public final class ApiSchemasGetEntityTagHeaders {
 
     /**
      * Set the etag property: The Etag property.
-     *
+     * 
      * @param etag the etag value to set.
      * @return the ApiSchemasGetEntityTagHeaders object itself.
      */
@@ -42,7 +50,7 @@ public final class ApiSchemasGetEntityTagHeaders {
 
     /**
      * Validates the instance.
-     *
+     * 
      * @throws IllegalArgumentException thrown if the instance is not valid.
      */
     public void validate() {

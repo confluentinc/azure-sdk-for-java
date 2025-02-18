@@ -13,82 +13,104 @@ import com.azure.core.util.Context;
 import com.azure.resourcemanager.containerservice.fluent.models.MaintenanceConfigurationInner;
 import reactor.core.publisher.Mono;
 
-/** An instance of this class provides access to all the operations defined in MaintenanceConfigurationsClient. */
+/**
+ * An instance of this class provides access to all the operations defined in MaintenanceConfigurationsClient.
+ */
 public interface MaintenanceConfigurationsClient {
     /**
      * Gets a list of maintenance configurations in the specified managed cluster.
-     *
-     * @param resourceGroupName The name of the resource group.
+     * 
+     * @param resourceGroupName The name of the resource group. The name is case insensitive.
      * @param resourceName The name of the managed cluster resource.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return a list of maintenance configurations in the specified managed cluster.
+     * @return a list of maintenance configurations in the specified managed cluster as paginated response with
+     * {@link PagedFlux}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
     PagedFlux<MaintenanceConfigurationInner> listByManagedClusterAsync(String resourceGroupName, String resourceName);
 
     /**
      * Gets a list of maintenance configurations in the specified managed cluster.
-     *
-     * @param resourceGroupName The name of the resource group.
+     * 
+     * @param resourceGroupName The name of the resource group. The name is case insensitive.
      * @param resourceName The name of the managed cluster resource.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return a list of maintenance configurations in the specified managed cluster.
+     * @return a list of maintenance configurations in the specified managed cluster as paginated response with
+     * {@link PagedIterable}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
     PagedIterable<MaintenanceConfigurationInner> listByManagedCluster(String resourceGroupName, String resourceName);
 
     /**
      * Gets a list of maintenance configurations in the specified managed cluster.
-     *
-     * @param resourceGroupName The name of the resource group.
+     * 
+     * @param resourceGroupName The name of the resource group. The name is case insensitive.
      * @param resourceName The name of the managed cluster resource.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return a list of maintenance configurations in the specified managed cluster.
+     * @return a list of maintenance configurations in the specified managed cluster as paginated response with
+     * {@link PagedIterable}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
-    PagedIterable<MaintenanceConfigurationInner> listByManagedCluster(
-        String resourceGroupName, String resourceName, Context context);
+    PagedIterable<MaintenanceConfigurationInner> listByManagedCluster(String resourceGroupName, String resourceName,
+        Context context);
 
     /**
      * Gets the specified maintenance configuration of a managed cluster.
-     *
-     * @param resourceGroupName The name of the resource group.
+     * 
+     * @param resourceGroupName The name of the resource group. The name is case insensitive.
      * @param resourceName The name of the managed cluster resource.
      * @param configName The name of the maintenance configuration.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the specified maintenance configuration of a managed cluster.
+     * @return the specified maintenance configuration of a managed cluster along with {@link Response} on successful
+     * completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    Mono<Response<MaintenanceConfigurationInner>> getWithResponseAsync(
-        String resourceGroupName, String resourceName, String configName);
+    Mono<Response<MaintenanceConfigurationInner>> getWithResponseAsync(String resourceGroupName, String resourceName,
+        String configName);
 
     /**
      * Gets the specified maintenance configuration of a managed cluster.
-     *
-     * @param resourceGroupName The name of the resource group.
+     * 
+     * @param resourceGroupName The name of the resource group. The name is case insensitive.
      * @param resourceName The name of the managed cluster resource.
      * @param configName The name of the maintenance configuration.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the specified maintenance configuration of a managed cluster.
+     * @return the specified maintenance configuration of a managed cluster on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
     Mono<MaintenanceConfigurationInner> getAsync(String resourceGroupName, String resourceName, String configName);
 
     /**
      * Gets the specified maintenance configuration of a managed cluster.
-     *
-     * @param resourceGroupName The name of the resource group.
+     * 
+     * @param resourceGroupName The name of the resource group. The name is case insensitive.
+     * @param resourceName The name of the managed cluster resource.
+     * @param configName The name of the maintenance configuration.
+     * @param context The context to associate with this operation.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return the specified maintenance configuration of a managed cluster along with {@link Response}.
+     */
+    @ServiceMethod(returns = ReturnType.SINGLE)
+    Response<MaintenanceConfigurationInner> getWithResponse(String resourceGroupName, String resourceName,
+        String configName, Context context);
+
+    /**
+     * Gets the specified maintenance configuration of a managed cluster.
+     * 
+     * @param resourceGroupName The name of the resource group. The name is case insensitive.
      * @param resourceName The name of the managed cluster resource.
      * @param configName The name of the maintenance configuration.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
@@ -100,73 +122,43 @@ public interface MaintenanceConfigurationsClient {
     MaintenanceConfigurationInner get(String resourceGroupName, String resourceName, String configName);
 
     /**
-     * Gets the specified maintenance configuration of a managed cluster.
-     *
-     * @param resourceGroupName The name of the resource group.
-     * @param resourceName The name of the managed cluster resource.
-     * @param configName The name of the maintenance configuration.
-     * @param context The context to associate with this operation.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the specified maintenance configuration of a managed cluster.
-     */
-    @ServiceMethod(returns = ReturnType.SINGLE)
-    Response<MaintenanceConfigurationInner> getWithResponse(
-        String resourceGroupName, String resourceName, String configName, Context context);
-
-    /**
      * Creates or updates a maintenance configuration in the specified managed cluster.
-     *
-     * @param resourceGroupName The name of the resource group.
+     * 
+     * @param resourceGroupName The name of the resource group. The name is case insensitive.
      * @param resourceName The name of the managed cluster resource.
      * @param configName The name of the maintenance configuration.
      * @param parameters The maintenance configuration to create or update.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return planned maintenance configuration, used to configure when updates can be deployed to a Managed Cluster.
+     * @return planned maintenance configuration, used to configure when updates can be deployed to a Managed Cluster
+     * along with {@link Response} on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    Mono<Response<MaintenanceConfigurationInner>> createOrUpdateWithResponseAsync(
-        String resourceGroupName, String resourceName, String configName, MaintenanceConfigurationInner parameters);
+    Mono<Response<MaintenanceConfigurationInner>> createOrUpdateWithResponseAsync(String resourceGroupName,
+        String resourceName, String configName, MaintenanceConfigurationInner parameters);
 
     /**
      * Creates or updates a maintenance configuration in the specified managed cluster.
-     *
-     * @param resourceGroupName The name of the resource group.
+     * 
+     * @param resourceGroupName The name of the resource group. The name is case insensitive.
      * @param resourceName The name of the managed cluster resource.
      * @param configName The name of the maintenance configuration.
      * @param parameters The maintenance configuration to create or update.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return planned maintenance configuration, used to configure when updates can be deployed to a Managed Cluster.
+     * @return planned maintenance configuration, used to configure when updates can be deployed to a Managed Cluster on
+     * successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    Mono<MaintenanceConfigurationInner> createOrUpdateAsync(
-        String resourceGroupName, String resourceName, String configName, MaintenanceConfigurationInner parameters);
+    Mono<MaintenanceConfigurationInner> createOrUpdateAsync(String resourceGroupName, String resourceName,
+        String configName, MaintenanceConfigurationInner parameters);
 
     /**
      * Creates or updates a maintenance configuration in the specified managed cluster.
-     *
-     * @param resourceGroupName The name of the resource group.
-     * @param resourceName The name of the managed cluster resource.
-     * @param configName The name of the maintenance configuration.
-     * @param parameters The maintenance configuration to create or update.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return planned maintenance configuration, used to configure when updates can be deployed to a Managed Cluster.
-     */
-    @ServiceMethod(returns = ReturnType.SINGLE)
-    MaintenanceConfigurationInner createOrUpdate(
-        String resourceGroupName, String resourceName, String configName, MaintenanceConfigurationInner parameters);
-
-    /**
-     * Creates or updates a maintenance configuration in the specified managed cluster.
-     *
-     * @param resourceGroupName The name of the resource group.
+     * 
+     * @param resourceGroupName The name of the resource group. The name is case insensitive.
      * @param resourceName The name of the managed cluster resource.
      * @param configName The name of the maintenance configuration.
      * @param parameters The maintenance configuration to create or update.
@@ -174,48 +166,77 @@ public interface MaintenanceConfigurationsClient {
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return planned maintenance configuration, used to configure when updates can be deployed to a Managed Cluster
+     * along with {@link Response}.
+     */
+    @ServiceMethod(returns = ReturnType.SINGLE)
+    Response<MaintenanceConfigurationInner> createOrUpdateWithResponse(String resourceGroupName, String resourceName,
+        String configName, MaintenanceConfigurationInner parameters, Context context);
+
+    /**
+     * Creates or updates a maintenance configuration in the specified managed cluster.
+     * 
+     * @param resourceGroupName The name of the resource group. The name is case insensitive.
+     * @param resourceName The name of the managed cluster resource.
+     * @param configName The name of the maintenance configuration.
+     * @param parameters The maintenance configuration to create or update.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
      * @return planned maintenance configuration, used to configure when updates can be deployed to a Managed Cluster.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    Response<MaintenanceConfigurationInner> createOrUpdateWithResponse(
-        String resourceGroupName,
-        String resourceName,
-        String configName,
-        MaintenanceConfigurationInner parameters,
-        Context context);
+    MaintenanceConfigurationInner createOrUpdate(String resourceGroupName, String resourceName, String configName,
+        MaintenanceConfigurationInner parameters);
 
     /**
      * Deletes a maintenance configuration.
-     *
-     * @param resourceGroupName The name of the resource group.
+     * 
+     * @param resourceGroupName The name of the resource group. The name is case insensitive.
      * @param resourceName The name of the managed cluster resource.
      * @param configName The name of the maintenance configuration.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the completion.
+     * @return the {@link Response} on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
     Mono<Response<Void>> deleteWithResponseAsync(String resourceGroupName, String resourceName, String configName);
 
     /**
      * Deletes a maintenance configuration.
-     *
-     * @param resourceGroupName The name of the resource group.
+     * 
+     * @param resourceGroupName The name of the resource group. The name is case insensitive.
      * @param resourceName The name of the managed cluster resource.
      * @param configName The name of the maintenance configuration.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the completion.
+     * @return A {@link Mono} that completes when a successful response is received.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
     Mono<Void> deleteAsync(String resourceGroupName, String resourceName, String configName);
 
     /**
      * Deletes a maintenance configuration.
-     *
-     * @param resourceGroupName The name of the resource group.
+     * 
+     * @param resourceGroupName The name of the resource group. The name is case insensitive.
+     * @param resourceName The name of the managed cluster resource.
+     * @param configName The name of the maintenance configuration.
+     * @param context The context to associate with this operation.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return the {@link Response}.
+     */
+    @ServiceMethod(returns = ReturnType.SINGLE)
+    Response<Void> deleteWithResponse(String resourceGroupName, String resourceName, String configName,
+        Context context);
+
+    /**
+     * Deletes a maintenance configuration.
+     * 
+     * @param resourceGroupName The name of the resource group. The name is case insensitive.
      * @param resourceName The name of the managed cluster resource.
      * @param configName The name of the maintenance configuration.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
@@ -224,20 +245,4 @@ public interface MaintenanceConfigurationsClient {
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
     void delete(String resourceGroupName, String resourceName, String configName);
-
-    /**
-     * Deletes a maintenance configuration.
-     *
-     * @param resourceGroupName The name of the resource group.
-     * @param resourceName The name of the managed cluster resource.
-     * @param configName The name of the maintenance configuration.
-     * @param context The context to associate with this operation.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the response.
-     */
-    @ServiceMethod(returns = ReturnType.SINGLE)
-    Response<Void> deleteWithResponse(
-        String resourceGroupName, String resourceName, String configName, Context context);
 }

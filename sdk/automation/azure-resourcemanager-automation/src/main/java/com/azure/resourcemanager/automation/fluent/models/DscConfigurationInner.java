@@ -5,93 +5,66 @@
 package com.azure.resourcemanager.automation.fluent.models;
 
 import com.azure.core.annotation.Fluent;
-import com.azure.core.annotation.JsonFlatten;
 import com.azure.core.management.Resource;
-import com.azure.core.util.logging.ClientLogger;
+import com.azure.json.JsonReader;
+import com.azure.json.JsonToken;
+import com.azure.json.JsonWriter;
 import com.azure.resourcemanager.automation.models.ContentSource;
 import com.azure.resourcemanager.automation.models.DscConfigurationParameter;
 import com.azure.resourcemanager.automation.models.DscConfigurationProvisioningState;
 import com.azure.resourcemanager.automation.models.DscConfigurationState;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import java.io.IOException;
 import java.time.OffsetDateTime;
 import java.util.Map;
 
-/** Definition of the configuration type. */
-@JsonFlatten
+/**
+ * Definition of the configuration type.
+ */
 @Fluent
-public class DscConfigurationInner extends Resource {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(DscConfigurationInner.class);
+public final class DscConfigurationInner extends Resource {
+    /*
+     * Gets or sets the configuration properties.
+     */
+    private DscConfigurationProperties innerProperties;
 
     /*
      * Gets or sets the etag of the resource.
      */
-    @JsonProperty(value = "etag")
     private String etag;
 
     /*
-     * Gets or sets the provisioning state of the configuration.
+     * The type of the resource.
      */
-    @JsonProperty(value = "properties.provisioningState")
-    private DscConfigurationProvisioningState provisioningState;
+    private String type;
 
     /*
-     * Gets or sets the job count of the configuration.
+     * The name of the resource.
      */
-    @JsonProperty(value = "properties.jobCount")
-    private Integer jobCount;
+    private String name;
 
     /*
-     * Gets or sets the configuration parameters.
+     * Fully qualified resource Id for the resource.
      */
-    @JsonProperty(value = "properties.parameters")
-    private Map<String, DscConfigurationParameter> parameters;
+    private String id;
 
-    /*
-     * Gets or sets the source.
+    /**
+     * Creates an instance of DscConfigurationInner class.
      */
-    @JsonProperty(value = "properties.source")
-    private ContentSource source;
+    public DscConfigurationInner() {
+    }
 
-    /*
-     * Gets or sets the state of the configuration.
+    /**
+     * Get the innerProperties property: Gets or sets the configuration properties.
+     * 
+     * @return the innerProperties value.
      */
-    @JsonProperty(value = "properties.state")
-    private DscConfigurationState state;
-
-    /*
-     * Gets or sets verbose log option.
-     */
-    @JsonProperty(value = "properties.logVerbose")
-    private Boolean logVerbose;
-
-    /*
-     * Gets or sets the creation time.
-     */
-    @JsonProperty(value = "properties.creationTime")
-    private OffsetDateTime creationTime;
-
-    /*
-     * Gets or sets the last modified time.
-     */
-    @JsonProperty(value = "properties.lastModifiedTime")
-    private OffsetDateTime lastModifiedTime;
-
-    /*
-     * Gets the number of compiled node configurations.
-     */
-    @JsonProperty(value = "properties.nodeConfigurationCount")
-    private Integer nodeConfigurationCount;
-
-    /*
-     * Gets or sets the description.
-     */
-    @JsonProperty(value = "properties.description")
-    private String description;
+    private DscConfigurationProperties innerProperties() {
+        return this.innerProperties;
+    }
 
     /**
      * Get the etag property: Gets or sets the etag of the resource.
-     *
+     * 
      * @return the etag value.
      */
     public String etag() {
@@ -100,7 +73,7 @@ public class DscConfigurationInner extends Resource {
 
     /**
      * Set the etag property: Gets or sets the etag of the resource.
-     *
+     * 
      * @param etag the etag value to set.
      * @return the DscConfigurationInner object itself.
      */
@@ -110,213 +83,47 @@ public class DscConfigurationInner extends Resource {
     }
 
     /**
-     * Get the provisioningState property: Gets or sets the provisioning state of the configuration.
-     *
-     * @return the provisioningState value.
+     * Get the type property: The type of the resource.
+     * 
+     * @return the type value.
      */
-    public DscConfigurationProvisioningState provisioningState() {
-        return this.provisioningState;
+    @Override
+    public String type() {
+        return this.type;
     }
 
     /**
-     * Set the provisioningState property: Gets or sets the provisioning state of the configuration.
-     *
-     * @param provisioningState the provisioningState value to set.
-     * @return the DscConfigurationInner object itself.
+     * Get the name property: The name of the resource.
+     * 
+     * @return the name value.
      */
-    public DscConfigurationInner withProvisioningState(DscConfigurationProvisioningState provisioningState) {
-        this.provisioningState = provisioningState;
-        return this;
+    @Override
+    public String name() {
+        return this.name;
     }
 
     /**
-     * Get the jobCount property: Gets or sets the job count of the configuration.
-     *
-     * @return the jobCount value.
+     * Get the id property: Fully qualified resource Id for the resource.
+     * 
+     * @return the id value.
      */
-    public Integer jobCount() {
-        return this.jobCount;
+    @Override
+    public String id() {
+        return this.id;
     }
 
     /**
-     * Set the jobCount property: Gets or sets the job count of the configuration.
-     *
-     * @param jobCount the jobCount value to set.
-     * @return the DscConfigurationInner object itself.
+     * {@inheritDoc}
      */
-    public DscConfigurationInner withJobCount(Integer jobCount) {
-        this.jobCount = jobCount;
-        return this;
-    }
-
-    /**
-     * Get the parameters property: Gets or sets the configuration parameters.
-     *
-     * @return the parameters value.
-     */
-    public Map<String, DscConfigurationParameter> parameters() {
-        return this.parameters;
-    }
-
-    /**
-     * Set the parameters property: Gets or sets the configuration parameters.
-     *
-     * @param parameters the parameters value to set.
-     * @return the DscConfigurationInner object itself.
-     */
-    public DscConfigurationInner withParameters(Map<String, DscConfigurationParameter> parameters) {
-        this.parameters = parameters;
-        return this;
-    }
-
-    /**
-     * Get the source property: Gets or sets the source.
-     *
-     * @return the source value.
-     */
-    public ContentSource source() {
-        return this.source;
-    }
-
-    /**
-     * Set the source property: Gets or sets the source.
-     *
-     * @param source the source value to set.
-     * @return the DscConfigurationInner object itself.
-     */
-    public DscConfigurationInner withSource(ContentSource source) {
-        this.source = source;
-        return this;
-    }
-
-    /**
-     * Get the state property: Gets or sets the state of the configuration.
-     *
-     * @return the state value.
-     */
-    public DscConfigurationState state() {
-        return this.state;
-    }
-
-    /**
-     * Set the state property: Gets or sets the state of the configuration.
-     *
-     * @param state the state value to set.
-     * @return the DscConfigurationInner object itself.
-     */
-    public DscConfigurationInner withState(DscConfigurationState state) {
-        this.state = state;
-        return this;
-    }
-
-    /**
-     * Get the logVerbose property: Gets or sets verbose log option.
-     *
-     * @return the logVerbose value.
-     */
-    public Boolean logVerbose() {
-        return this.logVerbose;
-    }
-
-    /**
-     * Set the logVerbose property: Gets or sets verbose log option.
-     *
-     * @param logVerbose the logVerbose value to set.
-     * @return the DscConfigurationInner object itself.
-     */
-    public DscConfigurationInner withLogVerbose(Boolean logVerbose) {
-        this.logVerbose = logVerbose;
-        return this;
-    }
-
-    /**
-     * Get the creationTime property: Gets or sets the creation time.
-     *
-     * @return the creationTime value.
-     */
-    public OffsetDateTime creationTime() {
-        return this.creationTime;
-    }
-
-    /**
-     * Set the creationTime property: Gets or sets the creation time.
-     *
-     * @param creationTime the creationTime value to set.
-     * @return the DscConfigurationInner object itself.
-     */
-    public DscConfigurationInner withCreationTime(OffsetDateTime creationTime) {
-        this.creationTime = creationTime;
-        return this;
-    }
-
-    /**
-     * Get the lastModifiedTime property: Gets or sets the last modified time.
-     *
-     * @return the lastModifiedTime value.
-     */
-    public OffsetDateTime lastModifiedTime() {
-        return this.lastModifiedTime;
-    }
-
-    /**
-     * Set the lastModifiedTime property: Gets or sets the last modified time.
-     *
-     * @param lastModifiedTime the lastModifiedTime value to set.
-     * @return the DscConfigurationInner object itself.
-     */
-    public DscConfigurationInner withLastModifiedTime(OffsetDateTime lastModifiedTime) {
-        this.lastModifiedTime = lastModifiedTime;
-        return this;
-    }
-
-    /**
-     * Get the nodeConfigurationCount property: Gets the number of compiled node configurations.
-     *
-     * @return the nodeConfigurationCount value.
-     */
-    public Integer nodeConfigurationCount() {
-        return this.nodeConfigurationCount;
-    }
-
-    /**
-     * Set the nodeConfigurationCount property: Gets the number of compiled node configurations.
-     *
-     * @param nodeConfigurationCount the nodeConfigurationCount value to set.
-     * @return the DscConfigurationInner object itself.
-     */
-    public DscConfigurationInner withNodeConfigurationCount(Integer nodeConfigurationCount) {
-        this.nodeConfigurationCount = nodeConfigurationCount;
-        return this;
-    }
-
-    /**
-     * Get the description property: Gets or sets the description.
-     *
-     * @return the description value.
-     */
-    public String description() {
-        return this.description;
-    }
-
-    /**
-     * Set the description property: Gets or sets the description.
-     *
-     * @param description the description value to set.
-     * @return the DscConfigurationInner object itself.
-     */
-    public DscConfigurationInner withDescription(String description) {
-        this.description = description;
-        return this;
-    }
-
-    /** {@inheritDoc} */
     @Override
     public DscConfigurationInner withLocation(String location) {
         super.withLocation(location);
         return this;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public DscConfigurationInner withTags(Map<String, String> tags) {
         super.withTags(tags);
@@ -324,23 +131,296 @@ public class DscConfigurationInner extends Resource {
     }
 
     /**
+     * Get the provisioningState property: Gets or sets the provisioning state of the configuration.
+     * 
+     * @return the provisioningState value.
+     */
+    public DscConfigurationProvisioningState provisioningState() {
+        return this.innerProperties() == null ? null : this.innerProperties().provisioningState();
+    }
+
+    /**
+     * Set the provisioningState property: Gets or sets the provisioning state of the configuration.
+     * 
+     * @param provisioningState the provisioningState value to set.
+     * @return the DscConfigurationInner object itself.
+     */
+    public DscConfigurationInner withProvisioningState(DscConfigurationProvisioningState provisioningState) {
+        if (this.innerProperties() == null) {
+            this.innerProperties = new DscConfigurationProperties();
+        }
+        this.innerProperties().withProvisioningState(provisioningState);
+        return this;
+    }
+
+    /**
+     * Get the jobCount property: Gets or sets the job count of the configuration.
+     * 
+     * @return the jobCount value.
+     */
+    public Integer jobCount() {
+        return this.innerProperties() == null ? null : this.innerProperties().jobCount();
+    }
+
+    /**
+     * Set the jobCount property: Gets or sets the job count of the configuration.
+     * 
+     * @param jobCount the jobCount value to set.
+     * @return the DscConfigurationInner object itself.
+     */
+    public DscConfigurationInner withJobCount(Integer jobCount) {
+        if (this.innerProperties() == null) {
+            this.innerProperties = new DscConfigurationProperties();
+        }
+        this.innerProperties().withJobCount(jobCount);
+        return this;
+    }
+
+    /**
+     * Get the parameters property: Gets or sets the configuration parameters.
+     * 
+     * @return the parameters value.
+     */
+    public Map<String, DscConfigurationParameter> parameters() {
+        return this.innerProperties() == null ? null : this.innerProperties().parameters();
+    }
+
+    /**
+     * Set the parameters property: Gets or sets the configuration parameters.
+     * 
+     * @param parameters the parameters value to set.
+     * @return the DscConfigurationInner object itself.
+     */
+    public DscConfigurationInner withParameters(Map<String, DscConfigurationParameter> parameters) {
+        if (this.innerProperties() == null) {
+            this.innerProperties = new DscConfigurationProperties();
+        }
+        this.innerProperties().withParameters(parameters);
+        return this;
+    }
+
+    /**
+     * Get the source property: Gets or sets the source.
+     * 
+     * @return the source value.
+     */
+    public ContentSource source() {
+        return this.innerProperties() == null ? null : this.innerProperties().source();
+    }
+
+    /**
+     * Set the source property: Gets or sets the source.
+     * 
+     * @param source the source value to set.
+     * @return the DscConfigurationInner object itself.
+     */
+    public DscConfigurationInner withSource(ContentSource source) {
+        if (this.innerProperties() == null) {
+            this.innerProperties = new DscConfigurationProperties();
+        }
+        this.innerProperties().withSource(source);
+        return this;
+    }
+
+    /**
+     * Get the state property: Gets or sets the state of the configuration.
+     * 
+     * @return the state value.
+     */
+    public DscConfigurationState state() {
+        return this.innerProperties() == null ? null : this.innerProperties().state();
+    }
+
+    /**
+     * Set the state property: Gets or sets the state of the configuration.
+     * 
+     * @param state the state value to set.
+     * @return the DscConfigurationInner object itself.
+     */
+    public DscConfigurationInner withState(DscConfigurationState state) {
+        if (this.innerProperties() == null) {
+            this.innerProperties = new DscConfigurationProperties();
+        }
+        this.innerProperties().withState(state);
+        return this;
+    }
+
+    /**
+     * Get the logVerbose property: Gets or sets verbose log option.
+     * 
+     * @return the logVerbose value.
+     */
+    public Boolean logVerbose() {
+        return this.innerProperties() == null ? null : this.innerProperties().logVerbose();
+    }
+
+    /**
+     * Set the logVerbose property: Gets or sets verbose log option.
+     * 
+     * @param logVerbose the logVerbose value to set.
+     * @return the DscConfigurationInner object itself.
+     */
+    public DscConfigurationInner withLogVerbose(Boolean logVerbose) {
+        if (this.innerProperties() == null) {
+            this.innerProperties = new DscConfigurationProperties();
+        }
+        this.innerProperties().withLogVerbose(logVerbose);
+        return this;
+    }
+
+    /**
+     * Get the creationTime property: Gets or sets the creation time.
+     * 
+     * @return the creationTime value.
+     */
+    public OffsetDateTime creationTime() {
+        return this.innerProperties() == null ? null : this.innerProperties().creationTime();
+    }
+
+    /**
+     * Set the creationTime property: Gets or sets the creation time.
+     * 
+     * @param creationTime the creationTime value to set.
+     * @return the DscConfigurationInner object itself.
+     */
+    public DscConfigurationInner withCreationTime(OffsetDateTime creationTime) {
+        if (this.innerProperties() == null) {
+            this.innerProperties = new DscConfigurationProperties();
+        }
+        this.innerProperties().withCreationTime(creationTime);
+        return this;
+    }
+
+    /**
+     * Get the lastModifiedTime property: Gets or sets the last modified time.
+     * 
+     * @return the lastModifiedTime value.
+     */
+    public OffsetDateTime lastModifiedTime() {
+        return this.innerProperties() == null ? null : this.innerProperties().lastModifiedTime();
+    }
+
+    /**
+     * Set the lastModifiedTime property: Gets or sets the last modified time.
+     * 
+     * @param lastModifiedTime the lastModifiedTime value to set.
+     * @return the DscConfigurationInner object itself.
+     */
+    public DscConfigurationInner withLastModifiedTime(OffsetDateTime lastModifiedTime) {
+        if (this.innerProperties() == null) {
+            this.innerProperties = new DscConfigurationProperties();
+        }
+        this.innerProperties().withLastModifiedTime(lastModifiedTime);
+        return this;
+    }
+
+    /**
+     * Get the nodeConfigurationCount property: Gets the number of compiled node configurations.
+     * 
+     * @return the nodeConfigurationCount value.
+     */
+    public Integer nodeConfigurationCount() {
+        return this.innerProperties() == null ? null : this.innerProperties().nodeConfigurationCount();
+    }
+
+    /**
+     * Set the nodeConfigurationCount property: Gets the number of compiled node configurations.
+     * 
+     * @param nodeConfigurationCount the nodeConfigurationCount value to set.
+     * @return the DscConfigurationInner object itself.
+     */
+    public DscConfigurationInner withNodeConfigurationCount(Integer nodeConfigurationCount) {
+        if (this.innerProperties() == null) {
+            this.innerProperties = new DscConfigurationProperties();
+        }
+        this.innerProperties().withNodeConfigurationCount(nodeConfigurationCount);
+        return this;
+    }
+
+    /**
+     * Get the description property: Gets or sets the description.
+     * 
+     * @return the description value.
+     */
+    public String description() {
+        return this.innerProperties() == null ? null : this.innerProperties().description();
+    }
+
+    /**
+     * Set the description property: Gets or sets the description.
+     * 
+     * @param description the description value to set.
+     * @return the DscConfigurationInner object itself.
+     */
+    public DscConfigurationInner withDescription(String description) {
+        if (this.innerProperties() == null) {
+            this.innerProperties = new DscConfigurationProperties();
+        }
+        this.innerProperties().withDescription(description);
+        return this;
+    }
+
+    /**
      * Validates the instance.
-     *
+     * 
      * @throws IllegalArgumentException thrown if the instance is not valid.
      */
     public void validate() {
-        if (parameters() != null) {
-            parameters()
-                .values()
-                .forEach(
-                    e -> {
-                        if (e != null) {
-                            e.validate();
-                        }
-                    });
+        if (innerProperties() != null) {
+            innerProperties().validate();
         }
-        if (source() != null) {
-            source().validate();
-        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public JsonWriter toJson(JsonWriter jsonWriter) throws IOException {
+        jsonWriter.writeStartObject();
+        jsonWriter.writeStringField("location", location());
+        jsonWriter.writeMapField("tags", tags(), (writer, element) -> writer.writeString(element));
+        jsonWriter.writeJsonField("properties", this.innerProperties);
+        jsonWriter.writeStringField("etag", this.etag);
+        return jsonWriter.writeEndObject();
+    }
+
+    /**
+     * Reads an instance of DscConfigurationInner from the JsonReader.
+     * 
+     * @param jsonReader The JsonReader being read.
+     * @return An instance of DscConfigurationInner if the JsonReader was pointing to an instance of it, or null if it
+     * was pointing to JSON null.
+     * @throws IllegalStateException If the deserialized JSON object was missing any required properties.
+     * @throws IOException If an error occurs while reading the DscConfigurationInner.
+     */
+    public static DscConfigurationInner fromJson(JsonReader jsonReader) throws IOException {
+        return jsonReader.readObject(reader -> {
+            DscConfigurationInner deserializedDscConfigurationInner = new DscConfigurationInner();
+            while (reader.nextToken() != JsonToken.END_OBJECT) {
+                String fieldName = reader.getFieldName();
+                reader.nextToken();
+
+                if ("id".equals(fieldName)) {
+                    deserializedDscConfigurationInner.id = reader.getString();
+                } else if ("name".equals(fieldName)) {
+                    deserializedDscConfigurationInner.name = reader.getString();
+                } else if ("type".equals(fieldName)) {
+                    deserializedDscConfigurationInner.type = reader.getString();
+                } else if ("location".equals(fieldName)) {
+                    deserializedDscConfigurationInner.withLocation(reader.getString());
+                } else if ("tags".equals(fieldName)) {
+                    Map<String, String> tags = reader.readMap(reader1 -> reader1.getString());
+                    deserializedDscConfigurationInner.withTags(tags);
+                } else if ("properties".equals(fieldName)) {
+                    deserializedDscConfigurationInner.innerProperties = DscConfigurationProperties.fromJson(reader);
+                } else if ("etag".equals(fieldName)) {
+                    deserializedDscConfigurationInner.etag = reader.getString();
+                } else {
+                    reader.skipChildren();
+                }
+            }
+
+            return deserializedDscConfigurationInner;
+        });
     }
 }

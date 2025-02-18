@@ -5,44 +5,71 @@
 package com.azure.resourcemanager.mediaservices.models;
 
 import com.azure.core.util.ExpandableStringEnum;
-import com.fasterxml.jackson.annotation.JsonCreator;
 import java.util.Collection;
 
-/** Defines values for JobState. */
+/**
+ * Describes the state of the JobOutput.
+ */
 public final class JobState extends ExpandableStringEnum<JobState> {
-    /** Static value Canceled for JobState. */
+    /**
+     * Static value Canceled for JobState.
+     */
     public static final JobState CANCELED = fromString("Canceled");
 
-    /** Static value Canceling for JobState. */
+    /**
+     * Static value Canceling for JobState.
+     */
     public static final JobState CANCELING = fromString("Canceling");
 
-    /** Static value Error for JobState. */
+    /**
+     * Static value Error for JobState.
+     */
     public static final JobState ERROR = fromString("Error");
 
-    /** Static value Finished for JobState. */
+    /**
+     * Static value Finished for JobState.
+     */
     public static final JobState FINISHED = fromString("Finished");
 
-    /** Static value Processing for JobState. */
+    /**
+     * Static value Processing for JobState.
+     */
     public static final JobState PROCESSING = fromString("Processing");
 
-    /** Static value Queued for JobState. */
+    /**
+     * Static value Queued for JobState.
+     */
     public static final JobState QUEUED = fromString("Queued");
 
-    /** Static value Scheduled for JobState. */
+    /**
+     * Static value Scheduled for JobState.
+     */
     public static final JobState SCHEDULED = fromString("Scheduled");
 
     /**
+     * Creates a new instance of JobState value.
+     * 
+     * @deprecated Use the {@link #fromString(String)} factory method.
+     */
+    @Deprecated
+    public JobState() {
+    }
+
+    /**
      * Creates or finds a JobState from its string representation.
-     *
+     * 
      * @param name a name to look for.
      * @return the corresponding JobState.
      */
-    @JsonCreator
     public static JobState fromString(String name) {
         return fromString(name, JobState.class);
     }
 
-    /** @return known JobState values. */
+    /**
+     * Gets known JobState values.
+     * 
+     * @return known JobState values.
+     */
     public static Collection<JobState> values() {
         return values(JobState.class);
     }

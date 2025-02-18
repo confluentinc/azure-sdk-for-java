@@ -5,34 +5,71 @@
 package com.azure.resourcemanager.securityinsights.models;
 
 import com.azure.core.annotation.Fluent;
-import com.azure.core.util.logging.ClientLogger;
-import com.azure.resourcemanager.securityinsights.fluent.models.EntityInner;
+import com.azure.core.management.SystemData;
+import com.azure.json.JsonReader;
+import com.azure.json.JsonToken;
+import com.azure.json.JsonWriter;
 import com.azure.resourcemanager.securityinsights.fluent.models.MailMessageEntityProperties;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import com.fasterxml.jackson.annotation.JsonTypeName;
+import java.io.IOException;
 import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-/** Represents a mail message entity. */
-@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "kind")
-@JsonTypeName("MailMessage")
+/**
+ * Represents a mail message entity.
+ */
 @Fluent
-public final class MailMessageEntity extends EntityInner {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(MailMessageEntity.class);
+public final class MailMessageEntity extends Entity {
+    /*
+     * The kind of the entity.
+     */
+    private EntityKindEnum kind = EntityKindEnum.MAIL_MESSAGE;
 
     /*
      * Mail message entity properties
      */
-    @JsonProperty(value = "properties")
     private MailMessageEntityProperties innerProperties;
+
+    /*
+     * Azure Resource Manager metadata containing createdBy and modifiedBy information.
+     */
+    private SystemData systemData;
+
+    /*
+     * The type of the resource.
+     */
+    private String type;
+
+    /*
+     * The name of the resource.
+     */
+    private String name;
+
+    /*
+     * Fully qualified resource Id for the resource.
+     */
+    private String id;
+
+    /**
+     * Creates an instance of MailMessageEntity class.
+     */
+    public MailMessageEntity() {
+    }
+
+    /**
+     * Get the kind property: The kind of the entity.
+     * 
+     * @return the kind value.
+     */
+    @Override
+    public EntityKindEnum kind() {
+        return this.kind;
+    }
 
     /**
      * Get the innerProperties property: Mail message entity properties.
-     *
+     * 
      * @return the innerProperties value.
      */
     private MailMessageEntityProperties innerProperties() {
@@ -40,8 +77,48 @@ public final class MailMessageEntity extends EntityInner {
     }
 
     /**
+     * Get the systemData property: Azure Resource Manager metadata containing createdBy and modifiedBy information.
+     * 
+     * @return the systemData value.
+     */
+    @Override
+    public SystemData systemData() {
+        return this.systemData;
+    }
+
+    /**
+     * Get the type property: The type of the resource.
+     * 
+     * @return the type value.
+     */
+    @Override
+    public String type() {
+        return this.type;
+    }
+
+    /**
+     * Get the name property: The name of the resource.
+     * 
+     * @return the name value.
+     */
+    @Override
+    public String name() {
+        return this.name;
+    }
+
+    /**
+     * Get the id property: Fully qualified resource Id for the resource.
+     * 
+     * @return the id value.
+     */
+    @Override
+    public String id() {
+        return this.id;
+    }
+
+    /**
      * Get the fileEntityIds property: The File entity ids of this mail message's attachments.
-     *
+     * 
      * @return the fileEntityIds value.
      */
     public List<String> fileEntityIds() {
@@ -51,7 +128,7 @@ public final class MailMessageEntity extends EntityInner {
     /**
      * Get the recipient property: The recipient of this mail message. Note that in case of multiple recipients the mail
      * message is forked and each copy has one recipient.
-     *
+     * 
      * @return the recipient value.
      */
     public String recipient() {
@@ -60,7 +137,7 @@ public final class MailMessageEntity extends EntityInner {
 
     /**
      * Get the urls property: The Urls contained in this mail message.
-     *
+     * 
      * @return the urls value.
      */
     public List<String> urls() {
@@ -69,7 +146,7 @@ public final class MailMessageEntity extends EntityInner {
 
     /**
      * Get the threats property: The threats of this mail message.
-     *
+     * 
      * @return the threats value.
      */
     public List<String> threats() {
@@ -78,7 +155,7 @@ public final class MailMessageEntity extends EntityInner {
 
     /**
      * Get the p1Sender property: The p1 sender's email address.
-     *
+     * 
      * @return the p1Sender value.
      */
     public String p1Sender() {
@@ -87,7 +164,7 @@ public final class MailMessageEntity extends EntityInner {
 
     /**
      * Get the p1SenderDisplayName property: The p1 sender's display name.
-     *
+     * 
      * @return the p1SenderDisplayName value.
      */
     public String p1SenderDisplayName() {
@@ -96,7 +173,7 @@ public final class MailMessageEntity extends EntityInner {
 
     /**
      * Get the p1SenderDomain property: The p1 sender's domain.
-     *
+     * 
      * @return the p1SenderDomain value.
      */
     public String p1SenderDomain() {
@@ -105,7 +182,7 @@ public final class MailMessageEntity extends EntityInner {
 
     /**
      * Get the senderIp property: The sender's IP address.
-     *
+     * 
      * @return the senderIp value.
      */
     public String senderIp() {
@@ -114,7 +191,7 @@ public final class MailMessageEntity extends EntityInner {
 
     /**
      * Get the p2Sender property: The p2 sender's email address.
-     *
+     * 
      * @return the p2Sender value.
      */
     public String p2Sender() {
@@ -123,7 +200,7 @@ public final class MailMessageEntity extends EntityInner {
 
     /**
      * Get the p2SenderDisplayName property: The p2 sender's display name.
-     *
+     * 
      * @return the p2SenderDisplayName value.
      */
     public String p2SenderDisplayName() {
@@ -132,7 +209,7 @@ public final class MailMessageEntity extends EntityInner {
 
     /**
      * Get the p2SenderDomain property: The p2 sender's domain.
-     *
+     * 
      * @return the p2SenderDomain value.
      */
     public String p2SenderDomain() {
@@ -141,7 +218,7 @@ public final class MailMessageEntity extends EntityInner {
 
     /**
      * Get the receiveDate property: The receive date of this message.
-     *
+     * 
      * @return the receiveDate value.
      */
     public OffsetDateTime receiveDate() {
@@ -150,7 +227,7 @@ public final class MailMessageEntity extends EntityInner {
 
     /**
      * Get the networkMessageId property: The network message id of this mail message.
-     *
+     * 
      * @return the networkMessageId value.
      */
     public UUID networkMessageId() {
@@ -159,7 +236,7 @@ public final class MailMessageEntity extends EntityInner {
 
     /**
      * Get the internetMessageId property: The internet message id of this mail message.
-     *
+     * 
      * @return the internetMessageId value.
      */
     public String internetMessageId() {
@@ -168,7 +245,7 @@ public final class MailMessageEntity extends EntityInner {
 
     /**
      * Get the subject property: The subject of this mail message.
-     *
+     * 
      * @return the subject value.
      */
     public String subject() {
@@ -177,7 +254,7 @@ public final class MailMessageEntity extends EntityInner {
 
     /**
      * Get the language property: The language of this mail message.
-     *
+     * 
      * @return the language value.
      */
     public String language() {
@@ -186,7 +263,7 @@ public final class MailMessageEntity extends EntityInner {
 
     /**
      * Get the threatDetectionMethods property: The threat detection methods.
-     *
+     * 
      * @return the threatDetectionMethods value.
      */
     public List<String> threatDetectionMethods() {
@@ -195,7 +272,7 @@ public final class MailMessageEntity extends EntityInner {
 
     /**
      * Get the bodyFingerprintBin1 property: The bodyFingerprintBin1.
-     *
+     * 
      * @return the bodyFingerprintBin1 value.
      */
     public Integer bodyFingerprintBin1() {
@@ -204,7 +281,7 @@ public final class MailMessageEntity extends EntityInner {
 
     /**
      * Set the bodyFingerprintBin1 property: The bodyFingerprintBin1.
-     *
+     * 
      * @param bodyFingerprintBin1 the bodyFingerprintBin1 value to set.
      * @return the MailMessageEntity object itself.
      */
@@ -218,7 +295,7 @@ public final class MailMessageEntity extends EntityInner {
 
     /**
      * Get the bodyFingerprintBin2 property: The bodyFingerprintBin2.
-     *
+     * 
      * @return the bodyFingerprintBin2 value.
      */
     public Integer bodyFingerprintBin2() {
@@ -227,7 +304,7 @@ public final class MailMessageEntity extends EntityInner {
 
     /**
      * Set the bodyFingerprintBin2 property: The bodyFingerprintBin2.
-     *
+     * 
      * @param bodyFingerprintBin2 the bodyFingerprintBin2 value to set.
      * @return the MailMessageEntity object itself.
      */
@@ -241,7 +318,7 @@ public final class MailMessageEntity extends EntityInner {
 
     /**
      * Get the bodyFingerprintBin3 property: The bodyFingerprintBin3.
-     *
+     * 
      * @return the bodyFingerprintBin3 value.
      */
     public Integer bodyFingerprintBin3() {
@@ -250,7 +327,7 @@ public final class MailMessageEntity extends EntityInner {
 
     /**
      * Set the bodyFingerprintBin3 property: The bodyFingerprintBin3.
-     *
+     * 
      * @param bodyFingerprintBin3 the bodyFingerprintBin3 value to set.
      * @return the MailMessageEntity object itself.
      */
@@ -264,7 +341,7 @@ public final class MailMessageEntity extends EntityInner {
 
     /**
      * Get the bodyFingerprintBin4 property: The bodyFingerprintBin4.
-     *
+     * 
      * @return the bodyFingerprintBin4 value.
      */
     public Integer bodyFingerprintBin4() {
@@ -273,7 +350,7 @@ public final class MailMessageEntity extends EntityInner {
 
     /**
      * Set the bodyFingerprintBin4 property: The bodyFingerprintBin4.
-     *
+     * 
      * @param bodyFingerprintBin4 the bodyFingerprintBin4 value to set.
      * @return the MailMessageEntity object itself.
      */
@@ -287,7 +364,7 @@ public final class MailMessageEntity extends EntityInner {
 
     /**
      * Get the bodyFingerprintBin5 property: The bodyFingerprintBin5.
-     *
+     * 
      * @return the bodyFingerprintBin5 value.
      */
     public Integer bodyFingerprintBin5() {
@@ -296,7 +373,7 @@ public final class MailMessageEntity extends EntityInner {
 
     /**
      * Set the bodyFingerprintBin5 property: The bodyFingerprintBin5.
-     *
+     * 
      * @param bodyFingerprintBin5 the bodyFingerprintBin5 value to set.
      * @return the MailMessageEntity object itself.
      */
@@ -310,7 +387,7 @@ public final class MailMessageEntity extends EntityInner {
 
     /**
      * Get the antispamDirection property: The directionality of this mail message.
-     *
+     * 
      * @return the antispamDirection value.
      */
     public AntispamMailDirection antispamDirection() {
@@ -319,7 +396,7 @@ public final class MailMessageEntity extends EntityInner {
 
     /**
      * Set the antispamDirection property: The directionality of this mail message.
-     *
+     * 
      * @param antispamDirection the antispamDirection value to set.
      * @return the MailMessageEntity object itself.
      */
@@ -333,7 +410,7 @@ public final class MailMessageEntity extends EntityInner {
 
     /**
      * Get the deliveryAction property: The delivery action of this mail message like Delivered, Blocked, Replaced etc.
-     *
+     * 
      * @return the deliveryAction value.
      */
     public DeliveryAction deliveryAction() {
@@ -342,7 +419,7 @@ public final class MailMessageEntity extends EntityInner {
 
     /**
      * Set the deliveryAction property: The delivery action of this mail message like Delivered, Blocked, Replaced etc.
-     *
+     * 
      * @param deliveryAction the deliveryAction value to set.
      * @return the MailMessageEntity object itself.
      */
@@ -356,7 +433,7 @@ public final class MailMessageEntity extends EntityInner {
 
     /**
      * Get the deliveryLocation property: The delivery location of this mail message like Inbox, JunkFolder etc.
-     *
+     * 
      * @return the deliveryLocation value.
      */
     public DeliveryLocation deliveryLocation() {
@@ -365,7 +442,7 @@ public final class MailMessageEntity extends EntityInner {
 
     /**
      * Set the deliveryLocation property: The delivery location of this mail message like Inbox, JunkFolder etc.
-     *
+     * 
      * @param deliveryLocation the deliveryLocation value to set.
      * @return the MailMessageEntity object itself.
      */
@@ -380,7 +457,7 @@ public final class MailMessageEntity extends EntityInner {
     /**
      * Get the additionalData property: A bag of custom fields that should be part of the entity and will be presented
      * to the user.
-     *
+     * 
      * @return the additionalData value.
      */
     public Map<String, Object> additionalData() {
@@ -390,7 +467,7 @@ public final class MailMessageEntity extends EntityInner {
     /**
      * Get the friendlyName property: The graph item display name which is a short humanly readable description of the
      * graph item instance. This property is optional and might be system generated.
-     *
+     * 
      * @return the friendlyName value.
      */
     public String friendlyName() {
@@ -399,14 +476,61 @@ public final class MailMessageEntity extends EntityInner {
 
     /**
      * Validates the instance.
-     *
+     * 
      * @throws IllegalArgumentException thrown if the instance is not valid.
      */
     @Override
     public void validate() {
-        super.validate();
         if (innerProperties() != null) {
             innerProperties().validate();
         }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public JsonWriter toJson(JsonWriter jsonWriter) throws IOException {
+        jsonWriter.writeStartObject();
+        jsonWriter.writeStringField("kind", this.kind == null ? null : this.kind.toString());
+        jsonWriter.writeJsonField("properties", this.innerProperties);
+        return jsonWriter.writeEndObject();
+    }
+
+    /**
+     * Reads an instance of MailMessageEntity from the JsonReader.
+     * 
+     * @param jsonReader The JsonReader being read.
+     * @return An instance of MailMessageEntity if the JsonReader was pointing to an instance of it, or null if it was
+     * pointing to JSON null.
+     * @throws IllegalStateException If the deserialized JSON object was missing any required properties.
+     * @throws IOException If an error occurs while reading the MailMessageEntity.
+     */
+    public static MailMessageEntity fromJson(JsonReader jsonReader) throws IOException {
+        return jsonReader.readObject(reader -> {
+            MailMessageEntity deserializedMailMessageEntity = new MailMessageEntity();
+            while (reader.nextToken() != JsonToken.END_OBJECT) {
+                String fieldName = reader.getFieldName();
+                reader.nextToken();
+
+                if ("id".equals(fieldName)) {
+                    deserializedMailMessageEntity.id = reader.getString();
+                } else if ("name".equals(fieldName)) {
+                    deserializedMailMessageEntity.name = reader.getString();
+                } else if ("type".equals(fieldName)) {
+                    deserializedMailMessageEntity.type = reader.getString();
+                } else if ("systemData".equals(fieldName)) {
+                    deserializedMailMessageEntity.systemData = SystemData.fromJson(reader);
+                } else if ("kind".equals(fieldName)) {
+                    deserializedMailMessageEntity.kind = EntityKindEnum.fromString(reader.getString());
+                } else if ("properties".equals(fieldName)) {
+                    deserializedMailMessageEntity.innerProperties = MailMessageEntityProperties.fromJson(reader);
+                } else {
+                    reader.skipChildren();
+                }
+            }
+
+            return deserializedMailMessageEntity;
+        });
     }
 }

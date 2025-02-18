@@ -13,49 +13,45 @@ import com.azure.resourcemanager.security.fluent.ComplianceResultsClient;
 import com.azure.resourcemanager.security.fluent.models.ComplianceResultInner;
 import com.azure.resourcemanager.security.models.ComplianceResult;
 import com.azure.resourcemanager.security.models.ComplianceResults;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 public final class ComplianceResultsImpl implements ComplianceResults {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(ComplianceResultsImpl.class);
+    private static final ClientLogger LOGGER = new ClientLogger(ComplianceResultsImpl.class);
 
     private final ComplianceResultsClient innerClient;
 
     private final com.azure.resourcemanager.security.SecurityManager serviceManager;
 
-    public ComplianceResultsImpl(
-        ComplianceResultsClient innerClient, com.azure.resourcemanager.security.SecurityManager serviceManager) {
+    public ComplianceResultsImpl(ComplianceResultsClient innerClient,
+        com.azure.resourcemanager.security.SecurityManager serviceManager) {
         this.innerClient = innerClient;
         this.serviceManager = serviceManager;
     }
 
     public PagedIterable<ComplianceResult> list(String scope) {
         PagedIterable<ComplianceResultInner> inner = this.serviceClient().list(scope);
-        return Utils.mapPage(inner, inner1 -> new ComplianceResultImpl(inner1, this.manager()));
+        return ResourceManagerUtils.mapPage(inner, inner1 -> new ComplianceResultImpl(inner1, this.manager()));
     }
 
     public PagedIterable<ComplianceResult> list(String scope, Context context) {
         PagedIterable<ComplianceResultInner> inner = this.serviceClient().list(scope, context);
-        return Utils.mapPage(inner, inner1 -> new ComplianceResultImpl(inner1, this.manager()));
+        return ResourceManagerUtils.mapPage(inner, inner1 -> new ComplianceResultImpl(inner1, this.manager()));
+    }
+
+    public Response<ComplianceResult> getWithResponse(String resourceId, String complianceResultName, Context context) {
+        Response<ComplianceResultInner> inner
+            = this.serviceClient().getWithResponse(resourceId, complianceResultName, context);
+        if (inner != null) {
+            return new SimpleResponse<>(inner.getRequest(), inner.getStatusCode(), inner.getHeaders(),
+                new ComplianceResultImpl(inner.getValue(), this.manager()));
+        } else {
+            return null;
+        }
     }
 
     public ComplianceResult get(String resourceId, String complianceResultName) {
         ComplianceResultInner inner = this.serviceClient().get(resourceId, complianceResultName);
         if (inner != null) {
             return new ComplianceResultImpl(inner, this.manager());
-        } else {
-            return null;
-        }
-    }
-
-    public Response<ComplianceResult> getWithResponse(String resourceId, String complianceResultName, Context context) {
-        Response<ComplianceResultInner> inner =
-            this.serviceClient().getWithResponse(resourceId, complianceResultName, context);
-        if (inner != null) {
-            return new SimpleResponse<>(
-                inner.getRequest(),
-                inner.getStatusCode(),
-                inner.getHeaders(),
-                new ComplianceResultImpl(inner.getValue(), this.manager()));
         } else {
             return null;
         }

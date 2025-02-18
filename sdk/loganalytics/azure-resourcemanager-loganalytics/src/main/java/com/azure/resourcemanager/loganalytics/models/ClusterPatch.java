@@ -5,39 +5,77 @@
 package com.azure.resourcemanager.loganalytics.models;
 
 import com.azure.core.annotation.Fluent;
-import com.azure.core.annotation.JsonFlatten;
-import com.azure.core.util.logging.ClientLogger;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.azure.json.JsonReader;
+import com.azure.json.JsonSerializable;
+import com.azure.json.JsonToken;
+import com.azure.json.JsonWriter;
+import com.azure.resourcemanager.loganalytics.fluent.models.ClusterPatchProperties;
+import java.io.IOException;
 import java.util.Map;
 
-/** The top level Log Analytics cluster resource container. */
-@JsonFlatten
+/**
+ * The top level Log Analytics cluster resource container.
+ */
 @Fluent
-public class ClusterPatch {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(ClusterPatch.class);
+public final class ClusterPatch implements JsonSerializable<ClusterPatch> {
+    /*
+     * Log Analytics cluster properties.
+     */
+    private ClusterPatchProperties innerProperties;
+
+    /*
+     * Resource's identity.
+     */
+    private ManagedServiceIdentity identity;
 
     /*
      * The sku properties.
      */
-    @JsonProperty(value = "sku")
     private ClusterSku sku;
 
     /*
      * Resource tags.
      */
-    @JsonProperty(value = "tags")
     private Map<String, String> tags;
 
-    /*
-     * The associated key properties.
+    /**
+     * Creates an instance of ClusterPatch class.
      */
-    @JsonProperty(value = "properties.keyVaultProperties")
-    private KeyVaultProperties keyVaultProperties;
+    public ClusterPatch() {
+    }
+
+    /**
+     * Get the innerProperties property: Log Analytics cluster properties.
+     * 
+     * @return the innerProperties value.
+     */
+    private ClusterPatchProperties innerProperties() {
+        return this.innerProperties;
+    }
+
+    /**
+     * Get the identity property: Resource's identity.
+     * 
+     * @return the identity value.
+     */
+    public ManagedServiceIdentity identity() {
+        return this.identity;
+    }
+
+    /**
+     * Set the identity property: Resource's identity.
+     * 
+     * @param identity the identity value to set.
+     * @return the ClusterPatch object itself.
+     */
+    public ClusterPatch withIdentity(ManagedServiceIdentity identity) {
+        this.identity = identity;
+        return this;
+    }
 
     /**
      * Get the sku property: The sku properties.
-     *
+     * 
      * @return the sku value.
      */
     public ClusterSku sku() {
@@ -46,7 +84,7 @@ public class ClusterPatch {
 
     /**
      * Set the sku property: The sku properties.
-     *
+     * 
      * @param sku the sku value to set.
      * @return the ClusterPatch object itself.
      */
@@ -57,7 +95,7 @@ public class ClusterPatch {
 
     /**
      * Get the tags property: Resource tags.
-     *
+     * 
      * @return the tags value.
      */
     public Map<String, String> tags() {
@@ -66,7 +104,7 @@ public class ClusterPatch {
 
     /**
      * Set the tags property: Resource tags.
-     *
+     * 
      * @param tags the tags value to set.
      * @return the ClusterPatch object itself.
      */
@@ -77,35 +115,110 @@ public class ClusterPatch {
 
     /**
      * Get the keyVaultProperties property: The associated key properties.
-     *
+     * 
      * @return the keyVaultProperties value.
      */
     public KeyVaultProperties keyVaultProperties() {
-        return this.keyVaultProperties;
+        return this.innerProperties() == null ? null : this.innerProperties().keyVaultProperties();
     }
 
     /**
      * Set the keyVaultProperties property: The associated key properties.
-     *
+     * 
      * @param keyVaultProperties the keyVaultProperties value to set.
      * @return the ClusterPatch object itself.
      */
     public ClusterPatch withKeyVaultProperties(KeyVaultProperties keyVaultProperties) {
-        this.keyVaultProperties = keyVaultProperties;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new ClusterPatchProperties();
+        }
+        this.innerProperties().withKeyVaultProperties(keyVaultProperties);
+        return this;
+    }
+
+    /**
+     * Get the billingType property: The cluster's billing type.
+     * 
+     * @return the billingType value.
+     */
+    public BillingType billingType() {
+        return this.innerProperties() == null ? null : this.innerProperties().billingType();
+    }
+
+    /**
+     * Set the billingType property: The cluster's billing type.
+     * 
+     * @param billingType the billingType value to set.
+     * @return the ClusterPatch object itself.
+     */
+    public ClusterPatch withBillingType(BillingType billingType) {
+        if (this.innerProperties() == null) {
+            this.innerProperties = new ClusterPatchProperties();
+        }
+        this.innerProperties().withBillingType(billingType);
         return this;
     }
 
     /**
      * Validates the instance.
-     *
+     * 
      * @throws IllegalArgumentException thrown if the instance is not valid.
      */
     public void validate() {
+        if (innerProperties() != null) {
+            innerProperties().validate();
+        }
+        if (identity() != null) {
+            identity().validate();
+        }
         if (sku() != null) {
             sku().validate();
         }
-        if (keyVaultProperties() != null) {
-            keyVaultProperties().validate();
-        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public JsonWriter toJson(JsonWriter jsonWriter) throws IOException {
+        jsonWriter.writeStartObject();
+        jsonWriter.writeJsonField("properties", this.innerProperties);
+        jsonWriter.writeJsonField("identity", this.identity);
+        jsonWriter.writeJsonField("sku", this.sku);
+        jsonWriter.writeMapField("tags", this.tags, (writer, element) -> writer.writeString(element));
+        return jsonWriter.writeEndObject();
+    }
+
+    /**
+     * Reads an instance of ClusterPatch from the JsonReader.
+     * 
+     * @param jsonReader The JsonReader being read.
+     * @return An instance of ClusterPatch if the JsonReader was pointing to an instance of it, or null if it was
+     * pointing to JSON null.
+     * @throws IOException If an error occurs while reading the ClusterPatch.
+     */
+    public static ClusterPatch fromJson(JsonReader jsonReader) throws IOException {
+        return jsonReader.readObject(reader -> {
+            ClusterPatch deserializedClusterPatch = new ClusterPatch();
+            while (reader.nextToken() != JsonToken.END_OBJECT) {
+                String fieldName = reader.getFieldName();
+                reader.nextToken();
+
+                if ("properties".equals(fieldName)) {
+                    deserializedClusterPatch.innerProperties = ClusterPatchProperties.fromJson(reader);
+                } else if ("identity".equals(fieldName)) {
+                    deserializedClusterPatch.identity = ManagedServiceIdentity.fromJson(reader);
+                } else if ("sku".equals(fieldName)) {
+                    deserializedClusterPatch.sku = ClusterSku.fromJson(reader);
+                } else if ("tags".equals(fieldName)) {
+                    Map<String, String> tags = reader.readMap(reader1 -> reader1.getString());
+                    deserializedClusterPatch.tags = tags;
+                } else {
+                    reader.skipChildren();
+                }
+            }
+
+            return deserializedClusterPatch;
+        });
     }
 }

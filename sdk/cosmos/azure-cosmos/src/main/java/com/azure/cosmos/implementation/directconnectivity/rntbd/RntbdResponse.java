@@ -12,6 +12,7 @@ import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.StdSerializer;
 import io.netty.buffer.ByteBuf;
+import io.netty.buffer.ByteBufInputStream;
 import io.netty.buffer.ByteBufUtil;
 import io.netty.buffer.Unpooled;
 import io.netty.handler.codec.http.HttpResponseStatus;
@@ -21,6 +22,7 @@ import io.netty.util.ResourceLeakDetector;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.time.Instant;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicIntegerFieldUpdater;
@@ -54,6 +56,12 @@ public final class RntbdResponse implements ReferenceCounted {
 
     @JsonProperty
     private volatile int referenceCount;
+
+    @JsonIgnore
+    private Instant decodeStartTime;
+
+    @JsonIgnore
+    private Instant decodeEndTime;
 
     // endregion
 
@@ -98,7 +106,7 @@ public final class RntbdResponse implements ReferenceCounted {
         this.frame = frame;
         this.headers = headers;
         this.content = content;
-        this.messageLength = message.writerIndex();;
+        this.messageLength = message.writerIndex();
     }
 
     // endregion
@@ -133,6 +141,22 @@ public final class RntbdResponse implements ReferenceCounted {
     @JsonIgnore
     public Long getTransportRequestId() {
         return this.getHeader(RntbdResponseHeader.TransportRequestID);
+    }
+
+    public Instant getDecodeStartTime() {
+        return this.decodeStartTime;
+    }
+
+    public void setDecodeStartTime(Instant decodeStartTime) {
+        this.decodeStartTime = decodeStartTime;
+    }
+
+    public Instant getDecodeEndTime() {
+        return this.decodeEndTime;
+    }
+
+    public void setDecodeEndTime(Instant decodeEndTime) {
+        this.decodeEndTime = decodeEndTime;
     }
 
     // endregion
@@ -220,7 +244,7 @@ public final class RntbdResponse implements ReferenceCounted {
 
             if (referenceCount < decrement) {
                 throw new IllegalReferenceCountException(referenceCount, -decrease);
-            };
+            }
 
             referenceCount = referenceCount - decrease;
 
@@ -328,16 +352,20 @@ public final class RntbdResponse implements ReferenceCounted {
         checkNotNull(context, "expected non-null context");
 
         final int length = this.content.writerIndex();
-        final byte[] content;
 
         if (length == 0) {
-            content = null;
-        } else {
-            content = new byte[length];
-            this.content.getBytes(0, content);
+            return new StoreResponse(
+                this.getStatus().code(),
+                this.headers.asMap(context, this.getActivityId()),
+                null,
+                0);
         }
 
-        return new StoreResponse(this.getStatus().code(), this.headers.asList(context, this.getActivityId()), content);
+        return new StoreResponse(
+            this.getStatus().code(),
+            this.headers.asMap(context, this.getActivityId()),
+            new ByteBufInputStream(this.content.retain(), true),
+            length);
     }
 
     // endregion

@@ -5,33 +5,52 @@
 package com.azure.resourcemanager.authorization.fluent.models;
 
 import com.azure.core.util.ExpandableStringEnum;
-import com.fasterxml.jackson.annotation.JsonCreator;
 import java.util.Collection;
 
-/** Defines values for MicrosoftGraphManagedDeviceOwnerType. */
+/**
+ * managedDeviceOwnerType.
+ */
 public final class MicrosoftGraphManagedDeviceOwnerType
     extends ExpandableStringEnum<MicrosoftGraphManagedDeviceOwnerType> {
-    /** Static value unknown for MicrosoftGraphManagedDeviceOwnerType. */
+    /**
+     * Static value unknown for MicrosoftGraphManagedDeviceOwnerType.
+     */
     public static final MicrosoftGraphManagedDeviceOwnerType UNKNOWN = fromString("unknown");
 
-    /** Static value company for MicrosoftGraphManagedDeviceOwnerType. */
+    /**
+     * Static value company for MicrosoftGraphManagedDeviceOwnerType.
+     */
     public static final MicrosoftGraphManagedDeviceOwnerType COMPANY = fromString("company");
 
-    /** Static value personal for MicrosoftGraphManagedDeviceOwnerType. */
+    /**
+     * Static value personal for MicrosoftGraphManagedDeviceOwnerType.
+     */
     public static final MicrosoftGraphManagedDeviceOwnerType PERSONAL = fromString("personal");
 
     /**
+     * Creates a new instance of MicrosoftGraphManagedDeviceOwnerType value.
+     * 
+     * @deprecated Use the {@link #fromString(String)} factory method.
+     */
+    @Deprecated
+    public MicrosoftGraphManagedDeviceOwnerType() {
+    }
+
+    /**
      * Creates or finds a MicrosoftGraphManagedDeviceOwnerType from its string representation.
-     *
+     * 
      * @param name a name to look for.
      * @return the corresponding MicrosoftGraphManagedDeviceOwnerType.
      */
-    @JsonCreator
     public static MicrosoftGraphManagedDeviceOwnerType fromString(String name) {
         return fromString(name, MicrosoftGraphManagedDeviceOwnerType.class);
     }
 
-    /** @return known MicrosoftGraphManagedDeviceOwnerType values. */
+    /**
+     * Gets known MicrosoftGraphManagedDeviceOwnerType values.
+     * 
+     * @return known MicrosoftGraphManagedDeviceOwnerType values.
+     */
     public static Collection<MicrosoftGraphManagedDeviceOwnerType> values() {
         return values(MicrosoftGraphManagedDeviceOwnerType.class);
     }

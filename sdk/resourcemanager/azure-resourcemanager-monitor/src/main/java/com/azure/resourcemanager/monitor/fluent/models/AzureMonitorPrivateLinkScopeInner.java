@@ -5,63 +5,113 @@
 package com.azure.resourcemanager.monitor.fluent.models;
 
 import com.azure.core.annotation.Fluent;
-import com.azure.core.annotation.JsonFlatten;
+import com.azure.core.management.Resource;
+import com.azure.core.management.SystemData;
 import com.azure.core.util.logging.ClientLogger;
-import com.azure.resourcemanager.monitor.models.PrivateLinkScopesResource;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.azure.json.JsonReader;
+import com.azure.json.JsonToken;
+import com.azure.json.JsonWriter;
+import com.azure.resourcemanager.monitor.models.AccessModeSettings;
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
-/** An Azure Monitor PrivateLinkScope definition. */
-@JsonFlatten
+/**
+ * An Azure Monitor PrivateLinkScope definition.
+ */
 @Fluent
-public class AzureMonitorPrivateLinkScopeInner extends PrivateLinkScopesResource {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(AzureMonitorPrivateLinkScopeInner.class);
+public final class AzureMonitorPrivateLinkScopeInner extends Resource {
+    /*
+     * Properties that define a Azure Monitor PrivateLinkScope resource.
+     */
+    private AzureMonitorPrivateLinkScopeProperties innerProperties = new AzureMonitorPrivateLinkScopeProperties();
 
     /*
-     * Current state of this PrivateLinkScope: whether or not is has been
-     * provisioned within the resource group it is defined. Users cannot change
-     * this value but are able to read from it. Values will include
-     * Provisioning ,Succeeded, Canceled and Failed.
+     * System data
      */
-    @JsonProperty(value = "properties.provisioningState", access = JsonProperty.Access.WRITE_ONLY)
-    private String provisioningState;
+    private SystemData systemData;
 
     /*
-     * List of private endpoint connections.
+     * Fully qualified resource Id for the resource.
      */
-    @JsonProperty(value = "properties.privateEndpointConnections", access = JsonProperty.Access.WRITE_ONLY)
-    private List<PrivateEndpointConnectionInner> privateEndpointConnections;
+    private String id;
+
+    /*
+     * The name of the resource.
+     */
+    private String name;
+
+    /*
+     * The type of the resource.
+     */
+    private String type;
 
     /**
-     * Get the provisioningState property: Current state of this PrivateLinkScope: whether or not is has been
-     * provisioned within the resource group it is defined. Users cannot change this value but are able to read from it.
-     * Values will include Provisioning ,Succeeded, Canceled and Failed.
-     *
-     * @return the provisioningState value.
+     * Creates an instance of AzureMonitorPrivateLinkScopeInner class.
      */
-    public String provisioningState() {
-        return this.provisioningState;
+    public AzureMonitorPrivateLinkScopeInner() {
     }
 
     /**
-     * Get the privateEndpointConnections property: List of private endpoint connections.
-     *
-     * @return the privateEndpointConnections value.
+     * Get the innerProperties property: Properties that define a Azure Monitor PrivateLinkScope resource.
+     * 
+     * @return the innerProperties value.
      */
-    public List<PrivateEndpointConnectionInner> privateEndpointConnections() {
-        return this.privateEndpointConnections;
+    private AzureMonitorPrivateLinkScopeProperties innerProperties() {
+        return this.innerProperties;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * Get the systemData property: System data.
+     * 
+     * @return the systemData value.
+     */
+    public SystemData systemData() {
+        return this.systemData;
+    }
+
+    /**
+     * Get the id property: Fully qualified resource Id for the resource.
+     * 
+     * @return the id value.
+     */
+    @Override
+    public String id() {
+        return this.id;
+    }
+
+    /**
+     * Get the name property: The name of the resource.
+     * 
+     * @return the name value.
+     */
+    @Override
+    public String name() {
+        return this.name;
+    }
+
+    /**
+     * Get the type property: The type of the resource.
+     * 
+     * @return the type value.
+     */
+    @Override
+    public String type() {
+        return this.type;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public AzureMonitorPrivateLinkScopeInner withLocation(String location) {
         super.withLocation(location);
         return this;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public AzureMonitorPrivateLinkScopeInner withTags(Map<String, String> tags) {
         super.withTags(tags);
@@ -69,15 +119,116 @@ public class AzureMonitorPrivateLinkScopeInner extends PrivateLinkScopesResource
     }
 
     /**
+     * Get the provisioningState property: Current state of this PrivateLinkScope: whether or not is has been
+     * provisioned within the resource group it is defined. Users cannot change this value but are able to read from it.
+     * Values will include Provisioning ,Succeeded, Canceled and Failed.
+     * 
+     * @return the provisioningState value.
+     */
+    public String provisioningState() {
+        return this.innerProperties() == null ? null : this.innerProperties().provisioningState();
+    }
+
+    /**
+     * Get the privateEndpointConnections property: List of private endpoint connections.
+     * 
+     * @return the privateEndpointConnections value.
+     */
+    public List<PrivateEndpointConnectionInner> privateEndpointConnections() {
+        return this.innerProperties() == null ? null : this.innerProperties().privateEndpointConnections();
+    }
+
+    /**
+     * Get the accessModeSettings property: Access mode settings.
+     * 
+     * @return the accessModeSettings value.
+     */
+    public AccessModeSettings accessModeSettings() {
+        return this.innerProperties() == null ? null : this.innerProperties().accessModeSettings();
+    }
+
+    /**
+     * Set the accessModeSettings property: Access mode settings.
+     * 
+     * @param accessModeSettings the accessModeSettings value to set.
+     * @return the AzureMonitorPrivateLinkScopeInner object itself.
+     */
+    public AzureMonitorPrivateLinkScopeInner withAccessModeSettings(AccessModeSettings accessModeSettings) {
+        if (this.innerProperties() == null) {
+            this.innerProperties = new AzureMonitorPrivateLinkScopeProperties();
+        }
+        this.innerProperties().withAccessModeSettings(accessModeSettings);
+        return this;
+    }
+
+    /**
      * Validates the instance.
-     *
+     * 
      * @throws IllegalArgumentException thrown if the instance is not valid.
      */
-    @Override
     public void validate() {
-        super.validate();
-        if (privateEndpointConnections() != null) {
-            privateEndpointConnections().forEach(e -> e.validate());
+        if (innerProperties() == null) {
+            throw LOGGER.atError()
+                .log(new IllegalArgumentException(
+                    "Missing required property innerProperties in model AzureMonitorPrivateLinkScopeInner"));
+        } else {
+            innerProperties().validate();
         }
+    }
+
+    private static final ClientLogger LOGGER = new ClientLogger(AzureMonitorPrivateLinkScopeInner.class);
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public JsonWriter toJson(JsonWriter jsonWriter) throws IOException {
+        jsonWriter.writeStartObject();
+        jsonWriter.writeStringField("location", location());
+        jsonWriter.writeMapField("tags", tags(), (writer, element) -> writer.writeString(element));
+        jsonWriter.writeJsonField("properties", this.innerProperties);
+        return jsonWriter.writeEndObject();
+    }
+
+    /**
+     * Reads an instance of AzureMonitorPrivateLinkScopeInner from the JsonReader.
+     * 
+     * @param jsonReader The JsonReader being read.
+     * @return An instance of AzureMonitorPrivateLinkScopeInner if the JsonReader was pointing to an instance of it, or
+     * null if it was pointing to JSON null.
+     * @throws IllegalStateException If the deserialized JSON object was missing any required properties.
+     * @throws IOException If an error occurs while reading the AzureMonitorPrivateLinkScopeInner.
+     */
+    public static AzureMonitorPrivateLinkScopeInner fromJson(JsonReader jsonReader) throws IOException {
+        return jsonReader.readObject(reader -> {
+            AzureMonitorPrivateLinkScopeInner deserializedAzureMonitorPrivateLinkScopeInner
+                = new AzureMonitorPrivateLinkScopeInner();
+            while (reader.nextToken() != JsonToken.END_OBJECT) {
+                String fieldName = reader.getFieldName();
+                reader.nextToken();
+
+                if ("id".equals(fieldName)) {
+                    deserializedAzureMonitorPrivateLinkScopeInner.id = reader.getString();
+                } else if ("name".equals(fieldName)) {
+                    deserializedAzureMonitorPrivateLinkScopeInner.name = reader.getString();
+                } else if ("type".equals(fieldName)) {
+                    deserializedAzureMonitorPrivateLinkScopeInner.type = reader.getString();
+                } else if ("location".equals(fieldName)) {
+                    deserializedAzureMonitorPrivateLinkScopeInner.withLocation(reader.getString());
+                } else if ("tags".equals(fieldName)) {
+                    Map<String, String> tags = reader.readMap(reader1 -> reader1.getString());
+                    deserializedAzureMonitorPrivateLinkScopeInner.withTags(tags);
+                } else if ("properties".equals(fieldName)) {
+                    deserializedAzureMonitorPrivateLinkScopeInner.innerProperties
+                        = AzureMonitorPrivateLinkScopeProperties.fromJson(reader);
+                } else if ("systemData".equals(fieldName)) {
+                    deserializedAzureMonitorPrivateLinkScopeInner.systemData = SystemData.fromJson(reader);
+                } else {
+                    reader.skipChildren();
+                }
+            }
+
+            return deserializedAzureMonitorPrivateLinkScopeInner;
+        });
     }
 }

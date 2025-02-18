@@ -5,70 +5,81 @@
 package com.azure.resourcemanager.compute.fluent.models;
 
 import com.azure.core.annotation.Fluent;
-import com.azure.core.util.logging.ClientLogger;
+import com.azure.json.JsonReader;
+import com.azure.json.JsonSerializable;
+import com.azure.json.JsonToken;
+import com.azure.json.JsonWriter;
+import com.azure.resourcemanager.compute.models.ArchitectureTypes;
 import com.azure.resourcemanager.compute.models.AutomaticOSUpgradeProperties;
 import com.azure.resourcemanager.compute.models.DataDiskImage;
 import com.azure.resourcemanager.compute.models.DisallowedConfiguration;
 import com.azure.resourcemanager.compute.models.HyperVGenerationTypes;
+import com.azure.resourcemanager.compute.models.ImageDeprecationStatus;
 import com.azure.resourcemanager.compute.models.OSDiskImage;
 import com.azure.resourcemanager.compute.models.PurchasePlan;
 import com.azure.resourcemanager.compute.models.VirtualMachineImageFeature;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import java.io.IOException;
 import java.util.List;
 
-/** Describes the properties of a Virtual Machine Image. */
+/**
+ * Describes the properties of a Virtual Machine Image.
+ */
 @Fluent
-public final class VirtualMachineImageProperties {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(VirtualMachineImageProperties.class);
-
+public final class VirtualMachineImageProperties implements JsonSerializable<VirtualMachineImageProperties> {
     /*
-     * Used for establishing the purchase context of any 3rd Party artifact
-     * through MarketPlace.
+     * Used for establishing the purchase context of any 3rd Party artifact through MarketPlace.
      */
-    @JsonProperty(value = "plan")
     private PurchasePlan plan;
 
     /*
      * Contains the os disk image information.
      */
-    @JsonProperty(value = "osDiskImage")
     private OSDiskImage osDiskImage;
 
     /*
      * The dataDiskImages property.
      */
-    @JsonProperty(value = "dataDiskImages")
     private List<DataDiskImage> dataDiskImages;
 
     /*
      * Describes automatic OS upgrade properties on the image.
      */
-    @JsonProperty(value = "automaticOSUpgradeProperties")
     private AutomaticOSUpgradeProperties automaticOSUpgradeProperties;
 
     /*
      * Specifies the HyperVGeneration Type
      */
-    @JsonProperty(value = "hyperVGeneration")
     private HyperVGenerationTypes hyperVGeneration;
 
     /*
-     * Specifies disallowed configuration for the VirtualMachine created from
-     * the image
+     * Specifies disallowed configuration for the VirtualMachine created from the image
      */
-    @JsonProperty(value = "disallowed")
     private DisallowedConfiguration disallowed;
 
     /*
      * The features property.
      */
-    @JsonProperty(value = "features")
     private List<VirtualMachineImageFeature> features;
+
+    /*
+     * Specifies the Architecture Type
+     */
+    private ArchitectureTypes architecture;
+
+    /*
+     * Describes image deprecation status properties on the image.
+     */
+    private ImageDeprecationStatus imageDeprecationStatus;
+
+    /**
+     * Creates an instance of VirtualMachineImageProperties class.
+     */
+    public VirtualMachineImageProperties() {
+    }
 
     /**
      * Get the plan property: Used for establishing the purchase context of any 3rd Party artifact through MarketPlace.
-     *
+     * 
      * @return the plan value.
      */
     public PurchasePlan plan() {
@@ -77,7 +88,7 @@ public final class VirtualMachineImageProperties {
 
     /**
      * Set the plan property: Used for establishing the purchase context of any 3rd Party artifact through MarketPlace.
-     *
+     * 
      * @param plan the plan value to set.
      * @return the VirtualMachineImageProperties object itself.
      */
@@ -88,7 +99,7 @@ public final class VirtualMachineImageProperties {
 
     /**
      * Get the osDiskImage property: Contains the os disk image information.
-     *
+     * 
      * @return the osDiskImage value.
      */
     public OSDiskImage osDiskImage() {
@@ -97,7 +108,7 @@ public final class VirtualMachineImageProperties {
 
     /**
      * Set the osDiskImage property: Contains the os disk image information.
-     *
+     * 
      * @param osDiskImage the osDiskImage value to set.
      * @return the VirtualMachineImageProperties object itself.
      */
@@ -108,7 +119,7 @@ public final class VirtualMachineImageProperties {
 
     /**
      * Get the dataDiskImages property: The dataDiskImages property.
-     *
+     * 
      * @return the dataDiskImages value.
      */
     public List<DataDiskImage> dataDiskImages() {
@@ -117,7 +128,7 @@ public final class VirtualMachineImageProperties {
 
     /**
      * Set the dataDiskImages property: The dataDiskImages property.
-     *
+     * 
      * @param dataDiskImages the dataDiskImages value to set.
      * @return the VirtualMachineImageProperties object itself.
      */
@@ -128,7 +139,7 @@ public final class VirtualMachineImageProperties {
 
     /**
      * Get the automaticOSUpgradeProperties property: Describes automatic OS upgrade properties on the image.
-     *
+     * 
      * @return the automaticOSUpgradeProperties value.
      */
     public AutomaticOSUpgradeProperties automaticOSUpgradeProperties() {
@@ -137,19 +148,19 @@ public final class VirtualMachineImageProperties {
 
     /**
      * Set the automaticOSUpgradeProperties property: Describes automatic OS upgrade properties on the image.
-     *
+     * 
      * @param automaticOSUpgradeProperties the automaticOSUpgradeProperties value to set.
      * @return the VirtualMachineImageProperties object itself.
      */
-    public VirtualMachineImageProperties withAutomaticOSUpgradeProperties(
-        AutomaticOSUpgradeProperties automaticOSUpgradeProperties) {
+    public VirtualMachineImageProperties
+        withAutomaticOSUpgradeProperties(AutomaticOSUpgradeProperties automaticOSUpgradeProperties) {
         this.automaticOSUpgradeProperties = automaticOSUpgradeProperties;
         return this;
     }
 
     /**
      * Get the hyperVGeneration property: Specifies the HyperVGeneration Type.
-     *
+     * 
      * @return the hyperVGeneration value.
      */
     public HyperVGenerationTypes hyperVGeneration() {
@@ -158,7 +169,7 @@ public final class VirtualMachineImageProperties {
 
     /**
      * Set the hyperVGeneration property: Specifies the HyperVGeneration Type.
-     *
+     * 
      * @param hyperVGeneration the hyperVGeneration value to set.
      * @return the VirtualMachineImageProperties object itself.
      */
@@ -169,7 +180,7 @@ public final class VirtualMachineImageProperties {
 
     /**
      * Get the disallowed property: Specifies disallowed configuration for the VirtualMachine created from the image.
-     *
+     * 
      * @return the disallowed value.
      */
     public DisallowedConfiguration disallowed() {
@@ -178,7 +189,7 @@ public final class VirtualMachineImageProperties {
 
     /**
      * Set the disallowed property: Specifies disallowed configuration for the VirtualMachine created from the image.
-     *
+     * 
      * @param disallowed the disallowed value to set.
      * @return the VirtualMachineImageProperties object itself.
      */
@@ -189,7 +200,7 @@ public final class VirtualMachineImageProperties {
 
     /**
      * Get the features property: The features property.
-     *
+     * 
      * @return the features value.
      */
     public List<VirtualMachineImageFeature> features() {
@@ -198,7 +209,7 @@ public final class VirtualMachineImageProperties {
 
     /**
      * Set the features property: The features property.
-     *
+     * 
      * @param features the features value to set.
      * @return the VirtualMachineImageProperties object itself.
      */
@@ -208,8 +219,48 @@ public final class VirtualMachineImageProperties {
     }
 
     /**
+     * Get the architecture property: Specifies the Architecture Type.
+     * 
+     * @return the architecture value.
+     */
+    public ArchitectureTypes architecture() {
+        return this.architecture;
+    }
+
+    /**
+     * Set the architecture property: Specifies the Architecture Type.
+     * 
+     * @param architecture the architecture value to set.
+     * @return the VirtualMachineImageProperties object itself.
+     */
+    public VirtualMachineImageProperties withArchitecture(ArchitectureTypes architecture) {
+        this.architecture = architecture;
+        return this;
+    }
+
+    /**
+     * Get the imageDeprecationStatus property: Describes image deprecation status properties on the image.
+     * 
+     * @return the imageDeprecationStatus value.
+     */
+    public ImageDeprecationStatus imageDeprecationStatus() {
+        return this.imageDeprecationStatus;
+    }
+
+    /**
+     * Set the imageDeprecationStatus property: Describes image deprecation status properties on the image.
+     * 
+     * @param imageDeprecationStatus the imageDeprecationStatus value to set.
+     * @return the VirtualMachineImageProperties object itself.
+     */
+    public VirtualMachineImageProperties withImageDeprecationStatus(ImageDeprecationStatus imageDeprecationStatus) {
+        this.imageDeprecationStatus = imageDeprecationStatus;
+        return this;
+    }
+
+    /**
      * Validates the instance.
-     *
+     * 
      * @throws IllegalArgumentException thrown if the instance is not valid.
      */
     public void validate() {
@@ -231,5 +282,78 @@ public final class VirtualMachineImageProperties {
         if (features() != null) {
             features().forEach(e -> e.validate());
         }
+        if (imageDeprecationStatus() != null) {
+            imageDeprecationStatus().validate();
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public JsonWriter toJson(JsonWriter jsonWriter) throws IOException {
+        jsonWriter.writeStartObject();
+        jsonWriter.writeJsonField("plan", this.plan);
+        jsonWriter.writeJsonField("osDiskImage", this.osDiskImage);
+        jsonWriter.writeArrayField("dataDiskImages", this.dataDiskImages,
+            (writer, element) -> writer.writeJson(element));
+        jsonWriter.writeJsonField("automaticOSUpgradeProperties", this.automaticOSUpgradeProperties);
+        jsonWriter.writeStringField("hyperVGeneration",
+            this.hyperVGeneration == null ? null : this.hyperVGeneration.toString());
+        jsonWriter.writeJsonField("disallowed", this.disallowed);
+        jsonWriter.writeArrayField("features", this.features, (writer, element) -> writer.writeJson(element));
+        jsonWriter.writeStringField("architecture", this.architecture == null ? null : this.architecture.toString());
+        jsonWriter.writeJsonField("imageDeprecationStatus", this.imageDeprecationStatus);
+        return jsonWriter.writeEndObject();
+    }
+
+    /**
+     * Reads an instance of VirtualMachineImageProperties from the JsonReader.
+     * 
+     * @param jsonReader The JsonReader being read.
+     * @return An instance of VirtualMachineImageProperties if the JsonReader was pointing to an instance of it, or null
+     * if it was pointing to JSON null.
+     * @throws IOException If an error occurs while reading the VirtualMachineImageProperties.
+     */
+    public static VirtualMachineImageProperties fromJson(JsonReader jsonReader) throws IOException {
+        return jsonReader.readObject(reader -> {
+            VirtualMachineImageProperties deserializedVirtualMachineImageProperties
+                = new VirtualMachineImageProperties();
+            while (reader.nextToken() != JsonToken.END_OBJECT) {
+                String fieldName = reader.getFieldName();
+                reader.nextToken();
+
+                if ("plan".equals(fieldName)) {
+                    deserializedVirtualMachineImageProperties.plan = PurchasePlan.fromJson(reader);
+                } else if ("osDiskImage".equals(fieldName)) {
+                    deserializedVirtualMachineImageProperties.osDiskImage = OSDiskImage.fromJson(reader);
+                } else if ("dataDiskImages".equals(fieldName)) {
+                    List<DataDiskImage> dataDiskImages = reader.readArray(reader1 -> DataDiskImage.fromJson(reader1));
+                    deserializedVirtualMachineImageProperties.dataDiskImages = dataDiskImages;
+                } else if ("automaticOSUpgradeProperties".equals(fieldName)) {
+                    deserializedVirtualMachineImageProperties.automaticOSUpgradeProperties
+                        = AutomaticOSUpgradeProperties.fromJson(reader);
+                } else if ("hyperVGeneration".equals(fieldName)) {
+                    deserializedVirtualMachineImageProperties.hyperVGeneration
+                        = HyperVGenerationTypes.fromString(reader.getString());
+                } else if ("disallowed".equals(fieldName)) {
+                    deserializedVirtualMachineImageProperties.disallowed = DisallowedConfiguration.fromJson(reader);
+                } else if ("features".equals(fieldName)) {
+                    List<VirtualMachineImageFeature> features
+                        = reader.readArray(reader1 -> VirtualMachineImageFeature.fromJson(reader1));
+                    deserializedVirtualMachineImageProperties.features = features;
+                } else if ("architecture".equals(fieldName)) {
+                    deserializedVirtualMachineImageProperties.architecture
+                        = ArchitectureTypes.fromString(reader.getString());
+                } else if ("imageDeprecationStatus".equals(fieldName)) {
+                    deserializedVirtualMachineImageProperties.imageDeprecationStatus
+                        = ImageDeprecationStatus.fromJson(reader);
+                } else {
+                    reader.skipChildren();
+                }
+            }
+
+            return deserializedVirtualMachineImageProperties;
+        });
     }
 }

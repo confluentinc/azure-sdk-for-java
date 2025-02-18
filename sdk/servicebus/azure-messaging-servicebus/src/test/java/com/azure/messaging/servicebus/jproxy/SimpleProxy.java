@@ -27,7 +27,7 @@ public class SimpleProxy implements ProxyServer {
 
     private static final String HOSTNAME = "localhost";
 
-    private final ClientLogger logger = new ClientLogger(SimpleProxy.class);
+    private static final ClientLogger LOGGER = new ClientLogger(SimpleProxy.class);
     private final AtomicBoolean isRunning;
     private final InetSocketAddress host;
     private final List<ProxyNegotiationHandler> connectedClients = new ArrayList<>();
@@ -51,11 +51,9 @@ public class SimpleProxy implements ProxyServer {
             throw new IllegalStateException("ProxyServer is already running.");
         }
 
-        onErrorHandler = onError != null
-            ? onError
-            : error -> logger.error("Error occurred when running proxy.", error);
+        onErrorHandler = onError != null ? onError : error -> LOGGER.error("Error occurred when running proxy.", error);
 
-        logger.info("Opening proxy server on: '{}'", host);
+        LOGGER.info("Opening proxy server on: '{}'", host);
 
         serverSocket = AsynchronousServerSocketChannel.open();
         serverSocket.bind(host);
@@ -72,7 +70,7 @@ public class SimpleProxy implements ProxyServer {
                     client.close();
                 } catch (IOException e) {
                     final AsynchronousSocketChannel clientSocket = client.connection.getClientSocket();
-                    logger.warning("Error closing client: {}.", clientSocket.getRemoteAddress(), e);
+                    LOGGER.warning("Error closing client: {}.", clientSocket.getRemoteAddress(), e);
                 }
             }
         }
@@ -81,8 +79,8 @@ public class SimpleProxy implements ProxyServer {
     /**
      * Handler invoked when a client connects to the proxy server.
      */
-    private class ClientConnectedHandler implements
-        CompletionHandler<AsynchronousSocketChannel, AsynchronousServerSocketChannel> {
+    private class ClientConnectedHandler
+        implements CompletionHandler<AsynchronousSocketChannel, AsynchronousServerSocketChannel> {
 
         /**
          * When a client has successfully connected to the proxy server.
@@ -93,9 +91,9 @@ public class SimpleProxy implements ProxyServer {
         @Override
         public void completed(AsynchronousSocketChannel client, AsynchronousServerSocketChannel serverSocket) {
             try {
-                logger.info("Client connected from: {}", client.getRemoteAddress());
+                LOGGER.info("Client connected from: {}", client.getRemoteAddress());
             } catch (IOException error) {
-                logger.error("Unable to get socket address for: {}", client, error);
+                LOGGER.error("Unable to get socket address for: {}", client, error);
             }
 
             // Invoke again to accept additional client connections.
@@ -104,7 +102,7 @@ public class SimpleProxy implements ProxyServer {
             try {
                 connectedClients.add(new ProxyNegotiationHandler(client));
             } catch (IOException e) {
-                logger.error("Error creating proxy negotiation handler.", e);
+                LOGGER.error("Error creating proxy negotiation handler.", e);
                 onErrorHandler.accept(e);
             }
         }
@@ -114,7 +112,7 @@ public class SimpleProxy implements ProxyServer {
             isRunning.set(false);
 
             if (exc instanceof AsynchronousCloseException) {
-                logger.info("Closed proxy server.");
+                LOGGER.info("Closed proxy server.");
             } else {
                 onErrorHandler.accept(exc);
             }
@@ -124,14 +122,13 @@ public class SimpleProxy implements ProxyServer {
     private static class ProxyNegotiationHandler implements Closeable {
         private final ConnectionProperties connection;
 
-        ProxyNegotiationHandler(AsynchronousSocketChannel clientSocket)
-            throws IOException {
+        ProxyNegotiationHandler(AsynchronousSocketChannel clientSocket) throws IOException {
             Objects.requireNonNull(clientSocket);
 
             final AsynchronousSocketChannel serviceSocket = AsynchronousSocketChannel.open();
             connection = new ConnectionProperties(ProxyConnectionState.PROXY_NOT_STARTED, clientSocket, serviceSocket);
-            final ReadWriteState state = new ReadWriteState(ReadWriteState.Target.SERVICE,
-                ByteBuffer.allocate(PROXY_BUFFER_SIZE), true);
+            final ReadWriteState state
+                = new ReadWriteState(ReadWriteState.Target.SERVICE, ByteBuffer.allocate(PROXY_BUFFER_SIZE), true);
 
             clientSocket.read(state.getBuffer(), state, new ReadWriteHandler(connection));
         }

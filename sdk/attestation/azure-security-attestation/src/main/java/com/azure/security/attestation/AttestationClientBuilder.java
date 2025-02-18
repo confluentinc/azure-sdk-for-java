@@ -4,6 +4,10 @@
 package com.azure.security.attestation;
 
 import com.azure.core.annotation.ServiceClientBuilder;
+import com.azure.core.client.traits.ConfigurationTrait;
+import com.azure.core.client.traits.EndpointTrait;
+import com.azure.core.client.traits.HttpTrait;
+import com.azure.core.client.traits.TokenCredentialTrait;
 import com.azure.core.credential.TokenCredential;
 import com.azure.core.http.HttpClient;
 import com.azure.core.http.HttpHeader;
@@ -15,18 +19,22 @@ import com.azure.core.http.policy.AddDatePolicy;
 import com.azure.core.http.policy.AddHeadersFromContextPolicy;
 import com.azure.core.http.policy.AddHeadersPolicy;
 import com.azure.core.http.policy.BearerTokenAuthenticationPolicy;
+import com.azure.core.http.policy.HttpLogDetailLevel;
 import com.azure.core.http.policy.HttpLogOptions;
 import com.azure.core.http.policy.HttpLoggingPolicy;
 import com.azure.core.http.policy.HttpPipelinePolicy;
 import com.azure.core.http.policy.HttpPolicyProviders;
 import com.azure.core.http.policy.RequestIdPolicy;
+import com.azure.core.http.policy.RetryOptions;
 import com.azure.core.http.policy.RetryPolicy;
 import com.azure.core.http.policy.UserAgentPolicy;
+import com.azure.core.util.BinaryData;
 import com.azure.core.util.ClientOptions;
 import com.azure.core.util.Configuration;
 import com.azure.core.util.CoreUtils;
+import com.azure.core.util.HttpClientOptions;
+import com.azure.core.util.builder.ClientBuilderUtil;
 import com.azure.core.util.logging.ClientLogger;
-import com.azure.core.util.serializer.JacksonAdapter;
 import com.azure.security.attestation.implementation.AttestationClientImpl;
 import com.azure.security.attestation.models.AttestationTokenValidationOptions;
 
@@ -40,14 +48,15 @@ import java.util.Objects;
 
 import static com.azure.core.util.CoreUtils.getApplicationId;
 
-/** This class provides a fluent builder API to help add in the configuration and instantiation of the
- * {@link AttestationClient} and {@link AttestationAsyncClient} classes calling the
- * {@link AttestationClientBuilder#buildClient()} or {@link AttestationClientBuilder#buildAsyncClient()}.
- *
- * <p>The minimal configuration option required by {@link AttestationClientBuilder} is {@code String endpoint}.
- *
- * For the {@link AttestationClient#attestTpm(String)} API, the client also requires that a {@link TokenCredential} object
- * be configured.
+/**
+ * This class provides a fluent builder API to help add in the configuration and instantiation of the
+ * {@link AttestationClient} and {@link AttestationAsyncClient} classes calling the {@link #buildClient()} or
+ * {@link #buildAsyncClient()}.
+ * <p>
+ * The minimal configuration option required by {@link AttestationClientBuilder} is {@code String endpoint}.
+ * <p>
+ * For the {@link AttestationClient#attestTpm(BinaryData)} API, the client also requires that a {@link TokenCredential}
+ * object be configured.
  *
  * <p><strong>Instantiate a synchronous Attestation Client</strong></p>
  * <!-- src_embed com.azure.security.attestation.AttestationClientBuilder.buildClient -->
@@ -64,28 +73,27 @@ import static com.azure.core.util.CoreUtils.getApplicationId;
  *     .buildAsyncClient&#40;&#41;;
  * </pre>
  * <!-- end com.azure.security.attestation.AttestationClientBuilder.buildAsyncClient -->
- *     <p><strong>Build a attestation client for use with the {@link AttestationClient#attestTpm(String)} API</strong></p>
- *     <!-- src_embed com.azure.security.attestation.AttestationClientBuilder.buildAsyncClientForTpm -->
+ * <p><strong>Build a attestation client for use with the {@link AttestationClient#attestTpm(BinaryData)} API</strong></p>
+ * <!-- src_embed com.azure.security.attestation.AttestationClientBuilder.buildAsyncClientForTpm -->
  * <pre>
  * AttestationAsyncClient asyncClientForTpm = new AttestationClientBuilder&#40;&#41;
  *     .endpoint&#40;endpoint&#41;
  *     .credential&#40;new DefaultAzureCredentialBuilder&#40;&#41;.build&#40;&#41;&#41;
  *     .buildAsyncClient&#40;&#41;;
  * </pre>
- *     <!-- end com.azure.security.attestation.AttestationClientBuilder.buildAsyncClientForTpm -->
+ * <!-- end com.azure.security.attestation.AttestationClientBuilder.buildAsyncClientForTpm -->
  */
-@ServiceClientBuilder(
-        serviceClients = {
-            AttestationClient.class,
-            AttestationAsyncClient.class,
-        })
-public final class AttestationClientBuilder {
+@ServiceClientBuilder(serviceClients = { AttestationClient.class, AttestationAsyncClient.class })
+public final class AttestationClientBuilder
+    implements ConfigurationTrait<AttestationClientBuilder>, EndpointTrait<AttestationClientBuilder>,
+    HttpTrait<AttestationClientBuilder>, TokenCredentialTrait<AttestationClientBuilder> {
     private static final String SDK_NAME = "name";
 
     private static final String SDK_VERSION = "version";
     private static final RetryPolicy DEFAULT_RETRY_POLICY = new RetryPolicy("retry-after-ms", ChronoUnit.MILLIS);
+    private static final ClientOptions DEFAULT_CLIENT_OPTIONS = new ClientOptions();
 
-    private final String[] dataplaneScope = new String[] {"https://attest.azure.net/.default"};
+    private final String[] dataplaneScope = new String[] { "https://attest.azure.net/.default" };
 
     private final ClientLogger logger = new ClientLogger(AttestationClientBuilder.class);
 
@@ -99,13 +107,13 @@ public final class AttestationClientBuilder {
     private HttpLogOptions httpLogOptions;
     private HttpPipeline pipeline;
     private HttpPipelinePolicy retryPolicy;
+    private RetryOptions retryOptions;
     private Configuration configuration;
     private AttestationServiceVersion serviceVersion;
     private AttestationTokenValidationOptions tokenValidationOptions;
     private TokenCredential tokenCredential = null;
     private static final String CLIENT_NAME;
     private static final String CLIENT_VERSION;
-
 
     static {
         Map<String, String> properties = CoreUtils.getProperties("azure-security-attestation.properties");
@@ -124,7 +132,7 @@ public final class AttestationClientBuilder {
 
     /**
      * Builds an instance of {@link AttestationClient} synchronous client.
-     *
+     * <p>
      * Instantiating a synchronous Attestation client:
      * <br>
      * <!-- src_embed com.azure.security.attestation.AttestationClientBuilder.buildClient -->
@@ -135,6 +143,8 @@ public final class AttestationClientBuilder {
      * </pre>
      * <!-- end com.azure.security.attestation.AttestationClientBuilder.buildClient -->
      * @return an instance of {@link AttestationClient}.
+     * @throws IllegalStateException If both {@link #retryOptions(RetryOptions)}
+     * and {@link #retryPolicy(RetryPolicy)} have been set.
      */
     public AttestationClient buildClient() {
         return new AttestationClient(buildAsyncClient());
@@ -142,7 +152,7 @@ public final class AttestationClientBuilder {
 
     /**
      * Builds an instance of AttestationAsyncClient async client.
-     *
+     * <p>
      * Instantiating a synchronous Attestation client:
      * <br>
      * <!-- src_embed com.azure.security.attestation.AttestationClientBuilder.buildAsyncClient -->
@@ -153,17 +163,20 @@ public final class AttestationClientBuilder {
      * </pre>
      * <!-- end com.azure.security.attestation.AttestationClientBuilder.buildAsyncClient -->
      * @return an instance of {@link AttestationClient}.
+     * @throws IllegalStateException If both {@link #retryOptions(RetryOptions)}
+     * and {@link #retryPolicy(RetryPolicy)} have been set.
      */
     public AttestationAsyncClient buildAsyncClient() {
         return new AttestationAsyncClient(buildInnerClient(), this.tokenValidationOptions);
     }
 
     /**
-     * Sets The attestation endpoint URI, for example https://myinstance.attest.azure.net.
+     * Sets The attestation endpoint URI, for example {@code https://myinstance.attest.azure.net}.
      *
      * @param endpoint The endpoint to connect to.
      * @return the AttestationClientBuilder.
      */
+    @Override
     public AttestationClientBuilder endpoint(String endpoint) {
         Objects.requireNonNull(endpoint);
         try {
@@ -185,13 +198,19 @@ public final class AttestationClientBuilder {
         this.serviceVersion = serviceVersion;
         return this;
     }
+
     /**
-     * Sets the credential to be used for communicating with the service.
-     * <p>Note that this property is only required for the {@link AttestationClient#attestTpm(String)} and
-     * {@link AttestationAsyncClient#attestTpm(String)} APIs - other attestation APIs can be anonymous.</p>
-     * @param credential Specifies the credential to be used for authentication.
+     * Sets the {@link TokenCredential} used to authorize requests sent to the service. Refer to the Azure SDK for Java
+     * <a href="https://aka.ms/azsdk/java/docs/identity">identity and authentication</a>
+     * documentation for more details on proper usage of the {@link TokenCredential} type.
+     *
+     * <p>Note that this property is only required for the {@link AttestationClient#attestTpm(BinaryData)} and
+     * {@link AttestationAsyncClient#attestTpm(BinaryData)} APIs - other attestation APIs can be anonymous.</p>
+     *
+     * @param credential {@link TokenCredential} used to authorize requests sent to the service.
      * @return the AttestationClientBuilder.
      */
+    @Override
     public AttestationClientBuilder credential(TokenCredential credential) {
         Objects.requireNonNull(credential);
         this.tokenCredential = credential;
@@ -199,44 +218,72 @@ public final class AttestationClientBuilder {
     }
 
     /**
-     * Sets The HTTP pipeline to send requests through.
+     * Sets the {@link HttpPipeline} to use for the service client.
      *
-     * @param pipeline the pipeline value.
+     * <p><strong>Note:</strong> It is important to understand the precedence order of the HttpTrait APIs. In
+     * particular, if a {@link HttpPipeline} is specified, this takes precedence over all other APIs in the trait, and
+     * they will be ignored. If no {@link HttpPipeline} is specified, a HTTP pipeline will be constructed internally
+     * based on the settings provided to this trait. Additionally, there may be other APIs in types that implement this
+     * trait that are also ignored if an {@link HttpPipeline} is specified, so please be sure to refer to the
+     * documentation of types that implement this trait to understand the full set of implications.</p>
+     *
+     * @param pipeline {@link HttpPipeline} to use for sending service requests and receiving responses.
      * @return the AttestationClientBuilder.
      */
+    @Override
     public AttestationClientBuilder pipeline(HttpPipeline pipeline) {
         this.pipeline = pipeline;
         return this;
     }
 
     /**
-     * Sets The HTTP client used to send the request.
+     * Sets the {@link HttpClient} to use for sending and receiving requests to and from the service.
      *
-     * @param httpClient the httpClient value.
+     * <p><strong>Note:</strong> It is important to understand the precedence order of the HttpTrait APIs. In
+     * particular, if a {@link HttpPipeline} is specified, this takes precedence over all other APIs in the trait, and
+     * they will be ignored. If no {@link HttpPipeline} is specified, a HTTP pipeline will be constructed internally
+     * based on the settings provided to this trait. Additionally, there may be other APIs in types that implement this
+     * trait that are also ignored if an {@link HttpPipeline} is specified, so please be sure to refer to the
+     * documentation of types that implement this trait to understand the full set of implications.</p>
+     *
+     * @param httpClient The {@link HttpClient} to use for requests.
      * @return the AttestationClientBuilder.
      */
+    @Override
     public AttestationClientBuilder httpClient(HttpClient httpClient) {
         this.httpClient = httpClient;
         return this;
     }
 
     /**
-     * Sets The configuration store that is used during construction of the service client.
+     * Sets the client-specific configuration used to retrieve client or global configuration properties
+     * when building a client.
      *
-     * @param configuration the configuration value.
+     * @param configuration Configuration store used to retrieve client configurations.
      * @return the AttestationClientBuilder.
      */
+    @Override
     public AttestationClientBuilder configuration(Configuration configuration) {
         this.configuration = configuration;
         return this;
     }
 
     /**
-     * Sets The logging configuration for HTTP requests and responses.
+     * Sets the {@link HttpLogOptions logging configuration} to use when sending and receiving requests to and from
+     * the service. If a {@code logLevel} is not provided, default value of {@link HttpLogDetailLevel#NONE} is set.
      *
-     * @param httpLogOptions the httpLogOptions value.
+     * <p><strong>Note:</strong> It is important to understand the precedence order of the HttpTrait APIs. In
+     * particular, if a {@link HttpPipeline} is specified, this takes precedence over all other APIs in the trait, and
+     * they will be ignored. If no {@link HttpPipeline} is specified, a HTTP pipeline will be constructed internally
+     * based on the settings provided to this trait. Additionally, there may be other APIs in types that implement this
+     * trait that are also ignored if an {@link HttpPipeline} is specified, so please be sure to refer to the
+     * documentation of types that implement this trait to understand the full set of implications.</p>
+     *
+     * @param httpLogOptions The {@link HttpLogOptions logging configuration} to use when sending and receiving requests
+     * to and from the service.
      * @return the AttestationClientBuilder.
      */
+    @Override
     public AttestationClientBuilder httpLogOptions(HttpLogOptions httpLogOptions) {
         this.httpLogOptions = httpLogOptions;
         return this;
@@ -244,6 +291,8 @@ public final class AttestationClientBuilder {
 
     /**
      * Sets The retry policy that will attempt to retry failed requests, if applicable.
+     * <p>
+     * Setting this is mutually exclusive with using {@link #retryOptions(RetryOptions)}.
      *
      * @param retryPolicy the retryPolicy value.
      * @return the AttestationClientBuilder.
@@ -254,11 +303,41 @@ public final class AttestationClientBuilder {
     }
 
     /**
-     * Adds a custom Http pipeline policy.
+     * Sets the {@link RetryOptions} for all the requests made through the client.
      *
-     * @param policy The custom Http pipeline policy to add.
-     * @return this {@link AttestationClientBuilder}.
+     * <p><strong>Note:</strong> It is important to understand the precedence order of the HttpTrait APIs. In
+     * particular, if a {@link HttpPipeline} is specified, this takes precedence over all other APIs in the trait, and
+     * they will be ignored. If no {@link HttpPipeline} is specified, a HTTP pipeline will be constructed internally
+     * based on the settings provided to this trait. Additionally, there may be other APIs in types that implement this
+     * trait that are also ignored if an {@link HttpPipeline} is specified, so please be sure to refer to the
+     * documentation of types that implement this trait to understand the full set of implications.</p>
+     * <p>
+     * Setting this is mutually exclusive with using {@link #retryPolicy(RetryPolicy)}.
+     *
+     * @param retryOptions The {@link RetryOptions} to use for all the requests made through the client.
+     * @return the AttestationClientBuilder.
      */
+    @Override
+    public AttestationClientBuilder retryOptions(RetryOptions retryOptions) {
+        this.retryOptions = retryOptions;
+        return this;
+    }
+
+    /**
+     * Adds a {@link HttpPipelinePolicy pipeline policy} to apply on each request sent.
+     *
+     * <p><strong>Note:</strong> It is important to understand the precedence order of the HttpTrait APIs. In
+     * particular, if a {@link HttpPipeline} is specified, this takes precedence over all other APIs in the trait, and
+     * they will be ignored. If no {@link HttpPipeline} is specified, a HTTP pipeline will be constructed internally
+     * based on the settings provided to this trait. Additionally, there may be other APIs in types that implement this
+     * trait that are also ignored if an {@link HttpPipeline} is specified, so please be sure to refer to the
+     * documentation of types that implement this trait to understand the full set of implications.</p>
+     *
+     * @param policy A {@link HttpPipelinePolicy pipeline policy}.
+     * @return this {@link AttestationClientBuilder}.
+     * @throws NullPointerException If {@code pipelinePolicy} is {@code null}.
+     */
+    @Override
     public AttestationClientBuilder addPolicy(HttpPipelinePolicy policy) {
         Objects.requireNonNull(policy, "'policy' cannot be null.");
 
@@ -272,16 +351,24 @@ public final class AttestationClientBuilder {
     }
 
     /**
-     * Sets the {@link ClientOptions} which enables various options to be set on the client. For example setting an
-     * {@code applicationId} using {@link ClientOptions#setApplicationId(String)} to configure
-     * the {@link UserAgentPolicy} for telemetry/monitoring purposes.
+     * Allows for setting common properties such as application ID, headers, proxy configuration, etc. Note that it is
+     * recommended that this method be called with an instance of the {@link HttpClientOptions}
+     * class (a subclass of the {@link ClientOptions} base class). The HttpClientOptions subclass provides more
+     * configuration options suitable for HTTP clients, which is applicable for any class that implements this HttpTrait
+     * interface.
      *
-     * <p>More About <a href="https://azure.github.io/azure-sdk/general_azurecore.html#telemetry-policy">Azure Core: Telemetry policy</a>
+     * <p><strong>Note:</strong> It is important to understand the precedence order of the HttpTrait APIs. In
+     * particular, if a {@link HttpPipeline} is specified, this takes precedence over all other APIs in the trait, and
+     * they will be ignored. If no {@link HttpPipeline} is specified, a HTTP pipeline will be constructed internally
+     * based on the settings provided to this trait. Additionally, there may be other APIs in types that implement this
+     * trait that are also ignored if an {@link HttpPipeline} is specified, so please be sure to refer to the
+     * documentation of types that implement this trait to understand the full set of implications.</p>
      *
-     * @param clientOptions {@link ClientOptions}.
-     *
+     * @param clientOptions A configured instance of {@link HttpClientOptions}.
      * @return the updated {@link AttestationClientBuilder} object
+     * @see HttpClientOptions
      */
+    @Override
     public AttestationClientBuilder clientOptions(ClientOptions clientOptions) {
         this.clientOptions = clientOptions;
         return this;
@@ -327,16 +414,14 @@ public final class AttestationClientBuilder {
      */
     private AttestationClientImpl buildInnerClient() {
 
-//        AttestationClientImplBuilder clientImplBuilder = new AttestationClientImplBuilder();
+        //        AttestationClientImplBuilder clientImplBuilder = new AttestationClientImplBuilder();
         // Global Env configuration store
-        Configuration buildConfiguration = (configuration == null)
-            ? Configuration.getGlobalConfiguration()
-            : configuration;
+        Configuration buildConfiguration
+            = (configuration == null) ? Configuration.getGlobalConfiguration() : configuration;
 
         // Service version
-        AttestationServiceVersion version = serviceVersion != null
-            ? serviceVersion
-            : AttestationServiceVersion.getLatest();
+        AttestationServiceVersion version
+            = serviceVersion != null ? serviceVersion : AttestationServiceVersion.getLatest();
 
         // endpoint cannot be null, which is required in request authentication
         String endpoint = this.endpoint;
@@ -346,17 +431,19 @@ public final class AttestationClientBuilder {
         // which were provided.
         HttpPipeline pipeline = this.pipeline;
         if (pipeline == null) {
+            ClientOptions localClientOptions = clientOptions != null ? clientOptions : DEFAULT_CLIENT_OPTIONS;
+
             // Closest to API goes first, closest to wire goes last.
             final List<HttpPipelinePolicy> policies = new ArrayList<>();
-            policies.add(new UserAgentPolicy(
-                getApplicationId(clientOptions, httpLogOptions), CLIENT_NAME, CLIENT_VERSION, buildConfiguration));
+            policies.add(new UserAgentPolicy(getApplicationId(localClientOptions, httpLogOptions), CLIENT_NAME,
+                CLIENT_VERSION, buildConfiguration));
             policies.add(new RequestIdPolicy());
             policies.add(new AddHeadersFromContextPolicy());
 
             policies.addAll(perCallPolicies);
             HttpPolicyProviders.addBeforeRetryPolicies(policies);
 
-            policies.add(retryPolicy == null ? DEFAULT_RETRY_POLICY : retryPolicy);
+            policies.add(ClientBuilderUtil.validateAndGetRetryPolicy(retryPolicy, retryOptions, DEFAULT_RETRY_POLICY));
 
             policies.add(new AddDatePolicy());
 
@@ -367,23 +454,21 @@ public final class AttestationClientBuilder {
             }
             policies.addAll(perRetryPolicies);
 
-            if (clientOptions != null) {
-                List<HttpHeader> httpHeaderList = new ArrayList<>();
-                clientOptions.getHeaders().forEach(
-                    header -> httpHeaderList.add(new HttpHeader(header.getName(), header.getValue())));
-                policies.add(new AddHeadersPolicy(new HttpHeaders(httpHeaderList)));
-            }
+            List<HttpHeader> httpHeaderList = new ArrayList<>();
+            localClientOptions.getHeaders()
+                .forEach(header -> httpHeaderList.add(new HttpHeader(header.getName(), header.getValue())));
+            policies.add(new AddHeadersPolicy(new HttpHeaders(httpHeaderList)));
 
             HttpPolicyProviders.addAfterRetryPolicies(policies);
             policies.add(new HttpLoggingPolicy(httpLogOptions));
 
             // customized pipeline
-            pipeline = new HttpPipelineBuilder()
-                .policies(policies.toArray(new HttpPipelinePolicy[0]))
+            pipeline = new HttpPipelineBuilder().policies(policies.toArray(new HttpPipelinePolicy[0]))
                 .httpClient(httpClient)
+                .clientOptions(localClientOptions)
                 .build();
         }
 
-        return new AttestationClientImpl(pipeline, JacksonAdapter.createDefaultSerializerAdapter(), endpoint, version.getVersion());
+        return new AttestationClientImpl(pipeline, endpoint, version.getVersion());
     }
 }

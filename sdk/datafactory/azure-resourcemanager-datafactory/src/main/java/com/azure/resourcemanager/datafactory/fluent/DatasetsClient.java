@@ -11,38 +11,59 @@ import com.azure.core.http.rest.Response;
 import com.azure.core.util.Context;
 import com.azure.resourcemanager.datafactory.fluent.models.DatasetResourceInner;
 
-/** An instance of this class provides access to all the operations defined in DatasetsClient. */
+/**
+ * An instance of this class provides access to all the operations defined in DatasetsClient.
+ */
 public interface DatasetsClient {
     /**
      * Lists datasets.
-     *
+     * 
      * @param resourceGroupName The resource group name.
      * @param factoryName The factory name.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return a list of dataset resources.
+     * @return a list of dataset resources as paginated response with {@link PagedIterable}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
     PagedIterable<DatasetResourceInner> listByFactory(String resourceGroupName, String factoryName);
 
     /**
      * Lists datasets.
-     *
+     * 
      * @param resourceGroupName The resource group name.
      * @param factoryName The factory name.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return a list of dataset resources.
+     * @return a list of dataset resources as paginated response with {@link PagedIterable}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
     PagedIterable<DatasetResourceInner> listByFactory(String resourceGroupName, String factoryName, Context context);
 
     /**
      * Creates or updates a dataset.
-     *
+     * 
+     * @param resourceGroupName The resource group name.
+     * @param factoryName The factory name.
+     * @param datasetName The dataset name.
+     * @param dataset Dataset resource definition.
+     * @param ifMatch ETag of the dataset entity. Should only be specified for update, for which it should match
+     * existing entity or can be * for unconditional update.
+     * @param context The context to associate with this operation.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return dataset resource type along with {@link Response}.
+     */
+    @ServiceMethod(returns = ReturnType.SINGLE)
+    Response<DatasetResourceInner> createOrUpdateWithResponse(String resourceGroupName, String factoryName,
+        String datasetName, DatasetResourceInner dataset, String ifMatch, Context context);
+
+    /**
+     * Creates or updates a dataset.
+     * 
      * @param resourceGroupName The resource group name.
      * @param factoryName The factory name.
      * @param datasetName The dataset name.
@@ -53,36 +74,30 @@ public interface DatasetsClient {
      * @return dataset resource type.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    DatasetResourceInner createOrUpdate(
-        String resourceGroupName, String factoryName, String datasetName, DatasetResourceInner dataset);
+    DatasetResourceInner createOrUpdate(String resourceGroupName, String factoryName, String datasetName,
+        DatasetResourceInner dataset);
 
     /**
-     * Creates or updates a dataset.
-     *
+     * Gets a dataset.
+     * 
      * @param resourceGroupName The resource group name.
      * @param factoryName The factory name.
      * @param datasetName The dataset name.
-     * @param dataset Dataset resource definition.
-     * @param ifMatch ETag of the dataset entity. Should only be specified for update, for which it should match
-     *     existing entity or can be * for unconditional update.
+     * @param ifNoneMatch ETag of the dataset entity. Should only be specified for get. If the ETag matches the existing
+     * entity tag, or if * was provided, then no content will be returned.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return dataset resource type along with {@link Response}.
+     * @return a dataset along with {@link Response}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    Response<DatasetResourceInner> createOrUpdateWithResponse(
-        String resourceGroupName,
-        String factoryName,
-        String datasetName,
-        DatasetResourceInner dataset,
-        String ifMatch,
-        Context context);
+    Response<DatasetResourceInner> getWithResponse(String resourceGroupName, String factoryName, String datasetName,
+        String ifNoneMatch, Context context);
 
     /**
      * Gets a dataset.
-     *
+     * 
      * @param resourceGroupName The resource group name.
      * @param factoryName The factory name.
      * @param datasetName The dataset name.
@@ -95,39 +110,8 @@ public interface DatasetsClient {
     DatasetResourceInner get(String resourceGroupName, String factoryName, String datasetName);
 
     /**
-     * Gets a dataset.
-     *
-     * @param resourceGroupName The resource group name.
-     * @param factoryName The factory name.
-     * @param datasetName The dataset name.
-     * @param ifNoneMatch ETag of the dataset entity. Should only be specified for get. If the ETag matches the existing
-     *     entity tag, or if * was provided, then no content will be returned.
-     * @param context The context to associate with this operation.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return a dataset along with {@link Response}.
-     */
-    @ServiceMethod(returns = ReturnType.SINGLE)
-    Response<DatasetResourceInner> getWithResponse(
-        String resourceGroupName, String factoryName, String datasetName, String ifNoneMatch, Context context);
-
-    /**
      * Deletes a dataset.
-     *
-     * @param resourceGroupName The resource group name.
-     * @param factoryName The factory name.
-     * @param datasetName The dataset name.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     */
-    @ServiceMethod(returns = ReturnType.SINGLE)
-    void delete(String resourceGroupName, String factoryName, String datasetName);
-
-    /**
-     * Deletes a dataset.
-     *
+     * 
      * @param resourceGroupName The resource group name.
      * @param factoryName The factory name.
      * @param datasetName The dataset name.
@@ -138,6 +122,19 @@ public interface DatasetsClient {
      * @return the {@link Response}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    Response<Void> deleteWithResponse(
-        String resourceGroupName, String factoryName, String datasetName, Context context);
+    Response<Void> deleteWithResponse(String resourceGroupName, String factoryName, String datasetName,
+        Context context);
+
+    /**
+     * Deletes a dataset.
+     * 
+     * @param resourceGroupName The resource group name.
+     * @param factoryName The factory name.
+     * @param datasetName The dataset name.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     */
+    @ServiceMethod(returns = ReturnType.SINGLE)
+    void delete(String resourceGroupName, String factoryName, String datasetName);
 }

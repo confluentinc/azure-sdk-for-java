@@ -5,6 +5,7 @@ package com.azure.messaging.servicebus;
 
 import com.azure.core.amqp.exception.AmqpErrorContext;
 import com.azure.core.amqp.exception.AmqpException;
+import com.azure.messaging.servicebus.models.ServiceBusReceiveMode;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -14,20 +15,21 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.reactivestreams.Subscription;
+import reactor.core.publisher.Mono;
 
-import java.util.HashSet;
+import java.time.Duration;
 import java.util.List;
-import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -42,6 +44,10 @@ public class SynchronousMessageSubscriberTest {
     private static final int NUMBER_OF_WORK_ITEMS = 4;
     private static final int NUMBER_OF_WORK_ITEMS_2 = 3;
 
+    private final Duration operationTimeout = Duration.ofSeconds(10);
+
+    @Mock
+    private ServiceBusReceiverAsyncClient asyncClient;
     @Mock
     private SynchronousReceiveWork work1;
     @Mock
@@ -53,7 +59,18 @@ public class SynchronousMessageSubscriberTest {
     @Captor
     private ArgumentCaptor<Long> subscriptionArgumentCaptor;
 
+    @Mock
+    private ReceiverOptions options;
+
+    @Mock
+    private ReceiverOptions deleteModeOptions;
+
+    @Mock
+    private ServiceBusReceiverAsyncClient deleteModeAsyncClient;
+
     private SynchronousMessageSubscriber syncSubscriber;
+    private SynchronousMessageSubscriber deleteModeSyncSubscriber;
+
     private AutoCloseable mocksCloseable;
 
     @BeforeEach
@@ -66,7 +83,16 @@ public class SynchronousMessageSubscriberTest {
         when(work2.getId()).thenReturn(WORK_ID_2);
         when(work2.getNumberOfEvents()).thenReturn(NUMBER_OF_WORK_ITEMS_2);
 
-        syncSubscriber = new SynchronousMessageSubscriber(work1);
+        when(asyncClient.getReceiverOptions()).thenReturn(options);
+        when(options.getReceiveMode()).thenReturn(ServiceBusReceiveMode.PEEK_LOCK);
+
+        syncSubscriber = new SynchronousMessageSubscriber(asyncClient, work1, false, operationTimeout);
+
+        when(deleteModeAsyncClient.getReceiverOptions()).thenReturn(deleteModeOptions);
+        when(deleteModeOptions.getReceiveMode()).thenReturn(ServiceBusReceiveMode.RECEIVE_AND_DELETE);
+
+        deleteModeSyncSubscriber
+            = new SynchronousMessageSubscriber(deleteModeAsyncClient, work1, false, operationTimeout);
     }
 
     @AfterEach
@@ -106,7 +132,7 @@ public class SynchronousMessageSubscriberTest {
     @Test
     public void queueWorkTest() {
         // Arrange
-        syncSubscriber = new SynchronousMessageSubscriber(work1);
+        syncSubscriber = new SynchronousMessageSubscriber(asyncClient, work1, false, operationTimeout);
 
         // Act
         syncSubscriber.queueWork(work2);
@@ -116,15 +142,11 @@ public class SynchronousMessageSubscriberTest {
     }
 
     /**
-     * Verifies that this processes multiple work items.
+     * Verifies that this processes multiple work items and current work encounter timeout
      */
     @Test
-    public void processesMultipleWorkItems() {
+    public void processesMultipleWorkItemsAndCurrentWorkTimeout() {
         // Arrange
-        final SynchronousReceiveWork work3 = mock(SynchronousReceiveWork.class);
-        when(work3.getId()).thenReturn(3L);
-        when(work3.getNumberOfEvents()).thenReturn(1);
-
         final ServiceBusReceivedMessage message1 = mock(ServiceBusReceivedMessage.class);
         final ServiceBusReceivedMessage message2 = mock(ServiceBusReceivedMessage.class);
         final ServiceBusReceivedMessage message3 = mock(ServiceBusReceivedMessage.class);
@@ -146,10 +168,16 @@ public class SynchronousMessageSubscriberTest {
         doAnswer(invocation -> isTerminal.get()).when(work1).isTerminal();
         doAnswer(invocation -> remaining.get()).when(work1).getRemainingEvents();
 
+        // WORK 2 is update to current work after the work1 is terminal and successfully emits message3
         when(work2.emitNext(message3)).thenReturn(true);
         when(work2.isTerminal()).thenReturn(false);
 
-        syncSubscriber = new SynchronousMessageSubscriber(work1);
+        // WORK 3 is placed in queue
+        final SynchronousReceiveWork work3 = mock(SynchronousReceiveWork.class);
+        when(work3.getId()).thenReturn(3L);
+        when(work3.getNumberOfEvents()).thenReturn(1);
+
+        syncSubscriber = new SynchronousMessageSubscriber(asyncClient, work1, false, operationTimeout);
         syncSubscriber.queueWork(work2);
         syncSubscriber.queueWork(work3);
 
@@ -180,15 +208,79 @@ public class SynchronousMessageSubscriberTest {
         //     - work2.getNumberOfEvents() - (REQUESTED - work1.getRemainingItems());
         verify(subscription, times(2)).request(subscriptionArgumentCaptor.capture());
         final List<Long> allRequests = subscriptionArgumentCaptor.getAllValues();
-        final Set<Long> expected = new HashSet<>();
-        expected.add((long) work1.getNumberOfEvents());
+        assertEquals(NUMBER_OF_WORK_ITEMS, allRequests.get(0));
 
         final long requestedAfterWork1 = NUMBER_OF_WORK_ITEMS - remaining.get();
         final long expectedDifference = work2.getNumberOfEvents() - requestedAfterWork1;
-        expected.add(expectedDifference);
+        assertEquals(expectedDifference, allRequests.get(1));
+    }
 
-        assertEquals(expected.size(), allRequests.size());
-        allRequests.forEach(r -> assertTrue(expected.contains(r)));
+    /**
+     * Verifies that this processes multiple work items and current work can emit all messages successfully
+     */
+    @Test
+    public void processesMultipleWorkItemsAndCurrentWorkEmitAllMessages() {
+        // Arrange
+        final ServiceBusReceivedMessage message1 = mock(ServiceBusReceivedMessage.class);
+        final ServiceBusReceivedMessage message2 = mock(ServiceBusReceivedMessage.class);
+        final ServiceBusReceivedMessage message3 = mock(ServiceBusReceivedMessage.class);
+        final ServiceBusReceivedMessage message4 = mock(ServiceBusReceivedMessage.class);
+        final ServiceBusReceivedMessage message5 = mock(ServiceBusReceivedMessage.class);
+
+        // WORK 1 successfully emits all messages and is terminal after emit message4.
+        final AtomicBoolean isTerminal = new AtomicBoolean(false);
+        final AtomicInteger remaining = new AtomicInteger(NUMBER_OF_WORK_ITEMS);
+        doAnswer(invocation -> {
+            ServiceBusReceivedMessage arg = invocation.getArgument(0);
+            remaining.decrementAndGet();
+            if (arg == message4) {
+                isTerminal.set(true);
+            }
+            return true;
+        }).when(work1).emitNext(any(ServiceBusReceivedMessage.class));
+        doAnswer(invocation -> isTerminal.get()).when(work1).isTerminal();
+        doAnswer(invocation -> remaining.get()).when(work1).getRemainingEvents();
+
+        // WORK 2 is updated to current work after work1 completed and successfully emit message5
+        when(work2.isTerminal()).thenReturn(false);
+        when(work2.emitNext(message5)).thenReturn(true);
+
+        // WORK 3 is placed in queue
+        final SynchronousReceiveWork work3 = mock(SynchronousReceiveWork.class);
+        when(work3.getId()).thenReturn(3L);
+        when(work3.getNumberOfEvents()).thenReturn(1);
+
+        syncSubscriber = new SynchronousMessageSubscriber(asyncClient, work1, false, operationTimeout);
+        syncSubscriber.queueWork(work2);
+        syncSubscriber.queueWork(work3);
+
+        syncSubscriber.hookOnSubscribe(subscription);
+
+        assertEquals(2, syncSubscriber.getWorkQueueSize());
+
+        // Act
+        syncSubscriber.hookOnNext(message1);
+        syncSubscriber.hookOnNext(message2);
+        syncSubscriber.hookOnNext(message3);
+        syncSubscriber.hookOnNext(message4);
+
+        // Assert
+        verify(work2).start();
+
+        // work2 emits message5
+        syncSubscriber.hookOnNext(message5);
+
+        verify(work2).emitNext(message5);
+
+        assertEquals(1, syncSubscriber.getWorkQueueSize());
+
+        // Verify that we requested:
+        // 1st time: hookOnSubscribe(work1.getNumberOfEvents())
+        // 2nd time: requestUpstream(work2.getNumberOfEvents()) and REQUESTED = 0
+        verify(subscription, times(2)).request(subscriptionArgumentCaptor.capture());
+        final List<Long> allRequests = subscriptionArgumentCaptor.getAllValues();
+        assertEquals(NUMBER_OF_WORK_ITEMS, allRequests.get(0));
+        assertEquals(NUMBER_OF_WORK_ITEMS_2, allRequests.get(1));
     }
 
     /**
@@ -237,5 +329,111 @@ public class SynchronousMessageSubscriberTest {
 
         // The current work has been polled, so this should be empty.
         assertEquals(0, syncSubscriber.getWorkQueueSize());
+    }
+
+    @Test
+    public void releaseIfNoActiveReceiveInPeekMode() {
+        // Arrange
+
+        // The work1 happily accept any message.
+        when(work1.emitNext(any(ServiceBusReceivedMessage.class))).thenReturn(true);
+
+        // The four messages produced by the link (two before work1 timeout and two after).
+        final ServiceBusReceivedMessage message1beforeTimeout = mock(ServiceBusReceivedMessage.class);
+        final ServiceBusReceivedMessage message2beforeTimeout = mock(ServiceBusReceivedMessage.class);
+        final ServiceBusReceivedMessage message1afterTimeout = mock(ServiceBusReceivedMessage.class);
+        final ServiceBusReceivedMessage message2afterTimeout = mock(ServiceBusReceivedMessage.class);
+
+        // work1 enters terminal-state when isTerminal is set (e.g. when something like timeout happens).
+        final AtomicBoolean isTerminal = new AtomicBoolean(false);
+        doAnswer(invocation -> isTerminal.get()).when(work1).isTerminal();
+
+        // Expect drain loop to invoke release for two messages those were received after timeout of work1
+        // and there were no work queued to receive those late messages.
+        final AtomicInteger expectedReleaseCalls = new AtomicInteger(0);
+        final AtomicBoolean hadUnexpectedReleaseCall = new AtomicBoolean(false);
+        doAnswer(invocation -> {
+            ServiceBusReceivedMessage arg = invocation.getArgument(0);
+            if (arg == message1afterTimeout || arg == message2afterTimeout) {
+                expectedReleaseCalls.incrementAndGet();
+            } else {
+                hadUnexpectedReleaseCall.set(true);
+            }
+            return Mono.empty();
+        }).when(asyncClient).release(any(ServiceBusReceivedMessage.class));
+
+        // The subscriber with prefetch-disabled - indicate any received messages that cannot be emitted should be released.
+        syncSubscriber = new SynchronousMessageSubscriber(asyncClient, work1, true, operationTimeout);
+
+        // Act
+        syncSubscriber.hookOnSubscribe(subscription);
+
+        // The work1 places a credit of 4; let's say link produced two messages
+        syncSubscriber.hookOnNext(message1beforeTimeout);
+        syncSubscriber.hookOnNext(message2beforeTimeout);
+        // then the work1 timeout (terminated)
+        isTerminal.set(true);
+        // then the remaining two messages produced by the link
+        syncSubscriber.hookOnNext(message1afterTimeout);
+        syncSubscriber.hookOnNext(message2afterTimeout);
+
+        // Assert
+
+        // the work1 received first two messages before the timeout
+        verify(work1).emitNext(message1beforeTimeout);
+        verify(work1).emitNext(message2beforeTimeout);
+        // the work1 should never receive two messages arrived later
+        verify(work1, never()).emitNext(message1afterTimeout);
+        verify(work1, never()).emitNext(message2afterTimeout);
+        // rather those late two messages should be released.
+        assertEquals(2, expectedReleaseCalls.get());
+        assertFalse(hadUnexpectedReleaseCall.get());
+    }
+
+    @Test
+    public void noReleaseIfNoActiveReceiveInDelMode() {
+        // Arrange
+
+        // The work1 and work2 happily accept any message.
+        when(work1.emitNext(any(ServiceBusReceivedMessage.class))).thenReturn(true);
+        when(work2.emitNext(any(ServiceBusReceivedMessage.class))).thenReturn(true);
+
+        // The four messages produced by the link (two before work1 timeout and two after).
+        final ServiceBusReceivedMessage message1beforeTimeout = mock(ServiceBusReceivedMessage.class);
+        final ServiceBusReceivedMessage message2beforeTimeout = mock(ServiceBusReceivedMessage.class);
+        final ServiceBusReceivedMessage message1afterTimeout = mock(ServiceBusReceivedMessage.class);
+        final ServiceBusReceivedMessage message2afterTimeout = mock(ServiceBusReceivedMessage.class);
+
+        // work1 enters terminal-state when isTerminal is set (e.g. when something like timeout happens).
+        final AtomicBoolean isTerminal = new AtomicBoolean(false);
+        doAnswer(invocation -> isTerminal.get()).when(work1).isTerminal();
+
+        // Act
+        deleteModeSyncSubscriber.hookOnSubscribe(subscription);
+
+        // The work1 places a credit of 4; let's say link produced two messages
+        deleteModeSyncSubscriber.hookOnNext(message1beforeTimeout);
+        deleteModeSyncSubscriber.hookOnNext(message2beforeTimeout);
+        // then the work1 timeout (terminated)
+        isTerminal.set(true);
+        // then the remaining two messages produced by the link
+        deleteModeSyncSubscriber.hookOnNext(message1afterTimeout);
+        deleteModeSyncSubscriber.hookOnNext(message2afterTimeout);
+        // add a new queue work to consume remained messages. In RECEIVE_AND_DELETE mode, messages won't be released
+        // and could be consumed even though prefetch is disabled and no current downstream.
+        deleteModeSyncSubscriber.queueWork(work2);
+
+        // Assert
+
+        // the work1 received first two messages before the timeout
+        verify(work1).emitNext(message1beforeTimeout);
+        verify(work1).emitNext(message2beforeTimeout);
+        // the work1 should never receive two messages arrived later
+        verify(work1, never()).emitNext(message1afterTimeout);
+        verify(work1, never()).emitNext(message2afterTimeout);
+
+        // the work2 received two messages after the timeout
+        verify(work2).emitNext(message1afterTimeout);
+        verify(work2).emitNext(message2afterTimeout);
     }
 }

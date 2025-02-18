@@ -7,11 +7,15 @@ package com.azure.resourcemanager.synapse.models;
 import com.azure.core.http.rest.PagedIterable;
 import com.azure.core.util.Context;
 
-/** Resource collection API of SqlPoolTableColumns. */
+/**
+ * Resource collection API of SqlPoolTableColumns.
+ */
 public interface SqlPoolTableColumns {
     /**
+     * Gets columns in a given table in a SQL pool
+     * 
      * Gets columns in a given table in a SQL pool.
-     *
+     * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
      * @param workspaceName The name of the workspace.
      * @param sqlPoolName SQL pool name.
@@ -20,14 +24,16 @@ public interface SqlPoolTableColumns {
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return columns in a given table in a SQL pool.
+     * @return columns in a given table in a SQL pool as paginated response with {@link PagedIterable}.
      */
-    PagedIterable<SqlPoolColumn> listByTableName(
-        String resourceGroupName, String workspaceName, String sqlPoolName, String schemaName, String tableName);
+    PagedIterable<SqlPoolColumn> listByTableName(String resourceGroupName, String workspaceName, String sqlPoolName,
+        String schemaName, String tableName);
 
     /**
+     * Gets columns in a given table in a SQL pool
+     * 
      * Gets columns in a given table in a SQL pool.
-     *
+     * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
      * @param workspaceName The name of the workspace.
      * @param sqlPoolName SQL pool name.
@@ -38,14 +44,8 @@ public interface SqlPoolTableColumns {
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return columns in a given table in a SQL pool.
+     * @return columns in a given table in a SQL pool as paginated response with {@link PagedIterable}.
      */
-    PagedIterable<SqlPoolColumn> listByTableName(
-        String resourceGroupName,
-        String workspaceName,
-        String sqlPoolName,
-        String schemaName,
-        String tableName,
-        String filter,
-        Context context);
+    PagedIterable<SqlPoolColumn> listByTableName(String resourceGroupName, String workspaceName, String sqlPoolName,
+        String schemaName, String tableName, String filter, Context context);
 }

@@ -9,31 +9,29 @@ import com.azure.core.util.Context;
 import com.azure.core.util.logging.ClientLogger;
 import com.azure.resourcemanager.synapse.fluent.SqlPoolOperationResultsClient;
 import com.azure.resourcemanager.synapse.models.SqlPoolOperationResults;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 public final class SqlPoolOperationResultsImpl implements SqlPoolOperationResults {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(SqlPoolOperationResultsImpl.class);
+    private static final ClientLogger LOGGER = new ClientLogger(SqlPoolOperationResultsImpl.class);
 
     private final SqlPoolOperationResultsClient innerClient;
 
     private final com.azure.resourcemanager.synapse.SynapseManager serviceManager;
 
-    public SqlPoolOperationResultsImpl(
-        SqlPoolOperationResultsClient innerClient, com.azure.resourcemanager.synapse.SynapseManager serviceManager) {
+    public SqlPoolOperationResultsImpl(SqlPoolOperationResultsClient innerClient,
+        com.azure.resourcemanager.synapse.SynapseManager serviceManager) {
         this.innerClient = innerClient;
         this.serviceManager = serviceManager;
     }
 
-    public Object getLocationHeaderResult(
-        String resourceGroupName, String workspaceName, String sqlPoolName, String operationId) {
-        return this.serviceClient().getLocationHeaderResult(resourceGroupName, workspaceName, sqlPoolName, operationId);
+    public Response<Object> getLocationHeaderResultWithResponse(String resourceGroupName, String workspaceName,
+        String sqlPoolName, String operationId, Context context) {
+        return this.serviceClient()
+            .getLocationHeaderResultWithResponse(resourceGroupName, workspaceName, sqlPoolName, operationId, context);
     }
 
-    public Response<Object> getLocationHeaderResultWithResponse(
-        String resourceGroupName, String workspaceName, String sqlPoolName, String operationId, Context context) {
-        return this
-            .serviceClient()
-            .getLocationHeaderResultWithResponse(resourceGroupName, workspaceName, sqlPoolName, operationId, context);
+    public Object getLocationHeaderResult(String resourceGroupName, String workspaceName, String sqlPoolName,
+        String operationId) {
+        return this.serviceClient().getLocationHeaderResult(resourceGroupName, workspaceName, sqlPoolName, operationId);
     }
 
     private SqlPoolOperationResultsClient serviceClient() {

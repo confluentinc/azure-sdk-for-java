@@ -3,7 +3,6 @@
 
 package com.azure.storage.file.share;
 
-
 import com.azure.core.util.ServiceVersion;
 
 /**
@@ -58,7 +57,87 @@ public enum ShareServiceVersion implements ServiceVersion {
     /**
      * Service version {@code 2021-02-12}.
      */
-    V2021_02_12("2021-02-12");
+    V2021_02_12("2021-02-12"),
+
+    /**
+     * Service version {@code 2021-04-10}.
+     */
+    V2021_04_10("2021-04-10"),
+
+    /**
+     * Service version {@code 2021-06-08}.
+     */
+    V2021_06_08("2021-06-08"),
+
+    /**
+     * Service version {@code 2021-08-06}.
+     */
+    V2021_08_06("2021-08-06"),
+
+    /**
+     * Service version {@code 2021-10-04}.
+     */
+    V2021_10_04("2021-10-04"),
+
+    /**
+     * Service version {@code 2021-12-02}.
+     */
+    V2021_12_02("2021-12-02"),
+
+    /**
+     * Service version {@code 2022-11-02}.
+     */
+    V2022_11_02("2022-11-02"),
+
+    /**
+     * Service version {@code 2023-01-03}.
+     */
+    V2023_01_03("2023-01-03"),
+
+    /**
+     * Service version {@code 2023-05-03}.
+     */
+    V2023_05_03("2023-05-03"),
+
+    /**
+     * Service version {@code 2023-08-03}.
+     */
+    V2023_08_03("2023-08-03"),
+
+    /**
+     * Service version {@code 2023-11-03}.
+     */
+    V2023_11_03("2023-11-03"),
+
+    /**
+     * Service version {@code 2024-02-04}.
+     */
+    V2024_02_04("2024-02-04"),
+
+    /**
+     * Service version {@code 2024-05-04}.
+     */
+    V2024_05_04("2024-05-04"),
+
+    /**
+     * Service version {@code 2024-08-04}.
+     */
+    V2024_08_04("2024-08-04"),
+
+    /**
+     * Service version {@code 2024-11-04}.
+     */
+    V2024_11_04("2024-11-04"),
+
+    /**
+     * Service version {@code 2025-01-05}.
+     */
+    V2025_01_05("2025-01-05"),
+
+    /**
+     * Service version {@code 2025-05-05}.
+     */
+    V2025_05_05("2025-05-05");
 
     private final String version;
 
@@ -80,6 +159,6 @@ public enum ShareServiceVersion implements ServiceVersion {
      * @return the latest {@link ShareServiceVersion}
      */
     public static ShareServiceVersion getLatest() {
-        return V2021_02_12;
+        return V2025_05_05;
     }
 }

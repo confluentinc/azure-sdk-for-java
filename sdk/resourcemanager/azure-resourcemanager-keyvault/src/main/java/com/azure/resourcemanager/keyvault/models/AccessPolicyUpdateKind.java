@@ -4,21 +4,28 @@
 
 package com.azure.resourcemanager.keyvault.models;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonValue;
-
-/** Defines values for AccessPolicyUpdateKind. */
+/**
+ * Defines values for AccessPolicyUpdateKind.
+ */
 public enum AccessPolicyUpdateKind {
-    /** Enum value add. */
+    /**
+     * Enum value add.
+     */
     ADD("add"),
 
-    /** Enum value replace. */
+    /**
+     * Enum value replace.
+     */
     REPLACE("replace"),
 
-    /** Enum value remove. */
+    /**
+     * Enum value remove.
+     */
     REMOVE("remove");
 
-    /** The actual serialized value for a AccessPolicyUpdateKind instance. */
+    /**
+     * The actual serialized value for a AccessPolicyUpdateKind instance.
+     */
     private final String value;
 
     AccessPolicyUpdateKind(String value) {
@@ -27,12 +34,14 @@ public enum AccessPolicyUpdateKind {
 
     /**
      * Parses a serialized value to a AccessPolicyUpdateKind instance.
-     *
+     * 
      * @param value the serialized value to parse.
      * @return the parsed AccessPolicyUpdateKind object, or null if unable to parse.
      */
-    @JsonCreator
     public static AccessPolicyUpdateKind fromString(String value) {
+        if (value == null) {
+            return null;
+        }
         AccessPolicyUpdateKind[] items = AccessPolicyUpdateKind.values();
         for (AccessPolicyUpdateKind item : items) {
             if (item.toString().equalsIgnoreCase(value)) {
@@ -42,7 +51,9 @@ public enum AccessPolicyUpdateKind {
         return null;
     }
 
-    @JsonValue
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String toString() {
         return this.value;

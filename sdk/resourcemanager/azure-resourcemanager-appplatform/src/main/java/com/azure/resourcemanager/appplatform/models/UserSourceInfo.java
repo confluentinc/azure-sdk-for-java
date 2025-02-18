@@ -5,84 +5,45 @@
 package com.azure.resourcemanager.appplatform.models;
 
 import com.azure.core.annotation.Fluent;
-import com.azure.core.util.logging.ClientLogger;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.azure.json.JsonReader;
+import com.azure.json.JsonSerializable;
+import com.azure.json.JsonToken;
+import com.azure.json.JsonWriter;
+import java.io.IOException;
 
-/** Source information for a deployment. */
+/**
+ * Source information for a deployment.
+ */
 @Fluent
-public final class UserSourceInfo {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(UserSourceInfo.class);
-
+public class UserSourceInfo implements JsonSerializable<UserSourceInfo> {
     /*
      * Type of the source uploaded
      */
-    @JsonProperty(value = "type")
-    private UserSourceType type;
-
-    /*
-     * Relative path of the storage which stores the source
-     */
-    @JsonProperty(value = "relativePath")
-    private String relativePath;
+    private String type = "UserSourceInfo";
 
     /*
      * Version of the source
      */
-    @JsonProperty(value = "version")
     private String version;
 
-    /*
-     * Selector for the artifact to be used for the deployment for multi-module
-     * projects. This should be
-     * the relative path to the target module/project.
+    /**
+     * Creates an instance of UserSourceInfo class.
      */
-    @JsonProperty(value = "artifactSelector")
-    private String artifactSelector;
+    public UserSourceInfo() {
+    }
 
     /**
      * Get the type property: Type of the source uploaded.
-     *
+     * 
      * @return the type value.
      */
-    public UserSourceType type() {
+    public String type() {
         return this.type;
     }
 
     /**
-     * Set the type property: Type of the source uploaded.
-     *
-     * @param type the type value to set.
-     * @return the UserSourceInfo object itself.
-     */
-    public UserSourceInfo withType(UserSourceType type) {
-        this.type = type;
-        return this;
-    }
-
-    /**
-     * Get the relativePath property: Relative path of the storage which stores the source.
-     *
-     * @return the relativePath value.
-     */
-    public String relativePath() {
-        return this.relativePath;
-    }
-
-    /**
-     * Set the relativePath property: Relative path of the storage which stores the source.
-     *
-     * @param relativePath the relativePath value to set.
-     * @return the UserSourceInfo object itself.
-     */
-    public UserSourceInfo withRelativePath(String relativePath) {
-        this.relativePath = relativePath;
-        return this;
-    }
-
-    /**
      * Get the version property: Version of the source.
-     *
+     * 
      * @return the version value.
      */
     public String version() {
@@ -91,7 +52,7 @@ public final class UserSourceInfo {
 
     /**
      * Set the version property: Version of the source.
-     *
+     * 
      * @param version the version value to set.
      * @return the UserSourceInfo object itself.
      */
@@ -101,32 +62,86 @@ public final class UserSourceInfo {
     }
 
     /**
-     * Get the artifactSelector property: Selector for the artifact to be used for the deployment for multi-module
-     * projects. This should be the relative path to the target module/project.
-     *
-     * @return the artifactSelector value.
-     */
-    public String artifactSelector() {
-        return this.artifactSelector;
-    }
-
-    /**
-     * Set the artifactSelector property: Selector for the artifact to be used for the deployment for multi-module
-     * projects. This should be the relative path to the target module/project.
-     *
-     * @param artifactSelector the artifactSelector value to set.
-     * @return the UserSourceInfo object itself.
-     */
-    public UserSourceInfo withArtifactSelector(String artifactSelector) {
-        this.artifactSelector = artifactSelector;
-        return this;
-    }
-
-    /**
      * Validates the instance.
-     *
+     * 
      * @throws IllegalArgumentException thrown if the instance is not valid.
      */
     public void validate() {
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public JsonWriter toJson(JsonWriter jsonWriter) throws IOException {
+        jsonWriter.writeStartObject();
+        jsonWriter.writeStringField("type", this.type);
+        jsonWriter.writeStringField("version", this.version);
+        return jsonWriter.writeEndObject();
+    }
+
+    /**
+     * Reads an instance of UserSourceInfo from the JsonReader.
+     * 
+     * @param jsonReader The JsonReader being read.
+     * @return An instance of UserSourceInfo if the JsonReader was pointing to an instance of it, or null if it was
+     * pointing to JSON null.
+     * @throws IOException If an error occurs while reading the UserSourceInfo.
+     */
+    public static UserSourceInfo fromJson(JsonReader jsonReader) throws IOException {
+        return jsonReader.readObject(reader -> {
+            String discriminatorValue = null;
+            try (JsonReader readerToUse = reader.bufferObject()) {
+                readerToUse.nextToken(); // Prepare for reading
+                while (readerToUse.nextToken() != JsonToken.END_OBJECT) {
+                    String fieldName = readerToUse.getFieldName();
+                    readerToUse.nextToken();
+                    if ("type".equals(fieldName)) {
+                        discriminatorValue = readerToUse.getString();
+                        break;
+                    } else {
+                        readerToUse.skipChildren();
+                    }
+                }
+                // Use the discriminator value to determine which subtype should be deserialized.
+                if ("UploadedUserSourceInfo".equals(discriminatorValue)) {
+                    return UploadedUserSourceInfo.fromJsonKnownDiscriminator(readerToUse.reset());
+                } else if ("Jar".equals(discriminatorValue)) {
+                    return JarUploadedUserSourceInfo.fromJson(readerToUse.reset());
+                } else if ("War".equals(discriminatorValue)) {
+                    return WarUploadedUserSourceInfo.fromJson(readerToUse.reset());
+                } else if ("Source".equals(discriminatorValue)) {
+                    return SourceUploadedUserSourceInfo.fromJson(readerToUse.reset());
+                } else if ("NetCoreZip".equals(discriminatorValue)) {
+                    return NetCoreZipUploadedUserSourceInfo.fromJson(readerToUse.reset());
+                } else if ("BuildResult".equals(discriminatorValue)) {
+                    return BuildResultUserSourceInfo.fromJson(readerToUse.reset());
+                } else if ("Container".equals(discriminatorValue)) {
+                    return CustomContainerUserSourceInfo.fromJson(readerToUse.reset());
+                } else {
+                    return fromJsonKnownDiscriminator(readerToUse.reset());
+                }
+            }
+        });
+    }
+
+    static UserSourceInfo fromJsonKnownDiscriminator(JsonReader jsonReader) throws IOException {
+        return jsonReader.readObject(reader -> {
+            UserSourceInfo deserializedUserSourceInfo = new UserSourceInfo();
+            while (reader.nextToken() != JsonToken.END_OBJECT) {
+                String fieldName = reader.getFieldName();
+                reader.nextToken();
+
+                if ("type".equals(fieldName)) {
+                    deserializedUserSourceInfo.type = reader.getString();
+                } else if ("version".equals(fieldName)) {
+                    deserializedUserSourceInfo.version = reader.getString();
+                } else {
+                    reader.skipChildren();
+                }
+            }
+
+            return deserializedUserSourceInfo;
+        });
     }
 }

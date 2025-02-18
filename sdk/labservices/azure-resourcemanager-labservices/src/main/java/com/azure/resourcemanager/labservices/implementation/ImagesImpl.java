@@ -13,31 +13,42 @@ import com.azure.resourcemanager.labservices.fluent.ImagesClient;
 import com.azure.resourcemanager.labservices.fluent.models.ImageInner;
 import com.azure.resourcemanager.labservices.models.Image;
 import com.azure.resourcemanager.labservices.models.Images;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 public final class ImagesImpl implements Images {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(ImagesImpl.class);
+    private static final ClientLogger LOGGER = new ClientLogger(ImagesImpl.class);
 
     private final ImagesClient innerClient;
 
     private final com.azure.resourcemanager.labservices.LabServicesManager serviceManager;
 
-    public ImagesImpl(
-        ImagesClient innerClient, com.azure.resourcemanager.labservices.LabServicesManager serviceManager) {
+    public ImagesImpl(ImagesClient innerClient,
+        com.azure.resourcemanager.labservices.LabServicesManager serviceManager) {
         this.innerClient = innerClient;
         this.serviceManager = serviceManager;
     }
 
     public PagedIterable<Image> listByLabPlan(String resourceGroupName, String labPlanName) {
         PagedIterable<ImageInner> inner = this.serviceClient().listByLabPlan(resourceGroupName, labPlanName);
-        return Utils.mapPage(inner, inner1 -> new ImageImpl(inner1, this.manager()));
+        return ResourceManagerUtils.mapPage(inner, inner1 -> new ImageImpl(inner1, this.manager()));
     }
 
-    public PagedIterable<Image> listByLabPlan(
-        String resourceGroupName, String labPlanName, String filter, Context context) {
-        PagedIterable<ImageInner> inner =
-            this.serviceClient().listByLabPlan(resourceGroupName, labPlanName, filter, context);
-        return Utils.mapPage(inner, inner1 -> new ImageImpl(inner1, this.manager()));
+    public PagedIterable<Image> listByLabPlan(String resourceGroupName, String labPlanName, String filter,
+        Context context) {
+        PagedIterable<ImageInner> inner
+            = this.serviceClient().listByLabPlan(resourceGroupName, labPlanName, filter, context);
+        return ResourceManagerUtils.mapPage(inner, inner1 -> new ImageImpl(inner1, this.manager()));
+    }
+
+    public Response<Image> getWithResponse(String resourceGroupName, String labPlanName, String imageName,
+        Context context) {
+        Response<ImageInner> inner
+            = this.serviceClient().getWithResponse(resourceGroupName, labPlanName, imageName, context);
+        if (inner != null) {
+            return new SimpleResponse<>(inner.getRequest(), inner.getStatusCode(), inner.getHeaders(),
+                new ImageImpl(inner.getValue(), this.manager()));
+        } else {
+            return null;
+        }
     }
 
     public Image get(String resourceGroupName, String labPlanName, String imageName) {
@@ -49,69 +60,40 @@ public final class ImagesImpl implements Images {
         }
     }
 
-    public Response<Image> getWithResponse(
-        String resourceGroupName, String labPlanName, String imageName, Context context) {
-        Response<ImageInner> inner =
-            this.serviceClient().getWithResponse(resourceGroupName, labPlanName, imageName, context);
-        if (inner != null) {
-            return new SimpleResponse<>(
-                inner.getRequest(),
-                inner.getStatusCode(),
-                inner.getHeaders(),
-                new ImageImpl(inner.getValue(), this.manager()));
-        } else {
-            return null;
-        }
-    }
-
     public Image getById(String id) {
-        String resourceGroupName = Utils.getValueFromIdByName(id, "resourceGroups");
+        String resourceGroupName = ResourceManagerUtils.getValueFromIdByName(id, "resourceGroups");
         if (resourceGroupName == null) {
-            throw logger
-                .logExceptionAsError(
-                    new IllegalArgumentException(
-                        String
-                            .format("The resource ID '%s' is not valid. Missing path segment 'resourceGroups'.", id)));
+            throw LOGGER.logExceptionAsError(new IllegalArgumentException(
+                String.format("The resource ID '%s' is not valid. Missing path segment 'resourceGroups'.", id)));
         }
-        String labPlanName = Utils.getValueFromIdByName(id, "labPlans");
+        String labPlanName = ResourceManagerUtils.getValueFromIdByName(id, "labPlans");
         if (labPlanName == null) {
-            throw logger
-                .logExceptionAsError(
-                    new IllegalArgumentException(
-                        String.format("The resource ID '%s' is not valid. Missing path segment 'labPlans'.", id)));
+            throw LOGGER.logExceptionAsError(new IllegalArgumentException(
+                String.format("The resource ID '%s' is not valid. Missing path segment 'labPlans'.", id)));
         }
-        String imageName = Utils.getValueFromIdByName(id, "images");
+        String imageName = ResourceManagerUtils.getValueFromIdByName(id, "images");
         if (imageName == null) {
-            throw logger
-                .logExceptionAsError(
-                    new IllegalArgumentException(
-                        String.format("The resource ID '%s' is not valid. Missing path segment 'images'.", id)));
+            throw LOGGER.logExceptionAsError(new IllegalArgumentException(
+                String.format("The resource ID '%s' is not valid. Missing path segment 'images'.", id)));
         }
         return this.getWithResponse(resourceGroupName, labPlanName, imageName, Context.NONE).getValue();
     }
 
     public Response<Image> getByIdWithResponse(String id, Context context) {
-        String resourceGroupName = Utils.getValueFromIdByName(id, "resourceGroups");
+        String resourceGroupName = ResourceManagerUtils.getValueFromIdByName(id, "resourceGroups");
         if (resourceGroupName == null) {
-            throw logger
-                .logExceptionAsError(
-                    new IllegalArgumentException(
-                        String
-                            .format("The resource ID '%s' is not valid. Missing path segment 'resourceGroups'.", id)));
+            throw LOGGER.logExceptionAsError(new IllegalArgumentException(
+                String.format("The resource ID '%s' is not valid. Missing path segment 'resourceGroups'.", id)));
         }
-        String labPlanName = Utils.getValueFromIdByName(id, "labPlans");
+        String labPlanName = ResourceManagerUtils.getValueFromIdByName(id, "labPlans");
         if (labPlanName == null) {
-            throw logger
-                .logExceptionAsError(
-                    new IllegalArgumentException(
-                        String.format("The resource ID '%s' is not valid. Missing path segment 'labPlans'.", id)));
+            throw LOGGER.logExceptionAsError(new IllegalArgumentException(
+                String.format("The resource ID '%s' is not valid. Missing path segment 'labPlans'.", id)));
         }
-        String imageName = Utils.getValueFromIdByName(id, "images");
+        String imageName = ResourceManagerUtils.getValueFromIdByName(id, "images");
         if (imageName == null) {
-            throw logger
-                .logExceptionAsError(
-                    new IllegalArgumentException(
-                        String.format("The resource ID '%s' is not valid. Missing path segment 'images'.", id)));
+            throw LOGGER.logExceptionAsError(new IllegalArgumentException(
+                String.format("The resource ID '%s' is not valid. Missing path segment 'images'.", id)));
         }
         return this.getWithResponse(resourceGroupName, labPlanName, imageName, context);
     }

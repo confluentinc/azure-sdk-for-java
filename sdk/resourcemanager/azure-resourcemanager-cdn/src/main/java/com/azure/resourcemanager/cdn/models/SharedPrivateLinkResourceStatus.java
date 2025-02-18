@@ -4,27 +4,38 @@
 
 package com.azure.resourcemanager.cdn.models;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonValue;
-
-/** Defines values for SharedPrivateLinkResourceStatus. */
+/**
+ * Status of the shared private link resource. Can be Pending, Approved, Rejected, Disconnected, or Timeout.
+ */
 public enum SharedPrivateLinkResourceStatus {
-    /** Enum value Pending. */
+    /**
+     * Enum value Pending.
+     */
     PENDING("Pending"),
 
-    /** Enum value Approved. */
+    /**
+     * Enum value Approved.
+     */
     APPROVED("Approved"),
 
-    /** Enum value Rejected. */
+    /**
+     * Enum value Rejected.
+     */
     REJECTED("Rejected"),
 
-    /** Enum value Disconnected. */
+    /**
+     * Enum value Disconnected.
+     */
     DISCONNECTED("Disconnected"),
 
-    /** Enum value Timeout. */
+    /**
+     * Enum value Timeout.
+     */
     TIMEOUT("Timeout");
 
-    /** The actual serialized value for a SharedPrivateLinkResourceStatus instance. */
+    /**
+     * The actual serialized value for a SharedPrivateLinkResourceStatus instance.
+     */
     private final String value;
 
     SharedPrivateLinkResourceStatus(String value) {
@@ -33,12 +44,14 @@ public enum SharedPrivateLinkResourceStatus {
 
     /**
      * Parses a serialized value to a SharedPrivateLinkResourceStatus instance.
-     *
+     * 
      * @param value the serialized value to parse.
      * @return the parsed SharedPrivateLinkResourceStatus object, or null if unable to parse.
      */
-    @JsonCreator
     public static SharedPrivateLinkResourceStatus fromString(String value) {
+        if (value == null) {
+            return null;
+        }
         SharedPrivateLinkResourceStatus[] items = SharedPrivateLinkResourceStatus.values();
         for (SharedPrivateLinkResourceStatus item : items) {
             if (item.toString().equalsIgnoreCase(value)) {
@@ -48,7 +61,9 @@ public enum SharedPrivateLinkResourceStatus {
         return null;
     }
 
-    @JsonValue
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String toString() {
         return this.value;

@@ -4,33 +4,39 @@
 
 package com.azure.resourcemanager.labservices.models;
 
-import com.azure.core.annotation.Immutable;
-import com.azure.core.util.logging.ClientLogger;
+import com.azure.core.annotation.Fluent;
+import com.azure.json.JsonReader;
+import com.azure.json.JsonSerializable;
+import com.azure.json.JsonToken;
+import com.azure.json.JsonWriter;
 import com.azure.resourcemanager.labservices.fluent.models.UsageInner;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import java.io.IOException;
 import java.util.List;
 
-/** List of Core Usages. */
-@Immutable
-public final class ListUsagesResult {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(ListUsagesResult.class);
-
+/**
+ * List of Core Usages.
+ */
+@Fluent
+public final class ListUsagesResult implements JsonSerializable<ListUsagesResult> {
     /*
      * The array page of Usages.
      */
-    @JsonProperty(value = "value", access = JsonProperty.Access.WRITE_ONLY)
     private List<UsageInner> value;
 
     /*
      * The link to get the next page of Usage result.
      */
-    @JsonProperty(value = "nextLink", access = JsonProperty.Access.WRITE_ONLY)
     private String nextLink;
 
     /**
+     * Creates an instance of ListUsagesResult class.
+     */
+    public ListUsagesResult() {
+    }
+
+    /**
      * Get the value property: The array page of Usages.
-     *
+     * 
      * @return the value value.
      */
     public List<UsageInner> value() {
@@ -38,8 +44,19 @@ public final class ListUsagesResult {
     }
 
     /**
+     * Set the value property: The array page of Usages.
+     * 
+     * @param value the value value to set.
+     * @return the ListUsagesResult object itself.
+     */
+    public ListUsagesResult withValue(List<UsageInner> value) {
+        this.value = value;
+        return this;
+    }
+
+    /**
      * Get the nextLink property: The link to get the next page of Usage result.
-     *
+     * 
      * @return the nextLink value.
      */
     public String nextLink() {
@@ -48,12 +65,51 @@ public final class ListUsagesResult {
 
     /**
      * Validates the instance.
-     *
+     * 
      * @throws IllegalArgumentException thrown if the instance is not valid.
      */
     public void validate() {
         if (value() != null) {
             value().forEach(e -> e.validate());
         }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public JsonWriter toJson(JsonWriter jsonWriter) throws IOException {
+        jsonWriter.writeStartObject();
+        jsonWriter.writeArrayField("value", this.value, (writer, element) -> writer.writeJson(element));
+        return jsonWriter.writeEndObject();
+    }
+
+    /**
+     * Reads an instance of ListUsagesResult from the JsonReader.
+     * 
+     * @param jsonReader The JsonReader being read.
+     * @return An instance of ListUsagesResult if the JsonReader was pointing to an instance of it, or null if it was
+     * pointing to JSON null.
+     * @throws IOException If an error occurs while reading the ListUsagesResult.
+     */
+    public static ListUsagesResult fromJson(JsonReader jsonReader) throws IOException {
+        return jsonReader.readObject(reader -> {
+            ListUsagesResult deserializedListUsagesResult = new ListUsagesResult();
+            while (reader.nextToken() != JsonToken.END_OBJECT) {
+                String fieldName = reader.getFieldName();
+                reader.nextToken();
+
+                if ("value".equals(fieldName)) {
+                    List<UsageInner> value = reader.readArray(reader1 -> UsageInner.fromJson(reader1));
+                    deserializedListUsagesResult.value = value;
+                } else if ("nextLink".equals(fieldName)) {
+                    deserializedListUsagesResult.nextLink = reader.getString();
+                } else {
+                    reader.skipChildren();
+                }
+            }
+
+            return deserializedListUsagesResult;
+        });
     }
 }

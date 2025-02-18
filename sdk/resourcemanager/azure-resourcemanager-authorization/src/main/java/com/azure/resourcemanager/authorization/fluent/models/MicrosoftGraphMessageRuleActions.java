@@ -5,97 +5,89 @@
 package com.azure.resourcemanager.authorization.fluent.models;
 
 import com.azure.core.annotation.Fluent;
-import com.azure.core.util.logging.ClientLogger;
-import com.fasterxml.jackson.annotation.JsonAnyGetter;
-import com.fasterxml.jackson.annotation.JsonAnySetter;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import java.util.HashMap;
+import com.azure.json.JsonReader;
+import com.azure.json.JsonSerializable;
+import com.azure.json.JsonToken;
+import com.azure.json.JsonWriter;
+import java.io.IOException;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-/** messageRuleActions. */
+/**
+ * messageRuleActions.
+ */
 @Fluent
-public final class MicrosoftGraphMessageRuleActions {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(MicrosoftGraphMessageRuleActions.class);
-
+public final class MicrosoftGraphMessageRuleActions implements JsonSerializable<MicrosoftGraphMessageRuleActions> {
     /*
      * A list of categories to be assigned to a message.
      */
-    @JsonProperty(value = "assignCategories")
     private List<String> assignCategories;
 
     /*
      * The ID of a folder that a message is to be copied to.
      */
-    @JsonProperty(value = "copyToFolder")
     private String copyToFolder;
 
     /*
      * Indicates whether a message should be moved to the Deleted Items folder.
      */
-    @JsonProperty(value = "delete")
     private Boolean delete;
 
     /*
-     * The email addresses of the recipients to which a message should be
-     * forwarded as an attachment.
+     * The email addresses of the recipients to which a message should be forwarded as an attachment.
      */
-    @JsonProperty(value = "forwardAsAttachmentTo")
     private List<MicrosoftGraphRecipient> forwardAsAttachmentTo;
 
     /*
-     * The email addresses of the recipients to which a message should be
-     * forwarded.
+     * The email addresses of the recipients to which a message should be forwarded.
      */
-    @JsonProperty(value = "forwardTo")
     private List<MicrosoftGraphRecipient> forwardTo;
 
     /*
      * Indicates whether a message should be marked as read.
      */
-    @JsonProperty(value = "markAsRead")
     private Boolean markAsRead;
 
     /*
-     * The markImportance property.
+     * importance
      */
-    @JsonProperty(value = "markImportance")
     private MicrosoftGraphImportance markImportance;
 
     /*
      * The ID of the folder that a message will be moved to.
      */
-    @JsonProperty(value = "moveToFolder")
     private String moveToFolder;
 
     /*
-     * Indicates whether a message should be permanently deleted and not saved
-     * to the Deleted Items folder.
+     * Indicates whether a message should be permanently deleted and not saved to the Deleted Items folder.
      */
-    @JsonProperty(value = "permanentDelete")
     private Boolean permanentDelete;
 
     /*
      * The email addresses to which a message should be redirected.
      */
-    @JsonProperty(value = "redirectTo")
     private List<MicrosoftGraphRecipient> redirectTo;
 
     /*
      * Indicates whether subsequent rules should be evaluated.
      */
-    @JsonProperty(value = "stopProcessingRules")
     private Boolean stopProcessingRules;
 
     /*
      * messageRuleActions
      */
-    @JsonIgnore private Map<String, Object> additionalProperties;
+    private Map<String, Object> additionalProperties;
+
+    /**
+     * Creates an instance of MicrosoftGraphMessageRuleActions class.
+     */
+    public MicrosoftGraphMessageRuleActions() {
+    }
 
     /**
      * Get the assignCategories property: A list of categories to be assigned to a message.
-     *
+     * 
      * @return the assignCategories value.
      */
     public List<String> assignCategories() {
@@ -104,7 +96,7 @@ public final class MicrosoftGraphMessageRuleActions {
 
     /**
      * Set the assignCategories property: A list of categories to be assigned to a message.
-     *
+     * 
      * @param assignCategories the assignCategories value to set.
      * @return the MicrosoftGraphMessageRuleActions object itself.
      */
@@ -115,7 +107,7 @@ public final class MicrosoftGraphMessageRuleActions {
 
     /**
      * Get the copyToFolder property: The ID of a folder that a message is to be copied to.
-     *
+     * 
      * @return the copyToFolder value.
      */
     public String copyToFolder() {
@@ -124,7 +116,7 @@ public final class MicrosoftGraphMessageRuleActions {
 
     /**
      * Set the copyToFolder property: The ID of a folder that a message is to be copied to.
-     *
+     * 
      * @param copyToFolder the copyToFolder value to set.
      * @return the MicrosoftGraphMessageRuleActions object itself.
      */
@@ -135,7 +127,7 @@ public final class MicrosoftGraphMessageRuleActions {
 
     /**
      * Get the delete property: Indicates whether a message should be moved to the Deleted Items folder.
-     *
+     * 
      * @return the delete value.
      */
     public Boolean delete() {
@@ -144,7 +136,7 @@ public final class MicrosoftGraphMessageRuleActions {
 
     /**
      * Set the delete property: Indicates whether a message should be moved to the Deleted Items folder.
-     *
+     * 
      * @param delete the delete value to set.
      * @return the MicrosoftGraphMessageRuleActions object itself.
      */
@@ -156,7 +148,7 @@ public final class MicrosoftGraphMessageRuleActions {
     /**
      * Get the forwardAsAttachmentTo property: The email addresses of the recipients to which a message should be
      * forwarded as an attachment.
-     *
+     * 
      * @return the forwardAsAttachmentTo value.
      */
     public List<MicrosoftGraphRecipient> forwardAsAttachmentTo() {
@@ -166,19 +158,19 @@ public final class MicrosoftGraphMessageRuleActions {
     /**
      * Set the forwardAsAttachmentTo property: The email addresses of the recipients to which a message should be
      * forwarded as an attachment.
-     *
+     * 
      * @param forwardAsAttachmentTo the forwardAsAttachmentTo value to set.
      * @return the MicrosoftGraphMessageRuleActions object itself.
      */
-    public MicrosoftGraphMessageRuleActions withForwardAsAttachmentTo(
-        List<MicrosoftGraphRecipient> forwardAsAttachmentTo) {
+    public MicrosoftGraphMessageRuleActions
+        withForwardAsAttachmentTo(List<MicrosoftGraphRecipient> forwardAsAttachmentTo) {
         this.forwardAsAttachmentTo = forwardAsAttachmentTo;
         return this;
     }
 
     /**
      * Get the forwardTo property: The email addresses of the recipients to which a message should be forwarded.
-     *
+     * 
      * @return the forwardTo value.
      */
     public List<MicrosoftGraphRecipient> forwardTo() {
@@ -187,7 +179,7 @@ public final class MicrosoftGraphMessageRuleActions {
 
     /**
      * Set the forwardTo property: The email addresses of the recipients to which a message should be forwarded.
-     *
+     * 
      * @param forwardTo the forwardTo value to set.
      * @return the MicrosoftGraphMessageRuleActions object itself.
      */
@@ -198,7 +190,7 @@ public final class MicrosoftGraphMessageRuleActions {
 
     /**
      * Get the markAsRead property: Indicates whether a message should be marked as read.
-     *
+     * 
      * @return the markAsRead value.
      */
     public Boolean markAsRead() {
@@ -207,7 +199,7 @@ public final class MicrosoftGraphMessageRuleActions {
 
     /**
      * Set the markAsRead property: Indicates whether a message should be marked as read.
-     *
+     * 
      * @param markAsRead the markAsRead value to set.
      * @return the MicrosoftGraphMessageRuleActions object itself.
      */
@@ -217,8 +209,8 @@ public final class MicrosoftGraphMessageRuleActions {
     }
 
     /**
-     * Get the markImportance property: The markImportance property.
-     *
+     * Get the markImportance property: importance.
+     * 
      * @return the markImportance value.
      */
     public MicrosoftGraphImportance markImportance() {
@@ -226,8 +218,8 @@ public final class MicrosoftGraphMessageRuleActions {
     }
 
     /**
-     * Set the markImportance property: The markImportance property.
-     *
+     * Set the markImportance property: importance.
+     * 
      * @param markImportance the markImportance value to set.
      * @return the MicrosoftGraphMessageRuleActions object itself.
      */
@@ -238,7 +230,7 @@ public final class MicrosoftGraphMessageRuleActions {
 
     /**
      * Get the moveToFolder property: The ID of the folder that a message will be moved to.
-     *
+     * 
      * @return the moveToFolder value.
      */
     public String moveToFolder() {
@@ -247,7 +239,7 @@ public final class MicrosoftGraphMessageRuleActions {
 
     /**
      * Set the moveToFolder property: The ID of the folder that a message will be moved to.
-     *
+     * 
      * @param moveToFolder the moveToFolder value to set.
      * @return the MicrosoftGraphMessageRuleActions object itself.
      */
@@ -259,7 +251,7 @@ public final class MicrosoftGraphMessageRuleActions {
     /**
      * Get the permanentDelete property: Indicates whether a message should be permanently deleted and not saved to the
      * Deleted Items folder.
-     *
+     * 
      * @return the permanentDelete value.
      */
     public Boolean permanentDelete() {
@@ -269,7 +261,7 @@ public final class MicrosoftGraphMessageRuleActions {
     /**
      * Set the permanentDelete property: Indicates whether a message should be permanently deleted and not saved to the
      * Deleted Items folder.
-     *
+     * 
      * @param permanentDelete the permanentDelete value to set.
      * @return the MicrosoftGraphMessageRuleActions object itself.
      */
@@ -280,7 +272,7 @@ public final class MicrosoftGraphMessageRuleActions {
 
     /**
      * Get the redirectTo property: The email addresses to which a message should be redirected.
-     *
+     * 
      * @return the redirectTo value.
      */
     public List<MicrosoftGraphRecipient> redirectTo() {
@@ -289,7 +281,7 @@ public final class MicrosoftGraphMessageRuleActions {
 
     /**
      * Set the redirectTo property: The email addresses to which a message should be redirected.
-     *
+     * 
      * @param redirectTo the redirectTo value to set.
      * @return the MicrosoftGraphMessageRuleActions object itself.
      */
@@ -300,7 +292,7 @@ public final class MicrosoftGraphMessageRuleActions {
 
     /**
      * Get the stopProcessingRules property: Indicates whether subsequent rules should be evaluated.
-     *
+     * 
      * @return the stopProcessingRules value.
      */
     public Boolean stopProcessingRules() {
@@ -309,7 +301,7 @@ public final class MicrosoftGraphMessageRuleActions {
 
     /**
      * Set the stopProcessingRules property: Indicates whether subsequent rules should be evaluated.
-     *
+     * 
      * @param stopProcessingRules the stopProcessingRules value to set.
      * @return the MicrosoftGraphMessageRuleActions object itself.
      */
@@ -320,17 +312,16 @@ public final class MicrosoftGraphMessageRuleActions {
 
     /**
      * Get the additionalProperties property: messageRuleActions.
-     *
+     * 
      * @return the additionalProperties value.
      */
-    @JsonAnyGetter
     public Map<String, Object> additionalProperties() {
         return this.additionalProperties;
     }
 
     /**
      * Set the additionalProperties property: messageRuleActions.
-     *
+     * 
      * @param additionalProperties the additionalProperties value to set.
      * @return the MicrosoftGraphMessageRuleActions object itself.
      */
@@ -339,17 +330,9 @@ public final class MicrosoftGraphMessageRuleActions {
         return this;
     }
 
-    @JsonAnySetter
-    void withAdditionalProperties(String key, Object value) {
-        if (additionalProperties == null) {
-            additionalProperties = new HashMap<>();
-        }
-        additionalProperties.put(key, value);
-    }
-
     /**
      * Validates the instance.
-     *
+     * 
      * @throws IllegalArgumentException thrown if the instance is not valid.
      */
     public void validate() {
@@ -362,5 +345,97 @@ public final class MicrosoftGraphMessageRuleActions {
         if (redirectTo() != null) {
             redirectTo().forEach(e -> e.validate());
         }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public JsonWriter toJson(JsonWriter jsonWriter) throws IOException {
+        jsonWriter.writeStartObject();
+        jsonWriter.writeArrayField("assignCategories", this.assignCategories,
+            (writer, element) -> writer.writeString(element));
+        jsonWriter.writeStringField("copyToFolder", this.copyToFolder);
+        jsonWriter.writeBooleanField("delete", this.delete);
+        jsonWriter.writeArrayField("forwardAsAttachmentTo", this.forwardAsAttachmentTo,
+            (writer, element) -> writer.writeJson(element));
+        jsonWriter.writeArrayField("forwardTo", this.forwardTo, (writer, element) -> writer.writeJson(element));
+        jsonWriter.writeBooleanField("markAsRead", this.markAsRead);
+        jsonWriter.writeStringField("markImportance",
+            this.markImportance == null ? null : this.markImportance.toString());
+        jsonWriter.writeStringField("moveToFolder", this.moveToFolder);
+        jsonWriter.writeBooleanField("permanentDelete", this.permanentDelete);
+        jsonWriter.writeArrayField("redirectTo", this.redirectTo, (writer, element) -> writer.writeJson(element));
+        jsonWriter.writeBooleanField("stopProcessingRules", this.stopProcessingRules);
+        if (additionalProperties != null) {
+            for (Map.Entry<String, Object> additionalProperty : additionalProperties.entrySet()) {
+                jsonWriter.writeUntypedField(additionalProperty.getKey(), additionalProperty.getValue());
+            }
+        }
+        return jsonWriter.writeEndObject();
+    }
+
+    /**
+     * Reads an instance of MicrosoftGraphMessageRuleActions from the JsonReader.
+     * 
+     * @param jsonReader The JsonReader being read.
+     * @return An instance of MicrosoftGraphMessageRuleActions if the JsonReader was pointing to an instance of it, or
+     * null if it was pointing to JSON null.
+     * @throws IOException If an error occurs while reading the MicrosoftGraphMessageRuleActions.
+     */
+    public static MicrosoftGraphMessageRuleActions fromJson(JsonReader jsonReader) throws IOException {
+        return jsonReader.readObject(reader -> {
+            MicrosoftGraphMessageRuleActions deserializedMicrosoftGraphMessageRuleActions
+                = new MicrosoftGraphMessageRuleActions();
+            Map<String, Object> additionalProperties = null;
+            while (reader.nextToken() != JsonToken.END_OBJECT) {
+                String fieldName = reader.getFieldName();
+                reader.nextToken();
+
+                if ("assignCategories".equals(fieldName)) {
+                    List<String> assignCategories = reader.readArray(reader1 -> reader1.getString());
+                    deserializedMicrosoftGraphMessageRuleActions.assignCategories = assignCategories;
+                } else if ("copyToFolder".equals(fieldName)) {
+                    deserializedMicrosoftGraphMessageRuleActions.copyToFolder = reader.getString();
+                } else if ("delete".equals(fieldName)) {
+                    deserializedMicrosoftGraphMessageRuleActions.delete = reader.getNullable(JsonReader::getBoolean);
+                } else if ("forwardAsAttachmentTo".equals(fieldName)) {
+                    List<MicrosoftGraphRecipient> forwardAsAttachmentTo
+                        = reader.readArray(reader1 -> MicrosoftGraphRecipient.fromJson(reader1));
+                    deserializedMicrosoftGraphMessageRuleActions.forwardAsAttachmentTo = forwardAsAttachmentTo;
+                } else if ("forwardTo".equals(fieldName)) {
+                    List<MicrosoftGraphRecipient> forwardTo
+                        = reader.readArray(reader1 -> MicrosoftGraphRecipient.fromJson(reader1));
+                    deserializedMicrosoftGraphMessageRuleActions.forwardTo = forwardTo;
+                } else if ("markAsRead".equals(fieldName)) {
+                    deserializedMicrosoftGraphMessageRuleActions.markAsRead
+                        = reader.getNullable(JsonReader::getBoolean);
+                } else if ("markImportance".equals(fieldName)) {
+                    deserializedMicrosoftGraphMessageRuleActions.markImportance
+                        = MicrosoftGraphImportance.fromString(reader.getString());
+                } else if ("moveToFolder".equals(fieldName)) {
+                    deserializedMicrosoftGraphMessageRuleActions.moveToFolder = reader.getString();
+                } else if ("permanentDelete".equals(fieldName)) {
+                    deserializedMicrosoftGraphMessageRuleActions.permanentDelete
+                        = reader.getNullable(JsonReader::getBoolean);
+                } else if ("redirectTo".equals(fieldName)) {
+                    List<MicrosoftGraphRecipient> redirectTo
+                        = reader.readArray(reader1 -> MicrosoftGraphRecipient.fromJson(reader1));
+                    deserializedMicrosoftGraphMessageRuleActions.redirectTo = redirectTo;
+                } else if ("stopProcessingRules".equals(fieldName)) {
+                    deserializedMicrosoftGraphMessageRuleActions.stopProcessingRules
+                        = reader.getNullable(JsonReader::getBoolean);
+                } else {
+                    if (additionalProperties == null) {
+                        additionalProperties = new LinkedHashMap<>();
+                    }
+
+                    additionalProperties.put(fieldName, reader.readUntyped());
+                }
+            }
+            deserializedMicrosoftGraphMessageRuleActions.additionalProperties = additionalProperties;
+
+            return deserializedMicrosoftGraphMessageRuleActions;
+        });
     }
 }

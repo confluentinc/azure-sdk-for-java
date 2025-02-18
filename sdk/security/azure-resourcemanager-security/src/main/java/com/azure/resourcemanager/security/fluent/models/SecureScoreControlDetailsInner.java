@@ -5,177 +5,232 @@
 package com.azure.resourcemanager.security.fluent.models;
 
 import com.azure.core.annotation.Fluent;
-import com.azure.core.annotation.JsonFlatten;
 import com.azure.core.management.ProxyResource;
-import com.azure.core.util.logging.ClientLogger;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.azure.json.JsonReader;
+import com.azure.json.JsonToken;
+import com.azure.json.JsonWriter;
+import java.io.IOException;
 
-/** Details of the security control, its score, and the health status of the relevant resources. */
-@JsonFlatten
+/**
+ * Details of the security control, its score, and the health status of the relevant resources.
+ */
 @Fluent
-public class SecureScoreControlDetailsInner extends ProxyResource {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(SecureScoreControlDetailsInner.class);
+public final class SecureScoreControlDetailsInner extends ProxyResource {
+    /*
+     * Calculation result data in control level
+     */
+    private SecureScoreControlScoreDetailsInner innerProperties;
 
     /*
-     * User friendly display name of the control
+     * The type of the resource.
      */
-    @JsonProperty(value = "properties.displayName", access = JsonProperty.Access.WRITE_ONLY)
-    private String displayName;
+    private String type;
 
     /*
-     * Number of healthy resources in the control
+     * The name of the resource.
      */
-    @JsonProperty(value = "properties.healthyResourceCount", access = JsonProperty.Access.WRITE_ONLY)
-    private Integer healthyResourceCount;
+    private String name;
 
     /*
-     * Number of unhealthy resources in the control
+     * Fully qualified resource Id for the resource.
      */
-    @JsonProperty(value = "properties.unhealthyResourceCount", access = JsonProperty.Access.WRITE_ONLY)
-    private Integer unhealthyResourceCount;
+    private String id;
 
-    /*
-     * Number of not applicable resources in the control
+    /**
+     * Creates an instance of SecureScoreControlDetailsInner class.
      */
-    @JsonProperty(value = "properties.notApplicableResourceCount", access = JsonProperty.Access.WRITE_ONLY)
-    private Integer notApplicableResourceCount;
+    public SecureScoreControlDetailsInner() {
+    }
 
-    /*
-     * The relative weight for this specific control in each of your
-     * subscriptions. Used when calculating an aggregated score for this
-     * control across all of your subscriptions.
+    /**
+     * Get the innerProperties property: Calculation result data in control level.
+     * 
+     * @return the innerProperties value.
      */
-    @JsonProperty(value = "properties.weight", access = JsonProperty.Access.WRITE_ONLY)
-    private Long weight;
+    private SecureScoreControlScoreDetailsInner innerProperties() {
+        return this.innerProperties;
+    }
 
-    /*
-     * Information about the security control.
+    /**
+     * Get the type property: The type of the resource.
+     * 
+     * @return the type value.
      */
-    @JsonProperty(value = "properties.definition")
-    private SecureScoreControlDefinitionItemInner definition;
+    @Override
+    public String type() {
+        return this.type;
+    }
 
-    /*
-     * Maximum score available
+    /**
+     * Get the name property: The name of the resource.
+     * 
+     * @return the name value.
      */
-    @JsonProperty(value = "properties.score.max", access = JsonProperty.Access.WRITE_ONLY)
-    private Integer max;
+    @Override
+    public String name() {
+        return this.name;
+    }
 
-    /*
-     * Current score
+    /**
+     * Get the id property: Fully qualified resource Id for the resource.
+     * 
+     * @return the id value.
      */
-    @JsonProperty(value = "properties.score.current", access = JsonProperty.Access.WRITE_ONLY)
-    private Double current;
-
-    /*
-     * Ratio of the current score divided by the maximum. Rounded to 4 digits
-     * after the decimal point
-     */
-    @JsonProperty(value = "properties.score.percentage", access = JsonProperty.Access.WRITE_ONLY)
-    private Double percentage;
+    @Override
+    public String id() {
+        return this.id;
+    }
 
     /**
      * Get the displayName property: User friendly display name of the control.
-     *
+     * 
      * @return the displayName value.
      */
     public String displayName() {
-        return this.displayName;
+        return this.innerProperties() == null ? null : this.innerProperties().displayName();
     }
 
     /**
      * Get the healthyResourceCount property: Number of healthy resources in the control.
-     *
+     * 
      * @return the healthyResourceCount value.
      */
     public Integer healthyResourceCount() {
-        return this.healthyResourceCount;
+        return this.innerProperties() == null ? null : this.innerProperties().healthyResourceCount();
     }
 
     /**
      * Get the unhealthyResourceCount property: Number of unhealthy resources in the control.
-     *
+     * 
      * @return the unhealthyResourceCount value.
      */
     public Integer unhealthyResourceCount() {
-        return this.unhealthyResourceCount;
+        return this.innerProperties() == null ? null : this.innerProperties().unhealthyResourceCount();
     }
 
     /**
      * Get the notApplicableResourceCount property: Number of not applicable resources in the control.
-     *
+     * 
      * @return the notApplicableResourceCount value.
      */
     public Integer notApplicableResourceCount() {
-        return this.notApplicableResourceCount;
+        return this.innerProperties() == null ? null : this.innerProperties().notApplicableResourceCount();
     }
 
     /**
      * Get the weight property: The relative weight for this specific control in each of your subscriptions. Used when
      * calculating an aggregated score for this control across all of your subscriptions.
-     *
+     * 
      * @return the weight value.
      */
     public Long weight() {
-        return this.weight;
+        return this.innerProperties() == null ? null : this.innerProperties().weight();
     }
 
     /**
      * Get the definition property: Information about the security control.
-     *
+     * 
      * @return the definition value.
      */
     public SecureScoreControlDefinitionItemInner definition() {
-        return this.definition;
+        return this.innerProperties() == null ? null : this.innerProperties().definition();
     }
 
     /**
      * Set the definition property: Information about the security control.
-     *
+     * 
      * @param definition the definition value to set.
      * @return the SecureScoreControlDetailsInner object itself.
      */
     public SecureScoreControlDetailsInner withDefinition(SecureScoreControlDefinitionItemInner definition) {
-        this.definition = definition;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new SecureScoreControlScoreDetailsInner();
+        }
+        this.innerProperties().withDefinition(definition);
         return this;
     }
 
     /**
      * Get the max property: Maximum score available.
-     *
+     * 
      * @return the max value.
      */
     public Integer max() {
-        return this.max;
+        return this.innerProperties() == null ? null : this.innerProperties().max();
     }
 
     /**
      * Get the current property: Current score.
-     *
+     * 
      * @return the current value.
      */
     public Double current() {
-        return this.current;
+        return this.innerProperties() == null ? null : this.innerProperties().current();
     }
 
     /**
      * Get the percentage property: Ratio of the current score divided by the maximum. Rounded to 4 digits after the
      * decimal point.
-     *
+     * 
      * @return the percentage value.
      */
     public Double percentage() {
-        return this.percentage;
+        return this.innerProperties() == null ? null : this.innerProperties().percentage();
     }
 
     /**
      * Validates the instance.
-     *
+     * 
      * @throws IllegalArgumentException thrown if the instance is not valid.
      */
     public void validate() {
-        if (definition() != null) {
-            definition().validate();
+        if (innerProperties() != null) {
+            innerProperties().validate();
         }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public JsonWriter toJson(JsonWriter jsonWriter) throws IOException {
+        jsonWriter.writeStartObject();
+        jsonWriter.writeJsonField("properties", this.innerProperties);
+        return jsonWriter.writeEndObject();
+    }
+
+    /**
+     * Reads an instance of SecureScoreControlDetailsInner from the JsonReader.
+     * 
+     * @param jsonReader The JsonReader being read.
+     * @return An instance of SecureScoreControlDetailsInner if the JsonReader was pointing to an instance of it, or
+     * null if it was pointing to JSON null.
+     * @throws IllegalStateException If the deserialized JSON object was missing any required properties.
+     * @throws IOException If an error occurs while reading the SecureScoreControlDetailsInner.
+     */
+    public static SecureScoreControlDetailsInner fromJson(JsonReader jsonReader) throws IOException {
+        return jsonReader.readObject(reader -> {
+            SecureScoreControlDetailsInner deserializedSecureScoreControlDetailsInner
+                = new SecureScoreControlDetailsInner();
+            while (reader.nextToken() != JsonToken.END_OBJECT) {
+                String fieldName = reader.getFieldName();
+                reader.nextToken();
+
+                if ("id".equals(fieldName)) {
+                    deserializedSecureScoreControlDetailsInner.id = reader.getString();
+                } else if ("name".equals(fieldName)) {
+                    deserializedSecureScoreControlDetailsInner.name = reader.getString();
+                } else if ("type".equals(fieldName)) {
+                    deserializedSecureScoreControlDetailsInner.type = reader.getString();
+                } else if ("properties".equals(fieldName)) {
+                    deserializedSecureScoreControlDetailsInner.innerProperties
+                        = SecureScoreControlScoreDetailsInner.fromJson(reader);
+                } else {
+                    reader.skipChildren();
+                }
+            }
+
+            return deserializedSecureScoreControlDetailsInner;
+        });
     }
 }

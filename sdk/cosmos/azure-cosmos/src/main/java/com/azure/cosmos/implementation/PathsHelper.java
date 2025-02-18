@@ -400,8 +400,8 @@ public class PathsHelper {
                 // modify.
                 if (!StringUtils.isEmpty(clientVersion)
                         && pathInfo.resourcePath.equalsIgnoreCase(Paths.MEDIA_PATH_SEGMENT)) {
-                    String attachmentId = null;
-                    byte storeIndex = 0;
+                    // String attachmentId = null;
+                    // byte storeIndex = 0;
                     // MEDIA Id parsing code  will come here , supported MediaIdHelper file missing in java sdk(Sync and Async both)
                     //Below code from .net
                     // if (!MediaIdHelper.TryParseMediaId(resourceIdOrFullName, out attachmentId, out storeIndex))
@@ -578,11 +578,15 @@ public class PathsHelper {
     }
 
     public static String getCollectionPath(String resourceFullName) {
+
         if (resourceFullName != null) {
             String trimmedResourceFullName = Utils.trimBeginningAndEndingSlashes(resourceFullName);
-            int index = indexOfNth(trimmedResourceFullName, '/', 4);
-            if (index > 0)
+            int index = indexOfNth(trimmedResourceFullName.toString(), '/', 4);
+            if (index > 0) {
                 return trimmedResourceFullName.substring(0, index);
+            } else {
+                return trimmedResourceFullName;
+            }
         }
 
         return resourceFullName;

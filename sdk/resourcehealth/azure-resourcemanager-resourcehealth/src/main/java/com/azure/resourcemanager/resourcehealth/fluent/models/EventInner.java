@@ -5,597 +5,912 @@
 package com.azure.resourcemanager.resourcehealth.fluent.models;
 
 import com.azure.core.annotation.Fluent;
-import com.azure.core.annotation.JsonFlatten;
 import com.azure.core.management.ProxyResource;
-import com.azure.core.util.logging.ClientLogger;
+import com.azure.core.management.SystemData;
+import com.azure.json.JsonReader;
+import com.azure.json.JsonToken;
+import com.azure.json.JsonWriter;
 import com.azure.resourcemanager.resourcehealth.models.EventLevelValues;
+import com.azure.resourcemanager.resourcehealth.models.EventPropertiesAdditionalInformation;
 import com.azure.resourcemanager.resourcehealth.models.EventPropertiesArticle;
 import com.azure.resourcemanager.resourcehealth.models.EventPropertiesRecommendedActions;
 import com.azure.resourcemanager.resourcehealth.models.EventSourceValues;
 import com.azure.resourcemanager.resourcehealth.models.EventStatusValues;
+import com.azure.resourcemanager.resourcehealth.models.EventSubTypeValues;
 import com.azure.resourcemanager.resourcehealth.models.EventTypeValues;
 import com.azure.resourcemanager.resourcehealth.models.Faq;
 import com.azure.resourcemanager.resourcehealth.models.Impact;
 import com.azure.resourcemanager.resourcehealth.models.LevelValues;
 import com.azure.resourcemanager.resourcehealth.models.Link;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import java.io.IOException;
 import java.time.OffsetDateTime;
 import java.util.List;
 
-/** Service health event. */
-@JsonFlatten
+/**
+ * Service health event.
+ */
 @Fluent
-public class EventInner extends ProxyResource {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(EventInner.class);
+public final class EventInner extends ProxyResource {
+    /*
+     * Properties of event.
+     */
+    private EventProperties innerProperties;
 
     /*
-     * Type of event.
+     * Azure Resource Manager metadata containing createdBy and modifiedBy information.
      */
-    @JsonProperty(value = "properties.eventType")
-    private EventTypeValues eventType;
+    private SystemData systemData;
 
     /*
-     * Source of event.
+     * The type of the resource.
      */
-    @JsonProperty(value = "properties.eventSource")
-    private EventSourceValues eventSource;
+    private String type;
 
     /*
-     * Current status of event.
+     * The name of the resource.
      */
-    @JsonProperty(value = "properties.status")
-    private EventStatusValues status;
+    private String name;
 
     /*
-     * Title text of event.
+     * Fully qualified resource Id for the resource.
      */
-    @JsonProperty(value = "properties.title")
-    private String title;
+    private String id;
 
-    /*
-     * Summary text of event.
+    /**
+     * Creates an instance of EventInner class.
      */
-    @JsonProperty(value = "properties.summary")
-    private String summary;
+    public EventInner() {
+    }
 
-    /*
-     * Header text of event.
+    /**
+     * Get the innerProperties property: Properties of event.
+     * 
+     * @return the innerProperties value.
      */
-    @JsonProperty(value = "properties.header")
-    private String headerProperty;
+    private EventProperties innerProperties() {
+        return this.innerProperties;
+    }
 
-    /*
-     * Level of insight.
+    /**
+     * Get the systemData property: Azure Resource Manager metadata containing createdBy and modifiedBy information.
+     * 
+     * @return the systemData value.
      */
-    @JsonProperty(value = "properties.level")
-    private LevelValues level;
+    public SystemData systemData() {
+        return this.systemData;
+    }
 
-    /*
-     * Level of event.
+    /**
+     * Get the type property: The type of the resource.
+     * 
+     * @return the type value.
      */
-    @JsonProperty(value = "properties.eventLevel")
-    private EventLevelValues eventLevel;
+    @Override
+    public String type() {
+        return this.type;
+    }
 
-    /*
-     * Article of event.
+    /**
+     * Get the name property: The name of the resource.
+     * 
+     * @return the name value.
      */
-    @JsonProperty(value = "properties.article")
-    private EventPropertiesArticle article;
+    @Override
+    public String name() {
+        return this.name;
+    }
 
-    /*
-     * Useful links of event.
+    /**
+     * Get the id property: Fully qualified resource Id for the resource.
+     * 
+     * @return the id value.
      */
-    @JsonProperty(value = "properties.links")
-    private List<Link> links;
-
-    /*
-     * It provides the Timestamp for when the health impacting event started.
-     */
-    @JsonProperty(value = "properties.impactStartTime")
-    private OffsetDateTime impactStartTime;
-
-    /*
-     * It provides the Timestamp for when the health impacting event resolved.
-     */
-    @JsonProperty(value = "properties.impactMitigationTime")
-    private OffsetDateTime impactMitigationTime;
-
-    /*
-     * List services impacted by the service health event.
-     */
-    @JsonProperty(value = "properties.impact")
-    private List<Impact> impact;
-
-    /*
-     * Recommended actions of event.
-     */
-    @JsonProperty(value = "properties.recommendedActions")
-    private EventPropertiesRecommendedActions recommendedActions;
-
-    /*
-     * Frequently asked questions for the service health event.
-     */
-    @JsonProperty(value = "properties.faqs")
-    private List<Faq> faqs;
-
-    /*
-     * It provides information if the event is High incident rate event or not.
-     */
-    @JsonProperty(value = "properties.isHIR")
-    private Boolean isHir;
-
-    /*
-     * Tells if we want to enable or disable Microsoft Support for this event.
-     */
-    @JsonProperty(value = "properties.enableMicrosoftSupport")
-    private Boolean enableMicrosoftSupport;
-
-    /*
-     * Tells if we want to enable or disable Microsoft Support for this event.
-     */
-    @JsonProperty(value = "properties.enableChatWithUs")
-    private Boolean enableChatWithUs;
-
-    /*
-     * Priority level of the event.
-     */
-    @JsonProperty(value = "properties.priority")
-    private Integer priority;
-
-    /*
-     * It provides the Timestamp for when the health impacting event was last
-     * updated.
-     */
-    @JsonProperty(value = "properties.lastUpdateTime")
-    private OffsetDateTime lastUpdateTime;
-
-    /*
-     * Stage for HIR Document
-     */
-    @JsonProperty(value = "properties.hirStage")
-    private String hirStage;
+    @Override
+    public String id() {
+        return this.id;
+    }
 
     /**
      * Get the eventType property: Type of event.
-     *
+     * 
      * @return the eventType value.
      */
     public EventTypeValues eventType() {
-        return this.eventType;
+        return this.innerProperties() == null ? null : this.innerProperties().eventType();
     }
 
     /**
      * Set the eventType property: Type of event.
-     *
+     * 
      * @param eventType the eventType value to set.
      * @return the EventInner object itself.
      */
     public EventInner withEventType(EventTypeValues eventType) {
-        this.eventType = eventType;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new EventProperties();
+        }
+        this.innerProperties().withEventType(eventType);
+        return this;
+    }
+
+    /**
+     * Get the eventSubType property: Sub type of the event. Currently used to determine retirement communications for
+     * health advisory events.
+     * 
+     * @return the eventSubType value.
+     */
+    public EventSubTypeValues eventSubType() {
+        return this.innerProperties() == null ? null : this.innerProperties().eventSubType();
+    }
+
+    /**
+     * Set the eventSubType property: Sub type of the event. Currently used to determine retirement communications for
+     * health advisory events.
+     * 
+     * @param eventSubType the eventSubType value to set.
+     * @return the EventInner object itself.
+     */
+    public EventInner withEventSubType(EventSubTypeValues eventSubType) {
+        if (this.innerProperties() == null) {
+            this.innerProperties = new EventProperties();
+        }
+        this.innerProperties().withEventSubType(eventSubType);
         return this;
     }
 
     /**
      * Get the eventSource property: Source of event.
-     *
+     * 
      * @return the eventSource value.
      */
     public EventSourceValues eventSource() {
-        return this.eventSource;
+        return this.innerProperties() == null ? null : this.innerProperties().eventSource();
     }
 
     /**
      * Set the eventSource property: Source of event.
-     *
+     * 
      * @param eventSource the eventSource value to set.
      * @return the EventInner object itself.
      */
     public EventInner withEventSource(EventSourceValues eventSource) {
-        this.eventSource = eventSource;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new EventProperties();
+        }
+        this.innerProperties().withEventSource(eventSource);
         return this;
     }
 
     /**
      * Get the status property: Current status of event.
-     *
+     * 
      * @return the status value.
      */
     public EventStatusValues status() {
-        return this.status;
+        return this.innerProperties() == null ? null : this.innerProperties().status();
     }
 
     /**
      * Set the status property: Current status of event.
-     *
+     * 
      * @param status the status value to set.
      * @return the EventInner object itself.
      */
     public EventInner withStatus(EventStatusValues status) {
-        this.status = status;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new EventProperties();
+        }
+        this.innerProperties().withStatus(status);
         return this;
     }
 
     /**
      * Get the title property: Title text of event.
-     *
+     * 
      * @return the title value.
      */
     public String title() {
-        return this.title;
+        return this.innerProperties() == null ? null : this.innerProperties().title();
     }
 
     /**
      * Set the title property: Title text of event.
-     *
+     * 
      * @param title the title value to set.
      * @return the EventInner object itself.
      */
     public EventInner withTitle(String title) {
-        this.title = title;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new EventProperties();
+        }
+        this.innerProperties().withTitle(title);
         return this;
     }
 
     /**
      * Get the summary property: Summary text of event.
-     *
+     * 
      * @return the summary value.
      */
     public String summary() {
-        return this.summary;
+        return this.innerProperties() == null ? null : this.innerProperties().summary();
     }
 
     /**
      * Set the summary property: Summary text of event.
-     *
+     * 
      * @param summary the summary value to set.
      * @return the EventInner object itself.
      */
     public EventInner withSummary(String summary) {
-        this.summary = summary;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new EventProperties();
+        }
+        this.innerProperties().withSummary(summary);
         return this;
     }
 
     /**
      * Get the headerProperty property: Header text of event.
-     *
+     * 
      * @return the headerProperty value.
      */
     public String headerProperty() {
-        return this.headerProperty;
+        return this.innerProperties() == null ? null : this.innerProperties().headerProperty();
     }
 
     /**
      * Set the headerProperty property: Header text of event.
-     *
+     * 
      * @param headerProperty the headerProperty value to set.
      * @return the EventInner object itself.
      */
     public EventInner withHeaderProperty(String headerProperty) {
-        this.headerProperty = headerProperty;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new EventProperties();
+        }
+        this.innerProperties().withHeaderProperty(headerProperty);
         return this;
     }
 
     /**
      * Get the level property: Level of insight.
-     *
+     * 
      * @return the level value.
      */
     public LevelValues level() {
-        return this.level;
+        return this.innerProperties() == null ? null : this.innerProperties().level();
     }
 
     /**
      * Set the level property: Level of insight.
-     *
+     * 
      * @param level the level value to set.
      * @return the EventInner object itself.
      */
     public EventInner withLevel(LevelValues level) {
-        this.level = level;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new EventProperties();
+        }
+        this.innerProperties().withLevel(level);
         return this;
     }
 
     /**
      * Get the eventLevel property: Level of event.
-     *
+     * 
      * @return the eventLevel value.
      */
     public EventLevelValues eventLevel() {
-        return this.eventLevel;
+        return this.innerProperties() == null ? null : this.innerProperties().eventLevel();
     }
 
     /**
      * Set the eventLevel property: Level of event.
-     *
+     * 
      * @param eventLevel the eventLevel value to set.
      * @return the EventInner object itself.
      */
     public EventInner withEventLevel(EventLevelValues eventLevel) {
-        this.eventLevel = eventLevel;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new EventProperties();
+        }
+        this.innerProperties().withEventLevel(eventLevel);
+        return this;
+    }
+
+    /**
+     * Get the externalIncidentId property: The id of the Incident.
+     * 
+     * @return the externalIncidentId value.
+     */
+    public String externalIncidentId() {
+        return this.innerProperties() == null ? null : this.innerProperties().externalIncidentId();
+    }
+
+    /**
+     * Set the externalIncidentId property: The id of the Incident.
+     * 
+     * @param externalIncidentId the externalIncidentId value to set.
+     * @return the EventInner object itself.
+     */
+    public EventInner withExternalIncidentId(String externalIncidentId) {
+        if (this.innerProperties() == null) {
+            this.innerProperties = new EventProperties();
+        }
+        this.innerProperties().withExternalIncidentId(externalIncidentId);
+        return this;
+    }
+
+    /**
+     * Get the reason property: The reason for the Incident.
+     * 
+     * @return the reason value.
+     */
+    public String reason() {
+        return this.innerProperties() == null ? null : this.innerProperties().reason();
+    }
+
+    /**
+     * Set the reason property: The reason for the Incident.
+     * 
+     * @param reason the reason value to set.
+     * @return the EventInner object itself.
+     */
+    public EventInner withReason(String reason) {
+        if (this.innerProperties() == null) {
+            this.innerProperties = new EventProperties();
+        }
+        this.innerProperties().withReason(reason);
         return this;
     }
 
     /**
      * Get the article property: Article of event.
-     *
+     * 
      * @return the article value.
      */
     public EventPropertiesArticle article() {
-        return this.article;
+        return this.innerProperties() == null ? null : this.innerProperties().article();
     }
 
     /**
      * Set the article property: Article of event.
-     *
+     * 
      * @param article the article value to set.
      * @return the EventInner object itself.
      */
     public EventInner withArticle(EventPropertiesArticle article) {
-        this.article = article;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new EventProperties();
+        }
+        this.innerProperties().withArticle(article);
         return this;
     }
 
     /**
      * Get the links property: Useful links of event.
-     *
+     * 
      * @return the links value.
      */
     public List<Link> links() {
-        return this.links;
+        return this.innerProperties() == null ? null : this.innerProperties().links();
     }
 
     /**
      * Set the links property: Useful links of event.
-     *
+     * 
      * @param links the links value to set.
      * @return the EventInner object itself.
      */
     public EventInner withLinks(List<Link> links) {
-        this.links = links;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new EventProperties();
+        }
+        this.innerProperties().withLinks(links);
         return this;
     }
 
     /**
      * Get the impactStartTime property: It provides the Timestamp for when the health impacting event started.
-     *
+     * 
      * @return the impactStartTime value.
      */
     public OffsetDateTime impactStartTime() {
-        return this.impactStartTime;
+        return this.innerProperties() == null ? null : this.innerProperties().impactStartTime();
     }
 
     /**
      * Set the impactStartTime property: It provides the Timestamp for when the health impacting event started.
-     *
+     * 
      * @param impactStartTime the impactStartTime value to set.
      * @return the EventInner object itself.
      */
     public EventInner withImpactStartTime(OffsetDateTime impactStartTime) {
-        this.impactStartTime = impactStartTime;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new EventProperties();
+        }
+        this.innerProperties().withImpactStartTime(impactStartTime);
         return this;
     }
 
     /**
      * Get the impactMitigationTime property: It provides the Timestamp for when the health impacting event resolved.
-     *
+     * 
      * @return the impactMitigationTime value.
      */
     public OffsetDateTime impactMitigationTime() {
-        return this.impactMitigationTime;
+        return this.innerProperties() == null ? null : this.innerProperties().impactMitigationTime();
     }
 
     /**
      * Set the impactMitigationTime property: It provides the Timestamp for when the health impacting event resolved.
-     *
+     * 
      * @param impactMitigationTime the impactMitigationTime value to set.
      * @return the EventInner object itself.
      */
     public EventInner withImpactMitigationTime(OffsetDateTime impactMitigationTime) {
-        this.impactMitigationTime = impactMitigationTime;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new EventProperties();
+        }
+        this.innerProperties().withImpactMitigationTime(impactMitigationTime);
         return this;
     }
 
     /**
      * Get the impact property: List services impacted by the service health event.
-     *
+     * 
      * @return the impact value.
      */
     public List<Impact> impact() {
-        return this.impact;
+        return this.innerProperties() == null ? null : this.innerProperties().impact();
     }
 
     /**
      * Set the impact property: List services impacted by the service health event.
-     *
+     * 
      * @param impact the impact value to set.
      * @return the EventInner object itself.
      */
     public EventInner withImpact(List<Impact> impact) {
-        this.impact = impact;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new EventProperties();
+        }
+        this.innerProperties().withImpact(impact);
         return this;
     }
 
     /**
      * Get the recommendedActions property: Recommended actions of event.
-     *
+     * 
      * @return the recommendedActions value.
      */
     public EventPropertiesRecommendedActions recommendedActions() {
-        return this.recommendedActions;
+        return this.innerProperties() == null ? null : this.innerProperties().recommendedActions();
     }
 
     /**
      * Set the recommendedActions property: Recommended actions of event.
-     *
+     * 
      * @param recommendedActions the recommendedActions value to set.
      * @return the EventInner object itself.
      */
     public EventInner withRecommendedActions(EventPropertiesRecommendedActions recommendedActions) {
-        this.recommendedActions = recommendedActions;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new EventProperties();
+        }
+        this.innerProperties().withRecommendedActions(recommendedActions);
         return this;
     }
 
     /**
      * Get the faqs property: Frequently asked questions for the service health event.
-     *
+     * 
      * @return the faqs value.
      */
     public List<Faq> faqs() {
-        return this.faqs;
+        return this.innerProperties() == null ? null : this.innerProperties().faqs();
     }
 
     /**
      * Set the faqs property: Frequently asked questions for the service health event.
-     *
+     * 
      * @param faqs the faqs value to set.
      * @return the EventInner object itself.
      */
     public EventInner withFaqs(List<Faq> faqs) {
-        this.faqs = faqs;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new EventProperties();
+        }
+        this.innerProperties().withFaqs(faqs);
         return this;
     }
 
     /**
      * Get the isHir property: It provides information if the event is High incident rate event or not.
-     *
+     * 
      * @return the isHir value.
      */
     public Boolean isHir() {
-        return this.isHir;
+        return this.innerProperties() == null ? null : this.innerProperties().isHir();
     }
 
     /**
      * Set the isHir property: It provides information if the event is High incident rate event or not.
-     *
+     * 
      * @param isHir the isHir value to set.
      * @return the EventInner object itself.
      */
     public EventInner withIsHir(Boolean isHir) {
-        this.isHir = isHir;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new EventProperties();
+        }
+        this.innerProperties().withIsHir(isHir);
         return this;
     }
 
     /**
      * Get the enableMicrosoftSupport property: Tells if we want to enable or disable Microsoft Support for this event.
-     *
+     * 
      * @return the enableMicrosoftSupport value.
      */
     public Boolean enableMicrosoftSupport() {
-        return this.enableMicrosoftSupport;
+        return this.innerProperties() == null ? null : this.innerProperties().enableMicrosoftSupport();
     }
 
     /**
      * Set the enableMicrosoftSupport property: Tells if we want to enable or disable Microsoft Support for this event.
-     *
+     * 
      * @param enableMicrosoftSupport the enableMicrosoftSupport value to set.
      * @return the EventInner object itself.
      */
     public EventInner withEnableMicrosoftSupport(Boolean enableMicrosoftSupport) {
-        this.enableMicrosoftSupport = enableMicrosoftSupport;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new EventProperties();
+        }
+        this.innerProperties().withEnableMicrosoftSupport(enableMicrosoftSupport);
+        return this;
+    }
+
+    /**
+     * Get the description property: Contains the communication message for the event, that could include summary, root
+     * cause and other details.
+     * 
+     * @return the description value.
+     */
+    public String description() {
+        return this.innerProperties() == null ? null : this.innerProperties().description();
+    }
+
+    /**
+     * Set the description property: Contains the communication message for the event, that could include summary, root
+     * cause and other details.
+     * 
+     * @param description the description value to set.
+     * @return the EventInner object itself.
+     */
+    public EventInner withDescription(String description) {
+        if (this.innerProperties() == null) {
+            this.innerProperties = new EventProperties();
+        }
+        this.innerProperties().withDescription(description);
+        return this;
+    }
+
+    /**
+     * Get the platformInitiated property: Is true if the event is platform initiated.
+     * 
+     * @return the platformInitiated value.
+     */
+    public Boolean platformInitiated() {
+        return this.innerProperties() == null ? null : this.innerProperties().platformInitiated();
+    }
+
+    /**
+     * Set the platformInitiated property: Is true if the event is platform initiated.
+     * 
+     * @param platformInitiated the platformInitiated value to set.
+     * @return the EventInner object itself.
+     */
+    public EventInner withPlatformInitiated(Boolean platformInitiated) {
+        if (this.innerProperties() == null) {
+            this.innerProperties = new EventProperties();
+        }
+        this.innerProperties().withPlatformInitiated(platformInitiated);
         return this;
     }
 
     /**
      * Get the enableChatWithUs property: Tells if we want to enable or disable Microsoft Support for this event.
-     *
+     * 
      * @return the enableChatWithUs value.
      */
     public Boolean enableChatWithUs() {
-        return this.enableChatWithUs;
+        return this.innerProperties() == null ? null : this.innerProperties().enableChatWithUs();
     }
 
     /**
      * Set the enableChatWithUs property: Tells if we want to enable or disable Microsoft Support for this event.
-     *
+     * 
      * @param enableChatWithUs the enableChatWithUs value to set.
      * @return the EventInner object itself.
      */
     public EventInner withEnableChatWithUs(Boolean enableChatWithUs) {
-        this.enableChatWithUs = enableChatWithUs;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new EventProperties();
+        }
+        this.innerProperties().withEnableChatWithUs(enableChatWithUs);
         return this;
     }
 
     /**
-     * Get the priority property: Priority level of the event.
-     *
+     * Get the priority property: Priority level of the event. Has value from 0 to 23. 0 is the highest priority.
+     * Service issue events have higher priority followed by planned maintenance and health advisory. Critical events
+     * have higher priority followed by error, warning and informational. Furthermore, active events have higher
+     * priority than resolved.
+     * 
      * @return the priority value.
      */
     public Integer priority() {
-        return this.priority;
+        return this.innerProperties() == null ? null : this.innerProperties().priority();
     }
 
     /**
-     * Set the priority property: Priority level of the event.
-     *
+     * Set the priority property: Priority level of the event. Has value from 0 to 23. 0 is the highest priority.
+     * Service issue events have higher priority followed by planned maintenance and health advisory. Critical events
+     * have higher priority followed by error, warning and informational. Furthermore, active events have higher
+     * priority than resolved.
+     * 
      * @param priority the priority value to set.
      * @return the EventInner object itself.
      */
     public EventInner withPriority(Integer priority) {
-        this.priority = priority;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new EventProperties();
+        }
+        this.innerProperties().withPriority(priority);
         return this;
     }
 
     /**
      * Get the lastUpdateTime property: It provides the Timestamp for when the health impacting event was last updated.
-     *
+     * 
      * @return the lastUpdateTime value.
      */
     public OffsetDateTime lastUpdateTime() {
-        return this.lastUpdateTime;
+        return this.innerProperties() == null ? null : this.innerProperties().lastUpdateTime();
     }
 
     /**
      * Set the lastUpdateTime property: It provides the Timestamp for when the health impacting event was last updated.
-     *
+     * 
      * @param lastUpdateTime the lastUpdateTime value to set.
      * @return the EventInner object itself.
      */
     public EventInner withLastUpdateTime(OffsetDateTime lastUpdateTime) {
-        this.lastUpdateTime = lastUpdateTime;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new EventProperties();
+        }
+        this.innerProperties().withLastUpdateTime(lastUpdateTime);
         return this;
     }
 
     /**
      * Get the hirStage property: Stage for HIR Document.
-     *
+     * 
      * @return the hirStage value.
      */
     public String hirStage() {
-        return this.hirStage;
+        return this.innerProperties() == null ? null : this.innerProperties().hirStage();
     }
 
     /**
      * Set the hirStage property: Stage for HIR Document.
-     *
+     * 
      * @param hirStage the hirStage value to set.
      * @return the EventInner object itself.
      */
     public EventInner withHirStage(String hirStage) {
-        this.hirStage = hirStage;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new EventProperties();
+        }
+        this.innerProperties().withHirStage(hirStage);
+        return this;
+    }
+
+    /**
+     * Get the additionalInformation property: Additional information.
+     * 
+     * @return the additionalInformation value.
+     */
+    public EventPropertiesAdditionalInformation additionalInformation() {
+        return this.innerProperties() == null ? null : this.innerProperties().additionalInformation();
+    }
+
+    /**
+     * Set the additionalInformation property: Additional information.
+     * 
+     * @param additionalInformation the additionalInformation value to set.
+     * @return the EventInner object itself.
+     */
+    public EventInner withAdditionalInformation(EventPropertiesAdditionalInformation additionalInformation) {
+        if (this.innerProperties() == null) {
+            this.innerProperties = new EventProperties();
+        }
+        this.innerProperties().withAdditionalInformation(additionalInformation);
+        return this;
+    }
+
+    /**
+     * Get the duration property: duration in seconds.
+     * 
+     * @return the duration value.
+     */
+    public Integer duration() {
+        return this.innerProperties() == null ? null : this.innerProperties().duration();
+    }
+
+    /**
+     * Set the duration property: duration in seconds.
+     * 
+     * @param duration the duration value to set.
+     * @return the EventInner object itself.
+     */
+    public EventInner withDuration(Integer duration) {
+        if (this.innerProperties() == null) {
+            this.innerProperties = new EventProperties();
+        }
+        this.innerProperties().withDuration(duration);
+        return this;
+    }
+
+    /**
+     * Get the impactType property: The type of the impact.
+     * 
+     * @return the impactType value.
+     */
+    public String impactType() {
+        return this.innerProperties() == null ? null : this.innerProperties().impactType();
+    }
+
+    /**
+     * Set the impactType property: The type of the impact.
+     * 
+     * @param impactType the impactType value to set.
+     * @return the EventInner object itself.
+     */
+    public EventInner withImpactType(String impactType) {
+        if (this.innerProperties() == null) {
+            this.innerProperties = new EventProperties();
+        }
+        this.innerProperties().withImpactType(impactType);
+        return this;
+    }
+
+    /**
+     * Get the maintenanceId property: Unique identifier for planned maintenance event.
+     * 
+     * @return the maintenanceId value.
+     */
+    public String maintenanceId() {
+        return this.innerProperties() == null ? null : this.innerProperties().maintenanceId();
+    }
+
+    /**
+     * Set the maintenanceId property: Unique identifier for planned maintenance event.
+     * 
+     * @param maintenanceId the maintenanceId value to set.
+     * @return the EventInner object itself.
+     */
+    public EventInner withMaintenanceId(String maintenanceId) {
+        if (this.innerProperties() == null) {
+            this.innerProperties = new EventProperties();
+        }
+        this.innerProperties().withMaintenanceId(maintenanceId);
+        return this;
+    }
+
+    /**
+     * Get the maintenanceType property: The type of planned maintenance event.
+     * 
+     * @return the maintenanceType value.
+     */
+    public String maintenanceType() {
+        return this.innerProperties() == null ? null : this.innerProperties().maintenanceType();
+    }
+
+    /**
+     * Set the maintenanceType property: The type of planned maintenance event.
+     * 
+     * @param maintenanceType the maintenanceType value to set.
+     * @return the EventInner object itself.
+     */
+    public EventInner withMaintenanceType(String maintenanceType) {
+        if (this.innerProperties() == null) {
+            this.innerProperties = new EventProperties();
+        }
+        this.innerProperties().withMaintenanceType(maintenanceType);
+        return this;
+    }
+
+    /**
+     * Get the argQuery property: Azure Resource Graph query to fetch the affected resources from their existing Azure
+     * Resource Graph locations.
+     * 
+     * @return the argQuery value.
+     */
+    public String argQuery() {
+        return this.innerProperties() == null ? null : this.innerProperties().argQuery();
+    }
+
+    /**
+     * Set the argQuery property: Azure Resource Graph query to fetch the affected resources from their existing Azure
+     * Resource Graph locations.
+     * 
+     * @param argQuery the argQuery value to set.
+     * @return the EventInner object itself.
+     */
+    public EventInner withArgQuery(String argQuery) {
+        if (this.innerProperties() == null) {
+            this.innerProperties = new EventProperties();
+        }
+        this.innerProperties().withArgQuery(argQuery);
         return this;
     }
 
     /**
      * Validates the instance.
-     *
+     * 
      * @throws IllegalArgumentException thrown if the instance is not valid.
      */
     public void validate() {
-        if (article() != null) {
-            article().validate();
+        if (innerProperties() != null) {
+            innerProperties().validate();
         }
-        if (links() != null) {
-            links().forEach(e -> e.validate());
-        }
-        if (impact() != null) {
-            impact().forEach(e -> e.validate());
-        }
-        if (recommendedActions() != null) {
-            recommendedActions().validate();
-        }
-        if (faqs() != null) {
-            faqs().forEach(e -> e.validate());
-        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public JsonWriter toJson(JsonWriter jsonWriter) throws IOException {
+        jsonWriter.writeStartObject();
+        jsonWriter.writeJsonField("properties", this.innerProperties);
+        return jsonWriter.writeEndObject();
+    }
+
+    /**
+     * Reads an instance of EventInner from the JsonReader.
+     * 
+     * @param jsonReader The JsonReader being read.
+     * @return An instance of EventInner if the JsonReader was pointing to an instance of it, or null if it was pointing
+     * to JSON null.
+     * @throws IllegalStateException If the deserialized JSON object was missing any required properties.
+     * @throws IOException If an error occurs while reading the EventInner.
+     */
+    public static EventInner fromJson(JsonReader jsonReader) throws IOException {
+        return jsonReader.readObject(reader -> {
+            EventInner deserializedEventInner = new EventInner();
+            while (reader.nextToken() != JsonToken.END_OBJECT) {
+                String fieldName = reader.getFieldName();
+                reader.nextToken();
+
+                if ("id".equals(fieldName)) {
+                    deserializedEventInner.id = reader.getString();
+                } else if ("name".equals(fieldName)) {
+                    deserializedEventInner.name = reader.getString();
+                } else if ("type".equals(fieldName)) {
+                    deserializedEventInner.type = reader.getString();
+                } else if ("properties".equals(fieldName)) {
+                    deserializedEventInner.innerProperties = EventProperties.fromJson(reader);
+                } else if ("systemData".equals(fieldName)) {
+                    deserializedEventInner.systemData = SystemData.fromJson(reader);
+                } else {
+                    reader.skipChildren();
+                }
+            }
+
+            return deserializedEventInner;
+        });
     }
 }

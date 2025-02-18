@@ -3,6 +3,7 @@
 
 package com.azure.storage.blob.options;
 
+import com.azure.core.util.BinaryData;
 import com.azure.core.util.CoreUtils;
 import com.azure.storage.blob.models.AccessTier;
 import com.azure.storage.blob.models.BlobHttpHeaders;
@@ -21,6 +22,7 @@ import java.util.Map;
 public class BlockBlobSimpleUploadOptions {
     private final Flux<ByteBuffer> dataFlux;
     private final InputStream dataStream;
+    private final BinaryData data;
     private final long length;
     private BlobHttpHeaders headers;
     private Map<String, String> metadata;
@@ -32,10 +34,30 @@ public class BlockBlobSimpleUploadOptions {
     private Boolean legalHold;
 
     /**
+     * Creates a new instance of {@link BlockBlobSimpleUploadOptions}.
+     *
+     * @param data The data to write to the block. Note that this {@code BinaryData} must have defined length
+     * and must be replayable if retries are enabled (the default), see {@link BinaryData#isReplayable()}.
+     * @throws NullPointerException If {@code data} is null or {@code data} does not have defined length.
+     */
+    public BlockBlobSimpleUploadOptions(BinaryData data) {
+        StorageImplUtils.assertNotNull("data must not be null", data);
+        StorageImplUtils.assertNotNull("data must have defined length", data.getLength());
+        this.data = data;
+        this.length = data.getLength();
+        this.dataFlux = null;
+        this.dataStream = null;
+    }
+
+    /**
+     * Creates a new instance of {@link BlockBlobSimpleUploadOptions}.
+     *
      * @param data The data to write to the blob. Note that this {@code Flux} must be replayable if retries are enabled
      * (the default). In other words, the Flux must produce the same data each time it is subscribed to.
      * @param length The exact length of the data. It is important that this value match precisely the length of the
      * data emitted by the data source.
+     * @throws NullPointerException If {@code data} is null.
+     * @throws IllegalArgumentException If {@code length} is less than 0 or greater than {@link Long#MAX_VALUE}.
      */
     public BlockBlobSimpleUploadOptions(Flux<ByteBuffer> data, long length) {
         StorageImplUtils.assertNotNull("dataFlux", data);
@@ -43,12 +65,17 @@ public class BlockBlobSimpleUploadOptions {
         this.dataFlux = data;
         this.length = length;
         this.dataStream = null;
+        this.data = null;
     }
 
     /**
+     * Creates a new instance of {@link BlockBlobSimpleUploadOptions}.
+     *
      * @param data The data to write to the blob.
      * @param length The exact length of the data. It is important that this value match precisely the length of the
      * data emitted by the data source.
+     * @throws NullPointerException If {@code data} is null.
+     * @throws IllegalArgumentException If {@code length} is less than 0 or greater than {@link Long#MAX_VALUE}.
      */
     public BlockBlobSimpleUploadOptions(InputStream data, long length) {
         StorageImplUtils.assertNotNull("dataStream", data);
@@ -56,9 +83,12 @@ public class BlockBlobSimpleUploadOptions {
         this.dataStream = data;
         this.length = length;
         this.dataFlux = null;
+        this.data = null;
     }
 
     /**
+     * Gets the data to write to the blob.
+     *
      * @return The data to write to the blob. Note that this {@code Flux} must be replayable if retries are enabled
      * (the default). In other words, the Flux must produce the same data each time it is subscribed to.
      */
@@ -67,6 +97,8 @@ public class BlockBlobSimpleUploadOptions {
     }
 
     /**
+     * Gets the data to write to the blob.
+     *
      * @return The data to write to the blob.
      */
     public InputStream getDataStream() {
@@ -74,6 +106,17 @@ public class BlockBlobSimpleUploadOptions {
     }
 
     /**
+     * Gets the data to write to the blob.
+     *
+     * @return The data to write to the blob.
+     */
+    public BinaryData getData() {
+        return this.data;
+    }
+
+    /**
+     * Gets the exact length of the data.
+     *
      * @return The exact length of the data. It is important that this value match precisely the length of the
      * data emitted by the data source.
      */
@@ -82,6 +125,8 @@ public class BlockBlobSimpleUploadOptions {
     }
 
     /**
+     * Gets the {@link BlobHttpHeaders}.
+     *
      * @return {@link BlobHttpHeaders}
      */
     public BlobHttpHeaders getHeaders() {
@@ -89,6 +134,8 @@ public class BlockBlobSimpleUploadOptions {
     }
 
     /**
+     * Sets the {@link BlobHttpHeaders}.
+     *
      * @param headers {@link BlobHttpHeaders}
      * @return The updated options
      */
@@ -98,6 +145,8 @@ public class BlockBlobSimpleUploadOptions {
     }
 
     /**
+     * Gets the metadata to associate with the blob.
+     *
      * @return The metadata to associate with the blob.
      */
     public Map<String, String> getMetadata() {
@@ -105,6 +154,8 @@ public class BlockBlobSimpleUploadOptions {
     }
 
     /**
+     * Sets the metadata to associate with the blob.
+     *
      * @param metadata The metadata to associate with the blob.
      * @return The updated options
      */
@@ -114,6 +165,8 @@ public class BlockBlobSimpleUploadOptions {
     }
 
     /**
+     * Gets the tags to associate with the blob.
+     *
      * @return The tags to associate with the blob.
      */
     public Map<String, String> getTags() {
@@ -121,6 +174,8 @@ public class BlockBlobSimpleUploadOptions {
     }
 
     /**
+     * Sets the tags to associate with the blob.
+     *
      * @param tags The tags to associate with the blob.
      * @return The updated options.
      */
@@ -130,6 +185,8 @@ public class BlockBlobSimpleUploadOptions {
     }
 
     /**
+     * Gets the {@link AccessTier}.
+     *
      * @return {@link AccessTier}
      */
     public AccessTier getTier() {
@@ -137,6 +194,8 @@ public class BlockBlobSimpleUploadOptions {
     }
 
     /**
+     * Sets the {@link AccessTier}.
+     *
      * @param tier {@link AccessTier}
      * @return The updated options.
      */
@@ -146,6 +205,8 @@ public class BlockBlobSimpleUploadOptions {
     }
 
     /**
+     * Gets the MD5 hash of the content.
+     *
      * @return An MD5 hash of the content. This hash is used to verify the integrity of the content during
      * transport. When this header is specified, the storage service compares the hash of the content that has arrived
      * with this header value. Note that this MD5 hash is not stored with the blob. If the two hashes do not match, the
@@ -156,6 +217,8 @@ public class BlockBlobSimpleUploadOptions {
     }
 
     /**
+     * Sets the MD5 hash of the content.
+     *
      * @param contentMd5 An MD5 hash of the block content. This hash is used to verify the integrity of the block during
      * transport. When this header is specified, the storage service compares the hash of the content that has arrived
      * with this header value. Note that this MD5 hash is not stored with the blob. If the two hashes do not match, the
@@ -168,6 +231,8 @@ public class BlockBlobSimpleUploadOptions {
     }
 
     /**
+     * Gets the {@link BlobRequestConditions}.
+     *
      * @return {@link BlobRequestConditions}
      */
     public BlobRequestConditions getRequestConditions() {
@@ -175,6 +240,8 @@ public class BlockBlobSimpleUploadOptions {
     }
 
     /**
+     * Sets the {@link BlobRequestConditions}.
+     *
      * @param requestConditions {@link BlobRequestConditions}
      * @return The updated options.
      */
@@ -184,6 +251,8 @@ public class BlockBlobSimpleUploadOptions {
     }
 
     /**
+     * Gets the {@link BlobImmutabilityPolicy}.
+     *
      * @return {@link BlobImmutabilityPolicy}
      */
     public BlobImmutabilityPolicy getImmutabilityPolicy() {
@@ -191,6 +260,8 @@ public class BlockBlobSimpleUploadOptions {
     }
 
     /**
+     * Sets the {@link BlobImmutabilityPolicy}.
+     * <p>
      * Note that this parameter is only applicable to a blob within a container that has immutable storage with
      * versioning enabled.
      * @param immutabilityPolicy {@link BlobImmutabilityPolicy}
@@ -202,6 +273,8 @@ public class BlockBlobSimpleUploadOptions {
     }
 
     /**
+     * Gets if a legal hold should be placed on the blob.
+     *
      * @return If a legal hold should be placed on the blob.
      */
     public Boolean isLegalHold() {
@@ -209,6 +282,8 @@ public class BlockBlobSimpleUploadOptions {
     }
 
     /**
+     * Sets if a legal hold should be placed on the blob.
+     * <p>
      * Note that this parameter is only applicable to a blob within a container that has immutable storage with
      * versioning enabled.
      * @param legalHold Indicates if a legal hold should be placed on the blob.

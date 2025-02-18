@@ -15,47 +15,52 @@ import com.azure.resourcemanager.apimanagement.models.ApiContract;
 import com.azure.resourcemanager.apimanagement.models.AssociationContract;
 import com.azure.resourcemanager.apimanagement.models.GatewayApis;
 import com.azure.resourcemanager.apimanagement.models.GatewayApisGetEntityTagResponse;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 public final class GatewayApisImpl implements GatewayApis {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(GatewayApisImpl.class);
+    private static final ClientLogger LOGGER = new ClientLogger(GatewayApisImpl.class);
 
     private final GatewayApisClient innerClient;
 
     private final com.azure.resourcemanager.apimanagement.ApiManagementManager serviceManager;
 
-    public GatewayApisImpl(
-        GatewayApisClient innerClient, com.azure.resourcemanager.apimanagement.ApiManagementManager serviceManager) {
+    public GatewayApisImpl(GatewayApisClient innerClient,
+        com.azure.resourcemanager.apimanagement.ApiManagementManager serviceManager) {
         this.innerClient = innerClient;
         this.serviceManager = serviceManager;
     }
 
     public PagedIterable<ApiContract> listByService(String resourceGroupName, String serviceName, String gatewayId) {
-        PagedIterable<ApiContractInner> inner =
-            this.serviceClient().listByService(resourceGroupName, serviceName, gatewayId);
-        return Utils.mapPage(inner, inner1 -> new ApiContractImpl(inner1, this.manager()));
+        PagedIterable<ApiContractInner> inner
+            = this.serviceClient().listByService(resourceGroupName, serviceName, gatewayId);
+        return ResourceManagerUtils.mapPage(inner, inner1 -> new ApiContractImpl(inner1, this.manager()));
     }
 
-    public PagedIterable<ApiContract> listByService(
-        String resourceGroupName,
-        String serviceName,
-        String gatewayId,
-        String filter,
-        Integer top,
-        Integer skip,
-        Context context) {
-        PagedIterable<ApiContractInner> inner =
-            this.serviceClient().listByService(resourceGroupName, serviceName, gatewayId, filter, top, skip, context);
-        return Utils.mapPage(inner, inner1 -> new ApiContractImpl(inner1, this.manager()));
+    public PagedIterable<ApiContract> listByService(String resourceGroupName, String serviceName, String gatewayId,
+        String filter, Integer top, Integer skip, Context context) {
+        PagedIterable<ApiContractInner> inner
+            = this.serviceClient().listByService(resourceGroupName, serviceName, gatewayId, filter, top, skip, context);
+        return ResourceManagerUtils.mapPage(inner, inner1 -> new ApiContractImpl(inner1, this.manager()));
+    }
+
+    public GatewayApisGetEntityTagResponse getEntityTagWithResponse(String resourceGroupName, String serviceName,
+        String gatewayId, String apiId, Context context) {
+        return this.serviceClient().getEntityTagWithResponse(resourceGroupName, serviceName, gatewayId, apiId, context);
     }
 
     public void getEntityTag(String resourceGroupName, String serviceName, String gatewayId, String apiId) {
         this.serviceClient().getEntityTag(resourceGroupName, serviceName, gatewayId, apiId);
     }
 
-    public GatewayApisGetEntityTagResponse getEntityTagWithResponse(
-        String resourceGroupName, String serviceName, String gatewayId, String apiId, Context context) {
-        return this.serviceClient().getEntityTagWithResponse(resourceGroupName, serviceName, gatewayId, apiId, context);
+    public Response<ApiContract> createOrUpdateWithResponse(String resourceGroupName, String serviceName,
+        String gatewayId, String apiId, AssociationContract parameters, Context context) {
+        Response<ApiContractInner> inner = this.serviceClient()
+            .createOrUpdateWithResponse(resourceGroupName, serviceName, gatewayId, apiId, parameters, context);
+        if (inner != null) {
+            return new SimpleResponse<>(inner.getRequest(), inner.getStatusCode(), inner.getHeaders(),
+                new ApiContractImpl(inner.getValue(), this.manager()));
+        } else {
+            return null;
+        }
     }
 
     public ApiContract createOrUpdate(String resourceGroupName, String serviceName, String gatewayId, String apiId) {
@@ -67,35 +72,13 @@ public final class GatewayApisImpl implements GatewayApis {
         }
     }
 
-    public Response<ApiContract> createOrUpdateWithResponse(
-        String resourceGroupName,
-        String serviceName,
-        String gatewayId,
-        String apiId,
-        AssociationContract parameters,
-        Context context) {
-        Response<ApiContractInner> inner =
-            this
-                .serviceClient()
-                .createOrUpdateWithResponse(resourceGroupName, serviceName, gatewayId, apiId, parameters, context);
-        if (inner != null) {
-            return new SimpleResponse<>(
-                inner.getRequest(),
-                inner.getStatusCode(),
-                inner.getHeaders(),
-                new ApiContractImpl(inner.getValue(), this.manager()));
-        } else {
-            return null;
-        }
+    public Response<Void> deleteWithResponse(String resourceGroupName, String serviceName, String gatewayId,
+        String apiId, Context context) {
+        return this.serviceClient().deleteWithResponse(resourceGroupName, serviceName, gatewayId, apiId, context);
     }
 
     public void delete(String resourceGroupName, String serviceName, String gatewayId, String apiId) {
         this.serviceClient().delete(resourceGroupName, serviceName, gatewayId, apiId);
-    }
-
-    public Response<Void> deleteWithResponse(
-        String resourceGroupName, String serviceName, String gatewayId, String apiId, Context context) {
-        return this.serviceClient().deleteWithResponse(resourceGroupName, serviceName, gatewayId, apiId, context);
     }
 
     private GatewayApisClient serviceClient() {

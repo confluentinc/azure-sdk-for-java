@@ -5,71 +5,68 @@
 package com.azure.resourcemanager.authorization.fluent.models;
 
 import com.azure.core.annotation.Fluent;
-import com.azure.core.util.logging.ClientLogger;
-import com.fasterxml.jackson.annotation.JsonAnyGetter;
-import com.fasterxml.jackson.annotation.JsonAnySetter;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.azure.core.util.CoreUtils;
+import com.azure.json.JsonReader;
+import com.azure.json.JsonToken;
+import com.azure.json.JsonWriter;
+import java.io.IOException;
 import java.time.OffsetDateTime;
-import java.util.HashMap;
+import java.time.format.DateTimeFormatter;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
 /**
+ * extensionProperty
+ * 
  * Represents an Azure Active Directory object. The directoryObject type is the base type for many other directory
  * entity types.
  */
 @Fluent
 public final class MicrosoftGraphExtensionPropertyInner extends MicrosoftGraphDirectoryObjectInner {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(MicrosoftGraphExtensionPropertyInner.class);
-
     /*
-     * Display name of the application object on which this extension property
-     * is defined. Read-only.
+     * Display name of the application object on which this extension property is defined. Read-only.
      */
-    @JsonProperty(value = "appDisplayName")
     private String appDisplayName;
 
     /*
-     * Specifies the data type of the value the extension property can hold.
-     * Following values are supported. Not nullable. Binary - 256 bytes
-     * maximumBooleanDateTime - Must be specified in ISO 8601 format. Will be
-     * stored in UTC.Integer - 32-bit value.LargeInteger - 64-bit value.String
-     * - 256 characters maximum
+     * Specifies the data type of the value the extension property can hold. Following values are supported. Not
+     * nullable. Binary - 256 bytes maximumBooleanDateTime - Must be specified in ISO 8601 format. Will be stored in
+     * UTC.Integer - 32-bit value.LargeInteger - 64-bit value.String - 256 characters maximum
      */
-    @JsonProperty(value = "dataType")
     private String dataType;
 
     /*
-     * Indicates if this extension property was sycned from onpremises
-     * directory using Azure AD Connect. Read-only.
+     * Indicates if this extension property was sycned from onpremises directory using Azure AD Connect. Read-only.
      */
-    @JsonProperty(value = "isSyncedFromOnPremises")
     private Boolean isSyncedFromOnPremises;
 
     /*
      * Name of the extension property. Not nullable.
      */
-    @JsonProperty(value = "name")
     private String name;
 
     /*
-     * Following values are supported. Not nullable.
-     * UserGroupOrganizationDeviceApplication
+     * Following values are supported. Not nullable. UserGroupOrganizationDeviceApplication
      */
-    @JsonProperty(value = "targetObjects")
     private List<String> targetObjects;
 
     /*
-     * Represents an Azure Active Directory object. The directoryObject type is
-     * the base type for many other directory entity types.
+     * Represents an Azure Active Directory object. The directoryObject type is the base type for many other directory
+     * entity types.
      */
-    @JsonIgnore private Map<String, Object> additionalProperties;
+    private Map<String, Object> additionalProperties;
+
+    /**
+     * Creates an instance of MicrosoftGraphExtensionPropertyInner class.
+     */
+    public MicrosoftGraphExtensionPropertyInner() {
+    }
 
     /**
      * Get the appDisplayName property: Display name of the application object on which this extension property is
      * defined. Read-only.
-     *
+     * 
      * @return the appDisplayName value.
      */
     public String appDisplayName() {
@@ -79,7 +76,7 @@ public final class MicrosoftGraphExtensionPropertyInner extends MicrosoftGraphDi
     /**
      * Set the appDisplayName property: Display name of the application object on which this extension property is
      * defined. Read-only.
-     *
+     * 
      * @param appDisplayName the appDisplayName value to set.
      * @return the MicrosoftGraphExtensionPropertyInner object itself.
      */
@@ -92,7 +89,7 @@ public final class MicrosoftGraphExtensionPropertyInner extends MicrosoftGraphDi
      * Get the dataType property: Specifies the data type of the value the extension property can hold. Following values
      * are supported. Not nullable. Binary - 256 bytes maximumBooleanDateTime - Must be specified in ISO 8601 format.
      * Will be stored in UTC.Integer - 32-bit value.LargeInteger - 64-bit value.String - 256 characters maximum.
-     *
+     * 
      * @return the dataType value.
      */
     public String dataType() {
@@ -103,7 +100,7 @@ public final class MicrosoftGraphExtensionPropertyInner extends MicrosoftGraphDi
      * Set the dataType property: Specifies the data type of the value the extension property can hold. Following values
      * are supported. Not nullable. Binary - 256 bytes maximumBooleanDateTime - Must be specified in ISO 8601 format.
      * Will be stored in UTC.Integer - 32-bit value.LargeInteger - 64-bit value.String - 256 characters maximum.
-     *
+     * 
      * @param dataType the dataType value to set.
      * @return the MicrosoftGraphExtensionPropertyInner object itself.
      */
@@ -115,7 +112,7 @@ public final class MicrosoftGraphExtensionPropertyInner extends MicrosoftGraphDi
     /**
      * Get the isSyncedFromOnPremises property: Indicates if this extension property was sycned from onpremises
      * directory using Azure AD Connect. Read-only.
-     *
+     * 
      * @return the isSyncedFromOnPremises value.
      */
     public Boolean isSyncedFromOnPremises() {
@@ -125,7 +122,7 @@ public final class MicrosoftGraphExtensionPropertyInner extends MicrosoftGraphDi
     /**
      * Set the isSyncedFromOnPremises property: Indicates if this extension property was sycned from onpremises
      * directory using Azure AD Connect. Read-only.
-     *
+     * 
      * @param isSyncedFromOnPremises the isSyncedFromOnPremises value to set.
      * @return the MicrosoftGraphExtensionPropertyInner object itself.
      */
@@ -136,7 +133,7 @@ public final class MicrosoftGraphExtensionPropertyInner extends MicrosoftGraphDi
 
     /**
      * Get the name property: Name of the extension property. Not nullable.
-     *
+     * 
      * @return the name value.
      */
     public String name() {
@@ -145,7 +142,7 @@ public final class MicrosoftGraphExtensionPropertyInner extends MicrosoftGraphDi
 
     /**
      * Set the name property: Name of the extension property. Not nullable.
-     *
+     * 
      * @param name the name value to set.
      * @return the MicrosoftGraphExtensionPropertyInner object itself.
      */
@@ -157,7 +154,7 @@ public final class MicrosoftGraphExtensionPropertyInner extends MicrosoftGraphDi
     /**
      * Get the targetObjects property: Following values are supported. Not nullable.
      * UserGroupOrganizationDeviceApplication.
-     *
+     * 
      * @return the targetObjects value.
      */
     public List<String> targetObjects() {
@@ -167,7 +164,7 @@ public final class MicrosoftGraphExtensionPropertyInner extends MicrosoftGraphDi
     /**
      * Set the targetObjects property: Following values are supported. Not nullable.
      * UserGroupOrganizationDeviceApplication.
-     *
+     * 
      * @param targetObjects the targetObjects value to set.
      * @return the MicrosoftGraphExtensionPropertyInner object itself.
      */
@@ -179,10 +176,9 @@ public final class MicrosoftGraphExtensionPropertyInner extends MicrosoftGraphDi
     /**
      * Get the additionalProperties property: Represents an Azure Active Directory object. The directoryObject type is
      * the base type for many other directory entity types.
-     *
+     * 
      * @return the additionalProperties value.
      */
-    @JsonAnyGetter
     public Map<String, Object> additionalProperties() {
         return this.additionalProperties;
     }
@@ -190,7 +186,7 @@ public final class MicrosoftGraphExtensionPropertyInner extends MicrosoftGraphDi
     /**
      * Set the additionalProperties property: Represents an Azure Active Directory object. The directoryObject type is
      * the base type for many other directory entity types.
-     *
+     * 
      * @param additionalProperties the additionalProperties value to set.
      * @return the MicrosoftGraphExtensionPropertyInner object itself.
      */
@@ -199,22 +195,18 @@ public final class MicrosoftGraphExtensionPropertyInner extends MicrosoftGraphDi
         return this;
     }
 
-    @JsonAnySetter
-    void withAdditionalProperties(String key, Object value) {
-        if (additionalProperties == null) {
-            additionalProperties = new HashMap<>();
-        }
-        additionalProperties.put(key, value);
-    }
-
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public MicrosoftGraphExtensionPropertyInner withDeletedDateTime(OffsetDateTime deletedDateTime) {
         super.withDeletedDateTime(deletedDateTime);
         return this;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public MicrosoftGraphExtensionPropertyInner withId(String id) {
         super.withId(id);
@@ -223,11 +215,82 @@ public final class MicrosoftGraphExtensionPropertyInner extends MicrosoftGraphDi
 
     /**
      * Validates the instance.
-     *
+     * 
      * @throws IllegalArgumentException thrown if the instance is not valid.
      */
     @Override
     public void validate() {
         super.validate();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public JsonWriter toJson(JsonWriter jsonWriter) throws IOException {
+        jsonWriter.writeStartObject();
+        jsonWriter.writeStringField("id", id());
+        jsonWriter.writeStringField("deletedDateTime",
+            deletedDateTime() == null ? null : DateTimeFormatter.ISO_OFFSET_DATE_TIME.format(deletedDateTime()));
+        jsonWriter.writeStringField("appDisplayName", this.appDisplayName);
+        jsonWriter.writeStringField("dataType", this.dataType);
+        jsonWriter.writeBooleanField("isSyncedFromOnPremises", this.isSyncedFromOnPremises);
+        jsonWriter.writeStringField("name", this.name);
+        jsonWriter.writeArrayField("targetObjects", this.targetObjects,
+            (writer, element) -> writer.writeString(element));
+        if (additionalProperties != null) {
+            for (Map.Entry<String, Object> additionalProperty : additionalProperties.entrySet()) {
+                jsonWriter.writeUntypedField(additionalProperty.getKey(), additionalProperty.getValue());
+            }
+        }
+        return jsonWriter.writeEndObject();
+    }
+
+    /**
+     * Reads an instance of MicrosoftGraphExtensionPropertyInner from the JsonReader.
+     * 
+     * @param jsonReader The JsonReader being read.
+     * @return An instance of MicrosoftGraphExtensionPropertyInner if the JsonReader was pointing to an instance of it,
+     * or null if it was pointing to JSON null.
+     * @throws IOException If an error occurs while reading the MicrosoftGraphExtensionPropertyInner.
+     */
+    public static MicrosoftGraphExtensionPropertyInner fromJson(JsonReader jsonReader) throws IOException {
+        return jsonReader.readObject(reader -> {
+            MicrosoftGraphExtensionPropertyInner deserializedMicrosoftGraphExtensionPropertyInner
+                = new MicrosoftGraphExtensionPropertyInner();
+            Map<String, Object> additionalProperties = null;
+            while (reader.nextToken() != JsonToken.END_OBJECT) {
+                String fieldName = reader.getFieldName();
+                reader.nextToken();
+
+                if ("id".equals(fieldName)) {
+                    deserializedMicrosoftGraphExtensionPropertyInner.withId(reader.getString());
+                } else if ("deletedDateTime".equals(fieldName)) {
+                    deserializedMicrosoftGraphExtensionPropertyInner.withDeletedDateTime(reader
+                        .getNullable(nonNullReader -> CoreUtils.parseBestOffsetDateTime(nonNullReader.getString())));
+                } else if ("appDisplayName".equals(fieldName)) {
+                    deserializedMicrosoftGraphExtensionPropertyInner.appDisplayName = reader.getString();
+                } else if ("dataType".equals(fieldName)) {
+                    deserializedMicrosoftGraphExtensionPropertyInner.dataType = reader.getString();
+                } else if ("isSyncedFromOnPremises".equals(fieldName)) {
+                    deserializedMicrosoftGraphExtensionPropertyInner.isSyncedFromOnPremises
+                        = reader.getNullable(JsonReader::getBoolean);
+                } else if ("name".equals(fieldName)) {
+                    deserializedMicrosoftGraphExtensionPropertyInner.name = reader.getString();
+                } else if ("targetObjects".equals(fieldName)) {
+                    List<String> targetObjects = reader.readArray(reader1 -> reader1.getString());
+                    deserializedMicrosoftGraphExtensionPropertyInner.targetObjects = targetObjects;
+                } else {
+                    if (additionalProperties == null) {
+                        additionalProperties = new LinkedHashMap<>();
+                    }
+
+                    additionalProperties.put(fieldName, reader.readUntyped());
+                }
+            }
+            deserializedMicrosoftGraphExtensionPropertyInner.additionalProperties = additionalProperties;
+
+            return deserializedMicrosoftGraphExtensionPropertyInner;
+        });
     }
 }

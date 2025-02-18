@@ -11,41 +11,32 @@ import com.azure.resourcemanager.synapse.fluent.SqlPoolTableColumnsClient;
 import com.azure.resourcemanager.synapse.fluent.models.SqlPoolColumnInner;
 import com.azure.resourcemanager.synapse.models.SqlPoolColumn;
 import com.azure.resourcemanager.synapse.models.SqlPoolTableColumns;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 public final class SqlPoolTableColumnsImpl implements SqlPoolTableColumns {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(SqlPoolTableColumnsImpl.class);
+    private static final ClientLogger LOGGER = new ClientLogger(SqlPoolTableColumnsImpl.class);
 
     private final SqlPoolTableColumnsClient innerClient;
 
     private final com.azure.resourcemanager.synapse.SynapseManager serviceManager;
 
-    public SqlPoolTableColumnsImpl(
-        SqlPoolTableColumnsClient innerClient, com.azure.resourcemanager.synapse.SynapseManager serviceManager) {
+    public SqlPoolTableColumnsImpl(SqlPoolTableColumnsClient innerClient,
+        com.azure.resourcemanager.synapse.SynapseManager serviceManager) {
         this.innerClient = innerClient;
         this.serviceManager = serviceManager;
     }
 
-    public PagedIterable<SqlPoolColumn> listByTableName(
-        String resourceGroupName, String workspaceName, String sqlPoolName, String schemaName, String tableName) {
-        PagedIterable<SqlPoolColumnInner> inner =
-            this.serviceClient().listByTableName(resourceGroupName, workspaceName, sqlPoolName, schemaName, tableName);
-        return Utils.mapPage(inner, inner1 -> new SqlPoolColumnImpl(inner1, this.manager()));
+    public PagedIterable<SqlPoolColumn> listByTableName(String resourceGroupName, String workspaceName,
+        String sqlPoolName, String schemaName, String tableName) {
+        PagedIterable<SqlPoolColumnInner> inner = this.serviceClient()
+            .listByTableName(resourceGroupName, workspaceName, sqlPoolName, schemaName, tableName);
+        return ResourceManagerUtils.mapPage(inner, inner1 -> new SqlPoolColumnImpl(inner1, this.manager()));
     }
 
-    public PagedIterable<SqlPoolColumn> listByTableName(
-        String resourceGroupName,
-        String workspaceName,
-        String sqlPoolName,
-        String schemaName,
-        String tableName,
-        String filter,
-        Context context) {
-        PagedIterable<SqlPoolColumnInner> inner =
-            this
-                .serviceClient()
-                .listByTableName(resourceGroupName, workspaceName, sqlPoolName, schemaName, tableName, filter, context);
-        return Utils.mapPage(inner, inner1 -> new SqlPoolColumnImpl(inner1, this.manager()));
+    public PagedIterable<SqlPoolColumn> listByTableName(String resourceGroupName, String workspaceName,
+        String sqlPoolName, String schemaName, String tableName, String filter, Context context) {
+        PagedIterable<SqlPoolColumnInner> inner = this.serviceClient()
+            .listByTableName(resourceGroupName, workspaceName, sqlPoolName, schemaName, tableName, filter, context);
+        return ResourceManagerUtils.mapPage(inner, inner1 -> new SqlPoolColumnImpl(inner1, this.manager()));
     }
 
     private SqlPoolTableColumnsClient serviceClient() {

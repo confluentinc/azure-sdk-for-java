@@ -5,382 +5,444 @@
 package com.azure.resourcemanager.automation.fluent.models;
 
 import com.azure.core.annotation.Fluent;
-import com.azure.core.annotation.JsonFlatten;
 import com.azure.core.management.ProxyResource;
-import com.azure.core.util.logging.ClientLogger;
+import com.azure.json.JsonReader;
+import com.azure.json.JsonToken;
+import com.azure.json.JsonWriter;
 import com.azure.resourcemanager.automation.models.AdvancedSchedule;
 import com.azure.resourcemanager.automation.models.ScheduleFrequency;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import java.io.IOException;
 import java.time.OffsetDateTime;
 
-/** Definition of the schedule. */
-@JsonFlatten
+/**
+ * Definition of the schedule.
+ */
 @Fluent
-public class ScheduleInner extends ProxyResource {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(ScheduleInner.class);
+public final class ScheduleInner extends ProxyResource {
+    /*
+     * Gets or sets the properties of the schedule.
+     */
+    private ScheduleProperties innerProperties;
 
     /*
-     * Gets or sets the start time of the schedule.
+     * The type of the resource.
      */
-    @JsonProperty(value = "properties.startTime")
-    private OffsetDateTime startTime;
+    private String type;
 
     /*
-     * Gets the start time's offset in minutes.
+     * The name of the resource.
      */
-    @JsonProperty(value = "properties.startTimeOffsetMinutes", access = JsonProperty.Access.WRITE_ONLY)
-    private Double startTimeOffsetMinutes;
+    private String name;
 
     /*
-     * Gets or sets the end time of the schedule.
+     * Fully qualified resource Id for the resource.
      */
-    @JsonProperty(value = "properties.expiryTime")
-    private OffsetDateTime expiryTime;
+    private String id;
 
-    /*
-     * Gets or sets the expiry time's offset in minutes.
+    /**
+     * Creates an instance of ScheduleInner class.
      */
-    @JsonProperty(value = "properties.expiryTimeOffsetMinutes")
-    private Double expiryTimeOffsetMinutes;
+    public ScheduleInner() {
+    }
 
-    /*
-     * Gets or sets a value indicating whether this schedule is enabled.
+    /**
+     * Get the innerProperties property: Gets or sets the properties of the schedule.
+     * 
+     * @return the innerProperties value.
      */
-    @JsonProperty(value = "properties.isEnabled")
-    private Boolean isEnabled;
+    private ScheduleProperties innerProperties() {
+        return this.innerProperties;
+    }
 
-    /*
-     * Gets or sets the next run time of the schedule.
+    /**
+     * Get the type property: The type of the resource.
+     * 
+     * @return the type value.
      */
-    @JsonProperty(value = "properties.nextRun")
-    private OffsetDateTime nextRun;
+    @Override
+    public String type() {
+        return this.type;
+    }
 
-    /*
-     * Gets or sets the next run time's offset in minutes.
+    /**
+     * Get the name property: The name of the resource.
+     * 
+     * @return the name value.
      */
-    @JsonProperty(value = "properties.nextRunOffsetMinutes")
-    private Double nextRunOffsetMinutes;
+    @Override
+    public String name() {
+        return this.name;
+    }
 
-    /*
-     * Gets or sets the interval of the schedule.
+    /**
+     * Get the id property: Fully qualified resource Id for the resource.
+     * 
+     * @return the id value.
      */
-    @JsonProperty(value = "properties.interval")
-    private Object interval;
-
-    /*
-     * Gets or sets the frequency of the schedule.
-     */
-    @JsonProperty(value = "properties.frequency")
-    private ScheduleFrequency frequency;
-
-    /*
-     * Gets or sets the time zone of the schedule.
-     */
-    @JsonProperty(value = "properties.timeZone")
-    private String timeZone;
-
-    /*
-     * Gets or sets the advanced schedule.
-     */
-    @JsonProperty(value = "properties.advancedSchedule")
-    private AdvancedSchedule advancedSchedule;
-
-    /*
-     * Gets or sets the creation time.
-     */
-    @JsonProperty(value = "properties.creationTime")
-    private OffsetDateTime creationTime;
-
-    /*
-     * Gets or sets the last modified time.
-     */
-    @JsonProperty(value = "properties.lastModifiedTime")
-    private OffsetDateTime lastModifiedTime;
-
-    /*
-     * Gets or sets the description.
-     */
-    @JsonProperty(value = "properties.description")
-    private String description;
+    @Override
+    public String id() {
+        return this.id;
+    }
 
     /**
      * Get the startTime property: Gets or sets the start time of the schedule.
-     *
+     * 
      * @return the startTime value.
      */
     public OffsetDateTime startTime() {
-        return this.startTime;
+        return this.innerProperties() == null ? null : this.innerProperties().startTime();
     }
 
     /**
      * Set the startTime property: Gets or sets the start time of the schedule.
-     *
+     * 
      * @param startTime the startTime value to set.
      * @return the ScheduleInner object itself.
      */
     public ScheduleInner withStartTime(OffsetDateTime startTime) {
-        this.startTime = startTime;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new ScheduleProperties();
+        }
+        this.innerProperties().withStartTime(startTime);
         return this;
     }
 
     /**
      * Get the startTimeOffsetMinutes property: Gets the start time's offset in minutes.
-     *
+     * 
      * @return the startTimeOffsetMinutes value.
      */
     public Double startTimeOffsetMinutes() {
-        return this.startTimeOffsetMinutes;
+        return this.innerProperties() == null ? null : this.innerProperties().startTimeOffsetMinutes();
     }
 
     /**
      * Get the expiryTime property: Gets or sets the end time of the schedule.
-     *
+     * 
      * @return the expiryTime value.
      */
     public OffsetDateTime expiryTime() {
-        return this.expiryTime;
+        return this.innerProperties() == null ? null : this.innerProperties().expiryTime();
     }
 
     /**
      * Set the expiryTime property: Gets or sets the end time of the schedule.
-     *
+     * 
      * @param expiryTime the expiryTime value to set.
      * @return the ScheduleInner object itself.
      */
     public ScheduleInner withExpiryTime(OffsetDateTime expiryTime) {
-        this.expiryTime = expiryTime;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new ScheduleProperties();
+        }
+        this.innerProperties().withExpiryTime(expiryTime);
         return this;
     }
 
     /**
      * Get the expiryTimeOffsetMinutes property: Gets or sets the expiry time's offset in minutes.
-     *
+     * 
      * @return the expiryTimeOffsetMinutes value.
      */
     public Double expiryTimeOffsetMinutes() {
-        return this.expiryTimeOffsetMinutes;
+        return this.innerProperties() == null ? null : this.innerProperties().expiryTimeOffsetMinutes();
     }
 
     /**
      * Set the expiryTimeOffsetMinutes property: Gets or sets the expiry time's offset in minutes.
-     *
+     * 
      * @param expiryTimeOffsetMinutes the expiryTimeOffsetMinutes value to set.
      * @return the ScheduleInner object itself.
      */
     public ScheduleInner withExpiryTimeOffsetMinutes(Double expiryTimeOffsetMinutes) {
-        this.expiryTimeOffsetMinutes = expiryTimeOffsetMinutes;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new ScheduleProperties();
+        }
+        this.innerProperties().withExpiryTimeOffsetMinutes(expiryTimeOffsetMinutes);
         return this;
     }
 
     /**
      * Get the isEnabled property: Gets or sets a value indicating whether this schedule is enabled.
-     *
+     * 
      * @return the isEnabled value.
      */
     public Boolean isEnabled() {
-        return this.isEnabled;
+        return this.innerProperties() == null ? null : this.innerProperties().isEnabled();
     }
 
     /**
      * Set the isEnabled property: Gets or sets a value indicating whether this schedule is enabled.
-     *
+     * 
      * @param isEnabled the isEnabled value to set.
      * @return the ScheduleInner object itself.
      */
     public ScheduleInner withIsEnabled(Boolean isEnabled) {
-        this.isEnabled = isEnabled;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new ScheduleProperties();
+        }
+        this.innerProperties().withIsEnabled(isEnabled);
         return this;
     }
 
     /**
      * Get the nextRun property: Gets or sets the next run time of the schedule.
-     *
+     * 
      * @return the nextRun value.
      */
     public OffsetDateTime nextRun() {
-        return this.nextRun;
+        return this.innerProperties() == null ? null : this.innerProperties().nextRun();
     }
 
     /**
      * Set the nextRun property: Gets or sets the next run time of the schedule.
-     *
+     * 
      * @param nextRun the nextRun value to set.
      * @return the ScheduleInner object itself.
      */
     public ScheduleInner withNextRun(OffsetDateTime nextRun) {
-        this.nextRun = nextRun;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new ScheduleProperties();
+        }
+        this.innerProperties().withNextRun(nextRun);
         return this;
     }
 
     /**
      * Get the nextRunOffsetMinutes property: Gets or sets the next run time's offset in minutes.
-     *
+     * 
      * @return the nextRunOffsetMinutes value.
      */
     public Double nextRunOffsetMinutes() {
-        return this.nextRunOffsetMinutes;
+        return this.innerProperties() == null ? null : this.innerProperties().nextRunOffsetMinutes();
     }
 
     /**
      * Set the nextRunOffsetMinutes property: Gets or sets the next run time's offset in minutes.
-     *
+     * 
      * @param nextRunOffsetMinutes the nextRunOffsetMinutes value to set.
      * @return the ScheduleInner object itself.
      */
     public ScheduleInner withNextRunOffsetMinutes(Double nextRunOffsetMinutes) {
-        this.nextRunOffsetMinutes = nextRunOffsetMinutes;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new ScheduleProperties();
+        }
+        this.innerProperties().withNextRunOffsetMinutes(nextRunOffsetMinutes);
         return this;
     }
 
     /**
      * Get the interval property: Gets or sets the interval of the schedule.
-     *
+     * 
      * @return the interval value.
      */
     public Object interval() {
-        return this.interval;
+        return this.innerProperties() == null ? null : this.innerProperties().interval();
     }
 
     /**
      * Set the interval property: Gets or sets the interval of the schedule.
-     *
+     * 
      * @param interval the interval value to set.
      * @return the ScheduleInner object itself.
      */
     public ScheduleInner withInterval(Object interval) {
-        this.interval = interval;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new ScheduleProperties();
+        }
+        this.innerProperties().withInterval(interval);
         return this;
     }
 
     /**
      * Get the frequency property: Gets or sets the frequency of the schedule.
-     *
+     * 
      * @return the frequency value.
      */
     public ScheduleFrequency frequency() {
-        return this.frequency;
+        return this.innerProperties() == null ? null : this.innerProperties().frequency();
     }
 
     /**
      * Set the frequency property: Gets or sets the frequency of the schedule.
-     *
+     * 
      * @param frequency the frequency value to set.
      * @return the ScheduleInner object itself.
      */
     public ScheduleInner withFrequency(ScheduleFrequency frequency) {
-        this.frequency = frequency;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new ScheduleProperties();
+        }
+        this.innerProperties().withFrequency(frequency);
         return this;
     }
 
     /**
      * Get the timeZone property: Gets or sets the time zone of the schedule.
-     *
+     * 
      * @return the timeZone value.
      */
     public String timeZone() {
-        return this.timeZone;
+        return this.innerProperties() == null ? null : this.innerProperties().timeZone();
     }
 
     /**
      * Set the timeZone property: Gets or sets the time zone of the schedule.
-     *
+     * 
      * @param timeZone the timeZone value to set.
      * @return the ScheduleInner object itself.
      */
     public ScheduleInner withTimeZone(String timeZone) {
-        this.timeZone = timeZone;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new ScheduleProperties();
+        }
+        this.innerProperties().withTimeZone(timeZone);
         return this;
     }
 
     /**
      * Get the advancedSchedule property: Gets or sets the advanced schedule.
-     *
+     * 
      * @return the advancedSchedule value.
      */
     public AdvancedSchedule advancedSchedule() {
-        return this.advancedSchedule;
+        return this.innerProperties() == null ? null : this.innerProperties().advancedSchedule();
     }
 
     /**
      * Set the advancedSchedule property: Gets or sets the advanced schedule.
-     *
+     * 
      * @param advancedSchedule the advancedSchedule value to set.
      * @return the ScheduleInner object itself.
      */
     public ScheduleInner withAdvancedSchedule(AdvancedSchedule advancedSchedule) {
-        this.advancedSchedule = advancedSchedule;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new ScheduleProperties();
+        }
+        this.innerProperties().withAdvancedSchedule(advancedSchedule);
         return this;
     }
 
     /**
      * Get the creationTime property: Gets or sets the creation time.
-     *
+     * 
      * @return the creationTime value.
      */
     public OffsetDateTime creationTime() {
-        return this.creationTime;
+        return this.innerProperties() == null ? null : this.innerProperties().creationTime();
     }
 
     /**
      * Set the creationTime property: Gets or sets the creation time.
-     *
+     * 
      * @param creationTime the creationTime value to set.
      * @return the ScheduleInner object itself.
      */
     public ScheduleInner withCreationTime(OffsetDateTime creationTime) {
-        this.creationTime = creationTime;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new ScheduleProperties();
+        }
+        this.innerProperties().withCreationTime(creationTime);
         return this;
     }
 
     /**
      * Get the lastModifiedTime property: Gets or sets the last modified time.
-     *
+     * 
      * @return the lastModifiedTime value.
      */
     public OffsetDateTime lastModifiedTime() {
-        return this.lastModifiedTime;
+        return this.innerProperties() == null ? null : this.innerProperties().lastModifiedTime();
     }
 
     /**
      * Set the lastModifiedTime property: Gets or sets the last modified time.
-     *
+     * 
      * @param lastModifiedTime the lastModifiedTime value to set.
      * @return the ScheduleInner object itself.
      */
     public ScheduleInner withLastModifiedTime(OffsetDateTime lastModifiedTime) {
-        this.lastModifiedTime = lastModifiedTime;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new ScheduleProperties();
+        }
+        this.innerProperties().withLastModifiedTime(lastModifiedTime);
         return this;
     }
 
     /**
      * Get the description property: Gets or sets the description.
-     *
+     * 
      * @return the description value.
      */
     public String description() {
-        return this.description;
+        return this.innerProperties() == null ? null : this.innerProperties().description();
     }
 
     /**
      * Set the description property: Gets or sets the description.
-     *
+     * 
      * @param description the description value to set.
      * @return the ScheduleInner object itself.
      */
     public ScheduleInner withDescription(String description) {
-        this.description = description;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new ScheduleProperties();
+        }
+        this.innerProperties().withDescription(description);
         return this;
     }
 
     /**
      * Validates the instance.
-     *
+     * 
      * @throws IllegalArgumentException thrown if the instance is not valid.
      */
     public void validate() {
-        if (advancedSchedule() != null) {
-            advancedSchedule().validate();
+        if (innerProperties() != null) {
+            innerProperties().validate();
         }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public JsonWriter toJson(JsonWriter jsonWriter) throws IOException {
+        jsonWriter.writeStartObject();
+        jsonWriter.writeJsonField("properties", this.innerProperties);
+        return jsonWriter.writeEndObject();
+    }
+
+    /**
+     * Reads an instance of ScheduleInner from the JsonReader.
+     * 
+     * @param jsonReader The JsonReader being read.
+     * @return An instance of ScheduleInner if the JsonReader was pointing to an instance of it, or null if it was
+     * pointing to JSON null.
+     * @throws IllegalStateException If the deserialized JSON object was missing any required properties.
+     * @throws IOException If an error occurs while reading the ScheduleInner.
+     */
+    public static ScheduleInner fromJson(JsonReader jsonReader) throws IOException {
+        return jsonReader.readObject(reader -> {
+            ScheduleInner deserializedScheduleInner = new ScheduleInner();
+            while (reader.nextToken() != JsonToken.END_OBJECT) {
+                String fieldName = reader.getFieldName();
+                reader.nextToken();
+
+                if ("id".equals(fieldName)) {
+                    deserializedScheduleInner.id = reader.getString();
+                } else if ("name".equals(fieldName)) {
+                    deserializedScheduleInner.name = reader.getString();
+                } else if ("type".equals(fieldName)) {
+                    deserializedScheduleInner.type = reader.getString();
+                } else if ("properties".equals(fieldName)) {
+                    deserializedScheduleInner.innerProperties = ScheduleProperties.fromJson(reader);
+                } else {
+                    reader.skipChildren();
+                }
+            }
+
+            return deserializedScheduleInner;
+        });
     }
 }

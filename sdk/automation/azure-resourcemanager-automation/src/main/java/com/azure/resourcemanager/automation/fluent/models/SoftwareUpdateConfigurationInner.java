@@ -5,228 +5,285 @@
 package com.azure.resourcemanager.automation.fluent.models;
 
 import com.azure.core.annotation.Fluent;
-import com.azure.core.annotation.JsonFlatten;
 import com.azure.core.management.ProxyResource;
 import com.azure.core.management.exception.ManagementError;
 import com.azure.core.util.logging.ClientLogger;
+import com.azure.json.JsonReader;
+import com.azure.json.JsonToken;
+import com.azure.json.JsonWriter;
 import com.azure.resourcemanager.automation.models.SoftwareUpdateConfigurationTasks;
 import com.azure.resourcemanager.automation.models.SucScheduleProperties;
 import com.azure.resourcemanager.automation.models.UpdateConfiguration;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import java.io.IOException;
 import java.time.OffsetDateTime;
 
-/** Software update configuration properties. */
-@JsonFlatten
+/**
+ * Software update configuration properties.
+ */
 @Fluent
-public class SoftwareUpdateConfigurationInner extends ProxyResource {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(SoftwareUpdateConfigurationInner.class);
+public final class SoftwareUpdateConfigurationInner extends ProxyResource {
+    /*
+     * Software update configuration properties.
+     */
+    private SoftwareUpdateConfigurationProperties innerProperties = new SoftwareUpdateConfigurationProperties();
 
     /*
-     * update specific properties for the Software update configuration
+     * The type of the resource.
      */
-    @JsonProperty(value = "properties.updateConfiguration", required = true)
-    private UpdateConfiguration updateConfiguration;
+    private String type;
 
     /*
-     * Schedule information for the Software update configuration
+     * The name of the resource.
      */
-    @JsonProperty(value = "properties.scheduleInfo", required = true)
-    private SucScheduleProperties scheduleInfo;
+    private String name;
 
     /*
-     * Provisioning state for the software update configuration, which only
-     * appears in the response.
+     * Fully qualified resource Id for the resource.
      */
-    @JsonProperty(value = "properties.provisioningState", access = JsonProperty.Access.WRITE_ONLY)
-    private String provisioningState;
+    private String id;
 
-    /*
-     * Details of provisioning error
+    /**
+     * Creates an instance of SoftwareUpdateConfigurationInner class.
      */
-    @JsonProperty(value = "properties.error")
-    private ManagementError error;
+    public SoftwareUpdateConfigurationInner() {
+    }
 
-    /*
-     * Creation time of the resource, which only appears in the response.
+    /**
+     * Get the innerProperties property: Software update configuration properties.
+     * 
+     * @return the innerProperties value.
      */
-    @JsonProperty(value = "properties.creationTime", access = JsonProperty.Access.WRITE_ONLY)
-    private OffsetDateTime creationTime;
+    private SoftwareUpdateConfigurationProperties innerProperties() {
+        return this.innerProperties;
+    }
 
-    /*
-     * CreatedBy property, which only appears in the response.
+    /**
+     * Get the type property: The type of the resource.
+     * 
+     * @return the type value.
      */
-    @JsonProperty(value = "properties.createdBy", access = JsonProperty.Access.WRITE_ONLY)
-    private String createdBy;
+    @Override
+    public String type() {
+        return this.type;
+    }
 
-    /*
-     * Last time resource was modified, which only appears in the response.
+    /**
+     * Get the name property: The name of the resource.
+     * 
+     * @return the name value.
      */
-    @JsonProperty(value = "properties.lastModifiedTime", access = JsonProperty.Access.WRITE_ONLY)
-    private OffsetDateTime lastModifiedTime;
+    @Override
+    public String name() {
+        return this.name;
+    }
 
-    /*
-     * LastModifiedBy property, which only appears in the response.
+    /**
+     * Get the id property: Fully qualified resource Id for the resource.
+     * 
+     * @return the id value.
      */
-    @JsonProperty(value = "properties.lastModifiedBy", access = JsonProperty.Access.WRITE_ONLY)
-    private String lastModifiedBy;
-
-    /*
-     * Tasks information for the Software update configuration.
-     */
-    @JsonProperty(value = "properties.tasks")
-    private SoftwareUpdateConfigurationTasks tasks;
+    @Override
+    public String id() {
+        return this.id;
+    }
 
     /**
      * Get the updateConfiguration property: update specific properties for the Software update configuration.
-     *
+     * 
      * @return the updateConfiguration value.
      */
     public UpdateConfiguration updateConfiguration() {
-        return this.updateConfiguration;
+        return this.innerProperties() == null ? null : this.innerProperties().updateConfiguration();
     }
 
     /**
      * Set the updateConfiguration property: update specific properties for the Software update configuration.
-     *
+     * 
      * @param updateConfiguration the updateConfiguration value to set.
      * @return the SoftwareUpdateConfigurationInner object itself.
      */
     public SoftwareUpdateConfigurationInner withUpdateConfiguration(UpdateConfiguration updateConfiguration) {
-        this.updateConfiguration = updateConfiguration;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new SoftwareUpdateConfigurationProperties();
+        }
+        this.innerProperties().withUpdateConfiguration(updateConfiguration);
         return this;
     }
 
     /**
      * Get the scheduleInfo property: Schedule information for the Software update configuration.
-     *
+     * 
      * @return the scheduleInfo value.
      */
     public SucScheduleProperties scheduleInfo() {
-        return this.scheduleInfo;
+        return this.innerProperties() == null ? null : this.innerProperties().scheduleInfo();
     }
 
     /**
      * Set the scheduleInfo property: Schedule information for the Software update configuration.
-     *
+     * 
      * @param scheduleInfo the scheduleInfo value to set.
      * @return the SoftwareUpdateConfigurationInner object itself.
      */
     public SoftwareUpdateConfigurationInner withScheduleInfo(SucScheduleProperties scheduleInfo) {
-        this.scheduleInfo = scheduleInfo;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new SoftwareUpdateConfigurationProperties();
+        }
+        this.innerProperties().withScheduleInfo(scheduleInfo);
         return this;
     }
 
     /**
      * Get the provisioningState property: Provisioning state for the software update configuration, which only appears
      * in the response.
-     *
+     * 
      * @return the provisioningState value.
      */
     public String provisioningState() {
-        return this.provisioningState;
+        return this.innerProperties() == null ? null : this.innerProperties().provisioningState();
     }
 
     /**
      * Get the error property: Details of provisioning error.
-     *
+     * 
      * @return the error value.
      */
     public ManagementError error() {
-        return this.error;
+        return this.innerProperties() == null ? null : this.innerProperties().error();
     }
 
     /**
      * Set the error property: Details of provisioning error.
-     *
+     * 
      * @param error the error value to set.
      * @return the SoftwareUpdateConfigurationInner object itself.
      */
     public SoftwareUpdateConfigurationInner withError(ManagementError error) {
-        this.error = error;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new SoftwareUpdateConfigurationProperties();
+        }
+        this.innerProperties().withError(error);
         return this;
     }
 
     /**
      * Get the creationTime property: Creation time of the resource, which only appears in the response.
-     *
+     * 
      * @return the creationTime value.
      */
     public OffsetDateTime creationTime() {
-        return this.creationTime;
+        return this.innerProperties() == null ? null : this.innerProperties().creationTime();
     }
 
     /**
      * Get the createdBy property: CreatedBy property, which only appears in the response.
-     *
+     * 
      * @return the createdBy value.
      */
     public String createdBy() {
-        return this.createdBy;
+        return this.innerProperties() == null ? null : this.innerProperties().createdBy();
     }
 
     /**
      * Get the lastModifiedTime property: Last time resource was modified, which only appears in the response.
-     *
+     * 
      * @return the lastModifiedTime value.
      */
     public OffsetDateTime lastModifiedTime() {
-        return this.lastModifiedTime;
+        return this.innerProperties() == null ? null : this.innerProperties().lastModifiedTime();
     }
 
     /**
      * Get the lastModifiedBy property: LastModifiedBy property, which only appears in the response.
-     *
+     * 
      * @return the lastModifiedBy value.
      */
     public String lastModifiedBy() {
-        return this.lastModifiedBy;
+        return this.innerProperties() == null ? null : this.innerProperties().lastModifiedBy();
     }
 
     /**
      * Get the tasks property: Tasks information for the Software update configuration.
-     *
+     * 
      * @return the tasks value.
      */
     public SoftwareUpdateConfigurationTasks tasks() {
-        return this.tasks;
+        return this.innerProperties() == null ? null : this.innerProperties().tasks();
     }
 
     /**
      * Set the tasks property: Tasks information for the Software update configuration.
-     *
+     * 
      * @param tasks the tasks value to set.
      * @return the SoftwareUpdateConfigurationInner object itself.
      */
     public SoftwareUpdateConfigurationInner withTasks(SoftwareUpdateConfigurationTasks tasks) {
-        this.tasks = tasks;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new SoftwareUpdateConfigurationProperties();
+        }
+        this.innerProperties().withTasks(tasks);
         return this;
     }
 
     /**
      * Validates the instance.
-     *
+     * 
      * @throws IllegalArgumentException thrown if the instance is not valid.
      */
     public void validate() {
-        if (updateConfiguration() == null) {
-            throw logger
-                .logExceptionAsError(
-                    new IllegalArgumentException(
-                        "Missing required property updateConfiguration in model SoftwareUpdateConfigurationInner"));
+        if (innerProperties() == null) {
+            throw LOGGER.atError()
+                .log(new IllegalArgumentException(
+                    "Missing required property innerProperties in model SoftwareUpdateConfigurationInner"));
         } else {
-            updateConfiguration().validate();
+            innerProperties().validate();
         }
-        if (scheduleInfo() == null) {
-            throw logger
-                .logExceptionAsError(
-                    new IllegalArgumentException(
-                        "Missing required property scheduleInfo in model SoftwareUpdateConfigurationInner"));
-        } else {
-            scheduleInfo().validate();
-        }
-        if (tasks() != null) {
-            tasks().validate();
-        }
+    }
+
+    private static final ClientLogger LOGGER = new ClientLogger(SoftwareUpdateConfigurationInner.class);
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public JsonWriter toJson(JsonWriter jsonWriter) throws IOException {
+        jsonWriter.writeStartObject();
+        jsonWriter.writeJsonField("properties", this.innerProperties);
+        return jsonWriter.writeEndObject();
+    }
+
+    /**
+     * Reads an instance of SoftwareUpdateConfigurationInner from the JsonReader.
+     * 
+     * @param jsonReader The JsonReader being read.
+     * @return An instance of SoftwareUpdateConfigurationInner if the JsonReader was pointing to an instance of it, or
+     * null if it was pointing to JSON null.
+     * @throws IllegalStateException If the deserialized JSON object was missing any required properties.
+     * @throws IOException If an error occurs while reading the SoftwareUpdateConfigurationInner.
+     */
+    public static SoftwareUpdateConfigurationInner fromJson(JsonReader jsonReader) throws IOException {
+        return jsonReader.readObject(reader -> {
+            SoftwareUpdateConfigurationInner deserializedSoftwareUpdateConfigurationInner
+                = new SoftwareUpdateConfigurationInner();
+            while (reader.nextToken() != JsonToken.END_OBJECT) {
+                String fieldName = reader.getFieldName();
+                reader.nextToken();
+
+                if ("id".equals(fieldName)) {
+                    deserializedSoftwareUpdateConfigurationInner.id = reader.getString();
+                } else if ("name".equals(fieldName)) {
+                    deserializedSoftwareUpdateConfigurationInner.name = reader.getString();
+                } else if ("type".equals(fieldName)) {
+                    deserializedSoftwareUpdateConfigurationInner.type = reader.getString();
+                } else if ("properties".equals(fieldName)) {
+                    deserializedSoftwareUpdateConfigurationInner.innerProperties
+                        = SoftwareUpdateConfigurationProperties.fromJson(reader);
+                } else {
+                    reader.skipChildren();
+                }
+            }
+
+            return deserializedSoftwareUpdateConfigurationInner;
+        });
     }
 }

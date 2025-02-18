@@ -5,105 +5,160 @@
 package com.azure.resourcemanager.automation.models;
 
 import com.azure.core.annotation.Fluent;
-import com.azure.core.annotation.JsonFlatten;
 import com.azure.core.util.logging.ClientLogger;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.azure.json.JsonReader;
+import com.azure.json.JsonSerializable;
+import com.azure.json.JsonToken;
+import com.azure.json.JsonWriter;
+import com.azure.resourcemanager.automation.fluent.models.JobCreateProperties;
+import java.io.IOException;
 import java.util.Map;
 
-/** The parameters supplied to the create job operation. */
-@JsonFlatten
+/**
+ * The parameters supplied to the create job operation.
+ */
 @Fluent
-public class JobCreateParameters {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(JobCreateParameters.class);
-
+public final class JobCreateParameters implements JsonSerializable<JobCreateParameters> {
     /*
-     * Gets or sets the runbook.
+     * Gets or sets the list of job properties.
      */
-    @JsonProperty(value = "properties.runbook")
-    private RunbookAssociationProperty runbook;
+    private JobCreateProperties innerProperties = new JobCreateProperties();
 
-    /*
-     * Gets or sets the parameters of the job.
+    /**
+     * Creates an instance of JobCreateParameters class.
      */
-    @JsonProperty(value = "properties.parameters")
-    private Map<String, String> parameters;
+    public JobCreateParameters() {
+    }
 
-    /*
-     * Gets or sets the runOn which specifies the group name where the job is
-     * to be executed.
+    /**
+     * Get the innerProperties property: Gets or sets the list of job properties.
+     * 
+     * @return the innerProperties value.
      */
-    @JsonProperty(value = "properties.runOn")
-    private String runOn;
+    private JobCreateProperties innerProperties() {
+        return this.innerProperties;
+    }
 
     /**
      * Get the runbook property: Gets or sets the runbook.
-     *
+     * 
      * @return the runbook value.
      */
     public RunbookAssociationProperty runbook() {
-        return this.runbook;
+        return this.innerProperties() == null ? null : this.innerProperties().runbook();
     }
 
     /**
      * Set the runbook property: Gets or sets the runbook.
-     *
+     * 
      * @param runbook the runbook value to set.
      * @return the JobCreateParameters object itself.
      */
     public JobCreateParameters withRunbook(RunbookAssociationProperty runbook) {
-        this.runbook = runbook;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new JobCreateProperties();
+        }
+        this.innerProperties().withRunbook(runbook);
         return this;
     }
 
     /**
      * Get the parameters property: Gets or sets the parameters of the job.
-     *
+     * 
      * @return the parameters value.
      */
     public Map<String, String> parameters() {
-        return this.parameters;
+        return this.innerProperties() == null ? null : this.innerProperties().parameters();
     }
 
     /**
      * Set the parameters property: Gets or sets the parameters of the job.
-     *
+     * 
      * @param parameters the parameters value to set.
      * @return the JobCreateParameters object itself.
      */
     public JobCreateParameters withParameters(Map<String, String> parameters) {
-        this.parameters = parameters;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new JobCreateProperties();
+        }
+        this.innerProperties().withParameters(parameters);
         return this;
     }
 
     /**
      * Get the runOn property: Gets or sets the runOn which specifies the group name where the job is to be executed.
-     *
+     * 
      * @return the runOn value.
      */
     public String runOn() {
-        return this.runOn;
+        return this.innerProperties() == null ? null : this.innerProperties().runOn();
     }
 
     /**
      * Set the runOn property: Gets or sets the runOn which specifies the group name where the job is to be executed.
-     *
+     * 
      * @param runOn the runOn value to set.
      * @return the JobCreateParameters object itself.
      */
     public JobCreateParameters withRunOn(String runOn) {
-        this.runOn = runOn;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new JobCreateProperties();
+        }
+        this.innerProperties().withRunOn(runOn);
         return this;
     }
 
     /**
      * Validates the instance.
-     *
+     * 
      * @throws IllegalArgumentException thrown if the instance is not valid.
      */
     public void validate() {
-        if (runbook() != null) {
-            runbook().validate();
+        if (innerProperties() == null) {
+            throw LOGGER.atError()
+                .log(new IllegalArgumentException(
+                    "Missing required property innerProperties in model JobCreateParameters"));
+        } else {
+            innerProperties().validate();
         }
+    }
+
+    private static final ClientLogger LOGGER = new ClientLogger(JobCreateParameters.class);
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public JsonWriter toJson(JsonWriter jsonWriter) throws IOException {
+        jsonWriter.writeStartObject();
+        jsonWriter.writeJsonField("properties", this.innerProperties);
+        return jsonWriter.writeEndObject();
+    }
+
+    /**
+     * Reads an instance of JobCreateParameters from the JsonReader.
+     * 
+     * @param jsonReader The JsonReader being read.
+     * @return An instance of JobCreateParameters if the JsonReader was pointing to an instance of it, or null if it was
+     * pointing to JSON null.
+     * @throws IllegalStateException If the deserialized JSON object was missing any required properties.
+     * @throws IOException If an error occurs while reading the JobCreateParameters.
+     */
+    public static JobCreateParameters fromJson(JsonReader jsonReader) throws IOException {
+        return jsonReader.readObject(reader -> {
+            JobCreateParameters deserializedJobCreateParameters = new JobCreateParameters();
+            while (reader.nextToken() != JsonToken.END_OBJECT) {
+                String fieldName = reader.getFieldName();
+                reader.nextToken();
+
+                if ("properties".equals(fieldName)) {
+                    deserializedJobCreateParameters.innerProperties = JobCreateProperties.fromJson(reader);
+                } else {
+                    reader.skipChildren();
+                }
+            }
+
+            return deserializedJobCreateParameters;
+        });
     }
 }

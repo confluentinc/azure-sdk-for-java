@@ -4,24 +4,33 @@
 
 package com.azure.resourcemanager.securityinsights.models;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonValue;
-
-/** Defines values for TriggerOperator. */
+/**
+ * The operation against the threshold that triggers alert rule.
+ */
 public enum TriggerOperator {
-    /** Enum value GreaterThan. */
+    /**
+     * Enum value GreaterThan.
+     */
     GREATER_THAN("GreaterThan"),
 
-    /** Enum value LessThan. */
+    /**
+     * Enum value LessThan.
+     */
     LESS_THAN("LessThan"),
 
-    /** Enum value Equal. */
+    /**
+     * Enum value Equal.
+     */
     EQUAL("Equal"),
 
-    /** Enum value NotEqual. */
+    /**
+     * Enum value NotEqual.
+     */
     NOT_EQUAL("NotEqual");
 
-    /** The actual serialized value for a TriggerOperator instance. */
+    /**
+     * The actual serialized value for a TriggerOperator instance.
+     */
     private final String value;
 
     TriggerOperator(String value) {
@@ -30,12 +39,14 @@ public enum TriggerOperator {
 
     /**
      * Parses a serialized value to a TriggerOperator instance.
-     *
+     * 
      * @param value the serialized value to parse.
      * @return the parsed TriggerOperator object, or null if unable to parse.
      */
-    @JsonCreator
     public static TriggerOperator fromString(String value) {
+        if (value == null) {
+            return null;
+        }
         TriggerOperator[] items = TriggerOperator.values();
         for (TriggerOperator item : items) {
             if (item.toString().equalsIgnoreCase(value)) {
@@ -45,7 +56,9 @@ public enum TriggerOperator {
         return null;
     }
 
-    @JsonValue
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String toString() {
         return this.value;

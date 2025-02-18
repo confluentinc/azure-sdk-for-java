@@ -29,7 +29,6 @@ import com.azure.core.management.exception.ManagementException;
 import com.azure.core.management.polling.PollResult;
 import com.azure.core.util.Context;
 import com.azure.core.util.FluxUtil;
-import com.azure.core.util.logging.ClientLogger;
 import com.azure.core.util.polling.PollerFlux;
 import com.azure.core.util.polling.SyncPoller;
 import com.azure.resourcemanager.network.fluent.InboundNatRulesClient;
@@ -39,24 +38,28 @@ import java.nio.ByteBuffer;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-/** An instance of this class provides access to all the operations defined in InboundNatRulesClient. */
+/**
+ * An instance of this class provides access to all the operations defined in InboundNatRulesClient.
+ */
 public final class InboundNatRulesClientImpl implements InboundNatRulesClient {
-    private final ClientLogger logger = new ClientLogger(InboundNatRulesClientImpl.class);
-
-    /** The proxy service used to perform REST calls. */
+    /**
+     * The proxy service used to perform REST calls.
+     */
     private final InboundNatRulesService service;
 
-    /** The service client containing this operation class. */
+    /**
+     * The service client containing this operation class.
+     */
     private final NetworkManagementClientImpl client;
 
     /**
      * Initializes an instance of InboundNatRulesClientImpl.
-     *
+     * 
      * @param client the instance of the service client containing this operation class.
      */
     InboundNatRulesClientImpl(NetworkManagementClientImpl client) {
-        this.service =
-            RestProxy.create(InboundNatRulesService.class, client.getHttpPipeline(), client.getSerializerAdapter());
+        this.service
+            = RestProxy.create(InboundNatRulesService.class, client.getHttpPipeline(), client.getSerializerAdapter());
         this.client = client;
     }
 
@@ -66,101 +69,75 @@ public final class InboundNatRulesClientImpl implements InboundNatRulesClient {
      */
     @Host("{$host}")
     @ServiceInterface(name = "NetworkManagementCli")
-    private interface InboundNatRulesService {
-        @Headers({"Content-Type: application/json"})
-        @Get(
-            "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network"
-                + "/loadBalancers/{loadBalancerName}/inboundNatRules")
-        @ExpectedResponses({200})
+    public interface InboundNatRulesService {
+        @Headers({ "Content-Type: application/json" })
+        @Get("/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/loadBalancers/{loadBalancerName}/inboundNatRules")
+        @ExpectedResponses({ 200 })
         @UnexpectedResponseExceptionType(ManagementException.class)
-        Mono<Response<InboundNatRuleListResult>> list(
-            @HostParam("$host") String endpoint,
+        Mono<Response<InboundNatRuleListResult>> list(@HostParam("$host") String endpoint,
             @PathParam("resourceGroupName") String resourceGroupName,
-            @PathParam("loadBalancerName") String loadBalancerName,
-            @QueryParam("api-version") String apiVersion,
-            @PathParam("subscriptionId") String subscriptionId,
-            @HeaderParam("Accept") String accept,
-            Context context);
+            @PathParam("loadBalancerName") String loadBalancerName, @QueryParam("api-version") String apiVersion,
+            @PathParam("subscriptionId") String subscriptionId, @HeaderParam("Accept") String accept, Context context);
 
-        @Headers({"Content-Type: application/json"})
-        @Delete(
-            "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network"
-                + "/loadBalancers/{loadBalancerName}/inboundNatRules/{inboundNatRuleName}")
-        @ExpectedResponses({200, 202, 204})
+        @Headers({ "Content-Type: application/json" })
+        @Delete("/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/loadBalancers/{loadBalancerName}/inboundNatRules/{inboundNatRuleName}")
+        @ExpectedResponses({ 200, 202, 204 })
         @UnexpectedResponseExceptionType(ManagementException.class)
-        Mono<Response<Flux<ByteBuffer>>> delete(
-            @HostParam("$host") String endpoint,
+        Mono<Response<Flux<ByteBuffer>>> delete(@HostParam("$host") String endpoint,
             @PathParam("resourceGroupName") String resourceGroupName,
             @PathParam("loadBalancerName") String loadBalancerName,
-            @PathParam("inboundNatRuleName") String inboundNatRuleName,
-            @QueryParam("api-version") String apiVersion,
-            @PathParam("subscriptionId") String subscriptionId,
-            @HeaderParam("Accept") String accept,
-            Context context);
+            @PathParam("inboundNatRuleName") String inboundNatRuleName, @QueryParam("api-version") String apiVersion,
+            @PathParam("subscriptionId") String subscriptionId, @HeaderParam("Accept") String accept, Context context);
 
-        @Headers({"Content-Type: application/json"})
-        @Get(
-            "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network"
-                + "/loadBalancers/{loadBalancerName}/inboundNatRules/{inboundNatRuleName}")
-        @ExpectedResponses({200})
+        @Headers({ "Content-Type: application/json" })
+        @Get("/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/loadBalancers/{loadBalancerName}/inboundNatRules/{inboundNatRuleName}")
+        @ExpectedResponses({ 200 })
         @UnexpectedResponseExceptionType(ManagementException.class)
-        Mono<Response<InboundNatRuleInner>> get(
-            @HostParam("$host") String endpoint,
+        Mono<Response<InboundNatRuleInner>> get(@HostParam("$host") String endpoint,
             @PathParam("resourceGroupName") String resourceGroupName,
             @PathParam("loadBalancerName") String loadBalancerName,
-            @PathParam("inboundNatRuleName") String inboundNatRuleName,
-            @QueryParam("api-version") String apiVersion,
-            @PathParam("subscriptionId") String subscriptionId,
-            @QueryParam("$expand") String expand,
-            @HeaderParam("Accept") String accept,
-            Context context);
+            @PathParam("inboundNatRuleName") String inboundNatRuleName, @QueryParam("api-version") String apiVersion,
+            @PathParam("subscriptionId") String subscriptionId, @QueryParam("$expand") String expand,
+            @HeaderParam("Accept") String accept, Context context);
 
-        @Headers({"Content-Type: application/json"})
-        @Put(
-            "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network"
-                + "/loadBalancers/{loadBalancerName}/inboundNatRules/{inboundNatRuleName}")
-        @ExpectedResponses({200, 201})
+        @Headers({ "Content-Type: application/json" })
+        @Put("/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/loadBalancers/{loadBalancerName}/inboundNatRules/{inboundNatRuleName}")
+        @ExpectedResponses({ 200, 201 })
         @UnexpectedResponseExceptionType(ManagementException.class)
-        Mono<Response<Flux<ByteBuffer>>> createOrUpdate(
-            @HostParam("$host") String endpoint,
+        Mono<Response<Flux<ByteBuffer>>> createOrUpdate(@HostParam("$host") String endpoint,
             @PathParam("resourceGroupName") String resourceGroupName,
             @PathParam("loadBalancerName") String loadBalancerName,
-            @PathParam("inboundNatRuleName") String inboundNatRuleName,
-            @QueryParam("api-version") String apiVersion,
+            @PathParam("inboundNatRuleName") String inboundNatRuleName, @QueryParam("api-version") String apiVersion,
             @PathParam("subscriptionId") String subscriptionId,
             @BodyParam("application/json") InboundNatRuleInner inboundNatRuleParameters,
-            @HeaderParam("Accept") String accept,
-            Context context);
+            @HeaderParam("Accept") String accept, Context context);
 
-        @Headers({"Content-Type: application/json"})
+        @Headers({ "Content-Type: application/json" })
         @Get("{nextLink}")
-        @ExpectedResponses({200})
+        @ExpectedResponses({ 200 })
         @UnexpectedResponseExceptionType(ManagementException.class)
         Mono<Response<InboundNatRuleListResult>> listNext(
-            @PathParam(value = "nextLink", encoded = true) String nextLink,
-            @HostParam("$host") String endpoint,
-            @HeaderParam("Accept") String accept,
-            Context context);
+            @PathParam(value = "nextLink", encoded = true) String nextLink, @HostParam("$host") String endpoint,
+            @HeaderParam("Accept") String accept, Context context);
     }
 
     /**
      * Gets all the inbound NAT rules in a load balancer.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param loadBalancerName The name of the load balancer.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return all the inbound NAT rules in a load balancer.
+     * @return all the inbound NAT rules in a load balancer along with {@link PagedResponse} on successful completion of
+     * {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    private Mono<PagedResponse<InboundNatRuleInner>> listSinglePageAsync(
-        String resourceGroupName, String loadBalancerName) {
+    private Mono<PagedResponse<InboundNatRuleInner>> listSinglePageAsync(String resourceGroupName,
+        String loadBalancerName) {
         if (this.client.getEndpoint() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getEndpoint() is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
         }
         if (resourceGroupName == null) {
             return Mono
@@ -171,56 +148,37 @@ public final class InboundNatRulesClientImpl implements InboundNatRulesClient {
                 .error(new IllegalArgumentException("Parameter loadBalancerName is required and cannot be null."));
         }
         if (this.client.getSubscriptionId() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getSubscriptionId() is required and cannot be null."));
+            return Mono.error(new IllegalArgumentException(
+                "Parameter this.client.getSubscriptionId() is required and cannot be null."));
         }
-        final String apiVersion = "2021-05-01";
+        final String apiVersion = "2024-05-01";
         final String accept = "application/json";
         return FluxUtil
-            .withContext(
-                context ->
-                    service
-                        .list(
-                            this.client.getEndpoint(),
-                            resourceGroupName,
-                            loadBalancerName,
-                            apiVersion,
-                            this.client.getSubscriptionId(),
-                            accept,
-                            context))
-            .<PagedResponse<InboundNatRuleInner>>map(
-                res ->
-                    new PagedResponseBase<>(
-                        res.getRequest(),
-                        res.getStatusCode(),
-                        res.getHeaders(),
-                        res.getValue().value(),
-                        res.getValue().nextLink(),
-                        null))
+            .withContext(context -> service.list(this.client.getEndpoint(), resourceGroupName, loadBalancerName,
+                apiVersion, this.client.getSubscriptionId(), accept, context))
+            .<PagedResponse<InboundNatRuleInner>>map(res -> new PagedResponseBase<>(res.getRequest(),
+                res.getStatusCode(), res.getHeaders(), res.getValue().value(), res.getValue().nextLink(), null))
             .contextWrite(context -> context.putAll(FluxUtil.toReactorContext(this.client.getContext()).readOnly()));
     }
 
     /**
      * Gets all the inbound NAT rules in a load balancer.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param loadBalancerName The name of the load balancer.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return all the inbound NAT rules in a load balancer.
+     * @return all the inbound NAT rules in a load balancer along with {@link PagedResponse} on successful completion of
+     * {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    private Mono<PagedResponse<InboundNatRuleInner>> listSinglePageAsync(
-        String resourceGroupName, String loadBalancerName, Context context) {
+    private Mono<PagedResponse<InboundNatRuleInner>> listSinglePageAsync(String resourceGroupName,
+        String loadBalancerName, Context context) {
         if (this.client.getEndpoint() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getEndpoint() is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
         }
         if (resourceGroupName == null) {
             return Mono
@@ -231,79 +189,62 @@ public final class InboundNatRulesClientImpl implements InboundNatRulesClient {
                 .error(new IllegalArgumentException("Parameter loadBalancerName is required and cannot be null."));
         }
         if (this.client.getSubscriptionId() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getSubscriptionId() is required and cannot be null."));
+            return Mono.error(new IllegalArgumentException(
+                "Parameter this.client.getSubscriptionId() is required and cannot be null."));
         }
-        final String apiVersion = "2021-05-01";
+        final String apiVersion = "2024-05-01";
         final String accept = "application/json";
         context = this.client.mergeContext(context);
         return service
-            .list(
-                this.client.getEndpoint(),
-                resourceGroupName,
-                loadBalancerName,
-                apiVersion,
-                this.client.getSubscriptionId(),
-                accept,
-                context)
-            .map(
-                res ->
-                    new PagedResponseBase<>(
-                        res.getRequest(),
-                        res.getStatusCode(),
-                        res.getHeaders(),
-                        res.getValue().value(),
-                        res.getValue().nextLink(),
-                        null));
+            .list(this.client.getEndpoint(), resourceGroupName, loadBalancerName, apiVersion,
+                this.client.getSubscriptionId(), accept, context)
+            .map(res -> new PagedResponseBase<>(res.getRequest(), res.getStatusCode(), res.getHeaders(),
+                res.getValue().value(), res.getValue().nextLink(), null));
     }
 
     /**
      * Gets all the inbound NAT rules in a load balancer.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param loadBalancerName The name of the load balancer.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return all the inbound NAT rules in a load balancer.
+     * @return all the inbound NAT rules in a load balancer as paginated response with {@link PagedFlux}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
     public PagedFlux<InboundNatRuleInner> listAsync(String resourceGroupName, String loadBalancerName) {
-        return new PagedFlux<>(
-            () -> listSinglePageAsync(resourceGroupName, loadBalancerName),
+        return new PagedFlux<>(() -> listSinglePageAsync(resourceGroupName, loadBalancerName),
             nextLink -> listNextSinglePageAsync(nextLink));
     }
 
     /**
      * Gets all the inbound NAT rules in a load balancer.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param loadBalancerName The name of the load balancer.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return all the inbound NAT rules in a load balancer.
+     * @return all the inbound NAT rules in a load balancer as paginated response with {@link PagedFlux}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
-    private PagedFlux<InboundNatRuleInner> listAsync(
-        String resourceGroupName, String loadBalancerName, Context context) {
-        return new PagedFlux<>(
-            () -> listSinglePageAsync(resourceGroupName, loadBalancerName, context),
+    private PagedFlux<InboundNatRuleInner> listAsync(String resourceGroupName, String loadBalancerName,
+        Context context) {
+        return new PagedFlux<>(() -> listSinglePageAsync(resourceGroupName, loadBalancerName, context),
             nextLink -> listNextSinglePageAsync(nextLink, context));
     }
 
     /**
      * Gets all the inbound NAT rules in a load balancer.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param loadBalancerName The name of the load balancer.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return all the inbound NAT rules in a load balancer.
+     * @return all the inbound NAT rules in a load balancer as paginated response with {@link PagedIterable}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
     public PagedIterable<InboundNatRuleInner> list(String resourceGroupName, String loadBalancerName) {
@@ -312,14 +253,14 @@ public final class InboundNatRulesClientImpl implements InboundNatRulesClient {
 
     /**
      * Gets all the inbound NAT rules in a load balancer.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param loadBalancerName The name of the load balancer.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return all the inbound NAT rules in a load balancer.
+     * @return all the inbound NAT rules in a load balancer as paginated response with {@link PagedIterable}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
     public PagedIterable<InboundNatRuleInner> list(String resourceGroupName, String loadBalancerName, Context context) {
@@ -328,23 +269,21 @@ public final class InboundNatRulesClientImpl implements InboundNatRulesClient {
 
     /**
      * Deletes the specified load balancer inbound NAT rule.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param loadBalancerName The name of the load balancer.
      * @param inboundNatRuleName The name of the inbound NAT rule.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the completion.
+     * @return the {@link Response} on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    public Mono<Response<Flux<ByteBuffer>>> deleteWithResponseAsync(
-        String resourceGroupName, String loadBalancerName, String inboundNatRuleName) {
+    public Mono<Response<Flux<ByteBuffer>>> deleteWithResponseAsync(String resourceGroupName, String loadBalancerName,
+        String inboundNatRuleName) {
         if (this.client.getEndpoint() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getEndpoint() is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
         }
         if (resourceGroupName == null) {
             return Mono
@@ -359,32 +298,20 @@ public final class InboundNatRulesClientImpl implements InboundNatRulesClient {
                 .error(new IllegalArgumentException("Parameter inboundNatRuleName is required and cannot be null."));
         }
         if (this.client.getSubscriptionId() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getSubscriptionId() is required and cannot be null."));
+            return Mono.error(new IllegalArgumentException(
+                "Parameter this.client.getSubscriptionId() is required and cannot be null."));
         }
-        final String apiVersion = "2021-05-01";
+        final String apiVersion = "2024-05-01";
         final String accept = "application/json";
         return FluxUtil
-            .withContext(
-                context ->
-                    service
-                        .delete(
-                            this.client.getEndpoint(),
-                            resourceGroupName,
-                            loadBalancerName,
-                            inboundNatRuleName,
-                            apiVersion,
-                            this.client.getSubscriptionId(),
-                            accept,
-                            context))
+            .withContext(context -> service.delete(this.client.getEndpoint(), resourceGroupName, loadBalancerName,
+                inboundNatRuleName, apiVersion, this.client.getSubscriptionId(), accept, context))
             .contextWrite(context -> context.putAll(FluxUtil.toReactorContext(this.client.getContext()).readOnly()));
     }
 
     /**
      * Deletes the specified load balancer inbound NAT rule.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param loadBalancerName The name of the load balancer.
      * @param inboundNatRuleName The name of the inbound NAT rule.
@@ -392,16 +319,14 @@ public final class InboundNatRulesClientImpl implements InboundNatRulesClient {
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the completion.
+     * @return the {@link Response} on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    private Mono<Response<Flux<ByteBuffer>>> deleteWithResponseAsync(
-        String resourceGroupName, String loadBalancerName, String inboundNatRuleName, Context context) {
+    private Mono<Response<Flux<ByteBuffer>>> deleteWithResponseAsync(String resourceGroupName, String loadBalancerName,
+        String inboundNatRuleName, Context context) {
         if (this.client.getEndpoint() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getEndpoint() is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
         }
         if (resourceGroupName == null) {
             return Mono
@@ -416,51 +341,39 @@ public final class InboundNatRulesClientImpl implements InboundNatRulesClient {
                 .error(new IllegalArgumentException("Parameter inboundNatRuleName is required and cannot be null."));
         }
         if (this.client.getSubscriptionId() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getSubscriptionId() is required and cannot be null."));
+            return Mono.error(new IllegalArgumentException(
+                "Parameter this.client.getSubscriptionId() is required and cannot be null."));
         }
-        final String apiVersion = "2021-05-01";
+        final String apiVersion = "2024-05-01";
         final String accept = "application/json";
         context = this.client.mergeContext(context);
-        return service
-            .delete(
-                this.client.getEndpoint(),
-                resourceGroupName,
-                loadBalancerName,
-                inboundNatRuleName,
-                apiVersion,
-                this.client.getSubscriptionId(),
-                accept,
-                context);
+        return service.delete(this.client.getEndpoint(), resourceGroupName, loadBalancerName, inboundNatRuleName,
+            apiVersion, this.client.getSubscriptionId(), accept, context);
     }
 
     /**
      * Deletes the specified load balancer inbound NAT rule.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param loadBalancerName The name of the load balancer.
      * @param inboundNatRuleName The name of the inbound NAT rule.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the completion.
+     * @return the {@link PollerFlux} for polling of long-running operation.
      */
     @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
-    public PollerFlux<PollResult<Void>, Void> beginDeleteAsync(
-        String resourceGroupName, String loadBalancerName, String inboundNatRuleName) {
-        Mono<Response<Flux<ByteBuffer>>> mono =
-            deleteWithResponseAsync(resourceGroupName, loadBalancerName, inboundNatRuleName);
-        return this
-            .client
-            .<Void, Void>getLroResult(
-                mono, this.client.getHttpPipeline(), Void.class, Void.class, this.client.getContext());
+    public PollerFlux<PollResult<Void>, Void> beginDeleteAsync(String resourceGroupName, String loadBalancerName,
+        String inboundNatRuleName) {
+        Mono<Response<Flux<ByteBuffer>>> mono
+            = deleteWithResponseAsync(resourceGroupName, loadBalancerName, inboundNatRuleName);
+        return this.client.<Void, Void>getLroResult(mono, this.client.getHttpPipeline(), Void.class, Void.class,
+            this.client.getContext());
     }
 
     /**
      * Deletes the specified load balancer inbound NAT rule.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param loadBalancerName The name of the load balancer.
      * @param inboundNatRuleName The name of the inbound NAT rule.
@@ -468,39 +381,38 @@ public final class InboundNatRulesClientImpl implements InboundNatRulesClient {
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the completion.
+     * @return the {@link PollerFlux} for polling of long-running operation.
      */
     @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
-    private PollerFlux<PollResult<Void>, Void> beginDeleteAsync(
-        String resourceGroupName, String loadBalancerName, String inboundNatRuleName, Context context) {
+    private PollerFlux<PollResult<Void>, Void> beginDeleteAsync(String resourceGroupName, String loadBalancerName,
+        String inboundNatRuleName, Context context) {
         context = this.client.mergeContext(context);
-        Mono<Response<Flux<ByteBuffer>>> mono =
-            deleteWithResponseAsync(resourceGroupName, loadBalancerName, inboundNatRuleName, context);
-        return this
-            .client
-            .<Void, Void>getLroResult(mono, this.client.getHttpPipeline(), Void.class, Void.class, context);
+        Mono<Response<Flux<ByteBuffer>>> mono
+            = deleteWithResponseAsync(resourceGroupName, loadBalancerName, inboundNatRuleName, context);
+        return this.client.<Void, Void>getLroResult(mono, this.client.getHttpPipeline(), Void.class, Void.class,
+            context);
     }
 
     /**
      * Deletes the specified load balancer inbound NAT rule.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param loadBalancerName The name of the load balancer.
      * @param inboundNatRuleName The name of the inbound NAT rule.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the completion.
+     * @return the {@link SyncPoller} for polling of long-running operation.
      */
     @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
-    public SyncPoller<PollResult<Void>, Void> beginDelete(
-        String resourceGroupName, String loadBalancerName, String inboundNatRuleName) {
-        return beginDeleteAsync(resourceGroupName, loadBalancerName, inboundNatRuleName).getSyncPoller();
+    public SyncPoller<PollResult<Void>, Void> beginDelete(String resourceGroupName, String loadBalancerName,
+        String inboundNatRuleName) {
+        return this.beginDeleteAsync(resourceGroupName, loadBalancerName, inboundNatRuleName).getSyncPoller();
     }
 
     /**
      * Deletes the specified load balancer inbound NAT rule.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param loadBalancerName The name of the load balancer.
      * @param inboundNatRuleName The name of the inbound NAT rule.
@@ -508,35 +420,34 @@ public final class InboundNatRulesClientImpl implements InboundNatRulesClient {
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the completion.
+     * @return the {@link SyncPoller} for polling of long-running operation.
      */
     @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
-    public SyncPoller<PollResult<Void>, Void> beginDelete(
-        String resourceGroupName, String loadBalancerName, String inboundNatRuleName, Context context) {
-        return beginDeleteAsync(resourceGroupName, loadBalancerName, inboundNatRuleName, context).getSyncPoller();
+    public SyncPoller<PollResult<Void>, Void> beginDelete(String resourceGroupName, String loadBalancerName,
+        String inboundNatRuleName, Context context) {
+        return this.beginDeleteAsync(resourceGroupName, loadBalancerName, inboundNatRuleName, context).getSyncPoller();
     }
 
     /**
      * Deletes the specified load balancer inbound NAT rule.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param loadBalancerName The name of the load balancer.
      * @param inboundNatRuleName The name of the inbound NAT rule.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the completion.
+     * @return A {@link Mono} that completes when a successful response is received.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
     public Mono<Void> deleteAsync(String resourceGroupName, String loadBalancerName, String inboundNatRuleName) {
-        return beginDeleteAsync(resourceGroupName, loadBalancerName, inboundNatRuleName)
-            .last()
+        return beginDeleteAsync(resourceGroupName, loadBalancerName, inboundNatRuleName).last()
             .flatMap(this.client::getLroFinalResultOrError);
     }
 
     /**
      * Deletes the specified load balancer inbound NAT rule.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param loadBalancerName The name of the load balancer.
      * @param inboundNatRuleName The name of the inbound NAT rule.
@@ -544,19 +455,18 @@ public final class InboundNatRulesClientImpl implements InboundNatRulesClient {
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the completion.
+     * @return A {@link Mono} that completes when a successful response is received.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    private Mono<Void> deleteAsync(
-        String resourceGroupName, String loadBalancerName, String inboundNatRuleName, Context context) {
-        return beginDeleteAsync(resourceGroupName, loadBalancerName, inboundNatRuleName, context)
-            .last()
+    private Mono<Void> deleteAsync(String resourceGroupName, String loadBalancerName, String inboundNatRuleName,
+        Context context) {
+        return beginDeleteAsync(resourceGroupName, loadBalancerName, inboundNatRuleName, context).last()
             .flatMap(this.client::getLroFinalResultOrError);
     }
 
     /**
      * Deletes the specified load balancer inbound NAT rule.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param loadBalancerName The name of the load balancer.
      * @param inboundNatRuleName The name of the inbound NAT rule.
@@ -571,7 +481,7 @@ public final class InboundNatRulesClientImpl implements InboundNatRulesClient {
 
     /**
      * Deletes the specified load balancer inbound NAT rule.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param loadBalancerName The name of the load balancer.
      * @param inboundNatRuleName The name of the inbound NAT rule.
@@ -587,7 +497,7 @@ public final class InboundNatRulesClientImpl implements InboundNatRulesClient {
 
     /**
      * Gets the specified load balancer inbound NAT rule.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param loadBalancerName The name of the load balancer.
      * @param inboundNatRuleName The name of the inbound NAT rule.
@@ -595,16 +505,15 @@ public final class InboundNatRulesClientImpl implements InboundNatRulesClient {
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the specified load balancer inbound NAT rule.
+     * @return the specified load balancer inbound NAT rule along with {@link Response} on successful completion of
+     * {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    public Mono<Response<InboundNatRuleInner>> getWithResponseAsync(
-        String resourceGroupName, String loadBalancerName, String inboundNatRuleName, String expand) {
+    public Mono<Response<InboundNatRuleInner>> getWithResponseAsync(String resourceGroupName, String loadBalancerName,
+        String inboundNatRuleName, String expand) {
         if (this.client.getEndpoint() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getEndpoint() is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
         }
         if (resourceGroupName == null) {
             return Mono
@@ -619,33 +528,20 @@ public final class InboundNatRulesClientImpl implements InboundNatRulesClient {
                 .error(new IllegalArgumentException("Parameter inboundNatRuleName is required and cannot be null."));
         }
         if (this.client.getSubscriptionId() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getSubscriptionId() is required and cannot be null."));
+            return Mono.error(new IllegalArgumentException(
+                "Parameter this.client.getSubscriptionId() is required and cannot be null."));
         }
-        final String apiVersion = "2021-05-01";
+        final String apiVersion = "2024-05-01";
         final String accept = "application/json";
         return FluxUtil
-            .withContext(
-                context ->
-                    service
-                        .get(
-                            this.client.getEndpoint(),
-                            resourceGroupName,
-                            loadBalancerName,
-                            inboundNatRuleName,
-                            apiVersion,
-                            this.client.getSubscriptionId(),
-                            expand,
-                            accept,
-                            context))
+            .withContext(context -> service.get(this.client.getEndpoint(), resourceGroupName, loadBalancerName,
+                inboundNatRuleName, apiVersion, this.client.getSubscriptionId(), expand, accept, context))
             .contextWrite(context -> context.putAll(FluxUtil.toReactorContext(this.client.getContext()).readOnly()));
     }
 
     /**
      * Gets the specified load balancer inbound NAT rule.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param loadBalancerName The name of the load balancer.
      * @param inboundNatRuleName The name of the inbound NAT rule.
@@ -654,16 +550,15 @@ public final class InboundNatRulesClientImpl implements InboundNatRulesClient {
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the specified load balancer inbound NAT rule.
+     * @return the specified load balancer inbound NAT rule along with {@link Response} on successful completion of
+     * {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    private Mono<Response<InboundNatRuleInner>> getWithResponseAsync(
-        String resourceGroupName, String loadBalancerName, String inboundNatRuleName, String expand, Context context) {
+    private Mono<Response<InboundNatRuleInner>> getWithResponseAsync(String resourceGroupName, String loadBalancerName,
+        String inboundNatRuleName, String expand, Context context) {
         if (this.client.getEndpoint() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getEndpoint() is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
         }
         if (resourceGroupName == null) {
             return Mono
@@ -678,82 +573,57 @@ public final class InboundNatRulesClientImpl implements InboundNatRulesClient {
                 .error(new IllegalArgumentException("Parameter inboundNatRuleName is required and cannot be null."));
         }
         if (this.client.getSubscriptionId() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getSubscriptionId() is required and cannot be null."));
+            return Mono.error(new IllegalArgumentException(
+                "Parameter this.client.getSubscriptionId() is required and cannot be null."));
         }
-        final String apiVersion = "2021-05-01";
+        final String apiVersion = "2024-05-01";
         final String accept = "application/json";
         context = this.client.mergeContext(context);
-        return service
-            .get(
-                this.client.getEndpoint(),
-                resourceGroupName,
-                loadBalancerName,
-                inboundNatRuleName,
-                apiVersion,
-                this.client.getSubscriptionId(),
-                expand,
-                accept,
-                context);
+        return service.get(this.client.getEndpoint(), resourceGroupName, loadBalancerName, inboundNatRuleName,
+            apiVersion, this.client.getSubscriptionId(), expand, accept, context);
     }
 
     /**
      * Gets the specified load balancer inbound NAT rule.
-     *
+     * 
+     * @param resourceGroupName The name of the resource group.
+     * @param loadBalancerName The name of the load balancer.
+     * @param inboundNatRuleName The name of the inbound NAT rule.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return the specified load balancer inbound NAT rule on successful completion of {@link Mono}.
+     */
+    @ServiceMethod(returns = ReturnType.SINGLE)
+    public Mono<InboundNatRuleInner> getAsync(String resourceGroupName, String loadBalancerName,
+        String inboundNatRuleName) {
+        final String expand = null;
+        return getWithResponseAsync(resourceGroupName, loadBalancerName, inboundNatRuleName, expand)
+            .flatMap(res -> Mono.justOrEmpty(res.getValue()));
+    }
+
+    /**
+     * Gets the specified load balancer inbound NAT rule.
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param loadBalancerName The name of the load balancer.
      * @param inboundNatRuleName The name of the inbound NAT rule.
      * @param expand Expands referenced resources.
+     * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the specified load balancer inbound NAT rule.
+     * @return the specified load balancer inbound NAT rule along with {@link Response}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    public Mono<InboundNatRuleInner> getAsync(
-        String resourceGroupName, String loadBalancerName, String inboundNatRuleName, String expand) {
-        return getWithResponseAsync(resourceGroupName, loadBalancerName, inboundNatRuleName, expand)
-            .flatMap(
-                (Response<InboundNatRuleInner> res) -> {
-                    if (res.getValue() != null) {
-                        return Mono.just(res.getValue());
-                    } else {
-                        return Mono.empty();
-                    }
-                });
+    public Response<InboundNatRuleInner> getWithResponse(String resourceGroupName, String loadBalancerName,
+        String inboundNatRuleName, String expand, Context context) {
+        return getWithResponseAsync(resourceGroupName, loadBalancerName, inboundNatRuleName, expand, context).block();
     }
 
     /**
      * Gets the specified load balancer inbound NAT rule.
-     *
-     * @param resourceGroupName The name of the resource group.
-     * @param loadBalancerName The name of the load balancer.
-     * @param inboundNatRuleName The name of the inbound NAT rule.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the specified load balancer inbound NAT rule.
-     */
-    @ServiceMethod(returns = ReturnType.SINGLE)
-    public Mono<InboundNatRuleInner> getAsync(
-        String resourceGroupName, String loadBalancerName, String inboundNatRuleName) {
-        final String expand = null;
-        return getWithResponseAsync(resourceGroupName, loadBalancerName, inboundNatRuleName, expand)
-            .flatMap(
-                (Response<InboundNatRuleInner> res) -> {
-                    if (res.getValue() != null) {
-                        return Mono.just(res.getValue());
-                    } else {
-                        return Mono.empty();
-                    }
-                });
-    }
-
-    /**
-     * Gets the specified load balancer inbound NAT rule.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param loadBalancerName The name of the load balancer.
      * @param inboundNatRuleName The name of the inbound NAT rule.
@@ -765,31 +635,13 @@ public final class InboundNatRulesClientImpl implements InboundNatRulesClient {
     @ServiceMethod(returns = ReturnType.SINGLE)
     public InboundNatRuleInner get(String resourceGroupName, String loadBalancerName, String inboundNatRuleName) {
         final String expand = null;
-        return getAsync(resourceGroupName, loadBalancerName, inboundNatRuleName, expand).block();
-    }
-
-    /**
-     * Gets the specified load balancer inbound NAT rule.
-     *
-     * @param resourceGroupName The name of the resource group.
-     * @param loadBalancerName The name of the load balancer.
-     * @param inboundNatRuleName The name of the inbound NAT rule.
-     * @param expand Expands referenced resources.
-     * @param context The context to associate with this operation.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the specified load balancer inbound NAT rule.
-     */
-    @ServiceMethod(returns = ReturnType.SINGLE)
-    public Response<InboundNatRuleInner> getWithResponse(
-        String resourceGroupName, String loadBalancerName, String inboundNatRuleName, String expand, Context context) {
-        return getWithResponseAsync(resourceGroupName, loadBalancerName, inboundNatRuleName, expand, context).block();
+        return getWithResponse(resourceGroupName, loadBalancerName, inboundNatRuleName, expand, Context.NONE)
+            .getValue();
     }
 
     /**
      * Creates or updates a load balancer inbound NAT rule.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param loadBalancerName The name of the load balancer.
      * @param inboundNatRuleName The name of the inbound NAT rule.
@@ -797,19 +649,15 @@ public final class InboundNatRulesClientImpl implements InboundNatRulesClient {
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return inbound NAT rule of the load balancer.
+     * @return inbound NAT rule of the load balancer along with {@link Response} on successful completion of
+     * {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    public Mono<Response<Flux<ByteBuffer>>> createOrUpdateWithResponseAsync(
-        String resourceGroupName,
-        String loadBalancerName,
-        String inboundNatRuleName,
-        InboundNatRuleInner inboundNatRuleParameters) {
+    public Mono<Response<Flux<ByteBuffer>>> createOrUpdateWithResponseAsync(String resourceGroupName,
+        String loadBalancerName, String inboundNatRuleName, InboundNatRuleInner inboundNatRuleParameters) {
         if (this.client.getEndpoint() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getEndpoint() is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
         }
         if (resourceGroupName == null) {
             return Mono
@@ -824,40 +672,27 @@ public final class InboundNatRulesClientImpl implements InboundNatRulesClient {
                 .error(new IllegalArgumentException("Parameter inboundNatRuleName is required and cannot be null."));
         }
         if (this.client.getSubscriptionId() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getSubscriptionId() is required and cannot be null."));
+            return Mono.error(new IllegalArgumentException(
+                "Parameter this.client.getSubscriptionId() is required and cannot be null."));
         }
         if (inboundNatRuleParameters == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException("Parameter inboundNatRuleParameters is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter inboundNatRuleParameters is required and cannot be null."));
         } else {
             inboundNatRuleParameters.validate();
         }
-        final String apiVersion = "2021-05-01";
+        final String apiVersion = "2024-05-01";
         final String accept = "application/json";
         return FluxUtil
-            .withContext(
-                context ->
-                    service
-                        .createOrUpdate(
-                            this.client.getEndpoint(),
-                            resourceGroupName,
-                            loadBalancerName,
-                            inboundNatRuleName,
-                            apiVersion,
-                            this.client.getSubscriptionId(),
-                            inboundNatRuleParameters,
-                            accept,
-                            context))
+            .withContext(context -> service.createOrUpdate(this.client.getEndpoint(), resourceGroupName,
+                loadBalancerName, inboundNatRuleName, apiVersion, this.client.getSubscriptionId(),
+                inboundNatRuleParameters, accept, context))
             .contextWrite(context -> context.putAll(FluxUtil.toReactorContext(this.client.getContext()).readOnly()));
     }
 
     /**
      * Creates or updates a load balancer inbound NAT rule.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param loadBalancerName The name of the load balancer.
      * @param inboundNatRuleName The name of the inbound NAT rule.
@@ -866,20 +701,16 @@ public final class InboundNatRulesClientImpl implements InboundNatRulesClient {
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return inbound NAT rule of the load balancer.
+     * @return inbound NAT rule of the load balancer along with {@link Response} on successful completion of
+     * {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    private Mono<Response<Flux<ByteBuffer>>> createOrUpdateWithResponseAsync(
-        String resourceGroupName,
-        String loadBalancerName,
-        String inboundNatRuleName,
-        InboundNatRuleInner inboundNatRuleParameters,
+    private Mono<Response<Flux<ByteBuffer>>> createOrUpdateWithResponseAsync(String resourceGroupName,
+        String loadBalancerName, String inboundNatRuleName, InboundNatRuleInner inboundNatRuleParameters,
         Context context) {
         if (this.client.getEndpoint() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getEndpoint() is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
         }
         if (resourceGroupName == null) {
             return Mono
@@ -894,37 +725,25 @@ public final class InboundNatRulesClientImpl implements InboundNatRulesClient {
                 .error(new IllegalArgumentException("Parameter inboundNatRuleName is required and cannot be null."));
         }
         if (this.client.getSubscriptionId() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getSubscriptionId() is required and cannot be null."));
+            return Mono.error(new IllegalArgumentException(
+                "Parameter this.client.getSubscriptionId() is required and cannot be null."));
         }
         if (inboundNatRuleParameters == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException("Parameter inboundNatRuleParameters is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter inboundNatRuleParameters is required and cannot be null."));
         } else {
             inboundNatRuleParameters.validate();
         }
-        final String apiVersion = "2021-05-01";
+        final String apiVersion = "2024-05-01";
         final String accept = "application/json";
         context = this.client.mergeContext(context);
-        return service
-            .createOrUpdate(
-                this.client.getEndpoint(),
-                resourceGroupName,
-                loadBalancerName,
-                inboundNatRuleName,
-                apiVersion,
-                this.client.getSubscriptionId(),
-                inboundNatRuleParameters,
-                accept,
-                context);
+        return service.createOrUpdate(this.client.getEndpoint(), resourceGroupName, loadBalancerName,
+            inboundNatRuleName, apiVersion, this.client.getSubscriptionId(), inboundNatRuleParameters, accept, context);
     }
 
     /**
      * Creates or updates a load balancer inbound NAT rule.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param loadBalancerName The name of the load balancer.
      * @param inboundNatRuleName The name of the inbound NAT rule.
@@ -932,30 +751,21 @@ public final class InboundNatRulesClientImpl implements InboundNatRulesClient {
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return inbound NAT rule of the load balancer.
+     * @return the {@link PollerFlux} for polling of inbound NAT rule of the load balancer.
      */
     @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
     public PollerFlux<PollResult<InboundNatRuleInner>, InboundNatRuleInner> beginCreateOrUpdateAsync(
-        String resourceGroupName,
-        String loadBalancerName,
-        String inboundNatRuleName,
+        String resourceGroupName, String loadBalancerName, String inboundNatRuleName,
         InboundNatRuleInner inboundNatRuleParameters) {
-        Mono<Response<Flux<ByteBuffer>>> mono =
-            createOrUpdateWithResponseAsync(
-                resourceGroupName, loadBalancerName, inboundNatRuleName, inboundNatRuleParameters);
-        return this
-            .client
-            .<InboundNatRuleInner, InboundNatRuleInner>getLroResult(
-                mono,
-                this.client.getHttpPipeline(),
-                InboundNatRuleInner.class,
-                InboundNatRuleInner.class,
-                this.client.getContext());
+        Mono<Response<Flux<ByteBuffer>>> mono = createOrUpdateWithResponseAsync(resourceGroupName, loadBalancerName,
+            inboundNatRuleName, inboundNatRuleParameters);
+        return this.client.<InboundNatRuleInner, InboundNatRuleInner>getLroResult(mono, this.client.getHttpPipeline(),
+            InboundNatRuleInner.class, InboundNatRuleInner.class, this.client.getContext());
     }
 
     /**
      * Creates or updates a load balancer inbound NAT rule.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param loadBalancerName The name of the load balancer.
      * @param inboundNatRuleName The name of the inbound NAT rule.
@@ -964,51 +774,43 @@ public final class InboundNatRulesClientImpl implements InboundNatRulesClient {
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return inbound NAT rule of the load balancer.
+     * @return the {@link PollerFlux} for polling of inbound NAT rule of the load balancer.
      */
     @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
     private PollerFlux<PollResult<InboundNatRuleInner>, InboundNatRuleInner> beginCreateOrUpdateAsync(
-        String resourceGroupName,
-        String loadBalancerName,
-        String inboundNatRuleName,
-        InboundNatRuleInner inboundNatRuleParameters,
-        Context context) {
+        String resourceGroupName, String loadBalancerName, String inboundNatRuleName,
+        InboundNatRuleInner inboundNatRuleParameters, Context context) {
         context = this.client.mergeContext(context);
-        Mono<Response<Flux<ByteBuffer>>> mono =
-            createOrUpdateWithResponseAsync(
-                resourceGroupName, loadBalancerName, inboundNatRuleName, inboundNatRuleParameters, context);
+        Mono<Response<Flux<ByteBuffer>>> mono = createOrUpdateWithResponseAsync(resourceGroupName, loadBalancerName,
+            inboundNatRuleName, inboundNatRuleParameters, context);
+        return this.client.<InboundNatRuleInner, InboundNatRuleInner>getLroResult(mono, this.client.getHttpPipeline(),
+            InboundNatRuleInner.class, InboundNatRuleInner.class, context);
+    }
+
+    /**
+     * Creates or updates a load balancer inbound NAT rule.
+     * 
+     * @param resourceGroupName The name of the resource group.
+     * @param loadBalancerName The name of the load balancer.
+     * @param inboundNatRuleName The name of the inbound NAT rule.
+     * @param inboundNatRuleParameters Parameters supplied to the create or update inbound NAT rule operation.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return the {@link SyncPoller} for polling of inbound NAT rule of the load balancer.
+     */
+    @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
+    public SyncPoller<PollResult<InboundNatRuleInner>, InboundNatRuleInner> beginCreateOrUpdate(
+        String resourceGroupName, String loadBalancerName, String inboundNatRuleName,
+        InboundNatRuleInner inboundNatRuleParameters) {
         return this
-            .client
-            .<InboundNatRuleInner, InboundNatRuleInner>getLroResult(
-                mono, this.client.getHttpPipeline(), InboundNatRuleInner.class, InboundNatRuleInner.class, context);
-    }
-
-    /**
-     * Creates or updates a load balancer inbound NAT rule.
-     *
-     * @param resourceGroupName The name of the resource group.
-     * @param loadBalancerName The name of the load balancer.
-     * @param inboundNatRuleName The name of the inbound NAT rule.
-     * @param inboundNatRuleParameters Parameters supplied to the create or update inbound NAT rule operation.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return inbound NAT rule of the load balancer.
-     */
-    @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
-    public SyncPoller<PollResult<InboundNatRuleInner>, InboundNatRuleInner> beginCreateOrUpdate(
-        String resourceGroupName,
-        String loadBalancerName,
-        String inboundNatRuleName,
-        InboundNatRuleInner inboundNatRuleParameters) {
-        return beginCreateOrUpdateAsync(
-                resourceGroupName, loadBalancerName, inboundNatRuleName, inboundNatRuleParameters)
+            .beginCreateOrUpdateAsync(resourceGroupName, loadBalancerName, inboundNatRuleName, inboundNatRuleParameters)
             .getSyncPoller();
     }
 
     /**
      * Creates or updates a load balancer inbound NAT rule.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param loadBalancerName The name of the load balancer.
      * @param inboundNatRuleName The name of the inbound NAT rule.
@@ -1017,23 +819,21 @@ public final class InboundNatRulesClientImpl implements InboundNatRulesClient {
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return inbound NAT rule of the load balancer.
+     * @return the {@link SyncPoller} for polling of inbound NAT rule of the load balancer.
      */
     @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
     public SyncPoller<PollResult<InboundNatRuleInner>, InboundNatRuleInner> beginCreateOrUpdate(
-        String resourceGroupName,
-        String loadBalancerName,
-        String inboundNatRuleName,
-        InboundNatRuleInner inboundNatRuleParameters,
-        Context context) {
-        return beginCreateOrUpdateAsync(
-                resourceGroupName, loadBalancerName, inboundNatRuleName, inboundNatRuleParameters, context)
+        String resourceGroupName, String loadBalancerName, String inboundNatRuleName,
+        InboundNatRuleInner inboundNatRuleParameters, Context context) {
+        return this
+            .beginCreateOrUpdateAsync(resourceGroupName, loadBalancerName, inboundNatRuleName, inboundNatRuleParameters,
+                context)
             .getSyncPoller();
     }
 
     /**
      * Creates or updates a load balancer inbound NAT rule.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param loadBalancerName The name of the load balancer.
      * @param inboundNatRuleName The name of the inbound NAT rule.
@@ -1041,23 +841,18 @@ public final class InboundNatRulesClientImpl implements InboundNatRulesClient {
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return inbound NAT rule of the load balancer.
+     * @return inbound NAT rule of the load balancer on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    public Mono<InboundNatRuleInner> createOrUpdateAsync(
-        String resourceGroupName,
-        String loadBalancerName,
-        String inboundNatRuleName,
-        InboundNatRuleInner inboundNatRuleParameters) {
-        return beginCreateOrUpdateAsync(
-                resourceGroupName, loadBalancerName, inboundNatRuleName, inboundNatRuleParameters)
-            .last()
-            .flatMap(this.client::getLroFinalResultOrError);
+    public Mono<InboundNatRuleInner> createOrUpdateAsync(String resourceGroupName, String loadBalancerName,
+        String inboundNatRuleName, InboundNatRuleInner inboundNatRuleParameters) {
+        return beginCreateOrUpdateAsync(resourceGroupName, loadBalancerName, inboundNatRuleName,
+            inboundNatRuleParameters).last().flatMap(this.client::getLroFinalResultOrError);
     }
 
     /**
      * Creates or updates a load balancer inbound NAT rule.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param loadBalancerName The name of the load balancer.
      * @param inboundNatRuleName The name of the inbound NAT rule.
@@ -1066,24 +861,18 @@ public final class InboundNatRulesClientImpl implements InboundNatRulesClient {
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return inbound NAT rule of the load balancer.
+     * @return inbound NAT rule of the load balancer on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    private Mono<InboundNatRuleInner> createOrUpdateAsync(
-        String resourceGroupName,
-        String loadBalancerName,
-        String inboundNatRuleName,
-        InboundNatRuleInner inboundNatRuleParameters,
-        Context context) {
-        return beginCreateOrUpdateAsync(
-                resourceGroupName, loadBalancerName, inboundNatRuleName, inboundNatRuleParameters, context)
-            .last()
-            .flatMap(this.client::getLroFinalResultOrError);
+    private Mono<InboundNatRuleInner> createOrUpdateAsync(String resourceGroupName, String loadBalancerName,
+        String inboundNatRuleName, InboundNatRuleInner inboundNatRuleParameters, Context context) {
+        return beginCreateOrUpdateAsync(resourceGroupName, loadBalancerName, inboundNatRuleName,
+            inboundNatRuleParameters, context).last().flatMap(this.client::getLroFinalResultOrError);
     }
 
     /**
      * Creates or updates a load balancer inbound NAT rule.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param loadBalancerName The name of the load balancer.
      * @param inboundNatRuleName The name of the inbound NAT rule.
@@ -1094,18 +883,15 @@ public final class InboundNatRulesClientImpl implements InboundNatRulesClient {
      * @return inbound NAT rule of the load balancer.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    public InboundNatRuleInner createOrUpdate(
-        String resourceGroupName,
-        String loadBalancerName,
-        String inboundNatRuleName,
-        InboundNatRuleInner inboundNatRuleParameters) {
+    public InboundNatRuleInner createOrUpdate(String resourceGroupName, String loadBalancerName,
+        String inboundNatRuleName, InboundNatRuleInner inboundNatRuleParameters) {
         return createOrUpdateAsync(resourceGroupName, loadBalancerName, inboundNatRuleName, inboundNatRuleParameters)
             .block();
     }
 
     /**
      * Creates or updates a load balancer inbound NAT rule.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param loadBalancerName The name of the load balancer.
      * @param inboundNatRuleName The name of the inbound NAT rule.
@@ -1117,25 +903,21 @@ public final class InboundNatRulesClientImpl implements InboundNatRulesClient {
      * @return inbound NAT rule of the load balancer.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    public InboundNatRuleInner createOrUpdate(
-        String resourceGroupName,
-        String loadBalancerName,
-        String inboundNatRuleName,
-        InboundNatRuleInner inboundNatRuleParameters,
-        Context context) {
-        return createOrUpdateAsync(
-                resourceGroupName, loadBalancerName, inboundNatRuleName, inboundNatRuleParameters, context)
-            .block();
+    public InboundNatRuleInner createOrUpdate(String resourceGroupName, String loadBalancerName,
+        String inboundNatRuleName, InboundNatRuleInner inboundNatRuleParameters, Context context) {
+        return createOrUpdateAsync(resourceGroupName, loadBalancerName, inboundNatRuleName, inboundNatRuleParameters,
+            context).block();
     }
 
     /**
      * Get the next page of items.
-     *
-     * @param nextLink The nextLink parameter.
+     * 
+     * @param nextLink The URL to get the next list of items.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return response for ListInboundNatRule API service call.
+     * @return response for ListInboundNatRule API service call along with {@link PagedResponse} on successful
+     * completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
     private Mono<PagedResponse<InboundNatRuleInner>> listNextSinglePageAsync(String nextLink) {
@@ -1143,35 +925,26 @@ public final class InboundNatRulesClientImpl implements InboundNatRulesClient {
             return Mono.error(new IllegalArgumentException("Parameter nextLink is required and cannot be null."));
         }
         if (this.client.getEndpoint() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getEndpoint() is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
         }
         final String accept = "application/json";
-        return FluxUtil
-            .withContext(context -> service.listNext(nextLink, this.client.getEndpoint(), accept, context))
-            .<PagedResponse<InboundNatRuleInner>>map(
-                res ->
-                    new PagedResponseBase<>(
-                        res.getRequest(),
-                        res.getStatusCode(),
-                        res.getHeaders(),
-                        res.getValue().value(),
-                        res.getValue().nextLink(),
-                        null))
+        return FluxUtil.withContext(context -> service.listNext(nextLink, this.client.getEndpoint(), accept, context))
+            .<PagedResponse<InboundNatRuleInner>>map(res -> new PagedResponseBase<>(res.getRequest(),
+                res.getStatusCode(), res.getHeaders(), res.getValue().value(), res.getValue().nextLink(), null))
             .contextWrite(context -> context.putAll(FluxUtil.toReactorContext(this.client.getContext()).readOnly()));
     }
 
     /**
      * Get the next page of items.
-     *
-     * @param nextLink The nextLink parameter.
+     * 
+     * @param nextLink The URL to get the next list of items.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return response for ListInboundNatRule API service call.
+     * @return response for ListInboundNatRule API service call along with {@link PagedResponse} on successful
+     * completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
     private Mono<PagedResponse<InboundNatRuleInner>> listNextSinglePageAsync(String nextLink, Context context) {
@@ -1179,23 +952,13 @@ public final class InboundNatRulesClientImpl implements InboundNatRulesClient {
             return Mono.error(new IllegalArgumentException("Parameter nextLink is required and cannot be null."));
         }
         if (this.client.getEndpoint() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getEndpoint() is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
         }
         final String accept = "application/json";
         context = this.client.mergeContext(context);
-        return service
-            .listNext(nextLink, this.client.getEndpoint(), accept, context)
-            .map(
-                res ->
-                    new PagedResponseBase<>(
-                        res.getRequest(),
-                        res.getStatusCode(),
-                        res.getHeaders(),
-                        res.getValue().value(),
-                        res.getValue().nextLink(),
-                        null));
+        return service.listNext(nextLink, this.client.getEndpoint(), accept, context)
+            .map(res -> new PagedResponseBase<>(res.getRequest(), res.getStatusCode(), res.getHeaders(),
+                res.getValue().value(), res.getValue().nextLink(), null));
     }
 }

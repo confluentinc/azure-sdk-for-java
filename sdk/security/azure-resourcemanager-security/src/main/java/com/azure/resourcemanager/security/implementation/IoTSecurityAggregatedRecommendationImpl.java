@@ -15,8 +15,7 @@ public final class IoTSecurityAggregatedRecommendationImpl implements IoTSecurit
 
     private final com.azure.resourcemanager.security.SecurityManager serviceManager;
 
-    IoTSecurityAggregatedRecommendationImpl(
-        IoTSecurityAggregatedRecommendationInner innerObject,
+    IoTSecurityAggregatedRecommendationImpl(IoTSecurityAggregatedRecommendationInner innerObject,
         com.azure.resourcemanager.security.SecurityManager serviceManager) {
         this.innerObject = innerObject;
         this.serviceManager = serviceManager;
@@ -32,6 +31,15 @@ public final class IoTSecurityAggregatedRecommendationImpl implements IoTSecurit
 
     public String type() {
         return this.innerModel().type();
+    }
+
+    public Map<String, String> tags() {
+        Map<String, String> inner = this.innerModel().tags();
+        if (inner != null) {
+            return Collections.unmodifiableMap(inner);
+        } else {
+            return Collections.emptyMap();
+        }
     }
 
     public String recommendationName() {
@@ -72,15 +80,6 @@ public final class IoTSecurityAggregatedRecommendationImpl implements IoTSecurit
 
     public String logAnalyticsQuery() {
         return this.innerModel().logAnalyticsQuery();
-    }
-
-    public Map<String, String> tags() {
-        Map<String, String> inner = this.innerModel().tags();
-        if (inner != null) {
-            return Collections.unmodifiableMap(inner);
-        } else {
-            return Collections.emptyMap();
-        }
     }
 
     public IoTSecurityAggregatedRecommendationInner innerModel() {

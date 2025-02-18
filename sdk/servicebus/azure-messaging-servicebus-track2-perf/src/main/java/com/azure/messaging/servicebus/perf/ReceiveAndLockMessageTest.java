@@ -3,11 +3,11 @@
 
 package com.azure.messaging.servicebus.perf;
 
-
 import com.azure.core.util.IterableStream;
 import com.azure.core.util.logging.ClientLogger;
 import com.azure.messaging.servicebus.ServiceBusMessage;
 import com.azure.messaging.servicebus.ServiceBusReceivedMessage;
+import com.azure.messaging.servicebus.ServiceBusReceiverAsyncClient;
 import com.azure.messaging.servicebus.models.ServiceBusReceiveMode;
 import com.azure.perf.test.core.TestDataCreationHelper;
 import reactor.core.publisher.Mono;
@@ -20,7 +20,7 @@ import java.util.UUID;
  * Performance test.
  */
 public class ReceiveAndLockMessageTest extends ServiceTest<ServiceBusStressOptions> {
-    private final ClientLogger logger = new ClientLogger(ReceiveAndLockMessageTest.class);
+    private static final ClientLogger LOGGER = new ClientLogger(ReceiveAndLockMessageTest.class);
     private final ServiceBusStressOptions options;
     private final String messageContent;
 
@@ -42,7 +42,7 @@ public class ReceiveAndLockMessageTest extends ServiceTest<ServiceBusStressOptio
 
             List<ServiceBusMessage> messages = new ArrayList<>();
             for (int i = 0; i < total; ++i) {
-                ServiceBusMessage message =  new ServiceBusMessage(messageContent);
+                ServiceBusMessage message = new ServiceBusMessage(messageContent);
                 message.setMessageId(UUID.randomUUID().toString());
                 messages.add(message);
             }
@@ -52,8 +52,7 @@ public class ReceiveAndLockMessageTest extends ServiceTest<ServiceBusStressOptio
 
     @Override
     public void run() {
-        IterableStream<ServiceBusReceivedMessage> messages = receiver
-            .receiveMessages(options.getMessagesToReceive());
+        IterableStream<ServiceBusReceivedMessage> messages = receiver.receiveMessages(options.getMessagesToReceive());
 
         int count = 0;
         for (ServiceBusReceivedMessage message : messages) {
@@ -62,17 +61,17 @@ public class ReceiveAndLockMessageTest extends ServiceTest<ServiceBusStressOptio
         }
 
         if (count <= 0) {
-            throw logger.logExceptionAsWarning(new RuntimeException("Error. Should have received some messages."));
+            throw LOGGER.logExceptionAsWarning(new RuntimeException("Error. Should have received some messages."));
         }
     }
 
     @Override
     public Mono<Void> runAsync() {
-        return receiverAsync
-            .receiveMessages()
-            .take(options.getMessagesToReceive())
-            .flatMap(message -> {
-                return receiverAsync.complete(message).thenReturn(true);
+        return Mono.using(receiverBuilder::buildAsyncClient, receiverAsyncClient -> {
+            return receiverAsyncClient.receiveMessages().take(options.getMessagesToReceive()).flatMap(message -> {
+                receiverAsyncClient.complete(message);
+                return Mono.just(message);
             }, 1).then();
+        }, ServiceBusReceiverAsyncClient::close, false);
     }
 }

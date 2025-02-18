@@ -16,56 +16,58 @@ import java.nio.ByteBuffer;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-/** An instance of this class provides access to all the operations defined in VpnSitesConfigurationsClient. */
+/**
+ * An instance of this class provides access to all the operations defined in VpnSitesConfigurationsClient.
+ */
 public interface VpnSitesConfigurationsClient {
     /**
      * Gives the sas-url to download the configurations for vpn-sites in a resource group.
-     *
+     * 
      * @param resourceGroupName The resource group name.
      * @param virtualWanName The name of the VirtualWAN for which configuration of all vpn-sites is needed.
      * @param request Parameters supplied to download vpn-sites configuration.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the completion.
+     * @return the {@link Response} on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    Mono<Response<Flux<ByteBuffer>>> downloadWithResponseAsync(
-        String resourceGroupName, String virtualWanName, GetVpnSitesConfigurationRequest request);
+    Mono<Response<Flux<ByteBuffer>>> downloadWithResponseAsync(String resourceGroupName, String virtualWanName,
+        GetVpnSitesConfigurationRequest request);
 
     /**
      * Gives the sas-url to download the configurations for vpn-sites in a resource group.
-     *
+     * 
      * @param resourceGroupName The resource group name.
      * @param virtualWanName The name of the VirtualWAN for which configuration of all vpn-sites is needed.
      * @param request Parameters supplied to download vpn-sites configuration.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the completion.
+     * @return the {@link PollerFlux} for polling of long-running operation.
      */
     @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
-    PollerFlux<PollResult<Void>, Void> beginDownloadAsync(
-        String resourceGroupName, String virtualWanName, GetVpnSitesConfigurationRequest request);
+    PollerFlux<PollResult<Void>, Void> beginDownloadAsync(String resourceGroupName, String virtualWanName,
+        GetVpnSitesConfigurationRequest request);
 
     /**
      * Gives the sas-url to download the configurations for vpn-sites in a resource group.
-     *
+     * 
      * @param resourceGroupName The resource group name.
      * @param virtualWanName The name of the VirtualWAN for which configuration of all vpn-sites is needed.
      * @param request Parameters supplied to download vpn-sites configuration.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the completion.
+     * @return the {@link SyncPoller} for polling of long-running operation.
      */
     @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
-    SyncPoller<PollResult<Void>, Void> beginDownload(
-        String resourceGroupName, String virtualWanName, GetVpnSitesConfigurationRequest request);
+    SyncPoller<PollResult<Void>, Void> beginDownload(String resourceGroupName, String virtualWanName,
+        GetVpnSitesConfigurationRequest request);
 
     /**
      * Gives the sas-url to download the configurations for vpn-sites in a resource group.
-     *
+     * 
      * @param resourceGroupName The resource group name.
      * @param virtualWanName The name of the VirtualWAN for which configuration of all vpn-sites is needed.
      * @param request Parameters supplied to download vpn-sites configuration.
@@ -73,29 +75,29 @@ public interface VpnSitesConfigurationsClient {
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the completion.
+     * @return the {@link SyncPoller} for polling of long-running operation.
      */
     @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
-    SyncPoller<PollResult<Void>, Void> beginDownload(
-        String resourceGroupName, String virtualWanName, GetVpnSitesConfigurationRequest request, Context context);
+    SyncPoller<PollResult<Void>, Void> beginDownload(String resourceGroupName, String virtualWanName,
+        GetVpnSitesConfigurationRequest request, Context context);
 
     /**
      * Gives the sas-url to download the configurations for vpn-sites in a resource group.
-     *
+     * 
      * @param resourceGroupName The resource group name.
      * @param virtualWanName The name of the VirtualWAN for which configuration of all vpn-sites is needed.
      * @param request Parameters supplied to download vpn-sites configuration.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the completion.
+     * @return A {@link Mono} that completes when a successful response is received.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
     Mono<Void> downloadAsync(String resourceGroupName, String virtualWanName, GetVpnSitesConfigurationRequest request);
 
     /**
      * Gives the sas-url to download the configurations for vpn-sites in a resource group.
-     *
+     * 
      * @param resourceGroupName The resource group name.
      * @param virtualWanName The name of the VirtualWAN for which configuration of all vpn-sites is needed.
      * @param request Parameters supplied to download vpn-sites configuration.
@@ -108,7 +110,7 @@ public interface VpnSitesConfigurationsClient {
 
     /**
      * Gives the sas-url to download the configurations for vpn-sites in a resource group.
-     *
+     * 
      * @param resourceGroupName The resource group name.
      * @param virtualWanName The name of the VirtualWAN for which configuration of all vpn-sites is needed.
      * @param request Parameters supplied to download vpn-sites configuration.
@@ -118,6 +120,6 @@ public interface VpnSitesConfigurationsClient {
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    void download(
-        String resourceGroupName, String virtualWanName, GetVpnSitesConfigurationRequest request, Context context);
+    void download(String resourceGroupName, String virtualWanName, GetVpnSitesConfigurationRequest request,
+        Context context);
 }

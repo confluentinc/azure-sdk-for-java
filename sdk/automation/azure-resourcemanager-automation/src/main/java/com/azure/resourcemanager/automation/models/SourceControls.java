@@ -8,11 +8,28 @@ import com.azure.core.http.rest.PagedIterable;
 import com.azure.core.http.rest.Response;
 import com.azure.core.util.Context;
 
-/** Resource collection API of SourceControls. */
+/**
+ * Resource collection API of SourceControls.
+ */
 public interface SourceControls {
     /**
      * Delete the source control.
-     *
+     * 
+     * @param resourceGroupName Name of an Azure Resource group.
+     * @param automationAccountName The name of the automation account.
+     * @param sourceControlName The name of source control.
+     * @param context The context to associate with this operation.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return the {@link Response}.
+     */
+    Response<Void> deleteWithResponse(String resourceGroupName, String automationAccountName, String sourceControlName,
+        Context context);
+
+    /**
+     * Delete the source control.
+     * 
      * @param resourceGroupName Name of an Azure Resource group.
      * @param automationAccountName The name of the automation account.
      * @param sourceControlName The name of source control.
@@ -23,8 +40,8 @@ public interface SourceControls {
     void delete(String resourceGroupName, String automationAccountName, String sourceControlName);
 
     /**
-     * Delete the source control.
-     *
+     * Retrieve the source control identified by source control name.
+     * 
      * @param resourceGroupName Name of an Azure Resource group.
      * @param automationAccountName The name of the automation account.
      * @param sourceControlName The name of source control.
@@ -32,14 +49,14 @@ public interface SourceControls {
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the response.
+     * @return definition of the source control along with {@link Response}.
      */
-    Response<Void> deleteWithResponse(
-        String resourceGroupName, String automationAccountName, String sourceControlName, Context context);
+    Response<SourceControl> getWithResponse(String resourceGroupName, String automationAccountName,
+        String sourceControlName, Context context);
 
     /**
      * Retrieve the source control identified by source control name.
-     *
+     * 
      * @param resourceGroupName Name of an Azure Resource group.
      * @param automationAccountName The name of the automation account.
      * @param sourceControlName The name of source control.
@@ -51,35 +68,21 @@ public interface SourceControls {
     SourceControl get(String resourceGroupName, String automationAccountName, String sourceControlName);
 
     /**
-     * Retrieve the source control identified by source control name.
-     *
-     * @param resourceGroupName Name of an Azure Resource group.
-     * @param automationAccountName The name of the automation account.
-     * @param sourceControlName The name of source control.
-     * @param context The context to associate with this operation.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return definition of the source control.
-     */
-    Response<SourceControl> getWithResponse(
-        String resourceGroupName, String automationAccountName, String sourceControlName, Context context);
-
-    /**
      * Retrieve a list of source controls.
-     *
+     * 
      * @param resourceGroupName Name of an Azure Resource group.
      * @param automationAccountName The name of the automation account.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the response model for the list source controls operation.
+     * @return the response model for the list source controls operation as paginated response with
+     * {@link PagedIterable}.
      */
     PagedIterable<SourceControl> listByAutomationAccount(String resourceGroupName, String automationAccountName);
 
     /**
      * Retrieve a list of source controls.
-     *
+     * 
      * @param resourceGroupName Name of an Azure Resource group.
      * @param automationAccountName The name of the automation account.
      * @param filter The filter to apply on the operation.
@@ -87,37 +90,38 @@ public interface SourceControls {
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the response model for the list source controls operation.
+     * @return the response model for the list source controls operation as paginated response with
+     * {@link PagedIterable}.
      */
-    PagedIterable<SourceControl> listByAutomationAccount(
-        String resourceGroupName, String automationAccountName, String filter, Context context);
+    PagedIterable<SourceControl> listByAutomationAccount(String resourceGroupName, String automationAccountName,
+        String filter, Context context);
 
     /**
      * Retrieve the source control identified by source control name.
-     *
+     * 
      * @param id the resource ID.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return definition of the source control.
+     * @return definition of the source control along with {@link Response}.
      */
     SourceControl getById(String id);
 
     /**
      * Retrieve the source control identified by source control name.
-     *
+     * 
      * @param id the resource ID.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return definition of the source control.
+     * @return definition of the source control along with {@link Response}.
      */
     Response<SourceControl> getByIdWithResponse(String id, Context context);
 
     /**
      * Delete the source control.
-     *
+     * 
      * @param id the resource ID.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
@@ -127,19 +131,19 @@ public interface SourceControls {
 
     /**
      * Delete the source control.
-     *
+     * 
      * @param id the resource ID.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the response.
+     * @return the {@link Response}.
      */
     Response<Void> deleteByIdWithResponse(String id, Context context);
 
     /**
      * Begins definition for a new SourceControl resource.
-     *
+     * 
      * @param name resource name.
      * @return the first stage of the new SourceControl definition.
      */

@@ -4,77 +4,86 @@
 
 package com.azure.resourcemanager.sql.fluent.models;
 
-import com.azure.core.annotation.Immutable;
-import com.azure.core.annotation.JsonFlatten;
+import com.azure.core.annotation.Fluent;
 import com.azure.core.management.ProxyResource;
-import com.azure.core.util.logging.ClientLogger;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.azure.json.JsonReader;
+import com.azure.json.JsonToken;
+import com.azure.json.JsonWriter;
+import com.azure.resourcemanager.sql.models.BackupStorageRedundancy;
+import com.azure.resourcemanager.sql.models.Sku;
+import java.io.IOException;
 import java.time.OffsetDateTime;
+import java.util.Map;
 
-/** A restorable dropped database. */
-@JsonFlatten
-@Immutable
-public class RestorableDroppedDatabaseInner extends ProxyResource {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(RestorableDroppedDatabaseInner.class);
+/**
+ * A restorable dropped database resource.
+ */
+@Fluent
+public final class RestorableDroppedDatabaseInner extends ProxyResource {
+    /*
+     * The name and tier of the SKU.
+     */
+    private Sku sku;
 
     /*
-     * The geo-location where the resource lives
+     * Resource location.
      */
-    @JsonProperty(value = "location", access = JsonProperty.Access.WRITE_ONLY)
     private String location;
 
     /*
-     * The name of the database
+     * Resource tags.
      */
-    @JsonProperty(value = "properties.databaseName", access = JsonProperty.Access.WRITE_ONLY)
-    private String databaseName;
+    private Map<String, String> tags;
 
     /*
-     * The edition of the database
+     * Resource properties.
      */
-    @JsonProperty(value = "properties.edition", access = JsonProperty.Access.WRITE_ONLY)
-    private String edition;
+    private RestorableDroppedDatabaseProperties innerProperties;
 
     /*
-     * The max size in bytes of the database
+     * The type of the resource.
      */
-    @JsonProperty(value = "properties.maxSizeBytes", access = JsonProperty.Access.WRITE_ONLY)
-    private String maxSizeBytes;
+    private String type;
 
     /*
-     * The service level objective name of the database
+     * The name of the resource.
      */
-    @JsonProperty(value = "properties.serviceLevelObjective", access = JsonProperty.Access.WRITE_ONLY)
-    private String serviceLevelObjective;
+    private String name;
 
     /*
-     * The elastic pool name of the database
+     * Fully qualified resource Id for the resource.
      */
-    @JsonProperty(value = "properties.elasticPoolName", access = JsonProperty.Access.WRITE_ONLY)
-    private String elasticPoolName;
-
-    /*
-     * The creation date of the database (ISO8601 format)
-     */
-    @JsonProperty(value = "properties.creationDate", access = JsonProperty.Access.WRITE_ONLY)
-    private OffsetDateTime creationDate;
-
-    /*
-     * The deletion date of the database (ISO8601 format)
-     */
-    @JsonProperty(value = "properties.deletionDate", access = JsonProperty.Access.WRITE_ONLY)
-    private OffsetDateTime deletionDate;
-
-    /*
-     * The earliest restore date of the database (ISO8601 format)
-     */
-    @JsonProperty(value = "properties.earliestRestoreDate", access = JsonProperty.Access.WRITE_ONLY)
-    private OffsetDateTime earliestRestoreDate;
+    private String id;
 
     /**
-     * Get the location property: The geo-location where the resource lives.
-     *
+     * Creates an instance of RestorableDroppedDatabaseInner class.
+     */
+    public RestorableDroppedDatabaseInner() {
+    }
+
+    /**
+     * Get the sku property: The name and tier of the SKU.
+     * 
+     * @return the sku value.
+     */
+    public Sku sku() {
+        return this.sku;
+    }
+
+    /**
+     * Set the sku property: The name and tier of the SKU.
+     * 
+     * @param sku the sku value to set.
+     * @return the RestorableDroppedDatabaseInner object itself.
+     */
+    public RestorableDroppedDatabaseInner withSku(Sku sku) {
+        this.sku = sku;
+        return this;
+    }
+
+    /**
+     * Get the location property: Resource location.
+     * 
      * @return the location value.
      */
     public String location() {
@@ -82,82 +91,195 @@ public class RestorableDroppedDatabaseInner extends ProxyResource {
     }
 
     /**
+     * Set the location property: Resource location.
+     * 
+     * @param location the location value to set.
+     * @return the RestorableDroppedDatabaseInner object itself.
+     */
+    public RestorableDroppedDatabaseInner withLocation(String location) {
+        this.location = location;
+        return this;
+    }
+
+    /**
+     * Get the tags property: Resource tags.
+     * 
+     * @return the tags value.
+     */
+    public Map<String, String> tags() {
+        return this.tags;
+    }
+
+    /**
+     * Set the tags property: Resource tags.
+     * 
+     * @param tags the tags value to set.
+     * @return the RestorableDroppedDatabaseInner object itself.
+     */
+    public RestorableDroppedDatabaseInner withTags(Map<String, String> tags) {
+        this.tags = tags;
+        return this;
+    }
+
+    /**
+     * Get the innerProperties property: Resource properties.
+     * 
+     * @return the innerProperties value.
+     */
+    private RestorableDroppedDatabaseProperties innerProperties() {
+        return this.innerProperties;
+    }
+
+    /**
+     * Get the type property: The type of the resource.
+     * 
+     * @return the type value.
+     */
+    @Override
+    public String type() {
+        return this.type;
+    }
+
+    /**
+     * Get the name property: The name of the resource.
+     * 
+     * @return the name value.
+     */
+    @Override
+    public String name() {
+        return this.name;
+    }
+
+    /**
+     * Get the id property: Fully qualified resource Id for the resource.
+     * 
+     * @return the id value.
+     */
+    @Override
+    public String id() {
+        return this.id;
+    }
+
+    /**
      * Get the databaseName property: The name of the database.
-     *
+     * 
      * @return the databaseName value.
      */
     public String databaseName() {
-        return this.databaseName;
+        return this.innerProperties() == null ? null : this.innerProperties().databaseName();
     }
 
     /**
-     * Get the edition property: The edition of the database.
-     *
-     * @return the edition value.
-     */
-    public String edition() {
-        return this.edition;
-    }
-
-    /**
-     * Get the maxSizeBytes property: The max size in bytes of the database.
-     *
+     * Get the maxSizeBytes property: The max size of the database expressed in bytes.
+     * 
      * @return the maxSizeBytes value.
      */
-    public String maxSizeBytes() {
-        return this.maxSizeBytes;
-    }
-
-    /**
-     * Get the serviceLevelObjective property: The service level objective name of the database.
-     *
-     * @return the serviceLevelObjective value.
-     */
-    public String serviceLevelObjective() {
-        return this.serviceLevelObjective;
-    }
-
-    /**
-     * Get the elasticPoolName property: The elastic pool name of the database.
-     *
-     * @return the elasticPoolName value.
-     */
-    public String elasticPoolName() {
-        return this.elasticPoolName;
+    public Long maxSizeBytes() {
+        return this.innerProperties() == null ? null : this.innerProperties().maxSizeBytes();
     }
 
     /**
      * Get the creationDate property: The creation date of the database (ISO8601 format).
-     *
+     * 
      * @return the creationDate value.
      */
     public OffsetDateTime creationDate() {
-        return this.creationDate;
+        return this.innerProperties() == null ? null : this.innerProperties().creationDate();
     }
 
     /**
      * Get the deletionDate property: The deletion date of the database (ISO8601 format).
-     *
+     * 
      * @return the deletionDate value.
      */
     public OffsetDateTime deletionDate() {
-        return this.deletionDate;
+        return this.innerProperties() == null ? null : this.innerProperties().deletionDate();
     }
 
     /**
      * Get the earliestRestoreDate property: The earliest restore date of the database (ISO8601 format).
-     *
+     * 
      * @return the earliestRestoreDate value.
      */
     public OffsetDateTime earliestRestoreDate() {
-        return this.earliestRestoreDate;
+        return this.innerProperties() == null ? null : this.innerProperties().earliestRestoreDate();
+    }
+
+    /**
+     * Get the backupStorageRedundancy property: The storage account type used to store backups for this database.
+     * 
+     * @return the backupStorageRedundancy value.
+     */
+    public BackupStorageRedundancy backupStorageRedundancy() {
+        return this.innerProperties() == null ? null : this.innerProperties().backupStorageRedundancy();
     }
 
     /**
      * Validates the instance.
-     *
+     * 
      * @throws IllegalArgumentException thrown if the instance is not valid.
      */
     public void validate() {
+        if (sku() != null) {
+            sku().validate();
+        }
+        if (innerProperties() != null) {
+            innerProperties().validate();
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public JsonWriter toJson(JsonWriter jsonWriter) throws IOException {
+        jsonWriter.writeStartObject();
+        jsonWriter.writeJsonField("sku", this.sku);
+        jsonWriter.writeStringField("location", this.location);
+        jsonWriter.writeMapField("tags", this.tags, (writer, element) -> writer.writeString(element));
+        jsonWriter.writeJsonField("properties", this.innerProperties);
+        return jsonWriter.writeEndObject();
+    }
+
+    /**
+     * Reads an instance of RestorableDroppedDatabaseInner from the JsonReader.
+     * 
+     * @param jsonReader The JsonReader being read.
+     * @return An instance of RestorableDroppedDatabaseInner if the JsonReader was pointing to an instance of it, or
+     * null if it was pointing to JSON null.
+     * @throws IllegalStateException If the deserialized JSON object was missing any required properties.
+     * @throws IOException If an error occurs while reading the RestorableDroppedDatabaseInner.
+     */
+    public static RestorableDroppedDatabaseInner fromJson(JsonReader jsonReader) throws IOException {
+        return jsonReader.readObject(reader -> {
+            RestorableDroppedDatabaseInner deserializedRestorableDroppedDatabaseInner
+                = new RestorableDroppedDatabaseInner();
+            while (reader.nextToken() != JsonToken.END_OBJECT) {
+                String fieldName = reader.getFieldName();
+                reader.nextToken();
+
+                if ("id".equals(fieldName)) {
+                    deserializedRestorableDroppedDatabaseInner.id = reader.getString();
+                } else if ("name".equals(fieldName)) {
+                    deserializedRestorableDroppedDatabaseInner.name = reader.getString();
+                } else if ("type".equals(fieldName)) {
+                    deserializedRestorableDroppedDatabaseInner.type = reader.getString();
+                } else if ("sku".equals(fieldName)) {
+                    deserializedRestorableDroppedDatabaseInner.sku = Sku.fromJson(reader);
+                } else if ("location".equals(fieldName)) {
+                    deserializedRestorableDroppedDatabaseInner.location = reader.getString();
+                } else if ("tags".equals(fieldName)) {
+                    Map<String, String> tags = reader.readMap(reader1 -> reader1.getString());
+                    deserializedRestorableDroppedDatabaseInner.tags = tags;
+                } else if ("properties".equals(fieldName)) {
+                    deserializedRestorableDroppedDatabaseInner.innerProperties
+                        = RestorableDroppedDatabaseProperties.fromJson(reader);
+                } else {
+                    reader.skipChildren();
+                }
+            }
+
+            return deserializedRestorableDroppedDatabaseInner;
+        });
     }
 }

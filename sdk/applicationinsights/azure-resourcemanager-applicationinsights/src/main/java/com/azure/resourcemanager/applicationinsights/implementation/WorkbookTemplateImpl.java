@@ -84,6 +84,10 @@ public final class WorkbookTemplateImpl
         return this.location();
     }
 
+    public String resourceGroupName() {
+        return resourceGroupName;
+    }
+
     public WorkbookTemplateInner innerModel() {
         return this.innerObject;
     }
@@ -104,27 +108,23 @@ public final class WorkbookTemplateImpl
     }
 
     public WorkbookTemplate create() {
-        this.innerObject =
-            serviceManager
-                .serviceClient()
-                .getWorkbookTemplates()
-                .createOrUpdateWithResponse(resourceGroupName, resourceName, this.innerModel(), Context.NONE)
-                .getValue();
+        this.innerObject = serviceManager.serviceClient()
+            .getWorkbookTemplates()
+            .createOrUpdateWithResponse(resourceGroupName, resourceName, this.innerModel(), Context.NONE)
+            .getValue();
         return this;
     }
 
     public WorkbookTemplate create(Context context) {
-        this.innerObject =
-            serviceManager
-                .serviceClient()
-                .getWorkbookTemplates()
-                .createOrUpdateWithResponse(resourceGroupName, resourceName, this.innerModel(), context)
-                .getValue();
+        this.innerObject = serviceManager.serviceClient()
+            .getWorkbookTemplates()
+            .createOrUpdateWithResponse(resourceGroupName, resourceName, this.innerModel(), context)
+            .getValue();
         return this;
     }
 
-    WorkbookTemplateImpl(
-        String name, com.azure.resourcemanager.applicationinsights.ApplicationInsightsManager serviceManager) {
+    WorkbookTemplateImpl(String name,
+        com.azure.resourcemanager.applicationinsights.ApplicationInsightsManager serviceManager) {
         this.innerObject = new WorkbookTemplateInner();
         this.serviceManager = serviceManager;
         this.resourceName = name;
@@ -136,52 +136,42 @@ public final class WorkbookTemplateImpl
     }
 
     public WorkbookTemplate apply() {
-        this.innerObject =
-            serviceManager
-                .serviceClient()
-                .getWorkbookTemplates()
-                .updateWithResponse(
-                    resourceGroupName, resourceName, updateWorkbookTemplateUpdateParameters, Context.NONE)
-                .getValue();
+        this.innerObject = serviceManager.serviceClient()
+            .getWorkbookTemplates()
+            .updateWithResponse(resourceGroupName, resourceName, updateWorkbookTemplateUpdateParameters, Context.NONE)
+            .getValue();
         return this;
     }
 
     public WorkbookTemplate apply(Context context) {
-        this.innerObject =
-            serviceManager
-                .serviceClient()
-                .getWorkbookTemplates()
-                .updateWithResponse(resourceGroupName, resourceName, updateWorkbookTemplateUpdateParameters, context)
-                .getValue();
+        this.innerObject = serviceManager.serviceClient()
+            .getWorkbookTemplates()
+            .updateWithResponse(resourceGroupName, resourceName, updateWorkbookTemplateUpdateParameters, context)
+            .getValue();
         return this;
     }
 
-    WorkbookTemplateImpl(
-        WorkbookTemplateInner innerObject,
+    WorkbookTemplateImpl(WorkbookTemplateInner innerObject,
         com.azure.resourcemanager.applicationinsights.ApplicationInsightsManager serviceManager) {
         this.innerObject = innerObject;
         this.serviceManager = serviceManager;
-        this.resourceGroupName = Utils.getValueFromIdByName(innerObject.id(), "resourceGroups");
-        this.resourceName = Utils.getValueFromIdByName(innerObject.id(), "workbooktemplates");
+        this.resourceGroupName = ResourceManagerUtils.getValueFromIdByName(innerObject.id(), "resourceGroups");
+        this.resourceName = ResourceManagerUtils.getValueFromIdByName(innerObject.id(), "workbooktemplates");
     }
 
     public WorkbookTemplate refresh() {
-        this.innerObject =
-            serviceManager
-                .serviceClient()
-                .getWorkbookTemplates()
-                .getByResourceGroupWithResponse(resourceGroupName, resourceName, Context.NONE)
-                .getValue();
+        this.innerObject = serviceManager.serviceClient()
+            .getWorkbookTemplates()
+            .getByResourceGroupWithResponse(resourceGroupName, resourceName, Context.NONE)
+            .getValue();
         return this;
     }
 
     public WorkbookTemplate refresh(Context context) {
-        this.innerObject =
-            serviceManager
-                .serviceClient()
-                .getWorkbookTemplates()
-                .getByResourceGroupWithResponse(resourceGroupName, resourceName, context)
-                .getValue();
+        this.innerObject = serviceManager.serviceClient()
+            .getWorkbookTemplates()
+            .getByResourceGroupWithResponse(resourceGroupName, resourceName, context)
+            .getValue();
         return this;
     }
 

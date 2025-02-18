@@ -8,33 +8,60 @@ import com.azure.core.http.rest.PagedIterable;
 import com.azure.core.http.rest.Response;
 import com.azure.core.util.Context;
 
-/** Resource collection API of CommunicationServices. */
+/**
+ * Resource collection API of CommunicationServices.
+ */
 public interface CommunicationServices {
     /**
+     * Check Name Availability
+     * 
      * Checks that the CommunicationService name is valid and is not already in use.
-     *
-     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return result of the request to check name availability.
-     */
-    NameAvailability checkNameAvailability();
-
-    /**
-     * Checks that the CommunicationService name is valid and is not already in use.
-     *
+     * 
      * @param nameAvailabilityParameters Parameters supplied to the operation.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return result of the request to check name availability along with {@link Response}.
+     * @return the check availability result along with {@link Response}.
      */
-    Response<NameAvailability> checkNameAvailabilityWithResponse(
-        NameAvailabilityParameters nameAvailabilityParameters, Context context);
+    Response<CheckNameAvailabilityResponse>
+        checkNameAvailabilityWithResponse(NameAvailabilityParameters nameAvailabilityParameters, Context context);
 
     /**
+     * Check Name Availability
+     * 
+     * Checks that the CommunicationService name is valid and is not already in use.
+     * 
+     * @param nameAvailabilityParameters Parameters supplied to the operation.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return the check availability result.
+     */
+    CheckNameAvailabilityResponse checkNameAvailability(NameAvailabilityParameters nameAvailabilityParameters);
+
+    /**
+     * Link Notification Hub
+     * 
      * Links an Azure Notification Hub to this communication service.
-     *
+     * 
+     * @param resourceGroupName The name of the resource group. The name is case insensitive.
+     * @param communicationServiceName The name of the CommunicationService resource.
+     * @param linkNotificationHubParameters Parameters supplied to the operation.
+     * @param context The context to associate with this operation.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return a notification hub that has been linked to the communication service along with {@link Response}.
+     */
+    Response<LinkedNotificationHub> linkNotificationHubWithResponse(String resourceGroupName,
+        String communicationServiceName, LinkNotificationHubParameters linkNotificationHubParameters, Context context);
+
+    /**
+     * Link Notification Hub
+     * 
+     * Links an Azure Notification Hub to this communication service.
+     * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
      * @param communicationServiceName The name of the CommunicationService resource.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
@@ -45,69 +72,81 @@ public interface CommunicationServices {
     LinkedNotificationHub linkNotificationHub(String resourceGroupName, String communicationServiceName);
 
     /**
-     * Links an Azure Notification Hub to this communication service.
-     *
-     * @param resourceGroupName The name of the resource group. The name is case insensitive.
-     * @param communicationServiceName The name of the CommunicationService resource.
-     * @param linkNotificationHubParameters Parameters supplied to the operation.
-     * @param context The context to associate with this operation.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return a notification hub that has been linked to the communication service along with {@link Response}.
-     */
-    Response<LinkedNotificationHub> linkNotificationHubWithResponse(
-        String resourceGroupName,
-        String communicationServiceName,
-        LinkNotificationHubParameters linkNotificationHubParameters,
-        Context context);
-
-    /**
+     * List By Subscription
+     * 
      * Handles requests to list all resources in a subscription.
-     *
+     * 
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return object that includes an array of CommunicationServices and a possible link for next set.
+     * @return object that includes an array of CommunicationServices and a possible link for next set as paginated
+     * response with {@link PagedIterable}.
      */
     PagedIterable<CommunicationServiceResource> list();
 
     /**
+     * List By Subscription
+     * 
      * Handles requests to list all resources in a subscription.
-     *
+     * 
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return object that includes an array of CommunicationServices and a possible link for next set.
+     * @return object that includes an array of CommunicationServices and a possible link for next set as paginated
+     * response with {@link PagedIterable}.
      */
     PagedIterable<CommunicationServiceResource> list(Context context);
 
     /**
+     * List By Resource Group
+     * 
      * Handles requests to list all resources in a resource group.
-     *
+     * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return object that includes an array of CommunicationServices and a possible link for next set.
+     * @return object that includes an array of CommunicationServices and a possible link for next set as paginated
+     * response with {@link PagedIterable}.
      */
     PagedIterable<CommunicationServiceResource> listByResourceGroup(String resourceGroupName);
 
     /**
+     * List By Resource Group
+     * 
      * Handles requests to list all resources in a resource group.
-     *
+     * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return object that includes an array of CommunicationServices and a possible link for next set.
+     * @return object that includes an array of CommunicationServices and a possible link for next set as paginated
+     * response with {@link PagedIterable}.
      */
     PagedIterable<CommunicationServiceResource> listByResourceGroup(String resourceGroupName, Context context);
 
     /**
+     * Get
+     * 
      * Get the CommunicationService and its properties.
-     *
+     * 
+     * @param resourceGroupName The name of the resource group. The name is case insensitive.
+     * @param communicationServiceName The name of the CommunicationService resource.
+     * @param context The context to associate with this operation.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return the CommunicationService and its properties along with {@link Response}.
+     */
+    Response<CommunicationServiceResource> getByResourceGroupWithResponse(String resourceGroupName,
+        String communicationServiceName, Context context);
+
+    /**
+     * Get
+     * 
+     * Get the CommunicationService and its properties.
+     * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
      * @param communicationServiceName The name of the CommunicationService resource.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
@@ -118,22 +157,10 @@ public interface CommunicationServices {
     CommunicationServiceResource getByResourceGroup(String resourceGroupName, String communicationServiceName);
 
     /**
-     * Get the CommunicationService and its properties.
-     *
-     * @param resourceGroupName The name of the resource group. The name is case insensitive.
-     * @param communicationServiceName The name of the CommunicationService resource.
-     * @param context The context to associate with this operation.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the CommunicationService and its properties along with {@link Response}.
-     */
-    Response<CommunicationServiceResource> getByResourceGroupWithResponse(
-        String resourceGroupName, String communicationServiceName, Context context);
-
-    /**
+     * Delete
+     * 
      * Operation to delete a CommunicationService.
-     *
+     * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
      * @param communicationServiceName The name of the CommunicationService resource.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
@@ -143,8 +170,10 @@ public interface CommunicationServices {
     void deleteByResourceGroup(String resourceGroupName, String communicationServiceName);
 
     /**
+     * Delete
+     * 
      * Operation to delete a CommunicationService.
-     *
+     * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
      * @param communicationServiceName The name of the CommunicationService resource.
      * @param context The context to associate with this operation.
@@ -155,8 +184,26 @@ public interface CommunicationServices {
     void delete(String resourceGroupName, String communicationServiceName, Context context);
 
     /**
+     * List Keys
+     * 
      * Get the access keys of the CommunicationService resource.
-     *
+     * 
+     * @param resourceGroupName The name of the resource group. The name is case insensitive.
+     * @param communicationServiceName The name of the CommunicationService resource.
+     * @param context The context to associate with this operation.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return the access keys of the CommunicationService resource along with {@link Response}.
+     */
+    Response<CommunicationServiceKeys> listKeysWithResponse(String resourceGroupName, String communicationServiceName,
+        Context context);
+
+    /**
+     * List Keys
+     * 
+     * Get the access keys of the CommunicationService resource.
+     * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
      * @param communicationServiceName The name of the CommunicationService resource.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
@@ -167,36 +214,10 @@ public interface CommunicationServices {
     CommunicationServiceKeys listKeys(String resourceGroupName, String communicationServiceName);
 
     /**
-     * Get the access keys of the CommunicationService resource.
-     *
-     * @param resourceGroupName The name of the resource group. The name is case insensitive.
-     * @param communicationServiceName The name of the CommunicationService resource.
-     * @param context The context to associate with this operation.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the access keys of the CommunicationService resource along with {@link Response}.
-     */
-    Response<CommunicationServiceKeys> listKeysWithResponse(
-        String resourceGroupName, String communicationServiceName, Context context);
-
-    /**
+     * Regenerate Key
+     * 
      * Regenerate CommunicationService access key. PrimaryKey and SecondaryKey cannot be regenerated at the same time.
-     *
-     * @param resourceGroupName The name of the resource group. The name is case insensitive.
-     * @param communicationServiceName The name of the CommunicationService resource.
-     * @param parameters Parameter that describes the Regenerate Key Operation.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return a class representing the access keys of a CommunicationService.
-     */
-    CommunicationServiceKeys regenerateKey(
-        String resourceGroupName, String communicationServiceName, RegenerateKeyParameters parameters);
-
-    /**
-     * Regenerate CommunicationService access key. PrimaryKey and SecondaryKey cannot be regenerated at the same time.
-     *
+     * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
      * @param communicationServiceName The name of the CommunicationService resource.
      * @param parameters Parameter that describes the Regenerate Key Operation.
@@ -206,12 +227,30 @@ public interface CommunicationServices {
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
      * @return a class representing the access keys of a CommunicationService along with {@link Response}.
      */
-    Response<CommunicationServiceKeys> regenerateKeyWithResponse(
-        String resourceGroupName, String communicationServiceName, RegenerateKeyParameters parameters, Context context);
+    Response<CommunicationServiceKeys> regenerateKeyWithResponse(String resourceGroupName,
+        String communicationServiceName, RegenerateKeyParameters parameters, Context context);
 
     /**
+     * Regenerate Key
+     * 
+     * Regenerate CommunicationService access key. PrimaryKey and SecondaryKey cannot be regenerated at the same time.
+     * 
+     * @param resourceGroupName The name of the resource group. The name is case insensitive.
+     * @param communicationServiceName The name of the CommunicationService resource.
+     * @param parameters Parameter that describes the Regenerate Key Operation.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return a class representing the access keys of a CommunicationService.
+     */
+    CommunicationServiceKeys regenerateKey(String resourceGroupName, String communicationServiceName,
+        RegenerateKeyParameters parameters);
+
+    /**
+     * Get
+     * 
      * Get the CommunicationService and its properties.
-     *
+     * 
      * @param id the resource ID.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
@@ -221,8 +260,10 @@ public interface CommunicationServices {
     CommunicationServiceResource getById(String id);
 
     /**
+     * Get
+     * 
      * Get the CommunicationService and its properties.
-     *
+     * 
      * @param id the resource ID.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
@@ -233,8 +274,10 @@ public interface CommunicationServices {
     Response<CommunicationServiceResource> getByIdWithResponse(String id, Context context);
 
     /**
+     * Delete
+     * 
      * Operation to delete a CommunicationService.
-     *
+     * 
      * @param id the resource ID.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
@@ -243,8 +286,10 @@ public interface CommunicationServices {
     void deleteById(String id);
 
     /**
+     * Delete
+     * 
      * Operation to delete a CommunicationService.
-     *
+     * 
      * @param id the resource ID.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
@@ -255,7 +300,7 @@ public interface CommunicationServices {
 
     /**
      * Begins definition for a new CommunicationServiceResource resource.
-     *
+     * 
      * @param name resource name.
      * @return the first stage of the new CommunicationServiceResource definition.
      */

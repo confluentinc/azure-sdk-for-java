@@ -5,172 +5,302 @@
 package com.azure.resourcemanager.sql.fluent.models;
 
 import com.azure.core.annotation.Fluent;
-import com.azure.core.annotation.JsonFlatten;
 import com.azure.core.management.ProxyResource;
-import com.azure.core.util.logging.ClientLogger;
+import com.azure.json.JsonReader;
+import com.azure.json.JsonToken;
+import com.azure.json.JsonWriter;
 import com.azure.resourcemanager.sql.models.SensitivityLabelRank;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import java.io.IOException;
 
-/** A sensitivity label. */
-@JsonFlatten
+/**
+ * A sensitivity label.
+ */
 @Fluent
-public class SensitivityLabelInner extends ProxyResource {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(SensitivityLabelInner.class);
+public final class SensitivityLabelInner extends ProxyResource {
+    /*
+     * Resource that manages the sensitivity label.
+     */
+    private String managedBy;
 
     /*
-     * The label name.
+     * Resource properties.
      */
-    @JsonProperty(value = "properties.labelName")
-    private String labelName;
+    private SensitivityLabelProperties innerProperties;
 
     /*
-     * The label ID.
+     * The type of the resource.
      */
-    @JsonProperty(value = "properties.labelId")
-    private String labelId;
+    private String type;
 
     /*
-     * The information type.
+     * The name of the resource.
      */
-    @JsonProperty(value = "properties.informationType")
-    private String informationType;
+    private String name;
 
     /*
-     * The information type ID.
+     * Fully qualified resource Id for the resource.
      */
-    @JsonProperty(value = "properties.informationTypeId")
-    private String informationTypeId;
+    private String id;
 
-    /*
-     * Is sensitivity recommendation disabled. Applicable for recommended
-     * sensitivity label only. Specifies whether the sensitivity recommendation
-     * on this column is disabled (dismissed) or not.
+    /**
+     * Creates an instance of SensitivityLabelInner class.
      */
-    @JsonProperty(value = "properties.isDisabled", access = JsonProperty.Access.WRITE_ONLY)
-    private Boolean isDisabled;
+    public SensitivityLabelInner() {
+    }
 
-    /*
-     * The rank property.
+    /**
+     * Get the managedBy property: Resource that manages the sensitivity label.
+     * 
+     * @return the managedBy value.
      */
-    @JsonProperty(value = "properties.rank")
-    private SensitivityLabelRank rank;
+    public String managedBy() {
+        return this.managedBy;
+    }
+
+    /**
+     * Get the innerProperties property: Resource properties.
+     * 
+     * @return the innerProperties value.
+     */
+    private SensitivityLabelProperties innerProperties() {
+        return this.innerProperties;
+    }
+
+    /**
+     * Get the type property: The type of the resource.
+     * 
+     * @return the type value.
+     */
+    @Override
+    public String type() {
+        return this.type;
+    }
+
+    /**
+     * Get the name property: The name of the resource.
+     * 
+     * @return the name value.
+     */
+    @Override
+    public String name() {
+        return this.name;
+    }
+
+    /**
+     * Get the id property: Fully qualified resource Id for the resource.
+     * 
+     * @return the id value.
+     */
+    @Override
+    public String id() {
+        return this.id;
+    }
+
+    /**
+     * Get the schemaName property: The schema name.
+     * 
+     * @return the schemaName value.
+     */
+    public String schemaName() {
+        return this.innerProperties() == null ? null : this.innerProperties().schemaName();
+    }
+
+    /**
+     * Get the tableName property: The table name.
+     * 
+     * @return the tableName value.
+     */
+    public String tableName() {
+        return this.innerProperties() == null ? null : this.innerProperties().tableName();
+    }
+
+    /**
+     * Get the columnName property: The column name.
+     * 
+     * @return the columnName value.
+     */
+    public String columnName() {
+        return this.innerProperties() == null ? null : this.innerProperties().columnName();
+    }
 
     /**
      * Get the labelName property: The label name.
-     *
+     * 
      * @return the labelName value.
      */
     public String labelName() {
-        return this.labelName;
+        return this.innerProperties() == null ? null : this.innerProperties().labelName();
     }
 
     /**
      * Set the labelName property: The label name.
-     *
+     * 
      * @param labelName the labelName value to set.
      * @return the SensitivityLabelInner object itself.
      */
     public SensitivityLabelInner withLabelName(String labelName) {
-        this.labelName = labelName;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new SensitivityLabelProperties();
+        }
+        this.innerProperties().withLabelName(labelName);
         return this;
     }
 
     /**
      * Get the labelId property: The label ID.
-     *
+     * 
      * @return the labelId value.
      */
     public String labelId() {
-        return this.labelId;
+        return this.innerProperties() == null ? null : this.innerProperties().labelId();
     }
 
     /**
      * Set the labelId property: The label ID.
-     *
+     * 
      * @param labelId the labelId value to set.
      * @return the SensitivityLabelInner object itself.
      */
     public SensitivityLabelInner withLabelId(String labelId) {
-        this.labelId = labelId;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new SensitivityLabelProperties();
+        }
+        this.innerProperties().withLabelId(labelId);
         return this;
     }
 
     /**
      * Get the informationType property: The information type.
-     *
+     * 
      * @return the informationType value.
      */
     public String informationType() {
-        return this.informationType;
+        return this.innerProperties() == null ? null : this.innerProperties().informationType();
     }
 
     /**
      * Set the informationType property: The information type.
-     *
+     * 
      * @param informationType the informationType value to set.
      * @return the SensitivityLabelInner object itself.
      */
     public SensitivityLabelInner withInformationType(String informationType) {
-        this.informationType = informationType;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new SensitivityLabelProperties();
+        }
+        this.innerProperties().withInformationType(informationType);
         return this;
     }
 
     /**
      * Get the informationTypeId property: The information type ID.
-     *
+     * 
      * @return the informationTypeId value.
      */
     public String informationTypeId() {
-        return this.informationTypeId;
+        return this.innerProperties() == null ? null : this.innerProperties().informationTypeId();
     }
 
     /**
      * Set the informationTypeId property: The information type ID.
-     *
+     * 
      * @param informationTypeId the informationTypeId value to set.
      * @return the SensitivityLabelInner object itself.
      */
     public SensitivityLabelInner withInformationTypeId(String informationTypeId) {
-        this.informationTypeId = informationTypeId;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new SensitivityLabelProperties();
+        }
+        this.innerProperties().withInformationTypeId(informationTypeId);
         return this;
     }
 
     /**
      * Get the isDisabled property: Is sensitivity recommendation disabled. Applicable for recommended sensitivity label
      * only. Specifies whether the sensitivity recommendation on this column is disabled (dismissed) or not.
-     *
+     * 
      * @return the isDisabled value.
      */
     public Boolean isDisabled() {
-        return this.isDisabled;
+        return this.innerProperties() == null ? null : this.innerProperties().isDisabled();
     }
 
     /**
      * Get the rank property: The rank property.
-     *
+     * 
      * @return the rank value.
      */
     public SensitivityLabelRank rank() {
-        return this.rank;
+        return this.innerProperties() == null ? null : this.innerProperties().rank();
     }
 
     /**
      * Set the rank property: The rank property.
-     *
+     * 
      * @param rank the rank value to set.
      * @return the SensitivityLabelInner object itself.
      */
     public SensitivityLabelInner withRank(SensitivityLabelRank rank) {
-        this.rank = rank;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new SensitivityLabelProperties();
+        }
+        this.innerProperties().withRank(rank);
         return this;
     }
 
     /**
      * Validates the instance.
-     *
+     * 
      * @throws IllegalArgumentException thrown if the instance is not valid.
      */
     public void validate() {
+        if (innerProperties() != null) {
+            innerProperties().validate();
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public JsonWriter toJson(JsonWriter jsonWriter) throws IOException {
+        jsonWriter.writeStartObject();
+        jsonWriter.writeJsonField("properties", this.innerProperties);
+        return jsonWriter.writeEndObject();
+    }
+
+    /**
+     * Reads an instance of SensitivityLabelInner from the JsonReader.
+     * 
+     * @param jsonReader The JsonReader being read.
+     * @return An instance of SensitivityLabelInner if the JsonReader was pointing to an instance of it, or null if it
+     * was pointing to JSON null.
+     * @throws IllegalStateException If the deserialized JSON object was missing any required properties.
+     * @throws IOException If an error occurs while reading the SensitivityLabelInner.
+     */
+    public static SensitivityLabelInner fromJson(JsonReader jsonReader) throws IOException {
+        return jsonReader.readObject(reader -> {
+            SensitivityLabelInner deserializedSensitivityLabelInner = new SensitivityLabelInner();
+            while (reader.nextToken() != JsonToken.END_OBJECT) {
+                String fieldName = reader.getFieldName();
+                reader.nextToken();
+
+                if ("id".equals(fieldName)) {
+                    deserializedSensitivityLabelInner.id = reader.getString();
+                } else if ("name".equals(fieldName)) {
+                    deserializedSensitivityLabelInner.name = reader.getString();
+                } else if ("type".equals(fieldName)) {
+                    deserializedSensitivityLabelInner.type = reader.getString();
+                } else if ("managedBy".equals(fieldName)) {
+                    deserializedSensitivityLabelInner.managedBy = reader.getString();
+                } else if ("properties".equals(fieldName)) {
+                    deserializedSensitivityLabelInner.innerProperties = SensitivityLabelProperties.fromJson(reader);
+                } else {
+                    reader.skipChildren();
+                }
+            }
+
+            return deserializedSensitivityLabelInner;
+        });
     }
 }

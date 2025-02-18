@@ -28,15 +28,13 @@ import java.util.function.Consumer;
  */
 public class AvroHeaderSchema extends AvroCompositeSchema {
 
-    private final ClientLogger logger = new ClientLogger(AvroHeaderSchema.class);
+    private static final ClientLogger LOGGER = new ClientLogger(AvroHeaderSchema.class);
 
-    private static final String HEADER_SCHEMA =
-        "{\"type\": \"record\", \"name\": \"org.apache.avro.file.Header\",\n"
-            + " \"fields\" : [\n"
+    private static final String HEADER_SCHEMA
+        = "{\"type\": \"record\", \"name\": \"org.apache.avro.file.Header\",\n" + " \"fields\" : [\n"
             + "   {\"name\": \"magic\", \"type\": {\"type\": \"fixed\", \"name\": \"Magic\", \"size\": 4}},\n"
             + "   {\"name\": \"meta\", \"type\": {\"type\": \"map\", \"values\": \"string\"}},\n"
-            + "   {\"name\": \"sync\", \"type\": {\"type\": \"fixed\", \"name\": \"Sync\", \"size\": 16}}\n"
-            + "  ]\n"
+            + "   {\"name\": \"sync\", \"type\": {\"type\": \"fixed\", \"name\": \"Sync\", \"size\": 16}}\n" + "  ]\n"
             + "}";
 
     /**
@@ -53,11 +51,7 @@ public class AvroHeaderSchema extends AvroCompositeSchema {
     public void pushToStack() {
         this.state.pushToStack(this);
         AvroType headerType = AvroType.getType(HEADER_SCHEMA);
-        AvroSchema headerSchema = AvroSchema.getSchema(
-            headerType,
-            this.state,
-            this::onHeader
-        );
+        AvroSchema headerSchema = AvroSchema.getSchema(headerType, this.state, this::onHeader);
         headerSchema.pushToStack();
     }
 
@@ -94,7 +88,7 @@ public class AvroHeaderSchema extends AvroCompositeSchema {
         byte[] init = AvroSchema.getBytes((List<?>) magic);
         for (int i = 0; i < AvroConstants.MAGIC_BYTES.size(); i++) {
             if (!AvroConstants.MAGIC_BYTES.get(i).equals(init[i])) {
-                throw logger.logExceptionAsError(new IllegalArgumentException("Invalid Avro file."));
+                throw LOGGER.logExceptionAsError(new IllegalArgumentException("Invalid Avro file."));
             }
         }
     }
@@ -108,7 +102,7 @@ public class AvroHeaderSchema extends AvroCompositeSchema {
         /* We do not support codec. */
         Object codecString = m.get(AvroConstants.CODEC_KEY);
         if (!(codecString == null || codecString.equals(AvroConstants.NULL_CODEC))) {
-            throw logger.logExceptionAsError(new IllegalArgumentException("Codec is not supported"));
+            throw LOGGER.logExceptionAsError(new IllegalArgumentException("Codec is not supported"));
         }
         /* Get the schema and parse it, call the onParsingSchema handler. */
         String schemaString = m.get(AvroConstants.SCHEMA_KEY).toString();

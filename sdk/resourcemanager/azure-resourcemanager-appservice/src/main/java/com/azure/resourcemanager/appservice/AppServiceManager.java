@@ -23,11 +23,13 @@ import com.azure.resourcemanager.authorization.AuthorizationManager;
 import com.azure.resourcemanager.dns.DnsZoneManager;
 import com.azure.resourcemanager.keyvault.KeyVaultManager;
 import com.azure.resourcemanager.resources.fluentcore.arm.AzureConfigurable;
-import com.azure.resourcemanager.resources.fluentcore.arm.implementation.AzureConfigurableImpl;
 import com.azure.resourcemanager.resources.fluentcore.arm.Manager;
 import com.azure.core.management.profile.AzureProfile;
+import com.azure.resourcemanager.resources.fluentcore.arm.implementation.AzureConfigurableImpl;
 import com.azure.resourcemanager.resources.fluentcore.utils.HttpPipelineProvider;
 import com.azure.resourcemanager.storage.StorageManager;
+
+import java.util.Objects;
 
 /** Entry point to Azure storage resource management. */
 public final class AppServiceManager extends Manager<WebSiteManagementClient> {
@@ -61,17 +63,21 @@ public final class AppServiceManager extends Manager<WebSiteManagementClient> {
      * @return the StorageManager
      */
     public static AppServiceManager authenticate(TokenCredential credential, AzureProfile profile) {
+        Objects.requireNonNull(credential, "'credential' cannot be null.");
+        Objects.requireNonNull(profile, "'profile' cannot be null.");
         return authenticate(HttpPipelineProvider.buildHttpPipeline(credential, profile), profile);
     }
 
     /**
      * Creates an instance of StorageManager that exposes storage resource management API entry points.
      *
-     * @param httpPipeline the HttpPipeline to be used for API calls.
+     * @param httpPipeline the {@link HttpPipeline} configured with Azure authentication credential.
      * @param profile the profile to use
      * @return the StorageManager
      */
-    private static AppServiceManager authenticate(HttpPipeline httpPipeline, AzureProfile profile) {
+    public static AppServiceManager authenticate(HttpPipeline httpPipeline, AzureProfile profile) {
+        Objects.requireNonNull(httpPipeline, "'httpPipeline' cannot be null.");
+        Objects.requireNonNull(profile, "'profile' cannot be null.");
         return new AppServiceManager(httpPipeline, profile);
     }
 
@@ -95,46 +101,58 @@ public final class AppServiceManager extends Manager<WebSiteManagementClient> {
     }
 
     private AppServiceManager(HttpPipeline httpPipeline, AzureProfile profile) {
-        super(
-            httpPipeline,
-            profile,
-            new WebSiteManagementClientBuilder()
-                .pipeline(httpPipeline)
+        super(httpPipeline, profile,
+            new WebSiteManagementClientBuilder().pipeline(httpPipeline)
                 .endpoint(profile.getEnvironment().getResourceManagerEndpoint())
                 .subscriptionId(profile.getSubscriptionId())
                 .buildClient());
-        keyVaultManager = AzureConfigurableImpl.configureHttpPipeline(httpPipeline, KeyVaultManager.configure())
-            .authenticate(null, profile);
-        storageManager = AzureConfigurableImpl.configureHttpPipeline(httpPipeline, StorageManager.configure())
-            .authenticate(null, profile);
-        authorizationManager = AzureConfigurableImpl
-            .configureHttpPipeline(httpPipeline, AuthorizationManager.configure())
-            .authenticate(null, profile);
-        dnsZoneManager = AzureConfigurableImpl.configureHttpPipeline(httpPipeline, DnsZoneManager.configure())
-            .authenticate(null, profile);
+        keyVaultManager = KeyVaultManager.authenticate(httpPipeline, profile);
+        storageManager = StorageManager.authenticate(httpPipeline, profile);
+        authorizationManager = AuthorizationManager.authenticate(httpPipeline, profile);
+        dnsZoneManager = DnsZoneManager.authenticate(httpPipeline, profile);
     }
 
-    /** @return the authorization manager instance. */
+    /**
+     * Gets the authorization manager instance.
+     *
+     * @return the authorization manager instance.
+     */
     public AuthorizationManager authorizationManager() {
         return authorizationManager;
     }
 
-    /** @return the key vault manager instance. */
+    /**
+     * Gets the key vault manager instance.
+     *
+     * @return the key vault manager instance.
+     */
     public KeyVaultManager keyVaultManager() {
         return keyVaultManager;
     }
 
-    /** @return the storage manager instance. */
+    /**
+     * Gets the storage manager instance.
+     *
+     * @return the storage manager instance.
+     */
     public StorageManager storageManager() {
         return storageManager;
     }
 
-    /** @return the DNS zone manager instance. */
+    /**
+     * Gets the DNS zone manager instance.
+     *
+     * @return the DNS zone manager instance.
+     */
     public DnsZoneManager dnsZoneManager() {
         return dnsZoneManager;
     }
 
-    /** @return the web app management API entry point */
+    /**
+     * Gets the web app management API entry point.
+     *
+     * @return the web app management API entry point
+     */
     public WebApps webApps() {
         if (webApps == null) {
             webApps = new WebAppsImpl(this);
@@ -142,7 +160,11 @@ public final class AppServiceManager extends Manager<WebSiteManagementClient> {
         return webApps;
     }
 
-    /** @return the app service plan management API entry point */
+    /**
+     * Gets the app service plan management API entry point.
+     *
+     * @return the app service plan management API entry point
+     */
     public AppServicePlans appServicePlans() {
         if (appServicePlans == null) {
             appServicePlans = new AppServicePlansImpl(this);
@@ -150,7 +172,11 @@ public final class AppServiceManager extends Manager<WebSiteManagementClient> {
         return appServicePlans;
     }
 
-    /** @return the certificate order management API entry point */
+    /**
+     * Gets the certificate order management API entry point.
+     *
+     * @return the certificate order management API entry point
+     */
     public AppServiceCertificateOrders certificateOrders() {
         if (appServiceCertificateOrders == null) {
             appServiceCertificateOrders = new AppServiceCertificateOrdersImpl(this);
@@ -158,7 +184,11 @@ public final class AppServiceManager extends Manager<WebSiteManagementClient> {
         return appServiceCertificateOrders;
     }
 
-    /** @return the certificate management API entry point */
+    /**
+     * Gets the certificate management API entry point.
+     *
+     * @return the certificate management API entry point
+     */
     public AppServiceCertificates certificates() {
         if (appServiceCertificates == null) {
             appServiceCertificates = new AppServiceCertificatesImpl(this);
@@ -166,14 +196,23 @@ public final class AppServiceManager extends Manager<WebSiteManagementClient> {
         return appServiceCertificates;
     }
 
-    /** @return the app service plan management API entry point */
+    /**
+     * Gets the app service plan management API entry point.
+     *
+     * @return the app service plan management API entry point
+     */
     public AppServiceDomains domains() {
         if (appServiceDomains == null) {
             appServiceDomains = new AppServiceDomainsImpl(this);
         }
         return appServiceDomains;
     }
-    /** @return the web app management API entry point */
+
+    /**
+     * Gets the web app management API entry point.
+     *
+     * @return the web app management API entry point
+     */
     public FunctionApps functionApps() {
         if (functionApps == null) {
             functionApps = new FunctionAppsImpl(this);

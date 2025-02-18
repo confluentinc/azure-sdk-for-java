@@ -5,75 +5,180 @@
 package com.azure.resourcemanager.sql.models;
 
 import com.azure.core.annotation.Fluent;
-import com.azure.core.annotation.JsonFlatten;
 import com.azure.core.management.ProxyResource;
-import com.azure.core.util.logging.ClientLogger;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.azure.json.JsonReader;
+import com.azure.json.JsonToken;
+import com.azure.json.JsonWriter;
+import com.azure.resourcemanager.sql.fluent.models.TdeCertificateProperties;
+import java.io.IOException;
 
-/** A TDE certificate that can be uploaded into a server. */
-@JsonFlatten
+/**
+ * A TDE certificate that can be uploaded into a server.
+ */
 @Fluent
-public class TdeCertificate extends ProxyResource {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(TdeCertificate.class);
+public final class TdeCertificate extends ProxyResource {
+    /*
+     * Resource properties.
+     */
+    private TdeCertificateProperties innerProperties;
 
     /*
-     * The base64 encoded certificate private blob.
+     * The type of the resource.
      */
-    @JsonProperty(value = "properties.privateBlob")
-    private String privateBlob;
+    private String type;
 
     /*
-     * The certificate password.
+     * The name of the resource.
      */
-    @JsonProperty(value = "properties.certPassword")
-    private String certPassword;
+    private String name;
+
+    /*
+     * Fully qualified resource Id for the resource.
+     */
+    private String id;
+
+    /**
+     * Creates an instance of TdeCertificate class.
+     */
+    public TdeCertificate() {
+    }
+
+    /**
+     * Get the innerProperties property: Resource properties.
+     * 
+     * @return the innerProperties value.
+     */
+    private TdeCertificateProperties innerProperties() {
+        return this.innerProperties;
+    }
+
+    /**
+     * Get the type property: The type of the resource.
+     * 
+     * @return the type value.
+     */
+    @Override
+    public String type() {
+        return this.type;
+    }
+
+    /**
+     * Get the name property: The name of the resource.
+     * 
+     * @return the name value.
+     */
+    @Override
+    public String name() {
+        return this.name;
+    }
+
+    /**
+     * Get the id property: Fully qualified resource Id for the resource.
+     * 
+     * @return the id value.
+     */
+    @Override
+    public String id() {
+        return this.id;
+    }
 
     /**
      * Get the privateBlob property: The base64 encoded certificate private blob.
-     *
+     * 
      * @return the privateBlob value.
      */
     public String privateBlob() {
-        return this.privateBlob;
+        return this.innerProperties() == null ? null : this.innerProperties().privateBlob();
     }
 
     /**
      * Set the privateBlob property: The base64 encoded certificate private blob.
-     *
+     * 
      * @param privateBlob the privateBlob value to set.
      * @return the TdeCertificate object itself.
      */
     public TdeCertificate withPrivateBlob(String privateBlob) {
-        this.privateBlob = privateBlob;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new TdeCertificateProperties();
+        }
+        this.innerProperties().withPrivateBlob(privateBlob);
         return this;
     }
 
     /**
      * Get the certPassword property: The certificate password.
-     *
+     * 
      * @return the certPassword value.
      */
     public String certPassword() {
-        return this.certPassword;
+        return this.innerProperties() == null ? null : this.innerProperties().certPassword();
     }
 
     /**
      * Set the certPassword property: The certificate password.
-     *
+     * 
      * @param certPassword the certPassword value to set.
      * @return the TdeCertificate object itself.
      */
     public TdeCertificate withCertPassword(String certPassword) {
-        this.certPassword = certPassword;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new TdeCertificateProperties();
+        }
+        this.innerProperties().withCertPassword(certPassword);
         return this;
     }
 
     /**
      * Validates the instance.
-     *
+     * 
      * @throws IllegalArgumentException thrown if the instance is not valid.
      */
     public void validate() {
+        if (innerProperties() != null) {
+            innerProperties().validate();
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public JsonWriter toJson(JsonWriter jsonWriter) throws IOException {
+        jsonWriter.writeStartObject();
+        jsonWriter.writeJsonField("properties", this.innerProperties);
+        return jsonWriter.writeEndObject();
+    }
+
+    /**
+     * Reads an instance of TdeCertificate from the JsonReader.
+     * 
+     * @param jsonReader The JsonReader being read.
+     * @return An instance of TdeCertificate if the JsonReader was pointing to an instance of it, or null if it was
+     * pointing to JSON null.
+     * @throws IllegalStateException If the deserialized JSON object was missing any required properties.
+     * @throws IOException If an error occurs while reading the TdeCertificate.
+     */
+    public static TdeCertificate fromJson(JsonReader jsonReader) throws IOException {
+        return jsonReader.readObject(reader -> {
+            TdeCertificate deserializedTdeCertificate = new TdeCertificate();
+            while (reader.nextToken() != JsonToken.END_OBJECT) {
+                String fieldName = reader.getFieldName();
+                reader.nextToken();
+
+                if ("id".equals(fieldName)) {
+                    deserializedTdeCertificate.id = reader.getString();
+                } else if ("name".equals(fieldName)) {
+                    deserializedTdeCertificate.name = reader.getString();
+                } else if ("type".equals(fieldName)) {
+                    deserializedTdeCertificate.type = reader.getString();
+                } else if ("properties".equals(fieldName)) {
+                    deserializedTdeCertificate.innerProperties = TdeCertificateProperties.fromJson(reader);
+                } else {
+                    reader.skipChildren();
+                }
+            }
+
+            return deserializedTdeCertificate;
+        });
     }
 }

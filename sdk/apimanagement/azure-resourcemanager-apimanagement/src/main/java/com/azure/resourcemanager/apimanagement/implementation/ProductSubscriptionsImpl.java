@@ -11,39 +11,31 @@ import com.azure.resourcemanager.apimanagement.fluent.ProductSubscriptionsClient
 import com.azure.resourcemanager.apimanagement.fluent.models.SubscriptionContractInner;
 import com.azure.resourcemanager.apimanagement.models.ProductSubscriptions;
 import com.azure.resourcemanager.apimanagement.models.SubscriptionContract;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 public final class ProductSubscriptionsImpl implements ProductSubscriptions {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(ProductSubscriptionsImpl.class);
+    private static final ClientLogger LOGGER = new ClientLogger(ProductSubscriptionsImpl.class);
 
     private final ProductSubscriptionsClient innerClient;
 
     private final com.azure.resourcemanager.apimanagement.ApiManagementManager serviceManager;
 
-    public ProductSubscriptionsImpl(
-        ProductSubscriptionsClient innerClient,
+    public ProductSubscriptionsImpl(ProductSubscriptionsClient innerClient,
         com.azure.resourcemanager.apimanagement.ApiManagementManager serviceManager) {
         this.innerClient = innerClient;
         this.serviceManager = serviceManager;
     }
 
     public PagedIterable<SubscriptionContract> list(String resourceGroupName, String serviceName, String productId) {
-        PagedIterable<SubscriptionContractInner> inner =
-            this.serviceClient().list(resourceGroupName, serviceName, productId);
-        return Utils.mapPage(inner, inner1 -> new SubscriptionContractImpl(inner1, this.manager()));
+        PagedIterable<SubscriptionContractInner> inner
+            = this.serviceClient().list(resourceGroupName, serviceName, productId);
+        return ResourceManagerUtils.mapPage(inner, inner1 -> new SubscriptionContractImpl(inner1, this.manager()));
     }
 
-    public PagedIterable<SubscriptionContract> list(
-        String resourceGroupName,
-        String serviceName,
-        String productId,
-        String filter,
-        Integer top,
-        Integer skip,
-        Context context) {
-        PagedIterable<SubscriptionContractInner> inner =
-            this.serviceClient().list(resourceGroupName, serviceName, productId, filter, top, skip, context);
-        return Utils.mapPage(inner, inner1 -> new SubscriptionContractImpl(inner1, this.manager()));
+    public PagedIterable<SubscriptionContract> list(String resourceGroupName, String serviceName, String productId,
+        String filter, Integer top, Integer skip, Context context) {
+        PagedIterable<SubscriptionContractInner> inner
+            = this.serviceClient().list(resourceGroupName, serviceName, productId, filter, top, skip, context);
+        return ResourceManagerUtils.mapPage(inner, inner1 -> new SubscriptionContractImpl(inner1, this.manager()));
     }
 
     private ProductSubscriptionsClient serviceClient() {

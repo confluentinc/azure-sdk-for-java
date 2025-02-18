@@ -12,40 +12,35 @@ import com.azure.resourcemanager.loganalytics.fluent.OperationStatusesClient;
 import com.azure.resourcemanager.loganalytics.fluent.models.OperationStatusInner;
 import com.azure.resourcemanager.loganalytics.models.OperationStatus;
 import com.azure.resourcemanager.loganalytics.models.OperationStatuses;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 public final class OperationStatusesImpl implements OperationStatuses {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(OperationStatusesImpl.class);
+    private static final ClientLogger LOGGER = new ClientLogger(OperationStatusesImpl.class);
 
     private final OperationStatusesClient innerClient;
 
     private final com.azure.resourcemanager.loganalytics.LogAnalyticsManager serviceManager;
 
-    public OperationStatusesImpl(
-        OperationStatusesClient innerClient,
+    public OperationStatusesImpl(OperationStatusesClient innerClient,
         com.azure.resourcemanager.loganalytics.LogAnalyticsManager serviceManager) {
         this.innerClient = innerClient;
         this.serviceManager = serviceManager;
+    }
+
+    public Response<OperationStatus> getWithResponse(String location, String asyncOperationId, Context context) {
+        Response<OperationStatusInner> inner
+            = this.serviceClient().getWithResponse(location, asyncOperationId, context);
+        if (inner != null) {
+            return new SimpleResponse<>(inner.getRequest(), inner.getStatusCode(), inner.getHeaders(),
+                new OperationStatusImpl(inner.getValue(), this.manager()));
+        } else {
+            return null;
+        }
     }
 
     public OperationStatus get(String location, String asyncOperationId) {
         OperationStatusInner inner = this.serviceClient().get(location, asyncOperationId);
         if (inner != null) {
             return new OperationStatusImpl(inner, this.manager());
-        } else {
-            return null;
-        }
-    }
-
-    public Response<OperationStatus> getWithResponse(String location, String asyncOperationId, Context context) {
-        Response<OperationStatusInner> inner =
-            this.serviceClient().getWithResponse(location, asyncOperationId, context);
-        if (inner != null) {
-            return new SimpleResponse<>(
-                inner.getRequest(),
-                inner.getStatusCode(),
-                inner.getHeaders(),
-                new OperationStatusImpl(inner.getValue(), this.manager()));
         } else {
             return null;
         }

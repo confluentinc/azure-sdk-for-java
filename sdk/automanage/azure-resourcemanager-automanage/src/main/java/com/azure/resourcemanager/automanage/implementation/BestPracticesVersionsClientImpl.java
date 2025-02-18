@@ -25,31 +25,33 @@ import com.azure.core.http.rest.RestProxy;
 import com.azure.core.management.exception.ManagementException;
 import com.azure.core.util.Context;
 import com.azure.core.util.FluxUtil;
-import com.azure.core.util.logging.ClientLogger;
 import com.azure.resourcemanager.automanage.fluent.BestPracticesVersionsClient;
 import com.azure.resourcemanager.automanage.fluent.models.BestPracticeInner;
 import com.azure.resourcemanager.automanage.models.BestPracticeList;
 import reactor.core.publisher.Mono;
 
-/** An instance of this class provides access to all the operations defined in BestPracticesVersionsClient. */
+/**
+ * An instance of this class provides access to all the operations defined in BestPracticesVersionsClient.
+ */
 public final class BestPracticesVersionsClientImpl implements BestPracticesVersionsClient {
-    private final ClientLogger logger = new ClientLogger(BestPracticesVersionsClientImpl.class);
-
-    /** The proxy service used to perform REST calls. */
+    /**
+     * The proxy service used to perform REST calls.
+     */
     private final BestPracticesVersionsService service;
 
-    /** The service client containing this operation class. */
+    /**
+     * The service client containing this operation class.
+     */
     private final AutomanageClientImpl client;
 
     /**
      * Initializes an instance of BestPracticesVersionsClientImpl.
-     *
+     * 
      * @param client the instance of the service client containing this operation class.
      */
     BestPracticesVersionsClientImpl(AutomanageClientImpl client) {
-        this.service =
-            RestProxy
-                .create(BestPracticesVersionsService.class, client.getHttpPipeline(), client.getSerializerAdapter());
+        this.service = RestProxy.create(BestPracticesVersionsService.class, client.getHttpPipeline(),
+            client.getSerializerAdapter());
         this.client = client;
     }
 
@@ -59,48 +61,40 @@ public final class BestPracticesVersionsClientImpl implements BestPracticesVersi
      */
     @Host("{$host}")
     @ServiceInterface(name = "AutomanageClientBest")
-    private interface BestPracticesVersionsService {
-        @Headers({"Content-Type: application/json"})
+    public interface BestPracticesVersionsService {
+        @Headers({ "Content-Type: application/json" })
         @Get("/providers/Microsoft.Automanage/bestPractices/{bestPracticeName}/versions/{versionName}")
-        @ExpectedResponses({200})
+        @ExpectedResponses({ 200 })
         @UnexpectedResponseExceptionType(ManagementException.class)
-        Mono<Response<BestPracticeInner>> get(
-            @HostParam("$host") String endpoint,
-            @PathParam("bestPracticeName") String bestPracticeName,
-            @PathParam("versionName") String versionName,
-            @QueryParam("api-version") String apiVersion,
-            @HeaderParam("Accept") String accept,
-            Context context);
+        Mono<Response<BestPracticeInner>> get(@HostParam("$host") String endpoint,
+            @PathParam("bestPracticeName") String bestPracticeName, @PathParam("versionName") String versionName,
+            @QueryParam("api-version") String apiVersion, @HeaderParam("Accept") String accept, Context context);
 
-        @Headers({"Content-Type: application/json"})
+        @Headers({ "Content-Type: application/json" })
         @Get("/providers/Microsoft.Automanage/bestPractices/{bestPracticeName}/versions")
-        @ExpectedResponses({200})
+        @ExpectedResponses({ 200 })
         @UnexpectedResponseExceptionType(ManagementException.class)
-        Mono<Response<BestPracticeList>> listByTenant(
-            @HostParam("$host") String endpoint,
-            @PathParam("bestPracticeName") String bestPracticeName,
-            @QueryParam("api-version") String apiVersion,
-            @HeaderParam("Accept") String accept,
-            Context context);
+        Mono<Response<BestPracticeList>> listByTenant(@HostParam("$host") String endpoint,
+            @PathParam("bestPracticeName") String bestPracticeName, @QueryParam("api-version") String apiVersion,
+            @HeaderParam("Accept") String accept, Context context);
     }
 
     /**
      * Get information about a Automanage best practice version.
-     *
+     * 
      * @param bestPracticeName The Automanage best practice name.
      * @param versionName The Automanage best practice version name.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return information about a Automanage best practice version.
+     * @return information about a Automanage best practice version along with {@link Response} on successful completion
+     * of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
     private Mono<Response<BestPracticeInner>> getWithResponseAsync(String bestPracticeName, String versionName) {
         if (this.client.getEndpoint() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getEndpoint() is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
         }
         if (bestPracticeName == null) {
             return Mono
@@ -111,38 +105,29 @@ public final class BestPracticesVersionsClientImpl implements BestPracticesVersi
         }
         final String accept = "application/json";
         return FluxUtil
-            .withContext(
-                context ->
-                    service
-                        .get(
-                            this.client.getEndpoint(),
-                            bestPracticeName,
-                            versionName,
-                            this.client.getApiVersion(),
-                            accept,
-                            context))
+            .withContext(context -> service.get(this.client.getEndpoint(), bestPracticeName, versionName,
+                this.client.getApiVersion(), accept, context))
             .contextWrite(context -> context.putAll(FluxUtil.toReactorContext(this.client.getContext()).readOnly()));
     }
 
     /**
      * Get information about a Automanage best practice version.
-     *
+     * 
      * @param bestPracticeName The Automanage best practice name.
      * @param versionName The Automanage best practice version name.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return information about a Automanage best practice version.
+     * @return information about a Automanage best practice version along with {@link Response} on successful completion
+     * of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    private Mono<Response<BestPracticeInner>> getWithResponseAsync(
-        String bestPracticeName, String versionName, Context context) {
+    private Mono<Response<BestPracticeInner>> getWithResponseAsync(String bestPracticeName, String versionName,
+        Context context) {
         if (this.client.getEndpoint() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getEndpoint() is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
         }
         if (bestPracticeName == null) {
             return Mono
@@ -153,37 +138,44 @@ public final class BestPracticesVersionsClientImpl implements BestPracticesVersi
         }
         final String accept = "application/json";
         context = this.client.mergeContext(context);
-        return service
-            .get(
-                this.client.getEndpoint(), bestPracticeName, versionName, this.client.getApiVersion(), accept, context);
+        return service.get(this.client.getEndpoint(), bestPracticeName, versionName, this.client.getApiVersion(),
+            accept, context);
     }
 
     /**
      * Get information about a Automanage best practice version.
-     *
+     * 
      * @param bestPracticeName The Automanage best practice name.
      * @param versionName The Automanage best practice version name.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return information about a Automanage best practice version.
+     * @return information about a Automanage best practice version on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
     private Mono<BestPracticeInner> getAsync(String bestPracticeName, String versionName) {
-        return getWithResponseAsync(bestPracticeName, versionName)
-            .flatMap(
-                (Response<BestPracticeInner> res) -> {
-                    if (res.getValue() != null) {
-                        return Mono.just(res.getValue());
-                    } else {
-                        return Mono.empty();
-                    }
-                });
+        return getWithResponseAsync(bestPracticeName, versionName).flatMap(res -> Mono.justOrEmpty(res.getValue()));
     }
 
     /**
      * Get information about a Automanage best practice version.
-     *
+     * 
+     * @param bestPracticeName The Automanage best practice name.
+     * @param versionName The Automanage best practice version name.
+     * @param context The context to associate with this operation.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return information about a Automanage best practice version along with {@link Response}.
+     */
+    @ServiceMethod(returns = ReturnType.SINGLE)
+    public Response<BestPracticeInner> getWithResponse(String bestPracticeName, String versionName, Context context) {
+        return getWithResponseAsync(bestPracticeName, versionName, context).block();
+    }
+
+    /**
+     * Get information about a Automanage best practice version.
+     * 
      * @param bestPracticeName The Automanage best practice name.
      * @param versionName The Automanage best practice version name.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
@@ -193,41 +185,24 @@ public final class BestPracticesVersionsClientImpl implements BestPracticesVersi
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
     public BestPracticeInner get(String bestPracticeName, String versionName) {
-        return getAsync(bestPracticeName, versionName).block();
-    }
-
-    /**
-     * Get information about a Automanage best practice version.
-     *
-     * @param bestPracticeName The Automanage best practice name.
-     * @param versionName The Automanage best practice version name.
-     * @param context The context to associate with this operation.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return information about a Automanage best practice version.
-     */
-    @ServiceMethod(returns = ReturnType.SINGLE)
-    public Response<BestPracticeInner> getWithResponse(String bestPracticeName, String versionName, Context context) {
-        return getWithResponseAsync(bestPracticeName, versionName, context).block();
+        return getWithResponse(bestPracticeName, versionName, Context.NONE).getValue();
     }
 
     /**
      * Retrieve a list of Automanage best practices versions.
-     *
+     * 
      * @param bestPracticeName The Automanage best practice name.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the response of the list best practice operation.
+     * @return the response of the list best practice operation along with {@link PagedResponse} on successful
+     * completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
     private Mono<PagedResponse<BestPracticeInner>> listByTenantSinglePageAsync(String bestPracticeName) {
         if (this.client.getEndpoint() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getEndpoint() is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
         }
         if (bestPracticeName == null) {
             return Mono
@@ -235,36 +210,30 @@ public final class BestPracticesVersionsClientImpl implements BestPracticesVersi
         }
         final String accept = "application/json";
         return FluxUtil
-            .withContext(
-                context ->
-                    service
-                        .listByTenant(
-                            this.client.getEndpoint(), bestPracticeName, this.client.getApiVersion(), accept, context))
-            .<PagedResponse<BestPracticeInner>>map(
-                res ->
-                    new PagedResponseBase<>(
-                        res.getRequest(), res.getStatusCode(), res.getHeaders(), res.getValue().value(), null, null))
+            .withContext(context -> service.listByTenant(this.client.getEndpoint(), bestPracticeName,
+                this.client.getApiVersion(), accept, context))
+            .<PagedResponse<BestPracticeInner>>map(res -> new PagedResponseBase<>(res.getRequest(), res.getStatusCode(),
+                res.getHeaders(), res.getValue().value(), null, null))
             .contextWrite(context -> context.putAll(FluxUtil.toReactorContext(this.client.getContext()).readOnly()));
     }
 
     /**
      * Retrieve a list of Automanage best practices versions.
-     *
+     * 
      * @param bestPracticeName The Automanage best practice name.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the response of the list best practice operation.
+     * @return the response of the list best practice operation along with {@link PagedResponse} on successful
+     * completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    private Mono<PagedResponse<BestPracticeInner>> listByTenantSinglePageAsync(
-        String bestPracticeName, Context context) {
+    private Mono<PagedResponse<BestPracticeInner>> listByTenantSinglePageAsync(String bestPracticeName,
+        Context context) {
         if (this.client.getEndpoint() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getEndpoint() is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
         }
         if (bestPracticeName == null) {
             return Mono
@@ -274,20 +243,18 @@ public final class BestPracticesVersionsClientImpl implements BestPracticesVersi
         context = this.client.mergeContext(context);
         return service
             .listByTenant(this.client.getEndpoint(), bestPracticeName, this.client.getApiVersion(), accept, context)
-            .map(
-                res ->
-                    new PagedResponseBase<>(
-                        res.getRequest(), res.getStatusCode(), res.getHeaders(), res.getValue().value(), null, null));
+            .map(res -> new PagedResponseBase<>(res.getRequest(), res.getStatusCode(), res.getHeaders(),
+                res.getValue().value(), null, null));
     }
 
     /**
      * Retrieve a list of Automanage best practices versions.
-     *
+     * 
      * @param bestPracticeName The Automanage best practice name.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the response of the list best practice operation.
+     * @return the response of the list best practice operation as paginated response with {@link PagedFlux}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
     private PagedFlux<BestPracticeInner> listByTenantAsync(String bestPracticeName) {
@@ -296,13 +263,13 @@ public final class BestPracticesVersionsClientImpl implements BestPracticesVersi
 
     /**
      * Retrieve a list of Automanage best practices versions.
-     *
+     * 
      * @param bestPracticeName The Automanage best practice name.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the response of the list best practice operation.
+     * @return the response of the list best practice operation as paginated response with {@link PagedFlux}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
     private PagedFlux<BestPracticeInner> listByTenantAsync(String bestPracticeName, Context context) {
@@ -311,12 +278,12 @@ public final class BestPracticesVersionsClientImpl implements BestPracticesVersi
 
     /**
      * Retrieve a list of Automanage best practices versions.
-     *
+     * 
      * @param bestPracticeName The Automanage best practice name.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the response of the list best practice operation.
+     * @return the response of the list best practice operation as paginated response with {@link PagedIterable}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
     public PagedIterable<BestPracticeInner> listByTenant(String bestPracticeName) {
@@ -325,13 +292,13 @@ public final class BestPracticesVersionsClientImpl implements BestPracticesVersi
 
     /**
      * Retrieve a list of Automanage best practices versions.
-     *
+     * 
      * @param bestPracticeName The Automanage best practice name.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the response of the list best practice operation.
+     * @return the response of the list best practice operation as paginated response with {@link PagedIterable}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
     public PagedIterable<BestPracticeInner> listByTenant(String bestPracticeName, Context context) {

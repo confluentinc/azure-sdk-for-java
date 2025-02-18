@@ -5,32 +5,51 @@
 package com.azure.resourcemanager.network.models;
 
 import com.azure.core.util.ExpandableStringEnum;
-import com.fasterxml.jackson.annotation.JsonCreator;
 import java.util.Collection;
 
-/** Defines values for LoadBalancerSkuName. */
+/**
+ * Name of a load balancer SKU.
+ */
 public final class LoadBalancerSkuName extends ExpandableStringEnum<LoadBalancerSkuName> {
-    /** Static value Basic for LoadBalancerSkuName. */
+    /**
+     * Static value Basic for LoadBalancerSkuName.
+     */
     public static final LoadBalancerSkuName BASIC = fromString("Basic");
 
-    /** Static value Standard for LoadBalancerSkuName. */
+    /**
+     * Static value Standard for LoadBalancerSkuName.
+     */
     public static final LoadBalancerSkuName STANDARD = fromString("Standard");
 
-    /** Static value Gateway for LoadBalancerSkuName. */
+    /**
+     * Static value Gateway for LoadBalancerSkuName.
+     */
     public static final LoadBalancerSkuName GATEWAY = fromString("Gateway");
 
     /**
+     * Creates a new instance of LoadBalancerSkuName value.
+     * 
+     * @deprecated Use the {@link #fromString(String)} factory method.
+     */
+    @Deprecated
+    public LoadBalancerSkuName() {
+    }
+
+    /**
      * Creates or finds a LoadBalancerSkuName from its string representation.
-     *
+     * 
      * @param name a name to look for.
      * @return the corresponding LoadBalancerSkuName.
      */
-    @JsonCreator
     public static LoadBalancerSkuName fromString(String name) {
         return fromString(name, LoadBalancerSkuName.class);
     }
 
-    /** @return known LoadBalancerSkuName values. */
+    /**
+     * Gets known LoadBalancerSkuName values.
+     * 
+     * @return known LoadBalancerSkuName values.
+     */
     public static Collection<LoadBalancerSkuName> values() {
         return values(LoadBalancerSkuName.class);
     }

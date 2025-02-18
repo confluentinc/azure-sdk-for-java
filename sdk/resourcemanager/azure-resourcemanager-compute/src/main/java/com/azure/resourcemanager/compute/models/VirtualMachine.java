@@ -5,14 +5,15 @@ package com.azure.resourcemanager.compute.models;
 
 import com.azure.core.annotation.Fluent;
 import com.azure.core.http.rest.PagedIterable;
+import com.azure.core.management.Region;
+import com.azure.resourcemanager.authorization.models.BuiltInRole;
 import com.azure.resourcemanager.compute.ComputeManager;
 import com.azure.resourcemanager.compute.fluent.models.VirtualMachineInner;
-import com.azure.resourcemanager.authorization.models.BuiltInRole;
 import com.azure.resourcemanager.msi.models.Identity;
+import com.azure.resourcemanager.network.models.HasNetworkInterfaces;
 import com.azure.resourcemanager.network.models.Network;
 import com.azure.resourcemanager.network.models.NetworkInterface;
 import com.azure.resourcemanager.network.models.PublicIpAddress;
-import com.azure.resourcemanager.network.models.HasNetworkInterfaces;
 import com.azure.resourcemanager.resources.fluentcore.arm.AvailabilityZoneId;
 import com.azure.resourcemanager.resources.fluentcore.arm.models.GroupableResource;
 import com.azure.resourcemanager.resources.fluentcore.arm.models.Resource;
@@ -22,18 +23,17 @@ import com.azure.resourcemanager.resources.fluentcore.model.Creatable;
 import com.azure.resourcemanager.resources.fluentcore.model.Refreshable;
 import com.azure.resourcemanager.resources.fluentcore.model.Updatable;
 import com.azure.resourcemanager.storage.models.StorageAccount;
+import reactor.core.publisher.Mono;
+
+import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import reactor.core.publisher.Mono;
 
 /** An immutable client-side representation of an Azure virtual machine. */
 @Fluent
-public interface VirtualMachine
-    extends GroupableResource<ComputeManager, VirtualMachineInner>,
-        Refreshable<VirtualMachine>,
-        Updatable<VirtualMachine.Update>,
-        HasNetworkInterfaces {
+public interface VirtualMachine extends GroupableResource<ComputeManager, VirtualMachineInner>,
+    Refreshable<VirtualMachine>, Updatable<VirtualMachine.Update>, HasNetworkInterfaces {
     // Actions
     /** Shuts down the virtual machine and releases the compute resources. */
     void deallocate();
@@ -80,6 +80,21 @@ public interface VirtualMachine
      */
     Mono<Void> powerOffAsync();
 
+    /**
+     * Stops the virtual machine.
+     *
+     * @param skipShutdown power off without graceful shutdown
+     */
+    void powerOff(boolean skipShutdown);
+
+    /**
+     * Stops the virtual machine.
+     *
+     * @param skipShutdown power off without graceful shutdown
+     * @return a representation of the deferred computation of this call.
+     */
+    Mono<Void> powerOffAsync(boolean skipShutdown);
+
     /** Restarts the virtual machine. */
     void restart();
 
@@ -123,7 +138,10 @@ public interface VirtualMachine
      */
     Mono<Void> simulateEvictionAsync();
 
-    /** @return entry point to enabling, disabling and querying disk encryption */
+    /**
+     * Gets entry point to enabling, disabling and querying disk encryption.
+     *
+     * @return entry point to enabling, disabling and querying disk encryption */
     VirtualMachineEncryption diskEncryption();
 
     /** Converts (migrates) the virtual machine with un-managed disks to use managed disk. */
@@ -195,8 +213,8 @@ public interface VirtualMachine
      * @param scriptParameters script parameters
      * @return handle to the asynchronous execution
      */
-    Mono<RunCommandResult> runPowerShellScriptAsync(
-        List<String> scriptLines, List<RunCommandInputParameter> scriptParameters);
+    Mono<RunCommandResult> runPowerShellScriptAsync(List<String> scriptLines,
+        List<RunCommandInputParameter> scriptParameters);
 
     /**
      * Run shell script in the virtual machine.
@@ -214,8 +232,8 @@ public interface VirtualMachine
      * @param scriptParameters script parameters
      * @return handle to the asynchronous execution
      */
-    Mono<RunCommandResult> runShellScriptAsync(
-        List<String> scriptLines, List<RunCommandInputParameter> scriptParameters);
+    Mono<RunCommandResult> runShellScriptAsync(List<String> scriptLines,
+        List<RunCommandInputParameter> scriptParameters);
 
     /**
      * Run commands in the virtual machine.
@@ -236,37 +254,116 @@ public interface VirtualMachine
     // Getters
     //
 
-    /** @return true if managed disks are used for the virtual machine's disks (OS, data) */
+    /**
+     * Checks whether managed disks are used for the virtual machine's disks (OS, data).
+     *
+     * @return true if managed disks are used for the virtual machine's disks (OS, data)
+     */
     boolean isManagedDiskEnabled();
 
-    /** @return name of this virtual machine */
+    /**
+     * Gets name of this virtual machine.
+     *
+     * @return name of this virtual machine
+     */
     String computerName();
 
-    /** @return the virtual machine size */
+    /**
+     * Gets the virtual machine size.
+     *
+     * @return the virtual machine size
+     */
     VirtualMachineSizeTypes size();
 
-    /** @return the operating system of this virtual machine */
+    /**
+     * Gets the operating system of this virtual machine.
+     *
+     * @return the operating system of this virtual machine
+     */
     OperatingSystemTypes osType();
 
-    /** @return the URI to the VHD file backing this virtual machine's operating system disk */
+    /**
+     * Gets the URI to the VHD file backing this virtual machine's operating system disk.
+     *
+     * @return the URI to the VHD file backing this virtual machine's operating system disk
+     */
     String osUnmanagedDiskVhdUri();
 
-    /** @return the operating system disk caching type */
+    /**
+     * Gets the operating system disk caching type.
+     *
+     * @return the operating system disk caching type
+     */
     CachingTypes osDiskCachingType();
 
-    /** @return the size of the operating system disk in GB */
+    /**
+     * Gets the size of the operating system disk in GB.
+     *
+     * @return the size of the operating system disk in GB
+     */
     int osDiskSize();
 
-    /** @return the storage account type of the managed disk backing OS disk */
+    /**
+     * Gets the storage account type of the managed disk backing OS disk.
+     *
+     * @return the storage account type of the managed disk backing OS disk
+     */
     StorageAccountTypes osDiskStorageAccountType();
 
-    /** @return resource ID of the managed disk backing the OS disk */
+    /**
+     * Gets resource ID of the managed disk backing the OS disk.
+     *
+     * @return resource ID of the managed disk backing the OS disk
+     */
     String osDiskId();
 
-    /** @return the unmanaged data disks associated with this virtual machine, indexed by LUN number */
+    /**
+     * Gets the delete options of the OS disk.
+     *
+     * @return the delete options of the OS disk
+     */
+    DeleteOptions osDiskDeleteOptions();
+
+    /**
+     * Gets resource ID of the disk encryption set of the OS disk.
+     *
+     * @return resource ID of the disk encryption set of the OS disk
+     */
+    String osDiskDiskEncryptionSetId();
+
+    /**
+     * Gets whether the write accelerator is enabled.
+     *
+     * @return whether the write accelerator is enabled
+     */
+    boolean isOsDiskWriteAcceleratorEnabled();
+
+    /**
+     * Checks whether the os disk is ephemeral.
+     *
+     * @return whether the os disk is ephemeral
+     */
+    boolean isOSDiskEphemeral();
+
+    /**
+     * Checks whether encryption at host.
+     *
+     * @return whether encryption at host
+     */
+    boolean isEncryptionAtHost();
+
+    /**
+     * Gets the unmanaged data disks associated with this virtual machine, indexed by LUN number.
+     *
+     * @return the unmanaged data disks associated with this virtual machine, indexed by LUN number
+     */
     Map<Integer, VirtualMachineUnmanagedDataDisk> unmanagedDataDisks();
 
-    /** @return the managed data disks associated with this virtual machine, indexed by LUN */
+    /**
+     * Gets the managed data disks associated with this virtual machine, indexed by LUN.
+     *
+     * @return the managed data disks associated with this virtual machine, indexed by LUN
+     */
     Map<Integer, VirtualMachineDataDisk> dataDisks();
 
     /**
@@ -279,17 +376,38 @@ public interface VirtualMachine
     PublicIpAddress getPrimaryPublicIPAddress();
 
     /**
+     * Gets the resource ID of the public IP address associated with this virtual machine's primary network interface.
+     *
      * @return the resource ID of the public IP address associated with this virtual machine's primary network interface
      */
     String getPrimaryPublicIPAddressId();
 
-    /** @return the resource ID of the availability set associated with this virtual machine */
+    /**
+     * Gets the resource ID of the availability set associated with this virtual machine.
+     *
+     * @return the resource ID of the availability set associated with this virtual machine
+     */
     String availabilitySetId();
 
-    /** @return the provisioningState value */
+    /**
+     * Gets the resource ID of the virtual machine scale set associated with this virtual machine.
+     *
+     * @return the resource ID of the virtual machine scale set associated with this virtual machine
+     */
+    String virtualMachineScaleSetId();
+
+    /**
+     * Gets the provisioningState value.
+     *
+     * @return the provisioningState value
+     */
     String provisioningState();
 
-    /** @return the licenseType value */
+    /**
+     * Gets the licenseType value.
+     *
+     * @return the licenseType value
+     */
     String licenseType();
 
     /**
@@ -301,15 +419,25 @@ public interface VirtualMachine
     ProximityPlacementGroup proximityPlacementGroup();
 
     /**
+     * Gets extensions attached to the virtual machine.
+     *
      * @return a representation of the deferred computation of this call, returning extensions attached to the virtual
      *     machine
      */
     Mono<List<VirtualMachineExtension>> listExtensionsAsync();
 
-    /** @return extensions attached to the virtual machine */
+    /**
+     * Gets extensions attached to the virtual machine.
+     *
+     * @return extensions attached to the virtual machine
+     */
     Map<String, VirtualMachineExtension> listExtensions();
 
-    /** @return the plan value */
+    /**
+     * Gets the plan value.
+     *
+     * @return the plan value
+     */
     Plan plan();
 
     /**
@@ -319,16 +447,32 @@ public interface VirtualMachine
      */
     StorageProfile storageProfile();
 
-    /** @return the operating system profile */
+    /**
+     * Gets the operating system profile.
+     *
+     * @return the operating system profile
+     */
     OSProfile osProfile();
 
-    /** @return the diagnostics profile */
+    /**
+     * Gets the diagnostics profile.
+     *
+     * @return the diagnostics profile
+     */
     DiagnosticsProfile diagnosticsProfile();
 
-    /** @return the virtual machine unique ID. */
+    /**
+     * Gets the virtual machine unique ID.
+     *
+     * @return the virtual machine unique ID.
+     */
     String vmId();
 
-    /** @return the power state of the virtual machine */
+    /**
+     * Gets the power state of the virtual machine.
+     *
+     * @return the power state of the virtual machine
+     */
     PowerState powerState();
 
     /**
@@ -340,112 +484,196 @@ public interface VirtualMachine
      */
     VirtualMachineInstanceView instanceView();
 
-    /** @return the availability zones assigned to the virtual machine */
+    /**
+     * Gets the availability zones assigned to the virtual machine.
+     *
+     * @return the availability zones assigned to the virtual machine
+     */
     Set<AvailabilityZoneId> availabilityZones();
 
-    /** @return true if boot diagnostics is enabled for the virtual machine */
+    /**
+     * Checks whether boot diagnostics is enabled for the virtual machine.
+     *
+     * @return true if boot diagnostics is enabled for the virtual machine
+     */
     boolean isBootDiagnosticsEnabled();
 
-    /** @return the storage blob endpoint uri if boot diagnostics is enabled for the virtual machine */
+    /**
+     * Gets the storage blob endpoint uri if boot diagnostics is enabled for the virtual machine.
+     *
+     * @return the storage blob endpoint uri if boot diagnostics is enabled for the virtual machine
+     */
     String bootDiagnosticsStorageUri();
 
-    /** @return true if Managed Service Identity is enabled for the virtual machine */
+    /**
+     * Checks whether Managed Service Identity is enabled for the virtual machine.
+     *
+     * @return true if Managed Service Identity is enabled for the virtual machine
+     */
     boolean isManagedServiceIdentityEnabled();
 
     /**
+     * Gets System Assigned (Local) Managed Service Identity specific Active Directory tenant ID assigned to the
+     *     virtual machine.
+     *
      * @return the System Assigned (Local) Managed Service Identity specific Active Directory tenant ID assigned to the
      *     virtual machine.
      */
     String systemAssignedManagedServiceIdentityTenantId();
 
     /**
+     * Gets the System Assigned (Local) Managed Service Identity specific Active Directory service principal ID
+     *     assigned to the virtual machine.
+     *
      * @return the System Assigned (Local) Managed Service Identity specific Active Directory service principal ID
      *     assigned to the virtual machine.
      */
     String systemAssignedManagedServiceIdentityPrincipalId();
 
-    /** @return the type of Managed Service Identity used for the virtual machine. */
+    /**
+     * Gets the type of Managed Service Identity used for the virtual machine.
+     *
+     * @return the type of Managed Service Identity used for the virtual machine.
+     */
     ResourceIdentityType managedServiceIdentityType();
 
-    /** @return the resource ids of User Assigned Managed Service Identities associated with the virtual machine. */
+    /**
+     * Gets the resource ids of User Assigned Managed Service Identities associated with the virtual machine.
+     *
+     * @return the resource ids of User Assigned Managed Service Identities associated with the virtual machine.
+     */
     Set<String> userAssignedManagedServiceIdentityIds();
 
-    /** @return the priority for the virtual machine. */
+    /**
+     * Gets the priority for the virtual machine.
+     *
+     * @return the priority for the virtual machine.
+     */
     VirtualMachinePriorityTypes priority();
 
-    /** @return the eviction policy for the virtual machine. */
+    /**
+     * Gets the eviction policy for the virtual machine.
+     *
+     * @return the eviction policy for the virtual machine.
+     */
     VirtualMachineEvictionPolicyTypes evictionPolicy();
 
-    /** @return the billing related details of a low priority virtual machine */
+    /**
+     * Gets the billing related details of a low priority virtual machine.
+     *
+     * @return the billing related details of a low priority virtual machine
+     */
     BillingProfile billingProfile();
 
     /**
+     * Checks whether hibernation feature is enabled on the virtual machine.
+     *
      * @return true if hibernation feature is enabled on the virtual machine.
      */
     boolean isHibernationEnabled();
+
+    /**
+     * Checks whether ultra SSD feature is enabled.
+     *
+     * @return true if ultra SSD feature is enabled on the virtual machine.
+     */
+    boolean isUltraSsdEnabled();
+
+    /**
+     * Gets the {@link SecurityTypes} of the virtual machine.
+     *
+     * @return the {@link SecurityTypes} of the virtual machine
+     */
+    SecurityTypes securityType();
+
+    /**
+     * Checks whether secure boot is enabled on the virtual machine
+     *
+     * @return whether secure boot is enabled on the virtual machine
+     */
+    boolean isSecureBootEnabled();
+
+    /**
+     * Checks whether vTPM is enabled on the virtual machine.
+     *
+     * @return whether vTPM is enabled on the virtual machine
+     */
+    boolean isVTpmEnabled();
+
+    /**
+     * Gets the time at which the Virtual Machine resource was created.
+     *
+     * @return the time at which the Virtual Machine resource was created
+     */
+    OffsetDateTime timeCreated();
+
+    /**
+     * Gets the delete options for the primary network interface.
+     *
+     * @return the delete options for the primary network interface
+     */
+    DeleteOptions primaryNetworkInterfaceDeleteOptions();
+
+    /**
+     * Gets the delete options for the given network interface.
+     *
+     * @param networkInterfaceId resource ID of the network interface
+     * @return the delete options for the network interface
+     */
+    DeleteOptions networkInterfaceDeleteOptions(String networkInterfaceId);
+
+    /**
+     * Gets the base64 encoded user data for the virtual machine.
+     *
+     * @return the base64 encoded user data for the virtual machine.
+     */
+    String userData();
+
+    /**
+     * Gets resource id of capacity reservation group for the virtual machine.
+     *
+     * @return the resource id of capacity reservation group for the virtual machine.
+     */
+    String capacityReservationGroupId();
 
     // Setters
     //
 
     /** The virtual machine scale set stages shared between managed and unmanaged based virtual machine definitions. */
-    interface DefinitionShared
-        extends DefinitionStages.Blank,
-            DefinitionStages.WithGroup,
-            DefinitionStages.WithNetwork,
-            DefinitionStages.WithSubnet,
-            DefinitionStages.WithPrivateIP,
-            DefinitionStages.WithPublicIPAddress,
-            DefinitionStages.WithPrimaryNetworkInterface,
-            DefinitionStages.WithOS,
-            DefinitionStages.WithProximityPlacementGroup,
-            DefinitionStages.WithCreate {
+    interface DefinitionShared extends DefinitionStages.Blank, DefinitionStages.WithGroup, DefinitionStages.WithNetwork,
+        DefinitionStages.WithSubnet, DefinitionStages.WithPrivateIP, DefinitionStages.WithPublicIPAddress,
+        DefinitionStages.WithPrimaryNetworkInterface, DefinitionStages.WithOS,
+        DefinitionStages.WithProximityPlacementGroup, DefinitionStages.WithSecurityFeatures,
+        DefinitionStages.WithCreate {
     }
 
     /** The entirety of the virtual machine definition. */
     interface DefinitionManagedOrUnmanaged
-        extends DefinitionShared,
-            DefinitionStages.WithLinuxRootUsernameManagedOrUnmanaged,
-            DefinitionStages.WithLinuxRootPasswordOrPublicKeyManagedOrUnmanaged,
-            DefinitionStages.WithWindowsAdminUsernameManagedOrUnmanaged,
-            DefinitionStages.WithWindowsAdminPasswordManagedOrUnmanaged,
-            DefinitionStages.WithFromImageCreateOptionsManagedOrUnmanaged,
-            DefinitionStages.WithLinuxCreateManagedOrUnmanaged,
-            DefinitionStages.WithWindowsCreateManagedOrUnmanaged,
-            DefinitionStages.WithManagedCreate,
-            DefinitionStages.WithUnmanagedCreate {
+        extends DefinitionShared, DefinitionStages.WithLinuxRootUsernameManagedOrUnmanaged,
+        DefinitionStages.WithLinuxRootPasswordOrPublicKeyManagedOrUnmanaged,
+        DefinitionStages.WithWindowsAdminUsernameManagedOrUnmanaged,
+        DefinitionStages.WithWindowsAdminPasswordManagedOrUnmanaged,
+        DefinitionStages.WithFromImageCreateOptionsManagedOrUnmanaged,
+        DefinitionStages.WithLinuxCreateManagedOrUnmanaged, DefinitionStages.WithWindowsCreateManagedOrUnmanaged,
+        DefinitionStages.WithManagedCreate, DefinitionStages.WithUnmanagedCreate {
     }
 
     /** The entirety of the managed disk based virtual machine definition. */
-    interface DefinitionManaged
-        extends DefinitionShared,
-            DefinitionStages.WithLinuxRootUsernameManaged,
-            DefinitionStages.WithLinuxRootPasswordOrPublicKeyManaged,
-            DefinitionStages.WithWindowsAdminUsernameManaged,
-            DefinitionStages.WithWindowsAdminPasswordManaged,
-            DefinitionStages.WithFromImageCreateOptionsManaged,
-            DefinitionStages.WithLinuxCreateManaged,
-            DefinitionStages.WithWindowsCreateManaged,
-            DefinitionStages.WithManagedCreate {
+    interface DefinitionManaged extends DefinitionShared, DefinitionStages.WithLinuxRootUsernameManaged,
+        DefinitionStages.WithLinuxRootPasswordOrPublicKeyManaged, DefinitionStages.WithWindowsAdminUsernameManaged,
+        DefinitionStages.WithWindowsAdminPasswordManaged, DefinitionStages.WithFromImageCreateOptionsManaged,
+        DefinitionStages.WithLinuxCreateManaged, DefinitionStages.WithWindowsCreateManaged,
+        DefinitionStages.WithManagedCreate {
     }
 
     /** The entirety of the unmanaged disk based virtual machine definition. */
-    interface DefinitionUnmanaged
-        extends DefinitionStages.Blank,
-            DefinitionStages.WithGroup,
-            DefinitionStages.WithNetwork,
-            DefinitionStages.WithSubnet,
-            DefinitionStages.WithPrivateIP,
-            DefinitionStages.WithPublicIPAddress,
-            DefinitionStages.WithPrimaryNetworkInterface,
-            DefinitionStages.WithOS,
-            DefinitionStages.WithLinuxRootUsernameUnmanaged,
-            DefinitionStages.WithLinuxRootPasswordOrPublicKeyUnmanaged,
-            DefinitionStages.WithWindowsAdminUsernameUnmanaged,
-            DefinitionStages.WithWindowsAdminPasswordUnmanaged,
-            DefinitionStages.WithFromImageCreateOptionsUnmanaged,
-            DefinitionStages.WithLinuxCreateUnmanaged,
-            DefinitionStages.WithWindowsCreateUnmanaged,
-            DefinitionStages.WithUnmanagedCreate {
+    interface DefinitionUnmanaged extends DefinitionStages.Blank, DefinitionStages.WithGroup,
+        DefinitionStages.WithNetwork, DefinitionStages.WithSubnet, DefinitionStages.WithPrivateIP,
+        DefinitionStages.WithPublicIPAddress, DefinitionStages.WithPrimaryNetworkInterface, DefinitionStages.WithOS,
+        DefinitionStages.WithLinuxRootUsernameUnmanaged, DefinitionStages.WithLinuxRootPasswordOrPublicKeyUnmanaged,
+        DefinitionStages.WithWindowsAdminUsernameUnmanaged, DefinitionStages.WithWindowsAdminPasswordUnmanaged,
+        DefinitionStages.WithFromImageCreateOptionsUnmanaged, DefinitionStages.WithLinuxCreateUnmanaged,
+        DefinitionStages.WithWindowsCreateUnmanaged, DefinitionStages.WithUnmanagedCreate {
     }
 
     /** Grouping of virtual machine definition stages. */
@@ -554,6 +782,18 @@ public interface VirtualMachine
              */
             WithProximityPlacementGroup withNewPrimaryPublicIPAddress(String leafDnsLabel);
 
+            //            /**
+            //             * Creates a new public IP address in the same region and resource group as the resource, with the specified
+            //             * DNS label and associates it with the VM's primary network interface.
+            //             *
+            //             * <p>The internal name for the public IP address will be derived from the DNS label.
+            //             *
+            //             * @param leafDnsLabel a leaf domain label
+            //             * @param deleteOptions the delete options for the IP address
+            //             * @return the next stage of the definition
+            //             */
+            //            WithProximityPlacementGroup withNewPrimaryPublicIPAddress(String leafDnsLabel, DeleteOptions deleteOptions);
+
             /**
              * Associates an existing public IP address with the VM's primary network interface.
              *
@@ -622,8 +862,8 @@ public interface VirtualMachine
              * @param knownImage a known market-place image
              * @return the next stage of the definition
              */
-            WithWindowsAdminUsernameManagedOrUnmanaged withPopularWindowsImage(
-                KnownWindowsVirtualMachineImage knownImage);
+            WithWindowsAdminUsernameManagedOrUnmanaged
+                withPopularWindowsImage(KnownWindowsVirtualMachineImage knownImage);
 
             /**
              * Specifies that the latest version of a marketplace Windows image should to be used as the virtual
@@ -634,8 +874,8 @@ public interface VirtualMachine
              * @param sku specifies the SKU of the image
              * @return the next stage of the definition
              */
-            WithWindowsAdminUsernameManagedOrUnmanaged withLatestWindowsImage(
-                String publisher, String offer, String sku);
+            WithWindowsAdminUsernameManagedOrUnmanaged withLatestWindowsImage(String publisher, String offer,
+                String sku);
 
             /**
              * Specifies a version of a marketplace Windows image to be used as the virtual machine's OS.
@@ -820,7 +1060,7 @@ public interface VirtualMachine
             /**
              * Specifies the SSH public key.
              *
-             * @param publicKey an SSH public key in the PEM format.
+             * @param publicKey an SSH public key at least 2048-bit and in ssh-rsa format.
              * @return the next stage of the definition
              */
             WithLinuxCreateManagedOrUnmanaged withSsh(String publicKey);
@@ -839,7 +1079,7 @@ public interface VirtualMachine
             /**
              * Specifies an SSH public key.
              *
-             * @param publicKey an SSH public key in the PEM format.
+             * @param publicKey an SSH public key at least 2048-bit and in ssh-rsa format.
              * @return the next stage of the definition
              */
             WithLinuxCreateManaged withSsh(String publicKey);
@@ -858,7 +1098,7 @@ public interface VirtualMachine
             /**
              * Specifies an SSH public key.
              *
-             * @param publicKey an SSH public key in the PEM format.
+             * @param publicKey an SSH public key at least 2048-bit and in ssh-rsa format.
              * @return the next stage of the definition
              */
             WithLinuxCreateUnmanaged withSsh(String publicKey);
@@ -996,7 +1236,7 @@ public interface VirtualMachine
             /**
              * Specifies an SSH public key.
              *
-             * @param publicKey an SSH public key in the PEM format.
+             * @param publicKey an SSH public key at least 2048-bit and in ssh-rsa format.
              * @return the next stage of the definition
              */
             WithLinuxCreateManagedOrUnmanaged withSsh(String publicKey);
@@ -1026,7 +1266,7 @@ public interface VirtualMachine
             /**
              * Specifies an SSH public key.
              *
-             * @param publicKey an SSH public key in the PEM format.
+             * @param publicKey an SSH public key at least 2048-bit and in ssh-rsa format.
              * @return the next stage of the definition
              */
             WithLinuxCreateUnmanaged withSsh(String publicKey);
@@ -1154,12 +1394,59 @@ public interface VirtualMachine
              * @return the next stage of the definition
              */
             WithCreate withOSDiskName(String name);
+
+            /**
+             * Specifies the delete options for the OS disk.
+             *
+             * @param deleteOptions the delete options for the OS disk.
+             * @return the next stage of the definition
+             */
+            WithCreate withOSDiskDeleteOptions(DeleteOptions deleteOptions);
+
+            /**
+             * Specifies the write accelerator for the OS disks.
+             * <p>
+             * Write Accelerator is generally available for M-series VMs in the Public Cloud.
+             * Enabling write accelerator for the operating system disk of the VM will reboot the VM.
+             * The Premium disk caching must be set to 'None' or 'Read Only'. All other caching modes are not supported.
+             *
+             * @param writeAcceleratorEnabled whether to enable the write accelerator
+             * @return the next stage of the definition
+             */
+            WithCreate withOSDiskWriteAcceleratorEnabled(boolean writeAcceleratorEnabled);
+
+            /**
+             * Specifies the disk encryption set for the managed OS disk.
+             *
+             * @param diskEncryptionSetId the ID of disk encryption set.
+             * @return the next stage of the definition
+             */
+            WithCreate withOSDiskDiskEncryptionSet(String diskEncryptionSetId);
+
+            /**
+             * Specifies the OS disk to be ephemeral.
+             * @return the next stage of the definition
+             */
+            WithEphemeralOSDisk withEphemeralOSDisk();
+        }
+
+        /** The stage of a virtual machine definition allowing to set OS disk to be ephemeral. */
+        interface WithEphemeralOSDisk {
+            /**
+             * Selects where you want to place the Ephemeral OS disk.
+             * @param placement placement of the Ephemeral OS disk
+             * @return the next stage of the definition
+             */
+            WithManagedCreate withPlacement(DiffDiskPlacement placement);
         }
 
         /** The stage of a virtual machine definition allowing to select a VM size. */
         interface WithVMSize {
             /**
              * Selects the size of the virtual machine.
+             * <p>
+             * See {@link ComputeSkus#listByRegion(Region)} for virtual machine sizes in region,
+             * and {@link AvailabilitySet#listVirtualMachineSizes()} for virtual machine sizes in availability set.
              *
              * @param sizeName the name of a size for the virtual machine as text
              * @return the next stage of the definition
@@ -1168,6 +1455,10 @@ public interface VirtualMachine
 
             /**
              * Specifies the size of the virtual machine.
+             * <p>
+             * {@link VirtualMachineSizeTypes} is not the complete list of virtual machine sizes.
+             * See {@link ComputeSkus#listByRegion(Region)} for virtual machine sizes in region,
+             * and {@link AvailabilitySet#listVirtualMachineSizes()} for virtual machine sizes in availability set.
              *
              * @param size a size from the list of available sizes for the virtual machine
              * @return the next stage of the definition
@@ -1193,8 +1484,8 @@ public interface VirtualMachine
              * @param vhdName the name for the VHD file
              * @return the next stage of the definition
              */
-            WithUnmanagedCreate withExistingUnmanagedDataDisk(
-                String storageAccountName, String containerName, String vhdName);
+            WithUnmanagedCreate withExistingUnmanagedDataDisk(String storageAccountName, String containerName,
+                String vhdName);
 
             /**
              * Begins definition of an unmanaged data disk to be attached to the virtual machine.
@@ -1202,8 +1493,8 @@ public interface VirtualMachine
              * @param name the name for the data disk
              * @return the first stage of an unmanaged data disk definition
              */
-            VirtualMachineUnmanagedDataDisk.DefinitionStages.Blank<WithUnmanagedCreate> defineUnmanagedDataDisk(
-                String name);
+            VirtualMachineUnmanagedDataDisk.DefinitionStages.Blank<WithUnmanagedCreate>
+                defineUnmanagedDataDisk(String name);
         }
 
         /** The stage of a virtual machine definition allowing to specify a managed data disk. */
@@ -1255,8 +1546,18 @@ public interface VirtualMachine
              * @param storageAccountType the storage account type
              * @return the next stage of the definition
              */
-            WithManagedCreate withNewDataDisk(
-                int sizeInGB, int lun, CachingTypes cachingType, StorageAccountTypes storageAccountType);
+            WithManagedCreate withNewDataDisk(int sizeInGB, int lun, CachingTypes cachingType,
+                StorageAccountTypes storageAccountType);
+
+            /**
+             * Specifies that a managed disk needs to be created implicitly with the given settings.
+             *
+             * @param sizeInGB the size of the managed disk in GB
+             * @param lun the disk LUN
+             * @param options the disk options
+             * @return the next stage of the definition
+             */
+            WithManagedCreate withNewDataDisk(int sizeInGB, int lun, VirtualMachineDiskOptions options);
 
             /**
              * Associates an existing source managed disk with the virtual machine.
@@ -1275,6 +1576,18 @@ public interface VirtualMachine
              * @return the next stage of the definition
              */
             WithManagedCreate withExistingDataDisk(Disk disk, int lun, CachingTypes cachingType);
+
+            /**
+             * Associates an existing source managed disk with the virtual machine and specifies additional settings.
+             *
+             * @param disk a managed disk
+             * @param newSizeInGB the disk resize size in GB
+             * @param lun the disk LUN
+             * @param options the disk options
+             * @return the next stage of the definition
+             */
+            WithManagedCreate withExistingDataDisk(Disk disk, int newSizeInGB, int lun,
+                VirtualMachineDiskOptions options);
 
             /**
              * Associates an existing source managed disk with the virtual machine and specifies additional settings.
@@ -1314,8 +1627,19 @@ public interface VirtualMachine
              * @param storageAccountType a storage account type
              * @return the next stage of the definition
              */
-            WithManagedCreate withNewDataDiskFromImage(
-                int imageLun, int newSizeInGB, CachingTypes cachingType, StorageAccountTypes storageAccountType);
+            WithManagedCreate withNewDataDiskFromImage(int imageLun, int newSizeInGB, CachingTypes cachingType,
+                StorageAccountTypes storageAccountType);
+
+            /**
+             * Specifies the data disk to be created from the data disk image in the virtual machine image.
+             *
+             * @param imageLun the LUN of the source data disk image
+             * @param newSizeInGB the new size that overrides the default size specified in the data disk image
+             * @param options the disk options
+             * @return the next stage of the definition
+             */
+            WithManagedCreate withNewDataDiskFromImage(int imageLun, int newSizeInGB,
+                VirtualMachineDiskOptions options);
         }
 
         /** The stage of the virtual machine definition allowing to specify availability set. */
@@ -1394,6 +1718,19 @@ public interface VirtualMachine
              * @return the next stage of the definition
              */
             WithCreate withNewSecondaryNetworkInterface(Creatable<NetworkInterface> creatable);
+
+            /**
+             * Creates a new network interface to associate with the virtual machine, based on the provided definition.
+             *
+             * <p>Note this method's effect is additive, i.e. each time it is used, a new secondary network interface
+             * added to the virtual machine.
+             *
+             * @param creatable a creatable definition for a new network interface
+             * @param deleteOptions the delete options for the secondary network interface
+             * @return the next stage of the definition
+             */
+            WithCreate withNewSecondaryNetworkInterface(Creatable<NetworkInterface> creatable,
+                DeleteOptions deleteOptions);
 
             /**
              * Associates an existing network interface with the virtual machine.
@@ -1564,8 +1901,8 @@ public interface VirtualMachine
              * @param role access role to assigned to the virtual machine's local identity
              * @return the next stage of the definition
              */
-            WithSystemAssignedIdentityBasedAccessOrCreate withSystemAssignedIdentityBasedAccessTo(
-                String resourceId, BuiltInRole role);
+            WithSystemAssignedIdentityBasedAccessOrCreate withSystemAssignedIdentityBasedAccessTo(String resourceId,
+                BuiltInRole role);
 
             /**
              * Specifies that virtual machine's system assigned (local) identity should have the given access (described
@@ -1575,8 +1912,8 @@ public interface VirtualMachine
              * @param role access role to assigned to the virtual machine's local identity
              * @return the next stage of the definition
              */
-            WithSystemAssignedIdentityBasedAccessOrCreate withSystemAssignedIdentityBasedAccessToCurrentResourceGroup(
-                BuiltInRole role);
+            WithSystemAssignedIdentityBasedAccessOrCreate
+                withSystemAssignedIdentityBasedAccessToCurrentResourceGroup(BuiltInRole role);
 
             /**
              * Specifies that virtual machine's system assigned (local) identity should have the access (described by
@@ -1587,8 +1924,8 @@ public interface VirtualMachine
              * @param roleDefinitionId access role definition to assigned to the virtual machine's local identity
              * @return the next stage of the definition
              */
-            WithSystemAssignedIdentityBasedAccessOrCreate withSystemAssignedIdentityBasedAccessTo(
-                String resourceId, String roleDefinitionId);
+            WithSystemAssignedIdentityBasedAccessOrCreate withSystemAssignedIdentityBasedAccessTo(String resourceId,
+                String roleDefinitionId);
 
             /**
              * Specifies that virtual machine's system assigned (local) identity should have the access (described by
@@ -1598,8 +1935,8 @@ public interface VirtualMachine
              * @param roleDefinitionId access role definition to assigned to the virtual machine's local identity
              * @return the next stage of the definition
              */
-            WithSystemAssignedIdentityBasedAccessOrCreate withSystemAssignedIdentityBasedAccessToCurrentResourceGroup(
-                String roleDefinitionId);
+            WithSystemAssignedIdentityBasedAccessOrCreate
+                withSystemAssignedIdentityBasedAccessToCurrentResourceGroup(String roleDefinitionId);
         }
 
         /**
@@ -1650,6 +1987,16 @@ public interface VirtualMachine
             WithManagedCreate withAvailabilityZone(AvailabilityZoneId zoneId);
         }
 
+        /** The stage of the VM definition allowing to specify virtual machine scale set */
+        interface WithScaleSet {
+            /**
+             * Specifies an existing virtual machine scale set for the virtual machine.
+             * @param scaleSet the virtual machine scale set with flexible orchestration mode
+             * @return the next stage of the definition
+             */
+            WithManagedCreate withExistingVirtualMachineScaleSet(VirtualMachineScaleSet scaleSet);
+        }
+
         /**
          * The stage of the definition which contains all the minimum required inputs for the VM using managed OS disk
          * to be created and optionally allow managed data disks specific settings to be specified.
@@ -1672,12 +2019,36 @@ public interface VirtualMachine
             WithManagedCreate withDataDiskDefaultCachingType(CachingTypes cachingType);
 
             /**
-             * Specifies the default caching type for managed data disks.
+             * Specifies the default storage account type for managed data disks.
              *
              * @param storageAccountType a storage account type
              * @return the next stage of the definition
              */
             WithManagedCreate withDataDiskDefaultStorageAccountType(StorageAccountTypes storageAccountType);
+
+            /**
+             * Specifies the delete options for managed data disks.
+             *
+             * @param deleteOptions the delete options for managed data disks
+             * @return the next stage of the definition
+             */
+            WithManagedCreate withDataDiskDefaultDeleteOptions(DeleteOptions deleteOptions);
+
+            /**
+             * Specifies the write accelerator for managed data disks.
+             *
+             * @param writeAcceleratorEnabled whether to enable the write accelerator
+             * @return the next stage of the definition
+             */
+            WithManagedCreate withDataDiskDefaultWriteAcceleratorEnabled(boolean writeAcceleratorEnabled);
+
+            /**
+             * Specifies the disk encryption set for the managed data disk.
+             *
+             * @param diskEncryptionSetId the ID of disk encryption set.
+             * @return the next stage of the definition
+             */
+            WithManagedCreate withDataDiskDefaultDiskEncryptionSet(String diskEncryptionSetId);
         }
 
         /**
@@ -1696,11 +2067,22 @@ public interface VirtualMachine
             WithUnmanagedCreate withOSDiskVhdLocation(String containerName, String vhdName);
         }
 
+        /** The stage of the definition allowing to specify delete options for the network interface. */
+        interface WithNetworkInterfaceDeleteOptions {
+            /**
+             * Sets delete options for primary network interfaces.
+             *
+             * @param deleteOptions the delete options for primary network interfaces
+             * @return the next stage of the definition
+             */
+            WithCreate withPrimaryNetworkInterfaceDeleteOptions(DeleteOptions deleteOptions);
+        }
+
         /** The stage of the VM definition allowing to specify additional capacities. */
         interface WithAdditionalCapacities {
             /**
              * Enables hibernation feature.
-             *
+             * <p>
              * Hibernation is supported on premium general purpose SKUs, e.g. STANDARD_D2S_V3.
              * Hibernation is supported on Windows 10 19H1 and higher, and Windows Server 2019 and higher.
              * For Ubuntu 18.04 or higher, hibernation-setup-tool is required to be installed on the virtual machine.
@@ -1708,32 +2090,102 @@ public interface VirtualMachine
              * @return the next stage of the definition
              */
             WithCreate enableHibernation();
+
+            /**
+             * Enables ultra SSD feature.
+             *
+             * @return the next stage of the definition
+             */
+            WithCreate enableUltraSsd();
+        }
+
+        /** The stage of the definition allowing to specify the SecurityType for the virtual machine. */
+        interface WithSecurityTypes {
+            /**
+             * Enables trusted launch.
+             * <p>
+             * Trusted launch only supports generation 2 VMs.
+             * </p>
+             *
+             * @see <a href="https://learn.microsoft.com/en-us/azure/virtual-machines/trusted-launch#limitations">Limitations</a>
+             *      for supported VM sizes, images and regions.
+             * @return the next stage of the definition
+             */
+            WithSecurityFeatures withTrustedLaunch();
+        }
+
+        /** The stage of the definition allowing to specify the security features for the virtual machine. */
+        interface WithSecurityFeatures extends WithCreate {
+            /**
+             * Enables secure boot feature.
+             *
+             * @return the next stage of the definition
+             */
+            WithSecurityFeatures withSecureBoot();
+
+            /**
+             * Enables vTPM feature.
+             *
+             * @return the next stage of the definition
+             */
+            WithSecurityFeatures withVTpm();
+        }
+
+        /** The stage of the definition allowing to specify the security profile for the virtual machine. */
+        interface WithSecurityProfile {
+
+            /**
+             * Enables the Host Encryption for the virtual machine.
+             *
+             * @return the next stage of the definition
+             */
+            WithCreate withEncryptionAtHost();
+        }
+
+        /** The stage of a virtual machine definition allowing to specify user data configurations. */
+        interface WithUserData {
+            /**
+             * Specifies the user data for the virtual machine.
+             *
+             * @param base64EncodedUserData the base64 encoded user data
+             * @return the next stage of the definition
+             */
+            WithCreate withUserData(String base64EncodedUserData);
+        }
+
+        /** The stage of a virtual machine definition allowing to specify capacity reservation configurations. */
+        interface WithCapacityReservation {
+            /**
+             * Specifies resource id of capacity reservation group for the virtual machine.
+             *
+             * @param capacityReservationGroupId the resource id of capacity reservation group
+             * @return the next stage of the definition
+             */
+            WithCreate withCapacityReservationGroup(String capacityReservationGroupId);
         }
 
         /**
          * The stage of the definition which contains all the minimum required inputs for the resource to be created,
          * but also allows for any other optional settings to be specified.
          */
-        interface WithCreate
-            extends Creatable<VirtualMachine>,
-                Resource.DefinitionWithTags<WithCreate>,
-                DefinitionStages.WithOSDiskSettings,
-                DefinitionStages.WithVMSize,
-                DefinitionStages.WithStorageAccount,
-                DefinitionStages.WithAvailabilitySet,
-                DefinitionStages.WithSecondaryNetworkInterface,
-                DefinitionStages.WithExtension,
-                DefinitionStages.WithPlan,
-                DefinitionStages.WithBootDiagnostics,
-                DefinitionStages.WithPriority,
-                DefinitionStages.WithBillingProfile,
-                DefinitionStages.WithSystemAssignedManagedServiceIdentity,
-                DefinitionStages.WithUserAssignedManagedServiceIdentity,
-                DefinitionStages.WithLicenseType,
-                DefinitionStages.WithAdditionalCapacities {
+        interface WithCreate extends Creatable<VirtualMachine>, Resource.DefinitionWithTags<WithCreate>,
+            DefinitionStages.WithOSDiskSettings, DefinitionStages.WithVMSize, DefinitionStages.WithStorageAccount,
+            DefinitionStages.WithAvailabilitySet, DefinitionStages.WithSecondaryNetworkInterface,
+            DefinitionStages.WithExtension, DefinitionStages.WithPlan, DefinitionStages.WithBootDiagnostics,
+            DefinitionStages.WithPriority, DefinitionStages.WithBillingProfile,
+            DefinitionStages.WithSystemAssignedManagedServiceIdentity,
+            DefinitionStages.WithUserAssignedManagedServiceIdentity, DefinitionStages.WithLicenseType,
+            DefinitionStages.WithAdditionalCapacities, DefinitionStages.WithNetworkInterfaceDeleteOptions,
+            DefinitionStages.WithEphemeralOSDisk, DefinitionStages.WithScaleSet, DefinitionStages.WithSecurityTypes,
+            DefinitionStages.WithSecurityProfile, DefinitionStages.WithUserData,
+            DefinitionStages.WithCapacityReservation {
 
             /**
              * Begins creating the virtual machine resource.
+             *
+             * Virtual machine extensions can only be created after the completion of virtual machine.
+             * Therefore, the configuration of virtual machine extensions is not compatible with this operation.
+             * Please use {@link WithCreate#create()} if virtual machine extensions is configured.
              *
              * @return the accepted create operation
              */
@@ -1878,8 +2330,18 @@ public interface VirtualMachine
              * @param storageAccountType a storage account type
              * @return the next stage of the update
              */
-            Update withNewDataDisk(
-                int sizeInGB, int lun, CachingTypes cachingType, StorageAccountTypes storageAccountType);
+            Update withNewDataDisk(int sizeInGB, int lun, CachingTypes cachingType,
+                StorageAccountTypes storageAccountType);
+
+            /**
+             * Specifies that a managed disk needs to be created implicitly with the given settings.
+             *
+             * @param sizeInGB the size of the managed disk in GB
+             * @param lun the disk LUN
+             * @param options the disk options
+             * @return the next stage of the definition
+             */
+            Update withNewDataDisk(int sizeInGB, int lun, VirtualMachineDiskOptions options);
 
             /**
              * Associates an existing source managed disk with the VM.
@@ -1911,48 +2373,23 @@ public interface VirtualMachine
             Update withExistingDataDisk(Disk disk, int newSizeInGB, int lun, CachingTypes cachingType);
 
             /**
+             * Associates an existing source managed disk with the virtual machine and specifies additional settings.
+             *
+             * @param disk a managed disk
+             * @param newSizeInGB the disk resize size in GB
+             * @param lun the disk LUN
+             * @param options the disk options
+             * @return the next stage of the definition
+             */
+            Update withExistingDataDisk(Disk disk, int newSizeInGB, int lun, VirtualMachineDiskOptions options);
+
+            /**
              * Detaches a managed data disk with the given LUN from the virtual machine.
              *
              * @param lun the disk LUN
              * @return the next stage of the update
              */
             Update withoutDataDisk(int lun);
-
-            /**
-             * Updates the size of a managed data disk with the given LUN.
-             *
-             * @param lun the disk LUN
-             * @param newSizeInGB the new size of the disk
-             * @return the next stage of the update
-             */
-            // TODO: This has been disabled by the Azure REST API
-            // Update withDataDiskUpdated(int lun, int newSizeInGB);
-
-            /**
-             * Updates the size and caching type of a managed data disk with the given LUN.
-             *
-             * @param lun the disk LUN
-             * @param newSizeInGB the new size of the disk
-             * @param cachingType a caching type
-             * @return the next stage of the update
-             */
-            // TODO: This has been disabled by the Azure REST API
-            // Update withDataDiskUpdated(int lun, int newSizeInGB, CachingTypes cachingType);
-
-            /**
-             * Updates the size, caching type and storage account type of a managed data disk with the given LUN.
-             *
-             * @param lun the disk LUN
-             * @param newSizeInGB the new size of the disk
-             * @param cachingType a caching type
-             * @param storageAccountType a storage account type
-             * @return the next stage of the update
-             */
-            // TODO: This has been disabled by the Azure REST API
-            // Update withDataDiskUpdated(int lun,
-            //                              int newSizeInGB,
-            //                              CachingTypes cachingType,
-            //                              StorageAccountTypes storageAccountType);
         }
 
         /** The stage of a virtual machine update allowing to specify additional network interfaces. */
@@ -1967,6 +2404,18 @@ public interface VirtualMachine
              * @return the next stage of the update
              */
             Update withNewSecondaryNetworkInterface(Creatable<NetworkInterface> creatable);
+
+            /**
+             * Creates a new network interface to associate with the virtual machine, based on the provided definition.
+             *
+             * <p>Note this method's effect is additive, i.e. each time it is used, a new secondary network interface
+             * added to the virtual machine.
+             *
+             * @param creatable a creatable definition for a new network interface
+             * @param deleteOptions the delete options for the secondary network interface
+             * @return the next stage of the definition
+             */
+            Update withNewSecondaryNetworkInterface(Creatable<NetworkInterface> creatable, DeleteOptions deleteOptions);
 
             /**
              * Associates an existing network interface with the virtual machine.
@@ -2098,8 +2547,8 @@ public interface VirtualMachine
              * @param role access role to assigned to the virtual machine's local identity
              * @return the next stage of the update
              */
-            WithSystemAssignedIdentityBasedAccessOrUpdate withSystemAssignedIdentityBasedAccessTo(
-                String resourceId, BuiltInRole role);
+            WithSystemAssignedIdentityBasedAccessOrUpdate withSystemAssignedIdentityBasedAccessTo(String resourceId,
+                BuiltInRole role);
 
             /**
              * Specifies that virtual machine's system assigned (local) identity should have the given access (described
@@ -2109,8 +2558,8 @@ public interface VirtualMachine
              * @param role access role to assigned to the virtual machine's local identity
              * @return the next stage of the update
              */
-            WithSystemAssignedIdentityBasedAccessOrUpdate withSystemAssignedIdentityBasedAccessToCurrentResourceGroup(
-                BuiltInRole role);
+            WithSystemAssignedIdentityBasedAccessOrUpdate
+                withSystemAssignedIdentityBasedAccessToCurrentResourceGroup(BuiltInRole role);
 
             /**
              * Specifies that virtual machine's system assigned (local) identity should have the access (described by
@@ -2121,8 +2570,8 @@ public interface VirtualMachine
              * @param roleDefinitionId access role definition to assigned to the virtual machine's local identity
              * @return the next stage of the update
              */
-            WithSystemAssignedIdentityBasedAccessOrUpdate withSystemAssignedIdentityBasedAccessTo(
-                String resourceId, String roleDefinitionId);
+            WithSystemAssignedIdentityBasedAccessOrUpdate withSystemAssignedIdentityBasedAccessTo(String resourceId,
+                String roleDefinitionId);
 
             /**
              * Specifies that virtual machine's system assigned (local) identity should have the access (described by
@@ -2132,8 +2581,8 @@ public interface VirtualMachine
              * @param roleDefinitionId access role definition to assigned to the virtual machine's local identity
              * @return the next stage of the update
              */
-            WithSystemAssignedIdentityBasedAccessOrUpdate withSystemAssignedIdentityBasedAccessToCurrentResourceGroup(
-                String roleDefinitionId);
+            WithSystemAssignedIdentityBasedAccessOrUpdate
+                withSystemAssignedIdentityBasedAccessToCurrentResourceGroup(String roleDefinitionId);
         }
 
         /**
@@ -2200,24 +2649,209 @@ public interface VirtualMachine
              * @return the next stage of the update
              */
             Update disableHibernation();
+
+            /**
+             * Enables ultra SSD feature.
+             *
+             * @return the next stage of the update
+             */
+            Update enableUltraSsd();
+
+            /**
+             * Disables ultra SSD feature.
+             *
+             * @return the next stage of the update
+             */
+            Update disableUltraSsd();
+        }
+
+        /** The stage of the VM update allowing to swap os disk. */
+        interface WithOSDisk {
+            /**
+             * Swaps the OS disk of the virtual machine for the specified managed disk.
+             * <p>Note:</p>
+             * <p>- Both the original OS disk and the disk to swap for have to be managed disks.</p>
+             * <p>- You cannot switch the OS Type of the VM
+             *      (i.e. Swap an OS Disk with Linux for an OS Disk with Windows).</p>
+             * <p>- Make sure that the VM size and storage type are compatible with the disk you want to attach.
+             *      For example, if the disk you want to use is in Premium Storage, then the VM needs to be capable of
+             *      Premium Storage (like a DS-series size).</p>
+             * @param diskId id of the managed disk to swap OS disk for
+             * @return the next stage of the update
+             */
+            Update withOSDisk(String diskId);
+
+            /**
+             * Swaps the OS disk of the virtual machine for the specified managed disk.
+             * <p>Note:</p>
+             * <p>- Both the original OS disk and the disk to swap for have to be managed disks.</p>
+             * <p>- You cannot switch the OS Type of the VM
+             *      (i.e. Swap an OS Disk with Linux for an OS Disk with Windows).</p>
+             * <p>- Make sure that the VM size and storage type are compatible with the disk you want to attach.
+             *      For example, if the disk you want to use is in Premium Storage, then the VM needs to be capable of
+             *      Premium Storage (like a DS-series size).</p>
+             * @param disk the managed disk to swap OS disk for
+             * @return the next stage of the update
+             */
+            Update withOSDisk(Disk disk);
+        }
+
+        /** The stage of the VM update allowing to change security features. */
+        interface WithSecurityFeatures {
+            /**
+             * Enables secure boot feature.
+             * <p>
+             * Your VM's security type should be set in order to enable this feature.
+             * After changing security features, a restart is required for your VM to take effect.
+             * </p>
+             *
+             * @return the next stage of the update
+             */
+            Update withSecureBoot();
+
+            /**
+             * Disables secure boot feature.
+             * <p>
+             * After changing security features, a restart is required for your VM to take effect.
+             * </p>
+             *
+             * @return the next stage of the update
+             */
+            Update withoutSecureBoot();
+
+            /**
+             * Enables vTPM feature.
+             * <p>
+             * Your VM's security type should be set in order to enable this feature.
+             * After changing security features, a restart is required for your VM to take effect.
+             * </p>
+             *
+             * @return the next stage of the update
+             */
+            Update withVTpm();
+
+            /**
+             * Disables vTPM feature.
+             * <p>
+             * After changing security features, a restart is required for your VM to take effect.
+             * </p>
+             *
+             * @return the next stage of the update
+             */
+            Update withoutVTpm();
+        }
+
+        /** The stage of the VM update allowing to change security profile. */
+        interface WithSecurityProfile {
+
+            /**
+             * Enables the Host Encryption for the virtual machine.
+             *
+             * @return the next stage of the definition
+             */
+            Update withEncryptionAtHost();
+
+            /**
+             * Disables the Host Encryption for the virtual machine.
+             *
+             * @return the next stage of the definition
+             */
+            Update withoutEncryptionAtHost();
+        }
+
+        /** The stage of the VM update allowing to change delete options of resources attached to this VM . */
+        interface WithDeleteOptions {
+            /**
+             * Specifies delete options for the OS disk of the VM.
+             *
+             * @param deleteOptions delete options for the OS disk
+             * @return the next stage of the update
+             */
+            Update withOsDiskDeleteOptions(DeleteOptions deleteOptions);
+
+            /**
+             * Specifies delete options for the primary network interface of the VM.
+             *
+             * @param deleteOptions delete options for the primary network interface
+             * @return the next stage of the update
+             */
+            Update withPrimaryNetworkInterfaceDeleteOptions(DeleteOptions deleteOptions);
+
+            /**
+             * Specifies delete options for the network interfaces attached to the VM.
+             * <p>This operation only affects existing <strong>attached</strong> network interfaces. Any newly-attached
+             * network interfaces that appear before {@link Update#apply()} won't be affected.</p>
+             *
+             * @param deleteOptions delete options for the network interfaces
+             * @param nicIds resource IDs of the network interfaces
+             * @return the next stage of the update
+             */
+            Update withNetworkInterfacesDeleteOptions(DeleteOptions deleteOptions, String... nicIds);
+
+            /**
+             * Specifies delete options for all the existing network interfaces attached to the VM.
+             * <p>This operation only affects existing <strong>attached</strong> network interfaces. Any newly-attached
+             * network interfaces that appear before {@link Update#apply()} won't be affected.</p>
+             *
+             * @param deleteOptions delete options for all the network interfaces
+             * @return the next stage of the update
+             */
+            Update withNetworkInterfacesDeleteOptions(DeleteOptions deleteOptions);
+
+            /**
+             * Specifies delete options for the existing data disk attached to the VM.
+             * <p>This operation only affects existing <strong>attached</strong> data disks. Any newly-attached data disks
+             * that appear before {@link Update#apply()} won't be affected.</p>
+             *
+             * @param deleteOptions delete options for the data disk
+             * @param luns the disk LUNs to update
+             * @return the next stage of the update
+             */
+            Update withDataDisksDeleteOptions(DeleteOptions deleteOptions, Integer... luns);
+
+            /**
+             * Specifies delete options for all the existing data disk attached to the VM.
+             * <p>This operation only affects existing <strong>attached</strong> data disks. Any newly-attached data disks
+             * that appear before {@link Update#apply()} won't be affected.</p>
+             *
+             * @param deleteOptions delete options for all the data disk
+             * @return the next stage of the update
+             */
+            Update withDataDisksDeleteOptions(DeleteOptions deleteOptions);
+        }
+
+        /** The stage of the virtual machine update allowing to user data configurations. */
+        interface WithUserData {
+            /**
+             * Specifies the user data for the virtual machine.
+             *
+             * @param base64EncodedUserData the base64 encoded user data
+             * @return the next stage of the update
+             */
+            Update withUserData(String base64EncodedUserData);
+        }
+
+        /** The stage of the virtual machine update allowing to capacity reservation configurations. */
+        interface WithCapacityReservation {
+            /**
+             * Specifies resource id of capacity reservation group for the virtual machine.
+             *
+             * @param capacityReservationGroupId the resource id of capacity reservation group
+             * @return the next stage of the update
+             */
+            Update withCapacityReservationGroup(String capacityReservationGroupId);
         }
     }
 
     /** The template for an update operation, containing all the settings that can be modified. */
-    interface Update
-        extends Appliable<VirtualMachine>,
-            Resource.UpdateWithTags<Update>,
-            UpdateStages.WithProximityPlacementGroup,
-            UpdateStages.WithUnmanagedDataDisk,
-            UpdateStages.WithManagedDataDisk,
-            UpdateStages.WithSecondaryNetworkInterface,
-            UpdateStages.WithExtension,
-            UpdateStages.WithBootDiagnostics,
-            UpdateStages.WithBillingProfile,
-            UpdateStages.WithSystemAssignedManagedServiceIdentity,
-            UpdateStages.WithUserAssignedManagedServiceIdentity,
-            UpdateStages.WithLicenseType,
-            UpdateStages.WithAdditionalCapacities {
+    interface Update extends Appliable<VirtualMachine>, Resource.UpdateWithTags<Update>,
+        UpdateStages.WithProximityPlacementGroup, UpdateStages.WithUnmanagedDataDisk, UpdateStages.WithManagedDataDisk,
+        UpdateStages.WithSecondaryNetworkInterface, UpdateStages.WithExtension, UpdateStages.WithBootDiagnostics,
+        UpdateStages.WithBillingProfile, UpdateStages.WithSystemAssignedManagedServiceIdentity,
+        UpdateStages.WithUserAssignedManagedServiceIdentity, UpdateStages.WithLicenseType,
+        UpdateStages.WithAdditionalCapacities, UpdateStages.WithOSDisk, UpdateStages.WithSecurityFeatures,
+        UpdateStages.WithDeleteOptions, UpdateStages.WithSecurityProfile, UpdateStages.WithUserData,
+        UpdateStages.WithCapacityReservation {
         /**
          * Specifies the encryption settings for the OS Disk.
          *
@@ -2225,6 +2859,18 @@ public interface VirtualMachine
          * @return the stage representing creatable VM update
          */
         Update withOSDiskEncryptionSettings(DiskEncryptionSettings settings);
+
+        /**
+         * Specifies the write accelerator for the OS disks.
+         * <p>
+         * Write Accelerator is generally available for M-series VMs in the Public Cloud.
+         * Enabling write accelerator for the operating system disk of the VM will reboot the VM.
+         * The Premium disk caching must be set to 'None' or 'Read Only'. All other caching modes are not supported.
+         *
+         * @param writeAcceleratorEnabled whether to enable the write accelerator
+         * @return the next stage of the update
+         */
+        Update withOSDiskWriteAcceleratorEnabled(boolean writeAcceleratorEnabled);
 
         /**
          * Specifies the default caching type for the managed data disks.
@@ -2241,6 +2887,30 @@ public interface VirtualMachine
          * @return the next stage of the update
          */
         Update withDataDiskDefaultStorageAccountType(StorageAccountTypes storageAccountType);
+
+        /**
+         * Specifies the delete options for managed data disks.
+         *
+         * @param deleteOptions the delete options for managed data disks
+         * @return the next stage of the definition
+         */
+        Update withDataDiskDefaultDeleteOptions(DeleteOptions deleteOptions);
+
+        /**
+         * Specifies the write accelerator for managed data disks.
+         *
+         * @param writeAcceleratorEnabled whether to enable the write accelerator
+         * @return the next stage of the definition
+         */
+        Update withDataDiskDefaultWriteAcceleratorEnabled(boolean writeAcceleratorEnabled);
+
+        /**
+         * Specifies the disk encryption set for the managed data disk.
+         *
+         * @param diskEncryptionSetId the ID of disk encryption set.
+         * @return the next stage of the definition
+         */
+        Update withDataDiskDefaultDiskEncryptionSet(String diskEncryptionSetId);
 
         /**
          * Specifies the caching type for the OS disk.
@@ -2263,6 +2933,8 @@ public interface VirtualMachine
 
         /**
          * Specifies a new size for the virtual machine.
+         * <p>
+         * See {@link VirtualMachine#availableSizes()} for resizing.
          *
          * @param sizeName the name of a size for the virtual machine as text
          * @return the next stage of the update
@@ -2271,6 +2943,9 @@ public interface VirtualMachine
 
         /**
          * Specifies a new size for the virtual machine.
+         * <p>
+         * {@link VirtualMachineSizeTypes} is not the complete list of virtual machine sizes.
+         * See {@link VirtualMachine#availableSizes()} for resizing.
          *
          * @param size a size from the list of available sizes for the virtual machine
          * @return the next stage of the definition

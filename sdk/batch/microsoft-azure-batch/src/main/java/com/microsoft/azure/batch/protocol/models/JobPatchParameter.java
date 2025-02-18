@@ -36,6 +36,16 @@ public class JobPatchParameter {
     private Integer maxParallelTasks;
 
     /**
+     * Whether Tasks in this job can be preempted by other high priority jobs.
+     * If the value is set to True, other high priority jobs submitted to the
+     * system will take precedence and will be able requeue tasks from this
+     * job. You can update a job's allowTaskPreemption after it has been
+     * created using the update job API.
+     */
+    @JsonProperty(value = "allowTaskPreemption")
+    private Boolean allowTaskPreemption;
+
+    /**
      * The action the Batch service should take when all Tasks in the Job are
      * in the completed state.
      * If omitted, the completion behavior is left unchanged. You may not
@@ -68,6 +78,12 @@ public class JobPatchParameter {
      */
     @JsonProperty(value = "poolInfo")
     private PoolInformation poolInfo;
+
+    /**
+     * The network configuration for the Job.
+     */
+    @JsonProperty(value = "networkConfiguration")
+    private JobNetworkConfiguration networkConfiguration;
 
     /**
      * A list of name-value pairs associated with the Job as metadata.
@@ -113,6 +129,26 @@ public class JobPatchParameter {
      */
     public JobPatchParameter withMaxParallelTasks(Integer maxParallelTasks) {
         this.maxParallelTasks = maxParallelTasks;
+        return this;
+    }
+
+    /**
+     * Get if the value is set to True, other high priority jobs submitted to the system will take precedence and will be able requeue tasks from this job. You can update a job's allowTaskPreemption after it has been created using the update job API.
+     *
+     * @return the allowTaskPreemption value
+     */
+    public Boolean allowTaskPreemption() {
+        return this.allowTaskPreemption;
+    }
+
+    /**
+     * Set if the value is set to True, other high priority jobs submitted to the system will take precedence and will be able requeue tasks from this job. You can update a job's allowTaskPreemption after it has been created using the update job API.
+     *
+     * @param allowTaskPreemption the allowTaskPreemption value to set
+     * @return the JobPatchParameter object itself.
+     */
+    public JobPatchParameter withAllowTaskPreemption(Boolean allowTaskPreemption) {
+        this.allowTaskPreemption = allowTaskPreemption;
         return this;
     }
 
@@ -173,6 +209,26 @@ public class JobPatchParameter {
      */
     public JobPatchParameter withPoolInfo(PoolInformation poolInfo) {
         this.poolInfo = poolInfo;
+        return this;
+    }
+
+    /**
+     * Get the networkConfiguration value.
+     *
+     * @return the networkConfiguration value
+     */
+    public JobNetworkConfiguration networkConfiguration() {
+        return this.networkConfiguration;
+    }
+
+    /**
+     * Set the networkConfiguration value.
+     *
+     * @param networkConfiguration the networkConfiguration value to set
+     * @return the JobPatchParameter object itself.
+     */
+    public JobPatchParameter withNetworkConfiguration(JobNetworkConfiguration networkConfiguration) {
+        this.networkConfiguration = networkConfiguration;
         return this;
     }
 

@@ -17,16 +17,19 @@ import com.azure.resourcemanager.batch.models.InterNodeCommunicationState;
 import com.azure.resourcemanager.batch.models.MetadataItem;
 import com.azure.resourcemanager.batch.models.MountConfiguration;
 import com.azure.resourcemanager.batch.models.NetworkConfiguration;
+import com.azure.resourcemanager.batch.models.NodeCommunicationMode;
 import com.azure.resourcemanager.batch.models.Pool;
 import com.azure.resourcemanager.batch.models.PoolProvisioningState;
 import com.azure.resourcemanager.batch.models.ResizeOperationStatus;
 import com.azure.resourcemanager.batch.models.ScaleSettings;
 import com.azure.resourcemanager.batch.models.StartTask;
 import com.azure.resourcemanager.batch.models.TaskSchedulingPolicy;
+import com.azure.resourcemanager.batch.models.UpgradePolicy;
 import com.azure.resourcemanager.batch.models.UserAccount;
 import java.time.OffsetDateTime;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 public final class PoolImpl implements Pool, Pool.Definition, Pool.Update {
     private PoolInner innerObject;
@@ -45,12 +48,21 @@ public final class PoolImpl implements Pool, Pool.Definition, Pool.Update {
         return this.innerModel().type();
     }
 
-    public BatchPoolIdentity identity() {
-        return this.innerModel().identity();
-    }
-
     public String etag() {
         return this.innerModel().etag();
+    }
+
+    public Map<String, String> tags() {
+        Map<String, String> inner = this.innerModel().tags();
+        if (inner != null) {
+            return Collections.unmodifiableMap(inner);
+        } else {
+            return Collections.emptyMap();
+        }
+    }
+
+    public BatchPoolIdentity identity() {
+        return this.innerModel().identity();
     }
 
     public String displayName() {
@@ -183,6 +195,31 @@ public final class PoolImpl implements Pool, Pool.Definition, Pool.Update {
         }
     }
 
+    public NodeCommunicationMode targetNodeCommunicationMode() {
+        return this.innerModel().targetNodeCommunicationMode();
+    }
+
+    public NodeCommunicationMode currentNodeCommunicationMode() {
+        return this.innerModel().currentNodeCommunicationMode();
+    }
+
+    public UpgradePolicy upgradePolicy() {
+        return this.innerModel().upgradePolicy();
+    }
+
+    public Map<String, String> resourceTags() {
+        Map<String, String> inner = this.innerModel().resourceTags();
+        if (inner != null) {
+            return Collections.unmodifiableMap(inner);
+        } else {
+            return Collections.emptyMap();
+        }
+    }
+
+    public String resourceGroupName() {
+        return resourceGroupName;
+    }
+
     public PoolInner innerModel() {
         return this.innerObject;
     }
@@ -210,36 +247,20 @@ public final class PoolImpl implements Pool, Pool.Definition, Pool.Update {
     }
 
     public Pool create() {
-        this.innerObject =
-            serviceManager
-                .serviceClient()
-                .getPools()
-                .createWithResponse(
-                    resourceGroupName,
-                    accountName,
-                    poolName,
-                    this.innerModel(),
-                    createIfMatch,
-                    createIfNoneMatch,
-                    Context.NONE)
-                .getValue();
+        this.innerObject = serviceManager.serviceClient()
+            .getPools()
+            .createWithResponse(resourceGroupName, accountName, poolName, this.innerModel(), createIfMatch,
+                createIfNoneMatch, Context.NONE)
+            .getValue();
         return this;
     }
 
     public Pool create(Context context) {
-        this.innerObject =
-            serviceManager
-                .serviceClient()
-                .getPools()
-                .createWithResponse(
-                    resourceGroupName,
-                    accountName,
-                    poolName,
-                    this.innerModel(),
-                    createIfMatch,
-                    createIfNoneMatch,
-                    context)
-                .getValue();
+        this.innerObject = serviceManager.serviceClient()
+            .getPools()
+            .createWithResponse(resourceGroupName, accountName, poolName, this.innerModel(), createIfMatch,
+                createIfNoneMatch, context)
+            .getValue();
         return this;
     }
 
@@ -257,68 +278,65 @@ public final class PoolImpl implements Pool, Pool.Definition, Pool.Update {
     }
 
     public Pool apply() {
-        this.innerObject =
-            serviceManager
-                .serviceClient()
-                .getPools()
-                .updateWithResponse(
-                    resourceGroupName, accountName, poolName, this.innerModel(), updateIfMatch, Context.NONE)
-                .getValue();
+        this.innerObject = serviceManager.serviceClient()
+            .getPools()
+            .updateWithResponse(resourceGroupName, accountName, poolName, this.innerModel(), updateIfMatch,
+                Context.NONE)
+            .getValue();
         return this;
     }
 
     public Pool apply(Context context) {
-        this.innerObject =
-            serviceManager
-                .serviceClient()
-                .getPools()
-                .updateWithResponse(resourceGroupName, accountName, poolName, this.innerModel(), updateIfMatch, context)
-                .getValue();
+        this.innerObject = serviceManager.serviceClient()
+            .getPools()
+            .updateWithResponse(resourceGroupName, accountName, poolName, this.innerModel(), updateIfMatch, context)
+            .getValue();
         return this;
     }
 
     PoolImpl(PoolInner innerObject, com.azure.resourcemanager.batch.BatchManager serviceManager) {
         this.innerObject = innerObject;
         this.serviceManager = serviceManager;
-        this.resourceGroupName = Utils.getValueFromIdByName(innerObject.id(), "resourceGroups");
-        this.accountName = Utils.getValueFromIdByName(innerObject.id(), "batchAccounts");
-        this.poolName = Utils.getValueFromIdByName(innerObject.id(), "pools");
+        this.resourceGroupName = ResourceManagerUtils.getValueFromIdByName(innerObject.id(), "resourceGroups");
+        this.accountName = ResourceManagerUtils.getValueFromIdByName(innerObject.id(), "batchAccounts");
+        this.poolName = ResourceManagerUtils.getValueFromIdByName(innerObject.id(), "pools");
     }
 
     public Pool refresh() {
-        this.innerObject =
-            serviceManager
-                .serviceClient()
-                .getPools()
-                .getWithResponse(resourceGroupName, accountName, poolName, Context.NONE)
-                .getValue();
+        this.innerObject = serviceManager.serviceClient()
+            .getPools()
+            .getWithResponse(resourceGroupName, accountName, poolName, Context.NONE)
+            .getValue();
         return this;
     }
 
     public Pool refresh(Context context) {
-        this.innerObject =
-            serviceManager
-                .serviceClient()
-                .getPools()
-                .getWithResponse(resourceGroupName, accountName, poolName, context)
-                .getValue();
+        this.innerObject = serviceManager.serviceClient()
+            .getPools()
+            .getWithResponse(resourceGroupName, accountName, poolName, context)
+            .getValue();
         return this;
-    }
-
-    public Pool disableAutoScale() {
-        return serviceManager.pools().disableAutoScale(resourceGroupName, accountName, poolName);
     }
 
     public Response<Pool> disableAutoScaleWithResponse(Context context) {
         return serviceManager.pools().disableAutoScaleWithResponse(resourceGroupName, accountName, poolName, context);
     }
 
-    public Pool stopResize() {
-        return serviceManager.pools().stopResize(resourceGroupName, accountName, poolName);
+    public Pool disableAutoScale() {
+        return serviceManager.pools().disableAutoScale(resourceGroupName, accountName, poolName);
     }
 
     public Response<Pool> stopResizeWithResponse(Context context) {
         return serviceManager.pools().stopResizeWithResponse(resourceGroupName, accountName, poolName, context);
+    }
+
+    public Pool stopResize() {
+        return serviceManager.pools().stopResize(resourceGroupName, accountName, poolName);
+    }
+
+    public PoolImpl withTags(Map<String, String> tags) {
+        this.innerModel().withTags(tags);
+        return this;
     }
 
     public PoolImpl withIdentity(BatchPoolIdentity identity) {
@@ -398,6 +416,21 @@ public final class PoolImpl implements Pool, Pool.Definition, Pool.Update {
 
     public PoolImpl withMountConfiguration(List<MountConfiguration> mountConfiguration) {
         this.innerModel().withMountConfiguration(mountConfiguration);
+        return this;
+    }
+
+    public PoolImpl withTargetNodeCommunicationMode(NodeCommunicationMode targetNodeCommunicationMode) {
+        this.innerModel().withTargetNodeCommunicationMode(targetNodeCommunicationMode);
+        return this;
+    }
+
+    public PoolImpl withUpgradePolicy(UpgradePolicy upgradePolicy) {
+        this.innerModel().withUpgradePolicy(upgradePolicy);
+        return this;
+    }
+
+    public PoolImpl withResourceTags(Map<String, String> resourceTags) {
+        this.innerModel().withResourceTags(resourceTags);
         return this;
     }
 

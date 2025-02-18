@@ -5,35 +5,38 @@
 package com.azure.resourcemanager.authorization.fluent.models;
 
 import com.azure.core.annotation.Fluent;
-import com.azure.core.util.logging.ClientLogger;
-import com.fasterxml.jackson.annotation.JsonAnyGetter;
-import com.fasterxml.jackson.annotation.JsonAnySetter;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import java.util.HashMap;
+import com.azure.json.JsonReader;
+import com.azure.json.JsonToken;
+import com.azure.json.JsonWriter;
+import java.io.IOException;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
-/** workbookApplication. */
+/**
+ * workbookApplication.
+ */
 @Fluent
 public final class MicrosoftGraphWorkbookApplication extends MicrosoftGraphEntity {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(MicrosoftGraphWorkbookApplication.class);
-
     /*
-     * Returns the calculation mode used in the workbook. Possible values are:
-     * Automatic, AutomaticExceptTables, Manual.
+     * Returns the calculation mode used in the workbook. Possible values are: Automatic, AutomaticExceptTables, Manual.
      */
-    @JsonProperty(value = "calculationMode")
     private String calculationMode;
 
     /*
      * workbookApplication
      */
-    @JsonIgnore private Map<String, Object> additionalProperties;
+    private Map<String, Object> additionalProperties;
+
+    /**
+     * Creates an instance of MicrosoftGraphWorkbookApplication class.
+     */
+    public MicrosoftGraphWorkbookApplication() {
+    }
 
     /**
      * Get the calculationMode property: Returns the calculation mode used in the workbook. Possible values are:
      * Automatic, AutomaticExceptTables, Manual.
-     *
+     * 
      * @return the calculationMode value.
      */
     public String calculationMode() {
@@ -43,7 +46,7 @@ public final class MicrosoftGraphWorkbookApplication extends MicrosoftGraphEntit
     /**
      * Set the calculationMode property: Returns the calculation mode used in the workbook. Possible values are:
      * Automatic, AutomaticExceptTables, Manual.
-     *
+     * 
      * @param calculationMode the calculationMode value to set.
      * @return the MicrosoftGraphWorkbookApplication object itself.
      */
@@ -54,17 +57,16 @@ public final class MicrosoftGraphWorkbookApplication extends MicrosoftGraphEntit
 
     /**
      * Get the additionalProperties property: workbookApplication.
-     *
+     * 
      * @return the additionalProperties value.
      */
-    @JsonAnyGetter
     public Map<String, Object> additionalProperties() {
         return this.additionalProperties;
     }
 
     /**
      * Set the additionalProperties property: workbookApplication.
-     *
+     * 
      * @param additionalProperties the additionalProperties value to set.
      * @return the MicrosoftGraphWorkbookApplication object itself.
      */
@@ -73,15 +75,9 @@ public final class MicrosoftGraphWorkbookApplication extends MicrosoftGraphEntit
         return this;
     }
 
-    @JsonAnySetter
-    void withAdditionalProperties(String key, Object value) {
-        if (additionalProperties == null) {
-            additionalProperties = new HashMap<>();
-        }
-        additionalProperties.put(key, value);
-    }
-
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public MicrosoftGraphWorkbookApplication withId(String id) {
         super.withId(id);
@@ -90,11 +86,62 @@ public final class MicrosoftGraphWorkbookApplication extends MicrosoftGraphEntit
 
     /**
      * Validates the instance.
-     *
+     * 
      * @throws IllegalArgumentException thrown if the instance is not valid.
      */
     @Override
     public void validate() {
         super.validate();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public JsonWriter toJson(JsonWriter jsonWriter) throws IOException {
+        jsonWriter.writeStartObject();
+        jsonWriter.writeStringField("id", id());
+        jsonWriter.writeStringField("calculationMode", this.calculationMode);
+        if (additionalProperties != null) {
+            for (Map.Entry<String, Object> additionalProperty : additionalProperties.entrySet()) {
+                jsonWriter.writeUntypedField(additionalProperty.getKey(), additionalProperty.getValue());
+            }
+        }
+        return jsonWriter.writeEndObject();
+    }
+
+    /**
+     * Reads an instance of MicrosoftGraphWorkbookApplication from the JsonReader.
+     * 
+     * @param jsonReader The JsonReader being read.
+     * @return An instance of MicrosoftGraphWorkbookApplication if the JsonReader was pointing to an instance of it, or
+     * null if it was pointing to JSON null.
+     * @throws IOException If an error occurs while reading the MicrosoftGraphWorkbookApplication.
+     */
+    public static MicrosoftGraphWorkbookApplication fromJson(JsonReader jsonReader) throws IOException {
+        return jsonReader.readObject(reader -> {
+            MicrosoftGraphWorkbookApplication deserializedMicrosoftGraphWorkbookApplication
+                = new MicrosoftGraphWorkbookApplication();
+            Map<String, Object> additionalProperties = null;
+            while (reader.nextToken() != JsonToken.END_OBJECT) {
+                String fieldName = reader.getFieldName();
+                reader.nextToken();
+
+                if ("id".equals(fieldName)) {
+                    deserializedMicrosoftGraphWorkbookApplication.withId(reader.getString());
+                } else if ("calculationMode".equals(fieldName)) {
+                    deserializedMicrosoftGraphWorkbookApplication.calculationMode = reader.getString();
+                } else {
+                    if (additionalProperties == null) {
+                        additionalProperties = new LinkedHashMap<>();
+                    }
+
+                    additionalProperties.put(fieldName, reader.readUntyped());
+                }
+            }
+            deserializedMicrosoftGraphWorkbookApplication.additionalProperties = additionalProperties;
+
+            return deserializedMicrosoftGraphWorkbookApplication;
+        });
     }
 }

@@ -8,78 +8,110 @@ import com.azure.core.http.rest.PagedIterable;
 import com.azure.core.http.rest.Response;
 import com.azure.core.util.Context;
 
-/** Resource collection API of CustomLocations. */
+/**
+ * Resource collection API of CustomLocations.
+ */
 public interface CustomLocations {
     /**
      * Lists all available Custom Locations operations.
-     *
+     * 
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return lists of Custom Locations operations.
+     * @return lists of Custom Locations operations as paginated response with {@link PagedIterable}.
      */
     PagedIterable<CustomLocationOperation> listOperations();
 
     /**
      * Lists all available Custom Locations operations.
-     *
+     * 
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return lists of Custom Locations operations.
+     * @return lists of Custom Locations operations as paginated response with {@link PagedIterable}.
      */
     PagedIterable<CustomLocationOperation> listOperations(Context context);
 
     /**
+     * Gets a list of Custom Locations in a subscription.
+     * 
      * Gets a list of Custom Locations in the specified subscription. The operation returns properties of each Custom
      * Location.
-     *
+     * 
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return a list of Custom Locations in the specified subscription.
+     * @return a list of Custom Locations in the specified subscription as paginated response with
+     * {@link PagedIterable}.
      */
     PagedIterable<CustomLocation> list();
 
     /**
+     * Gets a list of Custom Locations in a subscription.
+     * 
      * Gets a list of Custom Locations in the specified subscription. The operation returns properties of each Custom
      * Location.
-     *
+     * 
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return a list of Custom Locations in the specified subscription.
+     * @return a list of Custom Locations in the specified subscription as paginated response with
+     * {@link PagedIterable}.
      */
     PagedIterable<CustomLocation> list(Context context);
 
     /**
+     * Gets a list of Custom Locations in the specified subscription and resource group.
+     * 
      * Gets a list of Custom Locations in the specified subscription and resource group. The operation returns
      * properties of each Custom Location.
-     *
+     * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return a list of Custom Locations in the specified subscription and resource group.
+     * @return a list of Custom Locations in the specified subscription and resource group as paginated response with
+     * {@link PagedIterable}.
      */
     PagedIterable<CustomLocation> listByResourceGroup(String resourceGroupName);
 
     /**
+     * Gets a list of Custom Locations in the specified subscription and resource group.
+     * 
      * Gets a list of Custom Locations in the specified subscription and resource group. The operation returns
      * properties of each Custom Location.
-     *
+     * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return a list of Custom Locations in the specified subscription and resource group.
+     * @return a list of Custom Locations in the specified subscription and resource group as paginated response with
+     * {@link PagedIterable}.
      */
     PagedIterable<CustomLocation> listByResourceGroup(String resourceGroupName, Context context);
 
     /**
+     * Gets a Custom Location.
+     * 
      * Gets the details of the customLocation with a specified resource group and name.
-     *
+     * 
+     * @param resourceGroupName The name of the resource group. The name is case insensitive.
+     * @param resourceName Custom Locations name.
+     * @param context The context to associate with this operation.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return the details of the customLocation with a specified resource group and name along with {@link Response}.
+     */
+    Response<CustomLocation> getByResourceGroupWithResponse(String resourceGroupName, String resourceName,
+        Context context);
+
+    /**
+     * Gets a Custom Location.
+     * 
+     * Gets the details of the customLocation with a specified resource group and name.
+     * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
      * @param resourceName Custom Locations name.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
@@ -90,22 +122,10 @@ public interface CustomLocations {
     CustomLocation getByResourceGroup(String resourceGroupName, String resourceName);
 
     /**
-     * Gets the details of the customLocation with a specified resource group and name.
-     *
-     * @param resourceGroupName The name of the resource group. The name is case insensitive.
-     * @param resourceName Custom Locations name.
-     * @param context The context to associate with this operation.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the details of the customLocation with a specified resource group and name.
-     */
-    Response<CustomLocation> getByResourceGroupWithResponse(
-        String resourceGroupName, String resourceName, Context context);
-
-    /**
+     * Deletes a Custom Location.
+     * 
      * Deletes the Custom Location with the specified Resource Name, Resource Group, and Subscription Id.
-     *
+     * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
      * @param resourceName Custom Locations name.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
@@ -115,8 +135,10 @@ public interface CustomLocations {
     void deleteByResourceGroup(String resourceGroupName, String resourceName);
 
     /**
+     * Deletes a Custom Location.
+     * 
      * Deletes the Custom Location with the specified Resource Name, Resource Group, and Subscription Id.
-     *
+     * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
      * @param resourceName Custom Locations name.
      * @param context The context to associate with this operation.
@@ -127,57 +149,67 @@ public interface CustomLocations {
     void delete(String resourceGroupName, String resourceName, Context context);
 
     /**
+     * Gets the list of Enabled Resource Types.
+     * 
      * Gets the list of the Enabled Resource Types.
-     *
+     * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
      * @param resourceName Custom Locations name.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the list of the Enabled Resource Types.
+     * @return the list of the Enabled Resource Types as paginated response with {@link PagedIterable}.
      */
     PagedIterable<EnabledResourceType> listEnabledResourceTypes(String resourceGroupName, String resourceName);
 
     /**
+     * Gets the list of Enabled Resource Types.
+     * 
      * Gets the list of the Enabled Resource Types.
-     *
+     * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
      * @param resourceName Custom Locations name.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the list of the Enabled Resource Types.
+     * @return the list of the Enabled Resource Types as paginated response with {@link PagedIterable}.
      */
-    PagedIterable<EnabledResourceType> listEnabledResourceTypes(
-        String resourceGroupName, String resourceName, Context context);
+    PagedIterable<EnabledResourceType> listEnabledResourceTypes(String resourceGroupName, String resourceName,
+        Context context);
 
     /**
+     * Gets a Custom Location.
+     * 
      * Gets the details of the customLocation with a specified resource group and name.
-     *
+     * 
      * @param id the resource ID.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the details of the customLocation with a specified resource group and name.
+     * @return the details of the customLocation with a specified resource group and name along with {@link Response}.
      */
     CustomLocation getById(String id);
 
     /**
+     * Gets a Custom Location.
+     * 
      * Gets the details of the customLocation with a specified resource group and name.
-     *
+     * 
      * @param id the resource ID.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the details of the customLocation with a specified resource group and name.
+     * @return the details of the customLocation with a specified resource group and name along with {@link Response}.
      */
     Response<CustomLocation> getByIdWithResponse(String id, Context context);
 
     /**
+     * Deletes a Custom Location.
+     * 
      * Deletes the Custom Location with the specified Resource Name, Resource Group, and Subscription Id.
-     *
+     * 
      * @param id the resource ID.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
@@ -186,8 +218,10 @@ public interface CustomLocations {
     void deleteById(String id);
 
     /**
+     * Deletes a Custom Location.
+     * 
      * Deletes the Custom Location with the specified Resource Name, Resource Group, and Subscription Id.
-     *
+     * 
      * @param id the resource ID.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
@@ -198,7 +232,7 @@ public interface CustomLocations {
 
     /**
      * Begins definition for a new CustomLocation resource.
-     *
+     * 
      * @param name resource name.
      * @return the first stage of the new CustomLocation definition.
      */

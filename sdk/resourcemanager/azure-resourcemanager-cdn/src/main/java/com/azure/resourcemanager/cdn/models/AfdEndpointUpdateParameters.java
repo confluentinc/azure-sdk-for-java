@@ -5,41 +5,38 @@
 package com.azure.resourcemanager.cdn.models;
 
 import com.azure.core.annotation.Fluent;
-import com.azure.core.annotation.JsonFlatten;
-import com.azure.core.util.logging.ClientLogger;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.azure.json.JsonReader;
+import com.azure.json.JsonSerializable;
+import com.azure.json.JsonToken;
+import com.azure.json.JsonWriter;
+import com.azure.resourcemanager.cdn.fluent.models.AfdEndpointPropertiesUpdateParameters;
+import java.io.IOException;
 import java.util.Map;
 
-/** Properties required to create or update an endpoint. */
-@JsonFlatten
+/**
+ * Properties required to create or update an endpoint.
+ */
 @Fluent
-public class AfdEndpointUpdateParameters {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(AfdEndpointUpdateParameters.class);
-
+public final class AfdEndpointUpdateParameters implements JsonSerializable<AfdEndpointUpdateParameters> {
     /*
      * Endpoint tags.
      */
-    @JsonProperty(value = "tags")
     private Map<String, String> tags;
 
     /*
-     * Send and receive timeout on forwarding request to the origin. When
-     * timeout is reached, the request fails and returns.
+     * The JSON object containing endpoint update parameters.
      */
-    @JsonProperty(value = "properties.originResponseTimeoutSeconds")
-    private Integer originResponseTimeoutSeconds;
+    private AfdEndpointPropertiesUpdateParameters innerProperties;
 
-    /*
-     * Whether to enable use of this rule. Permitted values are 'Enabled' or
-     * 'Disabled'
+    /**
+     * Creates an instance of AfdEndpointUpdateParameters class.
      */
-    @JsonProperty(value = "properties.enabledState")
-    private EnabledState enabledState;
+    public AfdEndpointUpdateParameters() {
+    }
 
     /**
      * Get the tags property: Endpoint tags.
-     *
+     * 
      * @return the tags value.
      */
     public Map<String, String> tags() {
@@ -48,7 +45,7 @@ public class AfdEndpointUpdateParameters {
 
     /**
      * Set the tags property: Endpoint tags.
-     *
+     * 
      * @param tags the tags value to set.
      * @return the AfdEndpointUpdateParameters object itself.
      */
@@ -58,52 +55,95 @@ public class AfdEndpointUpdateParameters {
     }
 
     /**
-     * Get the originResponseTimeoutSeconds property: Send and receive timeout on forwarding request to the origin. When
-     * timeout is reached, the request fails and returns.
-     *
-     * @return the originResponseTimeoutSeconds value.
+     * Get the innerProperties property: The JSON object containing endpoint update parameters.
+     * 
+     * @return the innerProperties value.
      */
-    public Integer originResponseTimeoutSeconds() {
-        return this.originResponseTimeoutSeconds;
+    private AfdEndpointPropertiesUpdateParameters innerProperties() {
+        return this.innerProperties;
     }
 
     /**
-     * Set the originResponseTimeoutSeconds property: Send and receive timeout on forwarding request to the origin. When
-     * timeout is reached, the request fails and returns.
-     *
-     * @param originResponseTimeoutSeconds the originResponseTimeoutSeconds value to set.
-     * @return the AfdEndpointUpdateParameters object itself.
+     * Get the profileName property: The name of the profile which holds the endpoint.
+     * 
+     * @return the profileName value.
      */
-    public AfdEndpointUpdateParameters withOriginResponseTimeoutSeconds(Integer originResponseTimeoutSeconds) {
-        this.originResponseTimeoutSeconds = originResponseTimeoutSeconds;
-        return this;
+    public String profileName() {
+        return this.innerProperties() == null ? null : this.innerProperties().profileName();
     }
 
     /**
      * Get the enabledState property: Whether to enable use of this rule. Permitted values are 'Enabled' or 'Disabled'.
-     *
+     * 
      * @return the enabledState value.
      */
     public EnabledState enabledState() {
-        return this.enabledState;
+        return this.innerProperties() == null ? null : this.innerProperties().enabledState();
     }
 
     /**
      * Set the enabledState property: Whether to enable use of this rule. Permitted values are 'Enabled' or 'Disabled'.
-     *
+     * 
      * @param enabledState the enabledState value to set.
      * @return the AfdEndpointUpdateParameters object itself.
      */
     public AfdEndpointUpdateParameters withEnabledState(EnabledState enabledState) {
-        this.enabledState = enabledState;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new AfdEndpointPropertiesUpdateParameters();
+        }
+        this.innerProperties().withEnabledState(enabledState);
         return this;
     }
 
     /**
      * Validates the instance.
-     *
+     * 
      * @throws IllegalArgumentException thrown if the instance is not valid.
      */
     public void validate() {
+        if (innerProperties() != null) {
+            innerProperties().validate();
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public JsonWriter toJson(JsonWriter jsonWriter) throws IOException {
+        jsonWriter.writeStartObject();
+        jsonWriter.writeMapField("tags", this.tags, (writer, element) -> writer.writeString(element));
+        jsonWriter.writeJsonField("properties", this.innerProperties);
+        return jsonWriter.writeEndObject();
+    }
+
+    /**
+     * Reads an instance of AfdEndpointUpdateParameters from the JsonReader.
+     * 
+     * @param jsonReader The JsonReader being read.
+     * @return An instance of AfdEndpointUpdateParameters if the JsonReader was pointing to an instance of it, or null
+     * if it was pointing to JSON null.
+     * @throws IOException If an error occurs while reading the AfdEndpointUpdateParameters.
+     */
+    public static AfdEndpointUpdateParameters fromJson(JsonReader jsonReader) throws IOException {
+        return jsonReader.readObject(reader -> {
+            AfdEndpointUpdateParameters deserializedAfdEndpointUpdateParameters = new AfdEndpointUpdateParameters();
+            while (reader.nextToken() != JsonToken.END_OBJECT) {
+                String fieldName = reader.getFieldName();
+                reader.nextToken();
+
+                if ("tags".equals(fieldName)) {
+                    Map<String, String> tags = reader.readMap(reader1 -> reader1.getString());
+                    deserializedAfdEndpointUpdateParameters.tags = tags;
+                } else if ("properties".equals(fieldName)) {
+                    deserializedAfdEndpointUpdateParameters.innerProperties
+                        = AfdEndpointPropertiesUpdateParameters.fromJson(reader);
+                } else {
+                    reader.skipChildren();
+                }
+            }
+
+            return deserializedAfdEndpointUpdateParameters;
+        });
     }
 }

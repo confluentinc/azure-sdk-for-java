@@ -5,19 +5,20 @@
 package com.azure.analytics.purview.administration.generated;
 
 import com.azure.analytics.purview.administration.CollectionsClient;
-import com.azure.analytics.purview.administration.PurviewAccountClientBuilder;
+import com.azure.analytics.purview.administration.CollectionsClientBuilder;
 import com.azure.core.http.rest.RequestOptions;
 import com.azure.core.http.rest.Response;
 import com.azure.identity.DefaultAzureCredentialBuilder;
 
 public class CollectionsDeleteCollection {
     public static void main(String[] args) {
-        CollectionsClient client =
-                new PurviewAccountClientBuilder()
-                        .credential(new DefaultAzureCredentialBuilder().build())
-                        .endpoint("{endpoint}")
-                        .buildCollectionsClient();
+        CollectionsClient collectionsClient
+            = new CollectionsClientBuilder().credential(new DefaultAzureCredentialBuilder().build())
+                .endpoint("{endpoint}")
+                .buildClient();
+        // BEGIN:com.azure.analytics.purview.administration.generated.collectionsdeletecollection.collectionsdeletecollection
         RequestOptions requestOptions = new RequestOptions();
-        Response<Void> response = client.deleteCollectionWithResponse("myCollection1", requestOptions);
+        Response<Void> response = collectionsClient.deleteCollectionWithResponse("myCollection1", requestOptions);
+        // END:com.azure.analytics.purview.administration.generated.collectionsdeletecollection.collectionsdeletecollection
     }
 }

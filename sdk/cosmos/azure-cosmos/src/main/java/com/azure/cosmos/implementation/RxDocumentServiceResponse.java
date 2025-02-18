@@ -5,6 +5,7 @@ package com.azure.cosmos.implementation;
 
 import com.azure.cosmos.BridgeInternal;
 import com.azure.cosmos.CosmosDiagnostics;
+import com.azure.cosmos.CosmosItemSerializer;
 import com.azure.cosmos.implementation.apachecommons.lang.StringUtils;
 import com.azure.cosmos.implementation.directconnectivity.Address;
 import com.azure.cosmos.implementation.directconnectivity.StoreResponse;
@@ -15,7 +16,6 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -29,6 +29,7 @@ public class RxDocumentServiceResponse {
     private final Map<String, String> headersMap;
     private final StoreResponse storeResponse;
     private RequestTimeline gatewayHttpRequestTimeline;
+    private CosmosDiagnostics cosmosDiagnostics;
 
     public RxDocumentServiceResponse(DiagnosticsClientContext diagnosticsClientContext, StoreResponse response) {
         String[] headerNames = response.getResponseHeaderNames();
@@ -54,7 +55,29 @@ public class RxDocumentServiceResponse {
         this.gatewayHttpRequestTimeline = gatewayHttpRequestTimeline;
     }
 
-    public static <T extends Resource> String getResourceKey(Class<T> c) {
+    RxDocumentServiceResponse withRemappedStatusCode(int newStatusCode, double additionalRequestCharge) {
+        StoreResponse mappedStoreResponse = this
+            .storeResponse
+            .withRemappedStatusCode(newStatusCode, additionalRequestCharge);
+
+        RxDocumentServiceResponse result = new RxDocumentServiceResponse(
+            this.diagnosticsClientContext, mappedStoreResponse, this.gatewayHttpRequestTimeline);
+        if (this.cosmosDiagnostics != null) {
+            result.setCosmosDiagnostics(this.cosmosDiagnostics);
+        }
+
+        return result;
+    }
+
+    public boolean hasPayload() {
+        return this.storeResponse.getResponseBodyLength() > 0;
+    }
+
+    public int getResponsePayloadLength() {
+        return this.storeResponse.getResponseBodyLength();
+    }
+
+    private static <T> String getResourceKey(Class<T> c) {
         if (c.equals(Conflict.class)) {
             return InternalConstants.ResourceKeys.CONFLICTS;
         } else if (c.equals(Database.class)) {
@@ -83,7 +106,7 @@ public class RxDocumentServiceResponse {
             return InternalConstants.ResourceKeys.CLIENT_ENCRYPTION_KEYS;
         }
 
-        throw new IllegalArgumentException("c");
+        return InternalConstants.ResourceKeys.DOCUMENTS;
     }
 
     public int getStatusCode() {
@@ -94,12 +117,8 @@ public class RxDocumentServiceResponse {
         return this.headersMap;
     }
 
-    public byte[] getResponseBodyAsByteArray() {
-        return this.storeResponse.getResponseBody();
-    }
-
-    public String getResponseBodyAsString() {
-        return Utils.utf8StringFromOrNull(this.getResponseBodyAsByteArray());
+    public JsonNode getResponseBody() {
+        return this.storeResponse.getResponseBodyAsJson();
     }
 
     public RequestTimeline getGatewayHttpRequestTimeline() {
@@ -107,13 +126,14 @@ public class RxDocumentServiceResponse {
     }
 
     public <T extends Resource> T getResource(Class<T> c) {
-        String responseBody = this.getResponseBodyAsString();
-        if (StringUtils.isEmpty(responseBody))
+        ObjectNode responseBody = (ObjectNode)this.getResponseBody();
+        if (responseBody == null) {
             return null;
+        }
 
         T resource = null;
         try {
-            resource =  c.getConstructor(String.class).newInstance(responseBody);
+            resource =  c.getConstructor(ObjectNode.class).newInstance(responseBody);
         } catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException
                 | NoSuchMethodException | SecurityException e) {
             throw new IllegalStateException("Failed to instantiate class object.", e);
@@ -125,16 +145,12 @@ public class RxDocumentServiceResponse {
         return resource;
     }
 
-    @SuppressWarnings("unchecked")
-    // Given cls (where cls == Class<T>), objectNode is first decoded to cls and then casted to T.
-    public <T extends Resource> List<T> getQueryResponse(Class<T> c) {
-        byte[] responseBody = this.getResponseBodyAsByteArray();
-        if (responseBody == null) {
-            return new ArrayList<T>();
+    private ArrayNode extractQueryResponseNodes(String resourceKey) {
+        JsonNode jobject = this.getResponseBody();
+        if (jobject == null) {
+            return null;
         }
 
-        JsonNode jobject = fromJson(responseBody);
-        String resourceKey = RxDocumentServiceResponse.getResourceKey(c);
         ArrayNode jTokenArray = (ArrayNode) jobject.get(resourceKey);
 
         // Aggregate queries may return a nested array
@@ -143,21 +159,35 @@ public class RxDocumentServiceResponse {
             jTokenArray = innerArray;
         }
 
-        List<T> queryResults = new ArrayList<T>();
+        return jTokenArray;
+    }
 
-        if (jTokenArray != null) {
-            for (int i = 0; i < jTokenArray.size(); ++i) {
-                JsonNode jToken = jTokenArray.get(i);
-                // Aggregate on single partition collection may return the aggregated value only
-                // In that case it needs to encapsulated in a special document
+    @SuppressWarnings("unchecked")
+    // Given cls (where cls == Class<T>), objectNode is first decoded to cls and then casted to T.
+    public <T> List<T> getQueryResponse(
+        CosmosItemSerializer effectiveSerializer,
+        Class<T> c) {
 
-                JsonNode resourceJson = jToken.isValueNode() || jToken.isArray()// to add nulls, arrays, objects
-                        ? fromJson(String.format("{\"%s\": %s}", Constants.Properties.VALUE, jToken.toString()))
-                                : jToken;
+        String resourceKey = RxDocumentServiceResponse.getResourceKey(c);
+        ArrayNode jTokenArray = this.extractQueryResponseNodes(resourceKey);
+        if (jTokenArray == null) {
+            return new ArrayList<>();
+        }
 
-               T resource = (T) JsonSerializable.instantiateFromObjectNodeAndType((ObjectNode) resourceJson, c);
-               queryResults.add(resource);
-            }
+        List<T> queryResults = new ArrayList<>();
+
+        for (int i = 0; i < jTokenArray.size(); ++i) {
+            JsonNode jToken = jTokenArray.get(i);
+            // Aggregate on single partition collection may return the aggregated value only
+            // In that case it needs to encapsulated in a special document
+
+            ObjectNode resourceJson = jToken.isValueNode() || jToken.isArray()// to add nulls, arrays, objects
+                ? (ObjectNode) fromJson(String.format("{\"%s\": %s}", Constants.Properties.VALUE, jToken))
+                : (ObjectNode) jToken;
+
+            T resource = Utils.parse(resourceJson, c, effectiveSerializer);
+
+            queryResults.add(resource);
         }
 
         return queryResults;
@@ -179,14 +209,6 @@ public class RxDocumentServiceResponse {
         }
     }
 
-    private static JsonNode fromJson(byte[] json){
-        try {
-            return Utils.getSimpleObjectMapper().readTree(json);
-        } catch (IOException e) {
-            throw new IllegalStateException(String.format("Unable to parse JSON %s", Arrays.toString(json)), e);
-        }
-    }
-
     private String getOwnerFullName() {
         if (this.headersMap != null) {
             return this.headersMap.get(HttpConstants.HttpHeaders.OWNER_FULL_NAME);
@@ -195,10 +217,11 @@ public class RxDocumentServiceResponse {
     }
 
     public CosmosDiagnostics getCosmosDiagnostics() {
-        if (this.storeResponse == null) {
-            return null;
-        }
-        return this.storeResponse.getCosmosDiagnostics();
+        return this.cosmosDiagnostics;
+    }
+
+    public void setCosmosDiagnostics(CosmosDiagnostics cosmosDiagnostics) {
+        this.cosmosDiagnostics = cosmosDiagnostics;
     }
 
     public DiagnosticsClientContext getDiagnosticsClientContext() {

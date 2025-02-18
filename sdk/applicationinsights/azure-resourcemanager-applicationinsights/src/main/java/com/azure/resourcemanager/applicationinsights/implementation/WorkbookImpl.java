@@ -8,11 +8,11 @@ import com.azure.core.management.Region;
 import com.azure.core.management.SystemData;
 import com.azure.core.util.Context;
 import com.azure.resourcemanager.applicationinsights.fluent.models.WorkbookInner;
-import com.azure.resourcemanager.applicationinsights.models.Kind;
-import com.azure.resourcemanager.applicationinsights.models.SharedTypeKind;
 import com.azure.resourcemanager.applicationinsights.models.Workbook;
 import com.azure.resourcemanager.applicationinsights.models.WorkbookResourceIdentity;
+import com.azure.resourcemanager.applicationinsights.models.WorkbookSharedTypeKind;
 import com.azure.resourcemanager.applicationinsights.models.WorkbookUpdateParameters;
+import com.azure.resourcemanager.applicationinsights.models.WorkbookUpdateSharedTypeKind;
 import java.time.OffsetDateTime;
 import java.util.Collections;
 import java.util.List;
@@ -52,7 +52,7 @@ public final class WorkbookImpl implements Workbook, Workbook.Definition, Workbo
         return this.innerModel().identity();
     }
 
-    public Kind kind() {
+    public WorkbookSharedTypeKind kind() {
         return this.innerModel().kind();
     }
 
@@ -121,6 +121,10 @@ public final class WorkbookImpl implements Workbook, Workbook.Definition, Workbo
         return this.location();
     }
 
+    public String resourceGroupName() {
+        return resourceGroupName;
+    }
+
     public WorkbookInner innerModel() {
         return this.innerObject;
     }
@@ -145,23 +149,19 @@ public final class WorkbookImpl implements Workbook, Workbook.Definition, Workbo
     }
 
     public Workbook create() {
-        this.innerObject =
-            serviceManager
-                .serviceClient()
-                .getWorkbooks()
-                .createOrUpdateWithResponse(
-                    resourceGroupName, resourceName, this.innerModel(), createSourceId, Context.NONE)
-                .getValue();
+        this.innerObject = serviceManager.serviceClient()
+            .getWorkbooks()
+            .createOrUpdateWithResponse(resourceGroupName, resourceName, this.innerModel(), createSourceId,
+                Context.NONE)
+            .getValue();
         return this;
     }
 
     public Workbook create(Context context) {
-        this.innerObject =
-            serviceManager
-                .serviceClient()
-                .getWorkbooks()
-                .createOrUpdateWithResponse(resourceGroupName, resourceName, this.innerModel(), createSourceId, context)
-                .getValue();
+        this.innerObject = serviceManager.serviceClient()
+            .getWorkbooks()
+            .createOrUpdateWithResponse(resourceGroupName, resourceName, this.innerModel(), createSourceId, context)
+            .getValue();
         return this;
     }
 
@@ -179,53 +179,46 @@ public final class WorkbookImpl implements Workbook, Workbook.Definition, Workbo
     }
 
     public Workbook apply() {
-        this.innerObject =
-            serviceManager
-                .serviceClient()
-                .getWorkbooks()
-                .updateWithResponse(
-                    resourceGroupName, resourceName, updateSourceId, updateWorkbookUpdateParameters, Context.NONE)
-                .getValue();
+        this.innerObject = serviceManager.serviceClient()
+            .getWorkbooks()
+            .updateWithResponse(resourceGroupName, resourceName, updateSourceId, updateWorkbookUpdateParameters,
+                Context.NONE)
+            .getValue();
         return this;
     }
 
     public Workbook apply(Context context) {
-        this.innerObject =
-            serviceManager
-                .serviceClient()
-                .getWorkbooks()
-                .updateWithResponse(
-                    resourceGroupName, resourceName, updateSourceId, updateWorkbookUpdateParameters, context)
-                .getValue();
+        this.innerObject = serviceManager.serviceClient()
+            .getWorkbooks()
+            .updateWithResponse(resourceGroupName, resourceName, updateSourceId, updateWorkbookUpdateParameters,
+                context)
+            .getValue();
         return this;
     }
 
-    WorkbookImpl(
-        WorkbookInner innerObject,
+    WorkbookImpl(WorkbookInner innerObject,
         com.azure.resourcemanager.applicationinsights.ApplicationInsightsManager serviceManager) {
         this.innerObject = innerObject;
         this.serviceManager = serviceManager;
-        this.resourceGroupName = Utils.getValueFromIdByName(innerObject.id(), "resourceGroups");
-        this.resourceName = Utils.getValueFromIdByName(innerObject.id(), "workbooks");
+        this.resourceGroupName = ResourceManagerUtils.getValueFromIdByName(innerObject.id(), "resourceGroups");
+        this.resourceName = ResourceManagerUtils.getValueFromIdByName(innerObject.id(), "workbooks");
     }
 
     public Workbook refresh() {
-        this.innerObject =
-            serviceManager
-                .serviceClient()
-                .getWorkbooks()
-                .getByResourceGroupWithResponse(resourceGroupName, resourceName, Context.NONE)
-                .getValue();
+        Boolean localCanFetchContent = null;
+        this.innerObject = serviceManager.serviceClient()
+            .getWorkbooks()
+            .getByResourceGroupWithResponse(resourceGroupName, resourceName, localCanFetchContent, Context.NONE)
+            .getValue();
         return this;
     }
 
     public Workbook refresh(Context context) {
-        this.innerObject =
-            serviceManager
-                .serviceClient()
-                .getWorkbooks()
-                .getByResourceGroupWithResponse(resourceGroupName, resourceName, context)
-                .getValue();
+        Boolean localCanFetchContent = null;
+        this.innerObject = serviceManager.serviceClient()
+            .getWorkbooks()
+            .getByResourceGroupWithResponse(resourceGroupName, resourceName, localCanFetchContent, context)
+            .getValue();
         return this;
     }
 
@@ -254,7 +247,7 @@ public final class WorkbookImpl implements Workbook, Workbook.Definition, Workbo
         return this;
     }
 
-    public WorkbookImpl withKind(Kind kind) {
+    public WorkbookImpl withKind(WorkbookSharedTypeKind kind) {
         this.innerModel().withKind(kind);
         return this;
     }
@@ -339,7 +332,7 @@ public final class WorkbookImpl implements Workbook, Workbook.Definition, Workbo
         return this;
     }
 
-    public WorkbookImpl withKind(SharedTypeKind kind) {
+    public WorkbookImpl withKind(WorkbookUpdateSharedTypeKind kind) {
         this.updateWorkbookUpdateParameters.withKind(kind);
         return this;
     }

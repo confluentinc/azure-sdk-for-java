@@ -3,7 +3,6 @@
 
 package com.azure.storage.blob.sas;
 
-
 import com.azure.storage.common.implementation.Constants;
 
 import java.util.Locale;
@@ -16,25 +15,16 @@ import java.util.Locale;
  */
 public final class BlobContainerSasPermission {
     private boolean readPermission;
-
     private boolean addPermission;
-
     private boolean createPermission;
-
     private boolean writePermission;
-
     private boolean deletePermission;
-
     private boolean deleteVersionPermission;
-
     private boolean listPermission;
-
     private boolean tagsPermission;
-
     private boolean movePermission;
-
     private boolean executePermission;
-
+    private boolean filterPermission;
     private boolean immutabilityPolicyPermission;
 
     /**
@@ -61,46 +51,62 @@ public final class BlobContainerSasPermission {
                 case 'r':
                     permissions.readPermission = true;
                     break;
+
                 case 'a':
                     permissions.addPermission = true;
                     break;
+
                 case 'c':
                     permissions.createPermission = true;
                     break;
+
                 case 'w':
                     permissions.writePermission = true;
                     break;
+
                 case 'd':
                     permissions.deletePermission = true;
                     break;
+
                 case 'x':
                     permissions.deleteVersionPermission = true;
                     break;
+
                 case 'l':
                     permissions.listPermission = true;
                     break;
+
                 case 't':
                     permissions.tagsPermission = true;
                     break;
+
                 case 'm':
                     permissions.movePermission = true;
                     break;
+
                 case 'e':
                     permissions.executePermission = true;
                     break;
+
+                case 'f':
+                    permissions.filterPermission = true;
+                    break;
+
                 case 'i':
                     permissions.immutabilityPolicyPermission = true;
                     break;
+
                 default:
-                    throw new IllegalArgumentException(
-                        String.format(Locale.ROOT, Constants.ENUM_COULD_NOT_BE_PARSED_INVALID_VALUE,
-                            "Permissions", permissionString, c));
+                    throw new IllegalArgumentException(String.format(Locale.ROOT,
+                        Constants.ENUM_COULD_NOT_BE_PARSED_INVALID_VALUE, "Permissions", permissionString, c));
             }
         }
         return permissions;
     }
 
     /**
+     * Gets the read permission status.
+     *
      * @return the read permission status
      */
     public boolean hasReadPermission() {
@@ -119,6 +125,8 @@ public final class BlobContainerSasPermission {
     }
 
     /**
+     * Gets the add permission status.
+     *
      * @return the add permission status
      */
     public boolean hasAddPermission() {
@@ -137,6 +145,8 @@ public final class BlobContainerSasPermission {
     }
 
     /**
+     * Gets the create permission status.
+     *
      * @return the create permission status
      */
     public boolean hasCreatePermission() {
@@ -155,6 +165,8 @@ public final class BlobContainerSasPermission {
     }
 
     /**
+     * Gets the write permission status.
+     *
      * @return the write permission status
      */
     public boolean hasWritePermission() {
@@ -173,6 +185,8 @@ public final class BlobContainerSasPermission {
     }
 
     /**
+     * Gets the delete permission status.
+     *
      * @return the delete permission status
      */
     public boolean hasDeletePermission() {
@@ -191,6 +205,8 @@ public final class BlobContainerSasPermission {
     }
 
     /**
+     * Gets the delete version permission status.
+     *
      * @return the delete version permission status
      */
     public boolean hasDeleteVersionPermission() {
@@ -209,6 +225,8 @@ public final class BlobContainerSasPermission {
     }
 
     /**
+     * Gets the list permission status.
+     *
      * @return the list permission status
      */
     public boolean hasListPermission() {
@@ -227,6 +245,8 @@ public final class BlobContainerSasPermission {
     }
 
     /**
+     * Gets the tags permission status.
+     *
      * @return the tags permission status.
      */
     public boolean hasTagsPermission() {
@@ -245,6 +265,8 @@ public final class BlobContainerSasPermission {
     }
 
     /**
+     * Gets the move permission status.
+     *
      * @return the move permission status.
      */
     public boolean hasMovePermission() {
@@ -263,6 +285,8 @@ public final class BlobContainerSasPermission {
     }
 
     /**
+     * Gets the execute permission status.
+     *
      * @return the execute permission status.
      */
     public boolean hasExecutePermission() {
@@ -281,6 +305,28 @@ public final class BlobContainerSasPermission {
     }
 
     /**
+     * Gets the filter permission status.
+     *
+     * @return the filter permission status.
+     */
+    public boolean hasFilterPermission() {
+        return filterPermission;
+    }
+
+    /**
+     * Sets the filter permission status.
+     *
+     * @param hasFilterPermission Permission status to set
+     * @return the updated BlobSasPermission object.
+     */
+    public BlobContainerSasPermission setFilterPermission(boolean hasFilterPermission) {
+        this.filterPermission = hasFilterPermission;
+        return this;
+    }
+
+    /**
+     * Gets the set immutability policy permission status.
+     *
      * @return the set immutability policy permission status.
      */
     public boolean hasImmutabilityPolicyPermission() {
@@ -348,6 +394,10 @@ public final class BlobContainerSasPermission {
 
         if (this.executePermission) {
             builder.append('e');
+        }
+
+        if (this.filterPermission) {
+            builder.append('f');
         }
 
         if (this.immutabilityPolicyPermission) {

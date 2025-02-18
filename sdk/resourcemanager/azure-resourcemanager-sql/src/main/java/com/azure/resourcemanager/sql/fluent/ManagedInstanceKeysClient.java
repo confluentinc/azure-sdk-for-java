@@ -18,105 +18,124 @@ import java.nio.ByteBuffer;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-/** An instance of this class provides access to all the operations defined in ManagedInstanceKeysClient. */
+/**
+ * An instance of this class provides access to all the operations defined in ManagedInstanceKeysClient.
+ */
 public interface ManagedInstanceKeysClient {
     /**
      * Gets a list of managed instance keys.
-     *
+     * 
      * @param resourceGroupName The name of the resource group that contains the resource. You can obtain this value
-     *     from the Azure Resource Manager API or the portal.
+     * from the Azure Resource Manager API or the portal.
      * @param managedInstanceName The name of the managed instance.
      * @param filter An OData filter expression that filters elements in the collection.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return a list of managed instance keys.
+     * @return a list of managed instance keys as paginated response with {@link PagedFlux}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
-    PagedFlux<ManagedInstanceKeyInner> listByInstanceAsync(
-        String resourceGroupName, String managedInstanceName, String filter);
+    PagedFlux<ManagedInstanceKeyInner> listByInstanceAsync(String resourceGroupName, String managedInstanceName,
+        String filter);
 
     /**
      * Gets a list of managed instance keys.
-     *
+     * 
      * @param resourceGroupName The name of the resource group that contains the resource. You can obtain this value
-     *     from the Azure Resource Manager API or the portal.
+     * from the Azure Resource Manager API or the portal.
      * @param managedInstanceName The name of the managed instance.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return a list of managed instance keys.
+     * @return a list of managed instance keys as paginated response with {@link PagedFlux}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
     PagedFlux<ManagedInstanceKeyInner> listByInstanceAsync(String resourceGroupName, String managedInstanceName);
 
     /**
      * Gets a list of managed instance keys.
-     *
+     * 
      * @param resourceGroupName The name of the resource group that contains the resource. You can obtain this value
-     *     from the Azure Resource Manager API or the portal.
+     * from the Azure Resource Manager API or the portal.
+     * @param managedInstanceName The name of the managed instance.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return a list of managed instance keys as paginated response with {@link PagedIterable}.
+     */
+    @ServiceMethod(returns = ReturnType.COLLECTION)
+    PagedIterable<ManagedInstanceKeyInner> listByInstance(String resourceGroupName, String managedInstanceName);
+
+    /**
+     * Gets a list of managed instance keys.
+     * 
+     * @param resourceGroupName The name of the resource group that contains the resource. You can obtain this value
+     * from the Azure Resource Manager API or the portal.
      * @param managedInstanceName The name of the managed instance.
      * @param filter An OData filter expression that filters elements in the collection.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return a list of managed instance keys.
+     * @return a list of managed instance keys as paginated response with {@link PagedIterable}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
-    PagedIterable<ManagedInstanceKeyInner> listByInstance(
-        String resourceGroupName, String managedInstanceName, String filter, Context context);
-
-    /**
-     * Gets a list of managed instance keys.
-     *
-     * @param resourceGroupName The name of the resource group that contains the resource. You can obtain this value
-     *     from the Azure Resource Manager API or the portal.
-     * @param managedInstanceName The name of the managed instance.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return a list of managed instance keys.
-     */
-    @ServiceMethod(returns = ReturnType.COLLECTION)
-    PagedIterable<ManagedInstanceKeyInner> listByInstance(String resourceGroupName, String managedInstanceName);
+    PagedIterable<ManagedInstanceKeyInner> listByInstance(String resourceGroupName, String managedInstanceName,
+        String filter, Context context);
 
     /**
      * Gets a managed instance key.
-     *
+     * 
      * @param resourceGroupName The name of the resource group that contains the resource. You can obtain this value
-     *     from the Azure Resource Manager API or the portal.
+     * from the Azure Resource Manager API or the portal.
      * @param managedInstanceName The name of the managed instance.
      * @param keyName The name of the managed instance key to be retrieved.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return a managed instance key.
+     * @return a managed instance key along with {@link Response} on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    Mono<Response<ManagedInstanceKeyInner>> getWithResponseAsync(
-        String resourceGroupName, String managedInstanceName, String keyName);
+    Mono<Response<ManagedInstanceKeyInner>> getWithResponseAsync(String resourceGroupName, String managedInstanceName,
+        String keyName);
 
     /**
      * Gets a managed instance key.
-     *
+     * 
      * @param resourceGroupName The name of the resource group that contains the resource. You can obtain this value
-     *     from the Azure Resource Manager API or the portal.
+     * from the Azure Resource Manager API or the portal.
      * @param managedInstanceName The name of the managed instance.
      * @param keyName The name of the managed instance key to be retrieved.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return a managed instance key.
+     * @return a managed instance key on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
     Mono<ManagedInstanceKeyInner> getAsync(String resourceGroupName, String managedInstanceName, String keyName);
 
     /**
      * Gets a managed instance key.
-     *
+     * 
      * @param resourceGroupName The name of the resource group that contains the resource. You can obtain this value
-     *     from the Azure Resource Manager API or the portal.
+     * from the Azure Resource Manager API or the portal.
+     * @param managedInstanceName The name of the managed instance.
+     * @param keyName The name of the managed instance key to be retrieved.
+     * @param context The context to associate with this operation.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return a managed instance key along with {@link Response}.
+     */
+    @ServiceMethod(returns = ReturnType.SINGLE)
+    Response<ManagedInstanceKeyInner> getWithResponse(String resourceGroupName, String managedInstanceName,
+        String keyName, Context context);
+
+    /**
+     * Gets a managed instance key.
+     * 
+     * @param resourceGroupName The name of the resource group that contains the resource. You can obtain this value
+     * from the Azure Resource Manager API or the portal.
      * @param managedInstanceName The name of the managed instance.
      * @param keyName The name of the managed instance key to be retrieved.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
@@ -128,137 +147,117 @@ public interface ManagedInstanceKeysClient {
     ManagedInstanceKeyInner get(String resourceGroupName, String managedInstanceName, String keyName);
 
     /**
-     * Gets a managed instance key.
-     *
+     * Creates or updates a managed instance key.
+     * 
      * @param resourceGroupName The name of the resource group that contains the resource. You can obtain this value
-     *     from the Azure Resource Manager API or the portal.
+     * from the Azure Resource Manager API or the portal.
      * @param managedInstanceName The name of the managed instance.
-     * @param keyName The name of the managed instance key to be retrieved.
-     * @param context The context to associate with this operation.
+     * @param keyName The name of the managed instance key to be operated on (updated or created).
+     * @param parameters The requested managed instance key resource state.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return a managed instance key.
+     * @return a managed instance key along with {@link Response} on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    Response<ManagedInstanceKeyInner> getWithResponse(
-        String resourceGroupName, String managedInstanceName, String keyName, Context context);
+    Mono<Response<Flux<ByteBuffer>>> createOrUpdateWithResponseAsync(String resourceGroupName,
+        String managedInstanceName, String keyName, ManagedInstanceKeyInner parameters);
 
     /**
      * Creates or updates a managed instance key.
-     *
+     * 
      * @param resourceGroupName The name of the resource group that contains the resource. You can obtain this value
-     *     from the Azure Resource Manager API or the portal.
+     * from the Azure Resource Manager API or the portal.
      * @param managedInstanceName The name of the managed instance.
      * @param keyName The name of the managed instance key to be operated on (updated or created).
-     * @param parameters A managed instance key.
+     * @param parameters The requested managed instance key resource state.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return a managed instance key.
+     * @return the {@link PollerFlux} for polling of a managed instance key.
      */
-    @ServiceMethod(returns = ReturnType.SINGLE)
-    Mono<Response<Flux<ByteBuffer>>> createOrUpdateWithResponseAsync(
-        String resourceGroupName, String managedInstanceName, String keyName, ManagedInstanceKeyInner parameters);
-
-    /**
-     * Creates or updates a managed instance key.
-     *
-     * @param resourceGroupName The name of the resource group that contains the resource. You can obtain this value
-     *     from the Azure Resource Manager API or the portal.
-     * @param managedInstanceName The name of the managed instance.
-     * @param keyName The name of the managed instance key to be operated on (updated or created).
-     * @param parameters A managed instance key.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return a managed instance key.
-     */
-    @ServiceMethod(returns = ReturnType.SINGLE)
+    @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
     PollerFlux<PollResult<ManagedInstanceKeyInner>, ManagedInstanceKeyInner> beginCreateOrUpdateAsync(
         String resourceGroupName, String managedInstanceName, String keyName, ManagedInstanceKeyInner parameters);
 
     /**
      * Creates or updates a managed instance key.
-     *
+     * 
      * @param resourceGroupName The name of the resource group that contains the resource. You can obtain this value
-     *     from the Azure Resource Manager API or the portal.
+     * from the Azure Resource Manager API or the portal.
      * @param managedInstanceName The name of the managed instance.
      * @param keyName The name of the managed instance key to be operated on (updated or created).
-     * @param parameters A managed instance key.
+     * @param parameters The requested managed instance key resource state.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return a managed instance key.
+     * @return the {@link SyncPoller} for polling of a managed instance key.
      */
-    @ServiceMethod(returns = ReturnType.SINGLE)
+    @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
     SyncPoller<PollResult<ManagedInstanceKeyInner>, ManagedInstanceKeyInner> beginCreateOrUpdate(
         String resourceGroupName, String managedInstanceName, String keyName, ManagedInstanceKeyInner parameters);
 
     /**
      * Creates or updates a managed instance key.
-     *
+     * 
      * @param resourceGroupName The name of the resource group that contains the resource. You can obtain this value
-     *     from the Azure Resource Manager API or the portal.
+     * from the Azure Resource Manager API or the portal.
      * @param managedInstanceName The name of the managed instance.
      * @param keyName The name of the managed instance key to be operated on (updated or created).
-     * @param parameters A managed instance key.
+     * @param parameters The requested managed instance key resource state.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return a managed instance key.
+     * @return the {@link SyncPoller} for polling of a managed instance key.
      */
-    @ServiceMethod(returns = ReturnType.SINGLE)
+    @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
     SyncPoller<PollResult<ManagedInstanceKeyInner>, ManagedInstanceKeyInner> beginCreateOrUpdate(
-        String resourceGroupName,
-        String managedInstanceName,
-        String keyName,
-        ManagedInstanceKeyInner parameters,
+        String resourceGroupName, String managedInstanceName, String keyName, ManagedInstanceKeyInner parameters,
         Context context);
 
     /**
      * Creates or updates a managed instance key.
-     *
+     * 
      * @param resourceGroupName The name of the resource group that contains the resource. You can obtain this value
-     *     from the Azure Resource Manager API or the portal.
+     * from the Azure Resource Manager API or the portal.
      * @param managedInstanceName The name of the managed instance.
      * @param keyName The name of the managed instance key to be operated on (updated or created).
-     * @param parameters A managed instance key.
+     * @param parameters The requested managed instance key resource state.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return a managed instance key on successful completion of {@link Mono}.
+     */
+    @ServiceMethod(returns = ReturnType.SINGLE)
+    Mono<ManagedInstanceKeyInner> createOrUpdateAsync(String resourceGroupName, String managedInstanceName,
+        String keyName, ManagedInstanceKeyInner parameters);
+
+    /**
+     * Creates or updates a managed instance key.
+     * 
+     * @param resourceGroupName The name of the resource group that contains the resource. You can obtain this value
+     * from the Azure Resource Manager API or the portal.
+     * @param managedInstanceName The name of the managed instance.
+     * @param keyName The name of the managed instance key to be operated on (updated or created).
+     * @param parameters The requested managed instance key resource state.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
      * @return a managed instance key.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    Mono<ManagedInstanceKeyInner> createOrUpdateAsync(
-        String resourceGroupName, String managedInstanceName, String keyName, ManagedInstanceKeyInner parameters);
+    ManagedInstanceKeyInner createOrUpdate(String resourceGroupName, String managedInstanceName, String keyName,
+        ManagedInstanceKeyInner parameters);
 
     /**
      * Creates or updates a managed instance key.
-     *
+     * 
      * @param resourceGroupName The name of the resource group that contains the resource. You can obtain this value
-     *     from the Azure Resource Manager API or the portal.
+     * from the Azure Resource Manager API or the portal.
      * @param managedInstanceName The name of the managed instance.
      * @param keyName The name of the managed instance key to be operated on (updated or created).
-     * @param parameters A managed instance key.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return a managed instance key.
-     */
-    @ServiceMethod(returns = ReturnType.SINGLE)
-    ManagedInstanceKeyInner createOrUpdate(
-        String resourceGroupName, String managedInstanceName, String keyName, ManagedInstanceKeyInner parameters);
-
-    /**
-     * Creates or updates a managed instance key.
-     *
-     * @param resourceGroupName The name of the resource group that contains the resource. You can obtain this value
-     *     from the Azure Resource Manager API or the portal.
-     * @param managedInstanceName The name of the managed instance.
-     * @param keyName The name of the managed instance key to be operated on (updated or created).
-     * @param parameters A managed instance key.
+     * @param parameters The requested managed instance key resource state.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
@@ -266,98 +265,94 @@ public interface ManagedInstanceKeysClient {
      * @return a managed instance key.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    ManagedInstanceKeyInner createOrUpdate(
-        String resourceGroupName,
-        String managedInstanceName,
-        String keyName,
-        ManagedInstanceKeyInner parameters,
-        Context context);
+    ManagedInstanceKeyInner createOrUpdate(String resourceGroupName, String managedInstanceName, String keyName,
+        ManagedInstanceKeyInner parameters, Context context);
 
     /**
      * Deletes the managed instance key with the given name.
-     *
+     * 
      * @param resourceGroupName The name of the resource group that contains the resource. You can obtain this value
-     *     from the Azure Resource Manager API or the portal.
+     * from the Azure Resource Manager API or the portal.
      * @param managedInstanceName The name of the managed instance.
      * @param keyName The name of the managed instance key to be deleted.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the completion.
+     * @return the {@link Response} on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    Mono<Response<Flux<ByteBuffer>>> deleteWithResponseAsync(
-        String resourceGroupName, String managedInstanceName, String keyName);
+    Mono<Response<Flux<ByteBuffer>>> deleteWithResponseAsync(String resourceGroupName, String managedInstanceName,
+        String keyName);
 
     /**
      * Deletes the managed instance key with the given name.
-     *
+     * 
      * @param resourceGroupName The name of the resource group that contains the resource. You can obtain this value
-     *     from the Azure Resource Manager API or the portal.
+     * from the Azure Resource Manager API or the portal.
      * @param managedInstanceName The name of the managed instance.
      * @param keyName The name of the managed instance key to be deleted.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the completion.
+     * @return the {@link PollerFlux} for polling of long-running operation.
      */
-    @ServiceMethod(returns = ReturnType.SINGLE)
-    PollerFlux<PollResult<Void>, Void> beginDeleteAsync(
-        String resourceGroupName, String managedInstanceName, String keyName);
+    @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
+    PollerFlux<PollResult<Void>, Void> beginDeleteAsync(String resourceGroupName, String managedInstanceName,
+        String keyName);
 
     /**
      * Deletes the managed instance key with the given name.
-     *
+     * 
      * @param resourceGroupName The name of the resource group that contains the resource. You can obtain this value
-     *     from the Azure Resource Manager API or the portal.
+     * from the Azure Resource Manager API or the portal.
      * @param managedInstanceName The name of the managed instance.
      * @param keyName The name of the managed instance key to be deleted.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the completion.
+     * @return the {@link SyncPoller} for polling of long-running operation.
      */
-    @ServiceMethod(returns = ReturnType.SINGLE)
-    SyncPoller<PollResult<Void>, Void> beginDelete(
-        String resourceGroupName, String managedInstanceName, String keyName);
+    @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
+    SyncPoller<PollResult<Void>, Void> beginDelete(String resourceGroupName, String managedInstanceName,
+        String keyName);
 
     /**
      * Deletes the managed instance key with the given name.
-     *
+     * 
      * @param resourceGroupName The name of the resource group that contains the resource. You can obtain this value
-     *     from the Azure Resource Manager API or the portal.
+     * from the Azure Resource Manager API or the portal.
      * @param managedInstanceName The name of the managed instance.
      * @param keyName The name of the managed instance key to be deleted.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the completion.
+     * @return the {@link SyncPoller} for polling of long-running operation.
      */
-    @ServiceMethod(returns = ReturnType.SINGLE)
-    SyncPoller<PollResult<Void>, Void> beginDelete(
-        String resourceGroupName, String managedInstanceName, String keyName, Context context);
+    @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
+    SyncPoller<PollResult<Void>, Void> beginDelete(String resourceGroupName, String managedInstanceName, String keyName,
+        Context context);
 
     /**
      * Deletes the managed instance key with the given name.
-     *
+     * 
      * @param resourceGroupName The name of the resource group that contains the resource. You can obtain this value
-     *     from the Azure Resource Manager API or the portal.
+     * from the Azure Resource Manager API or the portal.
      * @param managedInstanceName The name of the managed instance.
      * @param keyName The name of the managed instance key to be deleted.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the completion.
+     * @return A {@link Mono} that completes when a successful response is received.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
     Mono<Void> deleteAsync(String resourceGroupName, String managedInstanceName, String keyName);
 
     /**
      * Deletes the managed instance key with the given name.
-     *
+     * 
      * @param resourceGroupName The name of the resource group that contains the resource. You can obtain this value
-     *     from the Azure Resource Manager API or the portal.
+     * from the Azure Resource Manager API or the portal.
      * @param managedInstanceName The name of the managed instance.
      * @param keyName The name of the managed instance key to be deleted.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
@@ -369,9 +364,9 @@ public interface ManagedInstanceKeysClient {
 
     /**
      * Deletes the managed instance key with the given name.
-     *
+     * 
      * @param resourceGroupName The name of the resource group that contains the resource. You can obtain this value
-     *     from the Azure Resource Manager API or the portal.
+     * from the Azure Resource Manager API or the portal.
      * @param managedInstanceName The name of the managed instance.
      * @param keyName The name of the managed instance key to be deleted.
      * @param context The context to associate with this operation.

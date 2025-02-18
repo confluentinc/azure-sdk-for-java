@@ -5,63 +5,52 @@
 package com.azure.resourcemanager.automation.models;
 
 import com.azure.core.annotation.Fluent;
-import com.azure.core.annotation.JsonFlatten;
-import com.azure.core.util.logging.ClientLogger;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.azure.json.JsonReader;
+import com.azure.json.JsonSerializable;
+import com.azure.json.JsonToken;
+import com.azure.json.JsonWriter;
+import com.azure.resourcemanager.automation.fluent.models.DscConfigurationCreateOrUpdateProperties;
+import java.io.IOException;
 import java.util.Map;
 
-/** The parameters supplied to the create or update configuration operation. */
-@JsonFlatten
+/**
+ * The parameters supplied to the create or update configuration operation.
+ */
 @Fluent
-public class DscConfigurationUpdateParameters {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(DscConfigurationUpdateParameters.class);
+public final class DscConfigurationUpdateParameters implements JsonSerializable<DscConfigurationUpdateParameters> {
+    /*
+     * Gets or sets configuration create or update properties.
+     */
+    private DscConfigurationCreateOrUpdateProperties innerProperties;
 
     /*
      * Gets or sets name of the resource.
      */
-    @JsonProperty(value = "name")
     private String name;
 
     /*
      * Gets or sets the tags attached to the resource.
      */
-    @JsonProperty(value = "tags")
     private Map<String, String> tags;
 
-    /*
-     * Gets or sets verbose log option.
+    /**
+     * Creates an instance of DscConfigurationUpdateParameters class.
      */
-    @JsonProperty(value = "properties.logVerbose")
-    private Boolean logVerbose;
+    public DscConfigurationUpdateParameters() {
+    }
 
-    /*
-     * Gets or sets progress log option.
+    /**
+     * Get the innerProperties property: Gets or sets configuration create or update properties.
+     * 
+     * @return the innerProperties value.
      */
-    @JsonProperty(value = "properties.logProgress")
-    private Boolean logProgress;
-
-    /*
-     * Gets or sets the source.
-     */
-    @JsonProperty(value = "properties.source")
-    private ContentSource source;
-
-    /*
-     * Gets or sets the configuration parameters.
-     */
-    @JsonProperty(value = "properties.parameters")
-    private Map<String, DscConfigurationParameter> parameters;
-
-    /*
-     * Gets or sets the description of the configuration.
-     */
-    @JsonProperty(value = "properties.description")
-    private String description;
+    private DscConfigurationCreateOrUpdateProperties innerProperties() {
+        return this.innerProperties;
+    }
 
     /**
      * Get the name property: Gets or sets name of the resource.
-     *
+     * 
      * @return the name value.
      */
     public String name() {
@@ -70,7 +59,7 @@ public class DscConfigurationUpdateParameters {
 
     /**
      * Set the name property: Gets or sets name of the resource.
-     *
+     * 
      * @param name the name value to set.
      * @return the DscConfigurationUpdateParameters object itself.
      */
@@ -81,7 +70,7 @@ public class DscConfigurationUpdateParameters {
 
     /**
      * Get the tags property: Gets or sets the tags attached to the resource.
-     *
+     * 
      * @return the tags value.
      */
     public Map<String, String> tags() {
@@ -90,7 +79,7 @@ public class DscConfigurationUpdateParameters {
 
     /**
      * Set the tags property: Gets or sets the tags attached to the resource.
-     *
+     * 
      * @param tags the tags value to set.
      * @return the DscConfigurationUpdateParameters object itself.
      */
@@ -101,122 +90,172 @@ public class DscConfigurationUpdateParameters {
 
     /**
      * Get the logVerbose property: Gets or sets verbose log option.
-     *
+     * 
      * @return the logVerbose value.
      */
     public Boolean logVerbose() {
-        return this.logVerbose;
+        return this.innerProperties() == null ? null : this.innerProperties().logVerbose();
     }
 
     /**
      * Set the logVerbose property: Gets or sets verbose log option.
-     *
+     * 
      * @param logVerbose the logVerbose value to set.
      * @return the DscConfigurationUpdateParameters object itself.
      */
     public DscConfigurationUpdateParameters withLogVerbose(Boolean logVerbose) {
-        this.logVerbose = logVerbose;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new DscConfigurationCreateOrUpdateProperties();
+        }
+        this.innerProperties().withLogVerbose(logVerbose);
         return this;
     }
 
     /**
      * Get the logProgress property: Gets or sets progress log option.
-     *
+     * 
      * @return the logProgress value.
      */
     public Boolean logProgress() {
-        return this.logProgress;
+        return this.innerProperties() == null ? null : this.innerProperties().logProgress();
     }
 
     /**
      * Set the logProgress property: Gets or sets progress log option.
-     *
+     * 
      * @param logProgress the logProgress value to set.
      * @return the DscConfigurationUpdateParameters object itself.
      */
     public DscConfigurationUpdateParameters withLogProgress(Boolean logProgress) {
-        this.logProgress = logProgress;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new DscConfigurationCreateOrUpdateProperties();
+        }
+        this.innerProperties().withLogProgress(logProgress);
         return this;
     }
 
     /**
      * Get the source property: Gets or sets the source.
-     *
+     * 
      * @return the source value.
      */
     public ContentSource source() {
-        return this.source;
+        return this.innerProperties() == null ? null : this.innerProperties().source();
     }
 
     /**
      * Set the source property: Gets or sets the source.
-     *
+     * 
      * @param source the source value to set.
      * @return the DscConfigurationUpdateParameters object itself.
      */
     public DscConfigurationUpdateParameters withSource(ContentSource source) {
-        this.source = source;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new DscConfigurationCreateOrUpdateProperties();
+        }
+        this.innerProperties().withSource(source);
         return this;
     }
 
     /**
      * Get the parameters property: Gets or sets the configuration parameters.
-     *
+     * 
      * @return the parameters value.
      */
     public Map<String, DscConfigurationParameter> parameters() {
-        return this.parameters;
+        return this.innerProperties() == null ? null : this.innerProperties().parameters();
     }
 
     /**
      * Set the parameters property: Gets or sets the configuration parameters.
-     *
+     * 
      * @param parameters the parameters value to set.
      * @return the DscConfigurationUpdateParameters object itself.
      */
     public DscConfigurationUpdateParameters withParameters(Map<String, DscConfigurationParameter> parameters) {
-        this.parameters = parameters;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new DscConfigurationCreateOrUpdateProperties();
+        }
+        this.innerProperties().withParameters(parameters);
         return this;
     }
 
     /**
      * Get the description property: Gets or sets the description of the configuration.
-     *
+     * 
      * @return the description value.
      */
     public String description() {
-        return this.description;
+        return this.innerProperties() == null ? null : this.innerProperties().description();
     }
 
     /**
      * Set the description property: Gets or sets the description of the configuration.
-     *
+     * 
      * @param description the description value to set.
      * @return the DscConfigurationUpdateParameters object itself.
      */
     public DscConfigurationUpdateParameters withDescription(String description) {
-        this.description = description;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new DscConfigurationCreateOrUpdateProperties();
+        }
+        this.innerProperties().withDescription(description);
         return this;
     }
 
     /**
      * Validates the instance.
-     *
+     * 
      * @throws IllegalArgumentException thrown if the instance is not valid.
      */
     public void validate() {
-        if (source() != null) {
-            source().validate();
+        if (innerProperties() != null) {
+            innerProperties().validate();
         }
-        if (parameters() != null) {
-            parameters()
-                .values()
-                .forEach(
-                    e -> {
-                        if (e != null) {
-                            e.validate();
-                        }
-                    });
-        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public JsonWriter toJson(JsonWriter jsonWriter) throws IOException {
+        jsonWriter.writeStartObject();
+        jsonWriter.writeJsonField("properties", this.innerProperties);
+        jsonWriter.writeStringField("name", this.name);
+        jsonWriter.writeMapField("tags", this.tags, (writer, element) -> writer.writeString(element));
+        return jsonWriter.writeEndObject();
+    }
+
+    /**
+     * Reads an instance of DscConfigurationUpdateParameters from the JsonReader.
+     * 
+     * @param jsonReader The JsonReader being read.
+     * @return An instance of DscConfigurationUpdateParameters if the JsonReader was pointing to an instance of it, or
+     * null if it was pointing to JSON null.
+     * @throws IOException If an error occurs while reading the DscConfigurationUpdateParameters.
+     */
+    public static DscConfigurationUpdateParameters fromJson(JsonReader jsonReader) throws IOException {
+        return jsonReader.readObject(reader -> {
+            DscConfigurationUpdateParameters deserializedDscConfigurationUpdateParameters
+                = new DscConfigurationUpdateParameters();
+            while (reader.nextToken() != JsonToken.END_OBJECT) {
+                String fieldName = reader.getFieldName();
+                reader.nextToken();
+
+                if ("properties".equals(fieldName)) {
+                    deserializedDscConfigurationUpdateParameters.innerProperties
+                        = DscConfigurationCreateOrUpdateProperties.fromJson(reader);
+                } else if ("name".equals(fieldName)) {
+                    deserializedDscConfigurationUpdateParameters.name = reader.getString();
+                } else if ("tags".equals(fieldName)) {
+                    Map<String, String> tags = reader.readMap(reader1 -> reader1.getString());
+                    deserializedDscConfigurationUpdateParameters.tags = tags;
+                } else {
+                    reader.skipChildren();
+                }
+            }
+
+            return deserializedDscConfigurationUpdateParameters;
+        });
     }
 }

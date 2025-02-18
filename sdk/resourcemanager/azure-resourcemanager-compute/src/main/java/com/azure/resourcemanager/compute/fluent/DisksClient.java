@@ -24,16 +24,17 @@ import java.nio.ByteBuffer;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-/** An instance of this class provides access to all the operations defined in DisksClient. */
+/**
+ * An instance of this class provides access to all the operations defined in DisksClient.
+ */
 public interface DisksClient
     extends InnerSupportsGet<DiskInner>, InnerSupportsListing<DiskInner>, InnerSupportsDelete<Void> {
     /**
      * Creates or updates a disk.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param diskName The name of the managed disk that is being created. The name can't be changed after the disk is
-     *     created. Supported characters for the name are a-z, A-Z, 0-9, _ and -. The maximum name length is 80
-     *     characters.
+     * created. Supported characters for the name are a-z, A-Z, 0-9, _ and -. The maximum name length is 80 characters.
      * @param disk Disk object supplied in the body of the Put disk operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
@@ -41,68 +42,64 @@ public interface DisksClient
      * @return disk resource along with {@link Response} on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    Mono<Response<Flux<ByteBuffer>>> createOrUpdateWithResponseAsync(
-        String resourceGroupName, String diskName, DiskInner disk);
+    Mono<Response<Flux<ByteBuffer>>> createOrUpdateWithResponseAsync(String resourceGroupName, String diskName,
+        DiskInner disk);
 
     /**
      * Creates or updates a disk.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param diskName The name of the managed disk that is being created. The name can't be changed after the disk is
-     *     created. Supported characters for the name are a-z, A-Z, 0-9, _ and -. The maximum name length is 80
-     *     characters.
+     * created. Supported characters for the name are a-z, A-Z, 0-9, _ and -. The maximum name length is 80 characters.
      * @param disk Disk object supplied in the body of the Put disk operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return disk resource along with {@link Response} on successful completion of {@link Mono}.
+     * @return the {@link PollerFlux} for polling of disk resource.
      */
     @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
-    PollerFlux<PollResult<DiskInner>, DiskInner> beginCreateOrUpdateAsync(
-        String resourceGroupName, String diskName, DiskInner disk);
+    PollerFlux<PollResult<DiskInner>, DiskInner> beginCreateOrUpdateAsync(String resourceGroupName, String diskName,
+        DiskInner disk);
 
     /**
      * Creates or updates a disk.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param diskName The name of the managed disk that is being created. The name can't be changed after the disk is
-     *     created. Supported characters for the name are a-z, A-Z, 0-9, _ and -. The maximum name length is 80
-     *     characters.
+     * created. Supported characters for the name are a-z, A-Z, 0-9, _ and -. The maximum name length is 80 characters.
      * @param disk Disk object supplied in the body of the Put disk operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return disk resource along with {@link Response} on successful completion of {@link Mono}.
+     * @return the {@link SyncPoller} for polling of disk resource.
      */
     @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
-    SyncPoller<PollResult<DiskInner>, DiskInner> beginCreateOrUpdate(
-        String resourceGroupName, String diskName, DiskInner disk);
+    SyncPoller<PollResult<DiskInner>, DiskInner> beginCreateOrUpdate(String resourceGroupName, String diskName,
+        DiskInner disk);
 
     /**
      * Creates or updates a disk.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param diskName The name of the managed disk that is being created. The name can't be changed after the disk is
-     *     created. Supported characters for the name are a-z, A-Z, 0-9, _ and -. The maximum name length is 80
-     *     characters.
+     * created. Supported characters for the name are a-z, A-Z, 0-9, _ and -. The maximum name length is 80 characters.
      * @param disk Disk object supplied in the body of the Put disk operation.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return disk resource along with {@link Response} on successful completion of {@link Mono}.
+     * @return the {@link SyncPoller} for polling of disk resource.
      */
     @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
-    SyncPoller<PollResult<DiskInner>, DiskInner> beginCreateOrUpdate(
-        String resourceGroupName, String diskName, DiskInner disk, Context context);
+    SyncPoller<PollResult<DiskInner>, DiskInner> beginCreateOrUpdate(String resourceGroupName, String diskName,
+        DiskInner disk, Context context);
 
     /**
      * Creates or updates a disk.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param diskName The name of the managed disk that is being created. The name can't be changed after the disk is
-     *     created. Supported characters for the name are a-z, A-Z, 0-9, _ and -. The maximum name length is 80
-     *     characters.
+     * created. Supported characters for the name are a-z, A-Z, 0-9, _ and -. The maximum name length is 80 characters.
      * @param disk Disk object supplied in the body of the Put disk operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
@@ -114,11 +111,10 @@ public interface DisksClient
 
     /**
      * Creates or updates a disk.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param diskName The name of the managed disk that is being created. The name can't be changed after the disk is
-     *     created. Supported characters for the name are a-z, A-Z, 0-9, _ and -. The maximum name length is 80
-     *     characters.
+     * created. Supported characters for the name are a-z, A-Z, 0-9, _ and -. The maximum name length is 80 characters.
      * @param disk Disk object supplied in the body of the Put disk operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
@@ -130,11 +126,10 @@ public interface DisksClient
 
     /**
      * Creates or updates a disk.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param diskName The name of the managed disk that is being created. The name can't be changed after the disk is
-     *     created. Supported characters for the name are a-z, A-Z, 0-9, _ and -. The maximum name length is 80
-     *     characters.
+     * created. Supported characters for the name are a-z, A-Z, 0-9, _ and -. The maximum name length is 80 characters.
      * @param disk Disk object supplied in the body of the Put disk operation.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
@@ -147,11 +142,10 @@ public interface DisksClient
 
     /**
      * Updates (patches) a disk.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param diskName The name of the managed disk that is being created. The name can't be changed after the disk is
-     *     created. Supported characters for the name are a-z, A-Z, 0-9, _ and -. The maximum name length is 80
-     *     characters.
+     * created. Supported characters for the name are a-z, A-Z, 0-9, _ and -. The maximum name length is 80 characters.
      * @param disk Disk object supplied in the body of the Patch disk operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
@@ -159,68 +153,64 @@ public interface DisksClient
      * @return disk resource along with {@link Response} on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    Mono<Response<Flux<ByteBuffer>>> updateWithResponseAsync(
-        String resourceGroupName, String diskName, DiskUpdate disk);
+    Mono<Response<Flux<ByteBuffer>>> updateWithResponseAsync(String resourceGroupName, String diskName,
+        DiskUpdate disk);
 
     /**
      * Updates (patches) a disk.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param diskName The name of the managed disk that is being created. The name can't be changed after the disk is
-     *     created. Supported characters for the name are a-z, A-Z, 0-9, _ and -. The maximum name length is 80
-     *     characters.
+     * created. Supported characters for the name are a-z, A-Z, 0-9, _ and -. The maximum name length is 80 characters.
      * @param disk Disk object supplied in the body of the Patch disk operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return disk resource along with {@link Response} on successful completion of {@link Mono}.
+     * @return the {@link PollerFlux} for polling of disk resource.
      */
     @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
-    PollerFlux<PollResult<DiskInner>, DiskInner> beginUpdateAsync(
-        String resourceGroupName, String diskName, DiskUpdate disk);
+    PollerFlux<PollResult<DiskInner>, DiskInner> beginUpdateAsync(String resourceGroupName, String diskName,
+        DiskUpdate disk);
 
     /**
      * Updates (patches) a disk.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param diskName The name of the managed disk that is being created. The name can't be changed after the disk is
-     *     created. Supported characters for the name are a-z, A-Z, 0-9, _ and -. The maximum name length is 80
-     *     characters.
+     * created. Supported characters for the name are a-z, A-Z, 0-9, _ and -. The maximum name length is 80 characters.
      * @param disk Disk object supplied in the body of the Patch disk operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return disk resource along with {@link Response} on successful completion of {@link Mono}.
+     * @return the {@link SyncPoller} for polling of disk resource.
      */
     @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
-    SyncPoller<PollResult<DiskInner>, DiskInner> beginUpdate(
-        String resourceGroupName, String diskName, DiskUpdate disk);
+    SyncPoller<PollResult<DiskInner>, DiskInner> beginUpdate(String resourceGroupName, String diskName,
+        DiskUpdate disk);
 
     /**
      * Updates (patches) a disk.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param diskName The name of the managed disk that is being created. The name can't be changed after the disk is
-     *     created. Supported characters for the name are a-z, A-Z, 0-9, _ and -. The maximum name length is 80
-     *     characters.
+     * created. Supported characters for the name are a-z, A-Z, 0-9, _ and -. The maximum name length is 80 characters.
      * @param disk Disk object supplied in the body of the Patch disk operation.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return disk resource along with {@link Response} on successful completion of {@link Mono}.
+     * @return the {@link SyncPoller} for polling of disk resource.
      */
     @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
-    SyncPoller<PollResult<DiskInner>, DiskInner> beginUpdate(
-        String resourceGroupName, String diskName, DiskUpdate disk, Context context);
+    SyncPoller<PollResult<DiskInner>, DiskInner> beginUpdate(String resourceGroupName, String diskName, DiskUpdate disk,
+        Context context);
 
     /**
      * Updates (patches) a disk.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param diskName The name of the managed disk that is being created. The name can't be changed after the disk is
-     *     created. Supported characters for the name are a-z, A-Z, 0-9, _ and -. The maximum name length is 80
-     *     characters.
+     * created. Supported characters for the name are a-z, A-Z, 0-9, _ and -. The maximum name length is 80 characters.
      * @param disk Disk object supplied in the body of the Patch disk operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
@@ -232,11 +222,10 @@ public interface DisksClient
 
     /**
      * Updates (patches) a disk.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param diskName The name of the managed disk that is being created. The name can't be changed after the disk is
-     *     created. Supported characters for the name are a-z, A-Z, 0-9, _ and -. The maximum name length is 80
-     *     characters.
+     * created. Supported characters for the name are a-z, A-Z, 0-9, _ and -. The maximum name length is 80 characters.
      * @param disk Disk object supplied in the body of the Patch disk operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
@@ -248,11 +237,10 @@ public interface DisksClient
 
     /**
      * Updates (patches) a disk.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param diskName The name of the managed disk that is being created. The name can't be changed after the disk is
-     *     created. Supported characters for the name are a-z, A-Z, 0-9, _ and -. The maximum name length is 80
-     *     characters.
+     * created. Supported characters for the name are a-z, A-Z, 0-9, _ and -. The maximum name length is 80 characters.
      * @param disk Disk object supplied in the body of the Patch disk operation.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
@@ -265,11 +253,10 @@ public interface DisksClient
 
     /**
      * Gets information about a disk.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param diskName The name of the managed disk that is being created. The name can't be changed after the disk is
-     *     created. Supported characters for the name are a-z, A-Z, 0-9, _ and -. The maximum name length is 80
-     *     characters.
+     * created. Supported characters for the name are a-z, A-Z, 0-9, _ and -. The maximum name length is 80 characters.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
@@ -280,11 +267,10 @@ public interface DisksClient
 
     /**
      * Gets information about a disk.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param diskName The name of the managed disk that is being created. The name can't be changed after the disk is
-     *     created. Supported characters for the name are a-z, A-Z, 0-9, _ and -. The maximum name length is 80
-     *     characters.
+     * created. Supported characters for the name are a-z, A-Z, 0-9, _ and -. The maximum name length is 80 characters.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
@@ -295,26 +281,10 @@ public interface DisksClient
 
     /**
      * Gets information about a disk.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param diskName The name of the managed disk that is being created. The name can't be changed after the disk is
-     *     created. Supported characters for the name are a-z, A-Z, 0-9, _ and -. The maximum name length is 80
-     *     characters.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return information about a disk.
-     */
-    @ServiceMethod(returns = ReturnType.SINGLE)
-    DiskInner getByResourceGroup(String resourceGroupName, String diskName);
-
-    /**
-     * Gets information about a disk.
-     *
-     * @param resourceGroupName The name of the resource group.
-     * @param diskName The name of the managed disk that is being created. The name can't be changed after the disk is
-     *     created. Supported characters for the name are a-z, A-Z, 0-9, _ and -. The maximum name length is 80
-     *     characters.
+     * created. Supported characters for the name are a-z, A-Z, 0-9, _ and -. The maximum name length is 80 characters.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
@@ -325,12 +295,25 @@ public interface DisksClient
     Response<DiskInner> getByResourceGroupWithResponse(String resourceGroupName, String diskName, Context context);
 
     /**
-     * Deletes a disk.
-     *
+     * Gets information about a disk.
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param diskName The name of the managed disk that is being created. The name can't be changed after the disk is
-     *     created. Supported characters for the name are a-z, A-Z, 0-9, _ and -. The maximum name length is 80
-     *     characters.
+     * created. Supported characters for the name are a-z, A-Z, 0-9, _ and -. The maximum name length is 80 characters.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return information about a disk.
+     */
+    @ServiceMethod(returns = ReturnType.SINGLE)
+    DiskInner getByResourceGroup(String resourceGroupName, String diskName);
+
+    /**
+     * Deletes a disk.
+     * 
+     * @param resourceGroupName The name of the resource group.
+     * @param diskName The name of the managed disk that is being created. The name can't be changed after the disk is
+     * created. Supported characters for the name are a-z, A-Z, 0-9, _ and -. The maximum name length is 80 characters.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
@@ -341,57 +324,53 @@ public interface DisksClient
 
     /**
      * Deletes a disk.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param diskName The name of the managed disk that is being created. The name can't be changed after the disk is
-     *     created. Supported characters for the name are a-z, A-Z, 0-9, _ and -. The maximum name length is 80
-     *     characters.
+     * created. Supported characters for the name are a-z, A-Z, 0-9, _ and -. The maximum name length is 80 characters.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the {@link Response} on successful completion of {@link Mono}.
+     * @return the {@link PollerFlux} for polling of long-running operation.
      */
     @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
     PollerFlux<PollResult<Void>, Void> beginDeleteAsync(String resourceGroupName, String diskName);
 
     /**
      * Deletes a disk.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param diskName The name of the managed disk that is being created. The name can't be changed after the disk is
-     *     created. Supported characters for the name are a-z, A-Z, 0-9, _ and -. The maximum name length is 80
-     *     characters.
+     * created. Supported characters for the name are a-z, A-Z, 0-9, _ and -. The maximum name length is 80 characters.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the {@link Response} on successful completion of {@link Mono}.
+     * @return the {@link SyncPoller} for polling of long-running operation.
      */
     @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
     SyncPoller<PollResult<Void>, Void> beginDelete(String resourceGroupName, String diskName);
 
     /**
      * Deletes a disk.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param diskName The name of the managed disk that is being created. The name can't be changed after the disk is
-     *     created. Supported characters for the name are a-z, A-Z, 0-9, _ and -. The maximum name length is 80
-     *     characters.
+     * created. Supported characters for the name are a-z, A-Z, 0-9, _ and -. The maximum name length is 80 characters.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the {@link Response} on successful completion of {@link Mono}.
+     * @return the {@link SyncPoller} for polling of long-running operation.
      */
     @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
     SyncPoller<PollResult<Void>, Void> beginDelete(String resourceGroupName, String diskName, Context context);
 
     /**
      * Deletes a disk.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param diskName The name of the managed disk that is being created. The name can't be changed after the disk is
-     *     created. Supported characters for the name are a-z, A-Z, 0-9, _ and -. The maximum name length is 80
-     *     characters.
+     * created. Supported characters for the name are a-z, A-Z, 0-9, _ and -. The maximum name length is 80 characters.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
@@ -402,11 +381,10 @@ public interface DisksClient
 
     /**
      * Deletes a disk.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param diskName The name of the managed disk that is being created. The name can't be changed after the disk is
-     *     created. Supported characters for the name are a-z, A-Z, 0-9, _ and -. The maximum name length is 80
-     *     characters.
+     * created. Supported characters for the name are a-z, A-Z, 0-9, _ and -. The maximum name length is 80 characters.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
@@ -416,11 +394,10 @@ public interface DisksClient
 
     /**
      * Deletes a disk.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param diskName The name of the managed disk that is being created. The name can't be changed after the disk is
-     *     created. Supported characters for the name are a-z, A-Z, 0-9, _ and -. The maximum name length is 80
-     *     characters.
+     * created. Supported characters for the name are a-z, A-Z, 0-9, _ and -. The maximum name length is 80 characters.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
@@ -431,80 +408,79 @@ public interface DisksClient
 
     /**
      * Lists all the disks under a resource group.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the List Disks operation response.
+     * @return the List Disks operation response as paginated response with {@link PagedFlux}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
     PagedFlux<DiskInner> listByResourceGroupAsync(String resourceGroupName);
 
     /**
      * Lists all the disks under a resource group.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the List Disks operation response.
+     * @return the List Disks operation response as paginated response with {@link PagedIterable}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
     PagedIterable<DiskInner> listByResourceGroup(String resourceGroupName);
 
     /**
      * Lists all the disks under a resource group.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the List Disks operation response.
+     * @return the List Disks operation response as paginated response with {@link PagedIterable}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
     PagedIterable<DiskInner> listByResourceGroup(String resourceGroupName, Context context);
 
     /**
      * Lists all the disks under a subscription.
-     *
+     * 
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the List Disks operation response.
+     * @return the List Disks operation response as paginated response with {@link PagedFlux}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
     PagedFlux<DiskInner> listAsync();
 
     /**
      * Lists all the disks under a subscription.
-     *
+     * 
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the List Disks operation response.
+     * @return the List Disks operation response as paginated response with {@link PagedIterable}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
     PagedIterable<DiskInner> list();
 
     /**
      * Lists all the disks under a subscription.
-     *
+     * 
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the List Disks operation response.
+     * @return the List Disks operation response as paginated response with {@link PagedIterable}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
     PagedIterable<DiskInner> list(Context context);
 
     /**
      * Grants access to a disk.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param diskName The name of the managed disk that is being created. The name can't be changed after the disk is
-     *     created. Supported characters for the name are a-z, A-Z, 0-9, _ and -. The maximum name length is 80
-     *     characters.
+     * created. Supported characters for the name are a-z, A-Z, 0-9, _ and -. The maximum name length is 80 characters.
      * @param grantAccessData Access data object supplied in the body of the get disk access operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
@@ -512,68 +488,64 @@ public interface DisksClient
      * @return a disk access SAS uri along with {@link Response} on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    Mono<Response<Flux<ByteBuffer>>> grantAccessWithResponseAsync(
-        String resourceGroupName, String diskName, GrantAccessData grantAccessData);
+    Mono<Response<Flux<ByteBuffer>>> grantAccessWithResponseAsync(String resourceGroupName, String diskName,
+        GrantAccessData grantAccessData);
 
     /**
      * Grants access to a disk.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param diskName The name of the managed disk that is being created. The name can't be changed after the disk is
-     *     created. Supported characters for the name are a-z, A-Z, 0-9, _ and -. The maximum name length is 80
-     *     characters.
+     * created. Supported characters for the name are a-z, A-Z, 0-9, _ and -. The maximum name length is 80 characters.
      * @param grantAccessData Access data object supplied in the body of the get disk access operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return a disk access SAS uri along with {@link Response} on successful completion of {@link Mono}.
+     * @return the {@link PollerFlux} for polling of a disk access SAS uri.
      */
     @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
-    PollerFlux<PollResult<AccessUriInner>, AccessUriInner> beginGrantAccessAsync(
-        String resourceGroupName, String diskName, GrantAccessData grantAccessData);
+    PollerFlux<PollResult<AccessUriInner>, AccessUriInner> beginGrantAccessAsync(String resourceGroupName,
+        String diskName, GrantAccessData grantAccessData);
 
     /**
      * Grants access to a disk.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param diskName The name of the managed disk that is being created. The name can't be changed after the disk is
-     *     created. Supported characters for the name are a-z, A-Z, 0-9, _ and -. The maximum name length is 80
-     *     characters.
+     * created. Supported characters for the name are a-z, A-Z, 0-9, _ and -. The maximum name length is 80 characters.
      * @param grantAccessData Access data object supplied in the body of the get disk access operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return a disk access SAS uri along with {@link Response} on successful completion of {@link Mono}.
+     * @return the {@link SyncPoller} for polling of a disk access SAS uri.
      */
     @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
-    SyncPoller<PollResult<AccessUriInner>, AccessUriInner> beginGrantAccess(
-        String resourceGroupName, String diskName, GrantAccessData grantAccessData);
+    SyncPoller<PollResult<AccessUriInner>, AccessUriInner> beginGrantAccess(String resourceGroupName, String diskName,
+        GrantAccessData grantAccessData);
 
     /**
      * Grants access to a disk.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param diskName The name of the managed disk that is being created. The name can't be changed after the disk is
-     *     created. Supported characters for the name are a-z, A-Z, 0-9, _ and -. The maximum name length is 80
-     *     characters.
+     * created. Supported characters for the name are a-z, A-Z, 0-9, _ and -. The maximum name length is 80 characters.
      * @param grantAccessData Access data object supplied in the body of the get disk access operation.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return a disk access SAS uri along with {@link Response} on successful completion of {@link Mono}.
+     * @return the {@link SyncPoller} for polling of a disk access SAS uri.
      */
     @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
-    SyncPoller<PollResult<AccessUriInner>, AccessUriInner> beginGrantAccess(
-        String resourceGroupName, String diskName, GrantAccessData grantAccessData, Context context);
+    SyncPoller<PollResult<AccessUriInner>, AccessUriInner> beginGrantAccess(String resourceGroupName, String diskName,
+        GrantAccessData grantAccessData, Context context);
 
     /**
      * Grants access to a disk.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param diskName The name of the managed disk that is being created. The name can't be changed after the disk is
-     *     created. Supported characters for the name are a-z, A-Z, 0-9, _ and -. The maximum name length is 80
-     *     characters.
+     * created. Supported characters for the name are a-z, A-Z, 0-9, _ and -. The maximum name length is 80 characters.
      * @param grantAccessData Access data object supplied in the body of the get disk access operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
@@ -585,11 +557,10 @@ public interface DisksClient
 
     /**
      * Grants access to a disk.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param diskName The name of the managed disk that is being created. The name can't be changed after the disk is
-     *     created. Supported characters for the name are a-z, A-Z, 0-9, _ and -. The maximum name length is 80
-     *     characters.
+     * created. Supported characters for the name are a-z, A-Z, 0-9, _ and -. The maximum name length is 80 characters.
      * @param grantAccessData Access data object supplied in the body of the get disk access operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
@@ -601,11 +572,10 @@ public interface DisksClient
 
     /**
      * Grants access to a disk.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param diskName The name of the managed disk that is being created. The name can't be changed after the disk is
-     *     created. Supported characters for the name are a-z, A-Z, 0-9, _ and -. The maximum name length is 80
-     *     characters.
+     * created. Supported characters for the name are a-z, A-Z, 0-9, _ and -. The maximum name length is 80 characters.
      * @param grantAccessData Access data object supplied in the body of the get disk access operation.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
@@ -614,16 +584,15 @@ public interface DisksClient
      * @return a disk access SAS uri.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    AccessUriInner grantAccess(
-        String resourceGroupName, String diskName, GrantAccessData grantAccessData, Context context);
+    AccessUriInner grantAccess(String resourceGroupName, String diskName, GrantAccessData grantAccessData,
+        Context context);
 
     /**
      * Revokes access to a disk.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param diskName The name of the managed disk that is being created. The name can't be changed after the disk is
-     *     created. Supported characters for the name are a-z, A-Z, 0-9, _ and -. The maximum name length is 80
-     *     characters.
+     * created. Supported characters for the name are a-z, A-Z, 0-9, _ and -. The maximum name length is 80 characters.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
@@ -634,57 +603,53 @@ public interface DisksClient
 
     /**
      * Revokes access to a disk.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param diskName The name of the managed disk that is being created. The name can't be changed after the disk is
-     *     created. Supported characters for the name are a-z, A-Z, 0-9, _ and -. The maximum name length is 80
-     *     characters.
+     * created. Supported characters for the name are a-z, A-Z, 0-9, _ and -. The maximum name length is 80 characters.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the {@link Response} on successful completion of {@link Mono}.
+     * @return the {@link PollerFlux} for polling of long-running operation.
      */
     @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
     PollerFlux<PollResult<Void>, Void> beginRevokeAccessAsync(String resourceGroupName, String diskName);
 
     /**
      * Revokes access to a disk.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param diskName The name of the managed disk that is being created. The name can't be changed after the disk is
-     *     created. Supported characters for the name are a-z, A-Z, 0-9, _ and -. The maximum name length is 80
-     *     characters.
+     * created. Supported characters for the name are a-z, A-Z, 0-9, _ and -. The maximum name length is 80 characters.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the {@link Response} on successful completion of {@link Mono}.
+     * @return the {@link SyncPoller} for polling of long-running operation.
      */
     @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
     SyncPoller<PollResult<Void>, Void> beginRevokeAccess(String resourceGroupName, String diskName);
 
     /**
      * Revokes access to a disk.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param diskName The name of the managed disk that is being created. The name can't be changed after the disk is
-     *     created. Supported characters for the name are a-z, A-Z, 0-9, _ and -. The maximum name length is 80
-     *     characters.
+     * created. Supported characters for the name are a-z, A-Z, 0-9, _ and -. The maximum name length is 80 characters.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the {@link Response} on successful completion of {@link Mono}.
+     * @return the {@link SyncPoller} for polling of long-running operation.
      */
     @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
     SyncPoller<PollResult<Void>, Void> beginRevokeAccess(String resourceGroupName, String diskName, Context context);
 
     /**
      * Revokes access to a disk.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param diskName The name of the managed disk that is being created. The name can't be changed after the disk is
-     *     created. Supported characters for the name are a-z, A-Z, 0-9, _ and -. The maximum name length is 80
-     *     characters.
+     * created. Supported characters for the name are a-z, A-Z, 0-9, _ and -. The maximum name length is 80 characters.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
@@ -695,11 +660,10 @@ public interface DisksClient
 
     /**
      * Revokes access to a disk.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param diskName The name of the managed disk that is being created. The name can't be changed after the disk is
-     *     created. Supported characters for the name are a-z, A-Z, 0-9, _ and -. The maximum name length is 80
-     *     characters.
+     * created. Supported characters for the name are a-z, A-Z, 0-9, _ and -. The maximum name length is 80 characters.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
@@ -709,11 +673,10 @@ public interface DisksClient
 
     /**
      * Revokes access to a disk.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param diskName The name of the managed disk that is being created. The name can't be changed after the disk is
-     *     created. Supported characters for the name are a-z, A-Z, 0-9, _ and -. The maximum name length is 80
-     *     characters.
+     * created. Supported characters for the name are a-z, A-Z, 0-9, _ and -. The maximum name length is 80 characters.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.

@@ -4,18 +4,25 @@
 
 package com.azure.resourcemanager.batch.models;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonValue;
-
-/** Defines values for DiskEncryptionTarget. */
+/**
+ * The disks to encrypt on each compute node.
+ * 
+ * If omitted, no disks on the compute nodes in the pool will be encrypted.
+ */
 public enum DiskEncryptionTarget {
-    /** Enum value OsDisk. */
+    /**
+     * Enum value OsDisk.
+     */
     OS_DISK("OsDisk"),
 
-    /** Enum value TemporaryDisk. */
+    /**
+     * Enum value TemporaryDisk.
+     */
     TEMPORARY_DISK("TemporaryDisk");
 
-    /** The actual serialized value for a DiskEncryptionTarget instance. */
+    /**
+     * The actual serialized value for a DiskEncryptionTarget instance.
+     */
     private final String value;
 
     DiskEncryptionTarget(String value) {
@@ -24,12 +31,14 @@ public enum DiskEncryptionTarget {
 
     /**
      * Parses a serialized value to a DiskEncryptionTarget instance.
-     *
+     * 
      * @param value the serialized value to parse.
      * @return the parsed DiskEncryptionTarget object, or null if unable to parse.
      */
-    @JsonCreator
     public static DiskEncryptionTarget fromString(String value) {
+        if (value == null) {
+            return null;
+        }
         DiskEncryptionTarget[] items = DiskEncryptionTarget.values();
         for (DiskEncryptionTarget item : items) {
             if (item.toString().equalsIgnoreCase(value)) {
@@ -39,7 +48,9 @@ public enum DiskEncryptionTarget {
         return null;
     }
 
-    @JsonValue
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String toString() {
         return this.value;

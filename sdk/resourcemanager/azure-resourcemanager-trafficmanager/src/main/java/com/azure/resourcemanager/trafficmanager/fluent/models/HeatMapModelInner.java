@@ -5,149 +5,62 @@
 package com.azure.resourcemanager.trafficmanager.fluent.models;
 
 import com.azure.core.annotation.Fluent;
-import com.azure.core.annotation.JsonFlatten;
 import com.azure.core.management.ProxyResource;
-import com.azure.core.util.logging.ClientLogger;
+import com.azure.json.JsonReader;
+import com.azure.json.JsonToken;
+import com.azure.json.JsonWriter;
 import com.azure.resourcemanager.trafficmanager.models.HeatMapEndpoint;
 import com.azure.resourcemanager.trafficmanager.models.TrafficFlow;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import java.io.IOException;
 import java.time.OffsetDateTime;
 import java.util.List;
 
-/** Class representing a Traffic Manager HeatMap. */
-@JsonFlatten
+/**
+ * Class representing a Traffic Manager HeatMap.
+ */
 @Fluent
-public class HeatMapModelInner extends ProxyResource {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(HeatMapModelInner.class);
-
+public final class HeatMapModelInner extends ProxyResource {
     /*
-     * The beginning of the time window for this HeatMap, inclusive.
+     * The properties of the Traffic Manager HeatMap.
      */
-    @JsonProperty(value = "properties.startTime")
-    private OffsetDateTime startTime;
-
-    /*
-     * The ending of the time window for this HeatMap, exclusive.
-     */
-    @JsonProperty(value = "properties.endTime")
-    private OffsetDateTime endTime;
-
-    /*
-     * The endpoints used in this HeatMap calculation.
-     */
-    @JsonProperty(value = "properties.endpoints")
-    private List<HeatMapEndpoint> endpoints;
-
-    /*
-     * The traffic flows produced in this HeatMap calculation.
-     */
-    @JsonProperty(value = "properties.trafficFlows")
-    private List<TrafficFlow> trafficFlows;
+    private HeatMapProperties innerProperties;
 
     /*
      * Fully qualified resource Id for the resource. Ex -
-     * /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/trafficManagerProfiles/{resourceName}
+     * /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/
+     * trafficManagerProfiles/{resourceName}
      */
-    @JsonProperty(value = "id")
     private String id;
 
     /*
      * The name of the resource
      */
-    @JsonProperty(value = "name")
     private String name;
 
     /*
      * The type of the resource. Ex- Microsoft.Network/trafficManagerProfiles.
      */
-    @JsonProperty(value = "type")
     private String type;
 
     /**
-     * Get the startTime property: The beginning of the time window for this HeatMap, inclusive.
-     *
-     * @return the startTime value.
+     * Creates an instance of HeatMapModelInner class.
      */
-    public OffsetDateTime startTime() {
-        return this.startTime;
+    public HeatMapModelInner() {
     }
 
     /**
-     * Set the startTime property: The beginning of the time window for this HeatMap, inclusive.
-     *
-     * @param startTime the startTime value to set.
-     * @return the HeatMapModelInner object itself.
+     * Get the innerProperties property: The properties of the Traffic Manager HeatMap.
+     * 
+     * @return the innerProperties value.
      */
-    public HeatMapModelInner withStartTime(OffsetDateTime startTime) {
-        this.startTime = startTime;
-        return this;
-    }
-
-    /**
-     * Get the endTime property: The ending of the time window for this HeatMap, exclusive.
-     *
-     * @return the endTime value.
-     */
-    public OffsetDateTime endTime() {
-        return this.endTime;
-    }
-
-    /**
-     * Set the endTime property: The ending of the time window for this HeatMap, exclusive.
-     *
-     * @param endTime the endTime value to set.
-     * @return the HeatMapModelInner object itself.
-     */
-    public HeatMapModelInner withEndTime(OffsetDateTime endTime) {
-        this.endTime = endTime;
-        return this;
-    }
-
-    /**
-     * Get the endpoints property: The endpoints used in this HeatMap calculation.
-     *
-     * @return the endpoints value.
-     */
-    public List<HeatMapEndpoint> endpoints() {
-        return this.endpoints;
-    }
-
-    /**
-     * Set the endpoints property: The endpoints used in this HeatMap calculation.
-     *
-     * @param endpoints the endpoints value to set.
-     * @return the HeatMapModelInner object itself.
-     */
-    public HeatMapModelInner withEndpoints(List<HeatMapEndpoint> endpoints) {
-        this.endpoints = endpoints;
-        return this;
-    }
-
-    /**
-     * Get the trafficFlows property: The traffic flows produced in this HeatMap calculation.
-     *
-     * @return the trafficFlows value.
-     */
-    public List<TrafficFlow> trafficFlows() {
-        return this.trafficFlows;
-    }
-
-    /**
-     * Set the trafficFlows property: The traffic flows produced in this HeatMap calculation.
-     *
-     * @param trafficFlows the trafficFlows value to set.
-     * @return the HeatMapModelInner object itself.
-     */
-    public HeatMapModelInner withTrafficFlows(List<TrafficFlow> trafficFlows) {
-        this.trafficFlows = trafficFlows;
-        return this;
+    private HeatMapProperties innerProperties() {
+        return this.innerProperties;
     }
 
     /**
      * Get the id property: Fully qualified resource Id for the resource. Ex -
      * /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/trafficManagerProfiles/{resourceName}.
-     *
+     * 
      * @return the id value.
      */
     public String id() {
@@ -157,7 +70,7 @@ public class HeatMapModelInner extends ProxyResource {
     /**
      * Set the id property: Fully qualified resource Id for the resource. Ex -
      * /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/trafficManagerProfiles/{resourceName}.
-     *
+     * 
      * @param id the id value to set.
      * @return the HeatMapModelInner object itself.
      */
@@ -168,7 +81,7 @@ public class HeatMapModelInner extends ProxyResource {
 
     /**
      * Get the name property: The name of the resource.
-     *
+     * 
      * @return the name value.
      */
     public String name() {
@@ -177,7 +90,7 @@ public class HeatMapModelInner extends ProxyResource {
 
     /**
      * Set the name property: The name of the resource.
-     *
+     * 
      * @param name the name value to set.
      * @return the HeatMapModelInner object itself.
      */
@@ -188,7 +101,7 @@ public class HeatMapModelInner extends ProxyResource {
 
     /**
      * Get the type property: The type of the resource. Ex- Microsoft.Network/trafficManagerProfiles.
-     *
+     * 
      * @return the type value.
      */
     public String type() {
@@ -197,7 +110,7 @@ public class HeatMapModelInner extends ProxyResource {
 
     /**
      * Set the type property: The type of the resource. Ex- Microsoft.Network/trafficManagerProfiles.
-     *
+     * 
      * @param type the type value to set.
      * @return the HeatMapModelInner object itself.
      */
@@ -207,16 +120,151 @@ public class HeatMapModelInner extends ProxyResource {
     }
 
     /**
+     * Get the startTime property: The beginning of the time window for this HeatMap, inclusive.
+     * 
+     * @return the startTime value.
+     */
+    public OffsetDateTime startTime() {
+        return this.innerProperties() == null ? null : this.innerProperties().startTime();
+    }
+
+    /**
+     * Set the startTime property: The beginning of the time window for this HeatMap, inclusive.
+     * 
+     * @param startTime the startTime value to set.
+     * @return the HeatMapModelInner object itself.
+     */
+    public HeatMapModelInner withStartTime(OffsetDateTime startTime) {
+        if (this.innerProperties() == null) {
+            this.innerProperties = new HeatMapProperties();
+        }
+        this.innerProperties().withStartTime(startTime);
+        return this;
+    }
+
+    /**
+     * Get the endTime property: The ending of the time window for this HeatMap, exclusive.
+     * 
+     * @return the endTime value.
+     */
+    public OffsetDateTime endTime() {
+        return this.innerProperties() == null ? null : this.innerProperties().endTime();
+    }
+
+    /**
+     * Set the endTime property: The ending of the time window for this HeatMap, exclusive.
+     * 
+     * @param endTime the endTime value to set.
+     * @return the HeatMapModelInner object itself.
+     */
+    public HeatMapModelInner withEndTime(OffsetDateTime endTime) {
+        if (this.innerProperties() == null) {
+            this.innerProperties = new HeatMapProperties();
+        }
+        this.innerProperties().withEndTime(endTime);
+        return this;
+    }
+
+    /**
+     * Get the endpoints property: The endpoints used in this HeatMap calculation.
+     * 
+     * @return the endpoints value.
+     */
+    public List<HeatMapEndpoint> endpoints() {
+        return this.innerProperties() == null ? null : this.innerProperties().endpoints();
+    }
+
+    /**
+     * Set the endpoints property: The endpoints used in this HeatMap calculation.
+     * 
+     * @param endpoints the endpoints value to set.
+     * @return the HeatMapModelInner object itself.
+     */
+    public HeatMapModelInner withEndpoints(List<HeatMapEndpoint> endpoints) {
+        if (this.innerProperties() == null) {
+            this.innerProperties = new HeatMapProperties();
+        }
+        this.innerProperties().withEndpoints(endpoints);
+        return this;
+    }
+
+    /**
+     * Get the trafficFlows property: The traffic flows produced in this HeatMap calculation.
+     * 
+     * @return the trafficFlows value.
+     */
+    public List<TrafficFlow> trafficFlows() {
+        return this.innerProperties() == null ? null : this.innerProperties().trafficFlows();
+    }
+
+    /**
+     * Set the trafficFlows property: The traffic flows produced in this HeatMap calculation.
+     * 
+     * @param trafficFlows the trafficFlows value to set.
+     * @return the HeatMapModelInner object itself.
+     */
+    public HeatMapModelInner withTrafficFlows(List<TrafficFlow> trafficFlows) {
+        if (this.innerProperties() == null) {
+            this.innerProperties = new HeatMapProperties();
+        }
+        this.innerProperties().withTrafficFlows(trafficFlows);
+        return this;
+    }
+
+    /**
      * Validates the instance.
-     *
+     * 
      * @throws IllegalArgumentException thrown if the instance is not valid.
      */
     public void validate() {
-        if (endpoints() != null) {
-            endpoints().forEach(e -> e.validate());
+        if (innerProperties() != null) {
+            innerProperties().validate();
         }
-        if (trafficFlows() != null) {
-            trafficFlows().forEach(e -> e.validate());
-        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public JsonWriter toJson(JsonWriter jsonWriter) throws IOException {
+        jsonWriter.writeStartObject();
+        jsonWriter.writeJsonField("properties", this.innerProperties);
+        jsonWriter.writeStringField("id", this.id);
+        jsonWriter.writeStringField("name", this.name);
+        jsonWriter.writeStringField("type", this.type);
+        return jsonWriter.writeEndObject();
+    }
+
+    /**
+     * Reads an instance of HeatMapModelInner from the JsonReader.
+     * 
+     * @param jsonReader The JsonReader being read.
+     * @return An instance of HeatMapModelInner if the JsonReader was pointing to an instance of it, or null if it was
+     * pointing to JSON null.
+     * @throws IllegalStateException If the deserialized JSON object was missing any required properties.
+     * @throws IOException If an error occurs while reading the HeatMapModelInner.
+     */
+    public static HeatMapModelInner fromJson(JsonReader jsonReader) throws IOException {
+        return jsonReader.readObject(reader -> {
+            HeatMapModelInner deserializedHeatMapModelInner = new HeatMapModelInner();
+            while (reader.nextToken() != JsonToken.END_OBJECT) {
+                String fieldName = reader.getFieldName();
+                reader.nextToken();
+
+                if ("properties".equals(fieldName)) {
+                    deserializedHeatMapModelInner.innerProperties = HeatMapProperties.fromJson(reader);
+                } else if ("id".equals(fieldName)) {
+                    deserializedHeatMapModelInner.id = reader.getString();
+                } else if ("name".equals(fieldName)) {
+                    deserializedHeatMapModelInner.name = reader.getString();
+                } else if ("type".equals(fieldName)) {
+                    deserializedHeatMapModelInner.type = reader.getString();
+                } else {
+                    reader.skipChildren();
+                }
+            }
+
+            return deserializedHeatMapModelInner;
+        });
     }
 }

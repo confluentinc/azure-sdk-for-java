@@ -62,7 +62,7 @@ public class JobManagerTask {
      * "/bin/sh -c MyCommand" in Linux. If the command line refers to file
      * paths, it should use a relative path (relative to the Task working
      * directory), or use the Batch provided environment variable
-     * (https://docs.microsoft.com/en-us/azure/batch/batch-compute-node-environment-variables).
+     * (https://docs.microsoft.com/azure/batch/batch-compute-node-environment-variables).
      */
     @JsonProperty(value = "commandLine", required = true)
     private String commandLine;
@@ -196,7 +196,8 @@ public class JobManagerTask {
     private AuthenticationTokenSettings authenticationTokenSettings;
 
     /**
-     * Whether the Job Manager Task may run on a low-priority Compute Node.
+     * Whether the Job Manager Task may run on a Spot/Low-priority Compute
+     * Node.
      * The default value is true.
      */
     @JsonProperty(value = "allowLowPriorityNode")
@@ -243,7 +244,7 @@ public class JobManagerTask {
     }
 
     /**
-     * Get the command line does not run under a shell, and therefore cannot take advantage of shell features such as environment variable expansion. If you want to take advantage of such features, you should invoke the shell in the command line, for example using "cmd /c MyCommand" in Windows or "/bin/sh -c MyCommand" in Linux. If the command line refers to file paths, it should use a relative path (relative to the Task working directory), or use the Batch provided environment variable (https://docs.microsoft.com/en-us/azure/batch/batch-compute-node-environment-variables).
+     * Get the command line does not run under a shell, and therefore cannot take advantage of shell features such as environment variable expansion. If you want to take advantage of such features, you should invoke the shell in the command line, for example using "cmd /c MyCommand" in Windows or "/bin/sh -c MyCommand" in Linux. If the command line refers to file paths, it should use a relative path (relative to the Task working directory), or use the Batch provided environment variable (https://docs.microsoft.com/azure/batch/batch-compute-node-environment-variables).
      *
      * @return the commandLine value
      */
@@ -252,7 +253,7 @@ public class JobManagerTask {
     }
 
     /**
-     * Set the command line does not run under a shell, and therefore cannot take advantage of shell features such as environment variable expansion. If you want to take advantage of such features, you should invoke the shell in the command line, for example using "cmd /c MyCommand" in Windows or "/bin/sh -c MyCommand" in Linux. If the command line refers to file paths, it should use a relative path (relative to the Task working directory), or use the Batch provided environment variable (https://docs.microsoft.com/en-us/azure/batch/batch-compute-node-environment-variables).
+     * Set the command line does not run under a shell, and therefore cannot take advantage of shell features such as environment variable expansion. If you want to take advantage of such features, you should invoke the shell in the command line, for example using "cmd /c MyCommand" in Windows or "/bin/sh -c MyCommand" in Linux. If the command line refers to file paths, it should use a relative path (relative to the Task working directory), or use the Batch provided environment variable (https://docs.microsoft.com/azure/batch/batch-compute-node-environment-variables).
      *
      * @param commandLine the commandLine value to set
      * @return the JobManagerTask object itself.

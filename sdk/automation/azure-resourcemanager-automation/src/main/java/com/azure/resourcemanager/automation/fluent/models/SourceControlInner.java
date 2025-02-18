@@ -5,260 +5,342 @@
 package com.azure.resourcemanager.automation.fluent.models;
 
 import com.azure.core.annotation.Fluent;
-import com.azure.core.annotation.JsonFlatten;
 import com.azure.core.management.ProxyResource;
-import com.azure.core.util.logging.ClientLogger;
+import com.azure.json.JsonReader;
+import com.azure.json.JsonToken;
+import com.azure.json.JsonWriter;
 import com.azure.resourcemanager.automation.models.SourceType;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import java.io.IOException;
 import java.time.OffsetDateTime;
 
-/** Definition of the source control. */
-@JsonFlatten
+/**
+ * Definition of the source control.
+ */
 @Fluent
-public class SourceControlInner extends ProxyResource {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(SourceControlInner.class);
+public final class SourceControlInner extends ProxyResource {
+    /*
+     * The properties of the source control.
+     */
+    private SourceControlProperties innerProperties;
 
     /*
-     * The repo url of the source control.
+     * The type of the resource.
      */
-    @JsonProperty(value = "properties.repoUrl")
-    private String repoUrl;
+    private String type;
 
     /*
-     * The repo branch of the source control. Include branch as empty string
-     * for VsoTfvc.
+     * The name of the resource.
      */
-    @JsonProperty(value = "properties.branch")
-    private String branch;
+    private String name;
 
     /*
-     * The folder path of the source control.
+     * Fully qualified resource Id for the resource.
      */
-    @JsonProperty(value = "properties.folderPath")
-    private String folderPath;
+    private String id;
 
-    /*
-     * The auto sync of the source control. Default is false.
+    /**
+     * Creates an instance of SourceControlInner class.
      */
-    @JsonProperty(value = "properties.autoSync")
-    private Boolean autoSync;
+    public SourceControlInner() {
+    }
 
-    /*
-     * The auto publish of the source control. Default is true.
+    /**
+     * Get the innerProperties property: The properties of the source control.
+     * 
+     * @return the innerProperties value.
      */
-    @JsonProperty(value = "properties.publishRunbook")
-    private Boolean publishRunbook;
+    private SourceControlProperties innerProperties() {
+        return this.innerProperties;
+    }
 
-    /*
-     * The source type. Must be one of VsoGit, VsoTfvc, GitHub.
+    /**
+     * Get the type property: The type of the resource.
+     * 
+     * @return the type value.
      */
-    @JsonProperty(value = "properties.sourceType")
-    private SourceType sourceType;
+    @Override
+    public String type() {
+        return this.type;
+    }
 
-    /*
-     * The description.
+    /**
+     * Get the name property: The name of the resource.
+     * 
+     * @return the name value.
      */
-    @JsonProperty(value = "properties.description")
-    private String description;
+    @Override
+    public String name() {
+        return this.name;
+    }
 
-    /*
-     * The creation time.
+    /**
+     * Get the id property: Fully qualified resource Id for the resource.
+     * 
+     * @return the id value.
      */
-    @JsonProperty(value = "properties.creationTime")
-    private OffsetDateTime creationTime;
-
-    /*
-     * The last modified time.
-     */
-    @JsonProperty(value = "properties.lastModifiedTime")
-    private OffsetDateTime lastModifiedTime;
+    @Override
+    public String id() {
+        return this.id;
+    }
 
     /**
      * Get the repoUrl property: The repo url of the source control.
-     *
+     * 
      * @return the repoUrl value.
      */
     public String repoUrl() {
-        return this.repoUrl;
+        return this.innerProperties() == null ? null : this.innerProperties().repoUrl();
     }
 
     /**
      * Set the repoUrl property: The repo url of the source control.
-     *
+     * 
      * @param repoUrl the repoUrl value to set.
      * @return the SourceControlInner object itself.
      */
     public SourceControlInner withRepoUrl(String repoUrl) {
-        this.repoUrl = repoUrl;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new SourceControlProperties();
+        }
+        this.innerProperties().withRepoUrl(repoUrl);
         return this;
     }
 
     /**
      * Get the branch property: The repo branch of the source control. Include branch as empty string for VsoTfvc.
-     *
+     * 
      * @return the branch value.
      */
     public String branch() {
-        return this.branch;
+        return this.innerProperties() == null ? null : this.innerProperties().branch();
     }
 
     /**
      * Set the branch property: The repo branch of the source control. Include branch as empty string for VsoTfvc.
-     *
+     * 
      * @param branch the branch value to set.
      * @return the SourceControlInner object itself.
      */
     public SourceControlInner withBranch(String branch) {
-        this.branch = branch;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new SourceControlProperties();
+        }
+        this.innerProperties().withBranch(branch);
         return this;
     }
 
     /**
      * Get the folderPath property: The folder path of the source control.
-     *
+     * 
      * @return the folderPath value.
      */
     public String folderPath() {
-        return this.folderPath;
+        return this.innerProperties() == null ? null : this.innerProperties().folderPath();
     }
 
     /**
      * Set the folderPath property: The folder path of the source control.
-     *
+     * 
      * @param folderPath the folderPath value to set.
      * @return the SourceControlInner object itself.
      */
     public SourceControlInner withFolderPath(String folderPath) {
-        this.folderPath = folderPath;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new SourceControlProperties();
+        }
+        this.innerProperties().withFolderPath(folderPath);
         return this;
     }
 
     /**
      * Get the autoSync property: The auto sync of the source control. Default is false.
-     *
+     * 
      * @return the autoSync value.
      */
     public Boolean autoSync() {
-        return this.autoSync;
+        return this.innerProperties() == null ? null : this.innerProperties().autoSync();
     }
 
     /**
      * Set the autoSync property: The auto sync of the source control. Default is false.
-     *
+     * 
      * @param autoSync the autoSync value to set.
      * @return the SourceControlInner object itself.
      */
     public SourceControlInner withAutoSync(Boolean autoSync) {
-        this.autoSync = autoSync;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new SourceControlProperties();
+        }
+        this.innerProperties().withAutoSync(autoSync);
         return this;
     }
 
     /**
      * Get the publishRunbook property: The auto publish of the source control. Default is true.
-     *
+     * 
      * @return the publishRunbook value.
      */
     public Boolean publishRunbook() {
-        return this.publishRunbook;
+        return this.innerProperties() == null ? null : this.innerProperties().publishRunbook();
     }
 
     /**
      * Set the publishRunbook property: The auto publish of the source control. Default is true.
-     *
+     * 
      * @param publishRunbook the publishRunbook value to set.
      * @return the SourceControlInner object itself.
      */
     public SourceControlInner withPublishRunbook(Boolean publishRunbook) {
-        this.publishRunbook = publishRunbook;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new SourceControlProperties();
+        }
+        this.innerProperties().withPublishRunbook(publishRunbook);
         return this;
     }
 
     /**
      * Get the sourceType property: The source type. Must be one of VsoGit, VsoTfvc, GitHub.
-     *
+     * 
      * @return the sourceType value.
      */
     public SourceType sourceType() {
-        return this.sourceType;
+        return this.innerProperties() == null ? null : this.innerProperties().sourceType();
     }
 
     /**
      * Set the sourceType property: The source type. Must be one of VsoGit, VsoTfvc, GitHub.
-     *
+     * 
      * @param sourceType the sourceType value to set.
      * @return the SourceControlInner object itself.
      */
     public SourceControlInner withSourceType(SourceType sourceType) {
-        this.sourceType = sourceType;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new SourceControlProperties();
+        }
+        this.innerProperties().withSourceType(sourceType);
         return this;
     }
 
     /**
      * Get the description property: The description.
-     *
+     * 
      * @return the description value.
      */
     public String description() {
-        return this.description;
+        return this.innerProperties() == null ? null : this.innerProperties().description();
     }
 
     /**
      * Set the description property: The description.
-     *
+     * 
      * @param description the description value to set.
      * @return the SourceControlInner object itself.
      */
     public SourceControlInner withDescription(String description) {
-        this.description = description;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new SourceControlProperties();
+        }
+        this.innerProperties().withDescription(description);
         return this;
     }
 
     /**
      * Get the creationTime property: The creation time.
-     *
+     * 
      * @return the creationTime value.
      */
     public OffsetDateTime creationTime() {
-        return this.creationTime;
+        return this.innerProperties() == null ? null : this.innerProperties().creationTime();
     }
 
     /**
      * Set the creationTime property: The creation time.
-     *
+     * 
      * @param creationTime the creationTime value to set.
      * @return the SourceControlInner object itself.
      */
     public SourceControlInner withCreationTime(OffsetDateTime creationTime) {
-        this.creationTime = creationTime;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new SourceControlProperties();
+        }
+        this.innerProperties().withCreationTime(creationTime);
         return this;
     }
 
     /**
      * Get the lastModifiedTime property: The last modified time.
-     *
+     * 
      * @return the lastModifiedTime value.
      */
     public OffsetDateTime lastModifiedTime() {
-        return this.lastModifiedTime;
+        return this.innerProperties() == null ? null : this.innerProperties().lastModifiedTime();
     }
 
     /**
      * Set the lastModifiedTime property: The last modified time.
-     *
+     * 
      * @param lastModifiedTime the lastModifiedTime value to set.
      * @return the SourceControlInner object itself.
      */
     public SourceControlInner withLastModifiedTime(OffsetDateTime lastModifiedTime) {
-        this.lastModifiedTime = lastModifiedTime;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new SourceControlProperties();
+        }
+        this.innerProperties().withLastModifiedTime(lastModifiedTime);
         return this;
     }
 
     /**
      * Validates the instance.
-     *
+     * 
      * @throws IllegalArgumentException thrown if the instance is not valid.
      */
     public void validate() {
+        if (innerProperties() != null) {
+            innerProperties().validate();
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public JsonWriter toJson(JsonWriter jsonWriter) throws IOException {
+        jsonWriter.writeStartObject();
+        jsonWriter.writeJsonField("properties", this.innerProperties);
+        return jsonWriter.writeEndObject();
+    }
+
+    /**
+     * Reads an instance of SourceControlInner from the JsonReader.
+     * 
+     * @param jsonReader The JsonReader being read.
+     * @return An instance of SourceControlInner if the JsonReader was pointing to an instance of it, or null if it was
+     * pointing to JSON null.
+     * @throws IllegalStateException If the deserialized JSON object was missing any required properties.
+     * @throws IOException If an error occurs while reading the SourceControlInner.
+     */
+    public static SourceControlInner fromJson(JsonReader jsonReader) throws IOException {
+        return jsonReader.readObject(reader -> {
+            SourceControlInner deserializedSourceControlInner = new SourceControlInner();
+            while (reader.nextToken() != JsonToken.END_OBJECT) {
+                String fieldName = reader.getFieldName();
+                reader.nextToken();
+
+                if ("id".equals(fieldName)) {
+                    deserializedSourceControlInner.id = reader.getString();
+                } else if ("name".equals(fieldName)) {
+                    deserializedSourceControlInner.name = reader.getString();
+                } else if ("type".equals(fieldName)) {
+                    deserializedSourceControlInner.type = reader.getString();
+                } else if ("properties".equals(fieldName)) {
+                    deserializedSourceControlInner.innerProperties = SourceControlProperties.fromJson(reader);
+                } else {
+                    reader.skipChildren();
+                }
+            }
+
+            return deserializedSourceControlInner;
+        });
     }
 }

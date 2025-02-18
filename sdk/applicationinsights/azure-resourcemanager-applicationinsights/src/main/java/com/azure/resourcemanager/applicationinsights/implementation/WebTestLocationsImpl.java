@@ -11,36 +11,34 @@ import com.azure.resourcemanager.applicationinsights.fluent.WebTestLocationsClie
 import com.azure.resourcemanager.applicationinsights.fluent.models.ApplicationInsightsComponentWebTestLocationInner;
 import com.azure.resourcemanager.applicationinsights.models.ApplicationInsightsComponentWebTestLocation;
 import com.azure.resourcemanager.applicationinsights.models.WebTestLocations;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 public final class WebTestLocationsImpl implements WebTestLocations {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(WebTestLocationsImpl.class);
+    private static final ClientLogger LOGGER = new ClientLogger(WebTestLocationsImpl.class);
 
     private final WebTestLocationsClient innerClient;
 
     private final com.azure.resourcemanager.applicationinsights.ApplicationInsightsManager serviceManager;
 
-    public WebTestLocationsImpl(
-        WebTestLocationsClient innerClient,
+    public WebTestLocationsImpl(WebTestLocationsClient innerClient,
         com.azure.resourcemanager.applicationinsights.ApplicationInsightsManager serviceManager) {
         this.innerClient = innerClient;
         this.serviceManager = serviceManager;
     }
 
-    public PagedIterable<ApplicationInsightsComponentWebTestLocation> list(
-        String resourceGroupName, String resourceName) {
-        PagedIterable<ApplicationInsightsComponentWebTestLocationInner> inner =
-            this.serviceClient().list(resourceGroupName, resourceName);
-        return Utils
-            .mapPage(inner, inner1 -> new ApplicationInsightsComponentWebTestLocationImpl(inner1, this.manager()));
+    public PagedIterable<ApplicationInsightsComponentWebTestLocation> list(String resourceGroupName,
+        String resourceName) {
+        PagedIterable<ApplicationInsightsComponentWebTestLocationInner> inner
+            = this.serviceClient().list(resourceGroupName, resourceName);
+        return ResourceManagerUtils.mapPage(inner,
+            inner1 -> new ApplicationInsightsComponentWebTestLocationImpl(inner1, this.manager()));
     }
 
-    public PagedIterable<ApplicationInsightsComponentWebTestLocation> list(
-        String resourceGroupName, String resourceName, Context context) {
-        PagedIterable<ApplicationInsightsComponentWebTestLocationInner> inner =
-            this.serviceClient().list(resourceGroupName, resourceName, context);
-        return Utils
-            .mapPage(inner, inner1 -> new ApplicationInsightsComponentWebTestLocationImpl(inner1, this.manager()));
+    public PagedIterable<ApplicationInsightsComponentWebTestLocation> list(String resourceGroupName,
+        String resourceName, Context context) {
+        PagedIterable<ApplicationInsightsComponentWebTestLocationInner> inner
+            = this.serviceClient().list(resourceGroupName, resourceName, context);
+        return ResourceManagerUtils.mapPage(inner,
+            inner1 -> new ApplicationInsightsComponentWebTestLocationImpl(inner1, this.manager()));
     }
 
     private WebTestLocationsClient serviceClient() {

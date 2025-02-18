@@ -5,41 +5,66 @@
 package com.azure.resourcemanager.avs.models;
 
 import com.azure.core.util.ExpandableStringEnum;
-import com.fasterxml.jackson.annotation.JsonCreator;
 import java.util.Collection;
 
-/** Defines values for ScriptParameterTypes. */
+/**
+ * Script Parameter types.
+ */
 public final class ScriptParameterTypes extends ExpandableStringEnum<ScriptParameterTypes> {
-    /** Static value String for ScriptParameterTypes. */
+    /**
+     * Static value String for ScriptParameterTypes.
+     */
     public static final ScriptParameterTypes STRING = fromString("String");
 
-    /** Static value SecureString for ScriptParameterTypes. */
+    /**
+     * Static value SecureString for ScriptParameterTypes.
+     */
     public static final ScriptParameterTypes SECURE_STRING = fromString("SecureString");
 
-    /** Static value Credential for ScriptParameterTypes. */
+    /**
+     * Static value Credential for ScriptParameterTypes.
+     */
     public static final ScriptParameterTypes CREDENTIAL = fromString("Credential");
 
-    /** Static value Int for ScriptParameterTypes. */
+    /**
+     * Static value Int for ScriptParameterTypes.
+     */
     public static final ScriptParameterTypes INT = fromString("Int");
 
-    /** Static value Bool for ScriptParameterTypes. */
+    /**
+     * Static value Bool for ScriptParameterTypes.
+     */
     public static final ScriptParameterTypes BOOL = fromString("Bool");
 
-    /** Static value Float for ScriptParameterTypes. */
+    /**
+     * Static value Float for ScriptParameterTypes.
+     */
     public static final ScriptParameterTypes FLOAT = fromString("Float");
 
     /**
+     * Creates a new instance of ScriptParameterTypes value.
+     * 
+     * @deprecated Use the {@link #fromString(String)} factory method.
+     */
+    @Deprecated
+    public ScriptParameterTypes() {
+    }
+
+    /**
      * Creates or finds a ScriptParameterTypes from its string representation.
-     *
+     * 
      * @param name a name to look for.
      * @return the corresponding ScriptParameterTypes.
      */
-    @JsonCreator
     public static ScriptParameterTypes fromString(String name) {
         return fromString(name, ScriptParameterTypes.class);
     }
 
-    /** @return known ScriptParameterTypes values. */
+    /**
+     * Gets known ScriptParameterTypes values.
+     * 
+     * @return known ScriptParameterTypes values.
+     */
     public static Collection<ScriptParameterTypes> values() {
         return values(ScriptParameterTypes.class);
     }

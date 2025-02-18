@@ -22,81 +22,81 @@ import java.nio.ByteBuffer;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-/** An instance of this class provides access to all the operations defined in NetworkSecurityGroupsClient. */
-public interface NetworkSecurityGroupsClient
-    extends InnerSupportsGet<NetworkSecurityGroupInner>,
-        InnerSupportsListing<NetworkSecurityGroupInner>,
-        InnerSupportsDelete<Void> {
+/**
+ * An instance of this class provides access to all the operations defined in NetworkSecurityGroupsClient.
+ */
+public interface NetworkSecurityGroupsClient extends InnerSupportsGet<NetworkSecurityGroupInner>,
+    InnerSupportsListing<NetworkSecurityGroupInner>, InnerSupportsDelete<Void> {
     /**
      * Deletes the specified network security group.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param networkSecurityGroupName The name of the network security group.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the completion.
+     * @return the {@link Response} on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
     Mono<Response<Flux<ByteBuffer>>> deleteWithResponseAsync(String resourceGroupName, String networkSecurityGroupName);
 
     /**
      * Deletes the specified network security group.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param networkSecurityGroupName The name of the network security group.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the completion.
+     * @return the {@link PollerFlux} for polling of long-running operation.
      */
     @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
     PollerFlux<PollResult<Void>, Void> beginDeleteAsync(String resourceGroupName, String networkSecurityGroupName);
 
     /**
      * Deletes the specified network security group.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param networkSecurityGroupName The name of the network security group.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the completion.
+     * @return the {@link SyncPoller} for polling of long-running operation.
      */
     @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
     SyncPoller<PollResult<Void>, Void> beginDelete(String resourceGroupName, String networkSecurityGroupName);
 
     /**
      * Deletes the specified network security group.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param networkSecurityGroupName The name of the network security group.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the completion.
+     * @return the {@link SyncPoller} for polling of long-running operation.
      */
     @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
-    SyncPoller<PollResult<Void>, Void> beginDelete(
-        String resourceGroupName, String networkSecurityGroupName, Context context);
+    SyncPoller<PollResult<Void>, Void> beginDelete(String resourceGroupName, String networkSecurityGroupName,
+        Context context);
 
     /**
      * Deletes the specified network security group.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param networkSecurityGroupName The name of the network security group.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the completion.
+     * @return A {@link Mono} that completes when a successful response is received.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
     Mono<Void> deleteAsync(String resourceGroupName, String networkSecurityGroupName);
 
     /**
      * Deletes the specified network security group.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param networkSecurityGroupName The name of the network security group.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
@@ -108,7 +108,7 @@ public interface NetworkSecurityGroupsClient
 
     /**
      * Deletes the specified network security group.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param networkSecurityGroupName The name of the network security group.
      * @param context The context to associate with this operation.
@@ -121,50 +121,52 @@ public interface NetworkSecurityGroupsClient
 
     /**
      * Gets the specified network security group.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param networkSecurityGroupName The name of the network security group.
      * @param expand Expands referenced resources.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the specified network security group.
+     * @return the specified network security group along with {@link Response} on successful completion of
+     * {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    Mono<Response<NetworkSecurityGroupInner>> getByResourceGroupWithResponseAsync(
-        String resourceGroupName, String networkSecurityGroupName, String expand);
+    Mono<Response<NetworkSecurityGroupInner>> getByResourceGroupWithResponseAsync(String resourceGroupName,
+        String networkSecurityGroupName, String expand);
 
     /**
      * Gets the specified network security group.
-     *
-     * @param resourceGroupName The name of the resource group.
-     * @param networkSecurityGroupName The name of the network security group.
-     * @param expand Expands referenced resources.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the specified network security group.
-     */
-    @ServiceMethod(returns = ReturnType.SINGLE)
-    Mono<NetworkSecurityGroupInner> getByResourceGroupAsync(
-        String resourceGroupName, String networkSecurityGroupName, String expand);
-
-    /**
-     * Gets the specified network security group.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param networkSecurityGroupName The name of the network security group.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the specified network security group.
+     * @return the specified network security group on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
     Mono<NetworkSecurityGroupInner> getByResourceGroupAsync(String resourceGroupName, String networkSecurityGroupName);
 
     /**
      * Gets the specified network security group.
-     *
+     * 
+     * @param resourceGroupName The name of the resource group.
+     * @param networkSecurityGroupName The name of the network security group.
+     * @param expand Expands referenced resources.
+     * @param context The context to associate with this operation.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return the specified network security group along with {@link Response}.
+     */
+    @ServiceMethod(returns = ReturnType.SINGLE)
+    Response<NetworkSecurityGroupInner> getByResourceGroupWithResponse(String resourceGroupName,
+        String networkSecurityGroupName, String expand, Context context);
+
+    /**
+     * Gets the specified network security group.
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param networkSecurityGroupName The name of the network security group.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
@@ -176,46 +178,30 @@ public interface NetworkSecurityGroupsClient
     NetworkSecurityGroupInner getByResourceGroup(String resourceGroupName, String networkSecurityGroupName);
 
     /**
-     * Gets the specified network security group.
-     *
-     * @param resourceGroupName The name of the resource group.
-     * @param networkSecurityGroupName The name of the network security group.
-     * @param expand Expands referenced resources.
-     * @param context The context to associate with this operation.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the specified network security group.
-     */
-    @ServiceMethod(returns = ReturnType.SINGLE)
-    Response<NetworkSecurityGroupInner> getByResourceGroupWithResponse(
-        String resourceGroupName, String networkSecurityGroupName, String expand, Context context);
-
-    /**
      * Creates or updates a network security group in the specified resource group.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param networkSecurityGroupName The name of the network security group.
      * @param parameters Parameters supplied to the create or update network security group operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return networkSecurityGroup resource.
+     * @return networkSecurityGroup resource along with {@link Response} on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    Mono<Response<Flux<ByteBuffer>>> createOrUpdateWithResponseAsync(
-        String resourceGroupName, String networkSecurityGroupName, NetworkSecurityGroupInner parameters);
+    Mono<Response<Flux<ByteBuffer>>> createOrUpdateWithResponseAsync(String resourceGroupName,
+        String networkSecurityGroupName, NetworkSecurityGroupInner parameters);
 
     /**
      * Creates or updates a network security group in the specified resource group.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param networkSecurityGroupName The name of the network security group.
      * @param parameters Parameters supplied to the create or update network security group operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return networkSecurityGroup resource.
+     * @return the {@link PollerFlux} for polling of networkSecurityGroup resource.
      */
     @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
     PollerFlux<PollResult<NetworkSecurityGroupInner>, NetworkSecurityGroupInner> beginCreateOrUpdateAsync(
@@ -223,14 +209,14 @@ public interface NetworkSecurityGroupsClient
 
     /**
      * Creates or updates a network security group in the specified resource group.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param networkSecurityGroupName The name of the network security group.
      * @param parameters Parameters supplied to the create or update network security group operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return networkSecurityGroup resource.
+     * @return the {@link SyncPoller} for polling of networkSecurityGroup resource.
      */
     @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
     SyncPoller<PollResult<NetworkSecurityGroupInner>, NetworkSecurityGroupInner> beginCreateOrUpdate(
@@ -238,7 +224,7 @@ public interface NetworkSecurityGroupsClient
 
     /**
      * Creates or updates a network security group in the specified resource group.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param networkSecurityGroupName The name of the network security group.
      * @param parameters Parameters supplied to the create or update network security group operation.
@@ -246,18 +232,31 @@ public interface NetworkSecurityGroupsClient
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return networkSecurityGroup resource.
+     * @return the {@link SyncPoller} for polling of networkSecurityGroup resource.
      */
     @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
     SyncPoller<PollResult<NetworkSecurityGroupInner>, NetworkSecurityGroupInner> beginCreateOrUpdate(
-        String resourceGroupName,
-        String networkSecurityGroupName,
-        NetworkSecurityGroupInner parameters,
+        String resourceGroupName, String networkSecurityGroupName, NetworkSecurityGroupInner parameters,
         Context context);
 
     /**
      * Creates or updates a network security group in the specified resource group.
-     *
+     * 
+     * @param resourceGroupName The name of the resource group.
+     * @param networkSecurityGroupName The name of the network security group.
+     * @param parameters Parameters supplied to the create or update network security group operation.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return networkSecurityGroup resource on successful completion of {@link Mono}.
+     */
+    @ServiceMethod(returns = ReturnType.SINGLE)
+    Mono<NetworkSecurityGroupInner> createOrUpdateAsync(String resourceGroupName, String networkSecurityGroupName,
+        NetworkSecurityGroupInner parameters);
+
+    /**
+     * Creates or updates a network security group in the specified resource group.
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param networkSecurityGroupName The name of the network security group.
      * @param parameters Parameters supplied to the create or update network security group operation.
@@ -267,27 +266,12 @@ public interface NetworkSecurityGroupsClient
      * @return networkSecurityGroup resource.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    Mono<NetworkSecurityGroupInner> createOrUpdateAsync(
-        String resourceGroupName, String networkSecurityGroupName, NetworkSecurityGroupInner parameters);
+    NetworkSecurityGroupInner createOrUpdate(String resourceGroupName, String networkSecurityGroupName,
+        NetworkSecurityGroupInner parameters);
 
     /**
      * Creates or updates a network security group in the specified resource group.
-     *
-     * @param resourceGroupName The name of the resource group.
-     * @param networkSecurityGroupName The name of the network security group.
-     * @param parameters Parameters supplied to the create or update network security group operation.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return networkSecurityGroup resource.
-     */
-    @ServiceMethod(returns = ReturnType.SINGLE)
-    NetworkSecurityGroupInner createOrUpdate(
-        String resourceGroupName, String networkSecurityGroupName, NetworkSecurityGroupInner parameters);
-
-    /**
-     * Creates or updates a network security group in the specified resource group.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param networkSecurityGroupName The name of the network security group.
      * @param parameters Parameters supplied to the create or update network security group operation.
@@ -298,60 +282,42 @@ public interface NetworkSecurityGroupsClient
      * @return networkSecurityGroup resource.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    NetworkSecurityGroupInner createOrUpdate(
-        String resourceGroupName,
-        String networkSecurityGroupName,
-        NetworkSecurityGroupInner parameters,
-        Context context);
+    NetworkSecurityGroupInner createOrUpdate(String resourceGroupName, String networkSecurityGroupName,
+        NetworkSecurityGroupInner parameters, Context context);
 
     /**
      * Updates a network security group tags.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param networkSecurityGroupName The name of the network security group.
      * @param parameters Parameters supplied to update network security group tags.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return networkSecurityGroup resource.
+     * @return networkSecurityGroup resource along with {@link Response} on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    Mono<Response<NetworkSecurityGroupInner>> updateTagsWithResponseAsync(
-        String resourceGroupName, String networkSecurityGroupName, TagsObject parameters);
+    Mono<Response<NetworkSecurityGroupInner>> updateTagsWithResponseAsync(String resourceGroupName,
+        String networkSecurityGroupName, TagsObject parameters);
 
     /**
      * Updates a network security group tags.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param networkSecurityGroupName The name of the network security group.
      * @param parameters Parameters supplied to update network security group tags.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return networkSecurityGroup resource.
+     * @return networkSecurityGroup resource on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    Mono<NetworkSecurityGroupInner> updateTagsAsync(
-        String resourceGroupName, String networkSecurityGroupName, TagsObject parameters);
+    Mono<NetworkSecurityGroupInner> updateTagsAsync(String resourceGroupName, String networkSecurityGroupName,
+        TagsObject parameters);
 
     /**
      * Updates a network security group tags.
-     *
-     * @param resourceGroupName The name of the resource group.
-     * @param networkSecurityGroupName The name of the network security group.
-     * @param parameters Parameters supplied to update network security group tags.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return networkSecurityGroup resource.
-     */
-    @ServiceMethod(returns = ReturnType.SINGLE)
-    NetworkSecurityGroupInner updateTags(
-        String resourceGroupName, String networkSecurityGroupName, TagsObject parameters);
-
-    /**
-     * Updates a network security group tags.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param networkSecurityGroupName The name of the network security group.
      * @param parameters Parameters supplied to update network security group tags.
@@ -359,77 +325,92 @@ public interface NetworkSecurityGroupsClient
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return networkSecurityGroup resource along with {@link Response}.
+     */
+    @ServiceMethod(returns = ReturnType.SINGLE)
+    Response<NetworkSecurityGroupInner> updateTagsWithResponse(String resourceGroupName,
+        String networkSecurityGroupName, TagsObject parameters, Context context);
+
+    /**
+     * Updates a network security group tags.
+     * 
+     * @param resourceGroupName The name of the resource group.
+     * @param networkSecurityGroupName The name of the network security group.
+     * @param parameters Parameters supplied to update network security group tags.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
      * @return networkSecurityGroup resource.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    Response<NetworkSecurityGroupInner> updateTagsWithResponse(
-        String resourceGroupName, String networkSecurityGroupName, TagsObject parameters, Context context);
+    NetworkSecurityGroupInner updateTags(String resourceGroupName, String networkSecurityGroupName,
+        TagsObject parameters);
 
     /**
      * Gets all network security groups in a subscription.
-     *
+     * 
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return all network security groups in a subscription.
+     * @return all network security groups in a subscription as paginated response with {@link PagedFlux}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
     PagedFlux<NetworkSecurityGroupInner> listAsync();
 
     /**
      * Gets all network security groups in a subscription.
-     *
+     * 
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return all network security groups in a subscription.
+     * @return all network security groups in a subscription as paginated response with {@link PagedIterable}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
     PagedIterable<NetworkSecurityGroupInner> list();
 
     /**
      * Gets all network security groups in a subscription.
-     *
+     * 
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return all network security groups in a subscription.
+     * @return all network security groups in a subscription as paginated response with {@link PagedIterable}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
     PagedIterable<NetworkSecurityGroupInner> list(Context context);
 
     /**
      * Gets all network security groups in a resource group.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return all network security groups in a resource group.
+     * @return all network security groups in a resource group as paginated response with {@link PagedFlux}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
     PagedFlux<NetworkSecurityGroupInner> listByResourceGroupAsync(String resourceGroupName);
 
     /**
      * Gets all network security groups in a resource group.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return all network security groups in a resource group.
+     * @return all network security groups in a resource group as paginated response with {@link PagedIterable}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
     PagedIterable<NetworkSecurityGroupInner> listByResourceGroup(String resourceGroupName);
 
     /**
      * Gets all network security groups in a resource group.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return all network security groups in a resource group.
+     * @return all network security groups in a resource group as paginated response with {@link PagedIterable}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
     PagedIterable<NetworkSecurityGroupInner> listByResourceGroup(String resourceGroupName, Context context);

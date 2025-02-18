@@ -16,7 +16,22 @@ import com.azure.resourcemanager.recoveryservicesbackup.fluent.models.BackupReso
 public interface BackupResourceStorageConfigsNonCrrsClient {
     /**
      * Fetches resource storage config.
-     *
+     * 
+     * @param vaultName The name of the recovery services vault.
+     * @param resourceGroupName The name of the resource group where the recovery services vault is present.
+     * @param context The context to associate with this operation.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return the resource storage details along with {@link Response}.
+     */
+    @ServiceMethod(returns = ReturnType.SINGLE)
+    Response<BackupResourceConfigResourceInner> getWithResponse(String vaultName, String resourceGroupName,
+        Context context);
+
+    /**
+     * Fetches resource storage config.
+     * 
      * @param vaultName The name of the recovery services vault.
      * @param resourceGroupName The name of the resource group where the recovery services vault is present.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
@@ -28,23 +43,24 @@ public interface BackupResourceStorageConfigsNonCrrsClient {
     BackupResourceConfigResourceInner get(String vaultName, String resourceGroupName);
 
     /**
-     * Fetches resource storage config.
-     *
+     * Updates vault storage model type.
+     * 
      * @param vaultName The name of the recovery services vault.
      * @param resourceGroupName The name of the resource group where the recovery services vault is present.
+     * @param parameters Vault storage config request.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the resource storage details.
+     * @return the resource storage details along with {@link Response}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    Response<BackupResourceConfigResourceInner> getWithResponse(
-        String vaultName, String resourceGroupName, Context context);
+    Response<BackupResourceConfigResourceInner> updateWithResponse(String vaultName, String resourceGroupName,
+        BackupResourceConfigResourceInner parameters, Context context);
 
     /**
      * Updates vault storage model type.
-     *
+     * 
      * @param vaultName The name of the recovery services vault.
      * @param resourceGroupName The name of the resource group where the recovery services vault is present.
      * @param parameters Vault storage config request.
@@ -54,12 +70,12 @@ public interface BackupResourceStorageConfigsNonCrrsClient {
      * @return the resource storage details.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    BackupResourceConfigResourceInner update(
-        String vaultName, String resourceGroupName, BackupResourceConfigResourceInner parameters);
+    BackupResourceConfigResourceInner update(String vaultName, String resourceGroupName,
+        BackupResourceConfigResourceInner parameters);
 
     /**
      * Updates vault storage model type.
-     *
+     * 
      * @param vaultName The name of the recovery services vault.
      * @param resourceGroupName The name of the resource group where the recovery services vault is present.
      * @param parameters Vault storage config request.
@@ -67,15 +83,15 @@ public interface BackupResourceStorageConfigsNonCrrsClient {
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the resource storage details.
+     * @return the {@link Response}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    Response<BackupResourceConfigResourceInner> updateWithResponse(
-        String vaultName, String resourceGroupName, BackupResourceConfigResourceInner parameters, Context context);
+    Response<Void> patchWithResponse(String vaultName, String resourceGroupName,
+        BackupResourceConfigResourceInner parameters, Context context);
 
     /**
      * Updates vault storage model type.
-     *
+     * 
      * @param vaultName The name of the recovery services vault.
      * @param resourceGroupName The name of the resource group where the recovery services vault is present.
      * @param parameters Vault storage config request.
@@ -85,20 +101,4 @@ public interface BackupResourceStorageConfigsNonCrrsClient {
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
     void patch(String vaultName, String resourceGroupName, BackupResourceConfigResourceInner parameters);
-
-    /**
-     * Updates vault storage model type.
-     *
-     * @param vaultName The name of the recovery services vault.
-     * @param resourceGroupName The name of the resource group where the recovery services vault is present.
-     * @param parameters Vault storage config request.
-     * @param context The context to associate with this operation.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the response.
-     */
-    @ServiceMethod(returns = ReturnType.SINGLE)
-    Response<Void> patchWithResponse(
-        String vaultName, String resourceGroupName, BackupResourceConfigResourceInner parameters, Context context);
 }

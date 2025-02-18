@@ -9,29 +9,27 @@ import com.azure.core.util.Context;
 import com.azure.core.util.logging.ClientLogger;
 import com.azure.resourcemanager.recoveryservicesbackup.fluent.BackupOperationResultsClient;
 import com.azure.resourcemanager.recoveryservicesbackup.models.BackupOperationResults;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 public final class BackupOperationResultsImpl implements BackupOperationResults {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(BackupOperationResultsImpl.class);
+    private static final ClientLogger LOGGER = new ClientLogger(BackupOperationResultsImpl.class);
 
     private final BackupOperationResultsClient innerClient;
 
     private final com.azure.resourcemanager.recoveryservicesbackup.RecoveryServicesBackupManager serviceManager;
 
-    public BackupOperationResultsImpl(
-        BackupOperationResultsClient innerClient,
+    public BackupOperationResultsImpl(BackupOperationResultsClient innerClient,
         com.azure.resourcemanager.recoveryservicesbackup.RecoveryServicesBackupManager serviceManager) {
         this.innerClient = innerClient;
         this.serviceManager = serviceManager;
     }
 
-    public void get(String vaultName, String resourceGroupName, String operationId) {
-        this.serviceClient().get(vaultName, resourceGroupName, operationId);
+    public Response<Void> getWithResponse(String vaultName, String resourceGroupName, String operationId,
+        Context context) {
+        return this.serviceClient().getWithResponse(vaultName, resourceGroupName, operationId, context);
     }
 
-    public Response<Void> getWithResponse(
-        String vaultName, String resourceGroupName, String operationId, Context context) {
-        return this.serviceClient().getWithResponse(vaultName, resourceGroupName, operationId, context);
+    public void get(String vaultName, String resourceGroupName, String operationId) {
+        this.serviceClient().get(vaultName, resourceGroupName, operationId);
     }
 
     private BackupOperationResultsClient serviceClient() {

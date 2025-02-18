@@ -4,29 +4,44 @@
 package com.azure.core.models;
 
 import com.azure.core.implementation.Option;
-import com.azure.core.util.logging.ClientLogger;
+import com.azure.core.util.CoreUtils;
 import com.azure.core.util.serializer.JacksonAdapter;
 import com.azure.core.util.serializer.JsonSerializer;
 import com.azure.core.util.serializer.JsonSerializerProviders;
+import com.azure.json.JsonReader;
+import com.azure.json.JsonSerializable;
+import com.azure.json.JsonWriter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonValue;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.UncheckedIOException;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
 /**
- * Represents a JSON Patch document.
+ * <p>Represents a JSON Patch document.</p>
+ *
+ * <p>This class encapsulates a list of {@link JsonPatchOperation} instances that form a JSON Patch document.
+ * It provides methods to add various types of operations (add, replace, copy, move, remove, test) to the document.</p>
+ *
+ * <p>Each operation in the document is represented by a {@link JsonPatchOperation} instance, which encapsulates the
+ * operation kind, path, and optional from and value.</p>
+ *
+ * <p>This class also provides a {@link #toJson(JsonWriter)} method to serialize the JSON Patch document to JSON,
+ * and a {@link #fromJson(JsonReader)} method to deserialize a JSON Patch document from JSON.</p>
+ *
+ * <p>This class is useful when you want to create a JSON Patch document to express a sequence of operations to
+ * apply to a JSON document.</p>
+ *
+ * @see JsonPatchOperation
+ * @see JsonPatchOperationKind
+ * @see JsonSerializable
  */
-public final class JsonPatchDocument {
+public final class JsonPatchDocument implements JsonSerializable<JsonPatchDocument> {
     private static final Object SERIALIZER_INSTANTIATION_SYNCHRONIZER = new Object();
     private static volatile JsonSerializer defaultSerializer;
-
-    @JsonIgnore
-    private final ClientLogger logger = new ClientLogger(JsonPatchDocument.class);
 
     @JsonIgnore
     private final JsonSerializer serializer;
@@ -458,30 +473,22 @@ public final class JsonPatchDocument {
             return Option.empty();
         }
 
-        String rawValue;
-        try {
-            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-
-            if (serializer == null) {
-                if (defaultSerializer == null) {
-                    synchronized (SERIALIZER_INSTANTIATION_SYNCHRONIZER) {
-                        if (defaultSerializer == null) {
-                            defaultSerializer = JsonSerializerProviders.createInstance();
-                        }
+        byte[] bytes;
+        if (serializer == null) {
+            if (defaultSerializer == null) {
+                synchronized (SERIALIZER_INSTANTIATION_SYNCHRONIZER) {
+                    if (defaultSerializer == null) {
+                        defaultSerializer = JsonSerializerProviders.createInstance();
                     }
                 }
-
-                defaultSerializer.serialize(outputStream, value);
-            } else {
-                serializer.serialize(outputStream, value);
             }
 
-            rawValue = outputStream.toString("UTF-8");
-        } catch (IOException ex) {
-            throw logger.logExceptionAsError(new UncheckedIOException(ex));
+            bytes = defaultSerializer.serializeToBytes(value);
+        } else {
+            bytes = serializer.serializeToBytes(value);
         }
 
-        return Option.of(rawValue);
+        return Option.of(new String(bytes, StandardCharsets.UTF_8));
     }
 
     private JsonPatchDocument appendOperation(JsonPatchOperationKind operationKind, String from, String path,
@@ -493,7 +500,7 @@ public final class JsonPatchDocument {
     /**
      * Gets a formatted JSON string representation of this JSON Patch document.
      *
-     * @return The formatted JSON String representing this JSON Patch docuemnt.
+     * @return The formatted JSON String representing this JSON Patch document.
      */
     @Override
     public String toString() {
@@ -508,5 +515,30 @@ public final class JsonPatchDocument {
         }
 
         return builder.append("]").toString();
+    }
+
+    @Override
+    public JsonWriter toJson(JsonWriter jsonWriter) throws IOException {
+        return (CoreUtils.isNullOrEmpty(operations))
+            ? jsonWriter
+            : jsonWriter.writeArray(operations, JsonWriter::writeJson);
+    }
+
+    /**
+     * Reads a JSON stream into a {@link JsonPatchDocument}.
+     *
+     * @param jsonReader The {@link JsonReader} being read.
+     * @return The {@link JsonPatchDocument} that the JSON stream represented, or null if it pointed to JSON null.
+     * @throws IllegalStateException If the deserialized JSON object was missing any required properties.
+     * @throws IOException If a {@link JsonPatchDocument} fails to be read from the {@code jsonReader}.
+     */
+    public static JsonPatchDocument fromJson(JsonReader jsonReader) throws IOException {
+        List<JsonPatchOperation> operations = jsonReader.readArray(JsonPatchOperation::fromJson);
+        JsonPatchDocument document = new JsonPatchDocument();
+        if (operations != null) {
+            document.operations.addAll(operations);
+        }
+
+        return document;
     }
 }

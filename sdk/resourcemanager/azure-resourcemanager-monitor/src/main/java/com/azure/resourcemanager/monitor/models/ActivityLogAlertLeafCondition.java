@@ -5,95 +5,143 @@
 package com.azure.resourcemanager.monitor.models;
 
 import com.azure.core.annotation.Fluent;
-import com.azure.core.util.logging.ClientLogger;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.azure.json.JsonReader;
+import com.azure.json.JsonToken;
+import com.azure.json.JsonWriter;
+import java.io.IOException;
+import java.util.List;
 
-/** An Activity Log alert condition that is met by comparing an activity log field and value. */
+/**
+ * An Activity Log Alert rule condition that is met when all its member conditions are met.
+ * Each condition can be of one of the following types:
+ * __Important__: Each type has its unique subset of properties. Properties from different types CANNOT exist in one
+ * condition.
+ * * __Leaf Condition -__ must contain 'field' and either 'equals' or 'containsAny'.
+ * _Please note, 'anyOf' should __not__ be set in a Leaf Condition._
+ * * __AnyOf Condition -__ must contain __only__ 'anyOf' (which is an array of Leaf Conditions).
+ * _Please note, 'field', 'equals' and 'containsAny' should __not__ be set in an AnyOf Condition._.
+ */
 @Fluent
-public final class ActivityLogAlertLeafCondition {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(ActivityLogAlertLeafCondition.class);
-
+public final class ActivityLogAlertLeafCondition extends AlertRuleLeafCondition {
     /*
-     * The name of the field that this condition will examine. The possible
-     * values for this field are (case-insensitive): 'resourceId', 'category',
-     * 'caller', 'level', 'operationName', 'resourceGroup', 'resourceProvider',
-     * 'status', 'subStatus', 'resourceType', or anything beginning with
-     * 'properties.'.
+     * An Activity Log Alert rule condition that is met when at least one of its member leaf conditions are met.
      */
-    @JsonProperty(value = "field", required = true)
-    private String field;
-
-    /*
-     * The field value will be compared to this value (case-insensitive) to
-     * determine if the condition is met.
-     */
-    @JsonProperty(value = "equals", required = true)
-    private String equals;
+    private List<AlertRuleLeafCondition> anyOf;
 
     /**
-     * Get the field property: The name of the field that this condition will examine. The possible values for this
-     * field are (case-insensitive): 'resourceId', 'category', 'caller', 'level', 'operationName', 'resourceGroup',
-     * 'resourceProvider', 'status', 'subStatus', 'resourceType', or anything beginning with 'properties.'.
-     *
-     * @return the field value.
+     * Creates an instance of ActivityLogAlertLeafCondition class.
      */
-    public String field() {
-        return this.field;
+    public ActivityLogAlertLeafCondition() {
     }
 
     /**
-     * Set the field property: The name of the field that this condition will examine. The possible values for this
-     * field are (case-insensitive): 'resourceId', 'category', 'caller', 'level', 'operationName', 'resourceGroup',
-     * 'resourceProvider', 'status', 'subStatus', 'resourceType', or anything beginning with 'properties.'.
-     *
-     * @param field the field value to set.
+     * Get the anyOf property: An Activity Log Alert rule condition that is met when at least one of its member leaf
+     * conditions are met.
+     * 
+     * @return the anyOf value.
+     */
+    public List<AlertRuleLeafCondition> anyOf() {
+        return this.anyOf;
+    }
+
+    /**
+     * Set the anyOf property: An Activity Log Alert rule condition that is met when at least one of its member leaf
+     * conditions are met.
+     * 
+     * @param anyOf the anyOf value to set.
      * @return the ActivityLogAlertLeafCondition object itself.
      */
-    public ActivityLogAlertLeafCondition withField(String field) {
-        this.field = field;
+    public ActivityLogAlertLeafCondition withAnyOf(List<AlertRuleLeafCondition> anyOf) {
+        this.anyOf = anyOf;
         return this;
     }
 
     /**
-     * Get the equals property: The field value will be compared to this value (case-insensitive) to determine if the
-     * condition is met.
-     *
-     * @return the equals value.
+     * {@inheritDoc}
      */
-    public String equals() {
-        return this.equals;
+    @Override
+    public ActivityLogAlertLeafCondition withField(String field) {
+        super.withField(field);
+        return this;
     }
 
     /**
-     * Set the equals property: The field value will be compared to this value (case-insensitive) to determine if the
-     * condition is met.
-     *
-     * @param equals the equals value to set.
-     * @return the ActivityLogAlertLeafCondition object itself.
+     * {@inheritDoc}
      */
+    @Override
     public ActivityLogAlertLeafCondition withEquals(String equals) {
-        this.equals = equals;
+        super.withEquals(equals);
+        return this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public ActivityLogAlertLeafCondition withContainsAny(List<String> containsAny) {
+        super.withContainsAny(containsAny);
         return this;
     }
 
     /**
      * Validates the instance.
-     *
+     * 
      * @throws IllegalArgumentException thrown if the instance is not valid.
      */
+    @Override
     public void validate() {
-        if (field() == null) {
-            throw logger
-                .logExceptionAsError(
-                    new IllegalArgumentException(
-                        "Missing required property field in model ActivityLogAlertLeafCondition"));
+        super.validate();
+        if (anyOf() != null) {
+            anyOf().forEach(e -> e.validate());
         }
-        if (equals() == null) {
-            throw logger
-                .logExceptionAsError(
-                    new IllegalArgumentException(
-                        "Missing required property equals in model ActivityLogAlertLeafCondition"));
-        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public JsonWriter toJson(JsonWriter jsonWriter) throws IOException {
+        jsonWriter.writeStartObject();
+        jsonWriter.writeStringField("field", field());
+        jsonWriter.writeStringField("equals", equals());
+        jsonWriter.writeArrayField("containsAny", containsAny(), (writer, element) -> writer.writeString(element));
+        jsonWriter.writeArrayField("anyOf", this.anyOf, (writer, element) -> writer.writeJson(element));
+        return jsonWriter.writeEndObject();
+    }
+
+    /**
+     * Reads an instance of ActivityLogAlertLeafCondition from the JsonReader.
+     * 
+     * @param jsonReader The JsonReader being read.
+     * @return An instance of ActivityLogAlertLeafCondition if the JsonReader was pointing to an instance of it, or null
+     * if it was pointing to JSON null.
+     * @throws IOException If an error occurs while reading the ActivityLogAlertLeafCondition.
+     */
+    public static ActivityLogAlertLeafCondition fromJson(JsonReader jsonReader) throws IOException {
+        return jsonReader.readObject(reader -> {
+            ActivityLogAlertLeafCondition deserializedActivityLogAlertLeafCondition
+                = new ActivityLogAlertLeafCondition();
+            while (reader.nextToken() != JsonToken.END_OBJECT) {
+                String fieldName = reader.getFieldName();
+                reader.nextToken();
+
+                if ("field".equals(fieldName)) {
+                    deserializedActivityLogAlertLeafCondition.withField(reader.getString());
+                } else if ("equals".equals(fieldName)) {
+                    deserializedActivityLogAlertLeafCondition.withEquals(reader.getString());
+                } else if ("containsAny".equals(fieldName)) {
+                    List<String> containsAny = reader.readArray(reader1 -> reader1.getString());
+                    deserializedActivityLogAlertLeafCondition.withContainsAny(containsAny);
+                } else if ("anyOf".equals(fieldName)) {
+                    List<AlertRuleLeafCondition> anyOf
+                        = reader.readArray(reader1 -> AlertRuleLeafCondition.fromJson(reader1));
+                    deserializedActivityLogAlertLeafCondition.anyOf = anyOf;
+                } else {
+                    reader.skipChildren();
+                }
+            }
+
+            return deserializedActivityLogAlertLeafCondition;
+        });
     }
 }

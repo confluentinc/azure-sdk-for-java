@@ -10,14 +10,16 @@ import com.azure.core.http.HttpPipeline;
 import com.azure.core.http.HttpPipelineBuilder;
 import com.azure.core.http.HttpPipelinePosition;
 import com.azure.core.http.policy.AddDatePolicy;
+import com.azure.core.http.policy.AddHeadersFromContextPolicy;
+import com.azure.core.http.policy.BearerTokenAuthenticationPolicy;
 import com.azure.core.http.policy.HttpLogOptions;
 import com.azure.core.http.policy.HttpLoggingPolicy;
 import com.azure.core.http.policy.HttpPipelinePolicy;
 import com.azure.core.http.policy.HttpPolicyProviders;
 import com.azure.core.http.policy.RequestIdPolicy;
+import com.azure.core.http.policy.RetryOptions;
 import com.azure.core.http.policy.RetryPolicy;
 import com.azure.core.http.policy.UserAgentPolicy;
-import com.azure.core.management.http.policy.ArmChallengeAuthenticationPolicy;
 import com.azure.core.management.profile.AzureProfile;
 import com.azure.core.util.Configuration;
 import com.azure.core.util.logging.ClientLogger;
@@ -26,30 +28,15 @@ import com.azure.resourcemanager.securityinsights.implementation.ActionsImpl;
 import com.azure.resourcemanager.securityinsights.implementation.AlertRuleTemplatesImpl;
 import com.azure.resourcemanager.securityinsights.implementation.AlertRulesImpl;
 import com.azure.resourcemanager.securityinsights.implementation.AutomationRulesImpl;
-import com.azure.resourcemanager.securityinsights.implementation.BookmarkOperationsImpl;
-import com.azure.resourcemanager.securityinsights.implementation.BookmarkRelationsImpl;
 import com.azure.resourcemanager.securityinsights.implementation.BookmarksImpl;
-import com.azure.resourcemanager.securityinsights.implementation.DataConnectorsCheckRequirementsOperationsImpl;
 import com.azure.resourcemanager.securityinsights.implementation.DataConnectorsImpl;
-import com.azure.resourcemanager.securityinsights.implementation.DomainWhoisImpl;
-import com.azure.resourcemanager.securityinsights.implementation.EntitiesGetTimelinesImpl;
-import com.azure.resourcemanager.securityinsights.implementation.EntitiesImpl;
-import com.azure.resourcemanager.securityinsights.implementation.EntitiesRelationsImpl;
-import com.azure.resourcemanager.securityinsights.implementation.EntityQueriesImpl;
-import com.azure.resourcemanager.securityinsights.implementation.EntityQueryTemplatesImpl;
-import com.azure.resourcemanager.securityinsights.implementation.EntityRelationsImpl;
 import com.azure.resourcemanager.securityinsights.implementation.IncidentCommentsImpl;
 import com.azure.resourcemanager.securityinsights.implementation.IncidentRelationsImpl;
 import com.azure.resourcemanager.securityinsights.implementation.IncidentsImpl;
-import com.azure.resourcemanager.securityinsights.implementation.IpGeodatasImpl;
-import com.azure.resourcemanager.securityinsights.implementation.MetadatasImpl;
-import com.azure.resourcemanager.securityinsights.implementation.OfficeConsentsImpl;
 import com.azure.resourcemanager.securityinsights.implementation.OperationsImpl;
-import com.azure.resourcemanager.securityinsights.implementation.ProductSettingsImpl;
 import com.azure.resourcemanager.securityinsights.implementation.SecurityInsightsBuilder;
+import com.azure.resourcemanager.securityinsights.implementation.SecurityMLAnalyticsSettingsImpl;
 import com.azure.resourcemanager.securityinsights.implementation.SentinelOnboardingStatesImpl;
-import com.azure.resourcemanager.securityinsights.implementation.SourceControlsImpl;
-import com.azure.resourcemanager.securityinsights.implementation.SourceControlsOperationsImpl;
 import com.azure.resourcemanager.securityinsights.implementation.ThreatIntelligenceIndicatorMetricsImpl;
 import com.azure.resourcemanager.securityinsights.implementation.ThreatIntelligenceIndicatorsImpl;
 import com.azure.resourcemanager.securityinsights.implementation.ThreatIntelligenceIndicatorsOperationsImpl;
@@ -59,29 +46,14 @@ import com.azure.resourcemanager.securityinsights.models.Actions;
 import com.azure.resourcemanager.securityinsights.models.AlertRuleTemplates;
 import com.azure.resourcemanager.securityinsights.models.AlertRules;
 import com.azure.resourcemanager.securityinsights.models.AutomationRules;
-import com.azure.resourcemanager.securityinsights.models.BookmarkOperations;
-import com.azure.resourcemanager.securityinsights.models.BookmarkRelations;
 import com.azure.resourcemanager.securityinsights.models.Bookmarks;
 import com.azure.resourcemanager.securityinsights.models.DataConnectors;
-import com.azure.resourcemanager.securityinsights.models.DataConnectorsCheckRequirementsOperations;
-import com.azure.resourcemanager.securityinsights.models.DomainWhois;
-import com.azure.resourcemanager.securityinsights.models.Entities;
-import com.azure.resourcemanager.securityinsights.models.EntitiesGetTimelines;
-import com.azure.resourcemanager.securityinsights.models.EntitiesRelations;
-import com.azure.resourcemanager.securityinsights.models.EntityQueries;
-import com.azure.resourcemanager.securityinsights.models.EntityQueryTemplates;
-import com.azure.resourcemanager.securityinsights.models.EntityRelations;
 import com.azure.resourcemanager.securityinsights.models.IncidentComments;
 import com.azure.resourcemanager.securityinsights.models.IncidentRelations;
 import com.azure.resourcemanager.securityinsights.models.Incidents;
-import com.azure.resourcemanager.securityinsights.models.IpGeodatas;
-import com.azure.resourcemanager.securityinsights.models.Metadatas;
-import com.azure.resourcemanager.securityinsights.models.OfficeConsents;
 import com.azure.resourcemanager.securityinsights.models.Operations;
-import com.azure.resourcemanager.securityinsights.models.ProductSettings;
+import com.azure.resourcemanager.securityinsights.models.SecurityMLAnalyticsSettings;
 import com.azure.resourcemanager.securityinsights.models.SentinelOnboardingStates;
-import com.azure.resourcemanager.securityinsights.models.SourceControls;
-import com.azure.resourcemanager.securityinsights.models.SourceControlsOperations;
 import com.azure.resourcemanager.securityinsights.models.ThreatIntelligenceIndicatorMetrics;
 import com.azure.resourcemanager.securityinsights.models.ThreatIntelligenceIndicators;
 import com.azure.resourcemanager.securityinsights.models.ThreatIntelligenceIndicatorsOperations;
@@ -95,8 +67,8 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
- * Entry point to SecurityInsightsManager. API spec for Microsoft.SecurityInsights (Azure Security Insights) resource
- * provider.
+ * Entry point to SecurityInsightsManager.
+ * API spec for Microsoft.SecurityInsights (Azure Security Insights) resource provider.
  */
 public final class SecurityInsightsManager {
     private AlertRules alertRules;
@@ -109,23 +81,7 @@ public final class SecurityInsightsManager {
 
     private Bookmarks bookmarks;
 
-    private BookmarkRelations bookmarkRelations;
-
-    private BookmarkOperations bookmarkOperations;
-
-    private IpGeodatas ipGeodatas;
-
-    private DomainWhois domainWhois;
-
-    private EntityQueries entityQueries;
-
-    private Entities entities;
-
-    private EntitiesGetTimelines entitiesGetTimelines;
-
-    private EntitiesRelations entitiesRelations;
-
-    private EntityRelations entityRelations;
+    private DataConnectors dataConnectors;
 
     private Incidents incidents;
 
@@ -133,23 +89,9 @@ public final class SecurityInsightsManager {
 
     private IncidentRelations incidentRelations;
 
-    private Metadatas metadatas;
-
     private SentinelOnboardingStates sentinelOnboardingStates;
 
-    private ProductSettings productSettings;
-
-    private SourceControls sourceControls;
-
-    private SourceControlsOperations sourceControlsOperations;
-
-    private Watchlists watchlists;
-
-    private WatchlistItems watchlistItems;
-
-    private DataConnectors dataConnectors;
-
-    private DataConnectorsCheckRequirementsOperations dataConnectorsCheckRequirementsOperations;
+    private SecurityMLAnalyticsSettings securityMLAnalyticsSettings;
 
     private ThreatIntelligenceIndicators threatIntelligenceIndicators;
 
@@ -157,29 +99,27 @@ public final class SecurityInsightsManager {
 
     private ThreatIntelligenceIndicatorMetrics threatIntelligenceIndicatorMetrics;
 
+    private Watchlists watchlists;
+
+    private WatchlistItems watchlistItems;
+
     private Operations operations;
-
-    private OfficeConsents officeConsents;
-
-    private EntityQueryTemplates entityQueryTemplates;
 
     private final SecurityInsights clientObject;
 
     private SecurityInsightsManager(HttpPipeline httpPipeline, AzureProfile profile, Duration defaultPollInterval) {
         Objects.requireNonNull(httpPipeline, "'httpPipeline' cannot be null.");
         Objects.requireNonNull(profile, "'profile' cannot be null.");
-        this.clientObject =
-            new SecurityInsightsBuilder()
-                .pipeline(httpPipeline)
-                .endpoint(profile.getEnvironment().getResourceManagerEndpoint())
-                .subscriptionId(profile.getSubscriptionId())
-                .defaultPollInterval(defaultPollInterval)
-                .buildClient();
+        this.clientObject = new SecurityInsightsBuilder().pipeline(httpPipeline)
+            .endpoint(profile.getEnvironment().getResourceManagerEndpoint())
+            .subscriptionId(profile.getSubscriptionId())
+            .defaultPollInterval(defaultPollInterval)
+            .buildClient();
     }
 
     /**
      * Creates an instance of SecurityInsights service API entry point.
-     *
+     * 
      * @param credential the credential to use.
      * @param profile the Azure profile for client.
      * @return the SecurityInsights service API instance.
@@ -191,23 +131,39 @@ public final class SecurityInsightsManager {
     }
 
     /**
+     * Creates an instance of SecurityInsights service API entry point.
+     * 
+     * @param httpPipeline the {@link HttpPipeline} configured with Azure authentication credential.
+     * @param profile the Azure profile for client.
+     * @return the SecurityInsights service API instance.
+     */
+    public static SecurityInsightsManager authenticate(HttpPipeline httpPipeline, AzureProfile profile) {
+        Objects.requireNonNull(httpPipeline, "'httpPipeline' cannot be null.");
+        Objects.requireNonNull(profile, "'profile' cannot be null.");
+        return new SecurityInsightsManager(httpPipeline, profile, null);
+    }
+
+    /**
      * Gets a Configurable instance that can be used to create SecurityInsightsManager with optional configuration.
-     *
+     * 
      * @return the Configurable instance allowing configurations.
      */
     public static Configurable configure() {
         return new SecurityInsightsManager.Configurable();
     }
 
-    /** The Configurable allowing configurations to be set. */
+    /**
+     * The Configurable allowing configurations to be set.
+     */
     public static final class Configurable {
-        private final ClientLogger logger = new ClientLogger(Configurable.class);
+        private static final ClientLogger LOGGER = new ClientLogger(Configurable.class);
 
         private HttpClient httpClient;
         private HttpLogOptions httpLogOptions;
         private final List<HttpPipelinePolicy> policies = new ArrayList<>();
         private final List<String> scopes = new ArrayList<>();
         private RetryPolicy retryPolicy;
+        private RetryOptions retryOptions;
         private Duration defaultPollInterval;
 
         private Configurable() {
@@ -269,15 +225,30 @@ public final class SecurityInsightsManager {
         }
 
         /**
+         * Sets the retry options for the HTTP pipeline retry policy.
+         * <p>
+         * This setting has no effect, if retry policy is set via {@link #withRetryPolicy(RetryPolicy)}.
+         *
+         * @param retryOptions the retry options for the HTTP pipeline retry policy.
+         * @return the configurable object itself.
+         */
+        public Configurable withRetryOptions(RetryOptions retryOptions) {
+            this.retryOptions = Objects.requireNonNull(retryOptions, "'retryOptions' cannot be null.");
+            return this;
+        }
+
+        /**
          * Sets the default poll interval, used when service does not provide "Retry-After" header.
          *
          * @param defaultPollInterval the default poll interval.
          * @return the configurable object itself.
          */
         public Configurable withDefaultPollInterval(Duration defaultPollInterval) {
-            this.defaultPollInterval = Objects.requireNonNull(defaultPollInterval, "'retryPolicy' cannot be null.");
+            this.defaultPollInterval
+                = Objects.requireNonNull(defaultPollInterval, "'defaultPollInterval' cannot be null.");
             if (this.defaultPollInterval.isNegative()) {
-                throw logger.logExceptionAsError(new IllegalArgumentException("'httpPipeline' cannot be negative"));
+                throw LOGGER
+                    .logExceptionAsError(new IllegalArgumentException("'defaultPollInterval' cannot be negative"));
             }
             return this;
         }
@@ -294,15 +265,13 @@ public final class SecurityInsightsManager {
             Objects.requireNonNull(profile, "'profile' cannot be null.");
 
             StringBuilder userAgentBuilder = new StringBuilder();
-            userAgentBuilder
-                .append("azsdk-java")
+            userAgentBuilder.append("azsdk-java")
                 .append("-")
                 .append("com.azure.resourcemanager.securityinsights")
                 .append("/")
-                .append("1.0.0-beta.1");
+                .append("1.0.0");
             if (!Configuration.getGlobalConfiguration().get("AZURE_TELEMETRY_DISABLED", false)) {
-                userAgentBuilder
-                    .append(" (")
+                userAgentBuilder.append(" (")
                     .append(Configuration.getGlobalConfiguration().get("java.version"))
                     .append("; ")
                     .append(Configuration.getGlobalConfiguration().get("os.name"))
@@ -317,41 +286,40 @@ public final class SecurityInsightsManager {
                 scopes.add(profile.getEnvironment().getManagementEndpoint() + "/.default");
             }
             if (retryPolicy == null) {
-                retryPolicy = new RetryPolicy("Retry-After", ChronoUnit.SECONDS);
+                if (retryOptions != null) {
+                    retryPolicy = new RetryPolicy(retryOptions);
+                } else {
+                    retryPolicy = new RetryPolicy("Retry-After", ChronoUnit.SECONDS);
+                }
             }
             List<HttpPipelinePolicy> policies = new ArrayList<>();
             policies.add(new UserAgentPolicy(userAgentBuilder.toString()));
+            policies.add(new AddHeadersFromContextPolicy());
             policies.add(new RequestIdPolicy());
-            policies
-                .addAll(
-                    this
-                        .policies
-                        .stream()
-                        .filter(p -> p.getPipelinePosition() == HttpPipelinePosition.PER_CALL)
-                        .collect(Collectors.toList()));
+            policies.addAll(this.policies.stream()
+                .filter(p -> p.getPipelinePosition() == HttpPipelinePosition.PER_CALL)
+                .collect(Collectors.toList()));
             HttpPolicyProviders.addBeforeRetryPolicies(policies);
             policies.add(retryPolicy);
             policies.add(new AddDatePolicy());
-            policies.add(new ArmChallengeAuthenticationPolicy(credential, scopes.toArray(new String[0])));
-            policies
-                .addAll(
-                    this
-                        .policies
-                        .stream()
-                        .filter(p -> p.getPipelinePosition() == HttpPipelinePosition.PER_RETRY)
-                        .collect(Collectors.toList()));
+            policies.add(new BearerTokenAuthenticationPolicy(credential, scopes.toArray(new String[0])));
+            policies.addAll(this.policies.stream()
+                .filter(p -> p.getPipelinePosition() == HttpPipelinePosition.PER_RETRY)
+                .collect(Collectors.toList()));
             HttpPolicyProviders.addAfterRetryPolicies(policies);
             policies.add(new HttpLoggingPolicy(httpLogOptions));
-            HttpPipeline httpPipeline =
-                new HttpPipelineBuilder()
-                    .httpClient(httpClient)
-                    .policies(policies.toArray(new HttpPipelinePolicy[0]))
-                    .build();
+            HttpPipeline httpPipeline = new HttpPipelineBuilder().httpClient(httpClient)
+                .policies(policies.toArray(new HttpPipelinePolicy[0]))
+                .build();
             return new SecurityInsightsManager(httpPipeline, profile, defaultPollInterval);
         }
     }
 
-    /** @return Resource collection API of AlertRules. */
+    /**
+     * Gets the resource collection API of AlertRules.
+     * 
+     * @return Resource collection API of AlertRules.
+     */
     public AlertRules alertRules() {
         if (this.alertRules == null) {
             this.alertRules = new AlertRulesImpl(clientObject.getAlertRules(), this);
@@ -359,7 +327,11 @@ public final class SecurityInsightsManager {
         return alertRules;
     }
 
-    /** @return Resource collection API of Actions. */
+    /**
+     * Gets the resource collection API of Actions. It manages ActionResponse.
+     * 
+     * @return Resource collection API of Actions.
+     */
     public Actions actions() {
         if (this.actions == null) {
             this.actions = new ActionsImpl(clientObject.getActions(), this);
@@ -367,7 +339,11 @@ public final class SecurityInsightsManager {
         return actions;
     }
 
-    /** @return Resource collection API of AlertRuleTemplates. */
+    /**
+     * Gets the resource collection API of AlertRuleTemplates.
+     * 
+     * @return Resource collection API of AlertRuleTemplates.
+     */
     public AlertRuleTemplates alertRuleTemplates() {
         if (this.alertRuleTemplates == null) {
             this.alertRuleTemplates = new AlertRuleTemplatesImpl(clientObject.getAlertRuleTemplates(), this);
@@ -375,7 +351,11 @@ public final class SecurityInsightsManager {
         return alertRuleTemplates;
     }
 
-    /** @return Resource collection API of AutomationRules. */
+    /**
+     * Gets the resource collection API of AutomationRules. It manages AutomationRule.
+     * 
+     * @return Resource collection API of AutomationRules.
+     */
     public AutomationRules automationRules() {
         if (this.automationRules == null) {
             this.automationRules = new AutomationRulesImpl(clientObject.getAutomationRules(), this);
@@ -383,7 +363,11 @@ public final class SecurityInsightsManager {
         return automationRules;
     }
 
-    /** @return Resource collection API of Bookmarks. */
+    /**
+     * Gets the resource collection API of Bookmarks. It manages Bookmark.
+     * 
+     * @return Resource collection API of Bookmarks.
+     */
     public Bookmarks bookmarks() {
         if (this.bookmarks == null) {
             this.bookmarks = new BookmarksImpl(clientObject.getBookmarks(), this);
@@ -391,161 +375,11 @@ public final class SecurityInsightsManager {
         return bookmarks;
     }
 
-    /** @return Resource collection API of BookmarkRelations. */
-    public BookmarkRelations bookmarkRelations() {
-        if (this.bookmarkRelations == null) {
-            this.bookmarkRelations = new BookmarkRelationsImpl(clientObject.getBookmarkRelations(), this);
-        }
-        return bookmarkRelations;
-    }
-
-    /** @return Resource collection API of BookmarkOperations. */
-    public BookmarkOperations bookmarkOperations() {
-        if (this.bookmarkOperations == null) {
-            this.bookmarkOperations = new BookmarkOperationsImpl(clientObject.getBookmarkOperations(), this);
-        }
-        return bookmarkOperations;
-    }
-
-    /** @return Resource collection API of IpGeodatas. */
-    public IpGeodatas ipGeodatas() {
-        if (this.ipGeodatas == null) {
-            this.ipGeodatas = new IpGeodatasImpl(clientObject.getIpGeodatas(), this);
-        }
-        return ipGeodatas;
-    }
-
-    /** @return Resource collection API of DomainWhois. */
-    public DomainWhois domainWhois() {
-        if (this.domainWhois == null) {
-            this.domainWhois = new DomainWhoisImpl(clientObject.getDomainWhois(), this);
-        }
-        return domainWhois;
-    }
-
-    /** @return Resource collection API of EntityQueries. */
-    public EntityQueries entityQueries() {
-        if (this.entityQueries == null) {
-            this.entityQueries = new EntityQueriesImpl(clientObject.getEntityQueries(), this);
-        }
-        return entityQueries;
-    }
-
-    /** @return Resource collection API of Entities. */
-    public Entities entities() {
-        if (this.entities == null) {
-            this.entities = new EntitiesImpl(clientObject.getEntities(), this);
-        }
-        return entities;
-    }
-
-    /** @return Resource collection API of EntitiesGetTimelines. */
-    public EntitiesGetTimelines entitiesGetTimelines() {
-        if (this.entitiesGetTimelines == null) {
-            this.entitiesGetTimelines = new EntitiesGetTimelinesImpl(clientObject.getEntitiesGetTimelines(), this);
-        }
-        return entitiesGetTimelines;
-    }
-
-    /** @return Resource collection API of EntitiesRelations. */
-    public EntitiesRelations entitiesRelations() {
-        if (this.entitiesRelations == null) {
-            this.entitiesRelations = new EntitiesRelationsImpl(clientObject.getEntitiesRelations(), this);
-        }
-        return entitiesRelations;
-    }
-
-    /** @return Resource collection API of EntityRelations. */
-    public EntityRelations entityRelations() {
-        if (this.entityRelations == null) {
-            this.entityRelations = new EntityRelationsImpl(clientObject.getEntityRelations(), this);
-        }
-        return entityRelations;
-    }
-
-    /** @return Resource collection API of Incidents. */
-    public Incidents incidents() {
-        if (this.incidents == null) {
-            this.incidents = new IncidentsImpl(clientObject.getIncidents(), this);
-        }
-        return incidents;
-    }
-
-    /** @return Resource collection API of IncidentComments. */
-    public IncidentComments incidentComments() {
-        if (this.incidentComments == null) {
-            this.incidentComments = new IncidentCommentsImpl(clientObject.getIncidentComments(), this);
-        }
-        return incidentComments;
-    }
-
-    /** @return Resource collection API of IncidentRelations. */
-    public IncidentRelations incidentRelations() {
-        if (this.incidentRelations == null) {
-            this.incidentRelations = new IncidentRelationsImpl(clientObject.getIncidentRelations(), this);
-        }
-        return incidentRelations;
-    }
-
-    /** @return Resource collection API of Metadatas. */
-    public Metadatas metadatas() {
-        if (this.metadatas == null) {
-            this.metadatas = new MetadatasImpl(clientObject.getMetadatas(), this);
-        }
-        return metadatas;
-    }
-
-    /** @return Resource collection API of SentinelOnboardingStates. */
-    public SentinelOnboardingStates sentinelOnboardingStates() {
-        if (this.sentinelOnboardingStates == null) {
-            this.sentinelOnboardingStates =
-                new SentinelOnboardingStatesImpl(clientObject.getSentinelOnboardingStates(), this);
-        }
-        return sentinelOnboardingStates;
-    }
-
-    /** @return Resource collection API of ProductSettings. */
-    public ProductSettings productSettings() {
-        if (this.productSettings == null) {
-            this.productSettings = new ProductSettingsImpl(clientObject.getProductSettings(), this);
-        }
-        return productSettings;
-    }
-
-    /** @return Resource collection API of SourceControls. */
-    public SourceControls sourceControls() {
-        if (this.sourceControls == null) {
-            this.sourceControls = new SourceControlsImpl(clientObject.getSourceControls(), this);
-        }
-        return sourceControls;
-    }
-
-    /** @return Resource collection API of SourceControlsOperations. */
-    public SourceControlsOperations sourceControlsOperations() {
-        if (this.sourceControlsOperations == null) {
-            this.sourceControlsOperations =
-                new SourceControlsOperationsImpl(clientObject.getSourceControlsOperations(), this);
-        }
-        return sourceControlsOperations;
-    }
-
-    /** @return Resource collection API of Watchlists. */
-    public Watchlists watchlists() {
-        if (this.watchlists == null) {
-            this.watchlists = new WatchlistsImpl(clientObject.getWatchlists(), this);
-        }
-        return watchlists;
-    }
-
-    /** @return Resource collection API of WatchlistItems. */
-    public WatchlistItems watchlistItems() {
-        if (this.watchlistItems == null) {
-            this.watchlistItems = new WatchlistItemsImpl(clientObject.getWatchlistItems(), this);
-        }
-        return watchlistItems;
-    }
-
-    /** @return Resource collection API of DataConnectors. */
+    /**
+     * Gets the resource collection API of DataConnectors.
+     * 
+     * @return Resource collection API of DataConnectors.
+     */
     public DataConnectors dataConnectors() {
         if (this.dataConnectors == null) {
             this.dataConnectors = new DataConnectorsImpl(clientObject.getDataConnectors(), this);
@@ -553,45 +387,136 @@ public final class SecurityInsightsManager {
         return dataConnectors;
     }
 
-    /** @return Resource collection API of DataConnectorsCheckRequirementsOperations. */
-    public DataConnectorsCheckRequirementsOperations dataConnectorsCheckRequirementsOperations() {
-        if (this.dataConnectorsCheckRequirementsOperations == null) {
-            this.dataConnectorsCheckRequirementsOperations =
-                new DataConnectorsCheckRequirementsOperationsImpl(
-                    clientObject.getDataConnectorsCheckRequirementsOperations(), this);
+    /**
+     * Gets the resource collection API of Incidents. It manages Incident.
+     * 
+     * @return Resource collection API of Incidents.
+     */
+    public Incidents incidents() {
+        if (this.incidents == null) {
+            this.incidents = new IncidentsImpl(clientObject.getIncidents(), this);
         }
-        return dataConnectorsCheckRequirementsOperations;
+        return incidents;
     }
 
-    /** @return Resource collection API of ThreatIntelligenceIndicators. */
+    /**
+     * Gets the resource collection API of IncidentComments. It manages IncidentComment.
+     * 
+     * @return Resource collection API of IncidentComments.
+     */
+    public IncidentComments incidentComments() {
+        if (this.incidentComments == null) {
+            this.incidentComments = new IncidentCommentsImpl(clientObject.getIncidentComments(), this);
+        }
+        return incidentComments;
+    }
+
+    /**
+     * Gets the resource collection API of IncidentRelations. It manages Relation.
+     * 
+     * @return Resource collection API of IncidentRelations.
+     */
+    public IncidentRelations incidentRelations() {
+        if (this.incidentRelations == null) {
+            this.incidentRelations = new IncidentRelationsImpl(clientObject.getIncidentRelations(), this);
+        }
+        return incidentRelations;
+    }
+
+    /**
+     * Gets the resource collection API of SentinelOnboardingStates. It manages SentinelOnboardingState.
+     * 
+     * @return Resource collection API of SentinelOnboardingStates.
+     */
+    public SentinelOnboardingStates sentinelOnboardingStates() {
+        if (this.sentinelOnboardingStates == null) {
+            this.sentinelOnboardingStates
+                = new SentinelOnboardingStatesImpl(clientObject.getSentinelOnboardingStates(), this);
+        }
+        return sentinelOnboardingStates;
+    }
+
+    /**
+     * Gets the resource collection API of SecurityMLAnalyticsSettings.
+     * 
+     * @return Resource collection API of SecurityMLAnalyticsSettings.
+     */
+    public SecurityMLAnalyticsSettings securityMLAnalyticsSettings() {
+        if (this.securityMLAnalyticsSettings == null) {
+            this.securityMLAnalyticsSettings
+                = new SecurityMLAnalyticsSettingsImpl(clientObject.getSecurityMLAnalyticsSettings(), this);
+        }
+        return securityMLAnalyticsSettings;
+    }
+
+    /**
+     * Gets the resource collection API of ThreatIntelligenceIndicators.
+     * 
+     * @return Resource collection API of ThreatIntelligenceIndicators.
+     */
     public ThreatIntelligenceIndicators threatIntelligenceIndicators() {
         if (this.threatIntelligenceIndicators == null) {
-            this.threatIntelligenceIndicators =
-                new ThreatIntelligenceIndicatorsImpl(clientObject.getThreatIntelligenceIndicators(), this);
+            this.threatIntelligenceIndicators
+                = new ThreatIntelligenceIndicatorsImpl(clientObject.getThreatIntelligenceIndicators(), this);
         }
         return threatIntelligenceIndicators;
     }
 
-    /** @return Resource collection API of ThreatIntelligenceIndicatorsOperations. */
+    /**
+     * Gets the resource collection API of ThreatIntelligenceIndicatorsOperations.
+     * 
+     * @return Resource collection API of ThreatIntelligenceIndicatorsOperations.
+     */
     public ThreatIntelligenceIndicatorsOperations threatIntelligenceIndicatorsOperations() {
         if (this.threatIntelligenceIndicatorsOperations == null) {
-            this.threatIntelligenceIndicatorsOperations =
-                new ThreatIntelligenceIndicatorsOperationsImpl(
-                    clientObject.getThreatIntelligenceIndicatorsOperations(), this);
+            this.threatIntelligenceIndicatorsOperations = new ThreatIntelligenceIndicatorsOperationsImpl(
+                clientObject.getThreatIntelligenceIndicatorsOperations(), this);
         }
         return threatIntelligenceIndicatorsOperations;
     }
 
-    /** @return Resource collection API of ThreatIntelligenceIndicatorMetrics. */
+    /**
+     * Gets the resource collection API of ThreatIntelligenceIndicatorMetrics.
+     * 
+     * @return Resource collection API of ThreatIntelligenceIndicatorMetrics.
+     */
     public ThreatIntelligenceIndicatorMetrics threatIntelligenceIndicatorMetrics() {
         if (this.threatIntelligenceIndicatorMetrics == null) {
-            this.threatIntelligenceIndicatorMetrics =
-                new ThreatIntelligenceIndicatorMetricsImpl(clientObject.getThreatIntelligenceIndicatorMetrics(), this);
+            this.threatIntelligenceIndicatorMetrics = new ThreatIntelligenceIndicatorMetricsImpl(
+                clientObject.getThreatIntelligenceIndicatorMetrics(), this);
         }
         return threatIntelligenceIndicatorMetrics;
     }
 
-    /** @return Resource collection API of Operations. */
+    /**
+     * Gets the resource collection API of Watchlists. It manages Watchlist.
+     * 
+     * @return Resource collection API of Watchlists.
+     */
+    public Watchlists watchlists() {
+        if (this.watchlists == null) {
+            this.watchlists = new WatchlistsImpl(clientObject.getWatchlists(), this);
+        }
+        return watchlists;
+    }
+
+    /**
+     * Gets the resource collection API of WatchlistItems. It manages WatchlistItem.
+     * 
+     * @return Resource collection API of WatchlistItems.
+     */
+    public WatchlistItems watchlistItems() {
+        if (this.watchlistItems == null) {
+            this.watchlistItems = new WatchlistItemsImpl(clientObject.getWatchlistItems(), this);
+        }
+        return watchlistItems;
+    }
+
+    /**
+     * Gets the resource collection API of Operations.
+     * 
+     * @return Resource collection API of Operations.
+     */
     public Operations operations() {
         if (this.operations == null) {
             this.operations = new OperationsImpl(clientObject.getOperations(), this);
@@ -599,25 +524,11 @@ public final class SecurityInsightsManager {
         return operations;
     }
 
-    /** @return Resource collection API of OfficeConsents. */
-    public OfficeConsents officeConsents() {
-        if (this.officeConsents == null) {
-            this.officeConsents = new OfficeConsentsImpl(clientObject.getOfficeConsents(), this);
-        }
-        return officeConsents;
-    }
-
-    /** @return Resource collection API of EntityQueryTemplates. */
-    public EntityQueryTemplates entityQueryTemplates() {
-        if (this.entityQueryTemplates == null) {
-            this.entityQueryTemplates = new EntityQueryTemplatesImpl(clientObject.getEntityQueryTemplates(), this);
-        }
-        return entityQueryTemplates;
-    }
-
     /**
-     * @return Wrapped service client SecurityInsights providing direct access to the underlying auto-generated API
-     *     implementation, based on Azure REST API.
+     * Gets wrapped service client SecurityInsights providing direct access to the underlying auto-generated API
+     * implementation, based on Azure REST API.
+     * 
+     * @return Wrapped service client SecurityInsights.
      */
     public SecurityInsights serviceClient() {
         return this.clientObject;

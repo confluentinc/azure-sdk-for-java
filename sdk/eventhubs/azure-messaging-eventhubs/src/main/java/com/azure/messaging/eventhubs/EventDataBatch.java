@@ -7,35 +7,25 @@ import com.azure.core.amqp.exception.AmqpErrorCondition;
 import com.azure.core.amqp.exception.AmqpException;
 import com.azure.core.amqp.implementation.AmqpConstants;
 import com.azure.core.amqp.implementation.ErrorContextProvider;
-import com.azure.core.amqp.implementation.TracerProvider;
 import com.azure.core.amqp.models.AmqpAnnotatedMessage;
-import com.azure.core.util.Context;
 import com.azure.core.util.logging.ClientLogger;
-import com.azure.core.util.tracing.ProcessKind;
+import com.azure.messaging.eventhubs.implementation.MessageUtils;
+import com.azure.messaging.eventhubs.implementation.instrumentation.EventHubsTracer;
 import com.azure.messaging.eventhubs.models.CreateBatchOptions;
 import org.apache.qpid.proton.amqp.messaging.MessageAnnotations;
+import org.apache.qpid.proton.codec.DroppingWritableBuffer;
 import org.apache.qpid.proton.message.Message;
-import reactor.core.publisher.Signal;
 
-import java.nio.BufferOverflowException;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
-import java.util.Optional;
-
-import static com.azure.core.util.tracing.Tracer.AZ_TRACING_NAMESPACE_KEY;
-import static com.azure.core.util.tracing.Tracer.DIAGNOSTIC_ID_KEY;
-import static com.azure.core.util.tracing.Tracer.ENTITY_PATH_KEY;
-import static com.azure.core.util.tracing.Tracer.HOST_NAME_KEY;
-import static com.azure.core.util.tracing.Tracer.SPAN_CONTEXT_KEY;
-import static com.azure.messaging.eventhubs.implementation.ClientConstants.AZ_NAMESPACE_VALUE;
-import static com.azure.messaging.eventhubs.implementation.ClientConstants.AZ_TRACING_SERVICE_NAME;
 
 /**
  * A class for aggregating {@link EventData} into a single, size-limited, batch. It is treated as a single message when
- * sent to the Azure Event Hubs service.
+ * sent to the Azure Event Hubs service.  {@link EventDataBatch} is recommended in scenarios requiring high throughput
+ * for publishing events.
  *
  * @see EventHubProducerClient#createBatch()
  * @see EventHubProducerClient#createBatch(CreateBatchOptions)
@@ -45,31 +35,24 @@ import static com.azure.messaging.eventhubs.implementation.ClientConstants.AZ_TR
  *     producer.
  */
 public final class EventDataBatch {
-    private final ClientLogger logger = new ClientLogger(EventDataBatch.class);
-    private final Object lock = new Object();
+    private static final ClientLogger LOGGER = new ClientLogger(EventDataBatch.class);
     private final int maxMessageSize;
     private final String partitionKey;
     private final ErrorContextProvider contextProvider;
     private final List<EventData> events;
-    private final byte[] eventBytes;
     private final String partitionId;
     private int sizeInBytes;
-    private final TracerProvider tracerProvider;
-    private final String entityPath;
-    private final String hostname;
+    private final EventHubsTracer tracer;
 
     EventDataBatch(int maxMessageSize, String partitionId, String partitionKey, ErrorContextProvider contextProvider,
-        TracerProvider tracerProvider, String entityPath, String hostname) {
+        EventHubsProducerInstrumentation instrumentation) {
         this.maxMessageSize = maxMessageSize;
         this.partitionKey = partitionKey;
         this.partitionId = partitionId;
         this.contextProvider = contextProvider;
         this.events = new LinkedList<>();
         this.sizeInBytes = (maxMessageSize / 65536) * 1024; // reserve 1KB for every 64KB
-        this.eventBytes = new byte[maxMessageSize];
-        this.tracerProvider = tracerProvider;
-        this.entityPath = entityPath;
-        this.hostname = hostname;
+        this.tracer = instrumentation.getTracer();
     }
 
     /**
@@ -102,68 +85,39 @@ public final class EventDataBatch {
     /**
      * Tries to add an {@link EventData event} to the batch.
      *
+     * <p>This method is not thread-safe; make sure to synchronize the method access when using multiple threads
+     * to add events.</p>
+     *
+     * <p>When batch was create with partition key, the event data will be updated with this partition key.</p>
+     *
      * @param eventData The {@link EventData} to add to the batch.
      * @return {@code true} if the event could be added to the batch; {@code false} if the event was too large to fit in
-     *     the batch.
+     *     the batch, to accommodate the event, the application should obtain a new {@link EventDataBatch} object and
+     *     add event to it.
      * @throws IllegalArgumentException if {@code eventData} is {@code null}.
      * @throws AmqpException if {@code eventData} is larger than the maximum size of the {@link EventDataBatch}.
      */
     public boolean tryAdd(final EventData eventData) {
         if (eventData == null) {
-            throw logger.logExceptionAsWarning(new NullPointerException("eventData cannot be null"));
-        }
-        EventData event = tracerProvider.isEnabled() ? traceMessageSpan(eventData) : eventData;
-
-        final int size;
-        try {
-            size = getSize(event, events.isEmpty());
-        } catch (BufferOverflowException exception) {
-            throw logger.logExceptionAsWarning(new AmqpException(false, AmqpErrorCondition.LINK_PAYLOAD_SIZE_EXCEEDED,
-                String.format(Locale.US, "Size of the payload exceeded maximum message size: %s kb",
-                    maxMessageSize / 1024),
-                contextProvider.getErrorContext()));
+            throw LOGGER.logExceptionAsWarning(new NullPointerException("eventData cannot be null"));
         }
 
-        synchronized (lock) {
-            if (this.sizeInBytes + size > this.maxMessageSize) {
-                return false;
-            }
+        tracer.reportMessageSpan(eventData, eventData.getContext());
 
-            this.sizeInBytes += size;
+        final int size = getSize(eventData, events.isEmpty());
+        if (this.sizeInBytes + size > this.maxMessageSize) {
+            return false;
         }
 
-        this.events.add(event);
+        this.sizeInBytes += size;
+
+        // updating event data only if we're going to add it to the batch
+        if (partitionKey != null) {
+            eventData.setPartitionKeyAnnotation(partitionKey);
+        }
+
+        this.events.add(eventData);
         return true;
-    }
-
-    /**
-     * Method to start and end a "Azure.EventHubs.message" span and add the "DiagnosticId" as a property of the message.
-     *
-     * @param eventData The Event to add tracing span for.
-     * @return the updated event data object.
-     */
-    private EventData traceMessageSpan(EventData eventData) {
-        Optional<Object> eventContextData = eventData.getContext().getData(SPAN_CONTEXT_KEY);
-        if (eventContextData.isPresent()) {
-            // if message has context (in case of retries), don't start a message span or add a new context
-            return eventData;
-        } else {
-            // Starting the span makes the sampling decision (nothing is logged at this time)
-            Context eventContext = eventData.getContext()
-                .addData(AZ_TRACING_NAMESPACE_KEY, AZ_NAMESPACE_VALUE)
-                .addData(ENTITY_PATH_KEY, this.entityPath)
-                .addData(HOST_NAME_KEY, this.hostname);
-            Context eventSpanContext = tracerProvider.startSpan(AZ_TRACING_SERVICE_NAME, eventContext,
-                ProcessKind.MESSAGE);
-            Optional<Object> eventDiagnosticIdOptional = eventSpanContext.getData(DIAGNOSTIC_ID_KEY);
-            if (eventDiagnosticIdOptional.isPresent()) {
-                eventData.getProperties().put(DIAGNOSTIC_ID_KEY, eventDiagnosticIdOptional.get().toString());
-                tracerProvider.endSpan(eventSpanContext, Signal.complete());
-                eventData.addContext(SPAN_CONTEXT_KEY, eventSpanContext);
-            }
-        }
-
-        return eventData;
     }
 
     List<EventData> getEvents() {
@@ -182,7 +136,7 @@ public final class EventDataBatch {
         Objects.requireNonNull(eventData, "'eventData' cannot be null.");
 
         final Message amqpMessage = createAmqpMessage(eventData, partitionKey);
-        int eventSize = amqpMessage.encode(this.eventBytes, 0, maxMessageSize); // actual encoded bytes size
+        int eventSize = encodedSize(amqpMessage); // actual encoded bytes size
         eventSize += 16; // data section overhead
 
         if (isFirst) {
@@ -191,7 +145,7 @@ public final class EventDataBatch {
             amqpMessage.setProperties(null);
             amqpMessage.setDeliveryAnnotations(null);
 
-            eventSize += amqpMessage.encode(this.eventBytes, 0, maxMessageSize);
+            eventSize += encodedSize(amqpMessage);
         }
 
         return eventSize;
@@ -216,5 +170,19 @@ public final class EventDataBatch {
         messageAnnotations.getValue().put(AmqpConstants.PARTITION_KEY, partitionKey);
 
         return protonJ;
+    }
+
+    private int encodedSize(Message amqpMessage) {
+        final int size = amqpMessage.encode(new DroppingWritableBuffer());
+        if (size > maxMessageSize) {
+            // The maxMessageSize is the Event Hubs service enforced upper limit for the message size or the application
+            // configured limit (lower than the service limit) when obtaining the batch object.
+            // https://learn.microsoft.com/en-us/azure/event-hubs/event-hubs-faq#what-is-the-message-event-size-for-event-hubs-
+            throw LOGGER.logExceptionAsWarning(new AmqpException(
+                false, AmqpErrorCondition.LINK_PAYLOAD_SIZE_EXCEEDED, String.format(Locale.US,
+                    "Size of the payload exceeded maximum message size: %s kb", maxMessageSize / 1024),
+                contextProvider.getErrorContext()));
+        }
+        return size;
     }
 }

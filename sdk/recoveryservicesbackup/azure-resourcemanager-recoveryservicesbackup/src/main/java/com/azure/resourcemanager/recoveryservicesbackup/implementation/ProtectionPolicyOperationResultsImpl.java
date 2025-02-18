@@ -12,43 +12,38 @@ import com.azure.resourcemanager.recoveryservicesbackup.fluent.ProtectionPolicyO
 import com.azure.resourcemanager.recoveryservicesbackup.fluent.models.ProtectionPolicyResourceInner;
 import com.azure.resourcemanager.recoveryservicesbackup.models.ProtectionPolicyOperationResults;
 import com.azure.resourcemanager.recoveryservicesbackup.models.ProtectionPolicyResource;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 public final class ProtectionPolicyOperationResultsImpl implements ProtectionPolicyOperationResults {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(ProtectionPolicyOperationResultsImpl.class);
+    private static final ClientLogger LOGGER = new ClientLogger(ProtectionPolicyOperationResultsImpl.class);
 
     private final ProtectionPolicyOperationResultsClient innerClient;
 
     private final com.azure.resourcemanager.recoveryservicesbackup.RecoveryServicesBackupManager serviceManager;
 
-    public ProtectionPolicyOperationResultsImpl(
-        ProtectionPolicyOperationResultsClient innerClient,
+    public ProtectionPolicyOperationResultsImpl(ProtectionPolicyOperationResultsClient innerClient,
         com.azure.resourcemanager.recoveryservicesbackup.RecoveryServicesBackupManager serviceManager) {
         this.innerClient = innerClient;
         this.serviceManager = serviceManager;
     }
 
-    public ProtectionPolicyResource get(
-        String vaultName, String resourceGroupName, String policyName, String operationId) {
-        ProtectionPolicyResourceInner inner =
-            this.serviceClient().get(vaultName, resourceGroupName, policyName, operationId);
+    public Response<ProtectionPolicyResource> getWithResponse(String vaultName, String resourceGroupName,
+        String policyName, String operationId, Context context) {
+        Response<ProtectionPolicyResourceInner> inner
+            = this.serviceClient().getWithResponse(vaultName, resourceGroupName, policyName, operationId, context);
         if (inner != null) {
-            return new ProtectionPolicyResourceImpl(inner, this.manager());
+            return new SimpleResponse<>(inner.getRequest(), inner.getStatusCode(), inner.getHeaders(),
+                new ProtectionPolicyResourceImpl(inner.getValue(), this.manager()));
         } else {
             return null;
         }
     }
 
-    public Response<ProtectionPolicyResource> getWithResponse(
-        String vaultName, String resourceGroupName, String policyName, String operationId, Context context) {
-        Response<ProtectionPolicyResourceInner> inner =
-            this.serviceClient().getWithResponse(vaultName, resourceGroupName, policyName, operationId, context);
+    public ProtectionPolicyResource get(String vaultName, String resourceGroupName, String policyName,
+        String operationId) {
+        ProtectionPolicyResourceInner inner
+            = this.serviceClient().get(vaultName, resourceGroupName, policyName, operationId);
         if (inner != null) {
-            return new SimpleResponse<>(
-                inner.getRequest(),
-                inner.getStatusCode(),
-                inner.getHeaders(),
-                new ProtectionPolicyResourceImpl(inner.getValue(), this.manager()));
+            return new ProtectionPolicyResourceImpl(inner, this.manager());
         } else {
             return null;
         }

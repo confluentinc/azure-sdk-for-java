@@ -5,26 +5,33 @@
 package com.azure.resourcemanager.labservices.models;
 
 import com.azure.core.annotation.Fluent;
-import com.azure.core.util.logging.ClientLogger;
+import com.azure.json.JsonReader;
+import com.azure.json.JsonSerializable;
+import com.azure.json.JsonToken;
+import com.azure.json.JsonWriter;
 import com.azure.resourcemanager.labservices.fluent.models.ScheduleUpdateProperties;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import java.io.IOException;
 import java.time.OffsetDateTime;
 
-/** Schedule for automatically turning virtual machines in a lab on and off at specified times. Used for updates. */
+/**
+ * Schedule for automatically turning virtual machines in a lab on and off at specified times. Used for updates.
+ */
 @Fluent
-public final class ScheduleUpdate {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(ScheduleUpdate.class);
-
+public final class ScheduleUpdate implements JsonSerializable<ScheduleUpdate> {
     /*
      * Schedule resource properties
      */
-    @JsonProperty(value = "properties")
     private ScheduleUpdateProperties innerProperties;
 
     /**
+     * Creates an instance of ScheduleUpdate class.
+     */
+    public ScheduleUpdate() {
+    }
+
+    /**
      * Get the innerProperties property: Schedule resource properties.
-     *
+     * 
      * @return the innerProperties value.
      */
     private ScheduleUpdateProperties innerProperties() {
@@ -34,7 +41,7 @@ public final class ScheduleUpdate {
     /**
      * Get the startAt property: When lab user virtual machines will be started. Timestamp offsets will be ignored and
      * timeZoneId is used instead.
-     *
+     * 
      * @return the startAt value.
      */
     public OffsetDateTime startAt() {
@@ -44,7 +51,7 @@ public final class ScheduleUpdate {
     /**
      * Set the startAt property: When lab user virtual machines will be started. Timestamp offsets will be ignored and
      * timeZoneId is used instead.
-     *
+     * 
      * @param startAt the startAt value to set.
      * @return the ScheduleUpdate object itself.
      */
@@ -59,7 +66,7 @@ public final class ScheduleUpdate {
     /**
      * Get the stopAt property: When lab user virtual machines will be stopped. Timestamp offsets will be ignored and
      * timeZoneId is used instead.
-     *
+     * 
      * @return the stopAt value.
      */
     public OffsetDateTime stopAt() {
@@ -69,7 +76,7 @@ public final class ScheduleUpdate {
     /**
      * Set the stopAt property: When lab user virtual machines will be stopped. Timestamp offsets will be ignored and
      * timeZoneId is used instead.
-     *
+     * 
      * @param stopAt the stopAt value to set.
      * @return the ScheduleUpdate object itself.
      */
@@ -83,7 +90,7 @@ public final class ScheduleUpdate {
 
     /**
      * Get the recurrencePattern property: The recurrence pattern of the scheduled actions.
-     *
+     * 
      * @return the recurrencePattern value.
      */
     public RecurrencePattern recurrencePattern() {
@@ -92,7 +99,7 @@ public final class ScheduleUpdate {
 
     /**
      * Set the recurrencePattern property: The recurrence pattern of the scheduled actions.
-     *
+     * 
      * @param recurrencePattern the recurrencePattern value to set.
      * @return the ScheduleUpdate object itself.
      */
@@ -106,7 +113,7 @@ public final class ScheduleUpdate {
 
     /**
      * Get the timeZoneId property: The IANA timezone id for the schedule.
-     *
+     * 
      * @return the timeZoneId value.
      */
     public String timeZoneId() {
@@ -115,7 +122,7 @@ public final class ScheduleUpdate {
 
     /**
      * Set the timeZoneId property: The IANA timezone id for the schedule.
-     *
+     * 
      * @param timeZoneId the timeZoneId value to set.
      * @return the ScheduleUpdate object itself.
      */
@@ -129,7 +136,7 @@ public final class ScheduleUpdate {
 
     /**
      * Get the notes property: Notes for this schedule.
-     *
+     * 
      * @return the notes value.
      */
     public String notes() {
@@ -138,7 +145,7 @@ public final class ScheduleUpdate {
 
     /**
      * Set the notes property: Notes for this schedule.
-     *
+     * 
      * @param notes the notes value to set.
      * @return the ScheduleUpdate object itself.
      */
@@ -152,12 +159,48 @@ public final class ScheduleUpdate {
 
     /**
      * Validates the instance.
-     *
+     * 
      * @throws IllegalArgumentException thrown if the instance is not valid.
      */
     public void validate() {
         if (innerProperties() != null) {
             innerProperties().validate();
         }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public JsonWriter toJson(JsonWriter jsonWriter) throws IOException {
+        jsonWriter.writeStartObject();
+        jsonWriter.writeJsonField("properties", this.innerProperties);
+        return jsonWriter.writeEndObject();
+    }
+
+    /**
+     * Reads an instance of ScheduleUpdate from the JsonReader.
+     * 
+     * @param jsonReader The JsonReader being read.
+     * @return An instance of ScheduleUpdate if the JsonReader was pointing to an instance of it, or null if it was
+     * pointing to JSON null.
+     * @throws IOException If an error occurs while reading the ScheduleUpdate.
+     */
+    public static ScheduleUpdate fromJson(JsonReader jsonReader) throws IOException {
+        return jsonReader.readObject(reader -> {
+            ScheduleUpdate deserializedScheduleUpdate = new ScheduleUpdate();
+            while (reader.nextToken() != JsonToken.END_OBJECT) {
+                String fieldName = reader.getFieldName();
+                reader.nextToken();
+
+                if ("properties".equals(fieldName)) {
+                    deserializedScheduleUpdate.innerProperties = ScheduleUpdateProperties.fromJson(reader);
+                } else {
+                    reader.skipChildren();
+                }
+            }
+
+            return deserializedScheduleUpdate;
+        });
     }
 }

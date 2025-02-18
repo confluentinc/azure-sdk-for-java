@@ -8,11 +8,13 @@ import com.azure.core.http.rest.PagedIterable;
 import com.azure.core.http.rest.Response;
 import com.azure.core.util.Context;
 
-/** Resource collection API of Clusters. */
+/**
+ * Resource collection API of Clusters.
+ */
 public interface Clusters {
     /**
      * Deletes the specified HDInsight cluster.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param clusterName The name of the cluster.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
@@ -23,7 +25,7 @@ public interface Clusters {
 
     /**
      * Deletes the specified HDInsight cluster.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param clusterName The name of the cluster.
      * @param context The context to associate with this operation.
@@ -35,7 +37,20 @@ public interface Clusters {
 
     /**
      * Gets the specified cluster.
-     *
+     * 
+     * @param resourceGroupName The name of the resource group.
+     * @param clusterName The name of the cluster.
+     * @param context The context to associate with this operation.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return the specified cluster along with {@link Response}.
+     */
+    Response<Cluster> getByResourceGroupWithResponse(String resourceGroupName, String clusterName, Context context);
+
+    /**
+     * Gets the specified cluster.
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param clusterName The name of the cluster.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
@@ -46,44 +61,31 @@ public interface Clusters {
     Cluster getByResourceGroup(String resourceGroupName, String clusterName);
 
     /**
-     * Gets the specified cluster.
-     *
-     * @param resourceGroupName The name of the resource group.
-     * @param clusterName The name of the cluster.
-     * @param context The context to associate with this operation.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the specified cluster.
-     */
-    Response<Cluster> getByResourceGroupWithResponse(String resourceGroupName, String clusterName, Context context);
-
-    /**
      * Lists the HDInsight clusters in a resource group.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the List Cluster operation response.
+     * @return the List Cluster operation response as paginated response with {@link PagedIterable}.
      */
     PagedIterable<Cluster> listByResourceGroup(String resourceGroupName);
 
     /**
      * Lists the HDInsight clusters in a resource group.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the List Cluster operation response.
+     * @return the List Cluster operation response as paginated response with {@link PagedIterable}.
      */
     PagedIterable<Cluster> listByResourceGroup(String resourceGroupName, Context context);
 
     /**
      * Resizes the specified HDInsight cluster to the specified size.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param clusterName The name of the cluster.
      * @param roleName The constant value for the roleName.
@@ -96,7 +98,7 @@ public interface Clusters {
 
     /**
      * Resizes the specified HDInsight cluster to the specified size.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param clusterName The name of the cluster.
      * @param roleName The constant value for the roleName.
@@ -106,16 +108,12 @@ public interface Clusters {
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
      */
-    void resize(
-        String resourceGroupName,
-        String clusterName,
-        RoleName roleName,
-        ClusterResizeParameters parameters,
+    void resize(String resourceGroupName, String clusterName, RoleName roleName, ClusterResizeParameters parameters,
         Context context);
 
     /**
      * Updates the Autoscale Configuration for HDInsight cluster.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param clusterName The name of the cluster.
      * @param roleName The constant value for the roleName.
@@ -124,15 +122,12 @@ public interface Clusters {
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
      */
-    void updateAutoScaleConfiguration(
-        String resourceGroupName,
-        String clusterName,
-        RoleName roleName,
+    void updateAutoScaleConfiguration(String resourceGroupName, String clusterName, RoleName roleName,
         AutoscaleConfigurationUpdateParameter parameters);
 
     /**
      * Updates the Autoscale Configuration for HDInsight cluster.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param clusterName The name of the cluster.
      * @param roleName The constant value for the roleName.
@@ -142,36 +137,32 @@ public interface Clusters {
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
      */
-    void updateAutoScaleConfiguration(
-        String resourceGroupName,
-        String clusterName,
-        RoleName roleName,
-        AutoscaleConfigurationUpdateParameter parameters,
-        Context context);
+    void updateAutoScaleConfiguration(String resourceGroupName, String clusterName, RoleName roleName,
+        AutoscaleConfigurationUpdateParameter parameters, Context context);
 
     /**
      * Lists all the HDInsight clusters under the subscription.
-     *
+     * 
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the List Cluster operation response.
+     * @return the List Cluster operation response as paginated response with {@link PagedIterable}.
      */
     PagedIterable<Cluster> list();
 
     /**
      * Lists all the HDInsight clusters under the subscription.
-     *
+     * 
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the List Cluster operation response.
+     * @return the List Cluster operation response as paginated response with {@link PagedIterable}.
      */
     PagedIterable<Cluster> list(Context context);
 
     /**
      * Rotate disk encryption key of the specified HDInsight cluster.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param clusterName The name of the cluster.
      * @param parameters The parameters for the disk encryption operation.
@@ -179,12 +170,12 @@ public interface Clusters {
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
      */
-    void rotateDiskEncryptionKey(
-        String resourceGroupName, String clusterName, ClusterDiskEncryptionParameters parameters);
+    void rotateDiskEncryptionKey(String resourceGroupName, String clusterName,
+        ClusterDiskEncryptionParameters parameters);
 
     /**
      * Rotate disk encryption key of the specified HDInsight cluster.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param clusterName The name of the cluster.
      * @param parameters The parameters for the disk encryption operation.
@@ -193,12 +184,26 @@ public interface Clusters {
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
      */
-    void rotateDiskEncryptionKey(
-        String resourceGroupName, String clusterName, ClusterDiskEncryptionParameters parameters, Context context);
+    void rotateDiskEncryptionKey(String resourceGroupName, String clusterName,
+        ClusterDiskEncryptionParameters parameters, Context context);
 
     /**
      * Gets the gateway settings for the specified cluster.
-     *
+     * 
+     * @param resourceGroupName The name of the resource group.
+     * @param clusterName The name of the cluster.
+     * @param context The context to associate with this operation.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return the gateway settings for the specified cluster along with {@link Response}.
+     */
+    Response<GatewaySettings> getGatewaySettingsWithResponse(String resourceGroupName, String clusterName,
+        Context context);
+
+    /**
+     * Gets the gateway settings for the specified cluster.
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param clusterName The name of the cluster.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
@@ -209,22 +214,8 @@ public interface Clusters {
     GatewaySettings getGatewaySettings(String resourceGroupName, String clusterName);
 
     /**
-     * Gets the gateway settings for the specified cluster.
-     *
-     * @param resourceGroupName The name of the resource group.
-     * @param clusterName The name of the cluster.
-     * @param context The context to associate with this operation.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the gateway settings for the specified cluster.
-     */
-    Response<GatewaySettings> getGatewaySettingsWithResponse(
-        String resourceGroupName, String clusterName, Context context);
-
-    /**
      * Configures the gateway settings on the specified cluster.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param clusterName The name of the cluster.
      * @param parameters The cluster configurations.
@@ -232,12 +223,12 @@ public interface Clusters {
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
      */
-    void updateGatewaySettings(
-        String resourceGroupName, String clusterName, UpdateGatewaySettingsParameters parameters);
+    void updateGatewaySettings(String resourceGroupName, String clusterName,
+        UpdateGatewaySettingsParameters parameters);
 
     /**
      * Configures the gateway settings on the specified cluster.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param clusterName The name of the cluster.
      * @param parameters The cluster configurations.
@@ -246,12 +237,27 @@ public interface Clusters {
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
      */
-    void updateGatewaySettings(
-        String resourceGroupName, String clusterName, UpdateGatewaySettingsParameters parameters, Context context);
+    void updateGatewaySettings(String resourceGroupName, String clusterName, UpdateGatewaySettingsParameters parameters,
+        Context context);
 
     /**
      * The the async operation status.
-     *
+     * 
+     * @param resourceGroupName The name of the resource group.
+     * @param clusterName The name of the cluster.
+     * @param operationId The long running operation id.
+     * @param context The context to associate with this operation.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return the azure async operation response along with {@link Response}.
+     */
+    Response<AsyncOperationResult> getAzureAsyncOperationStatusWithResponse(String resourceGroupName,
+        String clusterName, String operationId, Context context);
+
+    /**
+     * The the async operation status.
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param clusterName The name of the cluster.
      * @param operationId The long running operation id.
@@ -263,23 +269,8 @@ public interface Clusters {
     AsyncOperationResult getAzureAsyncOperationStatus(String resourceGroupName, String clusterName, String operationId);
 
     /**
-     * The the async operation status.
-     *
-     * @param resourceGroupName The name of the resource group.
-     * @param clusterName The name of the cluster.
-     * @param operationId The long running operation id.
-     * @param context The context to associate with this operation.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the azure async operation response.
-     */
-    Response<AsyncOperationResult> getAzureAsyncOperationStatusWithResponse(
-        String resourceGroupName, String clusterName, String operationId, Context context);
-
-    /**
      * Updates the cluster identity certificate.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param clusterName The name of the cluster.
      * @param parameters The cluster configurations.
@@ -287,12 +278,12 @@ public interface Clusters {
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
      */
-    void updateIdentityCertificate(
-        String resourceGroupName, String clusterName, UpdateClusterIdentityCertificateParameters parameters);
+    void updateIdentityCertificate(String resourceGroupName, String clusterName,
+        UpdateClusterIdentityCertificateParameters parameters);
 
     /**
      * Updates the cluster identity certificate.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param clusterName The name of the cluster.
      * @param parameters The cluster configurations.
@@ -301,64 +292,65 @@ public interface Clusters {
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
      */
-    void updateIdentityCertificate(
-        String resourceGroupName,
-        String clusterName,
-        UpdateClusterIdentityCertificateParameters parameters,
-        Context context);
+    void updateIdentityCertificate(String resourceGroupName, String clusterName,
+        UpdateClusterIdentityCertificateParameters parameters, Context context);
 
     /**
      * Executes script actions on the specified HDInsight cluster.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param clusterName The name of the cluster.
      * @param parameters The parameters for executing script actions.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
+     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server on
+     * status code 404.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
      */
     void executeScriptActions(String resourceGroupName, String clusterName, ExecuteScriptActionParameters parameters);
 
     /**
      * Executes script actions on the specified HDInsight cluster.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param clusterName The name of the cluster.
      * @param parameters The parameters for executing script actions.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
+     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server on
+     * status code 404.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
      */
-    void executeScriptActions(
-        String resourceGroupName, String clusterName, ExecuteScriptActionParameters parameters, Context context);
+    void executeScriptActions(String resourceGroupName, String clusterName, ExecuteScriptActionParameters parameters,
+        Context context);
 
     /**
      * Gets the specified cluster.
-     *
+     * 
      * @param id the resource ID.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the specified cluster.
+     * @return the specified cluster along with {@link Response}.
      */
     Cluster getById(String id);
 
     /**
      * Gets the specified cluster.
-     *
+     * 
      * @param id the resource ID.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the specified cluster.
+     * @return the specified cluster along with {@link Response}.
      */
     Response<Cluster> getByIdWithResponse(String id, Context context);
 
     /**
      * Deletes the specified HDInsight cluster.
-     *
+     * 
      * @param id the resource ID.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
@@ -368,7 +360,7 @@ public interface Clusters {
 
     /**
      * Deletes the specified HDInsight cluster.
-     *
+     * 
      * @param id the resource ID.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
@@ -379,7 +371,7 @@ public interface Clusters {
 
     /**
      * Begins definition for a new Cluster resource.
-     *
+     * 
      * @param name resource name.
      * @return the first stage of the new Cluster definition.
      */

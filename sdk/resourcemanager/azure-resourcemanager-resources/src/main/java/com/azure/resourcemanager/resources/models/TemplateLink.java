@@ -5,55 +5,53 @@
 package com.azure.resourcemanager.resources.models;
 
 import com.azure.core.annotation.Fluent;
-import com.azure.core.util.logging.ClientLogger;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.azure.json.JsonReader;
+import com.azure.json.JsonSerializable;
+import com.azure.json.JsonToken;
+import com.azure.json.JsonWriter;
+import java.io.IOException;
 
-/** Entity representing the reference to the template. */
+/**
+ * Entity representing the reference to the template.
+ */
 @Fluent
-public final class TemplateLink {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(TemplateLink.class);
-
+public final class TemplateLink implements JsonSerializable<TemplateLink> {
     /*
-     * The URI of the template to deploy. Use either the uri or id property,
-     * but not both.
+     * The URI of the template to deploy. Use either the uri or id property, but not both.
      */
-    @JsonProperty(value = "uri")
     private String uri;
 
     /*
-     * The resource id of a Template Spec. Use either the id or uri property,
-     * but not both.
+     * The resource id of a Template Spec. Use either the id or uri property, but not both.
      */
-    @JsonProperty(value = "id")
     private String id;
 
     /*
-     * The relativePath property can be used to deploy a linked template at a
-     * location relative to the parent. If the parent template was linked with
-     * a TemplateSpec, this will reference an artifact in the TemplateSpec.  If
-     * the parent was linked with a URI, the child deployment will be a
-     * combination of the parent and relativePath URIs
+     * The relativePath property can be used to deploy a linked template at a location relative to the parent. If the
+     * parent template was linked with a TemplateSpec, this will reference an artifact in the TemplateSpec. If the
+     * parent was linked with a URI, the child deployment will be a combination of the parent and relativePath URIs
      */
-    @JsonProperty(value = "relativePath")
     private String relativePath;
 
     /*
      * If included, must match the ContentVersion in the template.
      */
-    @JsonProperty(value = "contentVersion")
     private String contentVersion;
 
     /*
-     * The query string (for example, a SAS token) to be used with the
-     * templateLink URI.
+     * The query string (for example, a SAS token) to be used with the templateLink URI.
      */
-    @JsonProperty(value = "queryString")
     private String queryString;
 
     /**
+     * Creates an instance of TemplateLink class.
+     */
+    public TemplateLink() {
+    }
+
+    /**
      * Get the uri property: The URI of the template to deploy. Use either the uri or id property, but not both.
-     *
+     * 
      * @return the uri value.
      */
     public String uri() {
@@ -62,7 +60,7 @@ public final class TemplateLink {
 
     /**
      * Set the uri property: The URI of the template to deploy. Use either the uri or id property, but not both.
-     *
+     * 
      * @param uri the uri value to set.
      * @return the TemplateLink object itself.
      */
@@ -73,7 +71,7 @@ public final class TemplateLink {
 
     /**
      * Get the id property: The resource id of a Template Spec. Use either the id or uri property, but not both.
-     *
+     * 
      * @return the id value.
      */
     public String id() {
@@ -82,7 +80,7 @@ public final class TemplateLink {
 
     /**
      * Set the id property: The resource id of a Template Spec. Use either the id or uri property, but not both.
-     *
+     * 
      * @param id the id value to set.
      * @return the TemplateLink object itself.
      */
@@ -96,7 +94,7 @@ public final class TemplateLink {
      * relative to the parent. If the parent template was linked with a TemplateSpec, this will reference an artifact in
      * the TemplateSpec. If the parent was linked with a URI, the child deployment will be a combination of the parent
      * and relativePath URIs.
-     *
+     * 
      * @return the relativePath value.
      */
     public String relativePath() {
@@ -108,7 +106,7 @@ public final class TemplateLink {
      * relative to the parent. If the parent template was linked with a TemplateSpec, this will reference an artifact in
      * the TemplateSpec. If the parent was linked with a URI, the child deployment will be a combination of the parent
      * and relativePath URIs.
-     *
+     * 
      * @param relativePath the relativePath value to set.
      * @return the TemplateLink object itself.
      */
@@ -119,7 +117,7 @@ public final class TemplateLink {
 
     /**
      * Get the contentVersion property: If included, must match the ContentVersion in the template.
-     *
+     * 
      * @return the contentVersion value.
      */
     public String contentVersion() {
@@ -128,7 +126,7 @@ public final class TemplateLink {
 
     /**
      * Set the contentVersion property: If included, must match the ContentVersion in the template.
-     *
+     * 
      * @param contentVersion the contentVersion value to set.
      * @return the TemplateLink object itself.
      */
@@ -139,7 +137,7 @@ public final class TemplateLink {
 
     /**
      * Get the queryString property: The query string (for example, a SAS token) to be used with the templateLink URI.
-     *
+     * 
      * @return the queryString value.
      */
     public String queryString() {
@@ -148,7 +146,7 @@ public final class TemplateLink {
 
     /**
      * Set the queryString property: The query string (for example, a SAS token) to be used with the templateLink URI.
-     *
+     * 
      * @param queryString the queryString value to set.
      * @return the TemplateLink object itself.
      */
@@ -159,9 +157,57 @@ public final class TemplateLink {
 
     /**
      * Validates the instance.
-     *
+     * 
      * @throws IllegalArgumentException thrown if the instance is not valid.
      */
     public void validate() {
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public JsonWriter toJson(JsonWriter jsonWriter) throws IOException {
+        jsonWriter.writeStartObject();
+        jsonWriter.writeStringField("uri", this.uri);
+        jsonWriter.writeStringField("id", this.id);
+        jsonWriter.writeStringField("relativePath", this.relativePath);
+        jsonWriter.writeStringField("contentVersion", this.contentVersion);
+        jsonWriter.writeStringField("queryString", this.queryString);
+        return jsonWriter.writeEndObject();
+    }
+
+    /**
+     * Reads an instance of TemplateLink from the JsonReader.
+     * 
+     * @param jsonReader The JsonReader being read.
+     * @return An instance of TemplateLink if the JsonReader was pointing to an instance of it, or null if it was
+     * pointing to JSON null.
+     * @throws IOException If an error occurs while reading the TemplateLink.
+     */
+    public static TemplateLink fromJson(JsonReader jsonReader) throws IOException {
+        return jsonReader.readObject(reader -> {
+            TemplateLink deserializedTemplateLink = new TemplateLink();
+            while (reader.nextToken() != JsonToken.END_OBJECT) {
+                String fieldName = reader.getFieldName();
+                reader.nextToken();
+
+                if ("uri".equals(fieldName)) {
+                    deserializedTemplateLink.uri = reader.getString();
+                } else if ("id".equals(fieldName)) {
+                    deserializedTemplateLink.id = reader.getString();
+                } else if ("relativePath".equals(fieldName)) {
+                    deserializedTemplateLink.relativePath = reader.getString();
+                } else if ("contentVersion".equals(fieldName)) {
+                    deserializedTemplateLink.contentVersion = reader.getString();
+                } else if ("queryString".equals(fieldName)) {
+                    deserializedTemplateLink.queryString = reader.getString();
+                } else {
+                    reader.skipChildren();
+                }
+            }
+
+            return deserializedTemplateLink;
+        });
     }
 }

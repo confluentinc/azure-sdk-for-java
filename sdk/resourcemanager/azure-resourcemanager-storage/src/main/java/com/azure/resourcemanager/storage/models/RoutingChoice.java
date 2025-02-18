@@ -5,29 +5,46 @@
 package com.azure.resourcemanager.storage.models;
 
 import com.azure.core.util.ExpandableStringEnum;
-import com.fasterxml.jackson.annotation.JsonCreator;
 import java.util.Collection;
 
-/** Defines values for RoutingChoice. */
+/**
+ * Routing Choice defines the kind of network routing opted by the user.
+ */
 public final class RoutingChoice extends ExpandableStringEnum<RoutingChoice> {
-    /** Static value MicrosoftRouting for RoutingChoice. */
+    /**
+     * Static value MicrosoftRouting for RoutingChoice.
+     */
     public static final RoutingChoice MICROSOFT_ROUTING = fromString("MicrosoftRouting");
 
-    /** Static value InternetRouting for RoutingChoice. */
+    /**
+     * Static value InternetRouting for RoutingChoice.
+     */
     public static final RoutingChoice INTERNET_ROUTING = fromString("InternetRouting");
 
     /**
+     * Creates a new instance of RoutingChoice value.
+     * 
+     * @deprecated Use the {@link #fromString(String)} factory method.
+     */
+    @Deprecated
+    public RoutingChoice() {
+    }
+
+    /**
      * Creates or finds a RoutingChoice from its string representation.
-     *
+     * 
      * @param name a name to look for.
      * @return the corresponding RoutingChoice.
      */
-    @JsonCreator
     public static RoutingChoice fromString(String name) {
         return fromString(name, RoutingChoice.class);
     }
 
-    /** @return known RoutingChoice values. */
+    /**
+     * Gets known RoutingChoice values.
+     * 
+     * @return known RoutingChoice values.
+     */
     public static Collection<RoutingChoice> values() {
         return values(RoutingChoice.class);
     }

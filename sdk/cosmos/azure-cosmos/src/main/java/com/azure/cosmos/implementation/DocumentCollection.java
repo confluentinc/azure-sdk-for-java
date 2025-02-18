@@ -5,9 +5,12 @@ package com.azure.cosmos.implementation;
 
 import com.azure.cosmos.implementation.apachecommons.lang.StringUtils;
 import com.azure.cosmos.implementation.caches.SerializableWrapper;
-import com.azure.cosmos.models.ClientEncryptionPolicy;
 import com.azure.cosmos.models.ChangeFeedPolicy;
+import com.azure.cosmos.models.ClientEncryptionPolicy;
+import com.azure.cosmos.models.ComputedProperty;
 import com.azure.cosmos.models.ConflictResolutionPolicy;
+import com.azure.cosmos.models.CosmosFullTextPolicy;
+import com.azure.cosmos.models.CosmosVectorEmbeddingPolicy;
 import com.azure.cosmos.models.IndexingPolicy;
 import com.azure.cosmos.models.ModelBridgeInternal;
 import com.azure.cosmos.models.PartitionKeyDefinition;
@@ -19,8 +22,10 @@ import com.fasterxml.jackson.databind.node.TextNode;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.util.Collection;
+import java.util.Collections;
 
-import static com.azure.cosmos.BridgeInternal.setProperty;
+import static com.azure.cosmos.implementation.guava25.base.Preconditions.checkNotNull;
 
 /**
  * Represents a document collection in the Azure Cosmos DB database service. A collection is a named logical container
@@ -38,6 +43,8 @@ public final class DocumentCollection extends Resource {
     private UniqueKeyPolicy uniqueKeyPolicy;
     private PartitionKeyDefinition partitionKeyDefinition;
     private ClientEncryptionPolicy clientEncryptionPolicyInternal;
+    private CosmosVectorEmbeddingPolicy cosmosVectorEmbeddingPolicy;
+    private CosmosFullTextPolicy cosmosFullTextPolicy;
 
     /**
      * Constructor.
@@ -72,7 +79,7 @@ public final class DocumentCollection extends Resource {
      * @param jsonString the json string that represents the document collection.
      */
     public DocumentCollection(String jsonString) {
-        super(jsonString);
+        super(jsonString, Utils.getSimpleObjectMapperWithAllowDuplicates());
     }
 
     /**
@@ -170,7 +177,7 @@ public final class DocumentCollection extends Resource {
         // a "null" value is represented as a missing element on the wire.
         // setting timeToLive to null should remove the property from the property bag.
         if (timeToLive != null) {
-            setProperty(this, Constants.Properties.DEFAULT_TTL, timeToLive);
+            this.set(Constants.Properties.DEFAULT_TTL, timeToLive);
         } else if (super.has(Constants.Properties.DEFAULT_TTL)) {
             remove(Constants.Properties.DEFAULT_TTL);
         }
@@ -238,7 +245,7 @@ public final class DocumentCollection extends Resource {
         }
 
         this.uniqueKeyPolicy = uniqueKeyPolicy;
-        setProperty(this, Constants.Properties.UNIQUE_KEY_POLICY, uniqueKeyPolicy);
+        this.set(Constants.Properties.UNIQUE_KEY_POLICY, uniqueKeyPolicy);
     }
 
     /**
@@ -262,7 +269,7 @@ public final class DocumentCollection extends Resource {
             throw new IllegalArgumentException("CONFLICT_RESOLUTION_POLICY cannot be null.");
         }
 
-        setProperty(this, Constants.Properties.CONFLICT_RESOLUTION_POLICY, value);
+        this.set(Constants.Properties.CONFLICT_RESOLUTION_POLICY, value);
     }
 
     /**
@@ -274,7 +281,7 @@ public final class DocumentCollection extends Resource {
         ChangeFeedPolicy policy = super.getObject(Constants.Properties.CHANGE_FEED_POLICY, ChangeFeedPolicy.class);
 
         if (policy == null) {
-            return ChangeFeedPolicy.createIncrementalPolicy();
+            return ChangeFeedPolicy.createLatestVersionPolicy();
         }
 
         return policy;
@@ -290,7 +297,40 @@ public final class DocumentCollection extends Resource {
             throw new IllegalArgumentException("CHANGE_FEED_POLICY cannot be null.");
         }
 
-        setProperty(this, Constants.Properties.CHANGE_FEED_POLICY, value);
+        this.set(Constants.Properties.CHANGE_FEED_POLICY, value);
+    }
+
+    /**
+     * Gets the computedProperties for this container in Azure Cosmos DB service.
+     *
+     * @return the computed properties.
+     */
+    public Collection<ComputedProperty> getComputedProperties() {
+        Collection<ComputedProperty> computedProperties = super.getList(Constants.Properties.COMPUTED_PROPERTIES, ComputedProperty.class);
+
+        if (computedProperties == null) {
+            return Collections.emptyList();
+        }
+
+        return computedProperties;
+    }
+
+    /**
+     * Sets the computedProperties for this container in Azure Cosmos DB service.
+     *
+     * @param computedProperties the computed properties associated with the container.
+     */
+    public void setComputedProperties(Collection<ComputedProperty> computedProperties) {
+        if (computedProperties == null || computedProperties.isEmpty()) {
+            throw new IllegalArgumentException("COMPUTED_PROPERTIES cannot be null or empty.");
+        }
+        computedProperties.forEach(computedProperty -> {
+            if (computedProperty == null) {
+                throw new IllegalArgumentException("COMPUTED_PROPERTIES cannot have null values.");
+            }
+        });
+
+        this.set(Constants.Properties.COMPUTED_PROPERTIES, computedProperties);
     }
 
     /**
@@ -372,7 +412,61 @@ public final class DocumentCollection extends Resource {
             throw new IllegalArgumentException("ClientEncryptionPolicy cannot be null.");
         }
 
-        setProperty(this, Constants.Properties.CLIENT_ENCRYPTION_POLICY, value);
+        this.set(Constants.Properties.CLIENT_ENCRYPTION_POLICY, value);
+    }
+
+    /**
+     * Gets the Vector Embedding Policy containing paths for embeddings along with path-specific settings for the item
+     * used in performing vector search on the items in a collection in the Azure CosmosDB database service.
+     *
+     * @return the Vector Embedding Policy.
+     */
+    public CosmosVectorEmbeddingPolicy getVectorEmbeddingPolicy() {
+        if (this.cosmosVectorEmbeddingPolicy == null) {
+            if (super.has(Constants.Properties.VECTOR_EMBEDDING_POLICY)) {
+                this.cosmosVectorEmbeddingPolicy = super.getObject(Constants.Properties.VECTOR_EMBEDDING_POLICY,
+                    CosmosVectorEmbeddingPolicy.class);
+            }
+        }
+        return this.cosmosVectorEmbeddingPolicy;
+    }
+
+    /**
+     * Sets the Vector Embedding Policy containing paths for embeddings along with path-specific settings for the item
+     * used in performing vector search on the items in a collection in the Azure CosmosDB database service.
+     *
+     * @param value the Vector Embedding Policy.
+     */
+    public void setVectorEmbeddingPolicy(CosmosVectorEmbeddingPolicy value) {
+        checkNotNull(value, "cosmosVectorEmbeddingPolicy cannot be null");
+        this.set(Constants.Properties.VECTOR_EMBEDDING_POLICY, value);
+    }
+
+    /**
+     * Gets the Full Text Policy containing paths for full text search and the language specification for each path.
+     * It also contains the default language to be used.
+     *
+     * @return the FullTextPolicy
+     */
+    public CosmosFullTextPolicy getFullTextPolicy() {
+        if (this.cosmosFullTextPolicy == null) {
+            if (super.has(Constants.Properties.FULL_TEXT_POLICY)) {
+                this.cosmosFullTextPolicy = super.getObject(Constants.Properties.FULL_TEXT_POLICY,
+                    CosmosFullTextPolicy.class);
+            }
+        }
+        return this.cosmosFullTextPolicy;
+    }
+
+    /**
+     * Sets the Full Text Policy containing paths for full text search and the language specification for each path.
+     * It also contains the default language to be used.
+     *
+     * @param value the FullTextPolicy
+     */
+    public void setFullTextPolicy(CosmosFullTextPolicy value) {
+        checkNotNull(value, "cosmosFullTextPolicy cannot be null");
+        this.set(Constants.Properties.FULL_TEXT_POLICY, value);
     }
 
     public void populatePropertyBag() {
@@ -386,13 +480,16 @@ public final class DocumentCollection extends Resource {
 
         if (this.partitionKeyDefinition != null) {
             ModelBridgeInternal.populatePropertyBag(this.partitionKeyDefinition);
-            setProperty(this, Constants.Properties.PARTITION_KEY, this.partitionKeyDefinition);
+            this.set(
+                Constants.Properties.PARTITION_KEY,
+                this.partitionKeyDefinition
+            );
         }
         ModelBridgeInternal.populatePropertyBag(this.indexingPolicy);
         ModelBridgeInternal.populatePropertyBag(this.uniqueKeyPolicy);
 
-        setProperty(this, Constants.Properties.INDEXING_POLICY, this.indexingPolicy);
-        setProperty(this, Constants.Properties.UNIQUE_KEY_POLICY, this.uniqueKeyPolicy);
+        this.set(Constants.Properties.INDEXING_POLICY, this.indexingPolicy);
+        this.set(Constants.Properties.UNIQUE_KEY_POLICY, this.uniqueKeyPolicy);
     }
 
     @Override
@@ -418,7 +515,7 @@ public final class DocumentCollection extends Resource {
 
     public static class SerializableDocumentCollection implements SerializableWrapper<DocumentCollection> {
         private static final long serialVersionUID = 2l;
-        private static final ObjectMapper OBJECT_MAPPER = Utils.getSimpleObjectMapper();
+        private static final ObjectMapper OBJECT_MAPPER = Utils.getSimpleObjectMapperWithAllowDuplicates();
         public static SerializableDocumentCollection from(DocumentCollection documentCollection) {
             SerializableDocumentCollection serializableDocumentCollection = new SerializableDocumentCollection();
             serializableDocumentCollection.documentCollection = documentCollection;

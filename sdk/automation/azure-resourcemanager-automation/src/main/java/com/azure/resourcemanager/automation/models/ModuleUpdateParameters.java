@@ -5,45 +5,57 @@
 package com.azure.resourcemanager.automation.models;
 
 import com.azure.core.annotation.Fluent;
-import com.azure.core.annotation.JsonFlatten;
-import com.azure.core.util.logging.ClientLogger;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.azure.json.JsonReader;
+import com.azure.json.JsonSerializable;
+import com.azure.json.JsonToken;
+import com.azure.json.JsonWriter;
+import com.azure.resourcemanager.automation.fluent.models.ModuleUpdateProperties;
+import java.io.IOException;
 import java.util.Map;
 
-/** The parameters supplied to the update module operation. */
-@JsonFlatten
+/**
+ * The parameters supplied to the update module operation.
+ */
 @Fluent
-public class ModuleUpdateParameters {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(ModuleUpdateParameters.class);
+public final class ModuleUpdateParameters implements JsonSerializable<ModuleUpdateParameters> {
+    /*
+     * Gets or sets the module update properties.
+     */
+    private ModuleUpdateProperties innerProperties;
 
     /*
      * Gets or sets name of the resource.
      */
-    @JsonProperty(value = "name")
     private String name;
 
     /*
      * Gets or sets the location of the resource.
      */
-    @JsonProperty(value = "location")
     private String location;
 
     /*
      * Gets or sets the tags attached to the resource.
      */
-    @JsonProperty(value = "tags")
     private Map<String, String> tags;
 
-    /*
-     * Gets or sets the module content link.
+    /**
+     * Creates an instance of ModuleUpdateParameters class.
      */
-    @JsonProperty(value = "properties.contentLink")
-    private ContentLink contentLink;
+    public ModuleUpdateParameters() {
+    }
+
+    /**
+     * Get the innerProperties property: Gets or sets the module update properties.
+     * 
+     * @return the innerProperties value.
+     */
+    private ModuleUpdateProperties innerProperties() {
+        return this.innerProperties;
+    }
 
     /**
      * Get the name property: Gets or sets name of the resource.
-     *
+     * 
      * @return the name value.
      */
     public String name() {
@@ -52,7 +64,7 @@ public class ModuleUpdateParameters {
 
     /**
      * Set the name property: Gets or sets name of the resource.
-     *
+     * 
      * @param name the name value to set.
      * @return the ModuleUpdateParameters object itself.
      */
@@ -63,7 +75,7 @@ public class ModuleUpdateParameters {
 
     /**
      * Get the location property: Gets or sets the location of the resource.
-     *
+     * 
      * @return the location value.
      */
     public String location() {
@@ -72,7 +84,7 @@ public class ModuleUpdateParameters {
 
     /**
      * Set the location property: Gets or sets the location of the resource.
-     *
+     * 
      * @param location the location value to set.
      * @return the ModuleUpdateParameters object itself.
      */
@@ -83,7 +95,7 @@ public class ModuleUpdateParameters {
 
     /**
      * Get the tags property: Gets or sets the tags attached to the resource.
-     *
+     * 
      * @return the tags value.
      */
     public Map<String, String> tags() {
@@ -92,7 +104,7 @@ public class ModuleUpdateParameters {
 
     /**
      * Set the tags property: Gets or sets the tags attached to the resource.
-     *
+     * 
      * @param tags the tags value to set.
      * @return the ModuleUpdateParameters object itself.
      */
@@ -103,32 +115,81 @@ public class ModuleUpdateParameters {
 
     /**
      * Get the contentLink property: Gets or sets the module content link.
-     *
+     * 
      * @return the contentLink value.
      */
     public ContentLink contentLink() {
-        return this.contentLink;
+        return this.innerProperties() == null ? null : this.innerProperties().contentLink();
     }
 
     /**
      * Set the contentLink property: Gets or sets the module content link.
-     *
+     * 
      * @param contentLink the contentLink value to set.
      * @return the ModuleUpdateParameters object itself.
      */
     public ModuleUpdateParameters withContentLink(ContentLink contentLink) {
-        this.contentLink = contentLink;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new ModuleUpdateProperties();
+        }
+        this.innerProperties().withContentLink(contentLink);
         return this;
     }
 
     /**
      * Validates the instance.
-     *
+     * 
      * @throws IllegalArgumentException thrown if the instance is not valid.
      */
     public void validate() {
-        if (contentLink() != null) {
-            contentLink().validate();
+        if (innerProperties() != null) {
+            innerProperties().validate();
         }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public JsonWriter toJson(JsonWriter jsonWriter) throws IOException {
+        jsonWriter.writeStartObject();
+        jsonWriter.writeJsonField("properties", this.innerProperties);
+        jsonWriter.writeStringField("name", this.name);
+        jsonWriter.writeStringField("location", this.location);
+        jsonWriter.writeMapField("tags", this.tags, (writer, element) -> writer.writeString(element));
+        return jsonWriter.writeEndObject();
+    }
+
+    /**
+     * Reads an instance of ModuleUpdateParameters from the JsonReader.
+     * 
+     * @param jsonReader The JsonReader being read.
+     * @return An instance of ModuleUpdateParameters if the JsonReader was pointing to an instance of it, or null if it
+     * was pointing to JSON null.
+     * @throws IOException If an error occurs while reading the ModuleUpdateParameters.
+     */
+    public static ModuleUpdateParameters fromJson(JsonReader jsonReader) throws IOException {
+        return jsonReader.readObject(reader -> {
+            ModuleUpdateParameters deserializedModuleUpdateParameters = new ModuleUpdateParameters();
+            while (reader.nextToken() != JsonToken.END_OBJECT) {
+                String fieldName = reader.getFieldName();
+                reader.nextToken();
+
+                if ("properties".equals(fieldName)) {
+                    deserializedModuleUpdateParameters.innerProperties = ModuleUpdateProperties.fromJson(reader);
+                } else if ("name".equals(fieldName)) {
+                    deserializedModuleUpdateParameters.name = reader.getString();
+                } else if ("location".equals(fieldName)) {
+                    deserializedModuleUpdateParameters.location = reader.getString();
+                } else if ("tags".equals(fieldName)) {
+                    Map<String, String> tags = reader.readMap(reader1 -> reader1.getString());
+                    deserializedModuleUpdateParameters.tags = tags;
+                } else {
+                    reader.skipChildren();
+                }
+            }
+
+            return deserializedModuleUpdateParameters;
+        });
     }
 }

@@ -11,11 +11,13 @@ import com.azure.core.util.Context;
 import com.azure.resourcemanager.network.fluent.models.VpnSiteLinkConnectionInner;
 import reactor.core.publisher.Mono;
 
-/** An instance of this class provides access to all the operations defined in VpnSiteLinkConnectionsClient. */
+/**
+ * An instance of this class provides access to all the operations defined in VpnSiteLinkConnectionsClient.
+ */
 public interface VpnSiteLinkConnectionsClient {
     /**
      * Retrieves the details of a vpn site link connection.
-     *
+     * 
      * @param resourceGroupName The resource group name of the VpnGateway.
      * @param gatewayName The name of the gateway.
      * @param connectionName The name of the vpn connection.
@@ -23,15 +25,15 @@ public interface VpnSiteLinkConnectionsClient {
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return vpnSiteLinkConnection Resource.
+     * @return vpnSiteLinkConnection Resource along with {@link Response} on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    Mono<Response<VpnSiteLinkConnectionInner>> getWithResponseAsync(
-        String resourceGroupName, String gatewayName, String connectionName, String linkConnectionName);
+    Mono<Response<VpnSiteLinkConnectionInner>> getWithResponseAsync(String resourceGroupName, String gatewayName,
+        String connectionName, String linkConnectionName);
 
     /**
      * Retrieves the details of a vpn site link connection.
-     *
+     * 
      * @param resourceGroupName The resource group name of the VpnGateway.
      * @param gatewayName The name of the gateway.
      * @param connectionName The name of the vpn connection.
@@ -39,31 +41,15 @@ public interface VpnSiteLinkConnectionsClient {
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return vpnSiteLinkConnection Resource.
+     * @return vpnSiteLinkConnection Resource on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    Mono<VpnSiteLinkConnectionInner> getAsync(
-        String resourceGroupName, String gatewayName, String connectionName, String linkConnectionName);
+    Mono<VpnSiteLinkConnectionInner> getAsync(String resourceGroupName, String gatewayName, String connectionName,
+        String linkConnectionName);
 
     /**
      * Retrieves the details of a vpn site link connection.
-     *
-     * @param resourceGroupName The resource group name of the VpnGateway.
-     * @param gatewayName The name of the gateway.
-     * @param connectionName The name of the vpn connection.
-     * @param linkConnectionName The name of the vpn connection.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return vpnSiteLinkConnection Resource.
-     */
-    @ServiceMethod(returns = ReturnType.SINGLE)
-    VpnSiteLinkConnectionInner get(
-        String resourceGroupName, String gatewayName, String connectionName, String linkConnectionName);
-
-    /**
-     * Retrieves the details of a vpn site link connection.
-     *
+     * 
      * @param resourceGroupName The resource group name of the VpnGateway.
      * @param gatewayName The name of the gateway.
      * @param connectionName The name of the vpn connection.
@@ -72,13 +58,25 @@ public interface VpnSiteLinkConnectionsClient {
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return vpnSiteLinkConnection Resource along with {@link Response}.
+     */
+    @ServiceMethod(returns = ReturnType.SINGLE)
+    Response<VpnSiteLinkConnectionInner> getWithResponse(String resourceGroupName, String gatewayName,
+        String connectionName, String linkConnectionName, Context context);
+
+    /**
+     * Retrieves the details of a vpn site link connection.
+     * 
+     * @param resourceGroupName The resource group name of the VpnGateway.
+     * @param gatewayName The name of the gateway.
+     * @param connectionName The name of the vpn connection.
+     * @param linkConnectionName The name of the vpn connection.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
      * @return vpnSiteLinkConnection Resource.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    Response<VpnSiteLinkConnectionInner> getWithResponse(
-        String resourceGroupName,
-        String gatewayName,
-        String connectionName,
-        String linkConnectionName,
-        Context context);
+    VpnSiteLinkConnectionInner get(String resourceGroupName, String gatewayName, String connectionName,
+        String linkConnectionName);
 }

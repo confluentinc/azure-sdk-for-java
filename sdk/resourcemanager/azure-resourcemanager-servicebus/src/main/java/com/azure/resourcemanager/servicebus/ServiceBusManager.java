@@ -15,12 +15,15 @@ import com.azure.resourcemanager.servicebus.implementation.ServiceBusManagementC
 import com.azure.resourcemanager.servicebus.implementation.ServiceBusNamespacesImpl;
 import com.azure.resourcemanager.servicebus.models.ServiceBusNamespaces;
 
+import java.util.Objects;
+
 /**
  * Entry point to Azure ServiceBus management.
  */
 public final class ServiceBusManager extends Manager<ServiceBusManagementClient> {
     // Collections
     private ServiceBusNamespaces namespaces;
+
     /**
      * Get a Configurable instance that can be used to create {@link ServiceBusManager}
      * with optional configuration.
@@ -39,17 +42,21 @@ public final class ServiceBusManager extends Manager<ServiceBusManagementClient>
      * @return the ServiceBusManager
      */
     public static ServiceBusManager authenticate(TokenCredential credential, AzureProfile profile) {
+        Objects.requireNonNull(credential, "'credential' cannot be null.");
+        Objects.requireNonNull(profile, "'profile' cannot be null.");
         return authenticate(HttpPipelineProvider.buildHttpPipeline(credential, profile), profile);
     }
 
     /**
      * Creates an instance of ServiceBusManager that exposes servicebus management API entry points.
      *
-     * @param httpPipeline the HttpPipeline to be used for API calls.
+     * @param httpPipeline the {@link HttpPipeline} configured with Azure authentication credential.
      * @param profile the profile to use
      * @return the ServiceBusManager
      */
-    private static ServiceBusManager authenticate(HttpPipeline httpPipeline, AzureProfile profile) {
+    public static ServiceBusManager authenticate(HttpPipeline httpPipeline, AzureProfile profile) {
+        Objects.requireNonNull(httpPipeline, "'httpPipeline' cannot be null.");
+        Objects.requireNonNull(profile, "'profile' cannot be null.");
         return new ServiceBusManager(httpPipeline, profile);
     }
 
@@ -70,9 +77,7 @@ public final class ServiceBusManager extends Manager<ServiceBusManagementClient>
     /**
      * The implementation for Configurable interface.
      */
-    private static class ConfigurableImpl
-            extends AzureConfigurableImpl<Configurable>
-            implements Configurable {
+    private static class ConfigurableImpl extends AzureConfigurableImpl<Configurable> implements Configurable {
 
         public ServiceBusManager authenticate(TokenCredential credential, AzureProfile profile) {
             return ServiceBusManager.authenticate(buildHttpPipeline(credential, profile), profile);
@@ -80,17 +85,16 @@ public final class ServiceBusManager extends Manager<ServiceBusManagementClient>
     }
 
     private ServiceBusManager(HttpPipeline httpPipeline, AzureProfile profile) {
-        super(
-            httpPipeline,
-            profile,
-            new ServiceBusManagementClientBuilder()
-                .pipeline(httpPipeline)
+        super(httpPipeline, profile,
+            new ServiceBusManagementClientBuilder().pipeline(httpPipeline)
                 .endpoint(profile.getEnvironment().getResourceManagerEndpoint())
                 .subscriptionId(profile.getSubscriptionId())
                 .buildClient());
     }
 
     /**
+     * Gets the API entry point of the Service Bus namespace management.
+     *
      * @return the Service Bus namespace management API entry point
      */
     public ServiceBusNamespaces namespaces() {

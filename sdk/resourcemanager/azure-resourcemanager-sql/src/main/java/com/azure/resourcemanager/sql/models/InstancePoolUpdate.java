@@ -5,25 +5,32 @@
 package com.azure.resourcemanager.sql.models;
 
 import com.azure.core.annotation.Fluent;
-import com.azure.core.util.logging.ClientLogger;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.azure.json.JsonReader;
+import com.azure.json.JsonSerializable;
+import com.azure.json.JsonToken;
+import com.azure.json.JsonWriter;
+import java.io.IOException;
 import java.util.Map;
 
-/** An update to an Instance pool. */
+/**
+ * An update to an Instance pool.
+ */
 @Fluent
-public final class InstancePoolUpdate {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(InstancePoolUpdate.class);
-
+public final class InstancePoolUpdate implements JsonSerializable<InstancePoolUpdate> {
     /*
      * Resource tags.
      */
-    @JsonProperty(value = "tags")
     private Map<String, String> tags;
 
     /**
+     * Creates an instance of InstancePoolUpdate class.
+     */
+    public InstancePoolUpdate() {
+    }
+
+    /**
      * Get the tags property: Resource tags.
-     *
+     * 
      * @return the tags value.
      */
     public Map<String, String> tags() {
@@ -32,7 +39,7 @@ public final class InstancePoolUpdate {
 
     /**
      * Set the tags property: Resource tags.
-     *
+     * 
      * @param tags the tags value to set.
      * @return the InstancePoolUpdate object itself.
      */
@@ -43,9 +50,46 @@ public final class InstancePoolUpdate {
 
     /**
      * Validates the instance.
-     *
+     * 
      * @throws IllegalArgumentException thrown if the instance is not valid.
      */
     public void validate() {
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public JsonWriter toJson(JsonWriter jsonWriter) throws IOException {
+        jsonWriter.writeStartObject();
+        jsonWriter.writeMapField("tags", this.tags, (writer, element) -> writer.writeString(element));
+        return jsonWriter.writeEndObject();
+    }
+
+    /**
+     * Reads an instance of InstancePoolUpdate from the JsonReader.
+     * 
+     * @param jsonReader The JsonReader being read.
+     * @return An instance of InstancePoolUpdate if the JsonReader was pointing to an instance of it, or null if it was
+     * pointing to JSON null.
+     * @throws IOException If an error occurs while reading the InstancePoolUpdate.
+     */
+    public static InstancePoolUpdate fromJson(JsonReader jsonReader) throws IOException {
+        return jsonReader.readObject(reader -> {
+            InstancePoolUpdate deserializedInstancePoolUpdate = new InstancePoolUpdate();
+            while (reader.nextToken() != JsonToken.END_OBJECT) {
+                String fieldName = reader.getFieldName();
+                reader.nextToken();
+
+                if ("tags".equals(fieldName)) {
+                    Map<String, String> tags = reader.readMap(reader1 -> reader1.getString());
+                    deserializedInstancePoolUpdate.tags = tags;
+                } else {
+                    reader.skipChildren();
+                }
+            }
+
+            return deserializedInstancePoolUpdate;
+        });
     }
 }

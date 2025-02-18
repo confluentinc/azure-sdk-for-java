@@ -4,132 +4,74 @@
 
 package com.azure.resourcemanager.resourcehealth.models;
 
-import com.azure.core.annotation.Fluent;
-import com.azure.core.annotation.JsonFlatten;
-import com.azure.core.management.ProxyResource;
-import com.azure.core.util.logging.ClientLogger;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.azure.core.management.SystemData;
+import com.azure.resourcemanager.resourcehealth.fluent.models.MetadataEntityInner;
 import java.util.List;
 
-/** The metadata entity contract. */
-@JsonFlatten
-@Fluent
-public class MetadataEntity extends ProxyResource {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(MetadataEntity.class);
-
-    /*
-     * The display name.
+/**
+ * An immutable client-side representation of MetadataEntity.
+ */
+public interface MetadataEntity {
+    /**
+     * Gets the id property: Fully qualified resource Id for the resource.
+     * 
+     * @return the id value.
      */
-    @JsonProperty(value = "properties.displayName")
-    private String displayName;
-
-    /*
-     * The list of keys on which this entity depends on.
-     */
-    @JsonProperty(value = "properties.dependsOn")
-    private List<String> dependsOn;
-
-    /*
-     * The list of scenarios applicable to this metadata entity.
-     */
-    @JsonProperty(value = "properties.applicableScenarios")
-    private List<Scenario> applicableScenarios;
-
-    /*
-     * The list of supported values.
-     */
-    @JsonProperty(value = "properties.supportedValues")
-    private List<MetadataSupportedValueDetail> supportedValues;
+    String id();
 
     /**
-     * Get the displayName property: The display name.
-     *
+     * Gets the name property: The name of the resource.
+     * 
+     * @return the name value.
+     */
+    String name();
+
+    /**
+     * Gets the type property: The type of the resource.
+     * 
+     * @return the type value.
+     */
+    String type();
+
+    /**
+     * Gets the systemData property: Azure Resource Manager metadata containing createdBy and modifiedBy information.
+     * 
+     * @return the systemData value.
+     */
+    SystemData systemData();
+
+    /**
+     * Gets the displayName property: The display name.
+     * 
      * @return the displayName value.
      */
-    public String displayName() {
-        return this.displayName;
-    }
+    String displayName();
 
     /**
-     * Set the displayName property: The display name.
-     *
-     * @param displayName the displayName value to set.
-     * @return the MetadataEntity object itself.
-     */
-    public MetadataEntity withDisplayName(String displayName) {
-        this.displayName = displayName;
-        return this;
-    }
-
-    /**
-     * Get the dependsOn property: The list of keys on which this entity depends on.
-     *
+     * Gets the dependsOn property: The list of keys on which this entity depends on.
+     * 
      * @return the dependsOn value.
      */
-    public List<String> dependsOn() {
-        return this.dependsOn;
-    }
+    List<String> dependsOn();
 
     /**
-     * Set the dependsOn property: The list of keys on which this entity depends on.
-     *
-     * @param dependsOn the dependsOn value to set.
-     * @return the MetadataEntity object itself.
-     */
-    public MetadataEntity withDependsOn(List<String> dependsOn) {
-        this.dependsOn = dependsOn;
-        return this;
-    }
-
-    /**
-     * Get the applicableScenarios property: The list of scenarios applicable to this metadata entity.
-     *
+     * Gets the applicableScenarios property: The list of scenarios applicable to this metadata entity.
+     * 
      * @return the applicableScenarios value.
      */
-    public List<Scenario> applicableScenarios() {
-        return this.applicableScenarios;
-    }
+    List<Scenario> applicableScenarios();
 
     /**
-     * Set the applicableScenarios property: The list of scenarios applicable to this metadata entity.
-     *
-     * @param applicableScenarios the applicableScenarios value to set.
-     * @return the MetadataEntity object itself.
-     */
-    public MetadataEntity withApplicableScenarios(List<Scenario> applicableScenarios) {
-        this.applicableScenarios = applicableScenarios;
-        return this;
-    }
-
-    /**
-     * Get the supportedValues property: The list of supported values.
-     *
+     * Gets the supportedValues property: The list of supported values.
+     * 
      * @return the supportedValues value.
      */
-    public List<MetadataSupportedValueDetail> supportedValues() {
-        return this.supportedValues;
-    }
+    List<MetadataSupportedValueDetail> supportedValues();
 
     /**
-     * Set the supportedValues property: The list of supported values.
-     *
-     * @param supportedValues the supportedValues value to set.
-     * @return the MetadataEntity object itself.
+     * Gets the inner com.azure.resourcemanager.resourcehealth.fluent.models.MetadataEntityInner object.
+     * 
+     * @return the inner object.
      */
-    public MetadataEntity withSupportedValues(List<MetadataSupportedValueDetail> supportedValues) {
-        this.supportedValues = supportedValues;
-        return this;
-    }
-
-    /**
-     * Validates the instance.
-     *
-     * @throws IllegalArgumentException thrown if the instance is not valid.
-     */
-    public void validate() {
-        if (supportedValues() != null) {
-            supportedValues().forEach(e -> e.validate());
-        }
-    }
+    MetadataEntityInner innerModel();
 }

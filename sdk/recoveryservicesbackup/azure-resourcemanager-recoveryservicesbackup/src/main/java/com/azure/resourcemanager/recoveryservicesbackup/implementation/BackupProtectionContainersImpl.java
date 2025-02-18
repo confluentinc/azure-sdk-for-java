@@ -11,17 +11,15 @@ import com.azure.resourcemanager.recoveryservicesbackup.fluent.BackupProtectionC
 import com.azure.resourcemanager.recoveryservicesbackup.fluent.models.ProtectionContainerResourceInner;
 import com.azure.resourcemanager.recoveryservicesbackup.models.BackupProtectionContainers;
 import com.azure.resourcemanager.recoveryservicesbackup.models.ProtectionContainerResource;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 public final class BackupProtectionContainersImpl implements BackupProtectionContainers {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(BackupProtectionContainersImpl.class);
+    private static final ClientLogger LOGGER = new ClientLogger(BackupProtectionContainersImpl.class);
 
     private final BackupProtectionContainersClient innerClient;
 
     private final com.azure.resourcemanager.recoveryservicesbackup.RecoveryServicesBackupManager serviceManager;
 
-    public BackupProtectionContainersImpl(
-        BackupProtectionContainersClient innerClient,
+    public BackupProtectionContainersImpl(BackupProtectionContainersClient innerClient,
         com.azure.resourcemanager.recoveryservicesbackup.RecoveryServicesBackupManager serviceManager) {
         this.innerClient = innerClient;
         this.serviceManager = serviceManager;
@@ -29,14 +27,16 @@ public final class BackupProtectionContainersImpl implements BackupProtectionCon
 
     public PagedIterable<ProtectionContainerResource> list(String vaultName, String resourceGroupName) {
         PagedIterable<ProtectionContainerResourceInner> inner = this.serviceClient().list(vaultName, resourceGroupName);
-        return Utils.mapPage(inner, inner1 -> new ProtectionContainerResourceImpl(inner1, this.manager()));
+        return ResourceManagerUtils.mapPage(inner,
+            inner1 -> new ProtectionContainerResourceImpl(inner1, this.manager()));
     }
 
-    public PagedIterable<ProtectionContainerResource> list(
-        String vaultName, String resourceGroupName, String filter, Context context) {
-        PagedIterable<ProtectionContainerResourceInner> inner =
-            this.serviceClient().list(vaultName, resourceGroupName, filter, context);
-        return Utils.mapPage(inner, inner1 -> new ProtectionContainerResourceImpl(inner1, this.manager()));
+    public PagedIterable<ProtectionContainerResource> list(String vaultName, String resourceGroupName, String filter,
+        Context context) {
+        PagedIterable<ProtectionContainerResourceInner> inner
+            = this.serviceClient().list(vaultName, resourceGroupName, filter, context);
+        return ResourceManagerUtils.mapPage(inner,
+            inner1 -> new ProtectionContainerResourceImpl(inner1, this.manager()));
     }
 
     private BackupProtectionContainersClient serviceClient() {

@@ -5,7 +5,11 @@
 package com.azure.monitor.opentelemetry.exporter.implementation.models;
 
 import com.azure.core.annotation.Fluent;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.azure.json.JsonReader;
+import com.azure.json.JsonToken;
+import com.azure.json.JsonWriter;
+import java.io.IOException;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
@@ -15,85 +19,71 @@ import java.util.Map;
 @Fluent
 public final class PageViewPerfData extends MonitorDomain {
     /*
-     * Identifier of a page view instance. Used for correlation between page
-     * view and other telemetry items.
+     * Identifier of a page view instance. Used for correlation between page view and other telemetry items.
      */
-    @JsonProperty(value = "id", required = true)
     private String id;
 
     /*
-     * Event name. Keep it low cardinality to allow proper grouping and useful
-     * metrics.
+     * Event name. Keep it low cardinality to allow proper grouping and useful metrics.
      */
-    @JsonProperty(value = "name", required = true)
     private String name;
 
     /*
      * Request URL with all query string parameters
      */
-    @JsonProperty(value = "url")
     private String url;
 
     /*
-     * Request duration in format: DD.HH:MM:SS.MMMMMM. For a page view
-     * (PageViewData), this is the duration. For a page view with performance
-     * information (PageViewPerfData), this is the page load time. Must be less
-     * than 1000 days.
+     * Request duration in format: DD.HH:MM:SS.MMMMMM. For a page view (PageViewData), this is the duration. For a page
+     * view with performance information (PageViewPerfData), this is the page load time. Must be less than 1000 days.
      */
-    @JsonProperty(value = "duration")
     private String duration;
 
     /*
-     * Performance total in TimeSpan 'G' (general long) format:
-     * d:hh:mm:ss.fffffff
+     * Performance total in TimeSpan 'G' (general long) format: d:hh:mm:ss.fffffff
      */
-    @JsonProperty(value = "perfTotal")
     private String perfTotal;
 
     /*
-     * Network connection time in TimeSpan 'G' (general long) format:
-     * d:hh:mm:ss.fffffff
+     * Network connection time in TimeSpan 'G' (general long) format: d:hh:mm:ss.fffffff
      */
-    @JsonProperty(value = "networkConnect")
     private String networkConnect;
 
     /*
-     * Sent request time in TimeSpan 'G' (general long) format:
-     * d:hh:mm:ss.fffffff
+     * Sent request time in TimeSpan 'G' (general long) format: d:hh:mm:ss.fffffff
      */
-    @JsonProperty(value = "sentRequest")
     private String sentRequest;
 
     /*
-     * Received response time in TimeSpan 'G' (general long) format:
-     * d:hh:mm:ss.fffffff
+     * Received response time in TimeSpan 'G' (general long) format: d:hh:mm:ss.fffffff
      */
-    @JsonProperty(value = "receivedResponse")
     private String receivedResponse;
 
     /*
-     * DOM processing time in TimeSpan 'G' (general long) format:
-     * d:hh:mm:ss.fffffff
+     * DOM processing time in TimeSpan 'G' (general long) format: d:hh:mm:ss.fffffff
      */
-    @JsonProperty(value = "domProcessing")
     private String domProcessing;
 
     /*
      * Collection of custom properties.
      */
-    @JsonProperty(value = "properties")
     private Map<String, String> properties;
 
     /*
      * Collection of custom measurements.
      */
-    @JsonProperty(value = "measurements")
     private Map<String, Double> measurements;
+
+    /**
+     * Creates an instance of PageViewPerfData class.
+     */
+    public PageViewPerfData() {
+    }
 
     /**
      * Get the id property: Identifier of a page view instance. Used for correlation between page view and other
      * telemetry items.
-     *
+     * 
      * @return the id value.
      */
     public String getId() {
@@ -103,7 +93,7 @@ public final class PageViewPerfData extends MonitorDomain {
     /**
      * Set the id property: Identifier of a page view instance. Used for correlation between page view and other
      * telemetry items.
-     *
+     * 
      * @param id the id value to set.
      * @return the PageViewPerfData object itself.
      */
@@ -114,7 +104,7 @@ public final class PageViewPerfData extends MonitorDomain {
 
     /**
      * Get the name property: Event name. Keep it low cardinality to allow proper grouping and useful metrics.
-     *
+     * 
      * @return the name value.
      */
     public String getName() {
@@ -123,7 +113,7 @@ public final class PageViewPerfData extends MonitorDomain {
 
     /**
      * Set the name property: Event name. Keep it low cardinality to allow proper grouping and useful metrics.
-     *
+     * 
      * @param name the name value to set.
      * @return the PageViewPerfData object itself.
      */
@@ -134,7 +124,7 @@ public final class PageViewPerfData extends MonitorDomain {
 
     /**
      * Get the url property: Request URL with all query string parameters.
-     *
+     * 
      * @return the url value.
      */
     public String getUrl() {
@@ -143,7 +133,7 @@ public final class PageViewPerfData extends MonitorDomain {
 
     /**
      * Set the url property: Request URL with all query string parameters.
-     *
+     * 
      * @param url the url value to set.
      * @return the PageViewPerfData object itself.
      */
@@ -156,7 +146,7 @@ public final class PageViewPerfData extends MonitorDomain {
      * Get the duration property: Request duration in format: DD.HH:MM:SS.MMMMMM. For a page view (PageViewData), this
      * is the duration. For a page view with performance information (PageViewPerfData), this is the page load time.
      * Must be less than 1000 days.
-     *
+     * 
      * @return the duration value.
      */
     public String getDuration() {
@@ -167,7 +157,7 @@ public final class PageViewPerfData extends MonitorDomain {
      * Set the duration property: Request duration in format: DD.HH:MM:SS.MMMMMM. For a page view (PageViewData), this
      * is the duration. For a page view with performance information (PageViewPerfData), this is the page load time.
      * Must be less than 1000 days.
-     *
+     * 
      * @param duration the duration value to set.
      * @return the PageViewPerfData object itself.
      */
@@ -178,7 +168,7 @@ public final class PageViewPerfData extends MonitorDomain {
 
     /**
      * Get the perfTotal property: Performance total in TimeSpan 'G' (general long) format: d:hh:mm:ss.fffffff.
-     *
+     * 
      * @return the perfTotal value.
      */
     public String getPerfTotal() {
@@ -187,7 +177,7 @@ public final class PageViewPerfData extends MonitorDomain {
 
     /**
      * Set the perfTotal property: Performance total in TimeSpan 'G' (general long) format: d:hh:mm:ss.fffffff.
-     *
+     * 
      * @param perfTotal the perfTotal value to set.
      * @return the PageViewPerfData object itself.
      */
@@ -199,7 +189,7 @@ public final class PageViewPerfData extends MonitorDomain {
     /**
      * Get the networkConnect property: Network connection time in TimeSpan 'G' (general long) format:
      * d:hh:mm:ss.fffffff.
-     *
+     * 
      * @return the networkConnect value.
      */
     public String getNetworkConnect() {
@@ -209,7 +199,7 @@ public final class PageViewPerfData extends MonitorDomain {
     /**
      * Set the networkConnect property: Network connection time in TimeSpan 'G' (general long) format:
      * d:hh:mm:ss.fffffff.
-     *
+     * 
      * @param networkConnect the networkConnect value to set.
      * @return the PageViewPerfData object itself.
      */
@@ -220,7 +210,7 @@ public final class PageViewPerfData extends MonitorDomain {
 
     /**
      * Get the sentRequest property: Sent request time in TimeSpan 'G' (general long) format: d:hh:mm:ss.fffffff.
-     *
+     * 
      * @return the sentRequest value.
      */
     public String getSentRequest() {
@@ -229,7 +219,7 @@ public final class PageViewPerfData extends MonitorDomain {
 
     /**
      * Set the sentRequest property: Sent request time in TimeSpan 'G' (general long) format: d:hh:mm:ss.fffffff.
-     *
+     * 
      * @param sentRequest the sentRequest value to set.
      * @return the PageViewPerfData object itself.
      */
@@ -241,7 +231,7 @@ public final class PageViewPerfData extends MonitorDomain {
     /**
      * Get the receivedResponse property: Received response time in TimeSpan 'G' (general long) format:
      * d:hh:mm:ss.fffffff.
-     *
+     * 
      * @return the receivedResponse value.
      */
     public String getReceivedResponse() {
@@ -251,7 +241,7 @@ public final class PageViewPerfData extends MonitorDomain {
     /**
      * Set the receivedResponse property: Received response time in TimeSpan 'G' (general long) format:
      * d:hh:mm:ss.fffffff.
-     *
+     * 
      * @param receivedResponse the receivedResponse value to set.
      * @return the PageViewPerfData object itself.
      */
@@ -262,7 +252,7 @@ public final class PageViewPerfData extends MonitorDomain {
 
     /**
      * Get the domProcessing property: DOM processing time in TimeSpan 'G' (general long) format: d:hh:mm:ss.fffffff.
-     *
+     * 
      * @return the domProcessing value.
      */
     public String getDomProcessing() {
@@ -271,7 +261,7 @@ public final class PageViewPerfData extends MonitorDomain {
 
     /**
      * Set the domProcessing property: DOM processing time in TimeSpan 'G' (general long) format: d:hh:mm:ss.fffffff.
-     *
+     * 
      * @param domProcessing the domProcessing value to set.
      * @return the PageViewPerfData object itself.
      */
@@ -282,7 +272,7 @@ public final class PageViewPerfData extends MonitorDomain {
 
     /**
      * Get the properties property: Collection of custom properties.
-     *
+     * 
      * @return the properties value.
      */
     public Map<String, String> getProperties() {
@@ -291,7 +281,7 @@ public final class PageViewPerfData extends MonitorDomain {
 
     /**
      * Set the properties property: Collection of custom properties.
-     *
+     * 
      * @param properties the properties value to set.
      * @return the PageViewPerfData object itself.
      */
@@ -302,7 +292,7 @@ public final class PageViewPerfData extends MonitorDomain {
 
     /**
      * Get the measurements property: Collection of custom measurements.
-     *
+     * 
      * @return the measurements value.
      */
     public Map<String, Double> getMeasurements() {
@@ -311,12 +301,104 @@ public final class PageViewPerfData extends MonitorDomain {
 
     /**
      * Set the measurements property: Collection of custom measurements.
-     *
+     * 
      * @param measurements the measurements value to set.
      * @return the PageViewPerfData object itself.
      */
     public PageViewPerfData setMeasurements(Map<String, Double> measurements) {
         this.measurements = measurements;
         return this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public PageViewPerfData setVersion(int version) {
+        super.setVersion(version);
+        return this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public JsonWriter toJson(JsonWriter jsonWriter) throws IOException {
+        jsonWriter.writeStartObject();
+        jsonWriter.writeIntField("ver", getVersion());
+        jsonWriter.writeStringField("id", this.id);
+        jsonWriter.writeStringField("name", this.name);
+        jsonWriter.writeStringField("url", this.url);
+        jsonWriter.writeStringField("duration", this.duration);
+        jsonWriter.writeStringField("perfTotal", this.perfTotal);
+        jsonWriter.writeStringField("networkConnect", this.networkConnect);
+        jsonWriter.writeStringField("sentRequest", this.sentRequest);
+        jsonWriter.writeStringField("receivedResponse", this.receivedResponse);
+        jsonWriter.writeStringField("domProcessing", this.domProcessing);
+        jsonWriter.writeMapField("properties", this.properties, (writer, element) -> writer.writeString(element));
+        jsonWriter.writeMapField("measurements", this.measurements, (writer, element) -> writer.writeDouble(element));
+        if (getAdditionalProperties() != null) {
+            for (Map.Entry<String, Object> additionalProperty : getAdditionalProperties().entrySet()) {
+                jsonWriter.writeUntypedField(additionalProperty.getKey(), additionalProperty.getValue());
+            }
+        }
+        return jsonWriter.writeEndObject();
+    }
+
+    /**
+     * Reads an instance of PageViewPerfData from the JsonReader.
+     * 
+     * @param jsonReader The JsonReader being read.
+     * @return An instance of PageViewPerfData if the JsonReader was pointing to an instance of it, or null if it was
+     * pointing to JSON null.
+     * @throws IllegalStateException If the deserialized JSON object was missing any required properties.
+     * @throws IOException If an error occurs while reading the PageViewPerfData.
+     */
+    public static PageViewPerfData fromJson(JsonReader jsonReader) throws IOException {
+        return jsonReader.readObject(reader -> {
+            PageViewPerfData deserializedPageViewPerfData = new PageViewPerfData();
+            Map<String, Object> additionalProperties = null;
+            while (reader.nextToken() != JsonToken.END_OBJECT) {
+                String fieldName = reader.getFieldName();
+                reader.nextToken();
+
+                if ("ver".equals(fieldName)) {
+                    deserializedPageViewPerfData.setVersion(reader.getInt());
+                } else if ("id".equals(fieldName)) {
+                    deserializedPageViewPerfData.id = reader.getString();
+                } else if ("name".equals(fieldName)) {
+                    deserializedPageViewPerfData.name = reader.getString();
+                } else if ("url".equals(fieldName)) {
+                    deserializedPageViewPerfData.url = reader.getString();
+                } else if ("duration".equals(fieldName)) {
+                    deserializedPageViewPerfData.duration = reader.getString();
+                } else if ("perfTotal".equals(fieldName)) {
+                    deserializedPageViewPerfData.perfTotal = reader.getString();
+                } else if ("networkConnect".equals(fieldName)) {
+                    deserializedPageViewPerfData.networkConnect = reader.getString();
+                } else if ("sentRequest".equals(fieldName)) {
+                    deserializedPageViewPerfData.sentRequest = reader.getString();
+                } else if ("receivedResponse".equals(fieldName)) {
+                    deserializedPageViewPerfData.receivedResponse = reader.getString();
+                } else if ("domProcessing".equals(fieldName)) {
+                    deserializedPageViewPerfData.domProcessing = reader.getString();
+                } else if ("properties".equals(fieldName)) {
+                    Map<String, String> properties = reader.readMap(reader1 -> reader1.getString());
+                    deserializedPageViewPerfData.properties = properties;
+                } else if ("measurements".equals(fieldName)) {
+                    Map<String, Double> measurements = reader.readMap(reader1 -> reader1.getDouble());
+                    deserializedPageViewPerfData.measurements = measurements;
+                } else {
+                    if (additionalProperties == null) {
+                        additionalProperties = new LinkedHashMap<>();
+                    }
+
+                    additionalProperties.put(fieldName, reader.readUntyped());
+                }
+            }
+            deserializedPageViewPerfData.setAdditionalProperties(additionalProperties);
+
+            return deserializedPageViewPerfData;
+        });
     }
 }

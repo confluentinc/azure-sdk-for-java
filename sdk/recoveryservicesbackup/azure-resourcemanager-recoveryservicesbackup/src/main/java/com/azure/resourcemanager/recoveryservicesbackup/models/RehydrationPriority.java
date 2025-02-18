@@ -5,29 +5,46 @@
 package com.azure.resourcemanager.recoveryservicesbackup.models;
 
 import com.azure.core.util.ExpandableStringEnum;
-import com.fasterxml.jackson.annotation.JsonCreator;
 import java.util.Collection;
 
-/** Defines values for RehydrationPriority. */
+/**
+ * Rehydration Priority.
+ */
 public final class RehydrationPriority extends ExpandableStringEnum<RehydrationPriority> {
-    /** Static value Standard for RehydrationPriority. */
+    /**
+     * Static value Standard for RehydrationPriority.
+     */
     public static final RehydrationPriority STANDARD = fromString("Standard");
 
-    /** Static value High for RehydrationPriority. */
+    /**
+     * Static value High for RehydrationPriority.
+     */
     public static final RehydrationPriority HIGH = fromString("High");
 
     /**
+     * Creates a new instance of RehydrationPriority value.
+     * 
+     * @deprecated Use the {@link #fromString(String)} factory method.
+     */
+    @Deprecated
+    public RehydrationPriority() {
+    }
+
+    /**
      * Creates or finds a RehydrationPriority from its string representation.
-     *
+     * 
      * @param name a name to look for.
      * @return the corresponding RehydrationPriority.
      */
-    @JsonCreator
     public static RehydrationPriority fromString(String name) {
         return fromString(name, RehydrationPriority.class);
     }
 
-    /** @return known RehydrationPriority values. */
+    /**
+     * Gets known RehydrationPriority values.
+     * 
+     * @return known RehydrationPriority values.
+     */
     public static Collection<RehydrationPriority> values() {
         return values(RehydrationPriority.class);
     }

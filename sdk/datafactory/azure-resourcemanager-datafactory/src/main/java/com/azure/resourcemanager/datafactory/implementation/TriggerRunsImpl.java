@@ -13,60 +13,56 @@ import com.azure.resourcemanager.datafactory.fluent.models.TriggerRunsQueryRespo
 import com.azure.resourcemanager.datafactory.models.RunFilterParameters;
 import com.azure.resourcemanager.datafactory.models.TriggerRuns;
 import com.azure.resourcemanager.datafactory.models.TriggerRunsQueryResponse;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 public final class TriggerRunsImpl implements TriggerRuns {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(TriggerRunsImpl.class);
+    private static final ClientLogger LOGGER = new ClientLogger(TriggerRunsImpl.class);
 
     private final TriggerRunsClient innerClient;
 
     private final com.azure.resourcemanager.datafactory.DataFactoryManager serviceManager;
 
-    public TriggerRunsImpl(
-        TriggerRunsClient innerClient, com.azure.resourcemanager.datafactory.DataFactoryManager serviceManager) {
+    public TriggerRunsImpl(TriggerRunsClient innerClient,
+        com.azure.resourcemanager.datafactory.DataFactoryManager serviceManager) {
         this.innerClient = innerClient;
         this.serviceManager = serviceManager;
+    }
+
+    public Response<Void> rerunWithResponse(String resourceGroupName, String factoryName, String triggerName,
+        String runId, Context context) {
+        return this.serviceClient().rerunWithResponse(resourceGroupName, factoryName, triggerName, runId, context);
     }
 
     public void rerun(String resourceGroupName, String factoryName, String triggerName, String runId) {
         this.serviceClient().rerun(resourceGroupName, factoryName, triggerName, runId);
     }
 
-    public Response<Void> rerunWithResponse(
-        String resourceGroupName, String factoryName, String triggerName, String runId, Context context) {
-        return this.serviceClient().rerunWithResponse(resourceGroupName, factoryName, triggerName, runId, context);
+    public Response<Void> cancelWithResponse(String resourceGroupName, String factoryName, String triggerName,
+        String runId, Context context) {
+        return this.serviceClient().cancelWithResponse(resourceGroupName, factoryName, triggerName, runId, context);
     }
 
     public void cancel(String resourceGroupName, String factoryName, String triggerName, String runId) {
         this.serviceClient().cancel(resourceGroupName, factoryName, triggerName, runId);
     }
 
-    public Response<Void> cancelWithResponse(
-        String resourceGroupName, String factoryName, String triggerName, String runId, Context context) {
-        return this.serviceClient().cancelWithResponse(resourceGroupName, factoryName, triggerName, runId, context);
-    }
-
-    public TriggerRunsQueryResponse queryByFactory(
-        String resourceGroupName, String factoryName, RunFilterParameters filterParameters) {
-        TriggerRunsQueryResponseInner inner =
-            this.serviceClient().queryByFactory(resourceGroupName, factoryName, filterParameters);
+    public Response<TriggerRunsQueryResponse> queryByFactoryWithResponse(String resourceGroupName, String factoryName,
+        RunFilterParameters filterParameters, Context context) {
+        Response<TriggerRunsQueryResponseInner> inner = this.serviceClient()
+            .queryByFactoryWithResponse(resourceGroupName, factoryName, filterParameters, context);
         if (inner != null) {
-            return new TriggerRunsQueryResponseImpl(inner, this.manager());
+            return new SimpleResponse<>(inner.getRequest(), inner.getStatusCode(), inner.getHeaders(),
+                new TriggerRunsQueryResponseImpl(inner.getValue(), this.manager()));
         } else {
             return null;
         }
     }
 
-    public Response<TriggerRunsQueryResponse> queryByFactoryWithResponse(
-        String resourceGroupName, String factoryName, RunFilterParameters filterParameters, Context context) {
-        Response<TriggerRunsQueryResponseInner> inner =
-            this.serviceClient().queryByFactoryWithResponse(resourceGroupName, factoryName, filterParameters, context);
+    public TriggerRunsQueryResponse queryByFactory(String resourceGroupName, String factoryName,
+        RunFilterParameters filterParameters) {
+        TriggerRunsQueryResponseInner inner
+            = this.serviceClient().queryByFactory(resourceGroupName, factoryName, filterParameters);
         if (inner != null) {
-            return new SimpleResponse<>(
-                inner.getRequest(),
-                inner.getStatusCode(),
-                inner.getHeaders(),
-                new TriggerRunsQueryResponseImpl(inner.getValue(), this.manager()));
+            return new TriggerRunsQueryResponseImpl(inner, this.manager());
         } else {
             return null;
         }

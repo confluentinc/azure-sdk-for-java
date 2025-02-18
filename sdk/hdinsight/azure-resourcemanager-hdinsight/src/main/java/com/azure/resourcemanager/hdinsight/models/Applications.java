@@ -8,36 +8,53 @@ import com.azure.core.http.rest.PagedIterable;
 import com.azure.core.http.rest.Response;
 import com.azure.core.util.Context;
 
-/** Resource collection API of Applications. */
+/**
+ * Resource collection API of Applications.
+ */
 public interface Applications {
     /**
      * Lists all of the applications for the HDInsight cluster.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param clusterName The name of the cluster.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return result of the request to list cluster Applications.
+     * @return result of the request to list cluster Applications as paginated response with {@link PagedIterable}.
      */
     PagedIterable<Application> listByCluster(String resourceGroupName, String clusterName);
 
     /**
      * Lists all of the applications for the HDInsight cluster.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param clusterName The name of the cluster.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return result of the request to list cluster Applications.
+     * @return result of the request to list cluster Applications as paginated response with {@link PagedIterable}.
      */
     PagedIterable<Application> listByCluster(String resourceGroupName, String clusterName, Context context);
 
     /**
      * Gets properties of the specified application.
-     *
+     * 
+     * @param resourceGroupName The name of the resource group.
+     * @param clusterName The name of the cluster.
+     * @param applicationName The constant value for the application name.
+     * @param context The context to associate with this operation.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return properties of the specified application along with {@link Response}.
+     */
+    Response<Application> getWithResponse(String resourceGroupName, String clusterName, String applicationName,
+        Context context);
+
+    /**
+     * Gets properties of the specified application.
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param clusterName The name of the cluster.
      * @param applicationName The constant value for the application name.
@@ -49,23 +66,8 @@ public interface Applications {
     Application get(String resourceGroupName, String clusterName, String applicationName);
 
     /**
-     * Gets properties of the specified application.
-     *
-     * @param resourceGroupName The name of the resource group.
-     * @param clusterName The name of the cluster.
-     * @param applicationName The constant value for the application name.
-     * @param context The context to associate with this operation.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return properties of the specified application.
-     */
-    Response<Application> getWithResponse(
-        String resourceGroupName, String clusterName, String applicationName, Context context);
-
-    /**
      * Deletes the specified application on the HDInsight cluster.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param clusterName The name of the cluster.
      * @param applicationName The constant value for the application name.
@@ -77,7 +79,7 @@ public interface Applications {
 
     /**
      * Deletes the specified application on the HDInsight cluster.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param clusterName The name of the cluster.
      * @param applicationName The constant value for the application name.
@@ -90,22 +92,7 @@ public interface Applications {
 
     /**
      * Gets the async operation status.
-     *
-     * @param resourceGroupName The name of the resource group.
-     * @param clusterName The name of the cluster.
-     * @param applicationName The constant value for the application name.
-     * @param operationId The long running operation id.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the async operation status.
-     */
-    AsyncOperationResult getAzureAsyncOperationStatus(
-        String resourceGroupName, String clusterName, String applicationName, String operationId);
-
-    /**
-     * Gets the async operation status.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param clusterName The name of the cluster.
      * @param applicationName The constant value for the application name.
@@ -114,37 +101,52 @@ public interface Applications {
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return the async operation status along with {@link Response}.
+     */
+    Response<AsyncOperationResult> getAzureAsyncOperationStatusWithResponse(String resourceGroupName,
+        String clusterName, String applicationName, String operationId, Context context);
+
+    /**
+     * Gets the async operation status.
+     * 
+     * @param resourceGroupName The name of the resource group.
+     * @param clusterName The name of the cluster.
+     * @param applicationName The constant value for the application name.
+     * @param operationId The long running operation id.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
      * @return the async operation status.
      */
-    Response<AsyncOperationResult> getAzureAsyncOperationStatusWithResponse(
-        String resourceGroupName, String clusterName, String applicationName, String operationId, Context context);
+    AsyncOperationResult getAzureAsyncOperationStatus(String resourceGroupName, String clusterName,
+        String applicationName, String operationId);
 
     /**
      * Gets properties of the specified application.
-     *
+     * 
      * @param id the resource ID.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return properties of the specified application.
+     * @return properties of the specified application along with {@link Response}.
      */
     Application getById(String id);
 
     /**
      * Gets properties of the specified application.
-     *
+     * 
      * @param id the resource ID.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return properties of the specified application.
+     * @return properties of the specified application along with {@link Response}.
      */
     Response<Application> getByIdWithResponse(String id, Context context);
 
     /**
      * Deletes the specified application on the HDInsight cluster.
-     *
+     * 
      * @param id the resource ID.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
@@ -154,7 +156,7 @@ public interface Applications {
 
     /**
      * Deletes the specified application on the HDInsight cluster.
-     *
+     * 
      * @param id the resource ID.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
@@ -165,7 +167,7 @@ public interface Applications {
 
     /**
      * Begins definition for a new Application resource.
-     *
+     * 
      * @param name resource name.
      * @return the first stage of the new Application definition.
      */

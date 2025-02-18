@@ -20,34 +20,50 @@ import reactor.core.publisher.Mono;
 public interface SubscriptionFeatureRegistrationsClient extends InnerSupportsDelete<Void> {
     /**
      * Returns a feature registration.
-     *
+     * 
      * @param providerNamespace The provider namespace.
      * @param featureName The feature name.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return subscription feature registration details.
+     * @return subscription feature registration details along with {@link Response} on successful completion of
+     * {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    Mono<Response<SubscriptionFeatureRegistrationInner>> getWithResponseAsync(
-        String providerNamespace, String featureName);
+    Mono<Response<SubscriptionFeatureRegistrationInner>> getWithResponseAsync(String providerNamespace,
+        String featureName);
 
     /**
      * Returns a feature registration.
-     *
+     * 
      * @param providerNamespace The provider namespace.
      * @param featureName The feature name.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return subscription feature registration details.
+     * @return subscription feature registration details on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
     Mono<SubscriptionFeatureRegistrationInner> getAsync(String providerNamespace, String featureName);
 
     /**
      * Returns a feature registration.
-     *
+     * 
+     * @param providerNamespace The provider namespace.
+     * @param featureName The feature name.
+     * @param context The context to associate with this operation.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return subscription feature registration details along with {@link Response}.
+     */
+    @ServiceMethod(returns = ReturnType.SINGLE)
+    Response<SubscriptionFeatureRegistrationInner> getWithResponse(String providerNamespace, String featureName,
+        Context context);
+
+    /**
+     * Returns a feature registration.
+     * 
      * @param providerNamespace The provider namespace.
      * @param featureName The feature name.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
@@ -59,70 +75,53 @@ public interface SubscriptionFeatureRegistrationsClient extends InnerSupportsDel
     SubscriptionFeatureRegistrationInner get(String providerNamespace, String featureName);
 
     /**
-     * Returns a feature registration.
-     *
-     * @param providerNamespace The provider namespace.
-     * @param featureName The feature name.
-     * @param context The context to associate with this operation.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return subscription feature registration details.
-     */
-    @ServiceMethod(returns = ReturnType.SINGLE)
-    Response<SubscriptionFeatureRegistrationInner> getWithResponse(
-        String providerNamespace, String featureName, Context context);
-
-    /**
      * Create or update a feature registration.
-     *
+     * 
      * @param providerNamespace The provider namespace.
      * @param featureName The feature name.
      * @param subscriptionFeatureRegistrationType Subscription Feature Registration Type details.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return subscription feature registration details.
+     * @return subscription feature registration details along with {@link Response} on successful completion of
+     * {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    Mono<Response<SubscriptionFeatureRegistrationInner>> createOrUpdateWithResponseAsync(
-        String providerNamespace,
-        String featureName,
-        SubscriptionFeatureRegistrationInner subscriptionFeatureRegistrationType);
+    Mono<Response<SubscriptionFeatureRegistrationInner>> createOrUpdateWithResponseAsync(String providerNamespace,
+        String featureName, SubscriptionFeatureRegistrationInner subscriptionFeatureRegistrationType);
 
     /**
      * Create or update a feature registration.
-     *
-     * @param providerNamespace The provider namespace.
-     * @param featureName The feature name.
-     * @param subscriptionFeatureRegistrationType Subscription Feature Registration Type details.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return subscription feature registration details.
-     */
-    @ServiceMethod(returns = ReturnType.SINGLE)
-    Mono<SubscriptionFeatureRegistrationInner> createOrUpdateAsync(
-        String providerNamespace,
-        String featureName,
-        SubscriptionFeatureRegistrationInner subscriptionFeatureRegistrationType);
-
-    /**
-     * Create or update a feature registration.
-     *
+     * 
      * @param providerNamespace The provider namespace.
      * @param featureName The feature name.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return subscription feature registration details.
+     * @return subscription feature registration details on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
     Mono<SubscriptionFeatureRegistrationInner> createOrUpdateAsync(String providerNamespace, String featureName);
 
     /**
      * Create or update a feature registration.
-     *
+     * 
+     * @param providerNamespace The provider namespace.
+     * @param featureName The feature name.
+     * @param subscriptionFeatureRegistrationType Subscription Feature Registration Type details.
+     * @param context The context to associate with this operation.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return subscription feature registration details along with {@link Response}.
+     */
+    @ServiceMethod(returns = ReturnType.SINGLE)
+    Response<SubscriptionFeatureRegistrationInner> createOrUpdateWithResponse(String providerNamespace,
+        String featureName, SubscriptionFeatureRegistrationInner subscriptionFeatureRegistrationType, Context context);
+
+    /**
+     * Create or update a feature registration.
+     * 
      * @param providerNamespace The provider namespace.
      * @param featureName The feature name.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
@@ -134,53 +133,48 @@ public interface SubscriptionFeatureRegistrationsClient extends InnerSupportsDel
     SubscriptionFeatureRegistrationInner createOrUpdate(String providerNamespace, String featureName);
 
     /**
-     * Create or update a feature registration.
-     *
-     * @param providerNamespace The provider namespace.
-     * @param featureName The feature name.
-     * @param subscriptionFeatureRegistrationType Subscription Feature Registration Type details.
-     * @param context The context to associate with this operation.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return subscription feature registration details.
-     */
-    @ServiceMethod(returns = ReturnType.SINGLE)
-    Response<SubscriptionFeatureRegistrationInner> createOrUpdateWithResponse(
-        String providerNamespace,
-        String featureName,
-        SubscriptionFeatureRegistrationInner subscriptionFeatureRegistrationType,
-        Context context);
-
-    /**
      * Deletes a feature registration.
-     *
+     * 
      * @param providerNamespace The provider namespace.
      * @param featureName The feature name.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the completion.
+     * @return the {@link Response} on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
     Mono<Response<Void>> deleteWithResponseAsync(String providerNamespace, String featureName);
 
     /**
      * Deletes a feature registration.
-     *
+     * 
      * @param providerNamespace The provider namespace.
      * @param featureName The feature name.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the completion.
+     * @return A {@link Mono} that completes when a successful response is received.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
     Mono<Void> deleteAsync(String providerNamespace, String featureName);
 
     /**
      * Deletes a feature registration.
-     *
+     * 
+     * @param providerNamespace The provider namespace.
+     * @param featureName The feature name.
+     * @param context The context to associate with this operation.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return the {@link Response}.
+     */
+    @ServiceMethod(returns = ReturnType.SINGLE)
+    Response<Void> deleteWithResponse(String providerNamespace, String featureName, Context context);
+
+    /**
+     * Deletes a feature registration.
+     * 
      * @param providerNamespace The provider namespace.
      * @param featureName The feature name.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
@@ -191,84 +185,70 @@ public interface SubscriptionFeatureRegistrationsClient extends InnerSupportsDel
     void delete(String providerNamespace, String featureName);
 
     /**
-     * Deletes a feature registration.
-     *
-     * @param providerNamespace The provider namespace.
-     * @param featureName The feature name.
-     * @param context The context to associate with this operation.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the response.
-     */
-    @ServiceMethod(returns = ReturnType.SINGLE)
-    Response<Void> deleteWithResponse(String providerNamespace, String featureName, Context context);
-
-    /**
      * Returns subscription feature registrations for given subscription and provider namespace.
-     *
+     * 
      * @param providerNamespace The provider namespace.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the list of subscription feature registrations.
+     * @return the list of subscription feature registrations as paginated response with {@link PagedFlux}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
     PagedFlux<SubscriptionFeatureRegistrationInner> listBySubscriptionAsync(String providerNamespace);
 
     /**
      * Returns subscription feature registrations for given subscription and provider namespace.
-     *
+     * 
      * @param providerNamespace The provider namespace.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the list of subscription feature registrations.
+     * @return the list of subscription feature registrations as paginated response with {@link PagedIterable}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
     PagedIterable<SubscriptionFeatureRegistrationInner> listBySubscription(String providerNamespace);
 
     /**
      * Returns subscription feature registrations for given subscription and provider namespace.
-     *
+     * 
      * @param providerNamespace The provider namespace.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the list of subscription feature registrations.
+     * @return the list of subscription feature registrations as paginated response with {@link PagedIterable}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
     PagedIterable<SubscriptionFeatureRegistrationInner> listBySubscription(String providerNamespace, Context context);
 
     /**
      * Returns subscription feature registrations for given subscription.
-     *
+     * 
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the list of subscription feature registrations.
+     * @return the list of subscription feature registrations as paginated response with {@link PagedFlux}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
     PagedFlux<SubscriptionFeatureRegistrationInner> listAsync();
 
     /**
      * Returns subscription feature registrations for given subscription.
-     *
+     * 
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the list of subscription feature registrations.
+     * @return the list of subscription feature registrations as paginated response with {@link PagedIterable}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
     PagedIterable<SubscriptionFeatureRegistrationInner> list();
 
     /**
      * Returns subscription feature registrations for given subscription.
-     *
+     * 
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the list of subscription feature registrations.
+     * @return the list of subscription feature registrations as paginated response with {@link PagedIterable}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
     PagedIterable<SubscriptionFeatureRegistrationInner> list(Context context);

@@ -7,9 +7,5 @@ module com.azure.storage.blob.changefeed {
     requires com.azure.core;
 
     exports com.azure.storage.blob.changefeed;
-
     exports com.azure.storage.blob.changefeed.models;
-
-    exports com.azure.storage.blob.changefeed.implementation.models to
-        com.fasterxml.jackson.databind;
 }

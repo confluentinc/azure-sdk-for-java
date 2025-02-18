@@ -5,67 +5,66 @@
 package com.azure.resourcemanager.extendedlocation.fluent.models;
 
 import com.azure.core.annotation.Fluent;
-import com.azure.core.util.logging.ClientLogger;
+import com.azure.json.JsonReader;
+import com.azure.json.JsonSerializable;
+import com.azure.json.JsonToken;
+import com.azure.json.JsonWriter;
 import com.azure.resourcemanager.extendedlocation.models.CustomLocationPropertiesAuthentication;
 import com.azure.resourcemanager.extendedlocation.models.HostType;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import java.io.IOException;
 import java.util.List;
 
-/** Properties for a custom location. */
+/**
+ * Properties for a custom location.
+ */
 @Fluent
-public final class CustomLocationProperties {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(CustomLocationProperties.class);
-
+public final class CustomLocationProperties implements JsonSerializable<CustomLocationProperties> {
     /*
-     * This is optional input that contains the authentication that should be
-     * used to generate the namespace.
+     * This is optional input that contains the authentication that should be used to generate the namespace.
      */
-    @JsonProperty(value = "authentication")
     private CustomLocationPropertiesAuthentication authentication;
 
     /*
-     * Contains the reference to the add-on that contains charts to deploy CRDs
-     * and operators.
+     * Contains the reference to the add-on that contains charts to deploy CRDs and operators.
      */
-    @JsonProperty(value = "clusterExtensionIds")
     private List<String> clusterExtensionIds;
 
     /*
      * Display name for the Custom Locations location.
      */
-    @JsonProperty(value = "displayName")
     private String displayName;
 
     /*
-     * Connected Cluster or AKS Cluster. The Custom Locations RP will perform a
-     * checkAccess API for listAdminCredentials permissions.
+     * Connected Cluster or AKS Cluster. The Custom Locations RP will perform a checkAccess API for listAdminCredentials
+     * permissions.
      */
-    @JsonProperty(value = "hostResourceId")
     private String hostResourceId;
 
     /*
      * Type of host the Custom Locations is referencing (Kubernetes, etc...).
      */
-    @JsonProperty(value = "hostType")
     private HostType hostType;
 
     /*
      * Kubernetes namespace that will be created on the specified cluster.
      */
-    @JsonProperty(value = "namespace")
     private String namespace;
 
     /*
      * Provisioning State for the Custom Location.
      */
-    @JsonProperty(value = "provisioningState")
     private String provisioningState;
+
+    /**
+     * Creates an instance of CustomLocationProperties class.
+     */
+    public CustomLocationProperties() {
+    }
 
     /**
      * Get the authentication property: This is optional input that contains the authentication that should be used to
      * generate the namespace.
-     *
+     * 
      * @return the authentication value.
      */
     public CustomLocationPropertiesAuthentication authentication() {
@@ -75,7 +74,7 @@ public final class CustomLocationProperties {
     /**
      * Set the authentication property: This is optional input that contains the authentication that should be used to
      * generate the namespace.
-     *
+     * 
      * @param authentication the authentication value to set.
      * @return the CustomLocationProperties object itself.
      */
@@ -87,7 +86,7 @@ public final class CustomLocationProperties {
     /**
      * Get the clusterExtensionIds property: Contains the reference to the add-on that contains charts to deploy CRDs
      * and operators.
-     *
+     * 
      * @return the clusterExtensionIds value.
      */
     public List<String> clusterExtensionIds() {
@@ -97,7 +96,7 @@ public final class CustomLocationProperties {
     /**
      * Set the clusterExtensionIds property: Contains the reference to the add-on that contains charts to deploy CRDs
      * and operators.
-     *
+     * 
      * @param clusterExtensionIds the clusterExtensionIds value to set.
      * @return the CustomLocationProperties object itself.
      */
@@ -108,7 +107,7 @@ public final class CustomLocationProperties {
 
     /**
      * Get the displayName property: Display name for the Custom Locations location.
-     *
+     * 
      * @return the displayName value.
      */
     public String displayName() {
@@ -117,7 +116,7 @@ public final class CustomLocationProperties {
 
     /**
      * Set the displayName property: Display name for the Custom Locations location.
-     *
+     * 
      * @param displayName the displayName value to set.
      * @return the CustomLocationProperties object itself.
      */
@@ -129,7 +128,7 @@ public final class CustomLocationProperties {
     /**
      * Get the hostResourceId property: Connected Cluster or AKS Cluster. The Custom Locations RP will perform a
      * checkAccess API for listAdminCredentials permissions.
-     *
+     * 
      * @return the hostResourceId value.
      */
     public String hostResourceId() {
@@ -139,7 +138,7 @@ public final class CustomLocationProperties {
     /**
      * Set the hostResourceId property: Connected Cluster or AKS Cluster. The Custom Locations RP will perform a
      * checkAccess API for listAdminCredentials permissions.
-     *
+     * 
      * @param hostResourceId the hostResourceId value to set.
      * @return the CustomLocationProperties object itself.
      */
@@ -150,7 +149,7 @@ public final class CustomLocationProperties {
 
     /**
      * Get the hostType property: Type of host the Custom Locations is referencing (Kubernetes, etc...).
-     *
+     * 
      * @return the hostType value.
      */
     public HostType hostType() {
@@ -159,7 +158,7 @@ public final class CustomLocationProperties {
 
     /**
      * Set the hostType property: Type of host the Custom Locations is referencing (Kubernetes, etc...).
-     *
+     * 
      * @param hostType the hostType value to set.
      * @return the CustomLocationProperties object itself.
      */
@@ -170,7 +169,7 @@ public final class CustomLocationProperties {
 
     /**
      * Get the namespace property: Kubernetes namespace that will be created on the specified cluster.
-     *
+     * 
      * @return the namespace value.
      */
     public String namespace() {
@@ -179,7 +178,7 @@ public final class CustomLocationProperties {
 
     /**
      * Set the namespace property: Kubernetes namespace that will be created on the specified cluster.
-     *
+     * 
      * @param namespace the namespace value to set.
      * @return the CustomLocationProperties object itself.
      */
@@ -190,7 +189,7 @@ public final class CustomLocationProperties {
 
     /**
      * Get the provisioningState property: Provisioning State for the Custom Location.
-     *
+     * 
      * @return the provisioningState value.
      */
     public String provisioningState() {
@@ -199,7 +198,7 @@ public final class CustomLocationProperties {
 
     /**
      * Set the provisioningState property: Provisioning State for the Custom Location.
-     *
+     * 
      * @param provisioningState the provisioningState value to set.
      * @return the CustomLocationProperties object itself.
      */
@@ -210,12 +209,69 @@ public final class CustomLocationProperties {
 
     /**
      * Validates the instance.
-     *
+     * 
      * @throws IllegalArgumentException thrown if the instance is not valid.
      */
     public void validate() {
         if (authentication() != null) {
             authentication().validate();
         }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public JsonWriter toJson(JsonWriter jsonWriter) throws IOException {
+        jsonWriter.writeStartObject();
+        jsonWriter.writeJsonField("authentication", this.authentication);
+        jsonWriter.writeArrayField("clusterExtensionIds", this.clusterExtensionIds,
+            (writer, element) -> writer.writeString(element));
+        jsonWriter.writeStringField("displayName", this.displayName);
+        jsonWriter.writeStringField("hostResourceId", this.hostResourceId);
+        jsonWriter.writeStringField("hostType", this.hostType == null ? null : this.hostType.toString());
+        jsonWriter.writeStringField("namespace", this.namespace);
+        jsonWriter.writeStringField("provisioningState", this.provisioningState);
+        return jsonWriter.writeEndObject();
+    }
+
+    /**
+     * Reads an instance of CustomLocationProperties from the JsonReader.
+     * 
+     * @param jsonReader The JsonReader being read.
+     * @return An instance of CustomLocationProperties if the JsonReader was pointing to an instance of it, or null if
+     * it was pointing to JSON null.
+     * @throws IOException If an error occurs while reading the CustomLocationProperties.
+     */
+    public static CustomLocationProperties fromJson(JsonReader jsonReader) throws IOException {
+        return jsonReader.readObject(reader -> {
+            CustomLocationProperties deserializedCustomLocationProperties = new CustomLocationProperties();
+            while (reader.nextToken() != JsonToken.END_OBJECT) {
+                String fieldName = reader.getFieldName();
+                reader.nextToken();
+
+                if ("authentication".equals(fieldName)) {
+                    deserializedCustomLocationProperties.authentication
+                        = CustomLocationPropertiesAuthentication.fromJson(reader);
+                } else if ("clusterExtensionIds".equals(fieldName)) {
+                    List<String> clusterExtensionIds = reader.readArray(reader1 -> reader1.getString());
+                    deserializedCustomLocationProperties.clusterExtensionIds = clusterExtensionIds;
+                } else if ("displayName".equals(fieldName)) {
+                    deserializedCustomLocationProperties.displayName = reader.getString();
+                } else if ("hostResourceId".equals(fieldName)) {
+                    deserializedCustomLocationProperties.hostResourceId = reader.getString();
+                } else if ("hostType".equals(fieldName)) {
+                    deserializedCustomLocationProperties.hostType = HostType.fromString(reader.getString());
+                } else if ("namespace".equals(fieldName)) {
+                    deserializedCustomLocationProperties.namespace = reader.getString();
+                } else if ("provisioningState".equals(fieldName)) {
+                    deserializedCustomLocationProperties.provisioningState = reader.getString();
+                } else {
+                    reader.skipChildren();
+                }
+            }
+
+            return deserializedCustomLocationProperties;
+        });
     }
 }

@@ -5,8 +5,8 @@
 package com.azure.resourcemanager.sqlvirtualmachine.implementation;
 
 import com.azure.core.management.Region;
+import com.azure.core.management.SystemData;
 import com.azure.core.util.Context;
-import com.azure.resourcemanager.sqlvirtualmachine.SqlVirtualMachineManager;
 import com.azure.resourcemanager.sqlvirtualmachine.fluent.models.SqlVirtualMachineGroupInner;
 import com.azure.resourcemanager.sqlvirtualmachine.models.ClusterConfiguration;
 import com.azure.resourcemanager.sqlvirtualmachine.models.ClusterManagerType;
@@ -22,7 +22,7 @@ public final class SqlVirtualMachineGroupImpl
     implements SqlVirtualMachineGroup, SqlVirtualMachineGroup.Definition, SqlVirtualMachineGroup.Update {
     private SqlVirtualMachineGroupInner innerObject;
 
-    private final SqlVirtualMachineManager serviceManager;
+    private final com.azure.resourcemanager.sqlvirtualmachine.SqlVirtualMachineManager serviceManager;
 
     public String id() {
         return this.innerModel().id();
@@ -47,6 +47,10 @@ public final class SqlVirtualMachineGroupImpl
         } else {
             return Collections.emptyMap();
         }
+    }
+
+    public SystemData systemData() {
+        return this.innerModel().systemData();
     }
 
     public String provisioningState() {
@@ -85,11 +89,15 @@ public final class SqlVirtualMachineGroupImpl
         return this.location();
     }
 
+    public String resourceGroupName() {
+        return resourceGroupName;
+    }
+
     public SqlVirtualMachineGroupInner innerModel() {
         return this.innerObject;
     }
 
-    private SqlVirtualMachineManager manager() {
+    private com.azure.resourcemanager.sqlvirtualmachine.SqlVirtualMachineManager manager() {
         return this.serviceManager;
     }
 
@@ -105,24 +113,21 @@ public final class SqlVirtualMachineGroupImpl
     }
 
     public SqlVirtualMachineGroup create() {
-        this.innerObject =
-            serviceManager
-                .serviceClient()
-                .getSqlVirtualMachineGroups()
-                .createOrUpdate(resourceGroupName, sqlVirtualMachineGroupName, this.innerModel(), Context.NONE);
+        this.innerObject = serviceManager.serviceClient()
+            .getSqlVirtualMachineGroups()
+            .createOrUpdate(resourceGroupName, sqlVirtualMachineGroupName, this.innerModel(), Context.NONE);
         return this;
     }
 
     public SqlVirtualMachineGroup create(Context context) {
-        this.innerObject =
-            serviceManager
-                .serviceClient()
-                .getSqlVirtualMachineGroups()
-                .createOrUpdate(resourceGroupName, sqlVirtualMachineGroupName, this.innerModel(), context);
+        this.innerObject = serviceManager.serviceClient()
+            .getSqlVirtualMachineGroups()
+            .createOrUpdate(resourceGroupName, sqlVirtualMachineGroupName, this.innerModel(), context);
         return this;
     }
 
-    SqlVirtualMachineGroupImpl(String name, SqlVirtualMachineManager serviceManager) {
+    SqlVirtualMachineGroupImpl(String name,
+        com.azure.resourcemanager.sqlvirtualmachine.SqlVirtualMachineManager serviceManager) {
         this.innerObject = new SqlVirtualMachineGroupInner();
         this.serviceManager = serviceManager;
         this.sqlVirtualMachineGroupName = name;
@@ -134,47 +139,41 @@ public final class SqlVirtualMachineGroupImpl
     }
 
     public SqlVirtualMachineGroup apply() {
-        this.innerObject =
-            serviceManager
-                .serviceClient()
-                .getSqlVirtualMachineGroups()
-                .update(resourceGroupName, sqlVirtualMachineGroupName, updateParameters, Context.NONE);
+        this.innerObject = serviceManager.serviceClient()
+            .getSqlVirtualMachineGroups()
+            .update(resourceGroupName, sqlVirtualMachineGroupName, updateParameters, Context.NONE);
         return this;
     }
 
     public SqlVirtualMachineGroup apply(Context context) {
-        this.innerObject =
-            serviceManager
-                .serviceClient()
-                .getSqlVirtualMachineGroups()
-                .update(resourceGroupName, sqlVirtualMachineGroupName, updateParameters, context);
+        this.innerObject = serviceManager.serviceClient()
+            .getSqlVirtualMachineGroups()
+            .update(resourceGroupName, sqlVirtualMachineGroupName, updateParameters, context);
         return this;
     }
 
-    SqlVirtualMachineGroupImpl(SqlVirtualMachineGroupInner innerObject, SqlVirtualMachineManager serviceManager) {
+    SqlVirtualMachineGroupImpl(SqlVirtualMachineGroupInner innerObject,
+        com.azure.resourcemanager.sqlvirtualmachine.SqlVirtualMachineManager serviceManager) {
         this.innerObject = innerObject;
         this.serviceManager = serviceManager;
-        this.resourceGroupName = Utils.getValueFromIdByName(innerObject.id(), "resourceGroups");
-        this.sqlVirtualMachineGroupName = Utils.getValueFromIdByName(innerObject.id(), "sqlVirtualMachineGroups");
+        this.resourceGroupName = ResourceManagerUtils.getValueFromIdByName(innerObject.id(), "resourceGroups");
+        this.sqlVirtualMachineGroupName
+            = ResourceManagerUtils.getValueFromIdByName(innerObject.id(), "sqlVirtualMachineGroups");
     }
 
     public SqlVirtualMachineGroup refresh() {
-        this.innerObject =
-            serviceManager
-                .serviceClient()
-                .getSqlVirtualMachineGroups()
-                .getByResourceGroupWithResponse(resourceGroupName, sqlVirtualMachineGroupName, Context.NONE)
-                .getValue();
+        this.innerObject = serviceManager.serviceClient()
+            .getSqlVirtualMachineGroups()
+            .getByResourceGroupWithResponse(resourceGroupName, sqlVirtualMachineGroupName, Context.NONE)
+            .getValue();
         return this;
     }
 
     public SqlVirtualMachineGroup refresh(Context context) {
-        this.innerObject =
-            serviceManager
-                .serviceClient()
-                .getSqlVirtualMachineGroups()
-                .getByResourceGroupWithResponse(resourceGroupName, sqlVirtualMachineGroupName, context)
-                .getValue();
+        this.innerObject = serviceManager.serviceClient()
+            .getSqlVirtualMachineGroups()
+            .getByResourceGroupWithResponse(resourceGroupName, sqlVirtualMachineGroupName, context)
+            .getValue();
         return this;
     }
 

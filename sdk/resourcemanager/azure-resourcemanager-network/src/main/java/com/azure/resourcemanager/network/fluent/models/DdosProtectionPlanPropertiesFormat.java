@@ -6,43 +6,51 @@ package com.azure.resourcemanager.network.fluent.models;
 
 import com.azure.core.annotation.Immutable;
 import com.azure.core.management.SubResource;
-import com.azure.core.util.logging.ClientLogger;
+import com.azure.json.JsonReader;
+import com.azure.json.JsonSerializable;
+import com.azure.json.JsonToken;
+import com.azure.json.JsonWriter;
 import com.azure.resourcemanager.network.models.ProvisioningState;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import java.io.IOException;
 import java.util.List;
 
-/** DDoS protection plan properties. */
+/**
+ * DDoS protection plan properties.
+ */
 @Immutable
-public final class DdosProtectionPlanPropertiesFormat {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(DdosProtectionPlanPropertiesFormat.class);
-
+public final class DdosProtectionPlanPropertiesFormat implements JsonSerializable<DdosProtectionPlanPropertiesFormat> {
     /*
-     * The resource GUID property of the DDoS protection plan resource. It
-     * uniquely identifies the resource, even if the user changes its name or
-     * migrate the resource across subscriptions or resource groups.
+     * The resource GUID property of the DDoS protection plan resource. It uniquely identifies the resource, even if the
+     * user changes its name or migrate the resource across subscriptions or resource groups.
      */
-    @JsonProperty(value = "resourceGuid", access = JsonProperty.Access.WRITE_ONLY)
     private String resourceGuid;
 
     /*
      * The provisioning state of the DDoS protection plan resource.
      */
-    @JsonProperty(value = "provisioningState", access = JsonProperty.Access.WRITE_ONLY)
     private ProvisioningState provisioningState;
 
     /*
-     * The list of virtual networks associated with the DDoS protection plan
-     * resource. This list is read-only.
+     * The list of public IPs associated with the DDoS protection plan resource. This list is read-only.
      */
-    @JsonProperty(value = "virtualNetworks", access = JsonProperty.Access.WRITE_ONLY)
+    private List<SubResource> publicIpAddresses;
+
+    /*
+     * The list of virtual networks associated with the DDoS protection plan resource. This list is read-only.
+     */
     private List<SubResource> virtualNetworks;
+
+    /**
+     * Creates an instance of DdosProtectionPlanPropertiesFormat class.
+     */
+    public DdosProtectionPlanPropertiesFormat() {
+    }
 
     /**
      * Get the resourceGuid property: The resource GUID property of the DDoS protection plan resource. It uniquely
      * identifies the resource, even if the user changes its name or migrate the resource across subscriptions or
      * resource groups.
-     *
+     * 
      * @return the resourceGuid value.
      */
     public String resourceGuid() {
@@ -51,7 +59,7 @@ public final class DdosProtectionPlanPropertiesFormat {
 
     /**
      * Get the provisioningState property: The provisioning state of the DDoS protection plan resource.
-     *
+     * 
      * @return the provisioningState value.
      */
     public ProvisioningState provisioningState() {
@@ -59,9 +67,19 @@ public final class DdosProtectionPlanPropertiesFormat {
     }
 
     /**
+     * Get the publicIpAddresses property: The list of public IPs associated with the DDoS protection plan resource.
+     * This list is read-only.
+     * 
+     * @return the publicIpAddresses value.
+     */
+    public List<SubResource> publicIpAddresses() {
+        return this.publicIpAddresses;
+    }
+
+    /**
      * Get the virtualNetworks property: The list of virtual networks associated with the DDoS protection plan resource.
      * This list is read-only.
-     *
+     * 
      * @return the virtualNetworks value.
      */
     public List<SubResource> virtualNetworks() {
@@ -70,9 +88,54 @@ public final class DdosProtectionPlanPropertiesFormat {
 
     /**
      * Validates the instance.
-     *
+     * 
      * @throws IllegalArgumentException thrown if the instance is not valid.
      */
     public void validate() {
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public JsonWriter toJson(JsonWriter jsonWriter) throws IOException {
+        jsonWriter.writeStartObject();
+        return jsonWriter.writeEndObject();
+    }
+
+    /**
+     * Reads an instance of DdosProtectionPlanPropertiesFormat from the JsonReader.
+     * 
+     * @param jsonReader The JsonReader being read.
+     * @return An instance of DdosProtectionPlanPropertiesFormat if the JsonReader was pointing to an instance of it, or
+     * null if it was pointing to JSON null.
+     * @throws IOException If an error occurs while reading the DdosProtectionPlanPropertiesFormat.
+     */
+    public static DdosProtectionPlanPropertiesFormat fromJson(JsonReader jsonReader) throws IOException {
+        return jsonReader.readObject(reader -> {
+            DdosProtectionPlanPropertiesFormat deserializedDdosProtectionPlanPropertiesFormat
+                = new DdosProtectionPlanPropertiesFormat();
+            while (reader.nextToken() != JsonToken.END_OBJECT) {
+                String fieldName = reader.getFieldName();
+                reader.nextToken();
+
+                if ("resourceGuid".equals(fieldName)) {
+                    deserializedDdosProtectionPlanPropertiesFormat.resourceGuid = reader.getString();
+                } else if ("provisioningState".equals(fieldName)) {
+                    deserializedDdosProtectionPlanPropertiesFormat.provisioningState
+                        = ProvisioningState.fromString(reader.getString());
+                } else if ("publicIPAddresses".equals(fieldName)) {
+                    List<SubResource> publicIpAddresses = reader.readArray(reader1 -> SubResource.fromJson(reader1));
+                    deserializedDdosProtectionPlanPropertiesFormat.publicIpAddresses = publicIpAddresses;
+                } else if ("virtualNetworks".equals(fieldName)) {
+                    List<SubResource> virtualNetworks = reader.readArray(reader1 -> SubResource.fromJson(reader1));
+                    deserializedDdosProtectionPlanPropertiesFormat.virtualNetworks = virtualNetworks;
+                } else {
+                    reader.skipChildren();
+                }
+            }
+
+            return deserializedDdosProtectionPlanPropertiesFormat;
+        });
     }
 }

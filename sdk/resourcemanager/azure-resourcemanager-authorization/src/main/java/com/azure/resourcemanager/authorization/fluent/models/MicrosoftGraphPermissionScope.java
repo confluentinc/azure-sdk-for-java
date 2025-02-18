@@ -5,105 +5,93 @@
 package com.azure.resourcemanager.authorization.fluent.models;
 
 import com.azure.core.annotation.Fluent;
-import com.azure.core.util.logging.ClientLogger;
-import com.fasterxml.jackson.annotation.JsonAnyGetter;
-import com.fasterxml.jackson.annotation.JsonAnySetter;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import java.util.HashMap;
+import com.azure.json.JsonReader;
+import com.azure.json.JsonSerializable;
+import com.azure.json.JsonToken;
+import com.azure.json.JsonWriter;
+import java.io.IOException;
+import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.UUID;
 
-/** permissionScope. */
+/**
+ * permissionScope.
+ */
 @Fluent
-public final class MicrosoftGraphPermissionScope {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(MicrosoftGraphPermissionScope.class);
-
+public final class MicrosoftGraphPermissionScope implements JsonSerializable<MicrosoftGraphPermissionScope> {
     /*
-     * A description of the delegated permissions, intended to be read by an
-     * administrator granting the permission on behalf of all users. This text
-     * appears in tenant-wide admin consent experiences.
+     * A description of the delegated permissions, intended to be read by an administrator granting the permission on
+     * behalf of all users. This text appears in tenant-wide admin consent experiences.
      */
-    @JsonProperty(value = "adminConsentDescription")
     private String adminConsentDescription;
 
     /*
-     * The permission's title, intended to be read by an administrator granting
-     * the permission on behalf of all users.
+     * The permission's title, intended to be read by an administrator granting the permission on behalf of all users.
      */
-    @JsonProperty(value = "adminConsentDisplayName")
     private String adminConsentDisplayName;
 
     /*
-     * Unique delegated permission identifier inside the collection of
-     * delegated permissions defined for a resource application.
+     * Unique delegated permission identifier inside the collection of delegated permissions defined for a resource
+     * application.
      */
-    @JsonProperty(value = "id")
     private UUID id;
 
     /*
-     * When creating or updating a permission, this property must be set to
-     * true (which is the default). To delete a permission, this property must
-     * first be set to false.  At that point, in a subsequent call, the
-     * permission may be removed.
+     * When creating or updating a permission, this property must be set to true (which is the default). To delete a
+     * permission, this property must first be set to false. At that point, in a subsequent call, the permission may be
+     * removed.
      */
-    @JsonProperty(value = "isEnabled")
     private Boolean isEnabled;
 
     /*
      * The origin property.
      */
-    @JsonProperty(value = "origin")
     private String origin;
 
     /*
-     * Specifies whether this delegated permission should be considered safe
-     * for non-admin users to consent to on behalf of themselves, or whether an
-     * administrator should be required for consent to the permissions. This
-     * will be the default behavior, but each customer can choose to customize
-     * the behavior in their organization (by allowing, restricting or limiting
-     * user consent to this delegated permission.)
+     * Specifies whether this delegated permission should be considered safe for non-admin users to consent to on behalf
+     * of themselves, or whether an administrator should be required for consent to the permissions. This will be the
+     * default behavior, but each customer can choose to customize the behavior in their organization (by allowing,
+     * restricting or limiting user consent to this delegated permission.)
      */
-    @JsonProperty(value = "type")
     private String type;
 
     /*
-     * A description of the delegated permissions, intended to be read by a
-     * user granting the permission on their own behalf. This text appears in
-     * consent experiences where the user is consenting only on behalf of
-     * themselves.
+     * A description of the delegated permissions, intended to be read by a user granting the permission on their own
+     * behalf. This text appears in consent experiences where the user is consenting only on behalf of themselves.
      */
-    @JsonProperty(value = "userConsentDescription")
     private String userConsentDescription;
 
     /*
-     * A title for the permission, intended to be read by a user granting the
-     * permission on their own behalf. This text appears in consent experiences
-     * where the user is consenting only on behalf of themselves.
+     * A title for the permission, intended to be read by a user granting the permission on their own behalf. This text
+     * appears in consent experiences where the user is consenting only on behalf of themselves.
      */
-    @JsonProperty(value = "userConsentDisplayName")
     private String userConsentDisplayName;
 
     /*
-     * Specifies the value to include in the scp (scope) claim in access
-     * tokens. Must not exceed 120 characters in length. Allowed characters are
-     * : ! # $ % & ' ( ) * + , - . / : ;  =  ? @ [ ] ^ + _  {  } ~, as well as
-     * characters in the ranges 0-9, A-Z and a-z. Any other character,
-     * including the space character, are not allowed.
+     * Specifies the value to include in the scp (scope) claim in access tokens. Must not exceed 120 characters in
+     * length. Allowed characters are : ! # $ % & ' ( ) * + , - . / : ; = ? @ [ ] ^ + _ { } ~, as well as characters in
+     * the ranges 0-9, A-Z and a-z. Any other character, including the space character, are not allowed.
      */
-    @JsonProperty(value = "value")
     private String value;
 
     /*
      * permissionScope
      */
-    @JsonIgnore private Map<String, Object> additionalProperties;
+    private Map<String, Object> additionalProperties;
+
+    /**
+     * Creates an instance of MicrosoftGraphPermissionScope class.
+     */
+    public MicrosoftGraphPermissionScope() {
+    }
 
     /**
      * Get the adminConsentDescription property: A description of the delegated permissions, intended to be read by an
      * administrator granting the permission on behalf of all users. This text appears in tenant-wide admin consent
      * experiences.
-     *
+     * 
      * @return the adminConsentDescription value.
      */
     public String adminConsentDescription() {
@@ -114,7 +102,7 @@ public final class MicrosoftGraphPermissionScope {
      * Set the adminConsentDescription property: A description of the delegated permissions, intended to be read by an
      * administrator granting the permission on behalf of all users. This text appears in tenant-wide admin consent
      * experiences.
-     *
+     * 
      * @param adminConsentDescription the adminConsentDescription value to set.
      * @return the MicrosoftGraphPermissionScope object itself.
      */
@@ -126,7 +114,7 @@ public final class MicrosoftGraphPermissionScope {
     /**
      * Get the adminConsentDisplayName property: The permission's title, intended to be read by an administrator
      * granting the permission on behalf of all users.
-     *
+     * 
      * @return the adminConsentDisplayName value.
      */
     public String adminConsentDisplayName() {
@@ -136,7 +124,7 @@ public final class MicrosoftGraphPermissionScope {
     /**
      * Set the adminConsentDisplayName property: The permission's title, intended to be read by an administrator
      * granting the permission on behalf of all users.
-     *
+     * 
      * @param adminConsentDisplayName the adminConsentDisplayName value to set.
      * @return the MicrosoftGraphPermissionScope object itself.
      */
@@ -148,7 +136,7 @@ public final class MicrosoftGraphPermissionScope {
     /**
      * Get the id property: Unique delegated permission identifier inside the collection of delegated permissions
      * defined for a resource application.
-     *
+     * 
      * @return the id value.
      */
     public UUID id() {
@@ -158,7 +146,7 @@ public final class MicrosoftGraphPermissionScope {
     /**
      * Set the id property: Unique delegated permission identifier inside the collection of delegated permissions
      * defined for a resource application.
-     *
+     * 
      * @param id the id value to set.
      * @return the MicrosoftGraphPermissionScope object itself.
      */
@@ -171,7 +159,7 @@ public final class MicrosoftGraphPermissionScope {
      * Get the isEnabled property: When creating or updating a permission, this property must be set to true (which is
      * the default). To delete a permission, this property must first be set to false. At that point, in a subsequent
      * call, the permission may be removed.
-     *
+     * 
      * @return the isEnabled value.
      */
     public Boolean isEnabled() {
@@ -182,7 +170,7 @@ public final class MicrosoftGraphPermissionScope {
      * Set the isEnabled property: When creating or updating a permission, this property must be set to true (which is
      * the default). To delete a permission, this property must first be set to false. At that point, in a subsequent
      * call, the permission may be removed.
-     *
+     * 
      * @param isEnabled the isEnabled value to set.
      * @return the MicrosoftGraphPermissionScope object itself.
      */
@@ -193,7 +181,7 @@ public final class MicrosoftGraphPermissionScope {
 
     /**
      * Get the origin property: The origin property.
-     *
+     * 
      * @return the origin value.
      */
     public String origin() {
@@ -202,7 +190,7 @@ public final class MicrosoftGraphPermissionScope {
 
     /**
      * Set the origin property: The origin property.
-     *
+     * 
      * @param origin the origin value to set.
      * @return the MicrosoftGraphPermissionScope object itself.
      */
@@ -216,7 +204,7 @@ public final class MicrosoftGraphPermissionScope {
      * to consent to on behalf of themselves, or whether an administrator should be required for consent to the
      * permissions. This will be the default behavior, but each customer can choose to customize the behavior in their
      * organization (by allowing, restricting or limiting user consent to this delegated permission.).
-     *
+     * 
      * @return the type value.
      */
     public String type() {
@@ -228,7 +216,7 @@ public final class MicrosoftGraphPermissionScope {
      * to consent to on behalf of themselves, or whether an administrator should be required for consent to the
      * permissions. This will be the default behavior, but each customer can choose to customize the behavior in their
      * organization (by allowing, restricting or limiting user consent to this delegated permission.).
-     *
+     * 
      * @param type the type value to set.
      * @return the MicrosoftGraphPermissionScope object itself.
      */
@@ -241,7 +229,7 @@ public final class MicrosoftGraphPermissionScope {
      * Get the userConsentDescription property: A description of the delegated permissions, intended to be read by a
      * user granting the permission on their own behalf. This text appears in consent experiences where the user is
      * consenting only on behalf of themselves.
-     *
+     * 
      * @return the userConsentDescription value.
      */
     public String userConsentDescription() {
@@ -252,7 +240,7 @@ public final class MicrosoftGraphPermissionScope {
      * Set the userConsentDescription property: A description of the delegated permissions, intended to be read by a
      * user granting the permission on their own behalf. This text appears in consent experiences where the user is
      * consenting only on behalf of themselves.
-     *
+     * 
      * @param userConsentDescription the userConsentDescription value to set.
      * @return the MicrosoftGraphPermissionScope object itself.
      */
@@ -265,7 +253,7 @@ public final class MicrosoftGraphPermissionScope {
      * Get the userConsentDisplayName property: A title for the permission, intended to be read by a user granting the
      * permission on their own behalf. This text appears in consent experiences where the user is consenting only on
      * behalf of themselves.
-     *
+     * 
      * @return the userConsentDisplayName value.
      */
     public String userConsentDisplayName() {
@@ -276,7 +264,7 @@ public final class MicrosoftGraphPermissionScope {
      * Set the userConsentDisplayName property: A title for the permission, intended to be read by a user granting the
      * permission on their own behalf. This text appears in consent experiences where the user is consenting only on
      * behalf of themselves.
-     *
+     * 
      * @param userConsentDisplayName the userConsentDisplayName value to set.
      * @return the MicrosoftGraphPermissionScope object itself.
      */
@@ -287,10 +275,10 @@ public final class MicrosoftGraphPermissionScope {
 
     /**
      * Get the value property: Specifies the value to include in the scp (scope) claim in access tokens. Must not exceed
-     * 120 characters in length. Allowed characters are : ! # $ % &amp; ' ( ) * + , - . / : ; = ? @ [ ] ^ + _ { } ~, as
-     * well as characters in the ranges 0-9, A-Z and a-z. Any other character, including the space character, are not
-     * allowed.
-     *
+     * 120 characters in length. Allowed characters are : ! # $ % &amp; ' ( ) * + , - . / : ; = ? &#064; [ ] ^ + _ { }
+     * ~, as well as characters in the ranges 0-9, A-Z and a-z. Any other character, including the space character, are
+     * not allowed.
+     * 
      * @return the value value.
      */
     public String value() {
@@ -299,10 +287,10 @@ public final class MicrosoftGraphPermissionScope {
 
     /**
      * Set the value property: Specifies the value to include in the scp (scope) claim in access tokens. Must not exceed
-     * 120 characters in length. Allowed characters are : ! # $ % &amp; ' ( ) * + , - . / : ; = ? @ [ ] ^ + _ { } ~, as
-     * well as characters in the ranges 0-9, A-Z and a-z. Any other character, including the space character, are not
-     * allowed.
-     *
+     * 120 characters in length. Allowed characters are : ! # $ % &amp; ' ( ) * + , - . / : ; = ? &#064; [ ] ^ + _ { }
+     * ~, as well as characters in the ranges 0-9, A-Z and a-z. Any other character, including the space character, are
+     * not allowed.
+     * 
      * @param value the value value to set.
      * @return the MicrosoftGraphPermissionScope object itself.
      */
@@ -313,17 +301,16 @@ public final class MicrosoftGraphPermissionScope {
 
     /**
      * Get the additionalProperties property: permissionScope.
-     *
+     * 
      * @return the additionalProperties value.
      */
-    @JsonAnyGetter
     public Map<String, Object> additionalProperties() {
         return this.additionalProperties;
     }
 
     /**
      * Set the additionalProperties property: permissionScope.
-     *
+     * 
      * @param additionalProperties the additionalProperties value to set.
      * @return the MicrosoftGraphPermissionScope object itself.
      */
@@ -332,19 +319,84 @@ public final class MicrosoftGraphPermissionScope {
         return this;
     }
 
-    @JsonAnySetter
-    void withAdditionalProperties(String key, Object value) {
-        if (additionalProperties == null) {
-            additionalProperties = new HashMap<>();
-        }
-        additionalProperties.put(key, value);
-    }
-
     /**
      * Validates the instance.
-     *
+     * 
      * @throws IllegalArgumentException thrown if the instance is not valid.
      */
     public void validate() {
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public JsonWriter toJson(JsonWriter jsonWriter) throws IOException {
+        jsonWriter.writeStartObject();
+        jsonWriter.writeStringField("adminConsentDescription", this.adminConsentDescription);
+        jsonWriter.writeStringField("adminConsentDisplayName", this.adminConsentDisplayName);
+        jsonWriter.writeStringField("id", Objects.toString(this.id, null));
+        jsonWriter.writeBooleanField("isEnabled", this.isEnabled);
+        jsonWriter.writeStringField("origin", this.origin);
+        jsonWriter.writeStringField("type", this.type);
+        jsonWriter.writeStringField("userConsentDescription", this.userConsentDescription);
+        jsonWriter.writeStringField("userConsentDisplayName", this.userConsentDisplayName);
+        jsonWriter.writeStringField("value", this.value);
+        if (additionalProperties != null) {
+            for (Map.Entry<String, Object> additionalProperty : additionalProperties.entrySet()) {
+                jsonWriter.writeUntypedField(additionalProperty.getKey(), additionalProperty.getValue());
+            }
+        }
+        return jsonWriter.writeEndObject();
+    }
+
+    /**
+     * Reads an instance of MicrosoftGraphPermissionScope from the JsonReader.
+     * 
+     * @param jsonReader The JsonReader being read.
+     * @return An instance of MicrosoftGraphPermissionScope if the JsonReader was pointing to an instance of it, or null
+     * if it was pointing to JSON null.
+     * @throws IOException If an error occurs while reading the MicrosoftGraphPermissionScope.
+     */
+    public static MicrosoftGraphPermissionScope fromJson(JsonReader jsonReader) throws IOException {
+        return jsonReader.readObject(reader -> {
+            MicrosoftGraphPermissionScope deserializedMicrosoftGraphPermissionScope
+                = new MicrosoftGraphPermissionScope();
+            Map<String, Object> additionalProperties = null;
+            while (reader.nextToken() != JsonToken.END_OBJECT) {
+                String fieldName = reader.getFieldName();
+                reader.nextToken();
+
+                if ("adminConsentDescription".equals(fieldName)) {
+                    deserializedMicrosoftGraphPermissionScope.adminConsentDescription = reader.getString();
+                } else if ("adminConsentDisplayName".equals(fieldName)) {
+                    deserializedMicrosoftGraphPermissionScope.adminConsentDisplayName = reader.getString();
+                } else if ("id".equals(fieldName)) {
+                    deserializedMicrosoftGraphPermissionScope.id
+                        = reader.getNullable(nonNullReader -> UUID.fromString(nonNullReader.getString()));
+                } else if ("isEnabled".equals(fieldName)) {
+                    deserializedMicrosoftGraphPermissionScope.isEnabled = reader.getNullable(JsonReader::getBoolean);
+                } else if ("origin".equals(fieldName)) {
+                    deserializedMicrosoftGraphPermissionScope.origin = reader.getString();
+                } else if ("type".equals(fieldName)) {
+                    deserializedMicrosoftGraphPermissionScope.type = reader.getString();
+                } else if ("userConsentDescription".equals(fieldName)) {
+                    deserializedMicrosoftGraphPermissionScope.userConsentDescription = reader.getString();
+                } else if ("userConsentDisplayName".equals(fieldName)) {
+                    deserializedMicrosoftGraphPermissionScope.userConsentDisplayName = reader.getString();
+                } else if ("value".equals(fieldName)) {
+                    deserializedMicrosoftGraphPermissionScope.value = reader.getString();
+                } else {
+                    if (additionalProperties == null) {
+                        additionalProperties = new LinkedHashMap<>();
+                    }
+
+                    additionalProperties.put(fieldName, reader.readUntyped());
+                }
+            }
+            deserializedMicrosoftGraphPermissionScope.additionalProperties = additionalProperties;
+
+            return deserializedMicrosoftGraphPermissionScope;
+        });
     }
 }

@@ -28,32 +28,35 @@ import com.azure.core.http.rest.RestProxy;
 import com.azure.core.management.exception.ManagementException;
 import com.azure.core.util.Context;
 import com.azure.core.util.FluxUtil;
-import com.azure.core.util.logging.ClientLogger;
 import com.azure.resourcemanager.authorization.fluent.RoleDefinitionsClient;
 import com.azure.resourcemanager.authorization.fluent.models.RoleDefinitionInner;
 import com.azure.resourcemanager.authorization.models.RoleDefinitionListResult;
 import com.azure.resourcemanager.resources.fluentcore.collection.InnerSupportsDelete;
 import reactor.core.publisher.Mono;
 
-/** An instance of this class provides access to all the operations defined in RoleDefinitionsClient. */
+/**
+ * An instance of this class provides access to all the operations defined in RoleDefinitionsClient.
+ */
 public final class RoleDefinitionsClientImpl
     implements InnerSupportsDelete<RoleDefinitionInner>, RoleDefinitionsClient {
-    private final ClientLogger logger = new ClientLogger(RoleDefinitionsClientImpl.class);
-
-    /** The proxy service used to perform REST calls. */
+    /**
+     * The proxy service used to perform REST calls.
+     */
     private final RoleDefinitionsService service;
 
-    /** The service client containing this operation class. */
+    /**
+     * The service client containing this operation class.
+     */
     private final AuthorizationManagementClientImpl client;
 
     /**
      * Initializes an instance of RoleDefinitionsClientImpl.
-     *
+     * 
      * @param client the instance of the service client containing this operation class.
      */
     RoleDefinitionsClientImpl(AuthorizationManagementClientImpl client) {
-        this.service =
-            RestProxy.create(RoleDefinitionsService.class, client.getHttpPipeline(), client.getSerializerAdapter());
+        this.service
+            = RestProxy.create(RoleDefinitionsService.class, client.getHttpPipeline(), client.getSerializerAdapter());
         this.client = client;
     }
 
@@ -63,95 +66,75 @@ public final class RoleDefinitionsClientImpl
      */
     @Host("{$host}")
     @ServiceInterface(name = "AuthorizationManagem")
-    private interface RoleDefinitionsService {
-        @Headers({"Content-Type: application/json"})
+    public interface RoleDefinitionsService {
+        @Headers({ "Content-Type: application/json" })
         @Delete("/{scope}/providers/Microsoft.Authorization/roleDefinitions/{roleDefinitionId}")
-        @ExpectedResponses({200, 204})
+        @ExpectedResponses({ 200, 204 })
         @UnexpectedResponseExceptionType(ManagementException.class)
-        Mono<Response<RoleDefinitionInner>> delete(
-            @HostParam("$host") String endpoint,
+        Mono<Response<RoleDefinitionInner>> delete(@HostParam("$host") String endpoint,
             @PathParam(value = "scope", encoded = true) String scope,
-            @PathParam("roleDefinitionId") String roleDefinitionId,
-            @QueryParam("api-version") String apiVersion,
-            @HeaderParam("Accept") String accept,
-            Context context);
+            @PathParam("roleDefinitionId") String roleDefinitionId, @QueryParam("api-version") String apiVersion,
+            @HeaderParam("Accept") String accept, Context context);
 
-        @Headers({"Content-Type: application/json"})
+        @Headers({ "Content-Type: application/json" })
         @Get("/{scope}/providers/Microsoft.Authorization/roleDefinitions/{roleDefinitionId}")
-        @ExpectedResponses({200})
+        @ExpectedResponses({ 200 })
         @UnexpectedResponseExceptionType(ManagementException.class)
-        Mono<Response<RoleDefinitionInner>> get(
-            @HostParam("$host") String endpoint,
+        Mono<Response<RoleDefinitionInner>> get(@HostParam("$host") String endpoint,
             @PathParam(value = "scope", encoded = true) String scope,
-            @PathParam("roleDefinitionId") String roleDefinitionId,
-            @QueryParam("api-version") String apiVersion,
-            @HeaderParam("Accept") String accept,
-            Context context);
+            @PathParam("roleDefinitionId") String roleDefinitionId, @QueryParam("api-version") String apiVersion,
+            @HeaderParam("Accept") String accept, Context context);
 
-        @Headers({"Content-Type: application/json"})
+        @Headers({ "Content-Type: application/json" })
         @Put("/{scope}/providers/Microsoft.Authorization/roleDefinitions/{roleDefinitionId}")
-        @ExpectedResponses({201})
+        @ExpectedResponses({ 201 })
         @UnexpectedResponseExceptionType(ManagementException.class)
-        Mono<Response<RoleDefinitionInner>> createOrUpdate(
-            @HostParam("$host") String endpoint,
+        Mono<Response<RoleDefinitionInner>> createOrUpdate(@HostParam("$host") String endpoint,
             @PathParam(value = "scope", encoded = true) String scope,
-            @PathParam("roleDefinitionId") String roleDefinitionId,
-            @QueryParam("api-version") String apiVersion,
-            @BodyParam("application/json") RoleDefinitionInner roleDefinition,
-            @HeaderParam("Accept") String accept,
+            @PathParam("roleDefinitionId") String roleDefinitionId, @QueryParam("api-version") String apiVersion,
+            @BodyParam("application/json") RoleDefinitionInner roleDefinition, @HeaderParam("Accept") String accept,
             Context context);
 
-        @Headers({"Content-Type: application/json"})
+        @Headers({ "Content-Type: application/json" })
         @Get("/{scope}/providers/Microsoft.Authorization/roleDefinitions")
-        @ExpectedResponses({200})
+        @ExpectedResponses({ 200 })
         @UnexpectedResponseExceptionType(ManagementException.class)
-        Mono<Response<RoleDefinitionListResult>> list(
-            @HostParam("$host") String endpoint,
-            @PathParam(value = "scope", encoded = true) String scope,
-            @QueryParam("$filter") String filter,
-            @QueryParam("api-version") String apiVersion,
-            @HeaderParam("Accept") String accept,
-            Context context);
+        Mono<Response<RoleDefinitionListResult>> list(@HostParam("$host") String endpoint,
+            @PathParam(value = "scope", encoded = true) String scope, @QueryParam("$filter") String filter,
+            @QueryParam("api-version") String apiVersion, @HeaderParam("Accept") String accept, Context context);
 
-        @Headers({"Content-Type: application/json"})
+        @Headers({ "Content-Type: application/json" })
         @Get("/{roleId}")
-        @ExpectedResponses({200})
+        @ExpectedResponses({ 200 })
         @UnexpectedResponseExceptionType(ManagementException.class)
-        Mono<Response<RoleDefinitionInner>> getById(
-            @HostParam("$host") String endpoint,
-            @PathParam(value = "roleId", encoded = true) String roleId,
-            @QueryParam("api-version") String apiVersion,
-            @HeaderParam("Accept") String accept,
-            Context context);
+        Mono<Response<RoleDefinitionInner>> getById(@HostParam("$host") String endpoint,
+            @PathParam(value = "roleId", encoded = true) String roleId, @QueryParam("api-version") String apiVersion,
+            @HeaderParam("Accept") String accept, Context context);
 
-        @Headers({"Content-Type: application/json"})
+        @Headers({ "Content-Type: application/json" })
         @Get("{nextLink}")
-        @ExpectedResponses({200})
+        @ExpectedResponses({ 200 })
         @UnexpectedResponseExceptionType(ManagementException.class)
         Mono<Response<RoleDefinitionListResult>> listNext(
-            @PathParam(value = "nextLink", encoded = true) String nextLink,
-            @HostParam("$host") String endpoint,
-            @HeaderParam("Accept") String accept,
-            Context context);
+            @PathParam(value = "nextLink", encoded = true) String nextLink, @HostParam("$host") String endpoint,
+            @HeaderParam("Accept") String accept, Context context);
     }
 
     /**
      * Deletes a role definition.
-     *
+     * 
      * @param scope The scope of the role definition.
      * @param roleDefinitionId The ID of the role definition to delete.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return role definition.
+     * @return role definition along with {@link Response} on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
     public Mono<Response<RoleDefinitionInner>> deleteWithResponseAsync(String scope, String roleDefinitionId) {
         if (this.client.getEndpoint() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getEndpoint() is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
         }
         if (scope == null) {
             return Mono.error(new IllegalArgumentException("Parameter scope is required and cannot be null."));
@@ -160,34 +143,30 @@ public final class RoleDefinitionsClientImpl
             return Mono
                 .error(new IllegalArgumentException("Parameter roleDefinitionId is required and cannot be null."));
         }
-        final String apiVersion = "2018-01-01-preview";
+        final String apiVersion = "2022-04-01";
         final String accept = "application/json";
-        return FluxUtil
-            .withContext(
-                context ->
-                    service.delete(this.client.getEndpoint(), scope, roleDefinitionId, apiVersion, accept, context))
+        return FluxUtil.withContext(
+            context -> service.delete(this.client.getEndpoint(), scope, roleDefinitionId, apiVersion, accept, context))
             .contextWrite(context -> context.putAll(FluxUtil.toReactorContext(this.client.getContext()).readOnly()));
     }
 
     /**
      * Deletes a role definition.
-     *
+     * 
      * @param scope The scope of the role definition.
      * @param roleDefinitionId The ID of the role definition to delete.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return role definition.
+     * @return role definition along with {@link Response} on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    private Mono<Response<RoleDefinitionInner>> deleteWithResponseAsync(
-        String scope, String roleDefinitionId, Context context) {
+    private Mono<Response<RoleDefinitionInner>> deleteWithResponseAsync(String scope, String roleDefinitionId,
+        Context context) {
         if (this.client.getEndpoint() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getEndpoint() is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
         }
         if (scope == null) {
             return Mono.error(new IllegalArgumentException("Parameter scope is required and cannot be null."));
@@ -196,7 +175,7 @@ public final class RoleDefinitionsClientImpl
             return Mono
                 .error(new IllegalArgumentException("Parameter roleDefinitionId is required and cannot be null."));
         }
-        final String apiVersion = "2018-01-01-preview";
+        final String apiVersion = "2022-04-01";
         final String accept = "application/json";
         context = this.client.mergeContext(context);
         return service.delete(this.client.getEndpoint(), scope, roleDefinitionId, apiVersion, accept, context);
@@ -204,30 +183,38 @@ public final class RoleDefinitionsClientImpl
 
     /**
      * Deletes a role definition.
-     *
+     * 
      * @param scope The scope of the role definition.
      * @param roleDefinitionId The ID of the role definition to delete.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return role definition.
+     * @return role definition on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
     public Mono<RoleDefinitionInner> deleteAsync(String scope, String roleDefinitionId) {
-        return deleteWithResponseAsync(scope, roleDefinitionId)
-            .flatMap(
-                (Response<RoleDefinitionInner> res) -> {
-                    if (res.getValue() != null) {
-                        return Mono.just(res.getValue());
-                    } else {
-                        return Mono.empty();
-                    }
-                });
+        return deleteWithResponseAsync(scope, roleDefinitionId).flatMap(res -> Mono.justOrEmpty(res.getValue()));
     }
 
     /**
      * Deletes a role definition.
-     *
+     * 
+     * @param scope The scope of the role definition.
+     * @param roleDefinitionId The ID of the role definition to delete.
+     * @param context The context to associate with this operation.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return role definition along with {@link Response}.
+     */
+    @ServiceMethod(returns = ReturnType.SINGLE)
+    public Response<RoleDefinitionInner> deleteWithResponse(String scope, String roleDefinitionId, Context context) {
+        return deleteWithResponseAsync(scope, roleDefinitionId, context).block();
+    }
+
+    /**
+     * Deletes a role definition.
+     * 
      * @param scope The scope of the role definition.
      * @param roleDefinitionId The ID of the role definition to delete.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
@@ -237,42 +224,24 @@ public final class RoleDefinitionsClientImpl
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
     public RoleDefinitionInner delete(String scope, String roleDefinitionId) {
-        return deleteAsync(scope, roleDefinitionId).block();
-    }
-
-    /**
-     * Deletes a role definition.
-     *
-     * @param scope The scope of the role definition.
-     * @param roleDefinitionId The ID of the role definition to delete.
-     * @param context The context to associate with this operation.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return role definition.
-     */
-    @ServiceMethod(returns = ReturnType.SINGLE)
-    public Response<RoleDefinitionInner> deleteWithResponse(String scope, String roleDefinitionId, Context context) {
-        return deleteWithResponseAsync(scope, roleDefinitionId, context).block();
+        return deleteWithResponse(scope, roleDefinitionId, Context.NONE).getValue();
     }
 
     /**
      * Get role definition by name (GUID).
-     *
+     * 
      * @param scope The scope of the role definition.
      * @param roleDefinitionId The ID of the role definition.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return role definition by name (GUID).
+     * @return role definition by name (GUID) along with {@link Response} on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
     public Mono<Response<RoleDefinitionInner>> getWithResponseAsync(String scope, String roleDefinitionId) {
         if (this.client.getEndpoint() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getEndpoint() is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
         }
         if (scope == null) {
             return Mono.error(new IllegalArgumentException("Parameter scope is required and cannot be null."));
@@ -281,7 +250,7 @@ public final class RoleDefinitionsClientImpl
             return Mono
                 .error(new IllegalArgumentException("Parameter roleDefinitionId is required and cannot be null."));
         }
-        final String apiVersion = "2018-01-01-preview";
+        final String apiVersion = "2022-04-01";
         final String accept = "application/json";
         return FluxUtil
             .withContext(
@@ -291,23 +260,21 @@ public final class RoleDefinitionsClientImpl
 
     /**
      * Get role definition by name (GUID).
-     *
+     * 
      * @param scope The scope of the role definition.
      * @param roleDefinitionId The ID of the role definition.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return role definition by name (GUID).
+     * @return role definition by name (GUID) along with {@link Response} on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    private Mono<Response<RoleDefinitionInner>> getWithResponseAsync(
-        String scope, String roleDefinitionId, Context context) {
+    private Mono<Response<RoleDefinitionInner>> getWithResponseAsync(String scope, String roleDefinitionId,
+        Context context) {
         if (this.client.getEndpoint() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getEndpoint() is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
         }
         if (scope == null) {
             return Mono.error(new IllegalArgumentException("Parameter scope is required and cannot be null."));
@@ -316,7 +283,7 @@ public final class RoleDefinitionsClientImpl
             return Mono
                 .error(new IllegalArgumentException("Parameter roleDefinitionId is required and cannot be null."));
         }
-        final String apiVersion = "2018-01-01-preview";
+        final String apiVersion = "2022-04-01";
         final String accept = "application/json";
         context = this.client.mergeContext(context);
         return service.get(this.client.getEndpoint(), scope, roleDefinitionId, apiVersion, accept, context);
@@ -324,30 +291,38 @@ public final class RoleDefinitionsClientImpl
 
     /**
      * Get role definition by name (GUID).
-     *
+     * 
      * @param scope The scope of the role definition.
      * @param roleDefinitionId The ID of the role definition.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return role definition by name (GUID).
+     * @return role definition by name (GUID) on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
     public Mono<RoleDefinitionInner> getAsync(String scope, String roleDefinitionId) {
-        return getWithResponseAsync(scope, roleDefinitionId)
-            .flatMap(
-                (Response<RoleDefinitionInner> res) -> {
-                    if (res.getValue() != null) {
-                        return Mono.just(res.getValue());
-                    } else {
-                        return Mono.empty();
-                    }
-                });
+        return getWithResponseAsync(scope, roleDefinitionId).flatMap(res -> Mono.justOrEmpty(res.getValue()));
     }
 
     /**
      * Get role definition by name (GUID).
-     *
+     * 
+     * @param scope The scope of the role definition.
+     * @param roleDefinitionId The ID of the role definition.
+     * @param context The context to associate with this operation.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return role definition by name (GUID) along with {@link Response}.
+     */
+    @ServiceMethod(returns = ReturnType.SINGLE)
+    public Response<RoleDefinitionInner> getWithResponse(String scope, String roleDefinitionId, Context context) {
+        return getWithResponseAsync(scope, roleDefinitionId, context).block();
+    }
+
+    /**
+     * Get role definition by name (GUID).
+     * 
      * @param scope The scope of the role definition.
      * @param roleDefinitionId The ID of the role definition.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
@@ -357,44 +332,26 @@ public final class RoleDefinitionsClientImpl
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
     public RoleDefinitionInner get(String scope, String roleDefinitionId) {
-        return getAsync(scope, roleDefinitionId).block();
-    }
-
-    /**
-     * Get role definition by name (GUID).
-     *
-     * @param scope The scope of the role definition.
-     * @param roleDefinitionId The ID of the role definition.
-     * @param context The context to associate with this operation.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return role definition by name (GUID).
-     */
-    @ServiceMethod(returns = ReturnType.SINGLE)
-    public Response<RoleDefinitionInner> getWithResponse(String scope, String roleDefinitionId, Context context) {
-        return getWithResponseAsync(scope, roleDefinitionId, context).block();
+        return getWithResponse(scope, roleDefinitionId, Context.NONE).getValue();
     }
 
     /**
      * Creates or updates a role definition.
-     *
+     * 
      * @param scope The scope of the role definition.
      * @param roleDefinitionId The ID of the role definition.
      * @param roleDefinition The values for the role definition.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return role definition.
+     * @return role definition along with {@link Response} on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    public Mono<Response<RoleDefinitionInner>> createOrUpdateWithResponseAsync(
-        String scope, String roleDefinitionId, RoleDefinitionInner roleDefinition) {
+    public Mono<Response<RoleDefinitionInner>> createOrUpdateWithResponseAsync(String scope, String roleDefinitionId,
+        RoleDefinitionInner roleDefinition) {
         if (this.client.getEndpoint() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getEndpoint() is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
         }
         if (scope == null) {
             return Mono.error(new IllegalArgumentException("Parameter scope is required and cannot be null."));
@@ -408,26 +365,17 @@ public final class RoleDefinitionsClientImpl
         } else {
             roleDefinition.validate();
         }
-        final String apiVersion = "2018-01-01-preview";
+        final String apiVersion = "2022-04-01";
         final String accept = "application/json";
         return FluxUtil
-            .withContext(
-                context ->
-                    service
-                        .createOrUpdate(
-                            this.client.getEndpoint(),
-                            scope,
-                            roleDefinitionId,
-                            apiVersion,
-                            roleDefinition,
-                            accept,
-                            context))
+            .withContext(context -> service.createOrUpdate(this.client.getEndpoint(), scope, roleDefinitionId,
+                apiVersion, roleDefinition, accept, context))
             .contextWrite(context -> context.putAll(FluxUtil.toReactorContext(this.client.getContext()).readOnly()));
     }
 
     /**
      * Creates or updates a role definition.
-     *
+     * 
      * @param scope The scope of the role definition.
      * @param roleDefinitionId The ID of the role definition.
      * @param roleDefinition The values for the role definition.
@@ -435,16 +383,14 @@ public final class RoleDefinitionsClientImpl
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return role definition.
+     * @return role definition along with {@link Response} on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    private Mono<Response<RoleDefinitionInner>> createOrUpdateWithResponseAsync(
-        String scope, String roleDefinitionId, RoleDefinitionInner roleDefinition, Context context) {
+    private Mono<Response<RoleDefinitionInner>> createOrUpdateWithResponseAsync(String scope, String roleDefinitionId,
+        RoleDefinitionInner roleDefinition, Context context) {
         if (this.client.getEndpoint() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getEndpoint() is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
         }
         if (scope == null) {
             return Mono.error(new IllegalArgumentException("Parameter scope is required and cannot be null."));
@@ -458,59 +404,34 @@ public final class RoleDefinitionsClientImpl
         } else {
             roleDefinition.validate();
         }
-        final String apiVersion = "2018-01-01-preview";
+        final String apiVersion = "2022-04-01";
         final String accept = "application/json";
         context = this.client.mergeContext(context);
-        return service
-            .createOrUpdate(
-                this.client.getEndpoint(), scope, roleDefinitionId, apiVersion, roleDefinition, accept, context);
+        return service.createOrUpdate(this.client.getEndpoint(), scope, roleDefinitionId, apiVersion, roleDefinition,
+            accept, context);
     }
 
     /**
      * Creates or updates a role definition.
-     *
+     * 
      * @param scope The scope of the role definition.
      * @param roleDefinitionId The ID of the role definition.
      * @param roleDefinition The values for the role definition.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return role definition.
+     * @return role definition on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    public Mono<RoleDefinitionInner> createOrUpdateAsync(
-        String scope, String roleDefinitionId, RoleDefinitionInner roleDefinition) {
+    public Mono<RoleDefinitionInner> createOrUpdateAsync(String scope, String roleDefinitionId,
+        RoleDefinitionInner roleDefinition) {
         return createOrUpdateWithResponseAsync(scope, roleDefinitionId, roleDefinition)
-            .flatMap(
-                (Response<RoleDefinitionInner> res) -> {
-                    if (res.getValue() != null) {
-                        return Mono.just(res.getValue());
-                    } else {
-                        return Mono.empty();
-                    }
-                });
+            .flatMap(res -> Mono.justOrEmpty(res.getValue()));
     }
 
     /**
      * Creates or updates a role definition.
-     *
-     * @param scope The scope of the role definition.
-     * @param roleDefinitionId The ID of the role definition.
-     * @param roleDefinition The values for the role definition.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return role definition.
-     */
-    @ServiceMethod(returns = ReturnType.SINGLE)
-    public RoleDefinitionInner createOrUpdate(
-        String scope, String roleDefinitionId, RoleDefinitionInner roleDefinition) {
-        return createOrUpdateAsync(scope, roleDefinitionId, roleDefinition).block();
-    }
-
-    /**
-     * Creates or updates a role definition.
-     *
+     * 
      * @param scope The scope of the role definition.
      * @param roleDefinitionId The ID of the role definition.
      * @param roleDefinition The values for the role definition.
@@ -518,101 +439,101 @@ public final class RoleDefinitionsClientImpl
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return role definition.
+     * @return role definition along with {@link Response}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    public Response<RoleDefinitionInner> createOrUpdateWithResponse(
-        String scope, String roleDefinitionId, RoleDefinitionInner roleDefinition, Context context) {
+    public Response<RoleDefinitionInner> createOrUpdateWithResponse(String scope, String roleDefinitionId,
+        RoleDefinitionInner roleDefinition, Context context) {
         return createOrUpdateWithResponseAsync(scope, roleDefinitionId, roleDefinition, context).block();
     }
 
     /**
-     * Get all role definitions that are applicable at scope and above.
-     *
+     * Creates or updates a role definition.
+     * 
      * @param scope The scope of the role definition.
-     * @param filter The filter to apply on the operation. Use atScopeAndBelow filter to search below the given scope as
-     *     well.
+     * @param roleDefinitionId The ID of the role definition.
+     * @param roleDefinition The values for the role definition.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return all role definitions that are applicable at scope and above.
+     * @return role definition.
+     */
+    @ServiceMethod(returns = ReturnType.SINGLE)
+    public RoleDefinitionInner createOrUpdate(String scope, String roleDefinitionId,
+        RoleDefinitionInner roleDefinition) {
+        return createOrUpdateWithResponse(scope, roleDefinitionId, roleDefinition, Context.NONE).getValue();
+    }
+
+    /**
+     * Get all role definitions that are applicable at scope and above.
+     * 
+     * @param scope The scope of the role definition.
+     * @param filter The filter to apply on the operation. Use atScopeAndBelow filter to search below the given scope as
+     * well.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return all role definitions that are applicable at scope and above along with {@link PagedResponse} on
+     * successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
     private Mono<PagedResponse<RoleDefinitionInner>> listSinglePageAsync(String scope, String filter) {
         if (this.client.getEndpoint() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getEndpoint() is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
         }
         if (scope == null) {
             return Mono.error(new IllegalArgumentException("Parameter scope is required and cannot be null."));
         }
-        final String apiVersion = "2018-01-01-preview";
+        final String apiVersion = "2022-04-01";
         final String accept = "application/json";
         return FluxUtil
             .withContext(context -> service.list(this.client.getEndpoint(), scope, filter, apiVersion, accept, context))
-            .<PagedResponse<RoleDefinitionInner>>map(
-                res ->
-                    new PagedResponseBase<>(
-                        res.getRequest(),
-                        res.getStatusCode(),
-                        res.getHeaders(),
-                        res.getValue().value(),
-                        res.getValue().nextLink(),
-                        null))
+            .<PagedResponse<RoleDefinitionInner>>map(res -> new PagedResponseBase<>(res.getRequest(),
+                res.getStatusCode(), res.getHeaders(), res.getValue().value(), res.getValue().nextLink(), null))
             .contextWrite(context -> context.putAll(FluxUtil.toReactorContext(this.client.getContext()).readOnly()));
     }
 
     /**
      * Get all role definitions that are applicable at scope and above.
-     *
+     * 
      * @param scope The scope of the role definition.
      * @param filter The filter to apply on the operation. Use atScopeAndBelow filter to search below the given scope as
-     *     well.
+     * well.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return all role definitions that are applicable at scope and above.
+     * @return all role definitions that are applicable at scope and above along with {@link PagedResponse} on
+     * successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
     private Mono<PagedResponse<RoleDefinitionInner>> listSinglePageAsync(String scope, String filter, Context context) {
         if (this.client.getEndpoint() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getEndpoint() is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
         }
         if (scope == null) {
             return Mono.error(new IllegalArgumentException("Parameter scope is required and cannot be null."));
         }
-        final String apiVersion = "2018-01-01-preview";
+        final String apiVersion = "2022-04-01";
         final String accept = "application/json";
         context = this.client.mergeContext(context);
-        return service
-            .list(this.client.getEndpoint(), scope, filter, apiVersion, accept, context)
-            .map(
-                res ->
-                    new PagedResponseBase<>(
-                        res.getRequest(),
-                        res.getStatusCode(),
-                        res.getHeaders(),
-                        res.getValue().value(),
-                        res.getValue().nextLink(),
-                        null));
+        return service.list(this.client.getEndpoint(), scope, filter, apiVersion, accept, context)
+            .map(res -> new PagedResponseBase<>(res.getRequest(), res.getStatusCode(), res.getHeaders(),
+                res.getValue().value(), res.getValue().nextLink(), null));
     }
 
     /**
      * Get all role definitions that are applicable at scope and above.
-     *
+     * 
      * @param scope The scope of the role definition.
      * @param filter The filter to apply on the operation. Use atScopeAndBelow filter to search below the given scope as
-     *     well.
+     * well.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return all role definitions that are applicable at scope and above.
+     * @return all role definitions that are applicable at scope and above as paginated response with {@link PagedFlux}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
     public PagedFlux<RoleDefinitionInner> listAsync(String scope, String filter) {
@@ -621,12 +542,12 @@ public final class RoleDefinitionsClientImpl
 
     /**
      * Get all role definitions that are applicable at scope and above.
-     *
+     * 
      * @param scope The scope of the role definition.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return all role definitions that are applicable at scope and above.
+     * @return all role definitions that are applicable at scope and above as paginated response with {@link PagedFlux}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
     public PagedFlux<RoleDefinitionInner> listAsync(String scope) {
@@ -636,30 +557,31 @@ public final class RoleDefinitionsClientImpl
 
     /**
      * Get all role definitions that are applicable at scope and above.
-     *
+     * 
      * @param scope The scope of the role definition.
      * @param filter The filter to apply on the operation. Use atScopeAndBelow filter to search below the given scope as
-     *     well.
+     * well.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return all role definitions that are applicable at scope and above.
+     * @return all role definitions that are applicable at scope and above as paginated response with {@link PagedFlux}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
     private PagedFlux<RoleDefinitionInner> listAsync(String scope, String filter, Context context) {
-        return new PagedFlux<>(
-            () -> listSinglePageAsync(scope, filter, context), nextLink -> listNextSinglePageAsync(nextLink, context));
+        return new PagedFlux<>(() -> listSinglePageAsync(scope, filter, context),
+            nextLink -> listNextSinglePageAsync(nextLink, context));
     }
 
     /**
      * Get all role definitions that are applicable at scope and above.
-     *
+     * 
      * @param scope The scope of the role definition.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return all role definitions that are applicable at scope and above.
+     * @return all role definitions that are applicable at scope and above as paginated response with
+     * {@link PagedIterable}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
     public PagedIterable<RoleDefinitionInner> list(String scope) {
@@ -669,15 +591,16 @@ public final class RoleDefinitionsClientImpl
 
     /**
      * Get all role definitions that are applicable at scope and above.
-     *
+     * 
      * @param scope The scope of the role definition.
      * @param filter The filter to apply on the operation. Use atScopeAndBelow filter to search below the given scope as
-     *     well.
+     * well.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return all role definitions that are applicable at scope and above.
+     * @return all role definitions that are applicable at scope and above as paginated response with
+     * {@link PagedIterable}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
     public PagedIterable<RoleDefinitionInner> list(String scope, String filter, Context context) {
@@ -686,28 +609,26 @@ public final class RoleDefinitionsClientImpl
 
     /**
      * Gets a role definition by ID.
-     *
+     * 
      * @param roleId The fully qualified role definition ID. Use the format,
-     *     /subscriptions/{guid}/providers/Microsoft.Authorization/roleDefinitions/{roleDefinitionId} for subscription
-     *     level role definitions, or /providers/Microsoft.Authorization/roleDefinitions/{roleDefinitionId} for tenant
-     *     level role definitions.
+     * /subscriptions/{guid}/providers/Microsoft.Authorization/roleDefinitions/{roleDefinitionId} for subscription level
+     * role definitions, or /providers/Microsoft.Authorization/roleDefinitions/{roleDefinitionId} for tenant level role
+     * definitions.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return a role definition by ID.
+     * @return a role definition by ID along with {@link Response} on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
     public Mono<Response<RoleDefinitionInner>> getByIdWithResponseAsync(String roleId) {
         if (this.client.getEndpoint() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getEndpoint() is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
         }
         if (roleId == null) {
             return Mono.error(new IllegalArgumentException("Parameter roleId is required and cannot be null."));
         }
-        final String apiVersion = "2018-01-01-preview";
+        final String apiVersion = "2022-04-01";
         final String accept = "application/json";
         return FluxUtil
             .withContext(context -> service.getById(this.client.getEndpoint(), roleId, apiVersion, accept, context))
@@ -716,29 +637,27 @@ public final class RoleDefinitionsClientImpl
 
     /**
      * Gets a role definition by ID.
-     *
+     * 
      * @param roleId The fully qualified role definition ID. Use the format,
-     *     /subscriptions/{guid}/providers/Microsoft.Authorization/roleDefinitions/{roleDefinitionId} for subscription
-     *     level role definitions, or /providers/Microsoft.Authorization/roleDefinitions/{roleDefinitionId} for tenant
-     *     level role definitions.
+     * /subscriptions/{guid}/providers/Microsoft.Authorization/roleDefinitions/{roleDefinitionId} for subscription level
+     * role definitions, or /providers/Microsoft.Authorization/roleDefinitions/{roleDefinitionId} for tenant level role
+     * definitions.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return a role definition by ID.
+     * @return a role definition by ID along with {@link Response} on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
     private Mono<Response<RoleDefinitionInner>> getByIdWithResponseAsync(String roleId, Context context) {
         if (this.client.getEndpoint() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getEndpoint() is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
         }
         if (roleId == null) {
             return Mono.error(new IllegalArgumentException("Parameter roleId is required and cannot be null."));
         }
-        final String apiVersion = "2018-01-01-preview";
+        final String apiVersion = "2022-04-01";
         final String accept = "application/json";
         context = this.client.mergeContext(context);
         return service.getById(this.client.getEndpoint(), roleId, apiVersion, accept, context);
@@ -746,58 +665,33 @@ public final class RoleDefinitionsClientImpl
 
     /**
      * Gets a role definition by ID.
-     *
+     * 
      * @param roleId The fully qualified role definition ID. Use the format,
-     *     /subscriptions/{guid}/providers/Microsoft.Authorization/roleDefinitions/{roleDefinitionId} for subscription
-     *     level role definitions, or /providers/Microsoft.Authorization/roleDefinitions/{roleDefinitionId} for tenant
-     *     level role definitions.
+     * /subscriptions/{guid}/providers/Microsoft.Authorization/roleDefinitions/{roleDefinitionId} for subscription level
+     * role definitions, or /providers/Microsoft.Authorization/roleDefinitions/{roleDefinitionId} for tenant level role
+     * definitions.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return a role definition by ID.
+     * @return a role definition by ID on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
     public Mono<RoleDefinitionInner> getByIdAsync(String roleId) {
-        return getByIdWithResponseAsync(roleId)
-            .flatMap(
-                (Response<RoleDefinitionInner> res) -> {
-                    if (res.getValue() != null) {
-                        return Mono.just(res.getValue());
-                    } else {
-                        return Mono.empty();
-                    }
-                });
+        return getByIdWithResponseAsync(roleId).flatMap(res -> Mono.justOrEmpty(res.getValue()));
     }
 
     /**
      * Gets a role definition by ID.
-     *
+     * 
      * @param roleId The fully qualified role definition ID. Use the format,
-     *     /subscriptions/{guid}/providers/Microsoft.Authorization/roleDefinitions/{roleDefinitionId} for subscription
-     *     level role definitions, or /providers/Microsoft.Authorization/roleDefinitions/{roleDefinitionId} for tenant
-     *     level role definitions.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return a role definition by ID.
-     */
-    @ServiceMethod(returns = ReturnType.SINGLE)
-    public RoleDefinitionInner getById(String roleId) {
-        return getByIdAsync(roleId).block();
-    }
-
-    /**
-     * Gets a role definition by ID.
-     *
-     * @param roleId The fully qualified role definition ID. Use the format,
-     *     /subscriptions/{guid}/providers/Microsoft.Authorization/roleDefinitions/{roleDefinitionId} for subscription
-     *     level role definitions, or /providers/Microsoft.Authorization/roleDefinitions/{roleDefinitionId} for tenant
-     *     level role definitions.
+     * /subscriptions/{guid}/providers/Microsoft.Authorization/roleDefinitions/{roleDefinitionId} for subscription level
+     * role definitions, or /providers/Microsoft.Authorization/roleDefinitions/{roleDefinitionId} for tenant level role
+     * definitions.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return a role definition by ID.
+     * @return a role definition by ID along with {@link Response}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
     public Response<RoleDefinitionInner> getByIdWithResponse(String roleId, Context context) {
@@ -805,13 +699,31 @@ public final class RoleDefinitionsClientImpl
     }
 
     /**
-     * Get the next page of items.
-     *
-     * @param nextLink The nextLink parameter.
+     * Gets a role definition by ID.
+     * 
+     * @param roleId The fully qualified role definition ID. Use the format,
+     * /subscriptions/{guid}/providers/Microsoft.Authorization/roleDefinitions/{roleDefinitionId} for subscription level
+     * role definitions, or /providers/Microsoft.Authorization/roleDefinitions/{roleDefinitionId} for tenant level role
+     * definitions.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return role definition list operation result.
+     * @return a role definition by ID.
+     */
+    @ServiceMethod(returns = ReturnType.SINGLE)
+    public RoleDefinitionInner getById(String roleId) {
+        return getByIdWithResponse(roleId, Context.NONE).getValue();
+    }
+
+    /**
+     * Get the next page of items.
+     * 
+     * @param nextLink The URL to get the next list of items.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return role definition list operation result along with {@link PagedResponse} on successful completion of
+     * {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
     private Mono<PagedResponse<RoleDefinitionInner>> listNextSinglePageAsync(String nextLink) {
@@ -819,35 +731,26 @@ public final class RoleDefinitionsClientImpl
             return Mono.error(new IllegalArgumentException("Parameter nextLink is required and cannot be null."));
         }
         if (this.client.getEndpoint() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getEndpoint() is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
         }
         final String accept = "application/json";
-        return FluxUtil
-            .withContext(context -> service.listNext(nextLink, this.client.getEndpoint(), accept, context))
-            .<PagedResponse<RoleDefinitionInner>>map(
-                res ->
-                    new PagedResponseBase<>(
-                        res.getRequest(),
-                        res.getStatusCode(),
-                        res.getHeaders(),
-                        res.getValue().value(),
-                        res.getValue().nextLink(),
-                        null))
+        return FluxUtil.withContext(context -> service.listNext(nextLink, this.client.getEndpoint(), accept, context))
+            .<PagedResponse<RoleDefinitionInner>>map(res -> new PagedResponseBase<>(res.getRequest(),
+                res.getStatusCode(), res.getHeaders(), res.getValue().value(), res.getValue().nextLink(), null))
             .contextWrite(context -> context.putAll(FluxUtil.toReactorContext(this.client.getContext()).readOnly()));
     }
 
     /**
      * Get the next page of items.
-     *
-     * @param nextLink The nextLink parameter.
+     * 
+     * @param nextLink The URL to get the next list of items.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return role definition list operation result.
+     * @return role definition list operation result along with {@link PagedResponse} on successful completion of
+     * {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
     private Mono<PagedResponse<RoleDefinitionInner>> listNextSinglePageAsync(String nextLink, Context context) {
@@ -855,23 +758,13 @@ public final class RoleDefinitionsClientImpl
             return Mono.error(new IllegalArgumentException("Parameter nextLink is required and cannot be null."));
         }
         if (this.client.getEndpoint() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getEndpoint() is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
         }
         final String accept = "application/json";
         context = this.client.mergeContext(context);
-        return service
-            .listNext(nextLink, this.client.getEndpoint(), accept, context)
-            .map(
-                res ->
-                    new PagedResponseBase<>(
-                        res.getRequest(),
-                        res.getStatusCode(),
-                        res.getHeaders(),
-                        res.getValue().value(),
-                        res.getValue().nextLink(),
-                        null));
+        return service.listNext(nextLink, this.client.getEndpoint(), accept, context)
+            .map(res -> new PagedResponseBase<>(res.getRequest(), res.getStatusCode(), res.getHeaders(),
+                res.getValue().value(), res.getValue().nextLink(), null));
     }
 }

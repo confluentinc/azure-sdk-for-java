@@ -5,220 +5,274 @@
 package com.azure.resourcemanager.sql.fluent.models;
 
 import com.azure.core.annotation.Immutable;
-import com.azure.core.annotation.JsonFlatten;
 import com.azure.core.management.ProxyResource;
-import com.azure.core.util.logging.ClientLogger;
+import com.azure.json.JsonReader;
+import com.azure.json.JsonToken;
+import com.azure.json.JsonWriter;
+import com.azure.resourcemanager.sql.models.ManagedInstanceOperationParametersPair;
+import com.azure.resourcemanager.sql.models.ManagedInstanceOperationSteps;
 import com.azure.resourcemanager.sql.models.ManagementOperationState;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import java.io.IOException;
 import java.time.OffsetDateTime;
 
-/** A managed instance operation. */
-@JsonFlatten
+/**
+ * A managed instance operation.
+ */
 @Immutable
-public class ManagedInstanceOperationInner extends ProxyResource {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(ManagedInstanceOperationInner.class);
+public final class ManagedInstanceOperationInner extends ProxyResource {
+    /*
+     * Resource properties.
+     */
+    private ManagedInstanceOperationProperties innerProperties;
 
     /*
-     * The name of the managed instance the operation is being performed on.
+     * The type of the resource.
      */
-    @JsonProperty(value = "properties.managedInstanceName", access = JsonProperty.Access.WRITE_ONLY)
-    private String managedInstanceName;
+    private String type;
 
     /*
-     * The name of operation.
+     * The name of the resource.
      */
-    @JsonProperty(value = "properties.operation", access = JsonProperty.Access.WRITE_ONLY)
-    private String operation;
+    private String name;
 
     /*
-     * The friendly name of operation.
+     * Fully qualified resource Id for the resource.
      */
-    @JsonProperty(value = "properties.operationFriendlyName", access = JsonProperty.Access.WRITE_ONLY)
-    private String operationFriendlyName;
+    private String id;
 
-    /*
-     * The percentage of the operation completed.
+    /**
+     * Creates an instance of ManagedInstanceOperationInner class.
      */
-    @JsonProperty(value = "properties.percentComplete", access = JsonProperty.Access.WRITE_ONLY)
-    private Integer percentComplete;
+    public ManagedInstanceOperationInner() {
+    }
 
-    /*
-     * The operation start time.
+    /**
+     * Get the innerProperties property: Resource properties.
+     * 
+     * @return the innerProperties value.
      */
-    @JsonProperty(value = "properties.startTime", access = JsonProperty.Access.WRITE_ONLY)
-    private OffsetDateTime startTime;
+    private ManagedInstanceOperationProperties innerProperties() {
+        return this.innerProperties;
+    }
 
-    /*
-     * The operation state.
+    /**
+     * Get the type property: The type of the resource.
+     * 
+     * @return the type value.
      */
-    @JsonProperty(value = "properties.state", access = JsonProperty.Access.WRITE_ONLY)
-    private ManagementOperationState state;
+    @Override
+    public String type() {
+        return this.type;
+    }
 
-    /*
-     * The operation error code.
+    /**
+     * Get the name property: The name of the resource.
+     * 
+     * @return the name value.
      */
-    @JsonProperty(value = "properties.errorCode", access = JsonProperty.Access.WRITE_ONLY)
-    private Integer errorCode;
+    @Override
+    public String name() {
+        return this.name;
+    }
 
-    /*
-     * The operation error description.
+    /**
+     * Get the id property: Fully qualified resource Id for the resource.
+     * 
+     * @return the id value.
      */
-    @JsonProperty(value = "properties.errorDescription", access = JsonProperty.Access.WRITE_ONLY)
-    private String errorDescription;
-
-    /*
-     * The operation error severity.
-     */
-    @JsonProperty(value = "properties.errorSeverity", access = JsonProperty.Access.WRITE_ONLY)
-    private Integer errorSeverity;
-
-    /*
-     * Whether or not the error is a user error.
-     */
-    @JsonProperty(value = "properties.isUserError", access = JsonProperty.Access.WRITE_ONLY)
-    private Boolean isUserError;
-
-    /*
-     * The estimated completion time of the operation.
-     */
-    @JsonProperty(value = "properties.estimatedCompletionTime", access = JsonProperty.Access.WRITE_ONLY)
-    private OffsetDateTime estimatedCompletionTime;
-
-    /*
-     * The operation description.
-     */
-    @JsonProperty(value = "properties.description", access = JsonProperty.Access.WRITE_ONLY)
-    private String description;
-
-    /*
-     * Whether the operation can be cancelled.
-     */
-    @JsonProperty(value = "properties.isCancellable", access = JsonProperty.Access.WRITE_ONLY)
-    private Boolean isCancellable;
+    @Override
+    public String id() {
+        return this.id;
+    }
 
     /**
      * Get the managedInstanceName property: The name of the managed instance the operation is being performed on.
-     *
+     * 
      * @return the managedInstanceName value.
      */
     public String managedInstanceName() {
-        return this.managedInstanceName;
+        return this.innerProperties() == null ? null : this.innerProperties().managedInstanceName();
     }
 
     /**
      * Get the operation property: The name of operation.
-     *
+     * 
      * @return the operation value.
      */
     public String operation() {
-        return this.operation;
+        return this.innerProperties() == null ? null : this.innerProperties().operation();
     }
 
     /**
      * Get the operationFriendlyName property: The friendly name of operation.
-     *
+     * 
      * @return the operationFriendlyName value.
      */
     public String operationFriendlyName() {
-        return this.operationFriendlyName;
+        return this.innerProperties() == null ? null : this.innerProperties().operationFriendlyName();
     }
 
     /**
      * Get the percentComplete property: The percentage of the operation completed.
-     *
+     * 
      * @return the percentComplete value.
      */
     public Integer percentComplete() {
-        return this.percentComplete;
+        return this.innerProperties() == null ? null : this.innerProperties().percentComplete();
     }
 
     /**
      * Get the startTime property: The operation start time.
-     *
+     * 
      * @return the startTime value.
      */
     public OffsetDateTime startTime() {
-        return this.startTime;
+        return this.innerProperties() == null ? null : this.innerProperties().startTime();
     }
 
     /**
      * Get the state property: The operation state.
-     *
+     * 
      * @return the state value.
      */
     public ManagementOperationState state() {
-        return this.state;
+        return this.innerProperties() == null ? null : this.innerProperties().state();
     }
 
     /**
      * Get the errorCode property: The operation error code.
-     *
+     * 
      * @return the errorCode value.
      */
     public Integer errorCode() {
-        return this.errorCode;
+        return this.innerProperties() == null ? null : this.innerProperties().errorCode();
     }
 
     /**
      * Get the errorDescription property: The operation error description.
-     *
+     * 
      * @return the errorDescription value.
      */
     public String errorDescription() {
-        return this.errorDescription;
+        return this.innerProperties() == null ? null : this.innerProperties().errorDescription();
     }
 
     /**
      * Get the errorSeverity property: The operation error severity.
-     *
+     * 
      * @return the errorSeverity value.
      */
     public Integer errorSeverity() {
-        return this.errorSeverity;
+        return this.innerProperties() == null ? null : this.innerProperties().errorSeverity();
     }
 
     /**
      * Get the isUserError property: Whether or not the error is a user error.
-     *
+     * 
      * @return the isUserError value.
      */
     public Boolean isUserError() {
-        return this.isUserError;
+        return this.innerProperties() == null ? null : this.innerProperties().isUserError();
     }
 
     /**
      * Get the estimatedCompletionTime property: The estimated completion time of the operation.
-     *
+     * 
      * @return the estimatedCompletionTime value.
      */
     public OffsetDateTime estimatedCompletionTime() {
-        return this.estimatedCompletionTime;
+        return this.innerProperties() == null ? null : this.innerProperties().estimatedCompletionTime();
     }
 
     /**
      * Get the description property: The operation description.
-     *
+     * 
      * @return the description value.
      */
     public String description() {
-        return this.description;
+        return this.innerProperties() == null ? null : this.innerProperties().description();
     }
 
     /**
      * Get the isCancellable property: Whether the operation can be cancelled.
-     *
+     * 
      * @return the isCancellable value.
      */
     public Boolean isCancellable() {
-        return this.isCancellable;
+        return this.innerProperties() == null ? null : this.innerProperties().isCancellable();
+    }
+
+    /**
+     * Get the operationParameters property: The operation parameters.
+     * 
+     * @return the operationParameters value.
+     */
+    public ManagedInstanceOperationParametersPair operationParameters() {
+        return this.innerProperties() == null ? null : this.innerProperties().operationParameters();
+    }
+
+    /**
+     * Get the operationSteps property: The operation steps.
+     * 
+     * @return the operationSteps value.
+     */
+    public ManagedInstanceOperationSteps operationSteps() {
+        return this.innerProperties() == null ? null : this.innerProperties().operationSteps();
     }
 
     /**
      * Validates the instance.
-     *
+     * 
      * @throws IllegalArgumentException thrown if the instance is not valid.
      */
     public void validate() {
+        if (innerProperties() != null) {
+            innerProperties().validate();
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public JsonWriter toJson(JsonWriter jsonWriter) throws IOException {
+        jsonWriter.writeStartObject();
+        jsonWriter.writeJsonField("properties", this.innerProperties);
+        return jsonWriter.writeEndObject();
+    }
+
+    /**
+     * Reads an instance of ManagedInstanceOperationInner from the JsonReader.
+     * 
+     * @param jsonReader The JsonReader being read.
+     * @return An instance of ManagedInstanceOperationInner if the JsonReader was pointing to an instance of it, or null
+     * if it was pointing to JSON null.
+     * @throws IllegalStateException If the deserialized JSON object was missing any required properties.
+     * @throws IOException If an error occurs while reading the ManagedInstanceOperationInner.
+     */
+    public static ManagedInstanceOperationInner fromJson(JsonReader jsonReader) throws IOException {
+        return jsonReader.readObject(reader -> {
+            ManagedInstanceOperationInner deserializedManagedInstanceOperationInner
+                = new ManagedInstanceOperationInner();
+            while (reader.nextToken() != JsonToken.END_OBJECT) {
+                String fieldName = reader.getFieldName();
+                reader.nextToken();
+
+                if ("id".equals(fieldName)) {
+                    deserializedManagedInstanceOperationInner.id = reader.getString();
+                } else if ("name".equals(fieldName)) {
+                    deserializedManagedInstanceOperationInner.name = reader.getString();
+                } else if ("type".equals(fieldName)) {
+                    deserializedManagedInstanceOperationInner.type = reader.getString();
+                } else if ("properties".equals(fieldName)) {
+                    deserializedManagedInstanceOperationInner.innerProperties
+                        = ManagedInstanceOperationProperties.fromJson(reader);
+                } else {
+                    reader.skipChildren();
+                }
+            }
+
+            return deserializedManagedInstanceOperationInner;
+        });
     }
 }

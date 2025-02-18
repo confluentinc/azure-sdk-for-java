@@ -4,52 +4,68 @@
 package com.azure.core.credential;
 
 import com.azure.core.util.Base64Util;
-import com.azure.core.util.logging.ClientLogger;
 import reactor.core.publisher.Mono;
 
-import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.time.OffsetDateTime;
 
 /**
- * Basic Auth credentials for use with a REST Service Client.
+ * <p>
+ * The {@link BasicAuthenticationCredential} is used to authenticate and authorize requests made to
+ * Azure services using the Basic authentication scheme. Basic Authentication is a simple authentication scheme
+ * that uses a combination of a username and password.
+ * </p>
+ *
+ * <p>
+ * Note that Basic Authentication is generally considered less secure than other authentication methods,
+ * such as Azure Active Directory (AAD) authentication. It is recommended to use
+ * <a href="https://learn.microsoft.com/azure/active-directory/fundamentals/">Azure Active Directory (Azure AD)</a>
+ * authentication via {@link TokenCredential} whenever possible, especially for production environments.
+ * </p>
+ *
+ * <p>
+ * <strong>Sample: Azure SAS Authentication</strong>
+ * </p>
+ *
+ * <p>
+ * The following code sample demonstrates the creation of a
+ * {@link com.azure.core.credential.BasicAuthenticationCredential}, using username and password
+ * </p>
+ *
+ * <!-- src_embed com.azure.core.credential.basicAuthenticationCredential -->
+ * <pre>
+ * BasicAuthenticationCredential basicAuthenticationCredential =
+ *     new BasicAuthenticationCredential&#40;&quot;&lt;username&gt;&quot;, &quot;&lt;password&gt;&quot;&#41;;
+ * </pre>
+ * <!-- end com.azure.core.credential.basicAuthenticationCredential -->
+ *
+ * @see com.azure.core.credential
+ * @see com.azure.core.credential.TokenCredential
  */
 public class BasicAuthenticationCredential implements TokenCredential {
-    private final ClientLogger logger = new ClientLogger(BasicAuthenticationCredential.class);
     /**
-     * Basic auth user name.
+     * Base64 encoded username-password credential.
      */
-    private final String username;
-
-    /**
-     * Basic auth password.
-     */
-    private final String password;
+    private final String encodedCredential;
 
     /**
      * Creates a basic authentication credential.
      *
-     * @param username basic auth user name
+     * @param username basic auth username
      * @param password basic auth password
      */
     public BasicAuthenticationCredential(String username, String password) {
-        this.username = username;
-        this.password = password;
+        String credential = username + ":" + password;
+        this.encodedCredential = Base64Util.encodeToString(credential.getBytes(StandardCharsets.UTF_8));
     }
 
-    /**
-     * @throws RuntimeException If the UTF-8 encoding isn't supported.
-     */
     @Override
     public Mono<AccessToken> getToken(TokenRequestContext request) {
-        String credential = username + ":" + password;
-        String encodedCredential;
-        try {
-            encodedCredential = Base64Util.encodeToString(credential.getBytes("UTF8"));
-        } catch (UnsupportedEncodingException e) {
-            // The encoding is hard-coded, so if it's unsupported, it needs to be fixed right here.
-            throw logger.logExceptionAsError(new RuntimeException(e));
-        }
+        return Mono.fromCallable(() -> new AccessToken(encodedCredential, OffsetDateTime.MAX));
+    }
 
-        return Mono.just(new AccessToken(encodedCredential, OffsetDateTime.MAX));
+    @Override
+    public AccessToken getTokenSync(TokenRequestContext request) {
+        return new AccessToken(encodedCredential, OffsetDateTime.MAX);
     }
 }

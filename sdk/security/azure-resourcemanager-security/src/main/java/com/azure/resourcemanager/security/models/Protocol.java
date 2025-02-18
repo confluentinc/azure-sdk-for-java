@@ -4,62 +4,53 @@
 
 package com.azure.resourcemanager.security.models;
 
-import com.azure.core.annotation.Fluent;
-import com.azure.core.util.logging.ClientLogger;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.azure.core.util.ExpandableStringEnum;
+import java.util.Collection;
 
-/** Protocol data. */
-@Fluent
-public final class Protocol {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(Protocol.class);
-
-    /*
-     * Protocol name
+/**
+ * Defines values for Protocol.
+ */
+public final class Protocol extends ExpandableStringEnum<Protocol> {
+    /**
+     * Static value TCP for Protocol.
      */
-    @JsonProperty(value = "name", access = JsonProperty.Access.WRITE_ONLY)
-    private String name;
-
-    /*
-     * list of protocol identifiers.
-     */
-    @JsonProperty(value = "identifiers")
-    private String identifiers;
+    public static final Protocol TCP = fromString("TCP");
 
     /**
-     * Get the name property: Protocol name.
-     *
-     * @return the name value.
+     * Static value UDP for Protocol.
      */
-    public String name() {
-        return this.name;
+    public static final Protocol UDP = fromString("UDP");
+
+    /**
+     * Static value * for Protocol.
+     */
+    public static final Protocol ASTERISK = fromString("*");
+
+    /**
+     * Creates a new instance of Protocol value.
+     * 
+     * @deprecated Use the {@link #fromString(String)} factory method.
+     */
+    @Deprecated
+    public Protocol() {
     }
 
     /**
-     * Get the identifiers property: list of protocol identifiers.
-     *
-     * @return the identifiers value.
+     * Creates or finds a Protocol from its string representation.
+     * 
+     * @param name a name to look for.
+     * @return the corresponding Protocol.
      */
-    public String identifiers() {
-        return this.identifiers;
+    public static Protocol fromString(String name) {
+        return fromString(name, Protocol.class);
     }
 
     /**
-     * Set the identifiers property: list of protocol identifiers.
-     *
-     * @param identifiers the identifiers value to set.
-     * @return the Protocol object itself.
+     * Gets known Protocol values.
+     * 
+     * @return known Protocol values.
      */
-    public Protocol withIdentifiers(String identifiers) {
-        this.identifiers = identifiers;
-        return this;
-    }
-
-    /**
-     * Validates the instance.
-     *
-     * @throws IllegalArgumentException thrown if the instance is not valid.
-     */
-    public void validate() {
+    public static Collection<Protocol> values() {
+        return values(Protocol.class);
     }
 }

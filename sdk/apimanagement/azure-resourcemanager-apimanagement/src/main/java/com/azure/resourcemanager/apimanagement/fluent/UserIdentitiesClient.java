@@ -10,35 +10,37 @@ import com.azure.core.http.rest.PagedIterable;
 import com.azure.core.util.Context;
 import com.azure.resourcemanager.apimanagement.fluent.models.UserIdentityContractInner;
 
-/** An instance of this class provides access to all the operations defined in UserIdentitiesClient. */
+/**
+ * An instance of this class provides access to all the operations defined in UserIdentitiesClient.
+ */
 public interface UserIdentitiesClient {
     /**
      * List of all user identities.
-     *
-     * @param resourceGroupName The name of the resource group.
+     * 
+     * @param resourceGroupName The name of the resource group. The name is case insensitive.
      * @param serviceName The name of the API Management service.
      * @param userId User identifier. Must be unique in the current API Management service instance.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return list of Users Identity list representation.
+     * @return list of Users Identity list representation as paginated response with {@link PagedIterable}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
     PagedIterable<UserIdentityContractInner> list(String resourceGroupName, String serviceName, String userId);
 
     /**
      * List of all user identities.
-     *
-     * @param resourceGroupName The name of the resource group.
+     * 
+     * @param resourceGroupName The name of the resource group. The name is case insensitive.
      * @param serviceName The name of the API Management service.
      * @param userId User identifier. Must be unique in the current API Management service instance.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return list of Users Identity list representation.
+     * @return list of Users Identity list representation as paginated response with {@link PagedIterable}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
-    PagedIterable<UserIdentityContractInner> list(
-        String resourceGroupName, String serviceName, String userId, Context context);
+    PagedIterable<UserIdentityContractInner> list(String resourceGroupName, String serviceName, String userId,
+        Context context);
 }

@@ -22,11 +22,13 @@ import com.azure.resourcemanager.eventhubs.models.EventHubNamespaceAuthorization
 import com.azure.resourcemanager.eventhubs.models.EventHubNamespaces;
 import com.azure.resourcemanager.eventhubs.models.EventHubs;
 import com.azure.resourcemanager.resources.fluentcore.arm.AzureConfigurable;
-import com.azure.resourcemanager.resources.fluentcore.arm.implementation.AzureConfigurableImpl;
 import com.azure.resourcemanager.resources.fluentcore.arm.Manager;
 import com.azure.core.management.profile.AzureProfile;
+import com.azure.resourcemanager.resources.fluentcore.arm.implementation.AzureConfigurableImpl;
 import com.azure.resourcemanager.resources.fluentcore.utils.HttpPipelineProvider;
 import com.azure.resourcemanager.storage.StorageManager;
+
+import java.util.Objects;
 
 /**
  * Entry point to Azure EventHub resource management.
@@ -59,17 +61,21 @@ public final class EventHubsManager extends Manager<EventHubManagementClient> {
      * @return the EventHubsManager
      */
     public static EventHubsManager authenticate(TokenCredential credential, AzureProfile profile) {
+        Objects.requireNonNull(credential, "'credential' cannot be null.");
+        Objects.requireNonNull(profile, "'profile' cannot be null.");
         return authenticate(HttpPipelineProvider.buildHttpPipeline(credential, profile), profile);
     }
 
     /**
      * Creates an instance of EventHubsManager that exposes EventHub resource management API entry points.
      *
-     * @param httpPipeline the HttpPipeline to be used for API calls.
+     * @param httpPipeline the {@link HttpPipeline} configured with Azure authentication credential.
      * @param profile the profile to use
      * @return the EventHubsManager
      */
-    private static EventHubsManager authenticate(HttpPipeline httpPipeline, AzureProfile profile) {
+    public static EventHubsManager authenticate(HttpPipeline httpPipeline, AzureProfile profile) {
+        Objects.requireNonNull(httpPipeline, "'httpPipeline' cannot be null.");
+        Objects.requireNonNull(profile, "'profile' cannot be null.");
         return new EventHubsManager(httpPipeline, profile);
     }
 
@@ -86,6 +92,7 @@ public final class EventHubsManager extends Manager<EventHubManagementClient> {
          */
         EventHubsManager authenticate(TokenCredential credential, AzureProfile profile);
     }
+
     /**
      * The implementation for Configurable interface.
      */
@@ -94,20 +101,19 @@ public final class EventHubsManager extends Manager<EventHubManagementClient> {
             return EventHubsManager.authenticate(buildHttpPipeline(credential, profile), profile);
         }
     }
+
     private EventHubsManager(HttpPipeline httpPipeline, AzureProfile profile) {
-        super(
-            httpPipeline,
-            profile,
-            new EventHubManagementClientBuilder()
-                .pipeline(httpPipeline)
+        super(httpPipeline, profile,
+            new EventHubManagementClientBuilder().pipeline(httpPipeline)
                 .endpoint(profile.getEnvironment().getResourceManagerEndpoint())
                 .subscriptionId(profile.getSubscriptionId())
                 .buildClient());
-        storageManager = AzureConfigurableImpl.configureHttpPipeline(httpPipeline, StorageManager.configure())
-            .authenticate(null, profile);
+        storageManager = StorageManager.authenticate(httpPipeline, profile);
     }
 
     /**
+     * Gets entry point to manage EventHub namespaces.
+     *
      * @return entry point to manage EventHub namespaces
      */
     public EventHubNamespaces namespaces() {
@@ -118,6 +124,8 @@ public final class EventHubsManager extends Manager<EventHubManagementClient> {
     }
 
     /**
+     * Gets entry point to manage event hubs.
+     *
      * @return entry point to manage event hubs
      */
     public EventHubs eventHubs() {
@@ -128,6 +136,8 @@ public final class EventHubsManager extends Manager<EventHubManagementClient> {
     }
 
     /**
+     * Gets entry point to manage event hub consumer groups.
+     *
      * @return entry point to manage event hub consumer groups
      */
     public EventHubConsumerGroups consumerGroups() {
@@ -138,6 +148,8 @@ public final class EventHubsManager extends Manager<EventHubManagementClient> {
     }
 
     /**
+     * Gets entry point to manage disaster recovery pairing of event hub namespaces.
+     *
      * @return entry point to manage disaster recovery pairing of event hub namespaces.
      */
     public EventHubDisasterRecoveryPairings eventHubDisasterRecoveryPairings() {
@@ -148,6 +160,8 @@ public final class EventHubsManager extends Manager<EventHubManagementClient> {
     }
 
     /**
+     * Gets entry point to manage event hub authorization rules.
+     *
      * @return entry point to manage event hub authorization rules.
      */
     public EventHubAuthorizationRules eventHubAuthorizationRules() {
@@ -158,6 +172,8 @@ public final class EventHubsManager extends Manager<EventHubManagementClient> {
     }
 
     /**
+     * Gets entry point to manage event hub namespace authorization rules.
+     *
      * @return entry point to manage event hub namespace authorization rules.
      */
     public EventHubNamespaceAuthorizationRules namespaceAuthorizationRules() {
@@ -168,6 +184,8 @@ public final class EventHubsManager extends Manager<EventHubManagementClient> {
     }
 
     /**
+     * Gets entry point to manage disaster recovery pairing authorization rules.
+     *
      * @return entry point to manage disaster recovery pairing authorization rules.
      */
     public DisasterRecoveryPairingAuthorizationRules disasterRecoveryPairingAuthorizationRules() {

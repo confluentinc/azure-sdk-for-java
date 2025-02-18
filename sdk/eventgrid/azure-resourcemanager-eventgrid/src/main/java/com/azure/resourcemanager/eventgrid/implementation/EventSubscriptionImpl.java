@@ -95,6 +95,10 @@ public final class EventSubscriptionImpl
         return this.innerModel().deadLetterWithResourceIdentity();
     }
 
+    public String resourceGroupName() {
+        return resourceGroupName;
+    }
+
     public EventSubscriptionInner innerModel() {
         return this.innerObject;
     }
@@ -103,32 +107,31 @@ public final class EventSubscriptionImpl
         return this.serviceManager;
     }
 
-    private String scope;
+    private String resourceGroupName;
+
+    private String topicName;
 
     private String eventSubscriptionName;
 
     private EventSubscriptionUpdateParameters updateEventSubscriptionUpdateParameters;
 
-    public EventSubscriptionImpl withExistingScope(String scope) {
-        this.scope = scope;
+    public EventSubscriptionImpl withExistingTopic(String resourceGroupName, String topicName) {
+        this.resourceGroupName = resourceGroupName;
+        this.topicName = topicName;
         return this;
     }
 
     public EventSubscription create() {
-        this.innerObject =
-            serviceManager
-                .serviceClient()
-                .getEventSubscriptions()
-                .createOrUpdate(scope, eventSubscriptionName, this.innerModel(), Context.NONE);
+        this.innerObject = serviceManager.serviceClient()
+            .getTopicEventSubscriptions()
+            .createOrUpdate(resourceGroupName, topicName, eventSubscriptionName, this.innerModel(), Context.NONE);
         return this;
     }
 
     public EventSubscription create(Context context) {
-        this.innerObject =
-            serviceManager
-                .serviceClient()
-                .getEventSubscriptions()
-                .createOrUpdate(scope, eventSubscriptionName, this.innerModel(), context);
+        this.innerObject = serviceManager.serviceClient()
+            .getTopicEventSubscriptions()
+            .createOrUpdate(resourceGroupName, topicName, eventSubscriptionName, this.innerModel(), context);
         return this;
     }
 
@@ -144,77 +147,63 @@ public final class EventSubscriptionImpl
     }
 
     public EventSubscription apply() {
-        this.innerObject =
-            serviceManager
-                .serviceClient()
-                .getEventSubscriptions()
-                .update(scope, eventSubscriptionName, updateEventSubscriptionUpdateParameters, Context.NONE);
+        this.innerObject = serviceManager.serviceClient()
+            .getTopicEventSubscriptions()
+            .update(resourceGroupName, topicName, eventSubscriptionName, updateEventSubscriptionUpdateParameters,
+                Context.NONE);
         return this;
     }
 
     public EventSubscription apply(Context context) {
-        this.innerObject =
-            serviceManager
-                .serviceClient()
-                .getEventSubscriptions()
-                .update(scope, eventSubscriptionName, updateEventSubscriptionUpdateParameters, context);
+        this.innerObject = serviceManager.serviceClient()
+            .getTopicEventSubscriptions()
+            .update(resourceGroupName, topicName, eventSubscriptionName, updateEventSubscriptionUpdateParameters,
+                context);
         return this;
     }
 
-    EventSubscriptionImpl(
-        EventSubscriptionInner innerObject, com.azure.resourcemanager.eventgrid.EventGridManager serviceManager) {
+    EventSubscriptionImpl(EventSubscriptionInner innerObject,
+        com.azure.resourcemanager.eventgrid.EventGridManager serviceManager) {
         this.innerObject = innerObject;
         this.serviceManager = serviceManager;
-        this.scope =
-            Utils
-                .getValueFromIdByParameterName(
-                    innerObject.id(),
-                    "/{scope}/providers/Microsoft.EventGrid/eventSubscriptions/{eventSubscriptionName}",
-                    "scope");
-        this.eventSubscriptionName =
-            Utils
-                .getValueFromIdByParameterName(
-                    innerObject.id(),
-                    "/{scope}/providers/Microsoft.EventGrid/eventSubscriptions/{eventSubscriptionName}",
-                    "eventSubscriptionName");
+        this.resourceGroupName = ResourceManagerUtils.getValueFromIdByName(innerObject.id(), "resourceGroups");
+        this.topicName = ResourceManagerUtils.getValueFromIdByName(innerObject.id(), "topics");
+        this.eventSubscriptionName = ResourceManagerUtils.getValueFromIdByName(innerObject.id(), "eventSubscriptions");
     }
 
     public EventSubscription refresh() {
-        this.innerObject =
-            serviceManager
-                .serviceClient()
-                .getEventSubscriptions()
-                .getWithResponse(scope, eventSubscriptionName, Context.NONE)
-                .getValue();
+        this.innerObject = serviceManager.serviceClient()
+            .getTopicEventSubscriptions()
+            .getWithResponse(resourceGroupName, topicName, eventSubscriptionName, Context.NONE)
+            .getValue();
         return this;
     }
 
     public EventSubscription refresh(Context context) {
-        this.innerObject =
-            serviceManager
-                .serviceClient()
-                .getEventSubscriptions()
-                .getWithResponse(scope, eventSubscriptionName, context)
-                .getValue();
+        this.innerObject = serviceManager.serviceClient()
+            .getTopicEventSubscriptions()
+            .getWithResponse(resourceGroupName, topicName, eventSubscriptionName, context)
+            .getValue();
         return this;
     }
 
-    public EventSubscriptionFullUrl getFullUrl() {
-        return serviceManager.eventSubscriptions().getFullUrl(scope, eventSubscriptionName);
-    }
-
-    public Response<EventSubscriptionFullUrl> getFullUrlWithResponse(Context context) {
-        return serviceManager.eventSubscriptions().getFullUrlWithResponse(scope, eventSubscriptionName, context);
+    public Response<DeliveryAttributeListResult> getDeliveryAttributesWithResponse(Context context) {
+        return serviceManager.topicEventSubscriptions()
+            .getDeliveryAttributesWithResponse(resourceGroupName, topicName, eventSubscriptionName, context);
     }
 
     public DeliveryAttributeListResult getDeliveryAttributes() {
-        return serviceManager.eventSubscriptions().getDeliveryAttributes(scope, eventSubscriptionName);
+        return serviceManager.topicEventSubscriptions()
+            .getDeliveryAttributes(resourceGroupName, topicName, eventSubscriptionName);
     }
 
-    public Response<DeliveryAttributeListResult> getDeliveryAttributesWithResponse(Context context) {
-        return serviceManager
-            .eventSubscriptions()
-            .getDeliveryAttributesWithResponse(scope, eventSubscriptionName, context);
+    public Response<EventSubscriptionFullUrl> getFullUrlWithResponse(Context context) {
+        return serviceManager.topicEventSubscriptions()
+            .getFullUrlWithResponse(resourceGroupName, topicName, eventSubscriptionName, context);
+    }
+
+    public EventSubscriptionFullUrl getFullUrl() {
+        return serviceManager.topicEventSubscriptions().getFullUrl(resourceGroupName, topicName, eventSubscriptionName);
     }
 
     public EventSubscriptionImpl withDestination(EventSubscriptionDestination destination) {
@@ -227,8 +216,8 @@ public final class EventSubscriptionImpl
         }
     }
 
-    public EventSubscriptionImpl withDeliveryWithResourceIdentity(
-        DeliveryWithResourceIdentity deliveryWithResourceIdentity) {
+    public EventSubscriptionImpl
+        withDeliveryWithResourceIdentity(DeliveryWithResourceIdentity deliveryWithResourceIdentity) {
         if (isInCreateMode()) {
             this.innerModel().withDeliveryWithResourceIdentity(deliveryWithResourceIdentity);
             return this;
@@ -298,14 +287,13 @@ public final class EventSubscriptionImpl
         }
     }
 
-    public EventSubscriptionImpl withDeadLetterWithResourceIdentity(
-        DeadLetterWithResourceIdentity deadLetterWithResourceIdentity) {
+    public EventSubscriptionImpl
+        withDeadLetterWithResourceIdentity(DeadLetterWithResourceIdentity deadLetterWithResourceIdentity) {
         if (isInCreateMode()) {
             this.innerModel().withDeadLetterWithResourceIdentity(deadLetterWithResourceIdentity);
             return this;
         } else {
-            this
-                .updateEventSubscriptionUpdateParameters
+            this.updateEventSubscriptionUpdateParameters
                 .withDeadLetterWithResourceIdentity(deadLetterWithResourceIdentity);
             return this;
         }

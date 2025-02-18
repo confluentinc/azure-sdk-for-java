@@ -17,9 +17,9 @@ import com.azure.cosmos.implementation.routing.Range;
 import com.azure.cosmos.models.FeedRange;
 import com.azure.cosmos.models.PartitionKeyDefinition;
 import com.azure.cosmos.models.PartitionKeyDefinitionVersion;
-import com.azure.cosmos.models.PartitionKind;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import reactor.core.publisher.Mono;
@@ -34,6 +34,7 @@ import java.util.List;
 import static com.azure.cosmos.implementation.guava25.base.Preconditions.checkArgument;
 import static com.azure.cosmos.implementation.guava25.base.Preconditions.checkNotNull;
 
+@JsonSerialize(using = FeedRangeInternalSerializer.class)
 @JsonDeserialize(using = FeedRangeInternalDeserializer.class)
 public abstract class FeedRangeInternal extends JsonSerializable implements FeedRange {
     private final static Logger LOGGER = LoggerFactory.getLogger(FeedRangeInternal.class);
@@ -218,18 +219,15 @@ public abstract class FeedRangeInternal extends JsonSerializable implements Feed
                        PartitionKeyDefinition pkDefinition =
                            collectionValueHolder.v.getPartitionKey();
 
-                       if (targetedSplitCount <= 1 ||
-                           effectiveRange.isSingleValue() ||
-                           // splitting ranges into sub ranges only possible for hash partitioning
-                           pkDefinition.getKind() != PartitionKind.HASH) {
+                       if (targetedSplitCount <= 1 || effectiveRange.isSingleValue()) {
 
                            return Collections.singletonList(new FeedRangeEpkImpl(effectiveRange));
                        }
 
                        PartitionKeyDefinitionVersion effectivePKVersion =
-                           pkDefinition.getVersion() != null
-                           ? pkDefinition.getVersion()
-                           : PartitionKeyDefinitionVersion.V1;
+                               pkDefinition.getVersion() != null
+                                       ? pkDefinition.getVersion()
+                                       : PartitionKeyDefinitionVersion.V1;
                        switch (effectivePKVersion) {
                            case V1:
                                return trySplitWithHashV1(effectiveRange, targetedSplitCount);
@@ -242,6 +240,7 @@ public abstract class FeedRangeInternal extends JsonSerializable implements Feed
                        }
                    });
     }
+
 
     static List<FeedRangeEpkImpl> trySplitWithHashV1(
         Range<String> effectiveRange,
@@ -265,30 +264,34 @@ public abstract class FeedRangeInternal extends JsonSerializable implements Feed
         String minRange = effectiveRange.getMin();
         long diff = max - min;
         List<FeedRangeEpkImpl> splitFeedRanges = new ArrayList<>(targetedSplitCount);
-        for (int i = 1; i < targetedSplitCount; i++) {
-            long splitPoint = min + (i * (diff / targetedSplitCount));
-            String maxRange = PartitionKeyInternalHelper.toHexEncodedBinaryString(
-                new NumberPartitionKeyComponent[] {
-                    new NumberPartitionKeyComponent(splitPoint)
-                });
+        if (diff < targetedSplitCount) {
+            splitFeedRanges.add(new FeedRangeEpkImpl(effectiveRange));
+        } else {
+            for (int i = 1; i < targetedSplitCount; i++) {
+                long splitPoint = min + (i * (diff / targetedSplitCount));
+                String maxRange = PartitionKeyInternalHelper.toHexEncodedBinaryString(
+                    new NumberPartitionKeyComponent[] {
+                        new NumberPartitionKeyComponent(splitPoint)
+                    });
+                splitFeedRanges.add(
+                    new FeedRangeEpkImpl(
+                        new Range<>(
+                            minRange,
+                            maxRange,
+                            i > 1 || effectiveRange.isMinInclusive(),
+                            false)));
+
+                minRange = maxRange;
+            }
+
             splitFeedRanges.add(
                 new FeedRangeEpkImpl(
                     new Range<>(
                         minRange,
-                        maxRange,
-                        i > 1 || effectiveRange.isMinInclusive(),
-                        false)));
-
-            minRange = maxRange;
+                        effectiveRange.getMax(),
+                        true,
+                        effectiveRange.isMaxInclusive())));
         }
-
-        splitFeedRanges.add(
-            new FeedRangeEpkImpl(
-                new Range<>(
-                    minRange,
-                    effectiveRange.getMax(),
-                    true,
-                    effectiveRange.isMaxInclusive())));
 
         return splitFeedRanges;
     }

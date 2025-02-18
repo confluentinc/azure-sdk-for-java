@@ -4,30 +4,43 @@
 
 package com.azure.resourcemanager.monitor.models;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonValue;
-
-/** Defines values for AggregationType. */
+/**
+ * the aggregation type of the metric.
+ */
 public enum AggregationType {
-    /** Enum value None. */
+    /**
+     * Enum value None.
+     */
     NONE("None"),
 
-    /** Enum value Average. */
+    /**
+     * Enum value Average.
+     */
     AVERAGE("Average"),
 
-    /** Enum value Count. */
+    /**
+     * Enum value Count.
+     */
     COUNT("Count"),
 
-    /** Enum value Minimum. */
+    /**
+     * Enum value Minimum.
+     */
     MINIMUM("Minimum"),
 
-    /** Enum value Maximum. */
+    /**
+     * Enum value Maximum.
+     */
     MAXIMUM("Maximum"),
 
-    /** Enum value Total. */
+    /**
+     * Enum value Total.
+     */
     TOTAL("Total");
 
-    /** The actual serialized value for a AggregationType instance. */
+    /**
+     * The actual serialized value for a AggregationType instance.
+     */
     private final String value;
 
     AggregationType(String value) {
@@ -36,12 +49,14 @@ public enum AggregationType {
 
     /**
      * Parses a serialized value to a AggregationType instance.
-     *
+     * 
      * @param value the serialized value to parse.
      * @return the parsed AggregationType object, or null if unable to parse.
      */
-    @JsonCreator
     public static AggregationType fromString(String value) {
+        if (value == null) {
+            return null;
+        }
         AggregationType[] items = AggregationType.values();
         for (AggregationType item : items) {
             if (item.toString().equalsIgnoreCase(value)) {
@@ -51,7 +66,9 @@ public enum AggregationType {
         return null;
     }
 
-    @JsonValue
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String toString() {
         return this.value;

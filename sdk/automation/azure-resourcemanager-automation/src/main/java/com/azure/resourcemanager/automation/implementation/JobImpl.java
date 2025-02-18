@@ -4,6 +4,7 @@
 
 package com.azure.resourcemanager.automation.implementation;
 
+import com.azure.core.http.rest.Response;
 import com.azure.core.util.Context;
 import com.azure.resourcemanager.automation.fluent.models.JobInner;
 import com.azure.resourcemanager.automation.models.Job;
@@ -124,29 +125,20 @@ public final class JobImpl implements Job, Job.Definition {
     }
 
     public Job create() {
-        this.innerObject =
-            serviceManager
-                .serviceClient()
-                .getJobs()
-                .createWithResponse(
-                    resourceGroupName,
-                    automationAccountName,
-                    jobName,
-                    createParameters,
-                    createClientRequestId,
-                    Context.NONE)
-                .getValue();
+        this.innerObject = serviceManager.serviceClient()
+            .getJobs()
+            .createWithResponse(resourceGroupName, automationAccountName, jobName, createParameters,
+                createClientRequestId, Context.NONE)
+            .getValue();
         return this;
     }
 
     public Job create(Context context) {
-        this.innerObject =
-            serviceManager
-                .serviceClient()
-                .getJobs()
-                .createWithResponse(
-                    resourceGroupName, automationAccountName, jobName, createParameters, createClientRequestId, context)
-                .getValue();
+        this.innerObject = serviceManager.serviceClient()
+            .getJobs()
+            .createWithResponse(resourceGroupName, automationAccountName, jobName, createParameters,
+                createClientRequestId, context)
+            .getValue();
         return this;
     }
 
@@ -160,24 +152,47 @@ public final class JobImpl implements Job, Job.Definition {
 
     public Job refresh() {
         String localClientRequestId = null;
-        this.innerObject =
-            serviceManager
-                .serviceClient()
-                .getJobs()
-                .getWithResponse(resourceGroupName, automationAccountName, jobName, localClientRequestId, Context.NONE)
-                .getValue();
+        this.innerObject = serviceManager.serviceClient()
+            .getJobs()
+            .getWithResponse(resourceGroupName, automationAccountName, jobName, localClientRequestId, Context.NONE)
+            .getValue();
         return this;
     }
 
     public Job refresh(Context context) {
         String localClientRequestId = null;
-        this.innerObject =
-            serviceManager
-                .serviceClient()
-                .getJobs()
-                .getWithResponse(resourceGroupName, automationAccountName, jobName, localClientRequestId, context)
-                .getValue();
+        this.innerObject = serviceManager.serviceClient()
+            .getJobs()
+            .getWithResponse(resourceGroupName, automationAccountName, jobName, localClientRequestId, context)
+            .getValue();
         return this;
+    }
+
+    public Response<Void> suspendWithResponse(String clientRequestId, Context context) {
+        return serviceManager.jobs()
+            .suspendWithResponse(resourceGroupName, automationAccountName, jobName, clientRequestId, context);
+    }
+
+    public void suspend() {
+        serviceManager.jobs().suspend(resourceGroupName, automationAccountName, jobName);
+    }
+
+    public Response<Void> stopWithResponse(String clientRequestId, Context context) {
+        return serviceManager.jobs()
+            .stopWithResponse(resourceGroupName, automationAccountName, jobName, clientRequestId, context);
+    }
+
+    public void stop() {
+        serviceManager.jobs().stop(resourceGroupName, automationAccountName, jobName);
+    }
+
+    public Response<Void> resumeWithResponse(String clientRequestId, Context context) {
+        return serviceManager.jobs()
+            .resumeWithResponse(resourceGroupName, automationAccountName, jobName, clientRequestId, context);
+    }
+
+    public void resume() {
+        serviceManager.jobs().resume(resourceGroupName, automationAccountName, jobName);
     }
 
     public JobImpl withRunbook(RunbookAssociationProperty runbook) {

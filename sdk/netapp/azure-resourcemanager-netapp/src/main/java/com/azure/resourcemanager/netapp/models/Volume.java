@@ -4,125 +4,152 @@
 
 package com.azure.resourcemanager.netapp.models;
 
+import com.azure.core.http.rest.PagedIterable;
 import com.azure.core.management.Region;
+import com.azure.core.management.SystemData;
 import com.azure.core.util.Context;
 import com.azure.resourcemanager.netapp.fluent.models.MountTargetProperties;
 import com.azure.resourcemanager.netapp.fluent.models.VolumeInner;
 import java.util.List;
 import java.util.Map;
 
-/** An immutable client-side representation of Volume. */
+/**
+ * An immutable client-side representation of Volume.
+ */
 public interface Volume {
     /**
      * Gets the id property: Fully qualified resource Id for the resource.
-     *
+     * 
      * @return the id value.
      */
     String id();
 
     /**
      * Gets the name property: The name of the resource.
-     *
+     * 
      * @return the name value.
      */
     String name();
 
     /**
      * Gets the type property: The type of the resource.
-     *
+     * 
      * @return the type value.
      */
     String type();
 
     /**
      * Gets the location property: The geo-location where the resource lives.
-     *
+     * 
      * @return the location value.
      */
     String location();
 
     /**
      * Gets the tags property: Resource tags.
-     *
+     * 
      * @return the tags value.
      */
     Map<String, String> tags();
 
     /**
      * Gets the etag property: A unique read-only string that changes whenever the resource is updated.
-     *
+     * 
      * @return the etag value.
      */
     String etag();
 
     /**
-     * Gets the fileSystemId property: FileSystem ID Unique FileSystem Identifier.
-     *
+     * Gets the zones property: Availability Zone.
+     * 
+     * @return the zones value.
+     */
+    List<String> zones();
+
+    /**
+     * Gets the systemData property: Azure Resource Manager metadata containing createdBy and modifiedBy information.
+     * 
+     * @return the systemData value.
+     */
+    SystemData systemData();
+
+    /**
+     * Gets the fileSystemId property: Unique FileSystem Identifier.
+     * 
      * @return the fileSystemId value.
      */
     String fileSystemId();
 
     /**
-     * Gets the creationToken property: Creation Token or File Path A unique file path for the volume. Used when
-     * creating mount targets.
-     *
+     * Gets the creationToken property: A unique file path for the volume. Used when creating mount targets.
+     * 
      * @return the creationToken value.
      */
     String creationToken();
 
     /**
-     * Gets the serviceLevel property: serviceLevel The service level of the file system.
-     *
+     * Gets the serviceLevel property: The service level of the file system.
+     * 
      * @return the serviceLevel value.
      */
     ServiceLevel serviceLevel();
 
     /**
-     * Gets the usageThreshold property: usageThreshold Maximum storage quota allowed for a file system in bytes. This
-     * is a soft quota used for alerting only. Minimum size is 100 GiB. Upper limit is 100TiB. Specified in bytes.
-     *
+     * Gets the usageThreshold property: Maximum storage quota allowed for a file system in bytes. This is a soft quota
+     * used for alerting only. For regular volumes, valid values are in the range 50GiB to 100TiB. For large volumes,
+     * valid values are in the range 100TiB to 1PiB, and on an exceptional basis, from to 2400GiB to 2400TiB. Values
+     * expressed in bytes as multiples of 1 GiB.
+     * 
      * @return the usageThreshold value.
      */
     long usageThreshold();
 
     /**
-     * Gets the exportPolicy property: exportPolicy Set of export policy rules.
-     *
+     * Gets the exportPolicy property: Set of export policy rules.
+     * 
      * @return the exportPolicy value.
      */
     VolumePropertiesExportPolicy exportPolicy();
 
     /**
-     * Gets the protocolTypes property: protocolTypes Set of protocol types, default NFSv3, CIFS for SMB protocol.
-     *
+     * Gets the protocolTypes property: Set of protocol types, default NFSv3, CIFS for SMB protocol.
+     * 
      * @return the protocolTypes value.
      */
     List<String> protocolTypes();
 
     /**
      * Gets the provisioningState property: Azure lifecycle management.
-     *
+     * 
      * @return the provisioningState value.
      */
     String provisioningState();
 
     /**
-     * Gets the snapshotId property: Snapshot ID UUID v4 or resource identifier used to identify the Snapshot.
-     *
+     * Gets the snapshotId property: Resource identifier used to identify the Snapshot.
+     * 
      * @return the snapshotId value.
      */
     String snapshotId();
 
     /**
-     * Gets the backupId property: Backup ID UUID v4 or resource identifier used to identify the Backup.
-     *
+     * Gets the deleteBaseSnapshot property: If enabled (true) the snapshot the volume was created from will be
+     * automatically deleted after the volume create operation has finished. Defaults to false.
+     * 
+     * @return the deleteBaseSnapshot value.
+     */
+    Boolean deleteBaseSnapshot();
+
+    /**
+     * Gets the backupId property: Resource identifier used to identify the Backup.
+     * 
      * @return the backupId value.
      */
     String backupId();
 
     /**
-     * Gets the baremetalTenantId property: Baremetal Tenant ID Unique Baremetal Tenant Identifier.
-     *
+     * Gets the baremetalTenantId property: Unique Baremetal Tenant Identifier.
+     * 
      * @return the baremetalTenantId value.
      */
     String baremetalTenantId();
@@ -130,68 +157,86 @@ public interface Volume {
     /**
      * Gets the subnetId property: The Azure Resource URI for a delegated subnet. Must have the delegation
      * Microsoft.NetApp/volumes.
-     *
+     * 
      * @return the subnetId value.
      */
     String subnetId();
 
     /**
-     * Gets the networkFeatures property: Network features Basic network, or Standard features available to the volume.
-     *
+     * Gets the networkFeatures property: The original value of the network features type available to the volume at the
+     * time it was created.
+     * 
      * @return the networkFeatures value.
      */
     NetworkFeatures networkFeatures();
 
     /**
-     * Gets the networkSiblingSetId property: Network Sibling Set ID Network Sibling Set ID for the the group of volumes
-     * sharing networking resources.
-     *
+     * Gets the effectiveNetworkFeatures property: The effective value of the network features type available to the
+     * volume, or current effective state of update.
+     * 
+     * @return the effectiveNetworkFeatures value.
+     */
+    NetworkFeatures effectiveNetworkFeatures();
+
+    /**
+     * Gets the networkSiblingSetId property: Network Sibling Set ID for the the group of volumes sharing networking
+     * resources.
+     * 
      * @return the networkSiblingSetId value.
      */
     String networkSiblingSetId();
 
     /**
-     * Gets the storageToNetworkProximity property: Storage to Network Proximity Provides storage to network proximity
-     * information for the volume.
-     *
+     * Gets the storageToNetworkProximity property: Provides storage to network proximity information for the volume.
+     * 
      * @return the storageToNetworkProximity value.
      */
     VolumeStorageToNetworkProximity storageToNetworkProximity();
 
     /**
-     * Gets the mountTargets property: mountTargets List of mount targets.
-     *
+     * Gets the mountTargets property: List of mount targets.
+     * 
      * @return the mountTargets value.
      */
     List<MountTargetProperties> mountTargets();
 
     /**
      * Gets the volumeType property: What type of volume is this. For destination volumes in Cross Region Replication,
-     * set type to DataProtection.
-     *
+     * set type to DataProtection. For creating clone volume, set type to ShortTermClone.
+     * 
      * @return the volumeType value.
      */
     String volumeType();
 
     /**
-     * Gets the dataProtection property: DataProtection DataProtection type volumes include an object containing details
-     * of the replication.
-     *
+     * Gets the dataProtection property: DataProtection type volumes include an object containing details of the
+     * replication.
+     * 
      * @return the dataProtection value.
      */
     VolumePropertiesDataProtection dataProtection();
 
     /**
+     * Gets the acceptGrowCapacityPoolForShortTermCloneSplit property: While auto splitting the short term clone volume,
+     * if the parent pool does not have enough space to accommodate the volume after split, it will be automatically
+     * resized, which will lead to increased billing. To accept capacity pool size auto grow and create a short term
+     * clone volume, set the property as accepted.
+     * 
+     * @return the acceptGrowCapacityPoolForShortTermCloneSplit value.
+     */
+    AcceptGrowCapacityPoolForShortTermCloneSplit acceptGrowCapacityPoolForShortTermCloneSplit();
+
+    /**
      * Gets the isRestoring property: Restoring.
-     *
+     * 
      * @return the isRestoring value.
      */
     Boolean isRestoring();
 
     /**
      * Gets the snapshotDirectoryVisible property: If enabled (true) the volume will contain a read-only snapshot
-     * directory which provides access to each of the volume's snapshots (default to true).
-     *
+     * directory which provides access to each of the volume's snapshots (defaults to true).
+     * 
      * @return the snapshotDirectoryVisible value.
      */
     Boolean snapshotDirectoryVisible();
@@ -199,7 +244,7 @@ public interface Volume {
     /**
      * Gets the kerberosEnabled property: Describe if a volume is KerberosEnabled. To be use with swagger version
      * 2020-05-01 or later.
-     *
+     * 
      * @return the kerberosEnabled value.
      */
     Boolean kerberosEnabled();
@@ -207,7 +252,7 @@ public interface Volume {
     /**
      * Gets the securityStyle property: The security style of volume, default unix, defaults to ntfs for dual protocol
      * or CIFS protocol.
-     *
+     * 
      * @return the securityStyle value.
      */
     SecurityStyle securityStyle();
@@ -215,44 +260,78 @@ public interface Volume {
     /**
      * Gets the smbEncryption property: Enables encryption for in-flight smb3 data. Only applicable for SMB/DualProtocol
      * volume. To be used with swagger version 2020-08-01 or later.
-     *
+     * 
      * @return the smbEncryption value.
      */
     Boolean smbEncryption();
 
     /**
+     * Gets the smbAccessBasedEnumeration property: Enables access-based enumeration share property for SMB Shares. Only
+     * applicable for SMB/DualProtocol volume.
+     * 
+     * @return the smbAccessBasedEnumeration value.
+     */
+    SmbAccessBasedEnumeration smbAccessBasedEnumeration();
+
+    /**
+     * Gets the smbNonBrowsable property: Enables non-browsable property for SMB Shares. Only applicable for
+     * SMB/DualProtocol volume.
+     * 
+     * @return the smbNonBrowsable value.
+     */
+    SmbNonBrowsable smbNonBrowsable();
+
+    /**
      * Gets the smbContinuouslyAvailable property: Enables continuously available share property for smb volume. Only
      * applicable for SMB volume.
-     *
+     * 
      * @return the smbContinuouslyAvailable value.
      */
     Boolean smbContinuouslyAvailable();
 
     /**
-     * Gets the throughputMibps property: Maximum throughput in Mibps that can be achieved by this volume and this will
+     * Gets the throughputMibps property: Maximum throughput in MiB/s that can be achieved by this volume and this will
      * be accepted as input only for manual qosType volume.
-     *
+     * 
      * @return the throughputMibps value.
      */
     Float throughputMibps();
 
     /**
-     * Gets the encryptionKeySource property: Encryption Key Source. Possible values are: 'Microsoft.NetApp'.
-     *
+     * Gets the actualThroughputMibps property: Actual throughput in MiB/s for auto qosType volumes calculated based on
+     * size and serviceLevel.
+     * 
+     * @return the actualThroughputMibps value.
+     */
+    Float actualThroughputMibps();
+
+    /**
+     * Gets the encryptionKeySource property: Source of key used to encrypt data in volume. Applicable if NetApp account
+     * has encryption.keySource = 'Microsoft.KeyVault'. Possible values (case-insensitive) are: 'Microsoft.NetApp,
+     * Microsoft.KeyVault'.
+     * 
      * @return the encryptionKeySource value.
      */
-    String encryptionKeySource();
+    EncryptionKeySource encryptionKeySource();
+
+    /**
+     * Gets the keyVaultPrivateEndpointResourceId property: The resource ID of private endpoint for KeyVault. It must
+     * reside in the same VNET as the volume. Only applicable if encryptionKeySource = 'Microsoft.KeyVault'.
+     * 
+     * @return the keyVaultPrivateEndpointResourceId value.
+     */
+    String keyVaultPrivateEndpointResourceId();
 
     /**
      * Gets the ldapEnabled property: Specifies whether LDAP is enabled or not for a given NFS volume.
-     *
+     * 
      * @return the ldapEnabled value.
      */
     Boolean ldapEnabled();
 
     /**
      * Gets the coolAccess property: Specifies whether Cool Access(tiering) is enabled for the volume.
-     *
+     * 
      * @return the coolAccess value.
      */
     Boolean coolAccess();
@@ -260,18 +339,34 @@ public interface Volume {
     /**
      * Gets the coolnessPeriod property: Specifies the number of days after which data that is not accessed by clients
      * will be tiered.
-     *
+     * 
      * @return the coolnessPeriod value.
      */
     Integer coolnessPeriod();
+
+    /**
+     * Gets the coolAccessRetrievalPolicy property: coolAccessRetrievalPolicy determines the data retrieval behavior
+     * from the cool tier to standard storage based on the read pattern for cool access enabled volumes. The possible
+     * values for this field are:
+     * Default - Data will be pulled from cool tier to standard storage on random reads. This policy is the default.
+     * OnRead - All client-driven data read is pulled from cool tier to standard storage on both sequential and random
+     * reads.
+     * Never - No client-driven data is pulled from cool tier to standard storage.
+     * 
+     * @return the coolAccessRetrievalPolicy value.
+     */
+    CoolAccessRetrievalPolicy coolAccessRetrievalPolicy();
 
     /**
      * Gets the unixPermissions property: UNIX permissions for NFS volume accepted in octal 4 digit format. First digit
      * selects the set user ID(4), set group ID (2) and sticky (1) attributes. Second digit selects permission for the
      * owner of the file: read (4), write (2) and execute (1). Third selects permissions for other users in the same
      * group. the fourth for other users not in the group. 0755 - gives read/write/execute permissions to owner and
-     * read/execute to group and other users.
-     *
+     * read/execute to group and other users. Avoid passing null value for unixPermissions in volume update operation,
+     * As per the behavior, If Null value is passed then user-visible unixPermissions value will became null, and user
+     * will not be able to get unixPermissions value. On safer side, actual unixPermissions value on volume will remain
+     * as its last saved value only.
+     * 
      * @return the unixPermissions value.
      */
     String unixPermissions();
@@ -280,22 +375,37 @@ public interface Volume {
      * Gets the cloneProgress property: When a volume is being restored from another volume's snapshot, will show the
      * percentage completion of this cloning process. When this value is empty/null there is no cloning process
      * currently happening on this volume. This value will update every 5 minutes during cloning.
-     *
+     * 
      * @return the cloneProgress value.
      */
     Integer cloneProgress();
 
     /**
-     * Gets the avsDataStore property: avsDataStore Specifies whether the volume is enabled for Azure VMware Solution
-     * (AVS) datastore purpose.
-     *
+     * Gets the fileAccessLogs property: Flag indicating whether file access logs are enabled for the volume, based on
+     * active diagnostic settings present on the volume.
+     * 
+     * @return the fileAccessLogs value.
+     */
+    FileAccessLogs fileAccessLogs();
+
+    /**
+     * Gets the avsDataStore property: Specifies whether the volume is enabled for Azure VMware Solution (AVS) datastore
+     * purpose.
+     * 
      * @return the avsDataStore value.
      */
     AvsDataStore avsDataStore();
 
     /**
+     * Gets the dataStoreResourceId property: Data store resource unique identifier.
+     * 
+     * @return the dataStoreResourceId value.
+     */
+    List<String> dataStoreResourceId();
+
+    /**
      * Gets the isDefaultQuotaEnabled property: Specifies if default quota is enabled for the volume.
-     *
+     * 
      * @return the isDefaultQuotaEnabled value.
      */
     Boolean isDefaultQuotaEnabled();
@@ -303,7 +413,7 @@ public interface Volume {
     /**
      * Gets the defaultUserQuotaInKiBs property: Default user quota for volume in KiBs. If isDefaultQuotaEnabled is set,
      * the minimum value of 4 KiBs applies .
-     *
+     * 
      * @return the defaultUserQuotaInKiBs value.
      */
     Long defaultUserQuotaInKiBs();
@@ -311,14 +421,22 @@ public interface Volume {
     /**
      * Gets the defaultGroupQuotaInKiBs property: Default group quota for volume in KiBs. If isDefaultQuotaEnabled is
      * set, the minimum value of 4 KiBs applies.
-     *
+     * 
      * @return the defaultGroupQuotaInKiBs value.
      */
     Long defaultGroupQuotaInKiBs();
 
     /**
+     * Gets the maximumNumberOfFiles property: Maximum number of files allowed. Needs a service request in order to be
+     * changed. Only allowed to be changed if volume quota is more than 4TiB.
+     * 
+     * @return the maximumNumberOfFiles value.
+     */
+    Long maximumNumberOfFiles();
+
+    /**
      * Gets the volumeGroupName property: Volume Group Name.
-     *
+     * 
      * @return the volumeGroupName value.
      */
     String volumeGroupName();
@@ -326,21 +444,21 @@ public interface Volume {
     /**
      * Gets the capacityPoolResourceId property: Pool Resource Id used in case of creating a volume through volume
      * group.
-     *
+     * 
      * @return the capacityPoolResourceId value.
      */
     String capacityPoolResourceId();
 
     /**
      * Gets the proximityPlacementGroup property: Proximity placement group associated with the volume.
-     *
+     * 
      * @return the proximityPlacementGroup value.
      */
     String proximityPlacementGroup();
 
     /**
      * Gets the t2Network property: T2 network information.
-     *
+     * 
      * @return the t2Network value.
      */
     String t2Network();
@@ -348,60 +466,122 @@ public interface Volume {
     /**
      * Gets the volumeSpecName property: Volume spec name is the application specific designation or identifier for the
      * particular volume in a volume group for e.g. data, log.
-     *
+     * 
      * @return the volumeSpecName value.
      */
     String volumeSpecName();
 
     /**
-     * Gets the placementRules property: Volume placement rules Application specific placement rules for the particular
-     * volume.
-     *
+     * Gets the encrypted property: Specifies if the volume is encrypted or not. Only available on volumes created or
+     * updated after 2022-01-01.
+     * 
+     * @return the encrypted value.
+     */
+    Boolean encrypted();
+
+    /**
+     * Gets the placementRules property: Application specific placement rules for the particular volume.
+     * 
      * @return the placementRules value.
      */
     List<PlacementKeyValuePairs> placementRules();
 
     /**
+     * Gets the enableSubvolumes property: Flag indicating whether subvolume operations are enabled on the volume.
+     * 
+     * @return the enableSubvolumes value.
+     */
+    EnableSubvolumes enableSubvolumes();
+
+    /**
+     * Gets the provisionedAvailabilityZone property: The availability zone where the volume is provisioned. This refers
+     * to the logical availability zone where the volume resides.
+     * 
+     * @return the provisionedAvailabilityZone value.
+     */
+    String provisionedAvailabilityZone();
+
+    /**
+     * Gets the isLargeVolume property: Specifies whether volume is a Large Volume or Regular Volume.
+     * 
+     * @return the isLargeVolume value.
+     */
+    Boolean isLargeVolume();
+
+    /**
+     * Gets the originatingResourceId property: Id of the snapshot or backup that the volume is restored from.
+     * 
+     * @return the originatingResourceId value.
+     */
+    String originatingResourceId();
+
+    /**
+     * Gets the inheritedSizeInBytes property: Space shared by short term clone volume with parent volume in bytes.
+     * 
+     * @return the inheritedSizeInBytes value.
+     */
+    Long inheritedSizeInBytes();
+
+    /**
+     * Gets the language property: Language supported for volume.
+     * 
+     * @return the language value.
+     */
+    VolumeLanguage language();
+
+    /**
      * Gets the region of the resource.
-     *
+     * 
      * @return the region of the resource.
      */
     Region region();
 
     /**
      * Gets the name of the resource region.
-     *
+     * 
      * @return the name of the resource region.
      */
     String regionName();
 
     /**
+     * Gets the name of the resource group.
+     * 
+     * @return the name of the resource group.
+     */
+    String resourceGroupName();
+
+    /**
      * Gets the inner com.azure.resourcemanager.netapp.fluent.models.VolumeInner object.
-     *
+     * 
      * @return the inner object.
      */
     VolumeInner innerModel();
 
-    /** The entirety of the Volume definition. */
-    interface Definition
-        extends DefinitionStages.Blank,
-            DefinitionStages.WithLocation,
-            DefinitionStages.WithParentResource,
-            DefinitionStages.WithCreationToken,
-            DefinitionStages.WithUsageThreshold,
-            DefinitionStages.WithSubnetId,
-            DefinitionStages.WithCreate {
+    /**
+     * The entirety of the Volume definition.
+     */
+    interface Definition extends DefinitionStages.Blank, DefinitionStages.WithLocation,
+        DefinitionStages.WithParentResource, DefinitionStages.WithCreationToken, DefinitionStages.WithUsageThreshold,
+        DefinitionStages.WithSubnetId, DefinitionStages.WithCreate {
     }
-    /** The Volume definition stages. */
+
+    /**
+     * The Volume definition stages.
+     */
     interface DefinitionStages {
-        /** The first stage of the Volume definition. */
+        /**
+         * The first stage of the Volume definition.
+         */
         interface Blank extends WithLocation {
         }
-        /** The stage of the Volume definition allowing to specify location. */
+
+        /**
+         * The stage of the Volume definition allowing to specify location.
+         */
         interface WithLocation {
             /**
              * Specifies the region for the resource.
-             *
+             * 
              * @param location The geo-location where the resource lives.
              * @return the next definition stage.
              */
@@ -409,334 +589,883 @@ public interface Volume {
 
             /**
              * Specifies the region for the resource.
-             *
+             * 
              * @param location The geo-location where the resource lives.
              * @return the next definition stage.
              */
             WithParentResource withRegion(String location);
         }
-        /** The stage of the Volume definition allowing to specify parent resource. */
+
+        /**
+         * The stage of the Volume definition allowing to specify parent resource.
+         */
         interface WithParentResource {
             /**
              * Specifies resourceGroupName, accountName, poolName.
-             *
-             * @param resourceGroupName The name of the resource group.
+             * 
+             * @param resourceGroupName The name of the resource group. The name is case insensitive.
              * @param accountName The name of the NetApp account.
              * @param poolName The name of the capacity pool.
              * @return the next definition stage.
              */
             WithCreationToken withExistingCapacityPool(String resourceGroupName, String accountName, String poolName);
         }
-        /** The stage of the Volume definition allowing to specify creationToken. */
+
+        /**
+         * The stage of the Volume definition allowing to specify creationToken.
+         */
         interface WithCreationToken {
             /**
-             * Specifies the creationToken property: Creation Token or File Path A unique file path for the volume. Used
-             * when creating mount targets.
-             *
-             * @param creationToken Creation Token or File Path A unique file path for the volume. Used when creating
-             *     mount targets.
+             * Specifies the creationToken property: A unique file path for the volume. Used when creating mount
+             * targets.
+             * 
+             * @param creationToken A unique file path for the volume. Used when creating mount targets.
              * @return the next definition stage.
              */
             WithUsageThreshold withCreationToken(String creationToken);
         }
-        /** The stage of the Volume definition allowing to specify usageThreshold. */
+
+        /**
+         * The stage of the Volume definition allowing to specify usageThreshold.
+         */
         interface WithUsageThreshold {
             /**
-             * Specifies the usageThreshold property: usageThreshold Maximum storage quota allowed for a file system in
-             * bytes. This is a soft quota used for alerting only. Minimum size is 100 GiB. Upper limit is 100TiB.
-             * Specified in bytes..
-             *
-             * @param usageThreshold usageThreshold Maximum storage quota allowed for a file system in bytes. This is a
-             *     soft quota used for alerting only. Minimum size is 100 GiB. Upper limit is 100TiB. Specified in
-             *     bytes.
+             * Specifies the usageThreshold property: Maximum storage quota allowed for a file system in bytes. This is
+             * a soft quota used for alerting only. For regular volumes, valid values are in the range 50GiB to 100TiB.
+             * For large volumes, valid values are in the range 100TiB to 1PiB, and on an exceptional basis, from to
+             * 2400GiB to 2400TiB. Values expressed in bytes as multiples of 1 GiB..
+             * 
+             * @param usageThreshold Maximum storage quota allowed for a file system in bytes. This is a soft quota used
+             * for alerting only. For regular volumes, valid values are in the range 50GiB to 100TiB. For large volumes,
+             * valid values are in the range 100TiB to 1PiB, and on an exceptional basis, from to 2400GiB to 2400TiB.
+             * Values expressed in bytes as multiples of 1 GiB.
              * @return the next definition stage.
              */
             WithSubnetId withUsageThreshold(long usageThreshold);
         }
-        /** The stage of the Volume definition allowing to specify subnetId. */
+
+        /**
+         * The stage of the Volume definition allowing to specify subnetId.
+         */
         interface WithSubnetId {
             /**
              * Specifies the subnetId property: The Azure Resource URI for a delegated subnet. Must have the delegation
              * Microsoft.NetApp/volumes.
-             *
+             * 
              * @param subnetId The Azure Resource URI for a delegated subnet. Must have the delegation
-             *     Microsoft.NetApp/volumes.
+             * Microsoft.NetApp/volumes.
              * @return the next definition stage.
              */
             WithCreate withSubnetId(String subnetId);
         }
+
         /**
          * The stage of the Volume definition which contains all the minimum required properties for the resource to be
          * created, but also allows for any other optional properties to be specified.
          */
-        interface WithCreate
-            extends DefinitionStages.WithTags,
-                DefinitionStages.WithServiceLevel,
-                DefinitionStages.WithExportPolicy,
-                DefinitionStages.WithProtocolTypes,
-                DefinitionStages.WithSnapshotId,
-                DefinitionStages.WithBackupId,
-                DefinitionStages.WithNetworkFeatures,
-                DefinitionStages.WithVolumeType,
-                DefinitionStages.WithDataProtection,
-                DefinitionStages.WithIsRestoring,
-                DefinitionStages.WithSnapshotDirectoryVisible,
-                DefinitionStages.WithKerberosEnabled,
-                DefinitionStages.WithSecurityStyle,
-                DefinitionStages.WithSmbEncryption,
-                DefinitionStages.WithSmbContinuouslyAvailable,
-                DefinitionStages.WithThroughputMibps,
-                DefinitionStages.WithEncryptionKeySource,
-                DefinitionStages.WithLdapEnabled,
-                DefinitionStages.WithCoolAccess,
-                DefinitionStages.WithCoolnessPeriod,
-                DefinitionStages.WithUnixPermissions,
-                DefinitionStages.WithAvsDataStore,
-                DefinitionStages.WithIsDefaultQuotaEnabled,
-                DefinitionStages.WithDefaultUserQuotaInKiBs,
-                DefinitionStages.WithDefaultGroupQuotaInKiBs,
-                DefinitionStages.WithCapacityPoolResourceId,
-                DefinitionStages.WithProximityPlacementGroup,
-                DefinitionStages.WithVolumeSpecName,
-                DefinitionStages.WithPlacementRules {
+        interface WithCreate extends DefinitionStages.WithTags, DefinitionStages.WithZones,
+            DefinitionStages.WithServiceLevel, DefinitionStages.WithExportPolicy, DefinitionStages.WithProtocolTypes,
+            DefinitionStages.WithSnapshotId, DefinitionStages.WithDeleteBaseSnapshot, DefinitionStages.WithBackupId,
+            DefinitionStages.WithNetworkFeatures, DefinitionStages.WithVolumeType, DefinitionStages.WithDataProtection,
+            DefinitionStages.WithAcceptGrowCapacityPoolForShortTermCloneSplit, DefinitionStages.WithIsRestoring,
+            DefinitionStages.WithSnapshotDirectoryVisible, DefinitionStages.WithKerberosEnabled,
+            DefinitionStages.WithSecurityStyle, DefinitionStages.WithSmbEncryption,
+            DefinitionStages.WithSmbAccessBasedEnumeration, DefinitionStages.WithSmbNonBrowsable,
+            DefinitionStages.WithSmbContinuouslyAvailable, DefinitionStages.WithThroughputMibps,
+            DefinitionStages.WithEncryptionKeySource, DefinitionStages.WithKeyVaultPrivateEndpointResourceId,
+            DefinitionStages.WithLdapEnabled, DefinitionStages.WithCoolAccess, DefinitionStages.WithCoolnessPeriod,
+            DefinitionStages.WithCoolAccessRetrievalPolicy, DefinitionStages.WithUnixPermissions,
+            DefinitionStages.WithAvsDataStore, DefinitionStages.WithIsDefaultQuotaEnabled,
+            DefinitionStages.WithDefaultUserQuotaInKiBs, DefinitionStages.WithDefaultGroupQuotaInKiBs,
+            DefinitionStages.WithCapacityPoolResourceId, DefinitionStages.WithProximityPlacementGroup,
+            DefinitionStages.WithVolumeSpecName, DefinitionStages.WithPlacementRules,
+            DefinitionStages.WithEnableSubvolumes, DefinitionStages.WithIsLargeVolume, DefinitionStages.WithLanguage {
             /**
              * Executes the create request.
-             *
+             * 
              * @return the created resource.
              */
             Volume create();
 
             /**
              * Executes the create request.
-             *
+             * 
              * @param context The context to associate with this operation.
              * @return the created resource.
              */
             Volume create(Context context);
         }
-        /** The stage of the Volume definition allowing to specify tags. */
+
+        /**
+         * The stage of the Volume definition allowing to specify tags.
+         */
         interface WithTags {
             /**
              * Specifies the tags property: Resource tags..
-             *
+             * 
              * @param tags Resource tags.
              * @return the next definition stage.
              */
             WithCreate withTags(Map<String, String> tags);
         }
-        /** The stage of the Volume definition allowing to specify serviceLevel. */
+
+        /**
+         * The stage of the Volume definition allowing to specify zones.
+         */
+        interface WithZones {
+            /**
+             * Specifies the zones property: Availability Zone.
+             * 
+             * @param zones Availability Zone.
+             * @return the next definition stage.
+             */
+            WithCreate withZones(List<String> zones);
+        }
+
+        /**
+         * The stage of the Volume definition allowing to specify serviceLevel.
+         */
         interface WithServiceLevel {
             /**
-             * Specifies the serviceLevel property: serviceLevel The service level of the file system.
-             *
-             * @param serviceLevel serviceLevel The service level of the file system.
+             * Specifies the serviceLevel property: The service level of the file system.
+             * 
+             * @param serviceLevel The service level of the file system.
              * @return the next definition stage.
              */
             WithCreate withServiceLevel(ServiceLevel serviceLevel);
         }
-        /** The stage of the Volume definition allowing to specify exportPolicy. */
+
+        /**
+         * The stage of the Volume definition allowing to specify exportPolicy.
+         */
         interface WithExportPolicy {
             /**
-             * Specifies the exportPolicy property: exportPolicy Set of export policy rules.
-             *
-             * @param exportPolicy exportPolicy Set of export policy rules.
+             * Specifies the exportPolicy property: Set of export policy rules.
+             * 
+             * @param exportPolicy Set of export policy rules.
              * @return the next definition stage.
              */
             WithCreate withExportPolicy(VolumePropertiesExportPolicy exportPolicy);
         }
-        /** The stage of the Volume definition allowing to specify protocolTypes. */
+
+        /**
+         * The stage of the Volume definition allowing to specify protocolTypes.
+         */
         interface WithProtocolTypes {
             /**
-             * Specifies the protocolTypes property: protocolTypes Set of protocol types, default NFSv3, CIFS for SMB
-             * protocol.
-             *
-             * @param protocolTypes protocolTypes Set of protocol types, default NFSv3, CIFS for SMB protocol.
+             * Specifies the protocolTypes property: Set of protocol types, default NFSv3, CIFS for SMB protocol.
+             * 
+             * @param protocolTypes Set of protocol types, default NFSv3, CIFS for SMB protocol.
              * @return the next definition stage.
              */
             WithCreate withProtocolTypes(List<String> protocolTypes);
         }
-        /** The stage of the Volume definition allowing to specify snapshotId. */
+
+        /**
+         * The stage of the Volume definition allowing to specify snapshotId.
+         */
         interface WithSnapshotId {
             /**
-             * Specifies the snapshotId property: Snapshot ID UUID v4 or resource identifier used to identify the
-             * Snapshot..
-             *
-             * @param snapshotId Snapshot ID UUID v4 or resource identifier used to identify the Snapshot.
+             * Specifies the snapshotId property: Resource identifier used to identify the Snapshot..
+             * 
+             * @param snapshotId Resource identifier used to identify the Snapshot.
              * @return the next definition stage.
              */
             WithCreate withSnapshotId(String snapshotId);
         }
-        /** The stage of the Volume definition allowing to specify backupId. */
+
+        /**
+         * The stage of the Volume definition allowing to specify deleteBaseSnapshot.
+         */
+        interface WithDeleteBaseSnapshot {
+            /**
+             * Specifies the deleteBaseSnapshot property: If enabled (true) the snapshot the volume was created from
+             * will be automatically deleted after the volume create operation has finished. Defaults to false.
+             * 
+             * @param deleteBaseSnapshot If enabled (true) the snapshot the volume was created from will be
+             * automatically deleted after the volume create operation has finished. Defaults to false.
+             * @return the next definition stage.
+             */
+            WithCreate withDeleteBaseSnapshot(Boolean deleteBaseSnapshot);
+        }
+
+        /**
+         * The stage of the Volume definition allowing to specify backupId.
+         */
         interface WithBackupId {
             /**
-             * Specifies the backupId property: Backup ID UUID v4 or resource identifier used to identify the Backup..
-             *
-             * @param backupId Backup ID UUID v4 or resource identifier used to identify the Backup.
+             * Specifies the backupId property: Resource identifier used to identify the Backup..
+             * 
+             * @param backupId Resource identifier used to identify the Backup.
              * @return the next definition stage.
              */
             WithCreate withBackupId(String backupId);
         }
-        /** The stage of the Volume definition allowing to specify networkFeatures. */
+
+        /**
+         * The stage of the Volume definition allowing to specify networkFeatures.
+         */
         interface WithNetworkFeatures {
             /**
-             * Specifies the networkFeatures property: Network features Basic network, or Standard features available to
-             * the volume..
-             *
-             * @param networkFeatures Network features Basic network, or Standard features available to the volume.
+             * Specifies the networkFeatures property: The original value of the network features type available to the
+             * volume at the time it was created..
+             * 
+             * @param networkFeatures The original value of the network features type available to the volume at the
+             * time it was created.
              * @return the next definition stage.
              */
             WithCreate withNetworkFeatures(NetworkFeatures networkFeatures);
         }
-        /** The stage of the Volume definition allowing to specify volumeType. */
+
+        /**
+         * The stage of the Volume definition allowing to specify volumeType.
+         */
         interface WithVolumeType {
             /**
              * Specifies the volumeType property: What type of volume is this. For destination volumes in Cross Region
-             * Replication, set type to DataProtection.
-             *
+             * Replication, set type to DataProtection. For creating clone volume, set type to ShortTermClone.
+             * 
              * @param volumeType What type of volume is this. For destination volumes in Cross Region Replication, set
-             *     type to DataProtection.
+             * type to DataProtection. For creating clone volume, set type to ShortTermClone.
              * @return the next definition stage.
              */
             WithCreate withVolumeType(String volumeType);
         }
-        /** The stage of the Volume definition allowing to specify dataProtection. */
+
+        /**
+         * The stage of the Volume definition allowing to specify dataProtection.
+         */
         interface WithDataProtection {
             /**
-             * Specifies the dataProtection property: DataProtection DataProtection type volumes include an object
-             * containing details of the replication.
-             *
-             * @param dataProtection DataProtection DataProtection type volumes include an object containing details of
-             *     the replication.
+             * Specifies the dataProtection property: DataProtection type volumes include an object containing details
+             * of the replication.
+             * 
+             * @param dataProtection DataProtection type volumes include an object containing details of the
+             * replication.
              * @return the next definition stage.
              */
             WithCreate withDataProtection(VolumePropertiesDataProtection dataProtection);
         }
-        /** The stage of the Volume definition allowing to specify isRestoring. */
+
+        /**
+         * The stage of the Volume definition allowing to specify acceptGrowCapacityPoolForShortTermCloneSplit.
+         */
+        interface WithAcceptGrowCapacityPoolForShortTermCloneSplit {
+            /**
+             * Specifies the acceptGrowCapacityPoolForShortTermCloneSplit property: While auto splitting the short term
+             * clone volume, if the parent pool does not have enough space to accommodate the volume after split, it
+             * will be automatically resized, which will lead to increased billing. To accept capacity pool size auto
+             * grow and create a short term clone volume, set the property as accepted..
+             * 
+             * @param acceptGrowCapacityPoolForShortTermCloneSplit While auto splitting the short term clone volume, if
+             * the parent pool does not have enough space to accommodate the volume after split, it will be
+             * automatically resized, which will lead to increased billing. To accept capacity pool size auto grow and
+             * create a short term clone volume, set the property as accepted.
+             * @return the next definition stage.
+             */
+            WithCreate withAcceptGrowCapacityPoolForShortTermCloneSplit(
+                AcceptGrowCapacityPoolForShortTermCloneSplit acceptGrowCapacityPoolForShortTermCloneSplit);
+        }
+
+        /**
+         * The stage of the Volume definition allowing to specify isRestoring.
+         */
         interface WithIsRestoring {
             /**
              * Specifies the isRestoring property: Restoring.
-             *
+             * 
              * @param isRestoring Restoring.
              * @return the next definition stage.
              */
             WithCreate withIsRestoring(Boolean isRestoring);
         }
-        /** The stage of the Volume definition allowing to specify snapshotDirectoryVisible. */
+
+        /**
+         * The stage of the Volume definition allowing to specify snapshotDirectoryVisible.
+         */
         interface WithSnapshotDirectoryVisible {
             /**
              * Specifies the snapshotDirectoryVisible property: If enabled (true) the volume will contain a read-only
-             * snapshot directory which provides access to each of the volume's snapshots (default to true)..
-             *
+             * snapshot directory which provides access to each of the volume's snapshots (defaults to true)..
+             * 
              * @param snapshotDirectoryVisible If enabled (true) the volume will contain a read-only snapshot directory
-             *     which provides access to each of the volume's snapshots (default to true).
+             * which provides access to each of the volume's snapshots (defaults to true).
              * @return the next definition stage.
              */
             WithCreate withSnapshotDirectoryVisible(Boolean snapshotDirectoryVisible);
         }
-        /** The stage of the Volume definition allowing to specify kerberosEnabled. */
+
+        /**
+         * The stage of the Volume definition allowing to specify kerberosEnabled.
+         */
         interface WithKerberosEnabled {
             /**
              * Specifies the kerberosEnabled property: Describe if a volume is KerberosEnabled. To be use with swagger
              * version 2020-05-01 or later.
-             *
+             * 
              * @param kerberosEnabled Describe if a volume is KerberosEnabled. To be use with swagger version 2020-05-01
-             *     or later.
+             * or later.
              * @return the next definition stage.
              */
             WithCreate withKerberosEnabled(Boolean kerberosEnabled);
         }
-        /** The stage of the Volume definition allowing to specify securityStyle. */
+
+        /**
+         * The stage of the Volume definition allowing to specify securityStyle.
+         */
         interface WithSecurityStyle {
             /**
              * Specifies the securityStyle property: The security style of volume, default unix, defaults to ntfs for
              * dual protocol or CIFS protocol.
-             *
+             * 
              * @param securityStyle The security style of volume, default unix, defaults to ntfs for dual protocol or
-             *     CIFS protocol.
+             * CIFS protocol.
              * @return the next definition stage.
              */
             WithCreate withSecurityStyle(SecurityStyle securityStyle);
         }
-        /** The stage of the Volume definition allowing to specify smbEncryption. */
+
+        /**
+         * The stage of the Volume definition allowing to specify smbEncryption.
+         */
         interface WithSmbEncryption {
             /**
              * Specifies the smbEncryption property: Enables encryption for in-flight smb3 data. Only applicable for
              * SMB/DualProtocol volume. To be used with swagger version 2020-08-01 or later.
-             *
+             * 
              * @param smbEncryption Enables encryption for in-flight smb3 data. Only applicable for SMB/DualProtocol
-             *     volume. To be used with swagger version 2020-08-01 or later.
+             * volume. To be used with swagger version 2020-08-01 or later.
              * @return the next definition stage.
              */
             WithCreate withSmbEncryption(Boolean smbEncryption);
         }
-        /** The stage of the Volume definition allowing to specify smbContinuouslyAvailable. */
+
+        /**
+         * The stage of the Volume definition allowing to specify smbAccessBasedEnumeration.
+         */
+        interface WithSmbAccessBasedEnumeration {
+            /**
+             * Specifies the smbAccessBasedEnumeration property: Enables access-based enumeration share property for SMB
+             * Shares. Only applicable for SMB/DualProtocol volume.
+             * 
+             * @param smbAccessBasedEnumeration Enables access-based enumeration share property for SMB Shares. Only
+             * applicable for SMB/DualProtocol volume.
+             * @return the next definition stage.
+             */
+            WithCreate withSmbAccessBasedEnumeration(SmbAccessBasedEnumeration smbAccessBasedEnumeration);
+        }
+
+        /**
+         * The stage of the Volume definition allowing to specify smbNonBrowsable.
+         */
+        interface WithSmbNonBrowsable {
+            /**
+             * Specifies the smbNonBrowsable property: Enables non-browsable property for SMB Shares. Only applicable
+             * for SMB/DualProtocol volume.
+             * 
+             * @param smbNonBrowsable Enables non-browsable property for SMB Shares. Only applicable for
+             * SMB/DualProtocol volume.
+             * @return the next definition stage.
+             */
+            WithCreate withSmbNonBrowsable(SmbNonBrowsable smbNonBrowsable);
+        }
+
+        /**
+         * The stage of the Volume definition allowing to specify smbContinuouslyAvailable.
+         */
         interface WithSmbContinuouslyAvailable {
             /**
              * Specifies the smbContinuouslyAvailable property: Enables continuously available share property for smb
              * volume. Only applicable for SMB volume.
-             *
+             * 
              * @param smbContinuouslyAvailable Enables continuously available share property for smb volume. Only
-             *     applicable for SMB volume.
+             * applicable for SMB volume.
              * @return the next definition stage.
              */
             WithCreate withSmbContinuouslyAvailable(Boolean smbContinuouslyAvailable);
         }
-        /** The stage of the Volume definition allowing to specify throughputMibps. */
+
+        /**
+         * The stage of the Volume definition allowing to specify throughputMibps.
+         */
         interface WithThroughputMibps {
             /**
-             * Specifies the throughputMibps property: Maximum throughput in Mibps that can be achieved by this volume
+             * Specifies the throughputMibps property: Maximum throughput in MiB/s that can be achieved by this volume
              * and this will be accepted as input only for manual qosType volume.
-             *
-             * @param throughputMibps Maximum throughput in Mibps that can be achieved by this volume and this will be
-             *     accepted as input only for manual qosType volume.
+             * 
+             * @param throughputMibps Maximum throughput in MiB/s that can be achieved by this volume and this will be
+             * accepted as input only for manual qosType volume.
              * @return the next definition stage.
              */
             WithCreate withThroughputMibps(Float throughputMibps);
         }
-        /** The stage of the Volume definition allowing to specify encryptionKeySource. */
+
+        /**
+         * The stage of the Volume definition allowing to specify encryptionKeySource.
+         */
         interface WithEncryptionKeySource {
             /**
-             * Specifies the encryptionKeySource property: Encryption Key Source. Possible values are:
-             * 'Microsoft.NetApp'.
-             *
-             * @param encryptionKeySource Encryption Key Source. Possible values are: 'Microsoft.NetApp'.
+             * Specifies the encryptionKeySource property: Source of key used to encrypt data in volume. Applicable if
+             * NetApp account has encryption.keySource = 'Microsoft.KeyVault'. Possible values (case-insensitive) are:
+             * 'Microsoft.NetApp, Microsoft.KeyVault'.
+             * 
+             * @param encryptionKeySource Source of key used to encrypt data in volume. Applicable if NetApp account has
+             * encryption.keySource = 'Microsoft.KeyVault'. Possible values (case-insensitive) are: 'Microsoft.NetApp,
+             * Microsoft.KeyVault'.
              * @return the next definition stage.
              */
-            WithCreate withEncryptionKeySource(String encryptionKeySource);
+            WithCreate withEncryptionKeySource(EncryptionKeySource encryptionKeySource);
         }
-        /** The stage of the Volume definition allowing to specify ldapEnabled. */
+
+        /**
+         * The stage of the Volume definition allowing to specify keyVaultPrivateEndpointResourceId.
+         */
+        interface WithKeyVaultPrivateEndpointResourceId {
+            /**
+             * Specifies the keyVaultPrivateEndpointResourceId property: The resource ID of private endpoint for
+             * KeyVault. It must reside in the same VNET as the volume. Only applicable if encryptionKeySource =
+             * 'Microsoft.KeyVault'..
+             * 
+             * @param keyVaultPrivateEndpointResourceId The resource ID of private endpoint for KeyVault. It must reside
+             * in the same VNET as the volume. Only applicable if encryptionKeySource = 'Microsoft.KeyVault'.
+             * @return the next definition stage.
+             */
+            WithCreate withKeyVaultPrivateEndpointResourceId(String keyVaultPrivateEndpointResourceId);
+        }
+
+        /**
+         * The stage of the Volume definition allowing to specify ldapEnabled.
+         */
         interface WithLdapEnabled {
             /**
              * Specifies the ldapEnabled property: Specifies whether LDAP is enabled or not for a given NFS volume..
-             *
+             * 
              * @param ldapEnabled Specifies whether LDAP is enabled or not for a given NFS volume.
              * @return the next definition stage.
              */
             WithCreate withLdapEnabled(Boolean ldapEnabled);
         }
-        /** The stage of the Volume definition allowing to specify coolAccess. */
+
+        /**
+         * The stage of the Volume definition allowing to specify coolAccess.
+         */
         interface WithCoolAccess {
             /**
              * Specifies the coolAccess property: Specifies whether Cool Access(tiering) is enabled for the volume..
-             *
+             * 
              * @param coolAccess Specifies whether Cool Access(tiering) is enabled for the volume.
              * @return the next definition stage.
              */
             WithCreate withCoolAccess(Boolean coolAccess);
         }
-        /** The stage of the Volume definition allowing to specify coolnessPeriod. */
+
+        /**
+         * The stage of the Volume definition allowing to specify coolnessPeriod.
+         */
         interface WithCoolnessPeriod {
             /**
              * Specifies the coolnessPeriod property: Specifies the number of days after which data that is not accessed
              * by clients will be tiered..
-             *
+             * 
              * @param coolnessPeriod Specifies the number of days after which data that is not accessed by clients will
-             *     be tiered.
+             * be tiered.
              * @return the next definition stage.
              */
             WithCreate withCoolnessPeriod(Integer coolnessPeriod);
         }
-        /** The stage of the Volume definition allowing to specify unixPermissions. */
+
+        /**
+         * The stage of the Volume definition allowing to specify coolAccessRetrievalPolicy.
+         */
+        interface WithCoolAccessRetrievalPolicy {
+            /**
+             * Specifies the coolAccessRetrievalPolicy property: coolAccessRetrievalPolicy determines the data retrieval
+             * behavior from the cool tier to standard storage based on the read pattern for cool access enabled
+             * volumes. The possible values for this field are:
+             * Default - Data will be pulled from cool tier to standard storage on random reads. This policy is the
+             * default.
+             * OnRead - All client-driven data read is pulled from cool tier to standard storage on both sequential and
+             * random reads.
+             * Never - No client-driven data is pulled from cool tier to standard storage..
+             * 
+             * @param coolAccessRetrievalPolicy coolAccessRetrievalPolicy determines the data retrieval behavior from
+             * the cool tier to standard storage based on the read pattern for cool access enabled volumes. The possible
+             * values for this field are:
+             * Default - Data will be pulled from cool tier to standard storage on random reads. This policy is the
+             * default.
+             * OnRead - All client-driven data read is pulled from cool tier to standard storage on both sequential and
+             * random reads.
+             * Never - No client-driven data is pulled from cool tier to standard storage.
+             * @return the next definition stage.
+             */
+            WithCreate withCoolAccessRetrievalPolicy(CoolAccessRetrievalPolicy coolAccessRetrievalPolicy);
+        }
+
+        /**
+         * The stage of the Volume definition allowing to specify unixPermissions.
+         */
+        interface WithUnixPermissions {
+            /**
+             * Specifies the unixPermissions property: UNIX permissions for NFS volume accepted in octal 4 digit format.
+             * First digit selects the set user ID(4), set group ID (2) and sticky (1) attributes. Second digit selects
+             * permission for the owner of the file: read (4), write (2) and execute (1). Third selects permissions for
+             * other users in the same group. the fourth for other users not in the group. 0755 - gives
+             * read/write/execute permissions to owner and read/execute to group and other users. Avoid passing null
+             * value for unixPermissions in volume update operation, As per the behavior, If Null value is passed then
+             * user-visible unixPermissions value will became null, and user will not be able to get unixPermissions
+             * value. On safer side, actual unixPermissions value on volume will remain as its last saved value only..
+             * 
+             * @param unixPermissions UNIX permissions for NFS volume accepted in octal 4 digit format. First digit
+             * selects the set user ID(4), set group ID (2) and sticky (1) attributes. Second digit selects permission
+             * for the owner of the file: read (4), write (2) and execute (1). Third selects permissions for other users
+             * in the same group. the fourth for other users not in the group. 0755 - gives read/write/execute
+             * permissions to owner and read/execute to group and other users. Avoid passing null value for
+             * unixPermissions in volume update operation, As per the behavior, If Null value is passed then
+             * user-visible unixPermissions value will became null, and user will not be able to get unixPermissions
+             * value. On safer side, actual unixPermissions value on volume will remain as its last saved value only.
+             * @return the next definition stage.
+             */
+            WithCreate withUnixPermissions(String unixPermissions);
+        }
+
+        /**
+         * The stage of the Volume definition allowing to specify avsDataStore.
+         */
+        interface WithAvsDataStore {
+            /**
+             * Specifies the avsDataStore property: Specifies whether the volume is enabled for Azure VMware Solution
+             * (AVS) datastore purpose.
+             * 
+             * @param avsDataStore Specifies whether the volume is enabled for Azure VMware Solution (AVS) datastore
+             * purpose.
+             * @return the next definition stage.
+             */
+            WithCreate withAvsDataStore(AvsDataStore avsDataStore);
+        }
+
+        /**
+         * The stage of the Volume definition allowing to specify isDefaultQuotaEnabled.
+         */
+        interface WithIsDefaultQuotaEnabled {
+            /**
+             * Specifies the isDefaultQuotaEnabled property: Specifies if default quota is enabled for the volume..
+             * 
+             * @param isDefaultQuotaEnabled Specifies if default quota is enabled for the volume.
+             * @return the next definition stage.
+             */
+            WithCreate withIsDefaultQuotaEnabled(Boolean isDefaultQuotaEnabled);
+        }
+
+        /**
+         * The stage of the Volume definition allowing to specify defaultUserQuotaInKiBs.
+         */
+        interface WithDefaultUserQuotaInKiBs {
+            /**
+             * Specifies the defaultUserQuotaInKiBs property: Default user quota for volume in KiBs. If
+             * isDefaultQuotaEnabled is set, the minimum value of 4 KiBs applies ..
+             * 
+             * @param defaultUserQuotaInKiBs Default user quota for volume in KiBs. If isDefaultQuotaEnabled is set, the
+             * minimum value of 4 KiBs applies .
+             * @return the next definition stage.
+             */
+            WithCreate withDefaultUserQuotaInKiBs(Long defaultUserQuotaInKiBs);
+        }
+
+        /**
+         * The stage of the Volume definition allowing to specify defaultGroupQuotaInKiBs.
+         */
+        interface WithDefaultGroupQuotaInKiBs {
+            /**
+             * Specifies the defaultGroupQuotaInKiBs property: Default group quota for volume in KiBs. If
+             * isDefaultQuotaEnabled is set, the minimum value of 4 KiBs applies..
+             * 
+             * @param defaultGroupQuotaInKiBs Default group quota for volume in KiBs. If isDefaultQuotaEnabled is set,
+             * the minimum value of 4 KiBs applies.
+             * @return the next definition stage.
+             */
+            WithCreate withDefaultGroupQuotaInKiBs(Long defaultGroupQuotaInKiBs);
+        }
+
+        /**
+         * The stage of the Volume definition allowing to specify capacityPoolResourceId.
+         */
+        interface WithCapacityPoolResourceId {
+            /**
+             * Specifies the capacityPoolResourceId property: Pool Resource Id used in case of creating a volume through
+             * volume group.
+             * 
+             * @param capacityPoolResourceId Pool Resource Id used in case of creating a volume through volume group.
+             * @return the next definition stage.
+             */
+            WithCreate withCapacityPoolResourceId(String capacityPoolResourceId);
+        }
+
+        /**
+         * The stage of the Volume definition allowing to specify proximityPlacementGroup.
+         */
+        interface WithProximityPlacementGroup {
+            /**
+             * Specifies the proximityPlacementGroup property: Proximity placement group associated with the volume.
+             * 
+             * @param proximityPlacementGroup Proximity placement group associated with the volume.
+             * @return the next definition stage.
+             */
+            WithCreate withProximityPlacementGroup(String proximityPlacementGroup);
+        }
+
+        /**
+         * The stage of the Volume definition allowing to specify volumeSpecName.
+         */
+        interface WithVolumeSpecName {
+            /**
+             * Specifies the volumeSpecName property: Volume spec name is the application specific designation or
+             * identifier for the particular volume in a volume group for e.g. data, log.
+             * 
+             * @param volumeSpecName Volume spec name is the application specific designation or identifier for the
+             * particular volume in a volume group for e.g. data, log.
+             * @return the next definition stage.
+             */
+            WithCreate withVolumeSpecName(String volumeSpecName);
+        }
+
+        /**
+         * The stage of the Volume definition allowing to specify placementRules.
+         */
+        interface WithPlacementRules {
+            /**
+             * Specifies the placementRules property: Application specific placement rules for the particular volume.
+             * 
+             * @param placementRules Application specific placement rules for the particular volume.
+             * @return the next definition stage.
+             */
+            WithCreate withPlacementRules(List<PlacementKeyValuePairs> placementRules);
+        }
+
+        /**
+         * The stage of the Volume definition allowing to specify enableSubvolumes.
+         */
+        interface WithEnableSubvolumes {
+            /**
+             * Specifies the enableSubvolumes property: Flag indicating whether subvolume operations are enabled on the
+             * volume.
+             * 
+             * @param enableSubvolumes Flag indicating whether subvolume operations are enabled on the volume.
+             * @return the next definition stage.
+             */
+            WithCreate withEnableSubvolumes(EnableSubvolumes enableSubvolumes);
+        }
+
+        /**
+         * The stage of the Volume definition allowing to specify isLargeVolume.
+         */
+        interface WithIsLargeVolume {
+            /**
+             * Specifies the isLargeVolume property: Specifies whether volume is a Large Volume or Regular Volume..
+             * 
+             * @param isLargeVolume Specifies whether volume is a Large Volume or Regular Volume.
+             * @return the next definition stage.
+             */
+            WithCreate withIsLargeVolume(Boolean isLargeVolume);
+        }
+
+        /**
+         * The stage of the Volume definition allowing to specify language.
+         */
+        interface WithLanguage {
+            /**
+             * Specifies the language property: Language supported for volume..
+             * 
+             * @param language Language supported for volume.
+             * @return the next definition stage.
+             */
+            WithCreate withLanguage(VolumeLanguage language);
+        }
+    }
+
+    /**
+     * Begins update for the Volume resource.
+     * 
+     * @return the stage of resource update.
+     */
+    Volume.Update update();
+
+    /**
+     * The template for Volume update.
+     */
+    interface Update extends UpdateStages.WithTags, UpdateStages.WithServiceLevel, UpdateStages.WithUsageThreshold,
+        UpdateStages.WithExportPolicy, UpdateStages.WithProtocolTypes, UpdateStages.WithThroughputMibps,
+        UpdateStages.WithDataProtection, UpdateStages.WithIsDefaultQuotaEnabled,
+        UpdateStages.WithDefaultUserQuotaInKiBs, UpdateStages.WithDefaultGroupQuotaInKiBs,
+        UpdateStages.WithUnixPermissions, UpdateStages.WithCoolAccess, UpdateStages.WithCoolnessPeriod,
+        UpdateStages.WithCoolAccessRetrievalPolicy, UpdateStages.WithSnapshotDirectoryVisible,
+        UpdateStages.WithSmbAccessBasedEnumeration, UpdateStages.WithSmbNonBrowsable {
+        /**
+         * Executes the update request.
+         * 
+         * @return the updated resource.
+         */
+        Volume apply();
+
+        /**
+         * Executes the update request.
+         * 
+         * @param context The context to associate with this operation.
+         * @return the updated resource.
+         */
+        Volume apply(Context context);
+    }
+
+    /**
+     * The Volume update stages.
+     */
+    interface UpdateStages {
+        /**
+         * The stage of the Volume update allowing to specify tags.
+         */
+        interface WithTags {
+            /**
+             * Specifies the tags property: Resource tags..
+             * 
+             * @param tags Resource tags.
+             * @return the next definition stage.
+             */
+            Update withTags(Map<String, String> tags);
+        }
+
+        /**
+         * The stage of the Volume update allowing to specify serviceLevel.
+         */
+        interface WithServiceLevel {
+            /**
+             * Specifies the serviceLevel property: The service level of the file system.
+             * 
+             * @param serviceLevel The service level of the file system.
+             * @return the next definition stage.
+             */
+            Update withServiceLevel(ServiceLevel serviceLevel);
+        }
+
+        /**
+         * The stage of the Volume update allowing to specify usageThreshold.
+         */
+        interface WithUsageThreshold {
+            /**
+             * Specifies the usageThreshold property: Maximum storage quota allowed for a file system in bytes. This is
+             * a soft quota used for alerting only. For regular volumes, valid values are in the range 50GiB to 100TiB.
+             * For large volumes, valid values are in the range 100TiB to 1PiB, and on an exceptional basis, from to
+             * 2400GiB to 2400TiB. Values expressed in bytes as multiples of 1 GiB..
+             * 
+             * @param usageThreshold Maximum storage quota allowed for a file system in bytes. This is a soft quota used
+             * for alerting only. For regular volumes, valid values are in the range 50GiB to 100TiB. For large volumes,
+             * valid values are in the range 100TiB to 1PiB, and on an exceptional basis, from to 2400GiB to 2400TiB.
+             * Values expressed in bytes as multiples of 1 GiB.
+             * @return the next definition stage.
+             */
+            Update withUsageThreshold(Long usageThreshold);
+        }
+
+        /**
+         * The stage of the Volume update allowing to specify exportPolicy.
+         */
+        interface WithExportPolicy {
+            /**
+             * Specifies the exportPolicy property: Set of export policy rules.
+             * 
+             * @param exportPolicy Set of export policy rules.
+             * @return the next definition stage.
+             */
+            Update withExportPolicy(VolumePatchPropertiesExportPolicy exportPolicy);
+        }
+
+        /**
+         * The stage of the Volume update allowing to specify protocolTypes.
+         */
+        interface WithProtocolTypes {
+            /**
+             * Specifies the protocolTypes property: Set of protocol types, default NFSv3, CIFS for SMB protocol.
+             * 
+             * @param protocolTypes Set of protocol types, default NFSv3, CIFS for SMB protocol.
+             * @return the next definition stage.
+             */
+            Update withProtocolTypes(List<String> protocolTypes);
+        }
+
+        /**
+         * The stage of the Volume update allowing to specify throughputMibps.
+         */
+        interface WithThroughputMibps {
+            /**
+             * Specifies the throughputMibps property: Maximum throughput in MiB/s that can be achieved by this volume
+             * and this will be accepted as input only for manual qosType volume.
+             * 
+             * @param throughputMibps Maximum throughput in MiB/s that can be achieved by this volume and this will be
+             * accepted as input only for manual qosType volume.
+             * @return the next definition stage.
+             */
+            Update withThroughputMibps(Float throughputMibps);
+        }
+
+        /**
+         * The stage of the Volume update allowing to specify dataProtection.
+         */
+        interface WithDataProtection {
+            /**
+             * Specifies the dataProtection property: DataProtection type volumes include an object containing details
+             * of the replication.
+             * 
+             * @param dataProtection DataProtection type volumes include an object containing details of the
+             * replication.
+             * @return the next definition stage.
+             */
+            Update withDataProtection(VolumePatchPropertiesDataProtection dataProtection);
+        }
+
+        /**
+         * The stage of the Volume update allowing to specify isDefaultQuotaEnabled.
+         */
+        interface WithIsDefaultQuotaEnabled {
+            /**
+             * Specifies the isDefaultQuotaEnabled property: Specifies if default quota is enabled for the volume..
+             * 
+             * @param isDefaultQuotaEnabled Specifies if default quota is enabled for the volume.
+             * @return the next definition stage.
+             */
+            Update withIsDefaultQuotaEnabled(Boolean isDefaultQuotaEnabled);
+        }
+
+        /**
+         * The stage of the Volume update allowing to specify defaultUserQuotaInKiBs.
+         */
+        interface WithDefaultUserQuotaInKiBs {
+            /**
+             * Specifies the defaultUserQuotaInKiBs property: Default user quota for volume in KiBs. If
+             * isDefaultQuotaEnabled is set, the minimum value of 4 KiBs applies ..
+             * 
+             * @param defaultUserQuotaInKiBs Default user quota for volume in KiBs. If isDefaultQuotaEnabled is set, the
+             * minimum value of 4 KiBs applies .
+             * @return the next definition stage.
+             */
+            Update withDefaultUserQuotaInKiBs(Long defaultUserQuotaInKiBs);
+        }
+
+        /**
+         * The stage of the Volume update allowing to specify defaultGroupQuotaInKiBs.
+         */
+        interface WithDefaultGroupQuotaInKiBs {
+            /**
+             * Specifies the defaultGroupQuotaInKiBs property: Default group quota for volume in KiBs. If
+             * isDefaultQuotaEnabled is set, the minimum value of 4 KiBs applies..
+             * 
+             * @param defaultGroupQuotaInKiBs Default group quota for volume in KiBs. If isDefaultQuotaEnabled is set,
+             * the minimum value of 4 KiBs applies.
+             * @return the next definition stage.
+             */
+            Update withDefaultGroupQuotaInKiBs(Long defaultGroupQuotaInKiBs);
+        }
+
+        /**
+         * The stage of the Volume update allowing to specify unixPermissions.
+         */
         interface WithUnixPermissions {
             /**
              * Specifies the unixPermissions property: UNIX permissions for NFS volume accepted in octal 4 digit format.
@@ -744,264 +1473,162 @@ public interface Volume {
              * permission for the owner of the file: read (4), write (2) and execute (1). Third selects permissions for
              * other users in the same group. the fourth for other users not in the group. 0755 - gives
              * read/write/execute permissions to owner and read/execute to group and other users..
-             *
+             * 
              * @param unixPermissions UNIX permissions for NFS volume accepted in octal 4 digit format. First digit
-             *     selects the set user ID(4), set group ID (2) and sticky (1) attributes. Second digit selects
-             *     permission for the owner of the file: read (4), write (2) and execute (1). Third selects permissions
-             *     for other users in the same group. the fourth for other users not in the group. 0755 - gives
-             *     read/write/execute permissions to owner and read/execute to group and other users.
+             * selects the set user ID(4), set group ID (2) and sticky (1) attributes. Second digit selects permission
+             * for the owner of the file: read (4), write (2) and execute (1). Third selects permissions for other users
+             * in the same group. the fourth for other users not in the group. 0755 - gives read/write/execute
+             * permissions to owner and read/execute to group and other users.
              * @return the next definition stage.
              */
-            WithCreate withUnixPermissions(String unixPermissions);
+            Update withUnixPermissions(String unixPermissions);
         }
-        /** The stage of the Volume definition allowing to specify avsDataStore. */
-        interface WithAvsDataStore {
-            /**
-             * Specifies the avsDataStore property: avsDataStore Specifies whether the volume is enabled for Azure
-             * VMware Solution (AVS) datastore purpose.
-             *
-             * @param avsDataStore avsDataStore Specifies whether the volume is enabled for Azure VMware Solution (AVS)
-             *     datastore purpose.
-             * @return the next definition stage.
-             */
-            WithCreate withAvsDataStore(AvsDataStore avsDataStore);
-        }
-        /** The stage of the Volume definition allowing to specify isDefaultQuotaEnabled. */
-        interface WithIsDefaultQuotaEnabled {
-            /**
-             * Specifies the isDefaultQuotaEnabled property: Specifies if default quota is enabled for the volume..
-             *
-             * @param isDefaultQuotaEnabled Specifies if default quota is enabled for the volume.
-             * @return the next definition stage.
-             */
-            WithCreate withIsDefaultQuotaEnabled(Boolean isDefaultQuotaEnabled);
-        }
-        /** The stage of the Volume definition allowing to specify defaultUserQuotaInKiBs. */
-        interface WithDefaultUserQuotaInKiBs {
-            /**
-             * Specifies the defaultUserQuotaInKiBs property: Default user quota for volume in KiBs. If
-             * isDefaultQuotaEnabled is set, the minimum value of 4 KiBs applies ..
-             *
-             * @param defaultUserQuotaInKiBs Default user quota for volume in KiBs. If isDefaultQuotaEnabled is set, the
-             *     minimum value of 4 KiBs applies .
-             * @return the next definition stage.
-             */
-            WithCreate withDefaultUserQuotaInKiBs(Long defaultUserQuotaInKiBs);
-        }
-        /** The stage of the Volume definition allowing to specify defaultGroupQuotaInKiBs. */
-        interface WithDefaultGroupQuotaInKiBs {
-            /**
-             * Specifies the defaultGroupQuotaInKiBs property: Default group quota for volume in KiBs. If
-             * isDefaultQuotaEnabled is set, the minimum value of 4 KiBs applies..
-             *
-             * @param defaultGroupQuotaInKiBs Default group quota for volume in KiBs. If isDefaultQuotaEnabled is set,
-             *     the minimum value of 4 KiBs applies.
-             * @return the next definition stage.
-             */
-            WithCreate withDefaultGroupQuotaInKiBs(Long defaultGroupQuotaInKiBs);
-        }
-        /** The stage of the Volume definition allowing to specify capacityPoolResourceId. */
-        interface WithCapacityPoolResourceId {
-            /**
-             * Specifies the capacityPoolResourceId property: Pool Resource Id used in case of creating a volume through
-             * volume group.
-             *
-             * @param capacityPoolResourceId Pool Resource Id used in case of creating a volume through volume group.
-             * @return the next definition stage.
-             */
-            WithCreate withCapacityPoolResourceId(String capacityPoolResourceId);
-        }
-        /** The stage of the Volume definition allowing to specify proximityPlacementGroup. */
-        interface WithProximityPlacementGroup {
-            /**
-             * Specifies the proximityPlacementGroup property: Proximity placement group associated with the volume.
-             *
-             * @param proximityPlacementGroup Proximity placement group associated with the volume.
-             * @return the next definition stage.
-             */
-            WithCreate withProximityPlacementGroup(String proximityPlacementGroup);
-        }
-        /** The stage of the Volume definition allowing to specify volumeSpecName. */
-        interface WithVolumeSpecName {
-            /**
-             * Specifies the volumeSpecName property: Volume spec name is the application specific designation or
-             * identifier for the particular volume in a volume group for e.g. data, log.
-             *
-             * @param volumeSpecName Volume spec name is the application specific designation or identifier for the
-             *     particular volume in a volume group for e.g. data, log.
-             * @return the next definition stage.
-             */
-            WithCreate withVolumeSpecName(String volumeSpecName);
-        }
-        /** The stage of the Volume definition allowing to specify placementRules. */
-        interface WithPlacementRules {
-            /**
-             * Specifies the placementRules property: Volume placement rules Application specific placement rules for
-             * the particular volume.
-             *
-             * @param placementRules Volume placement rules Application specific placement rules for the particular
-             *     volume.
-             * @return the next definition stage.
-             */
-            WithCreate withPlacementRules(List<PlacementKeyValuePairs> placementRules);
-        }
-    }
-    /**
-     * Begins update for the Volume resource.
-     *
-     * @return the stage of resource update.
-     */
-    Volume.Update update();
-
-    /** The template for Volume update. */
-    interface Update
-        extends UpdateStages.WithTags,
-            UpdateStages.WithServiceLevel,
-            UpdateStages.WithUsageThreshold,
-            UpdateStages.WithExportPolicy,
-            UpdateStages.WithThroughputMibps,
-            UpdateStages.WithDataProtection,
-            UpdateStages.WithIsDefaultQuotaEnabled,
-            UpdateStages.WithDefaultUserQuotaInKiBs,
-            UpdateStages.WithDefaultGroupQuotaInKiBs {
-        /**
-         * Executes the update request.
-         *
-         * @return the updated resource.
-         */
-        Volume apply();
 
         /**
-         * Executes the update request.
-         *
-         * @param context The context to associate with this operation.
-         * @return the updated resource.
+         * The stage of the Volume update allowing to specify coolAccess.
          */
-        Volume apply(Context context);
-    }
-    /** The Volume update stages. */
-    interface UpdateStages {
-        /** The stage of the Volume update allowing to specify tags. */
-        interface WithTags {
+        interface WithCoolAccess {
             /**
-             * Specifies the tags property: Resource tags..
-             *
-             * @param tags Resource tags.
+             * Specifies the coolAccess property: Specifies whether Cool Access(tiering) is enabled for the volume..
+             * 
+             * @param coolAccess Specifies whether Cool Access(tiering) is enabled for the volume.
              * @return the next definition stage.
              */
-            Update withTags(Map<String, String> tags);
+            Update withCoolAccess(Boolean coolAccess);
         }
-        /** The stage of the Volume update allowing to specify serviceLevel. */
-        interface WithServiceLevel {
+
+        /**
+         * The stage of the Volume update allowing to specify coolnessPeriod.
+         */
+        interface WithCoolnessPeriod {
             /**
-             * Specifies the serviceLevel property: serviceLevel The service level of the file system.
-             *
-             * @param serviceLevel serviceLevel The service level of the file system.
+             * Specifies the coolnessPeriod property: Specifies the number of days after which data that is not accessed
+             * by clients will be tiered..
+             * 
+             * @param coolnessPeriod Specifies the number of days after which data that is not accessed by clients will
+             * be tiered.
              * @return the next definition stage.
              */
-            Update withServiceLevel(ServiceLevel serviceLevel);
+            Update withCoolnessPeriod(Integer coolnessPeriod);
         }
-        /** The stage of the Volume update allowing to specify usageThreshold. */
-        interface WithUsageThreshold {
+
+        /**
+         * The stage of the Volume update allowing to specify coolAccessRetrievalPolicy.
+         */
+        interface WithCoolAccessRetrievalPolicy {
             /**
-             * Specifies the usageThreshold property: usageThreshold Maximum storage quota allowed for a file system in
-             * bytes. This is a soft quota used for alerting only. Minimum size is 100 GiB. Upper limit is 100TiB.
-             * Specified in bytes..
-             *
-             * @param usageThreshold usageThreshold Maximum storage quota allowed for a file system in bytes. This is a
-             *     soft quota used for alerting only. Minimum size is 100 GiB. Upper limit is 100TiB. Specified in
-             *     bytes.
+             * Specifies the coolAccessRetrievalPolicy property: coolAccessRetrievalPolicy determines the data retrieval
+             * behavior from the cool tier to standard storage based on the read pattern for cool access enabled
+             * volumes. The possible values for this field are:
+             * Default - Data will be pulled from cool tier to standard storage on random reads. This policy is the
+             * default.
+             * OnRead - All client-driven data read is pulled from cool tier to standard storage on both sequential and
+             * random reads.
+             * Never - No client-driven data is pulled from cool tier to standard storage..
+             * 
+             * @param coolAccessRetrievalPolicy coolAccessRetrievalPolicy determines the data retrieval behavior from
+             * the cool tier to standard storage based on the read pattern for cool access enabled volumes. The possible
+             * values for this field are:
+             * Default - Data will be pulled from cool tier to standard storage on random reads. This policy is the
+             * default.
+             * OnRead - All client-driven data read is pulled from cool tier to standard storage on both sequential and
+             * random reads.
+             * Never - No client-driven data is pulled from cool tier to standard storage.
              * @return the next definition stage.
              */
-            Update withUsageThreshold(Long usageThreshold);
+            Update withCoolAccessRetrievalPolicy(CoolAccessRetrievalPolicy coolAccessRetrievalPolicy);
         }
-        /** The stage of the Volume update allowing to specify exportPolicy. */
-        interface WithExportPolicy {
+
+        /**
+         * The stage of the Volume update allowing to specify snapshotDirectoryVisible.
+         */
+        interface WithSnapshotDirectoryVisible {
             /**
-             * Specifies the exportPolicy property: exportPolicy Set of export policy rules.
-             *
-             * @param exportPolicy exportPolicy Set of export policy rules.
+             * Specifies the snapshotDirectoryVisible property: If enabled (true) the volume will contain a read-only
+             * snapshot directory which provides access to each of the volume's snapshots..
+             * 
+             * @param snapshotDirectoryVisible If enabled (true) the volume will contain a read-only snapshot directory
+             * which provides access to each of the volume's snapshots.
              * @return the next definition stage.
              */
-            Update withExportPolicy(VolumePatchPropertiesExportPolicy exportPolicy);
+            Update withSnapshotDirectoryVisible(Boolean snapshotDirectoryVisible);
         }
-        /** The stage of the Volume update allowing to specify throughputMibps. */
-        interface WithThroughputMibps {
+
+        /**
+         * The stage of the Volume update allowing to specify smbAccessBasedEnumeration.
+         */
+        interface WithSmbAccessBasedEnumeration {
             /**
-             * Specifies the throughputMibps property: Maximum throughput in Mibps that can be achieved by this volume
-             * and this will be accepted as input only for manual qosType volume.
-             *
-             * @param throughputMibps Maximum throughput in Mibps that can be achieved by this volume and this will be
-             *     accepted as input only for manual qosType volume.
+             * Specifies the smbAccessBasedEnumeration property: Enables access-based enumeration share property for SMB
+             * Shares. Only applicable for SMB/DualProtocol volume.
+             * 
+             * @param smbAccessBasedEnumeration Enables access-based enumeration share property for SMB Shares. Only
+             * applicable for SMB/DualProtocol volume.
              * @return the next definition stage.
              */
-            Update withThroughputMibps(Float throughputMibps);
+            Update withSmbAccessBasedEnumeration(SmbAccessBasedEnumeration smbAccessBasedEnumeration);
         }
-        /** The stage of the Volume update allowing to specify dataProtection. */
-        interface WithDataProtection {
+
+        /**
+         * The stage of the Volume update allowing to specify smbNonBrowsable.
+         */
+        interface WithSmbNonBrowsable {
             /**
-             * Specifies the dataProtection property: DataProtection DataProtection type volumes include an object
-             * containing details of the replication.
-             *
-             * @param dataProtection DataProtection DataProtection type volumes include an object containing details of
-             *     the replication.
+             * Specifies the smbNonBrowsable property: Enables non-browsable property for SMB Shares. Only applicable
+             * for SMB/DualProtocol volume.
+             * 
+             * @param smbNonBrowsable Enables non-browsable property for SMB Shares. Only applicable for
+             * SMB/DualProtocol volume.
              * @return the next definition stage.
              */
-            Update withDataProtection(VolumePatchPropertiesDataProtection dataProtection);
-        }
-        /** The stage of the Volume update allowing to specify isDefaultQuotaEnabled. */
-        interface WithIsDefaultQuotaEnabled {
-            /**
-             * Specifies the isDefaultQuotaEnabled property: Specifies if default quota is enabled for the volume..
-             *
-             * @param isDefaultQuotaEnabled Specifies if default quota is enabled for the volume.
-             * @return the next definition stage.
-             */
-            Update withIsDefaultQuotaEnabled(Boolean isDefaultQuotaEnabled);
-        }
-        /** The stage of the Volume update allowing to specify defaultUserQuotaInKiBs. */
-        interface WithDefaultUserQuotaInKiBs {
-            /**
-             * Specifies the defaultUserQuotaInKiBs property: Default user quota for volume in KiBs. If
-             * isDefaultQuotaEnabled is set, the minimum value of 4 KiBs applies ..
-             *
-             * @param defaultUserQuotaInKiBs Default user quota for volume in KiBs. If isDefaultQuotaEnabled is set, the
-             *     minimum value of 4 KiBs applies .
-             * @return the next definition stage.
-             */
-            Update withDefaultUserQuotaInKiBs(Long defaultUserQuotaInKiBs);
-        }
-        /** The stage of the Volume update allowing to specify defaultGroupQuotaInKiBs. */
-        interface WithDefaultGroupQuotaInKiBs {
-            /**
-             * Specifies the defaultGroupQuotaInKiBs property: Default group quota for volume in KiBs. If
-             * isDefaultQuotaEnabled is set, the minimum value of 4 KiBs applies..
-             *
-             * @param defaultGroupQuotaInKiBs Default group quota for volume in KiBs. If isDefaultQuotaEnabled is set,
-             *     the minimum value of 4 KiBs applies.
-             * @return the next definition stage.
-             */
-            Update withDefaultGroupQuotaInKiBs(Long defaultGroupQuotaInKiBs);
+            Update withSmbNonBrowsable(SmbNonBrowsable smbNonBrowsable);
         }
     }
+
     /**
      * Refreshes the resource to sync with Azure.
-     *
+     * 
      * @return the refreshed resource.
      */
     Volume refresh();
 
     /**
      * Refreshes the resource to sync with Azure.
-     *
+     * 
      * @param context The context to associate with this operation.
      * @return the refreshed resource.
      */
     Volume refresh(Context context);
 
     /**
+     * Populate Availability Zone
+     * 
+     * This operation will populate availability zone information for a volume.
+     * 
+     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return volume resource.
+     */
+    Volume populateAvailabilityZone();
+
+    /**
+     * Populate Availability Zone
+     * 
+     * This operation will populate availability zone information for a volume.
+     * 
+     * @param context The context to associate with this operation.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return volume resource.
+     */
+    Volume populateAvailabilityZone(Context context);
+
+    /**
+     * Revert a volume to one of its snapshots
+     * 
      * Revert a volume to the snapshot specified in the body.
-     *
+     * 
      * @param body Object for snapshot to revert supplied in the body of the operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
@@ -1010,8 +1637,10 @@ public interface Volume {
     void revert(VolumeRevert body);
 
     /**
+     * Revert a volume to one of its snapshots
+     * 
      * Revert a volume to the snapshot specified in the body.
-     *
+     * 
      * @param body Object for snapshot to revert supplied in the body of the operation.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
@@ -1021,26 +1650,139 @@ public interface Volume {
     void revert(VolumeRevert body, Context context);
 
     /**
-     * Break the replication connection on the destination volume.
-     *
-     * @param body Optional body to force break the replication.
+     * Reset cifs password
+     * 
+     * Reset cifs password from volume.
+     * 
+     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     */
+    void resetCifsPassword();
+
+    /**
+     * Reset cifs password
+     * 
+     * Reset cifs password from volume.
+     * 
+     * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
      */
-    void breakReplication(BreakReplicationRequest body);
+    void resetCifsPassword(Context context);
 
     /**
+     * Split clone from parent volume
+     * 
+     * Split operation to convert clone volume to an independent volume.
+     * 
+     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     */
+    void splitCloneFromParent();
+
+    /**
+     * Split clone from parent volume
+     * 
+     * Split operation to convert clone volume to an independent volume.
+     * 
+     * @param context The context to associate with this operation.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     */
+    void splitCloneFromParent(Context context);
+
+    /**
+     * Break file locks
+     * 
+     * Break all the file locks on a volume.
+     * 
+     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     */
+    void breakFileLocks();
+
+    /**
+     * Break file locks
+     * 
+     * Break all the file locks on a volume.
+     * 
+     * @param body Optional body to provide the ability to clear file locks with selected options.
+     * @param context The context to associate with this operation.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     */
+    void breakFileLocks(BreakFileLocksRequest body, Context context);
+
+    /**
+     * Get Group Id List for LDAP User
+     * 
+     * Returns the list of group Ids for a specific LDAP User.
+     * 
+     * @param body Returns group Id list for a specific LDAP user.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return group Id list for Ldap user.
+     */
+    GetGroupIdListForLdapUserResponse listGetGroupIdListForLdapUser(GetGroupIdListForLdapUserRequest body);
+
+    /**
+     * Get Group Id List for LDAP User
+     * 
+     * Returns the list of group Ids for a specific LDAP User.
+     * 
+     * @param body Returns group Id list for a specific LDAP user.
+     * @param context The context to associate with this operation.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return group Id list for Ldap user.
+     */
+    GetGroupIdListForLdapUserResponse listGetGroupIdListForLdapUser(GetGroupIdListForLdapUserRequest body,
+        Context context);
+
+    /**
+     * Lists Quota Report for the volume
+     * 
+     * Returns report of quotas for the volume.
+     * 
+     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return quota Report for volume.
+     */
+    ListQuotaReportResponse listQuotaReport();
+
+    /**
+     * Lists Quota Report for the volume
+     * 
+     * Returns report of quotas for the volume.
+     * 
+     * @param context The context to associate with this operation.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return quota Report for volume.
+     */
+    ListQuotaReportResponse listQuotaReport(Context context);
+
+    /**
+     * Break volume replication
+     * 
      * Break the replication connection on the destination volume.
-     *
+     * 
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
      */
     void breakReplication();
 
     /**
+     * Break volume replication
+     * 
      * Break the replication connection on the destination volume.
-     *
+     * 
      * @param body Optional body to force break the replication.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
@@ -1050,18 +1792,73 @@ public interface Volume {
     void breakReplication(BreakReplicationRequest body, Context context);
 
     /**
+     * Re-establish volume replication
+     * 
+     * Re-establish a previously deleted replication between 2 volumes that have a common ad-hoc or policy-based
+     * snapshots.
+     * 
+     * @param body body for the id of the source volume.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     */
+    void reestablishReplication(ReestablishReplicationRequest body);
+
+    /**
+     * Re-establish volume replication
+     * 
+     * Re-establish a previously deleted replication between 2 volumes that have a common ad-hoc or policy-based
+     * snapshots.
+     * 
+     * @param body body for the id of the source volume.
+     * @param context The context to associate with this operation.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     */
+    void reestablishReplication(ReestablishReplicationRequest body, Context context);
+
+    /**
+     * List replications for volume
+     * 
+     * List all replications for a specified volume.
+     * 
+     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return list Replications as paginated response with {@link PagedIterable}.
+     */
+    PagedIterable<Replication> listReplications();
+
+    /**
+     * List replications for volume
+     * 
+     * List all replications for a specified volume.
+     * 
+     * @param context The context to associate with this operation.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return list Replications as paginated response with {@link PagedIterable}.
+     */
+    PagedIterable<Replication> listReplications(Context context);
+
+    /**
+     * Resync volume replication
+     * 
      * Resync the connection on the destination volume. If the operation is ran on the source volume it will
      * reverse-resync the connection and sync from destination to source.
-     *
+     * 
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
      */
     void resyncReplication();
 
     /**
+     * Resync volume replication
+     * 
      * Resync the connection on the destination volume. If the operation is ran on the source volume it will
      * reverse-resync the connection and sync from destination to source.
-     *
+     * 
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
@@ -1070,16 +1867,20 @@ public interface Volume {
     void resyncReplication(Context context);
 
     /**
+     * Delete volume replication
+     * 
      * Delete the replication connection on the destination volume, and send release to the source replication.
-     *
+     * 
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
      */
     void deleteReplication();
 
     /**
+     * Delete volume replication
+     * 
      * Delete the replication connection on the destination volume, and send release to the source replication.
-     *
+     * 
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
@@ -1088,8 +1889,10 @@ public interface Volume {
     void deleteReplication(Context context);
 
     /**
+     * Authorize source volume replication
+     * 
      * Authorize the replication connection on the source volume.
-     *
+     * 
      * @param body Authorize request object supplied in the body of the operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
@@ -1098,8 +1901,10 @@ public interface Volume {
     void authorizeReplication(AuthorizeRequest body);
 
     /**
+     * Authorize source volume replication
+     * 
      * Authorize the replication connection on the source volume.
-     *
+     * 
      * @param body Authorize request object supplied in the body of the operation.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
@@ -1109,16 +1914,20 @@ public interface Volume {
     void authorizeReplication(AuthorizeRequest body, Context context);
 
     /**
+     * ReInitialize volume replication
+     * 
      * Re-Initializes the replication connection on the destination volume.
-     *
+     * 
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
      */
     void reInitializeReplication();
 
     /**
+     * ReInitialize volume replication
+     * 
      * Re-Initializes the replication connection on the destination volume.
-     *
+     * 
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
@@ -1127,8 +1936,109 @@ public interface Volume {
     void reInitializeReplication(Context context);
 
     /**
+     * Start Cluster peering
+     * 
+     * Starts peering the external cluster for this migration volume.
+     * 
+     * @param body Cluster peer request object supplied in the body of the operation.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return information about cluster peering process.
+     */
+    ClusterPeerCommandResponse peerExternalCluster(PeerClusterForVolumeMigrationRequest body);
+
+    /**
+     * Start Cluster peering
+     * 
+     * Starts peering the external cluster for this migration volume.
+     * 
+     * @param body Cluster peer request object supplied in the body of the operation.
+     * @param context The context to associate with this operation.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return information about cluster peering process.
+     */
+    ClusterPeerCommandResponse peerExternalCluster(PeerClusterForVolumeMigrationRequest body, Context context);
+
+    /**
+     * Start migration process
+     * 
+     * Starts SVM peering and returns a command to be run on the external ONTAP to accept it. Once the SVM have been
+     * peered a SnapMirror will be created.
+     * 
+     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return information about svm peering process.
+     */
+    SvmPeerCommandResponse authorizeExternalReplication();
+
+    /**
+     * Start migration process
+     * 
+     * Starts SVM peering and returns a command to be run on the external ONTAP to accept it. Once the SVM have been
+     * peered a SnapMirror will be created.
+     * 
+     * @param context The context to associate with this operation.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return information about svm peering process.
+     */
+    SvmPeerCommandResponse authorizeExternalReplication(Context context);
+
+    /**
+     * Finalize migration process
+     * 
+     * Finalizes the migration of an external volume by releasing the replication and breaking the external cluster
+     * peering if no other migration is active.
+     * 
+     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     */
+    void finalizeExternalReplication();
+
+    /**
+     * Finalize migration process
+     * 
+     * Finalizes the migration of an external volume by releasing the replication and breaking the external cluster
+     * peering if no other migration is active.
+     * 
+     * @param context The context to associate with this operation.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     */
+    void finalizeExternalReplication(Context context);
+
+    /**
+     * Perform a replication transfer
+     * 
+     * Performs an adhoc replication transfer on a volume with volumeType Migration.
+     * 
+     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     */
+    void performReplicationTransfer();
+
+    /**
+     * Perform a replication transfer
+     * 
+     * Performs an adhoc replication transfer on a volume with volumeType Migration.
+     * 
+     * @param context The context to associate with this operation.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     */
+    void performReplicationTransfer(Context context);
+
+    /**
+     * Change pool for volume
+     * 
      * Moves volume to another pool.
-     *
+     * 
      * @param body Move volume to the pool supplied in the body of the operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
@@ -1137,8 +2047,10 @@ public interface Volume {
     void poolChange(PoolChangeRequest body);
 
     /**
+     * Change pool for volume
+     * 
      * Moves volume to another pool.
-     *
+     * 
      * @param body Move volume to the pool supplied in the body of the operation.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
@@ -1146,4 +2058,71 @@ public interface Volume {
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
      */
     void poolChange(PoolChangeRequest body, Context context);
+
+    /**
+     * Relocate volume
+     * 
+     * Relocates volume to a new stamp.
+     * 
+     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     */
+    void relocate();
+
+    /**
+     * Relocate volume
+     * 
+     * Relocates volume to a new stamp.
+     * 
+     * @param body Relocate volume request.
+     * @param context The context to associate with this operation.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     */
+    void relocate(RelocateVolumeRequest body, Context context);
+
+    /**
+     * Finalize volume relocation
+     * 
+     * Finalizes the relocation of the volume and cleans up the old volume.
+     * 
+     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     */
+    void finalizeRelocation();
+
+    /**
+     * Finalize volume relocation
+     * 
+     * Finalizes the relocation of the volume and cleans up the old volume.
+     * 
+     * @param context The context to associate with this operation.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     */
+    void finalizeRelocation(Context context);
+
+    /**
+     * Revert volume relocation
+     * 
+     * Reverts the volume relocation process, cleans up the new volume and starts using the former-existing volume.
+     * 
+     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     */
+    void revertRelocation();
+
+    /**
+     * Revert volume relocation
+     * 
+     * Reverts the volume relocation process, cleans up the new volume and starts using the former-existing volume.
+     * 
+     * @param context The context to associate with this operation.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     */
+    void revertRelocation(Context context);
 }

@@ -16,18 +16,21 @@ import java.util.Objects;
 import java.util.concurrent.Semaphore;
 import java.util.function.Function;
 
+import static com.azure.messaging.servicebus.implementation.ServiceBusConstants.SEQUENCE_NUMBER_KEY;
+
 /**
  * Flux operator that auto-completes or auto-abandons messages when control is returned successfully.
  */
 final class FluxAutoComplete extends FluxOperator<ServiceBusMessageContext, ServiceBusMessageContext> {
+    private static final ClientLogger LOGGER = new ClientLogger(FluxAutoComplete.class);
+
     private final Semaphore completionLock;
     private final Function<ServiceBusMessageContext, Mono<Void>> onComplete;
     private final Function<ServiceBusMessageContext, Mono<Void>> onAbandon;
-    private final ClientLogger logger = new ClientLogger(FluxAutoComplete.class);
 
     FluxAutoComplete(Flux<? extends ServiceBusMessageContext> upstream, Semaphore completionLock,
-                     Function<ServiceBusMessageContext, Mono<Void>> onComplete,
-                     Function<ServiceBusMessageContext, Mono<Void>> onAbandon) {
+        Function<ServiceBusMessageContext, Mono<Void>> onComplete,
+        Function<ServiceBusMessageContext, Mono<Void>> onAbandon) {
         super(upstream);
         this.completionLock = completionLock;
         this.onComplete = Objects.requireNonNull(onComplete, "'onComplete' cannot be null.");
@@ -43,8 +46,8 @@ final class FluxAutoComplete extends FluxOperator<ServiceBusMessageContext, Serv
     public void subscribe(CoreSubscriber<? super ServiceBusMessageContext> coreSubscriber) {
         Objects.requireNonNull(coreSubscriber, "'coreSubscriber' cannot be null.");
 
-        final AutoCompleteSubscriber subscriber =
-            new AutoCompleteSubscriber(coreSubscriber, completionLock, onComplete, onAbandon, logger);
+        final AutoCompleteSubscriber subscriber
+            = new AutoCompleteSubscriber(coreSubscriber, completionLock, onComplete, onAbandon, LOGGER);
 
         source.subscribe(subscriber);
     }
@@ -56,10 +59,9 @@ final class FluxAutoComplete extends FluxOperator<ServiceBusMessageContext, Serv
         private final Semaphore semaphore;
         private final ClientLogger logger;
 
-        AutoCompleteSubscriber(CoreSubscriber<? super ServiceBusMessageContext> downstream,
-                               Semaphore completionLock,
-                               Function<ServiceBusMessageContext, Mono<Void>> onComplete,
-                               Function<ServiceBusMessageContext, Mono<Void>> onAbandon, ClientLogger logger) {
+        AutoCompleteSubscriber(CoreSubscriber<? super ServiceBusMessageContext> downstream, Semaphore completionLock,
+            Function<ServiceBusMessageContext, Mono<Void>> onComplete,
+            Function<ServiceBusMessageContext, Mono<Void>> onAbandon, ClientLogger logger) {
             this.downstream = downstream;
             this.onComplete = onComplete;
             this.onAbandon = onAbandon;
@@ -69,7 +71,9 @@ final class FluxAutoComplete extends FluxOperator<ServiceBusMessageContext, Serv
 
         @Override
         protected void hookOnSubscribe(Subscription subscription) {
-            logger.info("Subscription received. Subscribing downstream. {}", subscription);
+            logger.atVerbose()
+                .addKeyValue("subscription", subscription)
+                .log("Subscription received. Subscribing downstream.");
             downstream.onSubscribe(this);
         }
 
@@ -78,7 +82,9 @@ final class FluxAutoComplete extends FluxOperator<ServiceBusMessageContext, Serv
             final ServiceBusReceivedMessage message = value.getMessage();
             final String sequenceNumber = message != null ? String.valueOf(message.getSequenceNumber()) : "n/a";
 
-            logger.verbose("ON NEXT: Passing message downstream. sequenceNumber[{}]", sequenceNumber);
+            logger.atVerbose()
+                .addKeyValue(SEQUENCE_NUMBER_KEY, sequenceNumber)
+                .log("ON NEXT: Passing message downstream.");
             try {
                 semaphore.acquire();
             } catch (InterruptedException e) {
@@ -89,12 +95,13 @@ final class FluxAutoComplete extends FluxOperator<ServiceBusMessageContext, Serv
                 downstream.onNext(value);
                 applyWithCatch(onComplete, value, "complete");
             } catch (Exception e) {
-                logger.error("Error occurred processing message. Abandoning. sequenceNumber[{}]",
-                    sequenceNumber, e);
+                logger.atError()
+                    .addKeyValue(SEQUENCE_NUMBER_KEY, sequenceNumber)
+                    .log("Error occurred processing message. Abandoning.", e);
 
                 applyWithCatch(onAbandon, value, "abandon");
             } finally {
-                logger.verbose("ON NEXT: Finished. sequenceNumber[{}]", sequenceNumber);
+                logger.atVerbose().addKeyValue(SEQUENCE_NUMBER_KEY, sequenceNumber).log("ON NEXT: Finished.");
                 semaphore.release();
             }
         }
@@ -141,7 +148,7 @@ final class FluxAutoComplete extends FluxOperator<ServiceBusMessageContext, Serv
             try {
                 function.apply(context).block();
             } catch (Exception e) {
-                logger.warning("Unable to '{}' message.", operation, e);
+                logger.atWarning().addKeyValue("operation", operation).log("Operation on message failed.", e);
 
                 // On an error, we'll stop requesting from upstream and pass the error downstream.
                 upstream().cancel();

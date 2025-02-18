@@ -12,19 +12,30 @@ import com.azure.resourcemanager.synapse.fluent.SqlPoolMetadataSyncConfigsClient
 import com.azure.resourcemanager.synapse.fluent.models.MetadataSyncConfigInner;
 import com.azure.resourcemanager.synapse.models.MetadataSyncConfig;
 import com.azure.resourcemanager.synapse.models.SqlPoolMetadataSyncConfigs;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 public final class SqlPoolMetadataSyncConfigsImpl implements SqlPoolMetadataSyncConfigs {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(SqlPoolMetadataSyncConfigsImpl.class);
+    private static final ClientLogger LOGGER = new ClientLogger(SqlPoolMetadataSyncConfigsImpl.class);
 
     private final SqlPoolMetadataSyncConfigsClient innerClient;
 
     private final com.azure.resourcemanager.synapse.SynapseManager serviceManager;
 
-    public SqlPoolMetadataSyncConfigsImpl(
-        SqlPoolMetadataSyncConfigsClient innerClient, com.azure.resourcemanager.synapse.SynapseManager serviceManager) {
+    public SqlPoolMetadataSyncConfigsImpl(SqlPoolMetadataSyncConfigsClient innerClient,
+        com.azure.resourcemanager.synapse.SynapseManager serviceManager) {
         this.innerClient = innerClient;
         this.serviceManager = serviceManager;
+    }
+
+    public Response<MetadataSyncConfig> getWithResponse(String resourceGroupName, String workspaceName,
+        String sqlPoolName, Context context) {
+        Response<MetadataSyncConfigInner> inner
+            = this.serviceClient().getWithResponse(resourceGroupName, workspaceName, sqlPoolName, context);
+        if (inner != null) {
+            return new SimpleResponse<>(inner.getRequest(), inner.getStatusCode(), inner.getHeaders(),
+                new MetadataSyncConfigImpl(inner.getValue(), this.manager()));
+        } else {
+            return null;
+        }
     }
 
     public MetadataSyncConfig get(String resourceGroupName, String workspaceName, String sqlPoolName) {
@@ -36,51 +47,24 @@ public final class SqlPoolMetadataSyncConfigsImpl implements SqlPoolMetadataSync
         }
     }
 
-    public Response<MetadataSyncConfig> getWithResponse(
-        String resourceGroupName, String workspaceName, String sqlPoolName, Context context) {
-        Response<MetadataSyncConfigInner> inner =
-            this.serviceClient().getWithResponse(resourceGroupName, workspaceName, sqlPoolName, context);
+    public Response<MetadataSyncConfig> createWithResponse(String resourceGroupName, String workspaceName,
+        String sqlPoolName, MetadataSyncConfigInner metadataSyncConfiguration, Context context) {
+        Response<MetadataSyncConfigInner> inner = this.serviceClient()
+            .createWithResponse(resourceGroupName, workspaceName, sqlPoolName, metadataSyncConfiguration, context);
         if (inner != null) {
-            return new SimpleResponse<>(
-                inner.getRequest(),
-                inner.getStatusCode(),
-                inner.getHeaders(),
+            return new SimpleResponse<>(inner.getRequest(), inner.getStatusCode(), inner.getHeaders(),
                 new MetadataSyncConfigImpl(inner.getValue(), this.manager()));
         } else {
             return null;
         }
     }
 
-    public MetadataSyncConfig create(
-        String resourceGroupName,
-        String workspaceName,
-        String sqlPoolName,
+    public MetadataSyncConfig create(String resourceGroupName, String workspaceName, String sqlPoolName,
         MetadataSyncConfigInner metadataSyncConfiguration) {
-        MetadataSyncConfigInner inner =
-            this.serviceClient().create(resourceGroupName, workspaceName, sqlPoolName, metadataSyncConfiguration);
+        MetadataSyncConfigInner inner
+            = this.serviceClient().create(resourceGroupName, workspaceName, sqlPoolName, metadataSyncConfiguration);
         if (inner != null) {
             return new MetadataSyncConfigImpl(inner, this.manager());
-        } else {
-            return null;
-        }
-    }
-
-    public Response<MetadataSyncConfig> createWithResponse(
-        String resourceGroupName,
-        String workspaceName,
-        String sqlPoolName,
-        MetadataSyncConfigInner metadataSyncConfiguration,
-        Context context) {
-        Response<MetadataSyncConfigInner> inner =
-            this
-                .serviceClient()
-                .createWithResponse(resourceGroupName, workspaceName, sqlPoolName, metadataSyncConfiguration, context);
-        if (inner != null) {
-            return new SimpleResponse<>(
-                inner.getRequest(),
-                inner.getStatusCode(),
-                inner.getHeaders(),
-                new MetadataSyncConfigImpl(inner.getValue(), this.manager()));
         } else {
             return null;
         }

@@ -15,41 +15,52 @@ import com.azure.resourcemanager.apimanagement.models.ApiVersionSetContract;
 import com.azure.resourcemanager.apimanagement.models.ApiVersionSets;
 import com.azure.resourcemanager.apimanagement.models.ApiVersionSetsGetEntityTagResponse;
 import com.azure.resourcemanager.apimanagement.models.ApiVersionSetsGetResponse;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 public final class ApiVersionSetsImpl implements ApiVersionSets {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(ApiVersionSetsImpl.class);
+    private static final ClientLogger LOGGER = new ClientLogger(ApiVersionSetsImpl.class);
 
     private final ApiVersionSetsClient innerClient;
 
     private final com.azure.resourcemanager.apimanagement.ApiManagementManager serviceManager;
 
-    public ApiVersionSetsImpl(
-        ApiVersionSetsClient innerClient, com.azure.resourcemanager.apimanagement.ApiManagementManager serviceManager) {
+    public ApiVersionSetsImpl(ApiVersionSetsClient innerClient,
+        com.azure.resourcemanager.apimanagement.ApiManagementManager serviceManager) {
         this.innerClient = innerClient;
         this.serviceManager = serviceManager;
     }
 
     public PagedIterable<ApiVersionSetContract> listByService(String resourceGroupName, String serviceName) {
-        PagedIterable<ApiVersionSetContractInner> inner =
-            this.serviceClient().listByService(resourceGroupName, serviceName);
-        return Utils.mapPage(inner, inner1 -> new ApiVersionSetContractImpl(inner1, this.manager()));
+        PagedIterable<ApiVersionSetContractInner> inner
+            = this.serviceClient().listByService(resourceGroupName, serviceName);
+        return ResourceManagerUtils.mapPage(inner, inner1 -> new ApiVersionSetContractImpl(inner1, this.manager()));
     }
 
-    public PagedIterable<ApiVersionSetContract> listByService(
-        String resourceGroupName, String serviceName, String filter, Integer top, Integer skip, Context context) {
-        PagedIterable<ApiVersionSetContractInner> inner =
-            this.serviceClient().listByService(resourceGroupName, serviceName, filter, top, skip, context);
-        return Utils.mapPage(inner, inner1 -> new ApiVersionSetContractImpl(inner1, this.manager()));
+    public PagedIterable<ApiVersionSetContract> listByService(String resourceGroupName, String serviceName,
+        String filter, Integer top, Integer skip, Context context) {
+        PagedIterable<ApiVersionSetContractInner> inner
+            = this.serviceClient().listByService(resourceGroupName, serviceName, filter, top, skip, context);
+        return ResourceManagerUtils.mapPage(inner, inner1 -> new ApiVersionSetContractImpl(inner1, this.manager()));
+    }
+
+    public ApiVersionSetsGetEntityTagResponse getEntityTagWithResponse(String resourceGroupName, String serviceName,
+        String versionSetId, Context context) {
+        return this.serviceClient().getEntityTagWithResponse(resourceGroupName, serviceName, versionSetId, context);
     }
 
     public void getEntityTag(String resourceGroupName, String serviceName, String versionSetId) {
         this.serviceClient().getEntityTag(resourceGroupName, serviceName, versionSetId);
     }
 
-    public ApiVersionSetsGetEntityTagResponse getEntityTagWithResponse(
-        String resourceGroupName, String serviceName, String versionSetId, Context context) {
-        return this.serviceClient().getEntityTagWithResponse(resourceGroupName, serviceName, versionSetId, context);
+    public Response<ApiVersionSetContract> getWithResponse(String resourceGroupName, String serviceName,
+        String versionSetId, Context context) {
+        ApiVersionSetsGetResponse inner
+            = this.serviceClient().getWithResponse(resourceGroupName, serviceName, versionSetId, context);
+        if (inner != null) {
+            return new SimpleResponse<>(inner.getRequest(), inner.getStatusCode(), inner.getHeaders(),
+                new ApiVersionSetContractImpl(inner.getValue(), this.manager()));
+        } else {
+            return null;
+        }
     }
 
     public ApiVersionSetContract get(String resourceGroupName, String serviceName, String versionSetId) {
@@ -61,135 +72,88 @@ public final class ApiVersionSetsImpl implements ApiVersionSets {
         }
     }
 
-    public Response<ApiVersionSetContract> getWithResponse(
-        String resourceGroupName, String serviceName, String versionSetId, Context context) {
-        ApiVersionSetsGetResponse inner =
-            this.serviceClient().getWithResponse(resourceGroupName, serviceName, versionSetId, context);
-        if (inner != null) {
-            return new SimpleResponse<>(
-                inner.getRequest(),
-                inner.getStatusCode(),
-                inner.getHeaders(),
-                new ApiVersionSetContractImpl(inner.getValue(), this.manager()));
-        } else {
-            return null;
-        }
+    public Response<Void> deleteWithResponse(String resourceGroupName, String serviceName, String versionSetId,
+        String ifMatch, Context context) {
+        return this.serviceClient().deleteWithResponse(resourceGroupName, serviceName, versionSetId, ifMatch, context);
     }
 
     public void delete(String resourceGroupName, String serviceName, String versionSetId, String ifMatch) {
         this.serviceClient().delete(resourceGroupName, serviceName, versionSetId, ifMatch);
     }
 
-    public Response<Void> deleteWithResponse(
-        String resourceGroupName, String serviceName, String versionSetId, String ifMatch, Context context) {
-        return this.serviceClient().deleteWithResponse(resourceGroupName, serviceName, versionSetId, ifMatch, context);
-    }
-
     public ApiVersionSetContract getById(String id) {
-        String resourceGroupName = Utils.getValueFromIdByName(id, "resourceGroups");
+        String resourceGroupName = ResourceManagerUtils.getValueFromIdByName(id, "resourceGroups");
         if (resourceGroupName == null) {
-            throw logger
-                .logExceptionAsError(
-                    new IllegalArgumentException(
-                        String
-                            .format("The resource ID '%s' is not valid. Missing path segment 'resourceGroups'.", id)));
+            throw LOGGER.logExceptionAsError(new IllegalArgumentException(
+                String.format("The resource ID '%s' is not valid. Missing path segment 'resourceGroups'.", id)));
         }
-        String serviceName = Utils.getValueFromIdByName(id, "service");
+        String serviceName = ResourceManagerUtils.getValueFromIdByName(id, "service");
         if (serviceName == null) {
-            throw logger
-                .logExceptionAsError(
-                    new IllegalArgumentException(
-                        String.format("The resource ID '%s' is not valid. Missing path segment 'service'.", id)));
+            throw LOGGER.logExceptionAsError(new IllegalArgumentException(
+                String.format("The resource ID '%s' is not valid. Missing path segment 'service'.", id)));
         }
-        String versionSetId = Utils.getValueFromIdByName(id, "apiVersionSets");
+        String versionSetId = ResourceManagerUtils.getValueFromIdByName(id, "apiVersionSets");
         if (versionSetId == null) {
-            throw logger
-                .logExceptionAsError(
-                    new IllegalArgumentException(
-                        String
-                            .format("The resource ID '%s' is not valid. Missing path segment 'apiVersionSets'.", id)));
+            throw LOGGER.logExceptionAsError(new IllegalArgumentException(
+                String.format("The resource ID '%s' is not valid. Missing path segment 'apiVersionSets'.", id)));
         }
         return this.getWithResponse(resourceGroupName, serviceName, versionSetId, Context.NONE).getValue();
     }
 
     public Response<ApiVersionSetContract> getByIdWithResponse(String id, Context context) {
-        String resourceGroupName = Utils.getValueFromIdByName(id, "resourceGroups");
+        String resourceGroupName = ResourceManagerUtils.getValueFromIdByName(id, "resourceGroups");
         if (resourceGroupName == null) {
-            throw logger
-                .logExceptionAsError(
-                    new IllegalArgumentException(
-                        String
-                            .format("The resource ID '%s' is not valid. Missing path segment 'resourceGroups'.", id)));
+            throw LOGGER.logExceptionAsError(new IllegalArgumentException(
+                String.format("The resource ID '%s' is not valid. Missing path segment 'resourceGroups'.", id)));
         }
-        String serviceName = Utils.getValueFromIdByName(id, "service");
+        String serviceName = ResourceManagerUtils.getValueFromIdByName(id, "service");
         if (serviceName == null) {
-            throw logger
-                .logExceptionAsError(
-                    new IllegalArgumentException(
-                        String.format("The resource ID '%s' is not valid. Missing path segment 'service'.", id)));
+            throw LOGGER.logExceptionAsError(new IllegalArgumentException(
+                String.format("The resource ID '%s' is not valid. Missing path segment 'service'.", id)));
         }
-        String versionSetId = Utils.getValueFromIdByName(id, "apiVersionSets");
+        String versionSetId = ResourceManagerUtils.getValueFromIdByName(id, "apiVersionSets");
         if (versionSetId == null) {
-            throw logger
-                .logExceptionAsError(
-                    new IllegalArgumentException(
-                        String
-                            .format("The resource ID '%s' is not valid. Missing path segment 'apiVersionSets'.", id)));
+            throw LOGGER.logExceptionAsError(new IllegalArgumentException(
+                String.format("The resource ID '%s' is not valid. Missing path segment 'apiVersionSets'.", id)));
         }
         return this.getWithResponse(resourceGroupName, serviceName, versionSetId, context);
     }
 
     public void deleteById(String id) {
-        String resourceGroupName = Utils.getValueFromIdByName(id, "resourceGroups");
+        String resourceGroupName = ResourceManagerUtils.getValueFromIdByName(id, "resourceGroups");
         if (resourceGroupName == null) {
-            throw logger
-                .logExceptionAsError(
-                    new IllegalArgumentException(
-                        String
-                            .format("The resource ID '%s' is not valid. Missing path segment 'resourceGroups'.", id)));
+            throw LOGGER.logExceptionAsError(new IllegalArgumentException(
+                String.format("The resource ID '%s' is not valid. Missing path segment 'resourceGroups'.", id)));
         }
-        String serviceName = Utils.getValueFromIdByName(id, "service");
+        String serviceName = ResourceManagerUtils.getValueFromIdByName(id, "service");
         if (serviceName == null) {
-            throw logger
-                .logExceptionAsError(
-                    new IllegalArgumentException(
-                        String.format("The resource ID '%s' is not valid. Missing path segment 'service'.", id)));
+            throw LOGGER.logExceptionAsError(new IllegalArgumentException(
+                String.format("The resource ID '%s' is not valid. Missing path segment 'service'.", id)));
         }
-        String versionSetId = Utils.getValueFromIdByName(id, "apiVersionSets");
+        String versionSetId = ResourceManagerUtils.getValueFromIdByName(id, "apiVersionSets");
         if (versionSetId == null) {
-            throw logger
-                .logExceptionAsError(
-                    new IllegalArgumentException(
-                        String
-                            .format("The resource ID '%s' is not valid. Missing path segment 'apiVersionSets'.", id)));
+            throw LOGGER.logExceptionAsError(new IllegalArgumentException(
+                String.format("The resource ID '%s' is not valid. Missing path segment 'apiVersionSets'.", id)));
         }
         String localIfMatch = null;
-        this.deleteWithResponse(resourceGroupName, serviceName, versionSetId, localIfMatch, Context.NONE).getValue();
+        this.deleteWithResponse(resourceGroupName, serviceName, versionSetId, localIfMatch, Context.NONE);
     }
 
     public Response<Void> deleteByIdWithResponse(String id, String ifMatch, Context context) {
-        String resourceGroupName = Utils.getValueFromIdByName(id, "resourceGroups");
+        String resourceGroupName = ResourceManagerUtils.getValueFromIdByName(id, "resourceGroups");
         if (resourceGroupName == null) {
-            throw logger
-                .logExceptionAsError(
-                    new IllegalArgumentException(
-                        String
-                            .format("The resource ID '%s' is not valid. Missing path segment 'resourceGroups'.", id)));
+            throw LOGGER.logExceptionAsError(new IllegalArgumentException(
+                String.format("The resource ID '%s' is not valid. Missing path segment 'resourceGroups'.", id)));
         }
-        String serviceName = Utils.getValueFromIdByName(id, "service");
+        String serviceName = ResourceManagerUtils.getValueFromIdByName(id, "service");
         if (serviceName == null) {
-            throw logger
-                .logExceptionAsError(
-                    new IllegalArgumentException(
-                        String.format("The resource ID '%s' is not valid. Missing path segment 'service'.", id)));
+            throw LOGGER.logExceptionAsError(new IllegalArgumentException(
+                String.format("The resource ID '%s' is not valid. Missing path segment 'service'.", id)));
         }
-        String versionSetId = Utils.getValueFromIdByName(id, "apiVersionSets");
+        String versionSetId = ResourceManagerUtils.getValueFromIdByName(id, "apiVersionSets");
         if (versionSetId == null) {
-            throw logger
-                .logExceptionAsError(
-                    new IllegalArgumentException(
-                        String
-                            .format("The resource ID '%s' is not valid. Missing path segment 'apiVersionSets'.", id)));
+            throw LOGGER.logExceptionAsError(new IllegalArgumentException(
+                String.format("The resource ID '%s' is not valid. Missing path segment 'apiVersionSets'.", id)));
         }
         return this.deleteWithResponse(resourceGroupName, serviceName, versionSetId, ifMatch, context);
     }

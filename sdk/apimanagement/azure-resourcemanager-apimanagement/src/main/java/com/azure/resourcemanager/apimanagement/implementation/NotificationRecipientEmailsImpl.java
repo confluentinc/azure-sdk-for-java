@@ -15,26 +15,36 @@ import com.azure.resourcemanager.apimanagement.models.NotificationName;
 import com.azure.resourcemanager.apimanagement.models.NotificationRecipientEmails;
 import com.azure.resourcemanager.apimanagement.models.RecipientEmailCollection;
 import com.azure.resourcemanager.apimanagement.models.RecipientEmailContract;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 public final class NotificationRecipientEmailsImpl implements NotificationRecipientEmails {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(NotificationRecipientEmailsImpl.class);
+    private static final ClientLogger LOGGER = new ClientLogger(NotificationRecipientEmailsImpl.class);
 
     private final NotificationRecipientEmailsClient innerClient;
 
     private final com.azure.resourcemanager.apimanagement.ApiManagementManager serviceManager;
 
-    public NotificationRecipientEmailsImpl(
-        NotificationRecipientEmailsClient innerClient,
+    public NotificationRecipientEmailsImpl(NotificationRecipientEmailsClient innerClient,
         com.azure.resourcemanager.apimanagement.ApiManagementManager serviceManager) {
         this.innerClient = innerClient;
         this.serviceManager = serviceManager;
     }
 
-    public RecipientEmailCollection listByNotification(
-        String resourceGroupName, String serviceName, NotificationName notificationName) {
-        RecipientEmailCollectionInner inner =
-            this.serviceClient().listByNotification(resourceGroupName, serviceName, notificationName);
+    public Response<RecipientEmailCollection> listByNotificationWithResponse(String resourceGroupName,
+        String serviceName, NotificationName notificationName, Context context) {
+        Response<RecipientEmailCollectionInner> inner = this.serviceClient()
+            .listByNotificationWithResponse(resourceGroupName, serviceName, notificationName, context);
+        if (inner != null) {
+            return new SimpleResponse<>(inner.getRequest(), inner.getStatusCode(), inner.getHeaders(),
+                new RecipientEmailCollectionImpl(inner.getValue(), this.manager()));
+        } else {
+            return null;
+        }
+    }
+
+    public RecipientEmailCollection listByNotification(String resourceGroupName, String serviceName,
+        NotificationName notificationName) {
+        RecipientEmailCollectionInner inner
+            = this.serviceClient().listByNotification(resourceGroupName, serviceName, notificationName);
         if (inner != null) {
             return new RecipientEmailCollectionImpl(inner, this.manager());
         } else {
@@ -42,43 +52,33 @@ public final class NotificationRecipientEmailsImpl implements NotificationRecipi
         }
     }
 
-    public Response<RecipientEmailCollection> listByNotificationWithResponse(
-        String resourceGroupName, String serviceName, NotificationName notificationName, Context context) {
-        Response<RecipientEmailCollectionInner> inner =
-            this
-                .serviceClient()
-                .listByNotificationWithResponse(resourceGroupName, serviceName, notificationName, context);
+    public Response<Boolean> checkEntityExistsWithResponse(String resourceGroupName, String serviceName,
+        NotificationName notificationName, String email, Context context) {
+        return this.serviceClient()
+            .checkEntityExistsWithResponse(resourceGroupName, serviceName, notificationName, email, context);
+    }
+
+    public boolean checkEntityExists(String resourceGroupName, String serviceName, NotificationName notificationName,
+        String email) {
+        return this.serviceClient().checkEntityExists(resourceGroupName, serviceName, notificationName, email);
+    }
+
+    public Response<RecipientEmailContract> createOrUpdateWithResponse(String resourceGroupName, String serviceName,
+        NotificationName notificationName, String email, Context context) {
+        Response<RecipientEmailContractInner> inner = this.serviceClient()
+            .createOrUpdateWithResponse(resourceGroupName, serviceName, notificationName, email, context);
         if (inner != null) {
-            return new SimpleResponse<>(
-                inner.getRequest(),
-                inner.getStatusCode(),
-                inner.getHeaders(),
-                new RecipientEmailCollectionImpl(inner.getValue(), this.manager()));
+            return new SimpleResponse<>(inner.getRequest(), inner.getStatusCode(), inner.getHeaders(),
+                new RecipientEmailContractImpl(inner.getValue(), this.manager()));
         } else {
             return null;
         }
     }
 
-    public boolean checkEntityExists(
-        String resourceGroupName, String serviceName, NotificationName notificationName, String email) {
-        return this.serviceClient().checkEntityExists(resourceGroupName, serviceName, notificationName, email);
-    }
-
-    public Response<Boolean> checkEntityExistsWithResponse(
-        String resourceGroupName,
-        String serviceName,
-        NotificationName notificationName,
-        String email,
-        Context context) {
-        return this
-            .serviceClient()
-            .checkEntityExistsWithResponse(resourceGroupName, serviceName, notificationName, email, context);
-    }
-
-    public RecipientEmailContract createOrUpdate(
-        String resourceGroupName, String serviceName, NotificationName notificationName, String email) {
-        RecipientEmailContractInner inner =
-            this.serviceClient().createOrUpdate(resourceGroupName, serviceName, notificationName, email);
+    public RecipientEmailContract createOrUpdate(String resourceGroupName, String serviceName,
+        NotificationName notificationName, String email) {
+        RecipientEmailContractInner inner
+            = this.serviceClient().createOrUpdate(resourceGroupName, serviceName, notificationName, email);
         if (inner != null) {
             return new RecipientEmailContractImpl(inner, this.manager());
         } else {
@@ -86,40 +86,14 @@ public final class NotificationRecipientEmailsImpl implements NotificationRecipi
         }
     }
 
-    public Response<RecipientEmailContract> createOrUpdateWithResponse(
-        String resourceGroupName,
-        String serviceName,
-        NotificationName notificationName,
-        String email,
-        Context context) {
-        Response<RecipientEmailContractInner> inner =
-            this
-                .serviceClient()
-                .createOrUpdateWithResponse(resourceGroupName, serviceName, notificationName, email, context);
-        if (inner != null) {
-            return new SimpleResponse<>(
-                inner.getRequest(),
-                inner.getStatusCode(),
-                inner.getHeaders(),
-                new RecipientEmailContractImpl(inner.getValue(), this.manager()));
-        } else {
-            return null;
-        }
+    public Response<Void> deleteWithResponse(String resourceGroupName, String serviceName,
+        NotificationName notificationName, String email, Context context) {
+        return this.serviceClient()
+            .deleteWithResponse(resourceGroupName, serviceName, notificationName, email, context);
     }
 
     public void delete(String resourceGroupName, String serviceName, NotificationName notificationName, String email) {
         this.serviceClient().delete(resourceGroupName, serviceName, notificationName, email);
-    }
-
-    public Response<Void> deleteWithResponse(
-        String resourceGroupName,
-        String serviceName,
-        NotificationName notificationName,
-        String email,
-        Context context) {
-        return this
-            .serviceClient()
-            .deleteWithResponse(resourceGroupName, serviceName, notificationName, email, context);
     }
 
     private NotificationRecipientEmailsClient serviceClient() {

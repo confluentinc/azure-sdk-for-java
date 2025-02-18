@@ -5,26 +5,46 @@
 package com.azure.resourcemanager.cognitiveservices.models;
 
 import com.azure.core.util.ExpandableStringEnum;
-import com.fasterxml.jackson.annotation.JsonCreator;
 import java.util.Collection;
 
-/** Defines values for DeploymentScaleType. */
+/**
+ * Deployment scale type.
+ */
 public final class DeploymentScaleType extends ExpandableStringEnum<DeploymentScaleType> {
-    /** Static value Manual for DeploymentScaleType. */
+    /**
+     * Static value Standard for DeploymentScaleType.
+     */
+    public static final DeploymentScaleType STANDARD = fromString("Standard");
+
+    /**
+     * Static value Manual for DeploymentScaleType.
+     */
     public static final DeploymentScaleType MANUAL = fromString("Manual");
 
     /**
+     * Creates a new instance of DeploymentScaleType value.
+     * 
+     * @deprecated Use the {@link #fromString(String)} factory method.
+     */
+    @Deprecated
+    public DeploymentScaleType() {
+    }
+
+    /**
      * Creates or finds a DeploymentScaleType from its string representation.
-     *
+     * 
      * @param name a name to look for.
      * @return the corresponding DeploymentScaleType.
      */
-    @JsonCreator
     public static DeploymentScaleType fromString(String name) {
         return fromString(name, DeploymentScaleType.class);
     }
 
-    /** @return known DeploymentScaleType values. */
+    /**
+     * Gets known DeploymentScaleType values.
+     * 
+     * @return known DeploymentScaleType values.
+     */
     public static Collection<DeploymentScaleType> values() {
         return values(DeploymentScaleType.class);
     }

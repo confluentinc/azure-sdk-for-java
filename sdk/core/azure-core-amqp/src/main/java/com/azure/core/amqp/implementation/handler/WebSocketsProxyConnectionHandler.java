@@ -6,6 +6,7 @@ package com.azure.core.amqp.implementation.handler;
 import com.azure.core.amqp.ProxyAuthenticationType;
 import com.azure.core.amqp.ProxyOptions;
 import com.azure.core.amqp.implementation.AmqpErrorCode;
+import com.azure.core.amqp.implementation.AmqpMetricsProvider;
 import com.azure.core.amqp.implementation.ConnectionOptions;
 import com.azure.core.util.CoreUtils;
 import com.microsoft.azure.proton.transport.proxy.ProxyHandler;
@@ -38,10 +39,23 @@ import static com.azure.core.amqp.implementation.ClientConstants.HOSTNAME_KEY;
 public class WebSocketsProxyConnectionHandler extends WebSocketsConnectionHandler {
     private static final String HTTPS_URI_FORMAT = "https://%s:%s";
 
-    private final InetSocketAddress connectionHostname;
+    private final InetSocketAddress proxyHostAddress;
     private final ProxyOptions proxyOptions;
     private final String fullyQualifiedNamespace;
-    private final String amqpBrokerHostname;
+    /**
+     * The value of 'hostname:port' field for the 'HTTP CONNECT hostname:port HTTP/1.1'
+     * request to the Proxy.
+     * e.g.
+     *   CONNECT &lt;eventubs-namespace&gt;.servicebus.windows.net:443 HTTP/1.1 <br>
+     *   CONNECT order-events.contoso.com:443 HTTP/1.1 <br>
+     *   CONNECT shipping-events.contoso.com:200 HTTP/1.1 <br>
+     *
+     * The 'hostname' addresses the target host to which the HTTP Proxy server should forward
+     * the connection. It is usually the FQDN of the Event Hubs or Service Bus, or the host
+     * part of CustomEndpointAddress when a custom endpoint frontends the Event Hubs
+     * or Service Bus.
+     */
+    private final String connectHostnameAndPort;
 
     /**
      * Creates a handler that handles proton-j's connection through a proxy using web sockets.
@@ -50,19 +64,21 @@ public class WebSocketsProxyConnectionHandler extends WebSocketsConnectionHandle
      * @param connectionId Identifier for this connection.
      * @param connectionOptions Options used when creating the connection.
      * @param proxyOptions The options to use for proxy.
-     *
+     * @param peerDetails The peer details for this connection.
+     * @param metricsProvider The AMQP metrics provider.
      * @throws NullPointerException if {@code amqpHostname} or {@code proxyConfiguration} is null.
      * @throws IllegalStateException if a proxy address is unavailable for the given {@code proxyOptions}.
      */
     public WebSocketsProxyConnectionHandler(String connectionId, ConnectionOptions connectionOptions,
-        ProxyOptions proxyOptions, SslPeerDetails peerDetails) {
-        super(connectionId, connectionOptions, peerDetails);
+        ProxyOptions proxyOptions, SslPeerDetails peerDetails, AmqpMetricsProvider metricsProvider) {
+        super(connectionId, connectionOptions, peerDetails, metricsProvider);
 
         this.proxyOptions = Objects.requireNonNull(proxyOptions, "'proxyConfiguration' cannot be null.");
         this.fullyQualifiedNamespace = connectionOptions.getFullyQualifiedNamespace();
-        this.amqpBrokerHostname = connectionOptions.getFullyQualifiedNamespace() + ":" + connectionOptions.getPort();
+        this.connectHostnameAndPort = connectionOptions.getHostname() + ":" + connectionOptions.getPort();
+
         if (proxyOptions.isProxyAddressConfigured()) {
-            this.connectionHostname = (InetSocketAddress) proxyOptions.getProxyAddress().address();
+            this.proxyHostAddress = (InetSocketAddress) proxyOptions.getProxyAddress().address();
         } else {
             final URI serviceUri = createURI(connectionOptions.getHostname(), connectionOptions.getPort());
             final ProxySelector proxySelector = ProxySelector.getDefault();
@@ -72,14 +88,14 @@ public class WebSocketsProxyConnectionHandler extends WebSocketsConnectionHandle
 
             final List<Proxy> proxies = proxySelector.select(serviceUri);
             if (!isProxyAddressLegal(proxies)) {
-                final String formatted = String.format("No proxy address found for: '%s'. Available: %s.",
-                    serviceUri, proxies.stream().map(Proxy::toString).collect(Collectors.joining(", ")));
+                final String formatted = String.format("No proxy address found for: '%s'. Available: %s.", serviceUri,
+                    proxies.stream().map(Proxy::toString).collect(Collectors.joining(", ")));
 
                 throw logger.logExceptionAsError(new IllegalStateException(formatted));
             }
 
             final Proxy proxy = proxies.get(0);
-            this.connectionHostname = (InetSocketAddress) proxy.address();
+            this.proxyHostAddress = (InetSocketAddress) proxy.address();
         }
     }
 
@@ -111,7 +127,7 @@ public class WebSocketsProxyConnectionHandler extends WebSocketsConnectionHandle
      */
     @Override
     public String getHostname() {
-        return connectionHostname.getHostString();
+        return proxyHostAddress.getHostString();
     }
 
     /**
@@ -121,7 +137,7 @@ public class WebSocketsProxyConnectionHandler extends WebSocketsConnectionHandle
      */
     @Override
     public int getProtocolPort() {
-        return connectionHostname.getPort();
+        return proxyHostAddress.getPort();
     }
 
     @Override
@@ -136,8 +152,9 @@ public class WebSocketsProxyConnectionHandler extends WebSocketsConnectionHandle
         }
 
         final ErrorCondition errorCondition = transport.getCondition();
-        if (errorCondition == null || !(errorCondition.getCondition().equals(ConnectionError.FRAMING_ERROR)
-            || errorCondition.getCondition().equals(AmqpErrorCode.PROTON_IO_ERROR))) {
+        if (errorCondition == null
+            || !(errorCondition.getCondition().equals(ConnectionError.FRAMING_ERROR)
+                || errorCondition.getCondition().equals(AmqpErrorCode.PROTON_IO_ERROR))) {
             addErrorCondition(logger.atVerbose(), errorCondition)
                 .log("There is no error condition and these are not framing errors.");
             return;
@@ -173,7 +190,10 @@ public class WebSocketsProxyConnectionHandler extends WebSocketsConnectionHandle
         final URI url = createURI(fullyQualifiedNamespace, port);
         final InetSocketAddress address = new InetSocketAddress(hostNameParts[0], port);
 
-        logger.atError().log("Failed to connect to url: '{}', proxy host: '{}'", url, address.getHostString(), ioException);
+        logger.atWarning()
+            .addKeyValue("url", url)
+            .addKeyValue("proxyHost", address.getHostString())
+            .log("Failed to connect.", ioException);
 
         final ProxySelector proxySelector = ProxySelector.getDefault();
         if (proxySelector != null) {
@@ -186,48 +206,45 @@ public class WebSocketsProxyConnectionHandler extends WebSocketsConnectionHandle
         super.addTransportLayers(event, transport);
 
         // Checking that the proxy configuration is not null and not equal to the system defaults option.
-        final ProxyImpl proxy = proxyOptions != null
-            && !(proxyOptions == ProxyOptions.SYSTEM_DEFAULTS)
+        final ProxyImpl proxy = proxyOptions != null && !(proxyOptions == ProxyOptions.SYSTEM_DEFAULTS)
             ? new ProxyImpl(getProtonConfiguration())
             : new ProxyImpl();
 
-        // host name used to create proxy connect request must contain a port number.
-        // after creating the socket to proxy
         final ProxyHandler proxyHandler = new ProxyHandlerImpl();
-        proxy.configure(amqpBrokerHostname, null, proxyHandler, transport);
+        proxy.configure(connectHostnameAndPort, null, proxyHandler, transport);
 
         transport.addTransportLayer(proxy);
 
-        logger.atInfo()
-            .addKeyValue(HOSTNAME_KEY, amqpBrokerHostname)
-            .log("addProxyHandshake");
+        logger.atInfo().addKeyValue(HOSTNAME_KEY, connectHostnameAndPort).log("addProxyHandshake");
     }
 
     private com.microsoft.azure.proton.transport.proxy.ProxyConfiguration getProtonConfiguration() {
-        final com.microsoft.azure.proton.transport.proxy.ProxyAuthenticationType type =
-            getProtonAuthType(proxyOptions.getAuthentication());
-        final String username = proxyOptions.hasUserDefinedCredentials()
-            ? proxyOptions.getCredential().getUserName()
-            : null;
-        final String password = proxyOptions.hasUserDefinedCredentials()
-            ? new String(proxyOptions.getCredential().getPassword())
-            : null;
+        final com.microsoft.azure.proton.transport.proxy.ProxyAuthenticationType type
+            = getProtonAuthType(proxyOptions.getAuthentication());
+        final String username
+            = proxyOptions.hasUserDefinedCredentials() ? proxyOptions.getCredential().getUserName() : null;
+        final String password
+            = proxyOptions.hasUserDefinedCredentials() ? new String(proxyOptions.getCredential().getPassword()) : null;
 
-        return new com.microsoft.azure.proton.transport.proxy.ProxyConfiguration(type,
-            proxyOptions.getProxyAddress(), username, password);
+        return new com.microsoft.azure.proton.transport.proxy.ProxyConfiguration(type, proxyOptions.getProxyAddress(),
+            username, password);
     }
 
-    private com.microsoft.azure.proton.transport.proxy.ProxyAuthenticationType getProtonAuthType(
-        ProxyAuthenticationType type) {
+    private com.microsoft.azure.proton.transport.proxy.ProxyAuthenticationType
+        getProtonAuthType(ProxyAuthenticationType type) {
         switch (type) {
             case DIGEST:
                 return com.microsoft.azure.proton.transport.proxy.ProxyAuthenticationType.DIGEST;
+
             case BASIC:
                 return com.microsoft.azure.proton.transport.proxy.ProxyAuthenticationType.BASIC;
+
             case NONE:
                 return com.microsoft.azure.proton.transport.proxy.ProxyAuthenticationType.NONE;
+
             default:
-                throw logger.logExceptionAsError(new IllegalArgumentException(String.format("This authentication type is unknown: %s", type.name())));
+                throw logger.logExceptionAsError(new IllegalArgumentException(
+                    String.format("This authentication type is unknown: %s", type.name())));
         }
     }
 

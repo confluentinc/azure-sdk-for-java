@@ -30,7 +30,6 @@ import com.azure.core.management.exception.ManagementException;
 import com.azure.core.management.polling.PollResult;
 import com.azure.core.util.Context;
 import com.azure.core.util.FluxUtil;
-import com.azure.core.util.logging.ClientLogger;
 import com.azure.core.util.polling.PollerFlux;
 import com.azure.core.util.polling.SyncPoller;
 import com.azure.resourcemanager.synapse.fluent.BigDataPoolsClient;
@@ -41,24 +40,28 @@ import java.nio.ByteBuffer;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-/** An instance of this class provides access to all the operations defined in BigDataPoolsClient. */
+/**
+ * An instance of this class provides access to all the operations defined in BigDataPoolsClient.
+ */
 public final class BigDataPoolsClientImpl implements BigDataPoolsClient {
-    private final ClientLogger logger = new ClientLogger(BigDataPoolsClientImpl.class);
-
-    /** The proxy service used to perform REST calls. */
+    /**
+     * The proxy service used to perform REST calls.
+     */
     private final BigDataPoolsService service;
 
-    /** The service client containing this operation class. */
+    /**
+     * The service client containing this operation class.
+     */
     private final SynapseManagementClientImpl client;
 
     /**
      * Initializes an instance of BigDataPoolsClientImpl.
-     *
+     * 
      * @param client the instance of the service client containing this operation class.
      */
     BigDataPoolsClientImpl(SynapseManagementClientImpl client) {
-        this.service =
-            RestProxy.create(BigDataPoolsService.class, client.getHttpPipeline(), client.getSerializerAdapter());
+        this.service
+            = RestProxy.create(BigDataPoolsService.class, client.getHttpPipeline(), client.getSerializerAdapter());
         this.client = client;
     }
 
@@ -68,103 +71,72 @@ public final class BigDataPoolsClientImpl implements BigDataPoolsClient {
      */
     @Host("{$host}")
     @ServiceInterface(name = "SynapseManagementCli")
-    private interface BigDataPoolsService {
-        @Headers({"Content-Type: application/json"})
-        @Get(
-            "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Synapse/workspaces"
-                + "/{workspaceName}/bigDataPools/{bigDataPoolName}")
-        @ExpectedResponses({200})
+    public interface BigDataPoolsService {
+        @Headers({ "Content-Type: application/json" })
+        @Get("/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Synapse/workspaces/{workspaceName}/bigDataPools/{bigDataPoolName}")
+        @ExpectedResponses({ 200 })
         @UnexpectedResponseExceptionType(ManagementException.class)
-        Mono<Response<BigDataPoolResourceInfoInner>> get(
-            @HostParam("$host") String endpoint,
-            @QueryParam("api-version") String apiVersion,
-            @PathParam("subscriptionId") String subscriptionId,
-            @PathParam("resourceGroupName") String resourceGroupName,
-            @PathParam("workspaceName") String workspaceName,
-            @PathParam("bigDataPoolName") String bigDataPoolName,
-            @HeaderParam("Accept") String accept,
+        Mono<Response<BigDataPoolResourceInfoInner>> get(@HostParam("$host") String endpoint,
+            @QueryParam("api-version") String apiVersion, @PathParam("subscriptionId") String subscriptionId,
+            @PathParam("resourceGroupName") String resourceGroupName, @PathParam("workspaceName") String workspaceName,
+            @PathParam("bigDataPoolName") String bigDataPoolName, @HeaderParam("Accept") String accept,
             Context context);
 
-        @Headers({"Content-Type: application/json"})
-        @Patch(
-            "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Synapse/workspaces"
-                + "/{workspaceName}/bigDataPools/{bigDataPoolName}")
-        @ExpectedResponses({200})
+        @Headers({ "Content-Type: application/json" })
+        @Patch("/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Synapse/workspaces/{workspaceName}/bigDataPools/{bigDataPoolName}")
+        @ExpectedResponses({ 200 })
         @UnexpectedResponseExceptionType(ManagementException.class)
-        Mono<Response<BigDataPoolResourceInfoInner>> update(
-            @HostParam("$host") String endpoint,
-            @QueryParam("api-version") String apiVersion,
-            @PathParam("subscriptionId") String subscriptionId,
-            @PathParam("resourceGroupName") String resourceGroupName,
-            @PathParam("workspaceName") String workspaceName,
+        Mono<Response<BigDataPoolResourceInfoInner>> update(@HostParam("$host") String endpoint,
+            @QueryParam("api-version") String apiVersion, @PathParam("subscriptionId") String subscriptionId,
+            @PathParam("resourceGroupName") String resourceGroupName, @PathParam("workspaceName") String workspaceName,
             @PathParam("bigDataPoolName") String bigDataPoolName,
             @BodyParam("application/json") BigDataPoolPatchInfo bigDataPoolPatchInfo,
-            @HeaderParam("Accept") String accept,
-            Context context);
+            @HeaderParam("Accept") String accept, Context context);
 
-        @Headers({"Content-Type: application/json"})
-        @Put(
-            "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Synapse/workspaces"
-                + "/{workspaceName}/bigDataPools/{bigDataPoolName}")
-        @ExpectedResponses({200, 202})
+        @Headers({ "Content-Type: application/json" })
+        @Put("/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Synapse/workspaces/{workspaceName}/bigDataPools/{bigDataPoolName}")
+        @ExpectedResponses({ 200, 202 })
         @UnexpectedResponseExceptionType(ManagementException.class)
-        Mono<Response<Flux<ByteBuffer>>> createOrUpdate(
-            @HostParam("$host") String endpoint,
-            @QueryParam("api-version") String apiVersion,
-            @PathParam("subscriptionId") String subscriptionId,
-            @PathParam("resourceGroupName") String resourceGroupName,
-            @PathParam("workspaceName") String workspaceName,
-            @PathParam("bigDataPoolName") String bigDataPoolName,
-            @QueryParam("force") Boolean force,
+        Mono<Response<Flux<ByteBuffer>>> createOrUpdate(@HostParam("$host") String endpoint,
+            @QueryParam("api-version") String apiVersion, @PathParam("subscriptionId") String subscriptionId,
+            @PathParam("resourceGroupName") String resourceGroupName, @PathParam("workspaceName") String workspaceName,
+            @PathParam("bigDataPoolName") String bigDataPoolName, @QueryParam("force") Boolean force,
             @BodyParam("application/json") BigDataPoolResourceInfoInner bigDataPoolInfo,
-            @HeaderParam("Accept") String accept,
-            Context context);
+            @HeaderParam("Accept") String accept, Context context);
 
-        @Headers({"Content-Type: application/json"})
-        @Delete(
-            "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Synapse/workspaces"
-                + "/{workspaceName}/bigDataPools/{bigDataPoolName}")
-        @ExpectedResponses({200, 202, 204})
+        @Headers({ "Content-Type: application/json" })
+        @Delete("/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Synapse/workspaces/{workspaceName}/bigDataPools/{bigDataPoolName}")
+        @ExpectedResponses({ 200, 202, 204 })
         @UnexpectedResponseExceptionType(ManagementException.class)
-        Mono<Response<Flux<ByteBuffer>>> delete(
-            @HostParam("$host") String endpoint,
-            @QueryParam("api-version") String apiVersion,
-            @PathParam("subscriptionId") String subscriptionId,
-            @PathParam("resourceGroupName") String resourceGroupName,
-            @PathParam("workspaceName") String workspaceName,
-            @PathParam("bigDataPoolName") String bigDataPoolName,
-            @HeaderParam("Accept") String accept,
+        Mono<Response<Flux<ByteBuffer>>> delete(@HostParam("$host") String endpoint,
+            @QueryParam("api-version") String apiVersion, @PathParam("subscriptionId") String subscriptionId,
+            @PathParam("resourceGroupName") String resourceGroupName, @PathParam("workspaceName") String workspaceName,
+            @PathParam("bigDataPoolName") String bigDataPoolName, @HeaderParam("Accept") String accept,
             Context context);
 
-        @Headers({"Content-Type: application/json"})
-        @Get(
-            "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Synapse/workspaces"
-                + "/{workspaceName}/bigDataPools")
-        @ExpectedResponses({200})
+        @Headers({ "Content-Type: application/json" })
+        @Get("/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Synapse/workspaces/{workspaceName}/bigDataPools")
+        @ExpectedResponses({ 200 })
         @UnexpectedResponseExceptionType(ManagementException.class)
-        Mono<Response<BigDataPoolResourceInfoListResult>> listByWorkspace(
-            @HostParam("$host") String endpoint,
-            @QueryParam("api-version") String apiVersion,
-            @PathParam("subscriptionId") String subscriptionId,
-            @PathParam("resourceGroupName") String resourceGroupName,
-            @PathParam("workspaceName") String workspaceName,
-            @HeaderParam("Accept") String accept,
-            Context context);
+        Mono<Response<BigDataPoolResourceInfoListResult>> listByWorkspace(@HostParam("$host") String endpoint,
+            @QueryParam("api-version") String apiVersion, @PathParam("subscriptionId") String subscriptionId,
+            @PathParam("resourceGroupName") String resourceGroupName, @PathParam("workspaceName") String workspaceName,
+            @HeaderParam("Accept") String accept, Context context);
 
-        @Headers({"Content-Type: application/json"})
+        @Headers({ "Content-Type: application/json" })
         @Get("{nextLink}")
-        @ExpectedResponses({200})
+        @ExpectedResponses({ 200 })
         @UnexpectedResponseExceptionType(ManagementException.class)
         Mono<Response<BigDataPoolResourceInfoListResult>> listByWorkspaceNext(
-            @PathParam(value = "nextLink", encoded = true) String nextLink,
-            @HostParam("$host") String endpoint,
-            @HeaderParam("Accept") String accept,
-            Context context);
+            @PathParam(value = "nextLink", encoded = true) String nextLink, @HostParam("$host") String endpoint,
+            @HeaderParam("Accept") String accept, Context context);
     }
 
     /**
+     * Get Big Data pool
+     * 
      * Get a Big Data pool.
-     *
+     * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
      * @param workspaceName The name of the workspace.
      * @param bigDataPoolName Big Data pool name.
@@ -174,19 +146,15 @@ public final class BigDataPoolsClientImpl implements BigDataPoolsClient {
      * @return a Big Data pool along with {@link Response} on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    private Mono<Response<BigDataPoolResourceInfoInner>> getWithResponseAsync(
-        String resourceGroupName, String workspaceName, String bigDataPoolName) {
+    private Mono<Response<BigDataPoolResourceInfoInner>> getWithResponseAsync(String resourceGroupName,
+        String workspaceName, String bigDataPoolName) {
         if (this.client.getEndpoint() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getEndpoint() is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
         }
         if (this.client.getSubscriptionId() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getSubscriptionId() is required and cannot be null."));
+            return Mono.error(new IllegalArgumentException(
+                "Parameter this.client.getSubscriptionId() is required and cannot be null."));
         }
         if (resourceGroupName == null) {
             return Mono
@@ -199,27 +167,18 @@ public final class BigDataPoolsClientImpl implements BigDataPoolsClient {
             return Mono
                 .error(new IllegalArgumentException("Parameter bigDataPoolName is required and cannot be null."));
         }
-        final String apiVersion = "2021-06-01-preview";
         final String accept = "application/json";
         return FluxUtil
-            .withContext(
-                context ->
-                    service
-                        .get(
-                            this.client.getEndpoint(),
-                            apiVersion,
-                            this.client.getSubscriptionId(),
-                            resourceGroupName,
-                            workspaceName,
-                            bigDataPoolName,
-                            accept,
-                            context))
+            .withContext(context -> service.get(this.client.getEndpoint(), this.client.getApiVersion(),
+                this.client.getSubscriptionId(), resourceGroupName, workspaceName, bigDataPoolName, accept, context))
             .contextWrite(context -> context.putAll(FluxUtil.toReactorContext(this.client.getContext()).readOnly()));
     }
 
     /**
+     * Get Big Data pool
+     * 
      * Get a Big Data pool.
-     *
+     * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
      * @param workspaceName The name of the workspace.
      * @param bigDataPoolName Big Data pool name.
@@ -230,19 +189,15 @@ public final class BigDataPoolsClientImpl implements BigDataPoolsClient {
      * @return a Big Data pool along with {@link Response} on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    private Mono<Response<BigDataPoolResourceInfoInner>> getWithResponseAsync(
-        String resourceGroupName, String workspaceName, String bigDataPoolName, Context context) {
+    private Mono<Response<BigDataPoolResourceInfoInner>> getWithResponseAsync(String resourceGroupName,
+        String workspaceName, String bigDataPoolName, Context context) {
         if (this.client.getEndpoint() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getEndpoint() is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
         }
         if (this.client.getSubscriptionId() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getSubscriptionId() is required and cannot be null."));
+            return Mono.error(new IllegalArgumentException(
+                "Parameter this.client.getSubscriptionId() is required and cannot be null."));
         }
         if (resourceGroupName == null) {
             return Mono
@@ -255,24 +210,17 @@ public final class BigDataPoolsClientImpl implements BigDataPoolsClient {
             return Mono
                 .error(new IllegalArgumentException("Parameter bigDataPoolName is required and cannot be null."));
         }
-        final String apiVersion = "2021-06-01-preview";
         final String accept = "application/json";
         context = this.client.mergeContext(context);
-        return service
-            .get(
-                this.client.getEndpoint(),
-                apiVersion,
-                this.client.getSubscriptionId(),
-                resourceGroupName,
-                workspaceName,
-                bigDataPoolName,
-                accept,
-                context);
+        return service.get(this.client.getEndpoint(), this.client.getApiVersion(), this.client.getSubscriptionId(),
+            resourceGroupName, workspaceName, bigDataPoolName, accept, context);
     }
 
     /**
+     * Get Big Data pool
+     * 
      * Get a Big Data pool.
-     *
+     * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
      * @param workspaceName The name of the workspace.
      * @param bigDataPoolName Big Data pool name.
@@ -282,38 +230,17 @@ public final class BigDataPoolsClientImpl implements BigDataPoolsClient {
      * @return a Big Data pool on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    private Mono<BigDataPoolResourceInfoInner> getAsync(
-        String resourceGroupName, String workspaceName, String bigDataPoolName) {
+    private Mono<BigDataPoolResourceInfoInner> getAsync(String resourceGroupName, String workspaceName,
+        String bigDataPoolName) {
         return getWithResponseAsync(resourceGroupName, workspaceName, bigDataPoolName)
-            .flatMap(
-                (Response<BigDataPoolResourceInfoInner> res) -> {
-                    if (res.getValue() != null) {
-                        return Mono.just(res.getValue());
-                    } else {
-                        return Mono.empty();
-                    }
-                });
+            .flatMap(res -> Mono.justOrEmpty(res.getValue()));
     }
 
     /**
+     * Get Big Data pool
+     * 
      * Get a Big Data pool.
-     *
-     * @param resourceGroupName The name of the resource group. The name is case insensitive.
-     * @param workspaceName The name of the workspace.
-     * @param bigDataPoolName Big Data pool name.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return a Big Data pool.
-     */
-    @ServiceMethod(returns = ReturnType.SINGLE)
-    public BigDataPoolResourceInfoInner get(String resourceGroupName, String workspaceName, String bigDataPoolName) {
-        return getAsync(resourceGroupName, workspaceName, bigDataPoolName).block();
-    }
-
-    /**
-     * Get a Big Data pool.
-     *
+     * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
      * @param workspaceName The name of the workspace.
      * @param bigDataPoolName Big Data pool name.
@@ -324,14 +251,34 @@ public final class BigDataPoolsClientImpl implements BigDataPoolsClient {
      * @return a Big Data pool along with {@link Response}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    public Response<BigDataPoolResourceInfoInner> getWithResponse(
-        String resourceGroupName, String workspaceName, String bigDataPoolName, Context context) {
+    public Response<BigDataPoolResourceInfoInner> getWithResponse(String resourceGroupName, String workspaceName,
+        String bigDataPoolName, Context context) {
         return getWithResponseAsync(resourceGroupName, workspaceName, bigDataPoolName, context).block();
     }
 
     /**
+     * Get Big Data pool
+     * 
+     * Get a Big Data pool.
+     * 
+     * @param resourceGroupName The name of the resource group. The name is case insensitive.
+     * @param workspaceName The name of the workspace.
+     * @param bigDataPoolName Big Data pool name.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return a Big Data pool.
+     */
+    @ServiceMethod(returns = ReturnType.SINGLE)
+    public BigDataPoolResourceInfoInner get(String resourceGroupName, String workspaceName, String bigDataPoolName) {
+        return getWithResponse(resourceGroupName, workspaceName, bigDataPoolName, Context.NONE).getValue();
+    }
+
+    /**
+     * Update a Big Data pool.
+     * 
      * Patch a Big Data pool.
-     *
+     * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
      * @param workspaceName The name of the workspace.
      * @param bigDataPoolName Big Data pool name.
@@ -342,22 +289,15 @@ public final class BigDataPoolsClientImpl implements BigDataPoolsClient {
      * @return big Data pool along with {@link Response} on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    private Mono<Response<BigDataPoolResourceInfoInner>> updateWithResponseAsync(
-        String resourceGroupName,
-        String workspaceName,
-        String bigDataPoolName,
-        BigDataPoolPatchInfo bigDataPoolPatchInfo) {
+    private Mono<Response<BigDataPoolResourceInfoInner>> updateWithResponseAsync(String resourceGroupName,
+        String workspaceName, String bigDataPoolName, BigDataPoolPatchInfo bigDataPoolPatchInfo) {
         if (this.client.getEndpoint() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getEndpoint() is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
         }
         if (this.client.getSubscriptionId() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getSubscriptionId() is required and cannot be null."));
+            return Mono.error(new IllegalArgumentException(
+                "Parameter this.client.getSubscriptionId() is required and cannot be null."));
         }
         if (resourceGroupName == null) {
             return Mono
@@ -376,28 +316,19 @@ public final class BigDataPoolsClientImpl implements BigDataPoolsClient {
         } else {
             bigDataPoolPatchInfo.validate();
         }
-        final String apiVersion = "2021-06-01-preview";
         final String accept = "application/json";
         return FluxUtil
-            .withContext(
-                context ->
-                    service
-                        .update(
-                            this.client.getEndpoint(),
-                            apiVersion,
-                            this.client.getSubscriptionId(),
-                            resourceGroupName,
-                            workspaceName,
-                            bigDataPoolName,
-                            bigDataPoolPatchInfo,
-                            accept,
-                            context))
+            .withContext(context -> service.update(this.client.getEndpoint(), this.client.getApiVersion(),
+                this.client.getSubscriptionId(), resourceGroupName, workspaceName, bigDataPoolName,
+                bigDataPoolPatchInfo, accept, context))
             .contextWrite(context -> context.putAll(FluxUtil.toReactorContext(this.client.getContext()).readOnly()));
     }
 
     /**
+     * Update a Big Data pool.
+     * 
      * Patch a Big Data pool.
-     *
+     * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
      * @param workspaceName The name of the workspace.
      * @param bigDataPoolName Big Data pool name.
@@ -409,23 +340,15 @@ public final class BigDataPoolsClientImpl implements BigDataPoolsClient {
      * @return big Data pool along with {@link Response} on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    private Mono<Response<BigDataPoolResourceInfoInner>> updateWithResponseAsync(
-        String resourceGroupName,
-        String workspaceName,
-        String bigDataPoolName,
-        BigDataPoolPatchInfo bigDataPoolPatchInfo,
-        Context context) {
+    private Mono<Response<BigDataPoolResourceInfoInner>> updateWithResponseAsync(String resourceGroupName,
+        String workspaceName, String bigDataPoolName, BigDataPoolPatchInfo bigDataPoolPatchInfo, Context context) {
         if (this.client.getEndpoint() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getEndpoint() is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
         }
         if (this.client.getSubscriptionId() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getSubscriptionId() is required and cannot be null."));
+            return Mono.error(new IllegalArgumentException(
+                "Parameter this.client.getSubscriptionId() is required and cannot be null."));
         }
         if (resourceGroupName == null) {
             return Mono
@@ -444,25 +367,17 @@ public final class BigDataPoolsClientImpl implements BigDataPoolsClient {
         } else {
             bigDataPoolPatchInfo.validate();
         }
-        final String apiVersion = "2021-06-01-preview";
         final String accept = "application/json";
         context = this.client.mergeContext(context);
-        return service
-            .update(
-                this.client.getEndpoint(),
-                apiVersion,
-                this.client.getSubscriptionId(),
-                resourceGroupName,
-                workspaceName,
-                bigDataPoolName,
-                bigDataPoolPatchInfo,
-                accept,
-                context);
+        return service.update(this.client.getEndpoint(), this.client.getApiVersion(), this.client.getSubscriptionId(),
+            resourceGroupName, workspaceName, bigDataPoolName, bigDataPoolPatchInfo, accept, context);
     }
 
     /**
+     * Update a Big Data pool.
+     * 
      * Patch a Big Data pool.
-     *
+     * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
      * @param workspaceName The name of the workspace.
      * @param bigDataPoolName Big Data pool name.
@@ -473,46 +388,17 @@ public final class BigDataPoolsClientImpl implements BigDataPoolsClient {
      * @return big Data pool on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    private Mono<BigDataPoolResourceInfoInner> updateAsync(
-        String resourceGroupName,
-        String workspaceName,
-        String bigDataPoolName,
-        BigDataPoolPatchInfo bigDataPoolPatchInfo) {
+    private Mono<BigDataPoolResourceInfoInner> updateAsync(String resourceGroupName, String workspaceName,
+        String bigDataPoolName, BigDataPoolPatchInfo bigDataPoolPatchInfo) {
         return updateWithResponseAsync(resourceGroupName, workspaceName, bigDataPoolName, bigDataPoolPatchInfo)
-            .flatMap(
-                (Response<BigDataPoolResourceInfoInner> res) -> {
-                    if (res.getValue() != null) {
-                        return Mono.just(res.getValue());
-                    } else {
-                        return Mono.empty();
-                    }
-                });
+            .flatMap(res -> Mono.justOrEmpty(res.getValue()));
     }
 
     /**
+     * Update a Big Data pool.
+     * 
      * Patch a Big Data pool.
-     *
-     * @param resourceGroupName The name of the resource group. The name is case insensitive.
-     * @param workspaceName The name of the workspace.
-     * @param bigDataPoolName Big Data pool name.
-     * @param bigDataPoolPatchInfo The updated Big Data pool properties.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return big Data pool.
-     */
-    @ServiceMethod(returns = ReturnType.SINGLE)
-    public BigDataPoolResourceInfoInner update(
-        String resourceGroupName,
-        String workspaceName,
-        String bigDataPoolName,
-        BigDataPoolPatchInfo bigDataPoolPatchInfo) {
-        return updateAsync(resourceGroupName, workspaceName, bigDataPoolName, bigDataPoolPatchInfo).block();
-    }
-
-    /**
-     * Patch a Big Data pool.
-     *
+     * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
      * @param workspaceName The name of the workspace.
      * @param bigDataPoolName Big Data pool name.
@@ -524,19 +410,38 @@ public final class BigDataPoolsClientImpl implements BigDataPoolsClient {
      * @return big Data pool along with {@link Response}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    public Response<BigDataPoolResourceInfoInner> updateWithResponse(
-        String resourceGroupName,
-        String workspaceName,
-        String bigDataPoolName,
-        BigDataPoolPatchInfo bigDataPoolPatchInfo,
-        Context context) {
+    public Response<BigDataPoolResourceInfoInner> updateWithResponse(String resourceGroupName, String workspaceName,
+        String bigDataPoolName, BigDataPoolPatchInfo bigDataPoolPatchInfo, Context context) {
         return updateWithResponseAsync(resourceGroupName, workspaceName, bigDataPoolName, bigDataPoolPatchInfo, context)
             .block();
     }
 
     /**
+     * Update a Big Data pool.
+     * 
+     * Patch a Big Data pool.
+     * 
+     * @param resourceGroupName The name of the resource group. The name is case insensitive.
+     * @param workspaceName The name of the workspace.
+     * @param bigDataPoolName Big Data pool name.
+     * @param bigDataPoolPatchInfo The updated Big Data pool properties.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return big Data pool.
+     */
+    @ServiceMethod(returns = ReturnType.SINGLE)
+    public BigDataPoolResourceInfoInner update(String resourceGroupName, String workspaceName, String bigDataPoolName,
+        BigDataPoolPatchInfo bigDataPoolPatchInfo) {
+        return updateWithResponse(resourceGroupName, workspaceName, bigDataPoolName, bigDataPoolPatchInfo, Context.NONE)
+            .getValue();
+    }
+
+    /**
+     * Create a Big Data pool.
+     * 
      * Create a new Big Data pool.
-     *
+     * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
      * @param workspaceName The name of the workspace.
      * @param bigDataPoolName Big Data pool name.
@@ -548,23 +453,15 @@ public final class BigDataPoolsClientImpl implements BigDataPoolsClient {
      * @return big Data pool along with {@link Response} on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    private Mono<Response<Flux<ByteBuffer>>> createOrUpdateWithResponseAsync(
-        String resourceGroupName,
-        String workspaceName,
-        String bigDataPoolName,
-        BigDataPoolResourceInfoInner bigDataPoolInfo,
-        Boolean force) {
+    private Mono<Response<Flux<ByteBuffer>>> createOrUpdateWithResponseAsync(String resourceGroupName,
+        String workspaceName, String bigDataPoolName, BigDataPoolResourceInfoInner bigDataPoolInfo, Boolean force) {
         if (this.client.getEndpoint() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getEndpoint() is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
         }
         if (this.client.getSubscriptionId() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getSubscriptionId() is required and cannot be null."));
+            return Mono.error(new IllegalArgumentException(
+                "Parameter this.client.getSubscriptionId() is required and cannot be null."));
         }
         if (resourceGroupName == null) {
             return Mono
@@ -583,29 +480,19 @@ public final class BigDataPoolsClientImpl implements BigDataPoolsClient {
         } else {
             bigDataPoolInfo.validate();
         }
-        final String apiVersion = "2021-06-01-preview";
         final String accept = "application/json";
         return FluxUtil
-            .withContext(
-                context ->
-                    service
-                        .createOrUpdate(
-                            this.client.getEndpoint(),
-                            apiVersion,
-                            this.client.getSubscriptionId(),
-                            resourceGroupName,
-                            workspaceName,
-                            bigDataPoolName,
-                            force,
-                            bigDataPoolInfo,
-                            accept,
-                            context))
+            .withContext(context -> service.createOrUpdate(this.client.getEndpoint(), this.client.getApiVersion(),
+                this.client.getSubscriptionId(), resourceGroupName, workspaceName, bigDataPoolName, force,
+                bigDataPoolInfo, accept, context))
             .contextWrite(context -> context.putAll(FluxUtil.toReactorContext(this.client.getContext()).readOnly()));
     }
 
     /**
+     * Create a Big Data pool.
+     * 
      * Create a new Big Data pool.
-     *
+     * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
      * @param workspaceName The name of the workspace.
      * @param bigDataPoolName Big Data pool name.
@@ -618,24 +505,16 @@ public final class BigDataPoolsClientImpl implements BigDataPoolsClient {
      * @return big Data pool along with {@link Response} on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    private Mono<Response<Flux<ByteBuffer>>> createOrUpdateWithResponseAsync(
-        String resourceGroupName,
-        String workspaceName,
-        String bigDataPoolName,
-        BigDataPoolResourceInfoInner bigDataPoolInfo,
-        Boolean force,
+    private Mono<Response<Flux<ByteBuffer>>> createOrUpdateWithResponseAsync(String resourceGroupName,
+        String workspaceName, String bigDataPoolName, BigDataPoolResourceInfoInner bigDataPoolInfo, Boolean force,
         Context context) {
         if (this.client.getEndpoint() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getEndpoint() is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
         }
         if (this.client.getSubscriptionId() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getSubscriptionId() is required and cannot be null."));
+            return Mono.error(new IllegalArgumentException(
+                "Parameter this.client.getSubscriptionId() is required and cannot be null."));
         }
         if (resourceGroupName == null) {
             return Mono
@@ -654,26 +533,18 @@ public final class BigDataPoolsClientImpl implements BigDataPoolsClient {
         } else {
             bigDataPoolInfo.validate();
         }
-        final String apiVersion = "2021-06-01-preview";
         final String accept = "application/json";
         context = this.client.mergeContext(context);
-        return service
-            .createOrUpdate(
-                this.client.getEndpoint(),
-                apiVersion,
-                this.client.getSubscriptionId(),
-                resourceGroupName,
-                workspaceName,
-                bigDataPoolName,
-                force,
-                bigDataPoolInfo,
-                accept,
-                context);
+        return service.createOrUpdate(this.client.getEndpoint(), this.client.getApiVersion(),
+            this.client.getSubscriptionId(), resourceGroupName, workspaceName, bigDataPoolName, force, bigDataPoolInfo,
+            accept, context);
     }
 
     /**
+     * Create a Big Data pool.
+     * 
      * Create a new Big Data pool.
-     *
+     * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
      * @param workspaceName The name of the workspace.
      * @param bigDataPoolName Big Data pool name.
@@ -682,30 +553,50 @@ public final class BigDataPoolsClientImpl implements BigDataPoolsClient {
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return big Data pool along with {@link Response} on successful completion of {@link Mono}.
+     * @return the {@link PollerFlux} for polling of big Data pool.
      */
     @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
     private PollerFlux<PollResult<BigDataPoolResourceInfoInner>, BigDataPoolResourceInfoInner> beginCreateOrUpdateAsync(
-        String resourceGroupName,
-        String workspaceName,
-        String bigDataPoolName,
-        BigDataPoolResourceInfoInner bigDataPoolInfo,
-        Boolean force) {
-        Mono<Response<Flux<ByteBuffer>>> mono =
-            createOrUpdateWithResponseAsync(resourceGroupName, workspaceName, bigDataPoolName, bigDataPoolInfo, force);
-        return this
-            .client
-            .<BigDataPoolResourceInfoInner, BigDataPoolResourceInfoInner>getLroResult(
-                mono,
-                this.client.getHttpPipeline(),
-                BigDataPoolResourceInfoInner.class,
-                BigDataPoolResourceInfoInner.class,
-                this.client.getContext());
+        String resourceGroupName, String workspaceName, String bigDataPoolName,
+        BigDataPoolResourceInfoInner bigDataPoolInfo, Boolean force) {
+        Mono<Response<Flux<ByteBuffer>>> mono = createOrUpdateWithResponseAsync(resourceGroupName, workspaceName,
+            bigDataPoolName, bigDataPoolInfo, force);
+        return this.client.<BigDataPoolResourceInfoInner, BigDataPoolResourceInfoInner>getLroResult(mono,
+            this.client.getHttpPipeline(), BigDataPoolResourceInfoInner.class, BigDataPoolResourceInfoInner.class,
+            this.client.getContext());
     }
 
     /**
+     * Create a Big Data pool.
+     * 
      * Create a new Big Data pool.
-     *
+     * 
+     * @param resourceGroupName The name of the resource group. The name is case insensitive.
+     * @param workspaceName The name of the workspace.
+     * @param bigDataPoolName Big Data pool name.
+     * @param bigDataPoolInfo The Big Data pool to create.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return the {@link PollerFlux} for polling of big Data pool.
+     */
+    @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
+    private PollerFlux<PollResult<BigDataPoolResourceInfoInner>, BigDataPoolResourceInfoInner> beginCreateOrUpdateAsync(
+        String resourceGroupName, String workspaceName, String bigDataPoolName,
+        BigDataPoolResourceInfoInner bigDataPoolInfo) {
+        final Boolean force = null;
+        Mono<Response<Flux<ByteBuffer>>> mono = createOrUpdateWithResponseAsync(resourceGroupName, workspaceName,
+            bigDataPoolName, bigDataPoolInfo, force);
+        return this.client.<BigDataPoolResourceInfoInner, BigDataPoolResourceInfoInner>getLroResult(mono,
+            this.client.getHttpPipeline(), BigDataPoolResourceInfoInner.class, BigDataPoolResourceInfoInner.class,
+            this.client.getContext());
+    }
+
+    /**
+     * Create a Big Data pool.
+     * 
+     * Create a new Big Data pool.
+     * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
      * @param workspaceName The name of the workspace.
      * @param bigDataPoolName Big Data pool name.
@@ -715,84 +606,74 @@ public final class BigDataPoolsClientImpl implements BigDataPoolsClient {
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return big Data pool along with {@link Response} on successful completion of {@link Mono}.
+     * @return the {@link PollerFlux} for polling of big Data pool.
      */
     @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
     private PollerFlux<PollResult<BigDataPoolResourceInfoInner>, BigDataPoolResourceInfoInner> beginCreateOrUpdateAsync(
-        String resourceGroupName,
-        String workspaceName,
-        String bigDataPoolName,
-        BigDataPoolResourceInfoInner bigDataPoolInfo,
-        Boolean force,
-        Context context) {
+        String resourceGroupName, String workspaceName, String bigDataPoolName,
+        BigDataPoolResourceInfoInner bigDataPoolInfo, Boolean force, Context context) {
         context = this.client.mergeContext(context);
-        Mono<Response<Flux<ByteBuffer>>> mono =
-            createOrUpdateWithResponseAsync(
-                resourceGroupName, workspaceName, bigDataPoolName, bigDataPoolInfo, force, context);
+        Mono<Response<Flux<ByteBuffer>>> mono = createOrUpdateWithResponseAsync(resourceGroupName, workspaceName,
+            bigDataPoolName, bigDataPoolInfo, force, context);
+        return this.client.<BigDataPoolResourceInfoInner, BigDataPoolResourceInfoInner>getLroResult(mono,
+            this.client.getHttpPipeline(), BigDataPoolResourceInfoInner.class, BigDataPoolResourceInfoInner.class,
+            context);
+    }
+
+    /**
+     * Create a Big Data pool.
+     * 
+     * Create a new Big Data pool.
+     * 
+     * @param resourceGroupName The name of the resource group. The name is case insensitive.
+     * @param workspaceName The name of the workspace.
+     * @param bigDataPoolName Big Data pool name.
+     * @param bigDataPoolInfo The Big Data pool to create.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return the {@link SyncPoller} for polling of big Data pool.
+     */
+    @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
+    public SyncPoller<PollResult<BigDataPoolResourceInfoInner>, BigDataPoolResourceInfoInner> beginCreateOrUpdate(
+        String resourceGroupName, String workspaceName, String bigDataPoolName,
+        BigDataPoolResourceInfoInner bigDataPoolInfo) {
+        final Boolean force = null;
+        return this.beginCreateOrUpdateAsync(resourceGroupName, workspaceName, bigDataPoolName, bigDataPoolInfo, force)
+            .getSyncPoller();
+    }
+
+    /**
+     * Create a Big Data pool.
+     * 
+     * Create a new Big Data pool.
+     * 
+     * @param resourceGroupName The name of the resource group. The name is case insensitive.
+     * @param workspaceName The name of the workspace.
+     * @param bigDataPoolName Big Data pool name.
+     * @param bigDataPoolInfo The Big Data pool to create.
+     * @param force Whether to stop any running jobs in the Big Data pool.
+     * @param context The context to associate with this operation.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return the {@link SyncPoller} for polling of big Data pool.
+     */
+    @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
+    public SyncPoller<PollResult<BigDataPoolResourceInfoInner>, BigDataPoolResourceInfoInner> beginCreateOrUpdate(
+        String resourceGroupName, String workspaceName, String bigDataPoolName,
+        BigDataPoolResourceInfoInner bigDataPoolInfo, Boolean force, Context context) {
         return this
-            .client
-            .<BigDataPoolResourceInfoInner, BigDataPoolResourceInfoInner>getLroResult(
-                mono,
-                this.client.getHttpPipeline(),
-                BigDataPoolResourceInfoInner.class,
-                BigDataPoolResourceInfoInner.class,
-                context);
-    }
-
-    /**
-     * Create a new Big Data pool.
-     *
-     * @param resourceGroupName The name of the resource group. The name is case insensitive.
-     * @param workspaceName The name of the workspace.
-     * @param bigDataPoolName Big Data pool name.
-     * @param bigDataPoolInfo The Big Data pool to create.
-     * @param force Whether to stop any running jobs in the Big Data pool.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return big Data pool along with {@link Response} on successful completion of {@link Mono}.
-     */
-    @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
-    public SyncPoller<PollResult<BigDataPoolResourceInfoInner>, BigDataPoolResourceInfoInner> beginCreateOrUpdate(
-        String resourceGroupName,
-        String workspaceName,
-        String bigDataPoolName,
-        BigDataPoolResourceInfoInner bigDataPoolInfo,
-        Boolean force) {
-        return beginCreateOrUpdateAsync(resourceGroupName, workspaceName, bigDataPoolName, bigDataPoolInfo, force)
+            .beginCreateOrUpdateAsync(resourceGroupName, workspaceName, bigDataPoolName, bigDataPoolInfo, force,
+                context)
             .getSyncPoller();
     }
 
     /**
+     * Create a Big Data pool.
+     * 
      * Create a new Big Data pool.
-     *
-     * @param resourceGroupName The name of the resource group. The name is case insensitive.
-     * @param workspaceName The name of the workspace.
-     * @param bigDataPoolName Big Data pool name.
-     * @param bigDataPoolInfo The Big Data pool to create.
-     * @param force Whether to stop any running jobs in the Big Data pool.
-     * @param context The context to associate with this operation.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return big Data pool along with {@link Response} on successful completion of {@link Mono}.
-     */
-    @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
-    public SyncPoller<PollResult<BigDataPoolResourceInfoInner>, BigDataPoolResourceInfoInner> beginCreateOrUpdate(
-        String resourceGroupName,
-        String workspaceName,
-        String bigDataPoolName,
-        BigDataPoolResourceInfoInner bigDataPoolInfo,
-        Boolean force,
-        Context context) {
-        return beginCreateOrUpdateAsync(
-                resourceGroupName, workspaceName, bigDataPoolName, bigDataPoolInfo, force, context)
-            .getSyncPoller();
-    }
-
-    /**
-     * Create a new Big Data pool.
-     *
+     * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
      * @param workspaceName The name of the workspace.
      * @param bigDataPoolName Big Data pool name.
@@ -804,20 +685,18 @@ public final class BigDataPoolsClientImpl implements BigDataPoolsClient {
      * @return big Data pool on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    private Mono<BigDataPoolResourceInfoInner> createOrUpdateAsync(
-        String resourceGroupName,
-        String workspaceName,
-        String bigDataPoolName,
-        BigDataPoolResourceInfoInner bigDataPoolInfo,
-        Boolean force) {
+    private Mono<BigDataPoolResourceInfoInner> createOrUpdateAsync(String resourceGroupName, String workspaceName,
+        String bigDataPoolName, BigDataPoolResourceInfoInner bigDataPoolInfo, Boolean force) {
         return beginCreateOrUpdateAsync(resourceGroupName, workspaceName, bigDataPoolName, bigDataPoolInfo, force)
             .last()
             .flatMap(this.client::getLroFinalResultOrError);
     }
 
     /**
+     * Create a Big Data pool.
+     * 
      * Create a new Big Data pool.
-     *
+     * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
      * @param workspaceName The name of the workspace.
      * @param bigDataPoolName Big Data pool name.
@@ -828,11 +707,8 @@ public final class BigDataPoolsClientImpl implements BigDataPoolsClient {
      * @return big Data pool on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    private Mono<BigDataPoolResourceInfoInner> createOrUpdateAsync(
-        String resourceGroupName,
-        String workspaceName,
-        String bigDataPoolName,
-        BigDataPoolResourceInfoInner bigDataPoolInfo) {
+    private Mono<BigDataPoolResourceInfoInner> createOrUpdateAsync(String resourceGroupName, String workspaceName,
+        String bigDataPoolName, BigDataPoolResourceInfoInner bigDataPoolInfo) {
         final Boolean force = null;
         return beginCreateOrUpdateAsync(resourceGroupName, workspaceName, bigDataPoolName, bigDataPoolInfo, force)
             .last()
@@ -840,8 +716,10 @@ public final class BigDataPoolsClientImpl implements BigDataPoolsClient {
     }
 
     /**
+     * Create a Big Data pool.
+     * 
      * Create a new Big Data pool.
-     *
+     * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
      * @param workspaceName The name of the workspace.
      * @param bigDataPoolName Big Data pool name.
@@ -854,45 +732,17 @@ public final class BigDataPoolsClientImpl implements BigDataPoolsClient {
      * @return big Data pool on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    private Mono<BigDataPoolResourceInfoInner> createOrUpdateAsync(
-        String resourceGroupName,
-        String workspaceName,
-        String bigDataPoolName,
-        BigDataPoolResourceInfoInner bigDataPoolInfo,
-        Boolean force,
-        Context context) {
-        return beginCreateOrUpdateAsync(
-                resourceGroupName, workspaceName, bigDataPoolName, bigDataPoolInfo, force, context)
-            .last()
-            .flatMap(this.client::getLroFinalResultOrError);
+    private Mono<BigDataPoolResourceInfoInner> createOrUpdateAsync(String resourceGroupName, String workspaceName,
+        String bigDataPoolName, BigDataPoolResourceInfoInner bigDataPoolInfo, Boolean force, Context context) {
+        return beginCreateOrUpdateAsync(resourceGroupName, workspaceName, bigDataPoolName, bigDataPoolInfo, force,
+            context).last().flatMap(this.client::getLroFinalResultOrError);
     }
 
     /**
+     * Create a Big Data pool.
+     * 
      * Create a new Big Data pool.
-     *
-     * @param resourceGroupName The name of the resource group. The name is case insensitive.
-     * @param workspaceName The name of the workspace.
-     * @param bigDataPoolName Big Data pool name.
-     * @param bigDataPoolInfo The Big Data pool to create.
-     * @param force Whether to stop any running jobs in the Big Data pool.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return big Data pool.
-     */
-    @ServiceMethod(returns = ReturnType.SINGLE)
-    public BigDataPoolResourceInfoInner createOrUpdate(
-        String resourceGroupName,
-        String workspaceName,
-        String bigDataPoolName,
-        BigDataPoolResourceInfoInner bigDataPoolInfo,
-        Boolean force) {
-        return createOrUpdateAsync(resourceGroupName, workspaceName, bigDataPoolName, bigDataPoolInfo, force).block();
-    }
-
-    /**
-     * Create a new Big Data pool.
-     *
+     * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
      * @param workspaceName The name of the workspace.
      * @param bigDataPoolName Big Data pool name.
@@ -903,18 +753,17 @@ public final class BigDataPoolsClientImpl implements BigDataPoolsClient {
      * @return big Data pool.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    public BigDataPoolResourceInfoInner createOrUpdate(
-        String resourceGroupName,
-        String workspaceName,
-        String bigDataPoolName,
-        BigDataPoolResourceInfoInner bigDataPoolInfo) {
+    public BigDataPoolResourceInfoInner createOrUpdate(String resourceGroupName, String workspaceName,
+        String bigDataPoolName, BigDataPoolResourceInfoInner bigDataPoolInfo) {
         final Boolean force = null;
         return createOrUpdateAsync(resourceGroupName, workspaceName, bigDataPoolName, bigDataPoolInfo, force).block();
     }
 
     /**
+     * Create a Big Data pool.
+     * 
      * Create a new Big Data pool.
-     *
+     * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
      * @param workspaceName The name of the workspace.
      * @param bigDataPoolName Big Data pool name.
@@ -927,20 +776,17 @@ public final class BigDataPoolsClientImpl implements BigDataPoolsClient {
      * @return big Data pool.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    public BigDataPoolResourceInfoInner createOrUpdate(
-        String resourceGroupName,
-        String workspaceName,
-        String bigDataPoolName,
-        BigDataPoolResourceInfoInner bigDataPoolInfo,
-        Boolean force,
-        Context context) {
+    public BigDataPoolResourceInfoInner createOrUpdate(String resourceGroupName, String workspaceName,
+        String bigDataPoolName, BigDataPoolResourceInfoInner bigDataPoolInfo, Boolean force, Context context) {
         return createOrUpdateAsync(resourceGroupName, workspaceName, bigDataPoolName, bigDataPoolInfo, force, context)
             .block();
     }
 
     /**
+     * Delete a Big Data pool.
+     * 
      * Delete a Big Data pool from the workspace.
-     *
+     * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
      * @param workspaceName The name of the workspace.
      * @param bigDataPoolName Big Data pool name.
@@ -950,19 +796,15 @@ public final class BigDataPoolsClientImpl implements BigDataPoolsClient {
      * @return any object along with {@link Response} on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    private Mono<Response<Flux<ByteBuffer>>> deleteWithResponseAsync(
-        String resourceGroupName, String workspaceName, String bigDataPoolName) {
+    private Mono<Response<Flux<ByteBuffer>>> deleteWithResponseAsync(String resourceGroupName, String workspaceName,
+        String bigDataPoolName) {
         if (this.client.getEndpoint() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getEndpoint() is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
         }
         if (this.client.getSubscriptionId() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getSubscriptionId() is required and cannot be null."));
+            return Mono.error(new IllegalArgumentException(
+                "Parameter this.client.getSubscriptionId() is required and cannot be null."));
         }
         if (resourceGroupName == null) {
             return Mono
@@ -975,27 +817,18 @@ public final class BigDataPoolsClientImpl implements BigDataPoolsClient {
             return Mono
                 .error(new IllegalArgumentException("Parameter bigDataPoolName is required and cannot be null."));
         }
-        final String apiVersion = "2021-06-01-preview";
         final String accept = "application/json";
         return FluxUtil
-            .withContext(
-                context ->
-                    service
-                        .delete(
-                            this.client.getEndpoint(),
-                            apiVersion,
-                            this.client.getSubscriptionId(),
-                            resourceGroupName,
-                            workspaceName,
-                            bigDataPoolName,
-                            accept,
-                            context))
+            .withContext(context -> service.delete(this.client.getEndpoint(), this.client.getApiVersion(),
+                this.client.getSubscriptionId(), resourceGroupName, workspaceName, bigDataPoolName, accept, context))
             .contextWrite(context -> context.putAll(FluxUtil.toReactorContext(this.client.getContext()).readOnly()));
     }
 
     /**
+     * Delete a Big Data pool.
+     * 
      * Delete a Big Data pool from the workspace.
-     *
+     * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
      * @param workspaceName The name of the workspace.
      * @param bigDataPoolName Big Data pool name.
@@ -1006,19 +839,15 @@ public final class BigDataPoolsClientImpl implements BigDataPoolsClient {
      * @return any object along with {@link Response} on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    private Mono<Response<Flux<ByteBuffer>>> deleteWithResponseAsync(
-        String resourceGroupName, String workspaceName, String bigDataPoolName, Context context) {
+    private Mono<Response<Flux<ByteBuffer>>> deleteWithResponseAsync(String resourceGroupName, String workspaceName,
+        String bigDataPoolName, Context context) {
         if (this.client.getEndpoint() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getEndpoint() is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
         }
         if (this.client.getSubscriptionId() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getSubscriptionId() is required and cannot be null."));
+            return Mono.error(new IllegalArgumentException(
+                "Parameter this.client.getSubscriptionId() is required and cannot be null."));
         }
         if (resourceGroupName == null) {
             return Mono
@@ -1031,46 +860,39 @@ public final class BigDataPoolsClientImpl implements BigDataPoolsClient {
             return Mono
                 .error(new IllegalArgumentException("Parameter bigDataPoolName is required and cannot be null."));
         }
-        final String apiVersion = "2021-06-01-preview";
         final String accept = "application/json";
         context = this.client.mergeContext(context);
-        return service
-            .delete(
-                this.client.getEndpoint(),
-                apiVersion,
-                this.client.getSubscriptionId(),
-                resourceGroupName,
-                workspaceName,
-                bigDataPoolName,
-                accept,
-                context);
+        return service.delete(this.client.getEndpoint(), this.client.getApiVersion(), this.client.getSubscriptionId(),
+            resourceGroupName, workspaceName, bigDataPoolName, accept, context);
     }
 
     /**
+     * Delete a Big Data pool.
+     * 
      * Delete a Big Data pool from the workspace.
-     *
+     * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
      * @param workspaceName The name of the workspace.
      * @param bigDataPoolName Big Data pool name.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return any object along with {@link Response} on successful completion of {@link Mono}.
+     * @return the {@link PollerFlux} for polling of any object.
      */
     @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
-    private PollerFlux<PollResult<Object>, Object> beginDeleteAsync(
-        String resourceGroupName, String workspaceName, String bigDataPoolName) {
-        Mono<Response<Flux<ByteBuffer>>> mono =
-            deleteWithResponseAsync(resourceGroupName, workspaceName, bigDataPoolName);
-        return this
-            .client
-            .<Object, Object>getLroResult(
-                mono, this.client.getHttpPipeline(), Object.class, Object.class, this.client.getContext());
+    private PollerFlux<PollResult<Object>, Object> beginDeleteAsync(String resourceGroupName, String workspaceName,
+        String bigDataPoolName) {
+        Mono<Response<Flux<ByteBuffer>>> mono
+            = deleteWithResponseAsync(resourceGroupName, workspaceName, bigDataPoolName);
+        return this.client.<Object, Object>getLroResult(mono, this.client.getHttpPipeline(), Object.class, Object.class,
+            this.client.getContext());
     }
 
     /**
+     * Delete a Big Data pool.
+     * 
      * Delete a Big Data pool from the workspace.
-     *
+     * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
      * @param workspaceName The name of the workspace.
      * @param bigDataPoolName Big Data pool name.
@@ -1078,39 +900,42 @@ public final class BigDataPoolsClientImpl implements BigDataPoolsClient {
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return any object along with {@link Response} on successful completion of {@link Mono}.
+     * @return the {@link PollerFlux} for polling of any object.
      */
     @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
-    private PollerFlux<PollResult<Object>, Object> beginDeleteAsync(
-        String resourceGroupName, String workspaceName, String bigDataPoolName, Context context) {
+    private PollerFlux<PollResult<Object>, Object> beginDeleteAsync(String resourceGroupName, String workspaceName,
+        String bigDataPoolName, Context context) {
         context = this.client.mergeContext(context);
-        Mono<Response<Flux<ByteBuffer>>> mono =
-            deleteWithResponseAsync(resourceGroupName, workspaceName, bigDataPoolName, context);
-        return this
-            .client
-            .<Object, Object>getLroResult(mono, this.client.getHttpPipeline(), Object.class, Object.class, context);
+        Mono<Response<Flux<ByteBuffer>>> mono
+            = deleteWithResponseAsync(resourceGroupName, workspaceName, bigDataPoolName, context);
+        return this.client.<Object, Object>getLroResult(mono, this.client.getHttpPipeline(), Object.class, Object.class,
+            context);
     }
 
     /**
+     * Delete a Big Data pool.
+     * 
      * Delete a Big Data pool from the workspace.
-     *
+     * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
      * @param workspaceName The name of the workspace.
      * @param bigDataPoolName Big Data pool name.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return any object along with {@link Response} on successful completion of {@link Mono}.
+     * @return the {@link SyncPoller} for polling of any object.
      */
     @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
-    public SyncPoller<PollResult<Object>, Object> beginDelete(
-        String resourceGroupName, String workspaceName, String bigDataPoolName) {
-        return beginDeleteAsync(resourceGroupName, workspaceName, bigDataPoolName).getSyncPoller();
+    public SyncPoller<PollResult<Object>, Object> beginDelete(String resourceGroupName, String workspaceName,
+        String bigDataPoolName) {
+        return this.beginDeleteAsync(resourceGroupName, workspaceName, bigDataPoolName).getSyncPoller();
     }
 
     /**
+     * Delete a Big Data pool.
+     * 
      * Delete a Big Data pool from the workspace.
-     *
+     * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
      * @param workspaceName The name of the workspace.
      * @param bigDataPoolName Big Data pool name.
@@ -1118,17 +943,19 @@ public final class BigDataPoolsClientImpl implements BigDataPoolsClient {
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return any object along with {@link Response} on successful completion of {@link Mono}.
+     * @return the {@link SyncPoller} for polling of any object.
      */
     @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
-    public SyncPoller<PollResult<Object>, Object> beginDelete(
-        String resourceGroupName, String workspaceName, String bigDataPoolName, Context context) {
-        return beginDeleteAsync(resourceGroupName, workspaceName, bigDataPoolName, context).getSyncPoller();
+    public SyncPoller<PollResult<Object>, Object> beginDelete(String resourceGroupName, String workspaceName,
+        String bigDataPoolName, Context context) {
+        return this.beginDeleteAsync(resourceGroupName, workspaceName, bigDataPoolName, context).getSyncPoller();
     }
 
     /**
+     * Delete a Big Data pool.
+     * 
      * Delete a Big Data pool from the workspace.
-     *
+     * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
      * @param workspaceName The name of the workspace.
      * @param bigDataPoolName Big Data pool name.
@@ -1139,14 +966,15 @@ public final class BigDataPoolsClientImpl implements BigDataPoolsClient {
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
     private Mono<Object> deleteAsync(String resourceGroupName, String workspaceName, String bigDataPoolName) {
-        return beginDeleteAsync(resourceGroupName, workspaceName, bigDataPoolName)
-            .last()
+        return beginDeleteAsync(resourceGroupName, workspaceName, bigDataPoolName).last()
             .flatMap(this.client::getLroFinalResultOrError);
     }
 
     /**
+     * Delete a Big Data pool.
+     * 
      * Delete a Big Data pool from the workspace.
-     *
+     * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
      * @param workspaceName The name of the workspace.
      * @param bigDataPoolName Big Data pool name.
@@ -1157,16 +985,17 @@ public final class BigDataPoolsClientImpl implements BigDataPoolsClient {
      * @return any object on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    private Mono<Object> deleteAsync(
-        String resourceGroupName, String workspaceName, String bigDataPoolName, Context context) {
-        return beginDeleteAsync(resourceGroupName, workspaceName, bigDataPoolName, context)
-            .last()
+    private Mono<Object> deleteAsync(String resourceGroupName, String workspaceName, String bigDataPoolName,
+        Context context) {
+        return beginDeleteAsync(resourceGroupName, workspaceName, bigDataPoolName, context).last()
             .flatMap(this.client::getLroFinalResultOrError);
     }
 
     /**
+     * Delete a Big Data pool.
+     * 
      * Delete a Big Data pool from the workspace.
-     *
+     * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
      * @param workspaceName The name of the workspace.
      * @param bigDataPoolName Big Data pool name.
@@ -1181,8 +1010,10 @@ public final class BigDataPoolsClientImpl implements BigDataPoolsClient {
     }
 
     /**
+     * Delete a Big Data pool.
+     * 
      * Delete a Big Data pool from the workspace.
-     *
+     * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
      * @param workspaceName The name of the workspace.
      * @param bigDataPoolName Big Data pool name.
@@ -1198,8 +1029,10 @@ public final class BigDataPoolsClientImpl implements BigDataPoolsClient {
     }
 
     /**
+     * List the Big Data pools in a workspace.
+     * 
      * List Big Data pools in a workspace.
-     *
+     * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
      * @param workspaceName The name of the workspace.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
@@ -1208,19 +1041,15 @@ public final class BigDataPoolsClientImpl implements BigDataPoolsClient {
      * @return collection of Big Data pools along with {@link PagedResponse} on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    private Mono<PagedResponse<BigDataPoolResourceInfoInner>> listByWorkspaceSinglePageAsync(
-        String resourceGroupName, String workspaceName) {
+    private Mono<PagedResponse<BigDataPoolResourceInfoInner>> listByWorkspaceSinglePageAsync(String resourceGroupName,
+        String workspaceName) {
         if (this.client.getEndpoint() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getEndpoint() is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
         }
         if (this.client.getSubscriptionId() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getSubscriptionId() is required and cannot be null."));
+            return Mono.error(new IllegalArgumentException(
+                "Parameter this.client.getSubscriptionId() is required and cannot be null."));
         }
         if (resourceGroupName == null) {
             return Mono
@@ -1229,35 +1058,20 @@ public final class BigDataPoolsClientImpl implements BigDataPoolsClient {
         if (workspaceName == null) {
             return Mono.error(new IllegalArgumentException("Parameter workspaceName is required and cannot be null."));
         }
-        final String apiVersion = "2021-06-01-preview";
         final String accept = "application/json";
         return FluxUtil
-            .withContext(
-                context ->
-                    service
-                        .listByWorkspace(
-                            this.client.getEndpoint(),
-                            apiVersion,
-                            this.client.getSubscriptionId(),
-                            resourceGroupName,
-                            workspaceName,
-                            accept,
-                            context))
-            .<PagedResponse<BigDataPoolResourceInfoInner>>map(
-                res ->
-                    new PagedResponseBase<>(
-                        res.getRequest(),
-                        res.getStatusCode(),
-                        res.getHeaders(),
-                        res.getValue().value(),
-                        res.getValue().nextLink(),
-                        null))
+            .withContext(context -> service.listByWorkspace(this.client.getEndpoint(), this.client.getApiVersion(),
+                this.client.getSubscriptionId(), resourceGroupName, workspaceName, accept, context))
+            .<PagedResponse<BigDataPoolResourceInfoInner>>map(res -> new PagedResponseBase<>(res.getRequest(),
+                res.getStatusCode(), res.getHeaders(), res.getValue().value(), res.getValue().nextLink(), null))
             .contextWrite(context -> context.putAll(FluxUtil.toReactorContext(this.client.getContext()).readOnly()));
     }
 
     /**
+     * List the Big Data pools in a workspace.
+     * 
      * List Big Data pools in a workspace.
-     *
+     * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
      * @param workspaceName The name of the workspace.
      * @param context The context to associate with this operation.
@@ -1267,19 +1081,15 @@ public final class BigDataPoolsClientImpl implements BigDataPoolsClient {
      * @return collection of Big Data pools along with {@link PagedResponse} on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    private Mono<PagedResponse<BigDataPoolResourceInfoInner>> listByWorkspaceSinglePageAsync(
-        String resourceGroupName, String workspaceName, Context context) {
+    private Mono<PagedResponse<BigDataPoolResourceInfoInner>> listByWorkspaceSinglePageAsync(String resourceGroupName,
+        String workspaceName, Context context) {
         if (this.client.getEndpoint() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getEndpoint() is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
         }
         if (this.client.getSubscriptionId() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getSubscriptionId() is required and cannot be null."));
+            return Mono.error(new IllegalArgumentException(
+                "Parameter this.client.getSubscriptionId() is required and cannot be null."));
         }
         if (resourceGroupName == null) {
             return Mono
@@ -1288,75 +1098,65 @@ public final class BigDataPoolsClientImpl implements BigDataPoolsClient {
         if (workspaceName == null) {
             return Mono.error(new IllegalArgumentException("Parameter workspaceName is required and cannot be null."));
         }
-        final String apiVersion = "2021-06-01-preview";
         final String accept = "application/json";
         context = this.client.mergeContext(context);
         return service
-            .listByWorkspace(
-                this.client.getEndpoint(),
-                apiVersion,
-                this.client.getSubscriptionId(),
-                resourceGroupName,
-                workspaceName,
-                accept,
-                context)
-            .map(
-                res ->
-                    new PagedResponseBase<>(
-                        res.getRequest(),
-                        res.getStatusCode(),
-                        res.getHeaders(),
-                        res.getValue().value(),
-                        res.getValue().nextLink(),
-                        null));
+            .listByWorkspace(this.client.getEndpoint(), this.client.getApiVersion(), this.client.getSubscriptionId(),
+                resourceGroupName, workspaceName, accept, context)
+            .map(res -> new PagedResponseBase<>(res.getRequest(), res.getStatusCode(), res.getHeaders(),
+                res.getValue().value(), res.getValue().nextLink(), null));
     }
 
     /**
+     * List the Big Data pools in a workspace.
+     * 
      * List Big Data pools in a workspace.
-     *
+     * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
      * @param workspaceName The name of the workspace.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return collection of Big Data pools.
+     * @return collection of Big Data pools as paginated response with {@link PagedFlux}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
-    private PagedFlux<BigDataPoolResourceInfoInner> listByWorkspaceAsync(
-        String resourceGroupName, String workspaceName) {
-        return new PagedFlux<>(
-            () -> listByWorkspaceSinglePageAsync(resourceGroupName, workspaceName),
+    private PagedFlux<BigDataPoolResourceInfoInner> listByWorkspaceAsync(String resourceGroupName,
+        String workspaceName) {
+        return new PagedFlux<>(() -> listByWorkspaceSinglePageAsync(resourceGroupName, workspaceName),
             nextLink -> listByWorkspaceNextSinglePageAsync(nextLink));
     }
 
     /**
+     * List the Big Data pools in a workspace.
+     * 
      * List Big Data pools in a workspace.
-     *
+     * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
      * @param workspaceName The name of the workspace.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return collection of Big Data pools.
+     * @return collection of Big Data pools as paginated response with {@link PagedFlux}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
-    private PagedFlux<BigDataPoolResourceInfoInner> listByWorkspaceAsync(
-        String resourceGroupName, String workspaceName, Context context) {
-        return new PagedFlux<>(
-            () -> listByWorkspaceSinglePageAsync(resourceGroupName, workspaceName, context),
+    private PagedFlux<BigDataPoolResourceInfoInner> listByWorkspaceAsync(String resourceGroupName, String workspaceName,
+        Context context) {
+        return new PagedFlux<>(() -> listByWorkspaceSinglePageAsync(resourceGroupName, workspaceName, context),
             nextLink -> listByWorkspaceNextSinglePageAsync(nextLink, context));
     }
 
     /**
+     * List the Big Data pools in a workspace.
+     * 
      * List Big Data pools in a workspace.
-     *
+     * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
      * @param workspaceName The name of the workspace.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return collection of Big Data pools.
+     * @return collection of Big Data pools as paginated response with {@link PagedIterable}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
     public PagedIterable<BigDataPoolResourceInfoInner> listByWorkspace(String resourceGroupName, String workspaceName) {
@@ -1364,26 +1164,28 @@ public final class BigDataPoolsClientImpl implements BigDataPoolsClient {
     }
 
     /**
+     * List the Big Data pools in a workspace.
+     * 
      * List Big Data pools in a workspace.
-     *
+     * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
      * @param workspaceName The name of the workspace.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return collection of Big Data pools.
+     * @return collection of Big Data pools as paginated response with {@link PagedIterable}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
-    public PagedIterable<BigDataPoolResourceInfoInner> listByWorkspace(
-        String resourceGroupName, String workspaceName, Context context) {
+    public PagedIterable<BigDataPoolResourceInfoInner> listByWorkspace(String resourceGroupName, String workspaceName,
+        Context context) {
         return new PagedIterable<>(listByWorkspaceAsync(resourceGroupName, workspaceName, context));
     }
 
     /**
      * Get the next page of items.
-     *
-     * @param nextLink The nextLink parameter.
+     * 
+     * @param nextLink The URL to get the next list of items.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
@@ -1395,30 +1197,21 @@ public final class BigDataPoolsClientImpl implements BigDataPoolsClient {
             return Mono.error(new IllegalArgumentException("Parameter nextLink is required and cannot be null."));
         }
         if (this.client.getEndpoint() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getEndpoint() is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
         }
         final String accept = "application/json";
         return FluxUtil
             .withContext(context -> service.listByWorkspaceNext(nextLink, this.client.getEndpoint(), accept, context))
-            .<PagedResponse<BigDataPoolResourceInfoInner>>map(
-                res ->
-                    new PagedResponseBase<>(
-                        res.getRequest(),
-                        res.getStatusCode(),
-                        res.getHeaders(),
-                        res.getValue().value(),
-                        res.getValue().nextLink(),
-                        null))
+            .<PagedResponse<BigDataPoolResourceInfoInner>>map(res -> new PagedResponseBase<>(res.getRequest(),
+                res.getStatusCode(), res.getHeaders(), res.getValue().value(), res.getValue().nextLink(), null))
             .contextWrite(context -> context.putAll(FluxUtil.toReactorContext(this.client.getContext()).readOnly()));
     }
 
     /**
      * Get the next page of items.
-     *
-     * @param nextLink The nextLink parameter.
+     * 
+     * @param nextLink The URL to get the next list of items.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
@@ -1426,29 +1219,19 @@ public final class BigDataPoolsClientImpl implements BigDataPoolsClient {
      * @return collection of Big Data pools along with {@link PagedResponse} on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    private Mono<PagedResponse<BigDataPoolResourceInfoInner>> listByWorkspaceNextSinglePageAsync(
-        String nextLink, Context context) {
+    private Mono<PagedResponse<BigDataPoolResourceInfoInner>> listByWorkspaceNextSinglePageAsync(String nextLink,
+        Context context) {
         if (nextLink == null) {
             return Mono.error(new IllegalArgumentException("Parameter nextLink is required and cannot be null."));
         }
         if (this.client.getEndpoint() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getEndpoint() is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
         }
         final String accept = "application/json";
         context = this.client.mergeContext(context);
-        return service
-            .listByWorkspaceNext(nextLink, this.client.getEndpoint(), accept, context)
-            .map(
-                res ->
-                    new PagedResponseBase<>(
-                        res.getRequest(),
-                        res.getStatusCode(),
-                        res.getHeaders(),
-                        res.getValue().value(),
-                        res.getValue().nextLink(),
-                        null));
+        return service.listByWorkspaceNext(nextLink, this.client.getEndpoint(), accept, context)
+            .map(res -> new PagedResponseBase<>(res.getRequest(), res.getStatusCode(), res.getHeaders(),
+                res.getValue().value(), res.getValue().nextLink(), null));
     }
 }

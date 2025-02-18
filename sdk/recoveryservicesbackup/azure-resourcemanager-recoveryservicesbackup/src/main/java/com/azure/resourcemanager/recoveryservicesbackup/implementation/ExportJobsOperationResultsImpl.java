@@ -12,42 +12,37 @@ import com.azure.resourcemanager.recoveryservicesbackup.fluent.ExportJobsOperati
 import com.azure.resourcemanager.recoveryservicesbackup.fluent.models.OperationResultInfoBaseResourceInner;
 import com.azure.resourcemanager.recoveryservicesbackup.models.ExportJobsOperationResults;
 import com.azure.resourcemanager.recoveryservicesbackup.models.OperationResultInfoBaseResource;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 public final class ExportJobsOperationResultsImpl implements ExportJobsOperationResults {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(ExportJobsOperationResultsImpl.class);
+    private static final ClientLogger LOGGER = new ClientLogger(ExportJobsOperationResultsImpl.class);
 
     private final ExportJobsOperationResultsClient innerClient;
 
     private final com.azure.resourcemanager.recoveryservicesbackup.RecoveryServicesBackupManager serviceManager;
 
-    public ExportJobsOperationResultsImpl(
-        ExportJobsOperationResultsClient innerClient,
+    public ExportJobsOperationResultsImpl(ExportJobsOperationResultsClient innerClient,
         com.azure.resourcemanager.recoveryservicesbackup.RecoveryServicesBackupManager serviceManager) {
         this.innerClient = innerClient;
         this.serviceManager = serviceManager;
     }
 
-    public OperationResultInfoBaseResource get(String vaultName, String resourceGroupName, String operationId) {
-        OperationResultInfoBaseResourceInner inner =
-            this.serviceClient().get(vaultName, resourceGroupName, operationId);
+    public Response<OperationResultInfoBaseResource> getWithResponse(String vaultName, String resourceGroupName,
+        String operationId, Context context) {
+        Response<OperationResultInfoBaseResourceInner> inner
+            = this.serviceClient().getWithResponse(vaultName, resourceGroupName, operationId, context);
         if (inner != null) {
-            return new OperationResultInfoBaseResourceImpl(inner, this.manager());
+            return new SimpleResponse<>(inner.getRequest(), inner.getStatusCode(), inner.getHeaders(),
+                new OperationResultInfoBaseResourceImpl(inner.getValue(), this.manager()));
         } else {
             return null;
         }
     }
 
-    public Response<OperationResultInfoBaseResource> getWithResponse(
-        String vaultName, String resourceGroupName, String operationId, Context context) {
-        Response<OperationResultInfoBaseResourceInner> inner =
-            this.serviceClient().getWithResponse(vaultName, resourceGroupName, operationId, context);
+    public OperationResultInfoBaseResource get(String vaultName, String resourceGroupName, String operationId) {
+        OperationResultInfoBaseResourceInner inner
+            = this.serviceClient().get(vaultName, resourceGroupName, operationId);
         if (inner != null) {
-            return new SimpleResponse<>(
-                inner.getRequest(),
-                inner.getStatusCode(),
-                inner.getHeaders(),
-                new OperationResultInfoBaseResourceImpl(inner.getValue(), this.manager()));
+            return new OperationResultInfoBaseResourceImpl(inner, this.manager());
         } else {
             return null;
         }

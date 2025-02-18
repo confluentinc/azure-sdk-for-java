@@ -61,20 +61,24 @@ public final class AutomationRuleImpl implements AutomationRule, AutomationRule.
         }
     }
 
+    public OffsetDateTime lastModifiedTimeUtc() {
+        return this.innerModel().lastModifiedTimeUtc();
+    }
+
     public OffsetDateTime createdTimeUtc() {
         return this.innerModel().createdTimeUtc();
     }
 
-    public OffsetDateTime lastModifiedTimeUtc() {
-        return this.innerModel().lastModifiedTimeUtc();
+    public ClientInfo lastModifiedBy() {
+        return this.innerModel().lastModifiedBy();
     }
 
     public ClientInfo createdBy() {
         return this.innerModel().createdBy();
     }
 
-    public ClientInfo lastModifiedBy() {
-        return this.innerModel().lastModifiedBy();
+    public String resourceGroupName() {
+        return resourceGroupName;
     }
 
     public AutomationRuleInner innerModel() {
@@ -98,24 +102,19 @@ public final class AutomationRuleImpl implements AutomationRule, AutomationRule.
     }
 
     public AutomationRule create() {
-        this.innerObject =
-            serviceManager
-                .serviceClient()
-                .getAutomationRules()
-                .createOrUpdateWithResponse(
-                    resourceGroupName, workspaceName, automationRuleId, this.innerModel(), Context.NONE)
-                .getValue();
+        this.innerObject = serviceManager.serviceClient()
+            .getAutomationRules()
+            .createOrUpdateWithResponse(resourceGroupName, workspaceName, automationRuleId, this.innerModel(),
+                Context.NONE)
+            .getValue();
         return this;
     }
 
     public AutomationRule create(Context context) {
-        this.innerObject =
-            serviceManager
-                .serviceClient()
-                .getAutomationRules()
-                .createOrUpdateWithResponse(
-                    resourceGroupName, workspaceName, automationRuleId, this.innerModel(), context)
-                .getValue();
+        this.innerObject = serviceManager.serviceClient()
+            .getAutomationRules()
+            .createOrUpdateWithResponse(resourceGroupName, workspaceName, automationRuleId, this.innerModel(), context)
+            .getValue();
         return this;
     }
 
@@ -130,59 +129,44 @@ public final class AutomationRuleImpl implements AutomationRule, AutomationRule.
     }
 
     public AutomationRule apply() {
-        this.innerObject =
-            serviceManager
-                .serviceClient()
-                .getAutomationRules()
-                .createOrUpdateWithResponse(
-                    resourceGroupName, workspaceName, automationRuleId, this.innerModel(), Context.NONE)
-                .getValue();
+        this.innerObject = serviceManager.serviceClient()
+            .getAutomationRules()
+            .createOrUpdateWithResponse(resourceGroupName, workspaceName, automationRuleId, this.innerModel(),
+                Context.NONE)
+            .getValue();
         return this;
     }
 
     public AutomationRule apply(Context context) {
-        this.innerObject =
-            serviceManager
-                .serviceClient()
-                .getAutomationRules()
-                .createOrUpdateWithResponse(
-                    resourceGroupName, workspaceName, automationRuleId, this.innerModel(), context)
-                .getValue();
+        this.innerObject = serviceManager.serviceClient()
+            .getAutomationRules()
+            .createOrUpdateWithResponse(resourceGroupName, workspaceName, automationRuleId, this.innerModel(), context)
+            .getValue();
         return this;
     }
 
-    AutomationRuleImpl(
-        AutomationRuleInner innerObject,
+    AutomationRuleImpl(AutomationRuleInner innerObject,
         com.azure.resourcemanager.securityinsights.SecurityInsightsManager serviceManager) {
         this.innerObject = innerObject;
         this.serviceManager = serviceManager;
-        this.resourceGroupName = Utils.getValueFromIdByName(innerObject.id(), "resourceGroups");
-        this.workspaceName = Utils.getValueFromIdByName(innerObject.id(), "workspaces");
-        this.automationRuleId = Utils.getValueFromIdByName(innerObject.id(), "automationRules");
+        this.resourceGroupName = ResourceManagerUtils.getValueFromIdByName(innerObject.id(), "resourceGroups");
+        this.workspaceName = ResourceManagerUtils.getValueFromIdByName(innerObject.id(), "workspaces");
+        this.automationRuleId = ResourceManagerUtils.getValueFromIdByName(innerObject.id(), "automationRules");
     }
 
     public AutomationRule refresh() {
-        this.innerObject =
-            serviceManager
-                .serviceClient()
-                .getAutomationRules()
-                .getWithResponse(resourceGroupName, workspaceName, automationRuleId, Context.NONE)
-                .getValue();
+        this.innerObject = serviceManager.serviceClient()
+            .getAutomationRules()
+            .getWithResponse(resourceGroupName, workspaceName, automationRuleId, Context.NONE)
+            .getValue();
         return this;
     }
 
     public AutomationRule refresh(Context context) {
-        this.innerObject =
-            serviceManager
-                .serviceClient()
-                .getAutomationRules()
-                .getWithResponse(resourceGroupName, workspaceName, automationRuleId, context)
-                .getValue();
-        return this;
-    }
-
-    public AutomationRuleImpl withEtag(String etag) {
-        this.innerModel().withEtag(etag);
+        this.innerObject = serviceManager.serviceClient()
+            .getAutomationRules()
+            .getWithResponse(resourceGroupName, workspaceName, automationRuleId, context)
+            .getValue();
         return this;
     }
 
@@ -203,6 +187,11 @@ public final class AutomationRuleImpl implements AutomationRule, AutomationRule.
 
     public AutomationRuleImpl withActions(List<AutomationRuleAction> actions) {
         this.innerModel().withActions(actions);
+        return this;
+    }
+
+    public AutomationRuleImpl withEtag(String etag) {
+        this.innerModel().withEtag(etag);
         return this;
     }
 }

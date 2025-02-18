@@ -4,6 +4,7 @@
 package com.azure.storage.blob.models;
 
 import com.azure.core.annotation.Fluent;
+import com.azure.core.util.ProgressListener;
 import com.azure.storage.blob.ProgressReceiver;
 import com.azure.storage.blob.specialized.BlockBlobAsyncClient;
 import com.azure.storage.common.implementation.StorageImplUtils;
@@ -132,7 +133,9 @@ public final class ParallelTransferOptions {
     /**
      * Gets the Progress receiver for parallel reporting
      * @return The progress reporter
+     * @deprecated Use {@link #getProgressListener()}
      */
+    @Deprecated
     public ProgressReceiver getProgressReceiver() {
         return this.progressReceiver;
     }
@@ -142,10 +145,31 @@ public final class ParallelTransferOptions {
      *
      * @param progressReceiver The {@link ProgressReceiver}.
      * @return The ParallelTransferOptions object itself.
+     * @deprecated Use {@link #setProgressListener(ProgressListener)}
      */
+    @Deprecated
     public ParallelTransferOptions setProgressReceiver(ProgressReceiver progressReceiver) {
         this.progressReceiver = progressReceiver;
         return this;
+    }
+
+    /**
+     * Sets the {@link ProgressReceiver}.
+     *
+     * @param progressListener The {@link ProgressListener}.
+     * @return The ParallelTransferOptions object itself.
+     */
+    public ParallelTransferOptions setProgressListener(ProgressListener progressListener) {
+        this.progressReceiver = progressListener == null ? null : progressListener::handleProgress;
+        return this;
+    }
+
+    /**
+     * Gets the Progress listener for parallel reporting
+     * @return The progress listener
+     */
+    public ProgressListener getProgressListener() {
+        return this.progressReceiver;
     }
 
     /**
@@ -202,6 +226,14 @@ public final class ParallelTransferOptions {
     }
 
     /**
+     * Sets the maximum number of parallel requests that will be issued at any given time as a part of
+     * a single parallel transfer. This value applies per api. For example, if two calls to uploadFromFile are made at
+     * the same time, and each specifies a maxConcurrency of 5, there may be up to 10 outstanding, concurrent requests,
+     * up to 5 for each of the upload operations. For buffered uploads only, the maximum number of buffers to be
+     * allocated as part of the transfer will be {@code maxConcurrency + 1}. In those cases, memory will be allocated
+     * lazily as needed. The amount of memory consumed by methods which buffer may be up to blockSize * maxConcurrency.
+     * In general, upload methods which do not accept a length parameter must perform some buffering.
+     *
      * @param maxConcurrency The maximum number of parallel requests that will be issued at any given time as a part of
      * a single parallel transfer. This value applies per api. For example, if two calls to uploadFromFile are made at
      * the same time, and each specifies a maxConcurrency of 5, there may be up to 10 outstanding, concurrent requests,

@@ -4,18 +4,23 @@
 
 package com.azure.resourcemanager.resourcegraph.models;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonValue;
-
-/** Defines values for FacetSortOrder. */
+/**
+ * The sorting order by the selected column (count by default).
+ */
 public enum FacetSortOrder {
-    /** Enum value asc. */
+    /**
+     * Enum value asc.
+     */
     ASC("asc"),
 
-    /** Enum value desc. */
+    /**
+     * Enum value desc.
+     */
     DESC("desc");
 
-    /** The actual serialized value for a FacetSortOrder instance. */
+    /**
+     * The actual serialized value for a FacetSortOrder instance.
+     */
     private final String value;
 
     FacetSortOrder(String value) {
@@ -24,12 +29,14 @@ public enum FacetSortOrder {
 
     /**
      * Parses a serialized value to a FacetSortOrder instance.
-     *
+     * 
      * @param value the serialized value to parse.
      * @return the parsed FacetSortOrder object, or null if unable to parse.
      */
-    @JsonCreator
     public static FacetSortOrder fromString(String value) {
+        if (value == null) {
+            return null;
+        }
         FacetSortOrder[] items = FacetSortOrder.values();
         for (FacetSortOrder item : items) {
             if (item.toString().equalsIgnoreCase(value)) {
@@ -39,7 +46,9 @@ public enum FacetSortOrder {
         return null;
     }
 
-    @JsonValue
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String toString() {
         return this.value;

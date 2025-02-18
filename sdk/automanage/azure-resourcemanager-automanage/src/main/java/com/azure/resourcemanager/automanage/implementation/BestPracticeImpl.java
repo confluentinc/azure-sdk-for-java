@@ -7,16 +7,15 @@ package com.azure.resourcemanager.automanage.implementation;
 import com.azure.core.management.SystemData;
 import com.azure.resourcemanager.automanage.fluent.models.BestPracticeInner;
 import com.azure.resourcemanager.automanage.models.BestPractice;
-import java.util.Collections;
-import java.util.List;
+import com.azure.resourcemanager.automanage.models.ConfigurationProfileProperties;
 
 public final class BestPracticeImpl implements BestPractice {
     private BestPracticeInner innerObject;
 
     private final com.azure.resourcemanager.automanage.AutomanageManager serviceManager;
 
-    BestPracticeImpl(
-        BestPracticeInner innerObject, com.azure.resourcemanager.automanage.AutomanageManager serviceManager) {
+    BestPracticeImpl(BestPracticeInner innerObject,
+        com.azure.resourcemanager.automanage.AutomanageManager serviceManager) {
         this.innerObject = innerObject;
         this.serviceManager = serviceManager;
     }
@@ -33,21 +32,12 @@ public final class BestPracticeImpl implements BestPractice {
         return this.innerModel().type();
     }
 
+    public ConfigurationProfileProperties properties() {
+        return this.innerModel().properties();
+    }
+
     public SystemData systemData() {
         return this.innerModel().systemData();
-    }
-
-    public Object configuration() {
-        return this.innerModel().configuration();
-    }
-
-    public List<Object> overrides() {
-        List<Object> inner = this.innerModel().overrides();
-        if (inner != null) {
-            return Collections.unmodifiableList(inner);
-        } else {
-            return Collections.emptyList();
-        }
     }
 
     public BestPracticeInner innerModel() {

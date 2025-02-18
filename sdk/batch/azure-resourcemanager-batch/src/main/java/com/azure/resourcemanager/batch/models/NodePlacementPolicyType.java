@@ -4,18 +4,25 @@
 
 package com.azure.resourcemanager.batch.models;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonValue;
-
-/** Defines values for NodePlacementPolicyType. */
+/**
+ * The placement policy for allocating nodes in the pool.
+ * 
+ * The default value is regional.
+ */
 public enum NodePlacementPolicyType {
-    /** Enum value Regional. */
+    /**
+     * Enum value Regional.
+     */
     REGIONAL("Regional"),
 
-    /** Enum value Zonal. */
+    /**
+     * Enum value Zonal.
+     */
     ZONAL("Zonal");
 
-    /** The actual serialized value for a NodePlacementPolicyType instance. */
+    /**
+     * The actual serialized value for a NodePlacementPolicyType instance.
+     */
     private final String value;
 
     NodePlacementPolicyType(String value) {
@@ -24,12 +31,14 @@ public enum NodePlacementPolicyType {
 
     /**
      * Parses a serialized value to a NodePlacementPolicyType instance.
-     *
+     * 
      * @param value the serialized value to parse.
      * @return the parsed NodePlacementPolicyType object, or null if unable to parse.
      */
-    @JsonCreator
     public static NodePlacementPolicyType fromString(String value) {
+        if (value == null) {
+            return null;
+        }
         NodePlacementPolicyType[] items = NodePlacementPolicyType.values();
         for (NodePlacementPolicyType item : items) {
             if (item.toString().equalsIgnoreCase(value)) {
@@ -39,7 +48,9 @@ public enum NodePlacementPolicyType {
         return null;
     }
 
-    @JsonValue
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String toString() {
         return this.value;

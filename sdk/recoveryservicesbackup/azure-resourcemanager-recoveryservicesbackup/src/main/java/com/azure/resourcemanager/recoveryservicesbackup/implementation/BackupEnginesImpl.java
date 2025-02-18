@@ -13,17 +13,15 @@ import com.azure.resourcemanager.recoveryservicesbackup.fluent.BackupEnginesClie
 import com.azure.resourcemanager.recoveryservicesbackup.fluent.models.BackupEngineBaseResourceInner;
 import com.azure.resourcemanager.recoveryservicesbackup.models.BackupEngineBaseResource;
 import com.azure.resourcemanager.recoveryservicesbackup.models.BackupEngines;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 public final class BackupEnginesImpl implements BackupEngines {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(BackupEnginesImpl.class);
+    private static final ClientLogger LOGGER = new ClientLogger(BackupEnginesImpl.class);
 
     private final BackupEnginesClient innerClient;
 
     private final com.azure.resourcemanager.recoveryservicesbackup.RecoveryServicesBackupManager serviceManager;
 
-    public BackupEnginesImpl(
-        BackupEnginesClient innerClient,
+    public BackupEnginesImpl(BackupEnginesClient innerClient,
         com.azure.resourcemanager.recoveryservicesbackup.RecoveryServicesBackupManager serviceManager) {
         this.innerClient = innerClient;
         this.serviceManager = serviceManager;
@@ -31,42 +29,32 @@ public final class BackupEnginesImpl implements BackupEngines {
 
     public PagedIterable<BackupEngineBaseResource> list(String vaultName, String resourceGroupName) {
         PagedIterable<BackupEngineBaseResourceInner> inner = this.serviceClient().list(vaultName, resourceGroupName);
-        return Utils.mapPage(inner, inner1 -> new BackupEngineBaseResourceImpl(inner1, this.manager()));
+        return ResourceManagerUtils.mapPage(inner, inner1 -> new BackupEngineBaseResourceImpl(inner1, this.manager()));
     }
 
-    public PagedIterable<BackupEngineBaseResource> list(
-        String vaultName, String resourceGroupName, String filter, String skipToken, Context context) {
-        PagedIterable<BackupEngineBaseResourceInner> inner =
-            this.serviceClient().list(vaultName, resourceGroupName, filter, skipToken, context);
-        return Utils.mapPage(inner, inner1 -> new BackupEngineBaseResourceImpl(inner1, this.manager()));
+    public PagedIterable<BackupEngineBaseResource> list(String vaultName, String resourceGroupName, String filter,
+        String skipToken, Context context) {
+        PagedIterable<BackupEngineBaseResourceInner> inner
+            = this.serviceClient().list(vaultName, resourceGroupName, filter, skipToken, context);
+        return ResourceManagerUtils.mapPage(inner, inner1 -> new BackupEngineBaseResourceImpl(inner1, this.manager()));
+    }
+
+    public Response<BackupEngineBaseResource> getWithResponse(String vaultName, String resourceGroupName,
+        String backupEngineName, String filter, String skipToken, Context context) {
+        Response<BackupEngineBaseResourceInner> inner = this.serviceClient()
+            .getWithResponse(vaultName, resourceGroupName, backupEngineName, filter, skipToken, context);
+        if (inner != null) {
+            return new SimpleResponse<>(inner.getRequest(), inner.getStatusCode(), inner.getHeaders(),
+                new BackupEngineBaseResourceImpl(inner.getValue(), this.manager()));
+        } else {
+            return null;
+        }
     }
 
     public BackupEngineBaseResource get(String vaultName, String resourceGroupName, String backupEngineName) {
         BackupEngineBaseResourceInner inner = this.serviceClient().get(vaultName, resourceGroupName, backupEngineName);
         if (inner != null) {
             return new BackupEngineBaseResourceImpl(inner, this.manager());
-        } else {
-            return null;
-        }
-    }
-
-    public Response<BackupEngineBaseResource> getWithResponse(
-        String vaultName,
-        String resourceGroupName,
-        String backupEngineName,
-        String filter,
-        String skipToken,
-        Context context) {
-        Response<BackupEngineBaseResourceInner> inner =
-            this
-                .serviceClient()
-                .getWithResponse(vaultName, resourceGroupName, backupEngineName, filter, skipToken, context);
-        if (inner != null) {
-            return new SimpleResponse<>(
-                inner.getRequest(),
-                inner.getStatusCode(),
-                inner.getHeaders(),
-                new BackupEngineBaseResourceImpl(inner.getValue(), this.manager()));
         } else {
             return null;
         }

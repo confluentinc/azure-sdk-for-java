@@ -25,7 +25,6 @@ import com.azure.core.http.rest.RestProxy;
 import com.azure.core.management.exception.ManagementException;
 import com.azure.core.util.Context;
 import com.azure.core.util.FluxUtil;
-import com.azure.core.util.logging.ClientLogger;
 import com.azure.resourcemanager.automation.fluent.SourceControlSyncJobStreamsClient;
 import com.azure.resourcemanager.automation.fluent.models.SourceControlSyncJobStreamByIdInner;
 import com.azure.resourcemanager.automation.fluent.models.SourceControlSyncJobStreamInner;
@@ -33,26 +32,28 @@ import com.azure.resourcemanager.automation.models.SourceControlSyncJobStreamsLi
 import java.util.UUID;
 import reactor.core.publisher.Mono;
 
-/** An instance of this class provides access to all the operations defined in SourceControlSyncJobStreamsClient. */
+/**
+ * An instance of this class provides access to all the operations defined in SourceControlSyncJobStreamsClient.
+ */
 public final class SourceControlSyncJobStreamsClientImpl implements SourceControlSyncJobStreamsClient {
-    private final ClientLogger logger = new ClientLogger(SourceControlSyncJobStreamsClientImpl.class);
-
-    /** The proxy service used to perform REST calls. */
+    /**
+     * The proxy service used to perform REST calls.
+     */
     private final SourceControlSyncJobStreamsService service;
 
-    /** The service client containing this operation class. */
+    /**
+     * The service client containing this operation class.
+     */
     private final AutomationClientImpl client;
 
     /**
      * Initializes an instance of SourceControlSyncJobStreamsClientImpl.
-     *
+     * 
      * @param client the instance of the service client containing this operation class.
      */
     SourceControlSyncJobStreamsClientImpl(AutomationClientImpl client) {
-        this.service =
-            RestProxy
-                .create(
-                    SourceControlSyncJobStreamsService.class, client.getHttpPipeline(), client.getSerializerAdapter());
+        this.service = RestProxy.create(SourceControlSyncJobStreamsService.class, client.getHttpPipeline(),
+            client.getSerializerAdapter());
         this.client = client;
     }
 
@@ -62,59 +63,43 @@ public final class SourceControlSyncJobStreamsClientImpl implements SourceContro
      */
     @Host("{$host}")
     @ServiceInterface(name = "AutomationClientSour")
-    private interface SourceControlSyncJobStreamsService {
-        @Headers({"Content-Type: application/json"})
-        @Get(
-            "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Automation"
-                + "/automationAccounts/{automationAccountName}/sourceControls/{sourceControlName}/sourceControlSyncJobs"
-                + "/{sourceControlSyncJobId}/streams")
-        @ExpectedResponses({200})
+    public interface SourceControlSyncJobStreamsService {
+        @Headers({ "Content-Type: application/json" })
+        @Get("/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Automation/automationAccounts/{automationAccountName}/sourceControls/{sourceControlName}/sourceControlSyncJobs/{sourceControlSyncJobId}/streams")
+        @ExpectedResponses({ 200 })
         @UnexpectedResponseExceptionType(ManagementException.class)
-        Mono<Response<SourceControlSyncJobStreamsListBySyncJob>> listBySyncJob(
-            @HostParam("$host") String endpoint,
+        Mono<Response<SourceControlSyncJobStreamsListBySyncJob>> listBySyncJob(@HostParam("$host") String endpoint,
             @PathParam("resourceGroupName") String resourceGroupName,
             @PathParam("automationAccountName") String automationAccountName,
             @PathParam("sourceControlName") String sourceControlName,
-            @PathParam("sourceControlSyncJobId") UUID sourceControlSyncJobId,
-            @QueryParam("$filter") String filter,
-            @PathParam("subscriptionId") String subscriptionId,
-            @QueryParam("api-version") String apiVersion,
-            @HeaderParam("Accept") String accept,
-            Context context);
+            @PathParam("sourceControlSyncJobId") UUID sourceControlSyncJobId, @QueryParam("$filter") String filter,
+            @PathParam("subscriptionId") String subscriptionId, @QueryParam("api-version") String apiVersion,
+            @HeaderParam("Accept") String accept, Context context);
 
-        @Headers({"Content-Type: application/json"})
-        @Get(
-            "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Automation"
-                + "/automationAccounts/{automationAccountName}/sourceControls/{sourceControlName}/sourceControlSyncJobs"
-                + "/{sourceControlSyncJobId}/streams/{streamId}")
-        @ExpectedResponses({200})
+        @Headers({ "Content-Type: application/json" })
+        @Get("/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Automation/automationAccounts/{automationAccountName}/sourceControls/{sourceControlName}/sourceControlSyncJobs/{sourceControlSyncJobId}/streams/{streamId}")
+        @ExpectedResponses({ 200 })
         @UnexpectedResponseExceptionType(ManagementException.class)
-        Mono<Response<SourceControlSyncJobStreamByIdInner>> get(
-            @HostParam("$host") String endpoint,
+        Mono<Response<SourceControlSyncJobStreamByIdInner>> get(@HostParam("$host") String endpoint,
             @PathParam("resourceGroupName") String resourceGroupName,
             @PathParam("automationAccountName") String automationAccountName,
             @PathParam("sourceControlName") String sourceControlName,
-            @PathParam("sourceControlSyncJobId") UUID sourceControlSyncJobId,
-            @PathParam("streamId") String streamId,
-            @PathParam("subscriptionId") String subscriptionId,
-            @QueryParam("api-version") String apiVersion,
-            @HeaderParam("Accept") String accept,
-            Context context);
+            @PathParam("sourceControlSyncJobId") UUID sourceControlSyncJobId, @PathParam("streamId") String streamId,
+            @PathParam("subscriptionId") String subscriptionId, @QueryParam("api-version") String apiVersion,
+            @HeaderParam("Accept") String accept, Context context);
 
-        @Headers({"Content-Type: application/json"})
+        @Headers({ "Content-Type: application/json" })
         @Get("{nextLink}")
-        @ExpectedResponses({200})
+        @ExpectedResponses({ 200 })
         @UnexpectedResponseExceptionType(ManagementException.class)
         Mono<Response<SourceControlSyncJobStreamsListBySyncJob>> listBySyncJobNext(
-            @PathParam(value = "nextLink", encoded = true) String nextLink,
-            @HostParam("$host") String endpoint,
-            @HeaderParam("Accept") String accept,
-            Context context);
+            @PathParam(value = "nextLink", encoded = true) String nextLink, @HostParam("$host") String endpoint,
+            @HeaderParam("Accept") String accept, Context context);
     }
 
     /**
      * Retrieve a list of sync job streams identified by sync job id.
-     *
+     * 
      * @param resourceGroupName Name of an Azure Resource group.
      * @param automationAccountName The name of the automation account.
      * @param sourceControlName The source control name.
@@ -123,20 +108,15 @@ public final class SourceControlSyncJobStreamsClientImpl implements SourceContro
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the response model for the list source control sync job streams operation.
+     * @return the response model for the list source control sync job streams operation along with
+     * {@link PagedResponse} on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    private Mono<PagedResponse<SourceControlSyncJobStreamInner>> listBySyncJobSinglePageAsync(
-        String resourceGroupName,
-        String automationAccountName,
-        String sourceControlName,
-        UUID sourceControlSyncJobId,
-        String filter) {
+    private Mono<PagedResponse<SourceControlSyncJobStreamInner>> listBySyncJobSinglePageAsync(String resourceGroupName,
+        String automationAccountName, String sourceControlName, UUID sourceControlSyncJobId, String filter) {
         if (this.client.getEndpoint() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getEndpoint() is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
         }
         if (resourceGroupName == null) {
             return Mono
@@ -151,48 +131,27 @@ public final class SourceControlSyncJobStreamsClientImpl implements SourceContro
                 .error(new IllegalArgumentException("Parameter sourceControlName is required and cannot be null."));
         }
         if (sourceControlSyncJobId == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException("Parameter sourceControlSyncJobId is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter sourceControlSyncJobId is required and cannot be null."));
         }
         if (this.client.getSubscriptionId() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getSubscriptionId() is required and cannot be null."));
+            return Mono.error(new IllegalArgumentException(
+                "Parameter this.client.getSubscriptionId() is required and cannot be null."));
         }
-        final String apiVersion = "2019-06-01";
+        final String apiVersion = "2020-01-13-preview";
         final String accept = "application/json";
         return FluxUtil
-            .withContext(
-                context ->
-                    service
-                        .listBySyncJob(
-                            this.client.getEndpoint(),
-                            resourceGroupName,
-                            automationAccountName,
-                            sourceControlName,
-                            sourceControlSyncJobId,
-                            filter,
-                            this.client.getSubscriptionId(),
-                            apiVersion,
-                            accept,
-                            context))
-            .<PagedResponse<SourceControlSyncJobStreamInner>>map(
-                res ->
-                    new PagedResponseBase<>(
-                        res.getRequest(),
-                        res.getStatusCode(),
-                        res.getHeaders(),
-                        res.getValue().value(),
-                        res.getValue().nextLink(),
-                        null))
+            .withContext(context -> service.listBySyncJob(this.client.getEndpoint(), resourceGroupName,
+                automationAccountName, sourceControlName, sourceControlSyncJobId, filter,
+                this.client.getSubscriptionId(), apiVersion, accept, context))
+            .<PagedResponse<SourceControlSyncJobStreamInner>>map(res -> new PagedResponseBase<>(res.getRequest(),
+                res.getStatusCode(), res.getHeaders(), res.getValue().value(), res.getValue().nextLink(), null))
             .contextWrite(context -> context.putAll(FluxUtil.toReactorContext(this.client.getContext()).readOnly()));
     }
 
     /**
      * Retrieve a list of sync job streams identified by sync job id.
-     *
+     * 
      * @param resourceGroupName Name of an Azure Resource group.
      * @param automationAccountName The name of the automation account.
      * @param sourceControlName The source control name.
@@ -202,21 +161,16 @@ public final class SourceControlSyncJobStreamsClientImpl implements SourceContro
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the response model for the list source control sync job streams operation.
+     * @return the response model for the list source control sync job streams operation along with
+     * {@link PagedResponse} on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    private Mono<PagedResponse<SourceControlSyncJobStreamInner>> listBySyncJobSinglePageAsync(
-        String resourceGroupName,
-        String automationAccountName,
-        String sourceControlName,
-        UUID sourceControlSyncJobId,
-        String filter,
+    private Mono<PagedResponse<SourceControlSyncJobStreamInner>> listBySyncJobSinglePageAsync(String resourceGroupName,
+        String automationAccountName, String sourceControlName, UUID sourceControlSyncJobId, String filter,
         Context context) {
         if (this.client.getEndpoint() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getEndpoint() is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
         }
         if (resourceGroupName == null) {
             return Mono
@@ -231,45 +185,26 @@ public final class SourceControlSyncJobStreamsClientImpl implements SourceContro
                 .error(new IllegalArgumentException("Parameter sourceControlName is required and cannot be null."));
         }
         if (sourceControlSyncJobId == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException("Parameter sourceControlSyncJobId is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter sourceControlSyncJobId is required and cannot be null."));
         }
         if (this.client.getSubscriptionId() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getSubscriptionId() is required and cannot be null."));
+            return Mono.error(new IllegalArgumentException(
+                "Parameter this.client.getSubscriptionId() is required and cannot be null."));
         }
-        final String apiVersion = "2019-06-01";
+        final String apiVersion = "2020-01-13-preview";
         final String accept = "application/json";
         context = this.client.mergeContext(context);
         return service
-            .listBySyncJob(
-                this.client.getEndpoint(),
-                resourceGroupName,
-                automationAccountName,
-                sourceControlName,
-                sourceControlSyncJobId,
-                filter,
-                this.client.getSubscriptionId(),
-                apiVersion,
-                accept,
-                context)
-            .map(
-                res ->
-                    new PagedResponseBase<>(
-                        res.getRequest(),
-                        res.getStatusCode(),
-                        res.getHeaders(),
-                        res.getValue().value(),
-                        res.getValue().nextLink(),
-                        null));
+            .listBySyncJob(this.client.getEndpoint(), resourceGroupName, automationAccountName, sourceControlName,
+                sourceControlSyncJobId, filter, this.client.getSubscriptionId(), apiVersion, accept, context)
+            .map(res -> new PagedResponseBase<>(res.getRequest(), res.getStatusCode(), res.getHeaders(),
+                res.getValue().value(), res.getValue().nextLink(), null));
     }
 
     /**
      * Retrieve a list of sync job streams identified by sync job id.
-     *
+     * 
      * @param resourceGroupName Name of an Azure Resource group.
      * @param automationAccountName The name of the automation account.
      * @param sourceControlName The source control name.
@@ -278,25 +213,19 @@ public final class SourceControlSyncJobStreamsClientImpl implements SourceContro
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the response model for the list source control sync job streams operation.
+     * @return the response model for the list source control sync job streams operation as paginated response with
+     * {@link PagedFlux}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
-    private PagedFlux<SourceControlSyncJobStreamInner> listBySyncJobAsync(
-        String resourceGroupName,
-        String automationAccountName,
-        String sourceControlName,
-        UUID sourceControlSyncJobId,
-        String filter) {
-        return new PagedFlux<>(
-            () ->
-                listBySyncJobSinglePageAsync(
-                    resourceGroupName, automationAccountName, sourceControlName, sourceControlSyncJobId, filter),
-            nextLink -> listBySyncJobNextSinglePageAsync(nextLink));
+    private PagedFlux<SourceControlSyncJobStreamInner> listBySyncJobAsync(String resourceGroupName,
+        String automationAccountName, String sourceControlName, UUID sourceControlSyncJobId, String filter) {
+        return new PagedFlux<>(() -> listBySyncJobSinglePageAsync(resourceGroupName, automationAccountName,
+            sourceControlName, sourceControlSyncJobId, filter), nextLink -> listBySyncJobNextSinglePageAsync(nextLink));
     }
 
     /**
      * Retrieve a list of sync job streams identified by sync job id.
-     *
+     * 
      * @param resourceGroupName Name of an Azure Resource group.
      * @param automationAccountName The name of the automation account.
      * @param sourceControlName The source control name.
@@ -304,22 +233,20 @@ public final class SourceControlSyncJobStreamsClientImpl implements SourceContro
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the response model for the list source control sync job streams operation.
+     * @return the response model for the list source control sync job streams operation as paginated response with
+     * {@link PagedFlux}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
-    private PagedFlux<SourceControlSyncJobStreamInner> listBySyncJobAsync(
-        String resourceGroupName, String automationAccountName, String sourceControlName, UUID sourceControlSyncJobId) {
+    private PagedFlux<SourceControlSyncJobStreamInner> listBySyncJobAsync(String resourceGroupName,
+        String automationAccountName, String sourceControlName, UUID sourceControlSyncJobId) {
         final String filter = null;
-        return new PagedFlux<>(
-            () ->
-                listBySyncJobSinglePageAsync(
-                    resourceGroupName, automationAccountName, sourceControlName, sourceControlSyncJobId, filter),
-            nextLink -> listBySyncJobNextSinglePageAsync(nextLink));
+        return new PagedFlux<>(() -> listBySyncJobSinglePageAsync(resourceGroupName, automationAccountName,
+            sourceControlName, sourceControlSyncJobId, filter), nextLink -> listBySyncJobNextSinglePageAsync(nextLink));
     }
 
     /**
      * Retrieve a list of sync job streams identified by sync job id.
-     *
+     * 
      * @param resourceGroupName Name of an Azure Resource group.
      * @param automationAccountName The name of the automation account.
      * @param sourceControlName The source control name.
@@ -329,31 +256,22 @@ public final class SourceControlSyncJobStreamsClientImpl implements SourceContro
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the response model for the list source control sync job streams operation.
+     * @return the response model for the list source control sync job streams operation as paginated response with
+     * {@link PagedFlux}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
-    private PagedFlux<SourceControlSyncJobStreamInner> listBySyncJobAsync(
-        String resourceGroupName,
-        String automationAccountName,
-        String sourceControlName,
-        UUID sourceControlSyncJobId,
-        String filter,
+    private PagedFlux<SourceControlSyncJobStreamInner> listBySyncJobAsync(String resourceGroupName,
+        String automationAccountName, String sourceControlName, UUID sourceControlSyncJobId, String filter,
         Context context) {
         return new PagedFlux<>(
-            () ->
-                listBySyncJobSinglePageAsync(
-                    resourceGroupName,
-                    automationAccountName,
-                    sourceControlName,
-                    sourceControlSyncJobId,
-                    filter,
-                    context),
+            () -> listBySyncJobSinglePageAsync(resourceGroupName, automationAccountName, sourceControlName,
+                sourceControlSyncJobId, filter, context),
             nextLink -> listBySyncJobNextSinglePageAsync(nextLink, context));
     }
 
     /**
      * Retrieve a list of sync job streams identified by sync job id.
-     *
+     * 
      * @param resourceGroupName Name of an Azure Resource group.
      * @param automationAccountName The name of the automation account.
      * @param sourceControlName The source control name.
@@ -361,20 +279,20 @@ public final class SourceControlSyncJobStreamsClientImpl implements SourceContro
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the response model for the list source control sync job streams operation.
+     * @return the response model for the list source control sync job streams operation as paginated response with
+     * {@link PagedIterable}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
-    public PagedIterable<SourceControlSyncJobStreamInner> listBySyncJob(
-        String resourceGroupName, String automationAccountName, String sourceControlName, UUID sourceControlSyncJobId) {
+    public PagedIterable<SourceControlSyncJobStreamInner> listBySyncJob(String resourceGroupName,
+        String automationAccountName, String sourceControlName, UUID sourceControlSyncJobId) {
         final String filter = null;
-        return new PagedIterable<>(
-            listBySyncJobAsync(
-                resourceGroupName, automationAccountName, sourceControlName, sourceControlSyncJobId, filter));
+        return new PagedIterable<>(listBySyncJobAsync(resourceGroupName, automationAccountName, sourceControlName,
+            sourceControlSyncJobId, filter));
     }
 
     /**
      * Retrieve a list of sync job streams identified by sync job id.
-     *
+     * 
      * @param resourceGroupName Name of an Azure Resource group.
      * @param automationAccountName The name of the automation account.
      * @param sourceControlName The source control name.
@@ -384,24 +302,20 @@ public final class SourceControlSyncJobStreamsClientImpl implements SourceContro
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the response model for the list source control sync job streams operation.
+     * @return the response model for the list source control sync job streams operation as paginated response with
+     * {@link PagedIterable}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
-    public PagedIterable<SourceControlSyncJobStreamInner> listBySyncJob(
-        String resourceGroupName,
-        String automationAccountName,
-        String sourceControlName,
-        UUID sourceControlSyncJobId,
-        String filter,
+    public PagedIterable<SourceControlSyncJobStreamInner> listBySyncJob(String resourceGroupName,
+        String automationAccountName, String sourceControlName, UUID sourceControlSyncJobId, String filter,
         Context context) {
-        return new PagedIterable<>(
-            listBySyncJobAsync(
-                resourceGroupName, automationAccountName, sourceControlName, sourceControlSyncJobId, filter, context));
+        return new PagedIterable<>(listBySyncJobAsync(resourceGroupName, automationAccountName, sourceControlName,
+            sourceControlSyncJobId, filter, context));
     }
 
     /**
      * Retrieve a sync job stream identified by stream id.
-     *
+     * 
      * @param resourceGroupName Name of an Azure Resource group.
      * @param automationAccountName The name of the automation account.
      * @param sourceControlName The source control name.
@@ -410,20 +324,15 @@ public final class SourceControlSyncJobStreamsClientImpl implements SourceContro
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return definition of the source control sync job stream by id.
+     * @return definition of the source control sync job stream by id along with {@link Response} on successful
+     * completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    private Mono<Response<SourceControlSyncJobStreamByIdInner>> getWithResponseAsync(
-        String resourceGroupName,
-        String automationAccountName,
-        String sourceControlName,
-        UUID sourceControlSyncJobId,
-        String streamId) {
+    private Mono<Response<SourceControlSyncJobStreamByIdInner>> getWithResponseAsync(String resourceGroupName,
+        String automationAccountName, String sourceControlName, UUID sourceControlSyncJobId, String streamId) {
         if (this.client.getEndpoint() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getEndpoint() is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
         }
         if (resourceGroupName == null) {
             return Mono
@@ -438,42 +347,28 @@ public final class SourceControlSyncJobStreamsClientImpl implements SourceContro
                 .error(new IllegalArgumentException("Parameter sourceControlName is required and cannot be null."));
         }
         if (sourceControlSyncJobId == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException("Parameter sourceControlSyncJobId is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter sourceControlSyncJobId is required and cannot be null."));
         }
         if (streamId == null) {
             return Mono.error(new IllegalArgumentException("Parameter streamId is required and cannot be null."));
         }
         if (this.client.getSubscriptionId() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getSubscriptionId() is required and cannot be null."));
+            return Mono.error(new IllegalArgumentException(
+                "Parameter this.client.getSubscriptionId() is required and cannot be null."));
         }
-        final String apiVersion = "2019-06-01";
+        final String apiVersion = "2020-01-13-preview";
         final String accept = "application/json";
         return FluxUtil
-            .withContext(
-                context ->
-                    service
-                        .get(
-                            this.client.getEndpoint(),
-                            resourceGroupName,
-                            automationAccountName,
-                            sourceControlName,
-                            sourceControlSyncJobId,
-                            streamId,
-                            this.client.getSubscriptionId(),
-                            apiVersion,
-                            accept,
-                            context))
+            .withContext(context -> service.get(this.client.getEndpoint(), resourceGroupName, automationAccountName,
+                sourceControlName, sourceControlSyncJobId, streamId, this.client.getSubscriptionId(), apiVersion,
+                accept, context))
             .contextWrite(context -> context.putAll(FluxUtil.toReactorContext(this.client.getContext()).readOnly()));
     }
 
     /**
      * Retrieve a sync job stream identified by stream id.
-     *
+     * 
      * @param resourceGroupName Name of an Azure Resource group.
      * @param automationAccountName The name of the automation account.
      * @param sourceControlName The source control name.
@@ -483,21 +378,16 @@ public final class SourceControlSyncJobStreamsClientImpl implements SourceContro
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return definition of the source control sync job stream by id.
+     * @return definition of the source control sync job stream by id along with {@link Response} on successful
+     * completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    private Mono<Response<SourceControlSyncJobStreamByIdInner>> getWithResponseAsync(
-        String resourceGroupName,
-        String automationAccountName,
-        String sourceControlName,
-        UUID sourceControlSyncJobId,
-        String streamId,
+    private Mono<Response<SourceControlSyncJobStreamByIdInner>> getWithResponseAsync(String resourceGroupName,
+        String automationAccountName, String sourceControlName, UUID sourceControlSyncJobId, String streamId,
         Context context) {
         if (this.client.getEndpoint() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getEndpoint() is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
         }
         if (resourceGroupName == null) {
             return Mono
@@ -512,39 +402,26 @@ public final class SourceControlSyncJobStreamsClientImpl implements SourceContro
                 .error(new IllegalArgumentException("Parameter sourceControlName is required and cannot be null."));
         }
         if (sourceControlSyncJobId == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException("Parameter sourceControlSyncJobId is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter sourceControlSyncJobId is required and cannot be null."));
         }
         if (streamId == null) {
             return Mono.error(new IllegalArgumentException("Parameter streamId is required and cannot be null."));
         }
         if (this.client.getSubscriptionId() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getSubscriptionId() is required and cannot be null."));
+            return Mono.error(new IllegalArgumentException(
+                "Parameter this.client.getSubscriptionId() is required and cannot be null."));
         }
-        final String apiVersion = "2019-06-01";
+        final String apiVersion = "2020-01-13-preview";
         final String accept = "application/json";
         context = this.client.mergeContext(context);
-        return service
-            .get(
-                this.client.getEndpoint(),
-                resourceGroupName,
-                automationAccountName,
-                sourceControlName,
-                sourceControlSyncJobId,
-                streamId,
-                this.client.getSubscriptionId(),
-                apiVersion,
-                accept,
-                context);
+        return service.get(this.client.getEndpoint(), resourceGroupName, automationAccountName, sourceControlName,
+            sourceControlSyncJobId, streamId, this.client.getSubscriptionId(), apiVersion, accept, context);
     }
 
     /**
      * Retrieve a sync job stream identified by stream id.
-     *
+     * 
      * @param resourceGroupName Name of an Azure Resource group.
      * @param automationAccountName The name of the automation account.
      * @param sourceControlName The source control name.
@@ -553,54 +430,18 @@ public final class SourceControlSyncJobStreamsClientImpl implements SourceContro
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return definition of the source control sync job stream by id.
+     * @return definition of the source control sync job stream by id on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    private Mono<SourceControlSyncJobStreamByIdInner> getAsync(
-        String resourceGroupName,
-        String automationAccountName,
-        String sourceControlName,
-        UUID sourceControlSyncJobId,
-        String streamId) {
-        return getWithResponseAsync(
-                resourceGroupName, automationAccountName, sourceControlName, sourceControlSyncJobId, streamId)
-            .flatMap(
-                (Response<SourceControlSyncJobStreamByIdInner> res) -> {
-                    if (res.getValue() != null) {
-                        return Mono.just(res.getValue());
-                    } else {
-                        return Mono.empty();
-                    }
-                });
+    private Mono<SourceControlSyncJobStreamByIdInner> getAsync(String resourceGroupName, String automationAccountName,
+        String sourceControlName, UUID sourceControlSyncJobId, String streamId) {
+        return getWithResponseAsync(resourceGroupName, automationAccountName, sourceControlName, sourceControlSyncJobId,
+            streamId).flatMap(res -> Mono.justOrEmpty(res.getValue()));
     }
 
     /**
      * Retrieve a sync job stream identified by stream id.
-     *
-     * @param resourceGroupName Name of an Azure Resource group.
-     * @param automationAccountName The name of the automation account.
-     * @param sourceControlName The source control name.
-     * @param sourceControlSyncJobId The source control sync job id.
-     * @param streamId The id of the sync job stream.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return definition of the source control sync job stream by id.
-     */
-    @ServiceMethod(returns = ReturnType.SINGLE)
-    public SourceControlSyncJobStreamByIdInner get(
-        String resourceGroupName,
-        String automationAccountName,
-        String sourceControlName,
-        UUID sourceControlSyncJobId,
-        String streamId) {
-        return getAsync(resourceGroupName, automationAccountName, sourceControlName, sourceControlSyncJobId, streamId)
-            .block();
-    }
-
-    /**
-     * Retrieve a sync job stream identified by stream id.
-     *
+     * 
      * @param resourceGroupName Name of an Azure Resource group.
      * @param automationAccountName The name of the automation account.
      * @param sourceControlName The source control name.
@@ -610,29 +451,45 @@ public final class SourceControlSyncJobStreamsClientImpl implements SourceContro
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return definition of the source control sync job stream by id along with {@link Response}.
+     */
+    @ServiceMethod(returns = ReturnType.SINGLE)
+    public Response<SourceControlSyncJobStreamByIdInner> getWithResponse(String resourceGroupName,
+        String automationAccountName, String sourceControlName, UUID sourceControlSyncJobId, String streamId,
+        Context context) {
+        return getWithResponseAsync(resourceGroupName, automationAccountName, sourceControlName, sourceControlSyncJobId,
+            streamId, context).block();
+    }
+
+    /**
+     * Retrieve a sync job stream identified by stream id.
+     * 
+     * @param resourceGroupName Name of an Azure Resource group.
+     * @param automationAccountName The name of the automation account.
+     * @param sourceControlName The source control name.
+     * @param sourceControlSyncJobId The source control sync job id.
+     * @param streamId The id of the sync job stream.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
      * @return definition of the source control sync job stream by id.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    public Response<SourceControlSyncJobStreamByIdInner> getWithResponse(
-        String resourceGroupName,
-        String automationAccountName,
-        String sourceControlName,
-        UUID sourceControlSyncJobId,
-        String streamId,
-        Context context) {
-        return getWithResponseAsync(
-                resourceGroupName, automationAccountName, sourceControlName, sourceControlSyncJobId, streamId, context)
-            .block();
+    public SourceControlSyncJobStreamByIdInner get(String resourceGroupName, String automationAccountName,
+        String sourceControlName, UUID sourceControlSyncJobId, String streamId) {
+        return getWithResponse(resourceGroupName, automationAccountName, sourceControlName, sourceControlSyncJobId,
+            streamId, Context.NONE).getValue();
     }
 
     /**
      * Get the next page of items.
-     *
-     * @param nextLink The nextLink parameter.
+     * 
+     * @param nextLink The URL to get the next list of items.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the response model for the list source control sync job streams operation.
+     * @return the response model for the list source control sync job streams operation along with
+     * {@link PagedResponse} on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
     private Mono<PagedResponse<SourceControlSyncJobStreamInner>> listBySyncJobNextSinglePageAsync(String nextLink) {
@@ -640,60 +497,42 @@ public final class SourceControlSyncJobStreamsClientImpl implements SourceContro
             return Mono.error(new IllegalArgumentException("Parameter nextLink is required and cannot be null."));
         }
         if (this.client.getEndpoint() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getEndpoint() is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
         }
         final String accept = "application/json";
         return FluxUtil
             .withContext(context -> service.listBySyncJobNext(nextLink, this.client.getEndpoint(), accept, context))
-            .<PagedResponse<SourceControlSyncJobStreamInner>>map(
-                res ->
-                    new PagedResponseBase<>(
-                        res.getRequest(),
-                        res.getStatusCode(),
-                        res.getHeaders(),
-                        res.getValue().value(),
-                        res.getValue().nextLink(),
-                        null))
+            .<PagedResponse<SourceControlSyncJobStreamInner>>map(res -> new PagedResponseBase<>(res.getRequest(),
+                res.getStatusCode(), res.getHeaders(), res.getValue().value(), res.getValue().nextLink(), null))
             .contextWrite(context -> context.putAll(FluxUtil.toReactorContext(this.client.getContext()).readOnly()));
     }
 
     /**
      * Get the next page of items.
-     *
-     * @param nextLink The nextLink parameter.
+     * 
+     * @param nextLink The URL to get the next list of items.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the response model for the list source control sync job streams operation.
+     * @return the response model for the list source control sync job streams operation along with
+     * {@link PagedResponse} on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    private Mono<PagedResponse<SourceControlSyncJobStreamInner>> listBySyncJobNextSinglePageAsync(
-        String nextLink, Context context) {
+    private Mono<PagedResponse<SourceControlSyncJobStreamInner>> listBySyncJobNextSinglePageAsync(String nextLink,
+        Context context) {
         if (nextLink == null) {
             return Mono.error(new IllegalArgumentException("Parameter nextLink is required and cannot be null."));
         }
         if (this.client.getEndpoint() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getEndpoint() is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
         }
         final String accept = "application/json";
         context = this.client.mergeContext(context);
-        return service
-            .listBySyncJobNext(nextLink, this.client.getEndpoint(), accept, context)
-            .map(
-                res ->
-                    new PagedResponseBase<>(
-                        res.getRequest(),
-                        res.getStatusCode(),
-                        res.getHeaders(),
-                        res.getValue().value(),
-                        res.getValue().nextLink(),
-                        null));
+        return service.listBySyncJobNext(nextLink, this.client.getEndpoint(), accept, context)
+            .map(res -> new PagedResponseBase<>(res.getRequest(), res.getStatusCode(), res.getHeaders(),
+                res.getValue().value(), res.getValue().nextLink(), null));
     }
 }

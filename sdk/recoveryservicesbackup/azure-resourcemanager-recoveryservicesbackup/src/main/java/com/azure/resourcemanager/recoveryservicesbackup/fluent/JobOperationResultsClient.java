@@ -9,11 +9,30 @@ import com.azure.core.annotation.ServiceMethod;
 import com.azure.core.http.rest.Response;
 import com.azure.core.util.Context;
 
-/** An instance of this class provides access to all the operations defined in JobOperationResultsClient. */
+/**
+ * An instance of this class provides access to all the operations defined in JobOperationResultsClient.
+ */
 public interface JobOperationResultsClient {
     /**
      * Fetches the result of any operation.
-     *
+     * 
+     * @param vaultName The name of the recovery services vault.
+     * @param resourceGroupName The name of the resource group where the recovery services vault is present.
+     * @param jobName Job name whose operation result has to be fetched.
+     * @param operationId OperationID which represents the operation whose result has to be fetched.
+     * @param context The context to associate with this operation.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return the {@link Response}.
+     */
+    @ServiceMethod(returns = ReturnType.SINGLE)
+    Response<Void> getWithResponse(String vaultName, String resourceGroupName, String jobName, String operationId,
+        Context context);
+
+    /**
+     * Fetches the result of any operation.
+     * 
      * @param vaultName The name of the recovery services vault.
      * @param resourceGroupName The name of the resource group where the recovery services vault is present.
      * @param jobName Job name whose operation result has to be fetched.
@@ -24,21 +43,4 @@ public interface JobOperationResultsClient {
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
     void get(String vaultName, String resourceGroupName, String jobName, String operationId);
-
-    /**
-     * Fetches the result of any operation.
-     *
-     * @param vaultName The name of the recovery services vault.
-     * @param resourceGroupName The name of the resource group where the recovery services vault is present.
-     * @param jobName Job name whose operation result has to be fetched.
-     * @param operationId OperationID which represents the operation whose result has to be fetched.
-     * @param context The context to associate with this operation.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the response.
-     */
-    @ServiceMethod(returns = ReturnType.SINGLE)
-    Response<Void> getWithResponse(
-        String vaultName, String resourceGroupName, String jobName, String operationId, Context context);
 }

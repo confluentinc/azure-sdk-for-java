@@ -5,29 +5,46 @@
 package com.azure.resourcemanager.storage.models;
 
 import com.azure.core.util.ExpandableStringEnum;
-import com.fasterxml.jackson.annotation.JsonCreator;
 import java.util.Collection;
 
-/** Defines values for Format. */
+/**
+ * This is a required field, it specifies the format for the inventory files.
+ */
 public final class Format extends ExpandableStringEnum<Format> {
-    /** Static value Csv for Format. */
+    /**
+     * Static value Csv for Format.
+     */
     public static final Format CSV = fromString("Csv");
 
-    /** Static value Parquet for Format. */
+    /**
+     * Static value Parquet for Format.
+     */
     public static final Format PARQUET = fromString("Parquet");
 
     /**
+     * Creates a new instance of Format value.
+     * 
+     * @deprecated Use the {@link #fromString(String)} factory method.
+     */
+    @Deprecated
+    public Format() {
+    }
+
+    /**
      * Creates or finds a Format from its string representation.
-     *
+     * 
      * @param name a name to look for.
      * @return the corresponding Format.
      */
-    @JsonCreator
     public static Format fromString(String name) {
         return fromString(name, Format.class);
     }
 
-    /** @return known Format values. */
+    /**
+     * Gets known Format values.
+     * 
+     * @return known Format values.
+     */
     public static Collection<Format> values() {
         return values(Format.class);
     }

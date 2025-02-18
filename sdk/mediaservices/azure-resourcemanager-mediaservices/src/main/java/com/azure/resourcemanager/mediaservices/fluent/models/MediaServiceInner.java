@@ -5,80 +5,86 @@
 package com.azure.resourcemanager.mediaservices.fluent.models;
 
 import com.azure.core.annotation.Fluent;
-import com.azure.core.annotation.JsonFlatten;
 import com.azure.core.management.Resource;
 import com.azure.core.management.SystemData;
-import com.azure.core.util.logging.ClientLogger;
+import com.azure.json.JsonReader;
+import com.azure.json.JsonToken;
+import com.azure.json.JsonWriter;
 import com.azure.resourcemanager.mediaservices.models.AccountEncryption;
 import com.azure.resourcemanager.mediaservices.models.KeyDelivery;
 import com.azure.resourcemanager.mediaservices.models.MediaServiceIdentity;
+import com.azure.resourcemanager.mediaservices.models.MinimumTlsVersion;
+import com.azure.resourcemanager.mediaservices.models.ProvisioningState;
 import com.azure.resourcemanager.mediaservices.models.PublicNetworkAccess;
 import com.azure.resourcemanager.mediaservices.models.StorageAccount;
 import com.azure.resourcemanager.mediaservices.models.StorageAuthentication;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-/** A Media Services account. */
-@JsonFlatten
+/**
+ * A Media Services account.
+ */
 @Fluent
-public class MediaServiceInner extends Resource {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(MediaServiceInner.class);
-
+public final class MediaServiceInner extends Resource {
     /*
-     * The Managed Identity for the Media Services account.
+     * The resource properties.
      */
-    @JsonProperty(value = "identity")
-    private MediaServiceIdentity identity;
+    private MediaServiceProperties innerProperties;
 
     /*
      * The system metadata relating to this resource.
      */
-    @JsonProperty(value = "systemData", access = JsonProperty.Access.WRITE_ONLY)
     private SystemData systemData;
 
     /*
-     * The Media Services account ID.
+     * The Managed Identity for the Media Services account.
      */
-    @JsonProperty(value = "properties.mediaServiceId", access = JsonProperty.Access.WRITE_ONLY)
-    private UUID mediaServiceId;
+    private MediaServiceIdentity identity;
 
     /*
-     * The storage accounts for this resource.
+     * The type of the resource.
      */
-    @JsonProperty(value = "properties.storageAccounts")
-    private List<StorageAccount> storageAccounts;
+    private String type;
 
     /*
-     * The storageAuthentication property.
+     * The name of the resource.
      */
-    @JsonProperty(value = "properties.storageAuthentication")
-    private StorageAuthentication storageAuthentication;
+    private String name;
 
     /*
-     * The account encryption properties.
+     * Fully qualified resource Id for the resource.
      */
-    @JsonProperty(value = "properties.encryption")
-    private AccountEncryption encryption;
+    private String id;
 
-    /*
-     * The Key Delivery properties for Media Services account.
+    /**
+     * Creates an instance of MediaServiceInner class.
      */
-    @JsonProperty(value = "properties.keyDelivery")
-    private KeyDelivery keyDelivery;
+    public MediaServiceInner() {
+    }
 
-    /*
-     * Whether or not public network access is allowed for resources under the
-     * Media Services account.
+    /**
+     * Get the innerProperties property: The resource properties.
+     * 
+     * @return the innerProperties value.
      */
-    @JsonProperty(value = "properties.publicNetworkAccess")
-    private PublicNetworkAccess publicNetworkAccess;
+    private MediaServiceProperties innerProperties() {
+        return this.innerProperties;
+    }
+
+    /**
+     * Get the systemData property: The system metadata relating to this resource.
+     * 
+     * @return the systemData value.
+     */
+    public SystemData systemData() {
+        return this.systemData;
+    }
 
     /**
      * Get the identity property: The Managed Identity for the Media Services account.
-     *
+     * 
      * @return the identity value.
      */
     public MediaServiceIdentity identity() {
@@ -87,7 +93,7 @@ public class MediaServiceInner extends Resource {
 
     /**
      * Set the identity property: The Managed Identity for the Media Services account.
-     *
+     * 
      * @param identity the identity value to set.
      * @return the MediaServiceInner object itself.
      */
@@ -97,133 +103,47 @@ public class MediaServiceInner extends Resource {
     }
 
     /**
-     * Get the systemData property: The system metadata relating to this resource.
-     *
-     * @return the systemData value.
+     * Get the type property: The type of the resource.
+     * 
+     * @return the type value.
      */
-    public SystemData systemData() {
-        return this.systemData;
+    @Override
+    public String type() {
+        return this.type;
     }
 
     /**
-     * Get the mediaServiceId property: The Media Services account ID.
-     *
-     * @return the mediaServiceId value.
+     * Get the name property: The name of the resource.
+     * 
+     * @return the name value.
      */
-    public UUID mediaServiceId() {
-        return this.mediaServiceId;
+    @Override
+    public String name() {
+        return this.name;
     }
 
     /**
-     * Get the storageAccounts property: The storage accounts for this resource.
-     *
-     * @return the storageAccounts value.
+     * Get the id property: Fully qualified resource Id for the resource.
+     * 
+     * @return the id value.
      */
-    public List<StorageAccount> storageAccounts() {
-        return this.storageAccounts;
+    @Override
+    public String id() {
+        return this.id;
     }
 
     /**
-     * Set the storageAccounts property: The storage accounts for this resource.
-     *
-     * @param storageAccounts the storageAccounts value to set.
-     * @return the MediaServiceInner object itself.
+     * {@inheritDoc}
      */
-    public MediaServiceInner withStorageAccounts(List<StorageAccount> storageAccounts) {
-        this.storageAccounts = storageAccounts;
-        return this;
-    }
-
-    /**
-     * Get the storageAuthentication property: The storageAuthentication property.
-     *
-     * @return the storageAuthentication value.
-     */
-    public StorageAuthentication storageAuthentication() {
-        return this.storageAuthentication;
-    }
-
-    /**
-     * Set the storageAuthentication property: The storageAuthentication property.
-     *
-     * @param storageAuthentication the storageAuthentication value to set.
-     * @return the MediaServiceInner object itself.
-     */
-    public MediaServiceInner withStorageAuthentication(StorageAuthentication storageAuthentication) {
-        this.storageAuthentication = storageAuthentication;
-        return this;
-    }
-
-    /**
-     * Get the encryption property: The account encryption properties.
-     *
-     * @return the encryption value.
-     */
-    public AccountEncryption encryption() {
-        return this.encryption;
-    }
-
-    /**
-     * Set the encryption property: The account encryption properties.
-     *
-     * @param encryption the encryption value to set.
-     * @return the MediaServiceInner object itself.
-     */
-    public MediaServiceInner withEncryption(AccountEncryption encryption) {
-        this.encryption = encryption;
-        return this;
-    }
-
-    /**
-     * Get the keyDelivery property: The Key Delivery properties for Media Services account.
-     *
-     * @return the keyDelivery value.
-     */
-    public KeyDelivery keyDelivery() {
-        return this.keyDelivery;
-    }
-
-    /**
-     * Set the keyDelivery property: The Key Delivery properties for Media Services account.
-     *
-     * @param keyDelivery the keyDelivery value to set.
-     * @return the MediaServiceInner object itself.
-     */
-    public MediaServiceInner withKeyDelivery(KeyDelivery keyDelivery) {
-        this.keyDelivery = keyDelivery;
-        return this;
-    }
-
-    /**
-     * Get the publicNetworkAccess property: Whether or not public network access is allowed for resources under the
-     * Media Services account.
-     *
-     * @return the publicNetworkAccess value.
-     */
-    public PublicNetworkAccess publicNetworkAccess() {
-        return this.publicNetworkAccess;
-    }
-
-    /**
-     * Set the publicNetworkAccess property: Whether or not public network access is allowed for resources under the
-     * Media Services account.
-     *
-     * @param publicNetworkAccess the publicNetworkAccess value to set.
-     * @return the MediaServiceInner object itself.
-     */
-    public MediaServiceInner withPublicNetworkAccess(PublicNetworkAccess publicNetworkAccess) {
-        this.publicNetworkAccess = publicNetworkAccess;
-        return this;
-    }
-
-    /** {@inheritDoc} */
     @Override
     public MediaServiceInner withLocation(String location) {
         super.withLocation(location);
         return this;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public MediaServiceInner withTags(Map<String, String> tags) {
         super.withTags(tags);
@@ -231,22 +151,241 @@ public class MediaServiceInner extends Resource {
     }
 
     /**
+     * Get the mediaServiceId property: The Media Services account ID.
+     * 
+     * @return the mediaServiceId value.
+     */
+    public UUID mediaServiceId() {
+        return this.innerProperties() == null ? null : this.innerProperties().mediaServiceId();
+    }
+
+    /**
+     * Get the storageAccounts property: The storage accounts for this resource.
+     * 
+     * @return the storageAccounts value.
+     */
+    public List<StorageAccount> storageAccounts() {
+        return this.innerProperties() == null ? null : this.innerProperties().storageAccounts();
+    }
+
+    /**
+     * Set the storageAccounts property: The storage accounts for this resource.
+     * 
+     * @param storageAccounts the storageAccounts value to set.
+     * @return the MediaServiceInner object itself.
+     */
+    public MediaServiceInner withStorageAccounts(List<StorageAccount> storageAccounts) {
+        if (this.innerProperties() == null) {
+            this.innerProperties = new MediaServiceProperties();
+        }
+        this.innerProperties().withStorageAccounts(storageAccounts);
+        return this;
+    }
+
+    /**
+     * Get the storageAuthentication property: The storageAuthentication property.
+     * 
+     * @return the storageAuthentication value.
+     */
+    public StorageAuthentication storageAuthentication() {
+        return this.innerProperties() == null ? null : this.innerProperties().storageAuthentication();
+    }
+
+    /**
+     * Set the storageAuthentication property: The storageAuthentication property.
+     * 
+     * @param storageAuthentication the storageAuthentication value to set.
+     * @return the MediaServiceInner object itself.
+     */
+    public MediaServiceInner withStorageAuthentication(StorageAuthentication storageAuthentication) {
+        if (this.innerProperties() == null) {
+            this.innerProperties = new MediaServiceProperties();
+        }
+        this.innerProperties().withStorageAuthentication(storageAuthentication);
+        return this;
+    }
+
+    /**
+     * Get the encryption property: The account encryption properties.
+     * 
+     * @return the encryption value.
+     */
+    public AccountEncryption encryption() {
+        return this.innerProperties() == null ? null : this.innerProperties().encryption();
+    }
+
+    /**
+     * Set the encryption property: The account encryption properties.
+     * 
+     * @param encryption the encryption value to set.
+     * @return the MediaServiceInner object itself.
+     */
+    public MediaServiceInner withEncryption(AccountEncryption encryption) {
+        if (this.innerProperties() == null) {
+            this.innerProperties = new MediaServiceProperties();
+        }
+        this.innerProperties().withEncryption(encryption);
+        return this;
+    }
+
+    /**
+     * Get the keyDelivery property: The Key Delivery properties for Media Services account.
+     * 
+     * @return the keyDelivery value.
+     */
+    public KeyDelivery keyDelivery() {
+        return this.innerProperties() == null ? null : this.innerProperties().keyDelivery();
+    }
+
+    /**
+     * Set the keyDelivery property: The Key Delivery properties for Media Services account.
+     * 
+     * @param keyDelivery the keyDelivery value to set.
+     * @return the MediaServiceInner object itself.
+     */
+    public MediaServiceInner withKeyDelivery(KeyDelivery keyDelivery) {
+        if (this.innerProperties() == null) {
+            this.innerProperties = new MediaServiceProperties();
+        }
+        this.innerProperties().withKeyDelivery(keyDelivery);
+        return this;
+    }
+
+    /**
+     * Get the publicNetworkAccess property: Whether or not public network access is allowed for resources under the
+     * Media Services account.
+     * 
+     * @return the publicNetworkAccess value.
+     */
+    public PublicNetworkAccess publicNetworkAccess() {
+        return this.innerProperties() == null ? null : this.innerProperties().publicNetworkAccess();
+    }
+
+    /**
+     * Set the publicNetworkAccess property: Whether or not public network access is allowed for resources under the
+     * Media Services account.
+     * 
+     * @param publicNetworkAccess the publicNetworkAccess value to set.
+     * @return the MediaServiceInner object itself.
+     */
+    public MediaServiceInner withPublicNetworkAccess(PublicNetworkAccess publicNetworkAccess) {
+        if (this.innerProperties() == null) {
+            this.innerProperties = new MediaServiceProperties();
+        }
+        this.innerProperties().withPublicNetworkAccess(publicNetworkAccess);
+        return this;
+    }
+
+    /**
+     * Get the provisioningState property: Provisioning state of the Media Services account.
+     * 
+     * @return the provisioningState value.
+     */
+    public ProvisioningState provisioningState() {
+        return this.innerProperties() == null ? null : this.innerProperties().provisioningState();
+    }
+
+    /**
+     * Get the privateEndpointConnections property: The Private Endpoint Connections created for the Media Service
+     * account.
+     * 
+     * @return the privateEndpointConnections value.
+     */
+    public List<PrivateEndpointConnectionInner> privateEndpointConnections() {
+        return this.innerProperties() == null ? null : this.innerProperties().privateEndpointConnections();
+    }
+
+    /**
+     * Get the minimumTlsVersion property: The minimum TLS version allowed for this account's requests. This is an
+     * optional property. If unspecified, a secure default value will be used.
+     * 
+     * @return the minimumTlsVersion value.
+     */
+    public MinimumTlsVersion minimumTlsVersion() {
+        return this.innerProperties() == null ? null : this.innerProperties().minimumTlsVersion();
+    }
+
+    /**
+     * Set the minimumTlsVersion property: The minimum TLS version allowed for this account's requests. This is an
+     * optional property. If unspecified, a secure default value will be used.
+     * 
+     * @param minimumTlsVersion the minimumTlsVersion value to set.
+     * @return the MediaServiceInner object itself.
+     */
+    public MediaServiceInner withMinimumTlsVersion(MinimumTlsVersion minimumTlsVersion) {
+        if (this.innerProperties() == null) {
+            this.innerProperties = new MediaServiceProperties();
+        }
+        this.innerProperties().withMinimumTlsVersion(minimumTlsVersion);
+        return this;
+    }
+
+    /**
      * Validates the instance.
-     *
+     * 
      * @throws IllegalArgumentException thrown if the instance is not valid.
      */
     public void validate() {
+        if (innerProperties() != null) {
+            innerProperties().validate();
+        }
         if (identity() != null) {
             identity().validate();
         }
-        if (storageAccounts() != null) {
-            storageAccounts().forEach(e -> e.validate());
-        }
-        if (encryption() != null) {
-            encryption().validate();
-        }
-        if (keyDelivery() != null) {
-            keyDelivery().validate();
-        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public JsonWriter toJson(JsonWriter jsonWriter) throws IOException {
+        jsonWriter.writeStartObject();
+        jsonWriter.writeStringField("location", location());
+        jsonWriter.writeMapField("tags", tags(), (writer, element) -> writer.writeString(element));
+        jsonWriter.writeJsonField("properties", this.innerProperties);
+        jsonWriter.writeJsonField("identity", this.identity);
+        return jsonWriter.writeEndObject();
+    }
+
+    /**
+     * Reads an instance of MediaServiceInner from the JsonReader.
+     * 
+     * @param jsonReader The JsonReader being read.
+     * @return An instance of MediaServiceInner if the JsonReader was pointing to an instance of it, or null if it was
+     * pointing to JSON null.
+     * @throws IllegalStateException If the deserialized JSON object was missing any required properties.
+     * @throws IOException If an error occurs while reading the MediaServiceInner.
+     */
+    public static MediaServiceInner fromJson(JsonReader jsonReader) throws IOException {
+        return jsonReader.readObject(reader -> {
+            MediaServiceInner deserializedMediaServiceInner = new MediaServiceInner();
+            while (reader.nextToken() != JsonToken.END_OBJECT) {
+                String fieldName = reader.getFieldName();
+                reader.nextToken();
+
+                if ("id".equals(fieldName)) {
+                    deserializedMediaServiceInner.id = reader.getString();
+                } else if ("name".equals(fieldName)) {
+                    deserializedMediaServiceInner.name = reader.getString();
+                } else if ("type".equals(fieldName)) {
+                    deserializedMediaServiceInner.type = reader.getString();
+                } else if ("location".equals(fieldName)) {
+                    deserializedMediaServiceInner.withLocation(reader.getString());
+                } else if ("tags".equals(fieldName)) {
+                    Map<String, String> tags = reader.readMap(reader1 -> reader1.getString());
+                    deserializedMediaServiceInner.withTags(tags);
+                } else if ("properties".equals(fieldName)) {
+                    deserializedMediaServiceInner.innerProperties = MediaServiceProperties.fromJson(reader);
+                } else if ("systemData".equals(fieldName)) {
+                    deserializedMediaServiceInner.systemData = SystemData.fromJson(reader);
+                } else if ("identity".equals(fieldName)) {
+                    deserializedMediaServiceInner.identity = MediaServiceIdentity.fromJson(reader);
+                } else {
+                    reader.skipChildren();
+                }
+            }
+
+            return deserializedMediaServiceInner;
+        });
     }
 }

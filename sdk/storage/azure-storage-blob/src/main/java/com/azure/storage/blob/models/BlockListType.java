@@ -4,21 +4,28 @@
 
 package com.azure.storage.blob.models;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonValue;
-
-/** Defines values for BlockListType. */
+/**
+ * Defines values for BlockListType.
+ */
 public enum BlockListType {
-    /** Enum value committed. */
+    /**
+     * Enum value committed.
+     */
     COMMITTED("committed"),
 
-    /** Enum value uncommitted. */
+    /**
+     * Enum value uncommitted.
+     */
     UNCOMMITTED("uncommitted"),
 
-    /** Enum value all. */
+    /**
+     * Enum value all.
+     */
     ALL("all");
 
-    /** The actual serialized value for a BlockListType instance. */
+    /**
+     * The actual serialized value for a BlockListType instance.
+     */
     private final String value;
 
     BlockListType(String value) {
@@ -27,12 +34,14 @@ public enum BlockListType {
 
     /**
      * Parses a serialized value to a BlockListType instance.
-     *
+     * 
      * @param value the serialized value to parse.
      * @return the parsed BlockListType object, or null if unable to parse.
      */
-    @JsonCreator
     public static BlockListType fromString(String value) {
+        if (value == null) {
+            return null;
+        }
         BlockListType[] items = BlockListType.values();
         for (BlockListType item : items) {
             if (item.toString().equalsIgnoreCase(value)) {
@@ -42,7 +51,9 @@ public enum BlockListType {
         return null;
     }
 
-    @JsonValue
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String toString() {
         return this.value;

@@ -5,44 +5,61 @@
 package com.azure.resourcemanager.monitor.models;
 
 import com.azure.core.util.ExpandableStringEnum;
-import com.fasterxml.jackson.annotation.JsonCreator;
 import java.util.Collection;
 
-/** Defines values for Operator. */
+/**
+ * the criteria operator.
+ */
 public final class Operator extends ExpandableStringEnum<Operator> {
-    /** Static value Equals for Operator. */
+    /**
+     * Static value Equals for Operator.
+     */
     public static final Operator EQUALS = fromString("Equals");
 
-    /** Static value NotEquals for Operator. */
-    public static final Operator NOT_EQUALS = fromString("NotEquals");
-
-    /** Static value GreaterThan for Operator. */
+    /**
+     * Static value GreaterThan for Operator.
+     */
     public static final Operator GREATER_THAN = fromString("GreaterThan");
 
-    /** Static value GreaterThanOrEqual for Operator. */
+    /**
+     * Static value GreaterThanOrEqual for Operator.
+     */
     public static final Operator GREATER_THAN_OR_EQUAL = fromString("GreaterThanOrEqual");
 
-    /** Static value LessThan for Operator. */
+    /**
+     * Static value LessThan for Operator.
+     */
     public static final Operator LESS_THAN = fromString("LessThan");
 
-    /** Static value LessThanOrEqual for Operator. */
+    /**
+     * Static value LessThanOrEqual for Operator.
+     */
     public static final Operator LESS_THAN_OR_EQUAL = fromString("LessThanOrEqual");
 
-    /** Static value Include for Operator. */
-    public static final Operator INCLUDE = fromString("Include");
+    /**
+     * Creates a new instance of Operator value.
+     * 
+     * @deprecated Use the {@link #fromString(String)} factory method.
+     */
+    @Deprecated
+    public Operator() {
+    }
 
     /**
      * Creates or finds a Operator from its string representation.
-     *
+     * 
      * @param name a name to look for.
      * @return the corresponding Operator.
      */
-    @JsonCreator
     public static Operator fromString(String name) {
         return fromString(name, Operator.class);
     }
 
-    /** @return known Operator values. */
+    /**
+     * Gets known Operator values.
+     * 
+     * @return known Operator values.
+     */
     public static Collection<Operator> values() {
         return values(Operator.class);
     }

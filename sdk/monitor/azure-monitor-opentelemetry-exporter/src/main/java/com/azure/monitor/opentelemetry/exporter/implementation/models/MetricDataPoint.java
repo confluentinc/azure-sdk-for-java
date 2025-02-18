@@ -5,67 +5,66 @@
 package com.azure.monitor.opentelemetry.exporter.implementation.models;
 
 import com.azure.core.annotation.Fluent;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.azure.json.JsonReader;
+import com.azure.json.JsonSerializable;
+import com.azure.json.JsonToken;
+import com.azure.json.JsonWriter;
+import java.io.IOException;
 
-/** Metric data single measurement. */
+/**
+ * Metric data single measurement.
+ */
 @Fluent
-public final class MetricDataPoint {
+public final class MetricDataPoint implements JsonSerializable<MetricDataPoint> {
     /*
      * Namespace of the metric.
      */
-    @JsonProperty(value = "ns")
     private String namespace;
 
     /*
      * Name of the metric.
      */
-    @JsonProperty(value = "name", required = true)
     private String name;
 
     /*
      * Metric type. Single measurement or the aggregated value.
      */
-    @JsonProperty(value = "kind")
     private DataPointType dataPointType;
 
     /*
-     * Single value for measurement. Sum of individual measurements for the
-     * aggregation.
+     * Single value for measurement. Sum of individual measurements for the aggregation.
      */
-    @JsonProperty(value = "value", required = true)
     private double value;
 
     /*
-     * Metric weight of the aggregated metric. Should not be set for a
-     * measurement.
+     * Metric weight of the aggregated metric. Should not be set for a measurement.
      */
-    @JsonProperty(value = "count")
     private Integer count;
 
     /*
-     * Minimum value of the aggregated metric. Should not be set for a
-     * measurement.
+     * Minimum value of the aggregated metric. Should not be set for a measurement.
      */
-    @JsonProperty(value = "min")
     private Double min;
 
     /*
-     * Maximum value of the aggregated metric. Should not be set for a
-     * measurement.
+     * Maximum value of the aggregated metric. Should not be set for a measurement.
      */
-    @JsonProperty(value = "max")
     private Double max;
 
     /*
-     * Standard deviation of the aggregated metric. Should not be set for a
-     * measurement.
+     * Standard deviation of the aggregated metric. Should not be set for a measurement.
      */
-    @JsonProperty(value = "stdDev")
     private Double stdDev;
 
     /**
+     * Creates an instance of MetricDataPoint class.
+     */
+    public MetricDataPoint() {
+    }
+
+    /**
      * Get the namespace property: Namespace of the metric.
-     *
+     * 
      * @return the namespace value.
      */
     public String getNamespace() {
@@ -74,7 +73,7 @@ public final class MetricDataPoint {
 
     /**
      * Set the namespace property: Namespace of the metric.
-     *
+     * 
      * @param namespace the namespace value to set.
      * @return the MetricDataPoint object itself.
      */
@@ -85,7 +84,7 @@ public final class MetricDataPoint {
 
     /**
      * Get the name property: Name of the metric.
-     *
+     * 
      * @return the name value.
      */
     public String getName() {
@@ -94,7 +93,7 @@ public final class MetricDataPoint {
 
     /**
      * Set the name property: Name of the metric.
-     *
+     * 
      * @param name the name value to set.
      * @return the MetricDataPoint object itself.
      */
@@ -105,7 +104,7 @@ public final class MetricDataPoint {
 
     /**
      * Get the dataPointType property: Metric type. Single measurement or the aggregated value.
-     *
+     * 
      * @return the dataPointType value.
      */
     public DataPointType getDataPointType() {
@@ -114,7 +113,7 @@ public final class MetricDataPoint {
 
     /**
      * Set the dataPointType property: Metric type. Single measurement or the aggregated value.
-     *
+     * 
      * @param dataPointType the dataPointType value to set.
      * @return the MetricDataPoint object itself.
      */
@@ -125,7 +124,7 @@ public final class MetricDataPoint {
 
     /**
      * Get the value property: Single value for measurement. Sum of individual measurements for the aggregation.
-     *
+     * 
      * @return the value value.
      */
     public double getValue() {
@@ -134,7 +133,7 @@ public final class MetricDataPoint {
 
     /**
      * Set the value property: Single value for measurement. Sum of individual measurements for the aggregation.
-     *
+     * 
      * @param value the value value to set.
      * @return the MetricDataPoint object itself.
      */
@@ -145,7 +144,7 @@ public final class MetricDataPoint {
 
     /**
      * Get the count property: Metric weight of the aggregated metric. Should not be set for a measurement.
-     *
+     * 
      * @return the count value.
      */
     public Integer getCount() {
@@ -154,7 +153,7 @@ public final class MetricDataPoint {
 
     /**
      * Set the count property: Metric weight of the aggregated metric. Should not be set for a measurement.
-     *
+     * 
      * @param count the count value to set.
      * @return the MetricDataPoint object itself.
      */
@@ -165,7 +164,7 @@ public final class MetricDataPoint {
 
     /**
      * Get the min property: Minimum value of the aggregated metric. Should not be set for a measurement.
-     *
+     * 
      * @return the min value.
      */
     public Double getMin() {
@@ -174,7 +173,7 @@ public final class MetricDataPoint {
 
     /**
      * Set the min property: Minimum value of the aggregated metric. Should not be set for a measurement.
-     *
+     * 
      * @param min the min value to set.
      * @return the MetricDataPoint object itself.
      */
@@ -185,7 +184,7 @@ public final class MetricDataPoint {
 
     /**
      * Get the max property: Maximum value of the aggregated metric. Should not be set for a measurement.
-     *
+     * 
      * @return the max value.
      */
     public Double getMax() {
@@ -194,7 +193,7 @@ public final class MetricDataPoint {
 
     /**
      * Set the max property: Maximum value of the aggregated metric. Should not be set for a measurement.
-     *
+     * 
      * @param max the max value to set.
      * @return the MetricDataPoint object itself.
      */
@@ -205,7 +204,7 @@ public final class MetricDataPoint {
 
     /**
      * Get the stdDev property: Standard deviation of the aggregated metric. Should not be set for a measurement.
-     *
+     * 
      * @return the stdDev value.
      */
     public Double getStdDev() {
@@ -214,12 +213,70 @@ public final class MetricDataPoint {
 
     /**
      * Set the stdDev property: Standard deviation of the aggregated metric. Should not be set for a measurement.
-     *
+     * 
      * @param stdDev the stdDev value to set.
      * @return the MetricDataPoint object itself.
      */
     public MetricDataPoint setStdDev(Double stdDev) {
         this.stdDev = stdDev;
         return this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public JsonWriter toJson(JsonWriter jsonWriter) throws IOException {
+        jsonWriter.writeStartObject();
+        jsonWriter.writeStringField("name", this.name);
+        jsonWriter.writeDoubleField("value", this.value);
+        jsonWriter.writeStringField("ns", this.namespace);
+        jsonWriter.writeStringField("kind", this.dataPointType == null ? null : this.dataPointType.toString());
+        jsonWriter.writeNumberField("count", this.count);
+        jsonWriter.writeNumberField("min", this.min);
+        jsonWriter.writeNumberField("max", this.max);
+        jsonWriter.writeNumberField("stdDev", this.stdDev);
+        return jsonWriter.writeEndObject();
+    }
+
+    /**
+     * Reads an instance of MetricDataPoint from the JsonReader.
+     * 
+     * @param jsonReader The JsonReader being read.
+     * @return An instance of MetricDataPoint if the JsonReader was pointing to an instance of it, or null if it was
+     * pointing to JSON null.
+     * @throws IllegalStateException If the deserialized JSON object was missing any required properties.
+     * @throws IOException If an error occurs while reading the MetricDataPoint.
+     */
+    public static MetricDataPoint fromJson(JsonReader jsonReader) throws IOException {
+        return jsonReader.readObject(reader -> {
+            MetricDataPoint deserializedMetricDataPoint = new MetricDataPoint();
+            while (reader.nextToken() != JsonToken.END_OBJECT) {
+                String fieldName = reader.getFieldName();
+                reader.nextToken();
+
+                if ("name".equals(fieldName)) {
+                    deserializedMetricDataPoint.name = reader.getString();
+                } else if ("value".equals(fieldName)) {
+                    deserializedMetricDataPoint.value = reader.getDouble();
+                } else if ("ns".equals(fieldName)) {
+                    deserializedMetricDataPoint.namespace = reader.getString();
+                } else if ("kind".equals(fieldName)) {
+                    deserializedMetricDataPoint.dataPointType = DataPointType.fromString(reader.getString());
+                } else if ("count".equals(fieldName)) {
+                    deserializedMetricDataPoint.count = reader.getNullable(JsonReader::getInt);
+                } else if ("min".equals(fieldName)) {
+                    deserializedMetricDataPoint.min = reader.getNullable(JsonReader::getDouble);
+                } else if ("max".equals(fieldName)) {
+                    deserializedMetricDataPoint.max = reader.getNullable(JsonReader::getDouble);
+                } else if ("stdDev".equals(fieldName)) {
+                    deserializedMetricDataPoint.stdDev = reader.getNullable(JsonReader::getDouble);
+                } else {
+                    reader.skipChildren();
+                }
+            }
+
+            return deserializedMetricDataPoint;
+        });
     }
 }

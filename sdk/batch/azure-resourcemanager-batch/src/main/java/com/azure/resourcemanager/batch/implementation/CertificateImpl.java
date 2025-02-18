@@ -13,6 +13,8 @@ import com.azure.resourcemanager.batch.models.CertificateFormat;
 import com.azure.resourcemanager.batch.models.CertificateProvisioningState;
 import com.azure.resourcemanager.batch.models.DeleteCertificateError;
 import java.time.OffsetDateTime;
+import java.util.Collections;
+import java.util.Map;
 
 public final class CertificateImpl implements Certificate, Certificate.Definition, Certificate.Update {
     private CertificateInner innerObject;
@@ -33,6 +35,15 @@ public final class CertificateImpl implements Certificate, Certificate.Definitio
 
     public String etag() {
         return this.innerModel().etag();
+    }
+
+    public Map<String, String> tags() {
+        Map<String, String> inner = this.innerModel().tags();
+        if (inner != null) {
+            return Collections.unmodifiableMap(inner);
+        } else {
+            return Collections.emptyMap();
+        }
     }
 
     public CertificateProvisioningState provisioningState() {
@@ -71,6 +82,10 @@ public final class CertificateImpl implements Certificate, Certificate.Definitio
         return this.innerModel().format();
     }
 
+    public String resourceGroupName() {
+        return resourceGroupName;
+    }
+
     public CertificateInner innerModel() {
         return this.innerObject;
     }
@@ -102,36 +117,20 @@ public final class CertificateImpl implements Certificate, Certificate.Definitio
     }
 
     public Certificate create() {
-        this.innerObject =
-            serviceManager
-                .serviceClient()
-                .getCertificates()
-                .createWithResponse(
-                    resourceGroupName,
-                    accountName,
-                    certificateName,
-                    createParameters,
-                    createIfMatch,
-                    createIfNoneMatch,
-                    Context.NONE)
-                .getValue();
+        this.innerObject = serviceManager.serviceClient()
+            .getCertificates()
+            .createWithResponse(resourceGroupName, accountName, certificateName, createParameters, createIfMatch,
+                createIfNoneMatch, Context.NONE)
+            .getValue();
         return this;
     }
 
     public Certificate create(Context context) {
-        this.innerObject =
-            serviceManager
-                .serviceClient()
-                .getCertificates()
-                .createWithResponse(
-                    resourceGroupName,
-                    accountName,
-                    certificateName,
-                    createParameters,
-                    createIfMatch,
-                    createIfNoneMatch,
-                    context)
-                .getValue();
+        this.innerObject = serviceManager.serviceClient()
+            .getCertificates()
+            .createWithResponse(resourceGroupName, accountName, certificateName, createParameters, createIfMatch,
+                createIfNoneMatch, context)
+            .getValue();
         return this;
     }
 
@@ -151,71 +150,62 @@ public final class CertificateImpl implements Certificate, Certificate.Definitio
     }
 
     public Certificate apply() {
-        this.innerObject =
-            serviceManager
-                .serviceClient()
-                .getCertificates()
-                .updateWithResponse(
-                    resourceGroupName, accountName, certificateName, updateParameters, updateIfMatch, Context.NONE)
-                .getValue();
+        this.innerObject = serviceManager.serviceClient()
+            .getCertificates()
+            .updateWithResponse(resourceGroupName, accountName, certificateName, updateParameters, updateIfMatch,
+                Context.NONE)
+            .getValue();
         return this;
     }
 
     public Certificate apply(Context context) {
-        this.innerObject =
-            serviceManager
-                .serviceClient()
-                .getCertificates()
-                .updateWithResponse(
-                    resourceGroupName, accountName, certificateName, updateParameters, updateIfMatch, context)
-                .getValue();
+        this.innerObject = serviceManager.serviceClient()
+            .getCertificates()
+            .updateWithResponse(resourceGroupName, accountName, certificateName, updateParameters, updateIfMatch,
+                context)
+            .getValue();
         return this;
     }
 
     CertificateImpl(CertificateInner innerObject, com.azure.resourcemanager.batch.BatchManager serviceManager) {
         this.innerObject = innerObject;
         this.serviceManager = serviceManager;
-        this.resourceGroupName = Utils.getValueFromIdByName(innerObject.id(), "resourceGroups");
-        this.accountName = Utils.getValueFromIdByName(innerObject.id(), "batchAccounts");
-        this.certificateName = Utils.getValueFromIdByName(innerObject.id(), "certificates");
+        this.resourceGroupName = ResourceManagerUtils.getValueFromIdByName(innerObject.id(), "resourceGroups");
+        this.accountName = ResourceManagerUtils.getValueFromIdByName(innerObject.id(), "batchAccounts");
+        this.certificateName = ResourceManagerUtils.getValueFromIdByName(innerObject.id(), "certificates");
     }
 
     public Certificate refresh() {
-        this.innerObject =
-            serviceManager
-                .serviceClient()
-                .getCertificates()
-                .getWithResponse(resourceGroupName, accountName, certificateName, Context.NONE)
-                .getValue();
+        this.innerObject = serviceManager.serviceClient()
+            .getCertificates()
+            .getWithResponse(resourceGroupName, accountName, certificateName, Context.NONE)
+            .getValue();
         return this;
     }
 
     public Certificate refresh(Context context) {
-        this.innerObject =
-            serviceManager
-                .serviceClient()
-                .getCertificates()
-                .getWithResponse(resourceGroupName, accountName, certificateName, context)
-                .getValue();
+        this.innerObject = serviceManager.serviceClient()
+            .getCertificates()
+            .getWithResponse(resourceGroupName, accountName, certificateName, context)
+            .getValue();
         return this;
+    }
+
+    public Response<Certificate> cancelDeletionWithResponse(Context context) {
+        return serviceManager.certificates()
+            .cancelDeletionWithResponse(resourceGroupName, accountName, certificateName, context);
     }
 
     public Certificate cancelDeletion() {
         return serviceManager.certificates().cancelDeletion(resourceGroupName, accountName, certificateName);
     }
 
-    public Response<Certificate> cancelDeletionWithResponse(Context context) {
-        return serviceManager
-            .certificates()
-            .cancelDeletionWithResponse(resourceGroupName, accountName, certificateName, context);
-    }
-
-    public CertificateImpl withData(String data) {
+    public CertificateImpl withTags(Map<String, String> tags) {
         if (isInCreateMode()) {
-            this.createParameters.withData(data);
+            this.createParameters.withTags(tags);
             return this;
         } else {
-            this.updateParameters.withData(data);
+            this.updateParameters.withTags(tags);
             return this;
         }
     }
@@ -272,6 +262,11 @@ public final class CertificateImpl implements Certificate, Certificate.Definitio
 
     public CertificateImpl withIfNoneMatch(String ifNoneMatch) {
         this.createIfNoneMatch = ifNoneMatch;
+        return this;
+    }
+
+    public CertificateImpl withData(String data) {
+        this.updateParameters.withData(data);
         return this;
     }
 

@@ -25,30 +25,33 @@ import com.azure.core.http.rest.RestProxy;
 import com.azure.core.management.exception.ManagementException;
 import com.azure.core.util.Context;
 import com.azure.core.util.FluxUtil;
-import com.azure.core.util.logging.ClientLogger;
 import com.azure.resourcemanager.automation.fluent.ActivitiesClient;
 import com.azure.resourcemanager.automation.fluent.models.ActivityInner;
 import com.azure.resourcemanager.automation.models.ActivityListResult;
 import reactor.core.publisher.Mono;
 
-/** An instance of this class provides access to all the operations defined in ActivitiesClient. */
+/**
+ * An instance of this class provides access to all the operations defined in ActivitiesClient.
+ */
 public final class ActivitiesClientImpl implements ActivitiesClient {
-    private final ClientLogger logger = new ClientLogger(ActivitiesClientImpl.class);
-
-    /** The proxy service used to perform REST calls. */
+    /**
+     * The proxy service used to perform REST calls.
+     */
     private final ActivitiesService service;
 
-    /** The service client containing this operation class. */
+    /**
+     * The service client containing this operation class.
+     */
     private final AutomationClientImpl client;
 
     /**
      * Initializes an instance of ActivitiesClientImpl.
-     *
+     * 
      * @param client the instance of the service client containing this operation class.
      */
     ActivitiesClientImpl(AutomationClientImpl client) {
-        this.service =
-            RestProxy.create(ActivitiesService.class, client.getHttpPipeline(), client.getSerializerAdapter());
+        this.service
+            = RestProxy.create(ActivitiesService.class, client.getHttpPipeline(), client.getSerializerAdapter());
         this.client = client;
     }
 
@@ -58,54 +61,40 @@ public final class ActivitiesClientImpl implements ActivitiesClient {
      */
     @Host("{$host}")
     @ServiceInterface(name = "AutomationClientActi")
-    private interface ActivitiesService {
-        @Headers({"Content-Type: application/json"})
-        @Get(
-            "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Automation"
-                + "/automationAccounts/{automationAccountName}/modules/{moduleName}/activities/{activityName}")
-        @ExpectedResponses({200})
+    public interface ActivitiesService {
+        @Headers({ "Content-Type: application/json" })
+        @Get("/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Automation/automationAccounts/{automationAccountName}/modules/{moduleName}/activities/{activityName}")
+        @ExpectedResponses({ 200 })
         @UnexpectedResponseExceptionType(ManagementException.class)
-        Mono<Response<ActivityInner>> get(
-            @HostParam("$host") String endpoint,
+        Mono<Response<ActivityInner>> get(@HostParam("$host") String endpoint,
             @PathParam("resourceGroupName") String resourceGroupName,
             @PathParam("automationAccountName") String automationAccountName,
-            @PathParam("moduleName") String moduleName,
-            @PathParam("activityName") String activityName,
-            @PathParam("subscriptionId") String subscriptionId,
-            @QueryParam("api-version") String apiVersion,
-            @HeaderParam("Accept") String accept,
-            Context context);
+            @PathParam("moduleName") String moduleName, @PathParam("activityName") String activityName,
+            @PathParam("subscriptionId") String subscriptionId, @QueryParam("api-version") String apiVersion,
+            @HeaderParam("Accept") String accept, Context context);
 
-        @Headers({"Content-Type: application/json"})
-        @Get(
-            "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Automation"
-                + "/automationAccounts/{automationAccountName}/modules/{moduleName}/activities")
-        @ExpectedResponses({200})
+        @Headers({ "Content-Type: application/json" })
+        @Get("/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Automation/automationAccounts/{automationAccountName}/modules/{moduleName}/activities")
+        @ExpectedResponses({ 200 })
         @UnexpectedResponseExceptionType(ManagementException.class)
-        Mono<Response<ActivityListResult>> listByModule(
-            @HostParam("$host") String endpoint,
+        Mono<Response<ActivityListResult>> listByModule(@HostParam("$host") String endpoint,
             @PathParam("resourceGroupName") String resourceGroupName,
             @PathParam("automationAccountName") String automationAccountName,
-            @PathParam("moduleName") String moduleName,
-            @PathParam("subscriptionId") String subscriptionId,
-            @QueryParam("api-version") String apiVersion,
-            @HeaderParam("Accept") String accept,
-            Context context);
+            @PathParam("moduleName") String moduleName, @PathParam("subscriptionId") String subscriptionId,
+            @QueryParam("api-version") String apiVersion, @HeaderParam("Accept") String accept, Context context);
 
-        @Headers({"Content-Type: application/json"})
+        @Headers({ "Content-Type: application/json" })
         @Get("{nextLink}")
-        @ExpectedResponses({200})
+        @ExpectedResponses({ 200 })
         @UnexpectedResponseExceptionType(ManagementException.class)
         Mono<Response<ActivityListResult>> listByModuleNext(
-            @PathParam(value = "nextLink", encoded = true) String nextLink,
-            @HostParam("$host") String endpoint,
-            @HeaderParam("Accept") String accept,
-            Context context);
+            @PathParam(value = "nextLink", encoded = true) String nextLink, @HostParam("$host") String endpoint,
+            @HeaderParam("Accept") String accept, Context context);
     }
 
     /**
      * Retrieve the activity in the module identified by module name and activity name.
-     *
+     * 
      * @param resourceGroupName Name of an Azure Resource group.
      * @param automationAccountName The name of the automation account.
      * @param moduleName The name of module.
@@ -113,16 +102,14 @@ public final class ActivitiesClientImpl implements ActivitiesClient {
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return definition of the activity.
+     * @return definition of the activity along with {@link Response} on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    private Mono<Response<ActivityInner>> getWithResponseAsync(
-        String resourceGroupName, String automationAccountName, String moduleName, String activityName) {
+    private Mono<Response<ActivityInner>> getWithResponseAsync(String resourceGroupName, String automationAccountName,
+        String moduleName, String activityName) {
         if (this.client.getEndpoint() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getEndpoint() is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
         }
         if (resourceGroupName == null) {
             return Mono
@@ -139,33 +126,20 @@ public final class ActivitiesClientImpl implements ActivitiesClient {
             return Mono.error(new IllegalArgumentException("Parameter activityName is required and cannot be null."));
         }
         if (this.client.getSubscriptionId() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getSubscriptionId() is required and cannot be null."));
+            return Mono.error(new IllegalArgumentException(
+                "Parameter this.client.getSubscriptionId() is required and cannot be null."));
         }
-        final String apiVersion = "2019-06-01";
+        final String apiVersion = "2020-01-13-preview";
         final String accept = "application/json";
         return FluxUtil
-            .withContext(
-                context ->
-                    service
-                        .get(
-                            this.client.getEndpoint(),
-                            resourceGroupName,
-                            automationAccountName,
-                            moduleName,
-                            activityName,
-                            this.client.getSubscriptionId(),
-                            apiVersion,
-                            accept,
-                            context))
+            .withContext(context -> service.get(this.client.getEndpoint(), resourceGroupName, automationAccountName,
+                moduleName, activityName, this.client.getSubscriptionId(), apiVersion, accept, context))
             .contextWrite(context -> context.putAll(FluxUtil.toReactorContext(this.client.getContext()).readOnly()));
     }
 
     /**
      * Retrieve the activity in the module identified by module name and activity name.
-     *
+     * 
      * @param resourceGroupName Name of an Azure Resource group.
      * @param automationAccountName The name of the automation account.
      * @param moduleName The name of module.
@@ -174,20 +148,14 @@ public final class ActivitiesClientImpl implements ActivitiesClient {
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return definition of the activity.
+     * @return definition of the activity along with {@link Response} on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    private Mono<Response<ActivityInner>> getWithResponseAsync(
-        String resourceGroupName,
-        String automationAccountName,
-        String moduleName,
-        String activityName,
-        Context context) {
+    private Mono<Response<ActivityInner>> getWithResponseAsync(String resourceGroupName, String automationAccountName,
+        String moduleName, String activityName, Context context) {
         if (this.client.getEndpoint() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getEndpoint() is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
         }
         if (resourceGroupName == null) {
             return Mono
@@ -204,30 +172,19 @@ public final class ActivitiesClientImpl implements ActivitiesClient {
             return Mono.error(new IllegalArgumentException("Parameter activityName is required and cannot be null."));
         }
         if (this.client.getSubscriptionId() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getSubscriptionId() is required and cannot be null."));
+            return Mono.error(new IllegalArgumentException(
+                "Parameter this.client.getSubscriptionId() is required and cannot be null."));
         }
-        final String apiVersion = "2019-06-01";
+        final String apiVersion = "2020-01-13-preview";
         final String accept = "application/json";
         context = this.client.mergeContext(context);
-        return service
-            .get(
-                this.client.getEndpoint(),
-                resourceGroupName,
-                automationAccountName,
-                moduleName,
-                activityName,
-                this.client.getSubscriptionId(),
-                apiVersion,
-                accept,
-                context);
+        return service.get(this.client.getEndpoint(), resourceGroupName, automationAccountName, moduleName,
+            activityName, this.client.getSubscriptionId(), apiVersion, accept, context);
     }
 
     /**
      * Retrieve the activity in the module identified by module name and activity name.
-     *
+     * 
      * @param resourceGroupName Name of an Azure Resource group.
      * @param automationAccountName The name of the automation account.
      * @param moduleName The name of module.
@@ -235,43 +192,18 @@ public final class ActivitiesClientImpl implements ActivitiesClient {
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return definition of the activity.
+     * @return definition of the activity on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    private Mono<ActivityInner> getAsync(
-        String resourceGroupName, String automationAccountName, String moduleName, String activityName) {
+    private Mono<ActivityInner> getAsync(String resourceGroupName, String automationAccountName, String moduleName,
+        String activityName) {
         return getWithResponseAsync(resourceGroupName, automationAccountName, moduleName, activityName)
-            .flatMap(
-                (Response<ActivityInner> res) -> {
-                    if (res.getValue() != null) {
-                        return Mono.just(res.getValue());
-                    } else {
-                        return Mono.empty();
-                    }
-                });
+            .flatMap(res -> Mono.justOrEmpty(res.getValue()));
     }
 
     /**
      * Retrieve the activity in the module identified by module name and activity name.
-     *
-     * @param resourceGroupName Name of an Azure Resource group.
-     * @param automationAccountName The name of the automation account.
-     * @param moduleName The name of module.
-     * @param activityName The name of activity.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return definition of the activity.
-     */
-    @ServiceMethod(returns = ReturnType.SINGLE)
-    public ActivityInner get(
-        String resourceGroupName, String automationAccountName, String moduleName, String activityName) {
-        return getAsync(resourceGroupName, automationAccountName, moduleName, activityName).block();
-    }
-
-    /**
-     * Retrieve the activity in the module identified by module name and activity name.
-     *
+     * 
      * @param resourceGroupName Name of an Azure Resource group.
      * @param automationAccountName The name of the automation account.
      * @param moduleName The name of module.
@@ -280,38 +212,52 @@ public final class ActivitiesClientImpl implements ActivitiesClient {
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return definition of the activity.
+     * @return definition of the activity along with {@link Response}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    public Response<ActivityInner> getWithResponse(
-        String resourceGroupName,
-        String automationAccountName,
-        String moduleName,
-        String activityName,
-        Context context) {
+    public Response<ActivityInner> getWithResponse(String resourceGroupName, String automationAccountName,
+        String moduleName, String activityName, Context context) {
         return getWithResponseAsync(resourceGroupName, automationAccountName, moduleName, activityName, context)
             .block();
     }
 
     /**
+     * Retrieve the activity in the module identified by module name and activity name.
+     * 
+     * @param resourceGroupName Name of an Azure Resource group.
+     * @param automationAccountName The name of the automation account.
+     * @param moduleName The name of module.
+     * @param activityName The name of activity.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return definition of the activity.
+     */
+    @ServiceMethod(returns = ReturnType.SINGLE)
+    public ActivityInner get(String resourceGroupName, String automationAccountName, String moduleName,
+        String activityName) {
+        return getWithResponse(resourceGroupName, automationAccountName, moduleName, activityName, Context.NONE)
+            .getValue();
+    }
+
+    /**
      * Retrieve a list of activities in the module identified by module name.
-     *
+     * 
      * @param resourceGroupName Name of an Azure Resource group.
      * @param automationAccountName The name of the automation account.
      * @param moduleName The name of module.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the response model for the list activity operation.
+     * @return the response model for the list activity operation along with {@link PagedResponse} on successful
+     * completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    private Mono<PagedResponse<ActivityInner>> listByModuleSinglePageAsync(
-        String resourceGroupName, String automationAccountName, String moduleName) {
+    private Mono<PagedResponse<ActivityInner>> listByModuleSinglePageAsync(String resourceGroupName,
+        String automationAccountName, String moduleName) {
         if (this.client.getEndpoint() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getEndpoint() is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
         }
         if (resourceGroupName == null) {
             return Mono
@@ -325,41 +271,22 @@ public final class ActivitiesClientImpl implements ActivitiesClient {
             return Mono.error(new IllegalArgumentException("Parameter moduleName is required and cannot be null."));
         }
         if (this.client.getSubscriptionId() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getSubscriptionId() is required and cannot be null."));
+            return Mono.error(new IllegalArgumentException(
+                "Parameter this.client.getSubscriptionId() is required and cannot be null."));
         }
-        final String apiVersion = "2019-06-01";
+        final String apiVersion = "2020-01-13-preview";
         final String accept = "application/json";
         return FluxUtil
-            .withContext(
-                context ->
-                    service
-                        .listByModule(
-                            this.client.getEndpoint(),
-                            resourceGroupName,
-                            automationAccountName,
-                            moduleName,
-                            this.client.getSubscriptionId(),
-                            apiVersion,
-                            accept,
-                            context))
-            .<PagedResponse<ActivityInner>>map(
-                res ->
-                    new PagedResponseBase<>(
-                        res.getRequest(),
-                        res.getStatusCode(),
-                        res.getHeaders(),
-                        res.getValue().value(),
-                        res.getValue().nextLink(),
-                        null))
+            .withContext(context -> service.listByModule(this.client.getEndpoint(), resourceGroupName,
+                automationAccountName, moduleName, this.client.getSubscriptionId(), apiVersion, accept, context))
+            .<PagedResponse<ActivityInner>>map(res -> new PagedResponseBase<>(res.getRequest(), res.getStatusCode(),
+                res.getHeaders(), res.getValue().value(), res.getValue().nextLink(), null))
             .contextWrite(context -> context.putAll(FluxUtil.toReactorContext(this.client.getContext()).readOnly()));
     }
 
     /**
      * Retrieve a list of activities in the module identified by module name.
-     *
+     * 
      * @param resourceGroupName Name of an Azure Resource group.
      * @param automationAccountName The name of the automation account.
      * @param moduleName The name of module.
@@ -367,16 +294,15 @@ public final class ActivitiesClientImpl implements ActivitiesClient {
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the response model for the list activity operation.
+     * @return the response model for the list activity operation along with {@link PagedResponse} on successful
+     * completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    private Mono<PagedResponse<ActivityInner>> listByModuleSinglePageAsync(
-        String resourceGroupName, String automationAccountName, String moduleName, Context context) {
+    private Mono<PagedResponse<ActivityInner>> listByModuleSinglePageAsync(String resourceGroupName,
+        String automationAccountName, String moduleName, Context context) {
         if (this.client.getEndpoint() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getEndpoint() is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
         }
         if (resourceGroupName == null) {
             return Mono
@@ -390,57 +316,40 @@ public final class ActivitiesClientImpl implements ActivitiesClient {
             return Mono.error(new IllegalArgumentException("Parameter moduleName is required and cannot be null."));
         }
         if (this.client.getSubscriptionId() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getSubscriptionId() is required and cannot be null."));
+            return Mono.error(new IllegalArgumentException(
+                "Parameter this.client.getSubscriptionId() is required and cannot be null."));
         }
-        final String apiVersion = "2019-06-01";
+        final String apiVersion = "2020-01-13-preview";
         final String accept = "application/json";
         context = this.client.mergeContext(context);
         return service
-            .listByModule(
-                this.client.getEndpoint(),
-                resourceGroupName,
-                automationAccountName,
-                moduleName,
-                this.client.getSubscriptionId(),
-                apiVersion,
-                accept,
-                context)
-            .map(
-                res ->
-                    new PagedResponseBase<>(
-                        res.getRequest(),
-                        res.getStatusCode(),
-                        res.getHeaders(),
-                        res.getValue().value(),
-                        res.getValue().nextLink(),
-                        null));
+            .listByModule(this.client.getEndpoint(), resourceGroupName, automationAccountName, moduleName,
+                this.client.getSubscriptionId(), apiVersion, accept, context)
+            .map(res -> new PagedResponseBase<>(res.getRequest(), res.getStatusCode(), res.getHeaders(),
+                res.getValue().value(), res.getValue().nextLink(), null));
     }
 
     /**
      * Retrieve a list of activities in the module identified by module name.
-     *
+     * 
      * @param resourceGroupName Name of an Azure Resource group.
      * @param automationAccountName The name of the automation account.
      * @param moduleName The name of module.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the response model for the list activity operation.
+     * @return the response model for the list activity operation as paginated response with {@link PagedFlux}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
-    private PagedFlux<ActivityInner> listByModuleAsync(
-        String resourceGroupName, String automationAccountName, String moduleName) {
-        return new PagedFlux<>(
-            () -> listByModuleSinglePageAsync(resourceGroupName, automationAccountName, moduleName),
+    private PagedFlux<ActivityInner> listByModuleAsync(String resourceGroupName, String automationAccountName,
+        String moduleName) {
+        return new PagedFlux<>(() -> listByModuleSinglePageAsync(resourceGroupName, automationAccountName, moduleName),
             nextLink -> listByModuleNextSinglePageAsync(nextLink));
     }
 
     /**
      * Retrieve a list of activities in the module identified by module name.
-     *
+     * 
      * @param resourceGroupName Name of an Azure Resource group.
      * @param automationAccountName The name of the automation account.
      * @param moduleName The name of module.
@@ -448,11 +357,11 @@ public final class ActivitiesClientImpl implements ActivitiesClient {
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the response model for the list activity operation.
+     * @return the response model for the list activity operation as paginated response with {@link PagedFlux}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
-    private PagedFlux<ActivityInner> listByModuleAsync(
-        String resourceGroupName, String automationAccountName, String moduleName, Context context) {
+    private PagedFlux<ActivityInner> listByModuleAsync(String resourceGroupName, String automationAccountName,
+        String moduleName, Context context) {
         return new PagedFlux<>(
             () -> listByModuleSinglePageAsync(resourceGroupName, automationAccountName, moduleName, context),
             nextLink -> listByModuleNextSinglePageAsync(nextLink, context));
@@ -460,24 +369,24 @@ public final class ActivitiesClientImpl implements ActivitiesClient {
 
     /**
      * Retrieve a list of activities in the module identified by module name.
-     *
+     * 
      * @param resourceGroupName Name of an Azure Resource group.
      * @param automationAccountName The name of the automation account.
      * @param moduleName The name of module.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the response model for the list activity operation.
+     * @return the response model for the list activity operation as paginated response with {@link PagedIterable}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
-    public PagedIterable<ActivityInner> listByModule(
-        String resourceGroupName, String automationAccountName, String moduleName) {
+    public PagedIterable<ActivityInner> listByModule(String resourceGroupName, String automationAccountName,
+        String moduleName) {
         return new PagedIterable<>(listByModuleAsync(resourceGroupName, automationAccountName, moduleName));
     }
 
     /**
      * Retrieve a list of activities in the module identified by module name.
-     *
+     * 
      * @param resourceGroupName Name of an Azure Resource group.
      * @param automationAccountName The name of the automation account.
      * @param moduleName The name of module.
@@ -485,22 +394,23 @@ public final class ActivitiesClientImpl implements ActivitiesClient {
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the response model for the list activity operation.
+     * @return the response model for the list activity operation as paginated response with {@link PagedIterable}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
-    public PagedIterable<ActivityInner> listByModule(
-        String resourceGroupName, String automationAccountName, String moduleName, Context context) {
+    public PagedIterable<ActivityInner> listByModule(String resourceGroupName, String automationAccountName,
+        String moduleName, Context context) {
         return new PagedIterable<>(listByModuleAsync(resourceGroupName, automationAccountName, moduleName, context));
     }
 
     /**
      * Get the next page of items.
-     *
-     * @param nextLink The nextLink parameter.
+     * 
+     * @param nextLink The URL to get the next list of items.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the response model for the list activity operation.
+     * @return the response model for the list activity operation along with {@link PagedResponse} on successful
+     * completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
     private Mono<PagedResponse<ActivityInner>> listByModuleNextSinglePageAsync(String nextLink) {
@@ -508,35 +418,27 @@ public final class ActivitiesClientImpl implements ActivitiesClient {
             return Mono.error(new IllegalArgumentException("Parameter nextLink is required and cannot be null."));
         }
         if (this.client.getEndpoint() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getEndpoint() is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
         }
         final String accept = "application/json";
         return FluxUtil
             .withContext(context -> service.listByModuleNext(nextLink, this.client.getEndpoint(), accept, context))
-            .<PagedResponse<ActivityInner>>map(
-                res ->
-                    new PagedResponseBase<>(
-                        res.getRequest(),
-                        res.getStatusCode(),
-                        res.getHeaders(),
-                        res.getValue().value(),
-                        res.getValue().nextLink(),
-                        null))
+            .<PagedResponse<ActivityInner>>map(res -> new PagedResponseBase<>(res.getRequest(), res.getStatusCode(),
+                res.getHeaders(), res.getValue().value(), res.getValue().nextLink(), null))
             .contextWrite(context -> context.putAll(FluxUtil.toReactorContext(this.client.getContext()).readOnly()));
     }
 
     /**
      * Get the next page of items.
-     *
-     * @param nextLink The nextLink parameter.
+     * 
+     * @param nextLink The URL to get the next list of items.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the response model for the list activity operation.
+     * @return the response model for the list activity operation along with {@link PagedResponse} on successful
+     * completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
     private Mono<PagedResponse<ActivityInner>> listByModuleNextSinglePageAsync(String nextLink, Context context) {
@@ -544,23 +446,13 @@ public final class ActivitiesClientImpl implements ActivitiesClient {
             return Mono.error(new IllegalArgumentException("Parameter nextLink is required and cannot be null."));
         }
         if (this.client.getEndpoint() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getEndpoint() is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
         }
         final String accept = "application/json";
         context = this.client.mergeContext(context);
-        return service
-            .listByModuleNext(nextLink, this.client.getEndpoint(), accept, context)
-            .map(
-                res ->
-                    new PagedResponseBase<>(
-                        res.getRequest(),
-                        res.getStatusCode(),
-                        res.getHeaders(),
-                        res.getValue().value(),
-                        res.getValue().nextLink(),
-                        null));
+        return service.listByModuleNext(nextLink, this.client.getEndpoint(), accept, context)
+            .map(res -> new PagedResponseBase<>(res.getRequest(), res.getStatusCode(), res.getHeaders(),
+                res.getValue().value(), res.getValue().nextLink(), null));
     }
 }

@@ -6,84 +6,82 @@ package com.azure.resourcemanager.network.fluent.models;
 
 import com.azure.core.annotation.Fluent;
 import com.azure.core.management.SubResource;
-import com.azure.core.util.logging.ClientLogger;
+import com.azure.json.JsonReader;
+import com.azure.json.JsonSerializable;
+import com.azure.json.JsonToken;
+import com.azure.json.JsonWriter;
 import com.azure.resourcemanager.network.models.IpTag;
 import com.azure.resourcemanager.network.models.IpVersion;
 import com.azure.resourcemanager.network.models.ProvisioningState;
 import com.azure.resourcemanager.network.models.ReferencedPublicIpAddress;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import java.io.IOException;
 import java.util.List;
 
-/** Public IP prefix properties. */
+/**
+ * Public IP prefix properties.
+ */
 @Fluent
-public final class PublicIpPrefixPropertiesFormatInner {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(PublicIpPrefixPropertiesFormatInner.class);
-
+public final class PublicIpPrefixPropertiesFormatInner
+    implements JsonSerializable<PublicIpPrefixPropertiesFormatInner> {
     /*
      * The public IP address version.
      */
-    @JsonProperty(value = "publicIPAddressVersion")
     private IpVersion publicIpAddressVersion;
 
     /*
      * The list of tags associated with the public IP prefix.
      */
-    @JsonProperty(value = "ipTags")
     private List<IpTag> ipTags;
 
     /*
      * The Length of the Public IP Prefix.
      */
-    @JsonProperty(value = "prefixLength")
     private Integer prefixLength;
 
     /*
      * The allocated Prefix.
      */
-    @JsonProperty(value = "ipPrefix", access = JsonProperty.Access.WRITE_ONLY)
     private String ipPrefix;
 
     /*
      * The list of all referenced PublicIPAddresses.
      */
-    @JsonProperty(value = "publicIPAddresses", access = JsonProperty.Access.WRITE_ONLY)
     private List<ReferencedPublicIpAddress> publicIpAddresses;
 
     /*
-     * The reference to load balancer frontend IP configuration associated with
-     * the public IP prefix.
+     * The reference to load balancer frontend IP configuration associated with the public IP prefix.
      */
-    @JsonProperty(value = "loadBalancerFrontendIpConfiguration", access = JsonProperty.Access.WRITE_ONLY)
     private SubResource loadBalancerFrontendIpConfiguration;
 
     /*
      * The customIpPrefix that this prefix is associated with.
      */
-    @JsonProperty(value = "customIPPrefix")
     private SubResource customIpPrefix;
 
     /*
      * The resource GUID property of the public IP prefix resource.
      */
-    @JsonProperty(value = "resourceGuid", access = JsonProperty.Access.WRITE_ONLY)
     private String resourceGuid;
 
     /*
      * The provisioning state of the public IP prefix resource.
      */
-    @JsonProperty(value = "provisioningState", access = JsonProperty.Access.WRITE_ONLY)
     private ProvisioningState provisioningState;
 
     /*
      * NatGateway of Public IP Prefix.
      */
-    @JsonProperty(value = "natGateway")
     private NatGatewayInner natGateway;
 
     /**
+     * Creates an instance of PublicIpPrefixPropertiesFormatInner class.
+     */
+    public PublicIpPrefixPropertiesFormatInner() {
+    }
+
+    /**
      * Get the publicIpAddressVersion property: The public IP address version.
-     *
+     * 
      * @return the publicIpAddressVersion value.
      */
     public IpVersion publicIpAddressVersion() {
@@ -92,7 +90,7 @@ public final class PublicIpPrefixPropertiesFormatInner {
 
     /**
      * Set the publicIpAddressVersion property: The public IP address version.
-     *
+     * 
      * @param publicIpAddressVersion the publicIpAddressVersion value to set.
      * @return the PublicIpPrefixPropertiesFormatInner object itself.
      */
@@ -103,7 +101,7 @@ public final class PublicIpPrefixPropertiesFormatInner {
 
     /**
      * Get the ipTags property: The list of tags associated with the public IP prefix.
-     *
+     * 
      * @return the ipTags value.
      */
     public List<IpTag> ipTags() {
@@ -112,7 +110,7 @@ public final class PublicIpPrefixPropertiesFormatInner {
 
     /**
      * Set the ipTags property: The list of tags associated with the public IP prefix.
-     *
+     * 
      * @param ipTags the ipTags value to set.
      * @return the PublicIpPrefixPropertiesFormatInner object itself.
      */
@@ -123,7 +121,7 @@ public final class PublicIpPrefixPropertiesFormatInner {
 
     /**
      * Get the prefixLength property: The Length of the Public IP Prefix.
-     *
+     * 
      * @return the prefixLength value.
      */
     public Integer prefixLength() {
@@ -132,7 +130,7 @@ public final class PublicIpPrefixPropertiesFormatInner {
 
     /**
      * Set the prefixLength property: The Length of the Public IP Prefix.
-     *
+     * 
      * @param prefixLength the prefixLength value to set.
      * @return the PublicIpPrefixPropertiesFormatInner object itself.
      */
@@ -143,7 +141,7 @@ public final class PublicIpPrefixPropertiesFormatInner {
 
     /**
      * Get the ipPrefix property: The allocated Prefix.
-     *
+     * 
      * @return the ipPrefix value.
      */
     public String ipPrefix() {
@@ -152,7 +150,7 @@ public final class PublicIpPrefixPropertiesFormatInner {
 
     /**
      * Get the publicIpAddresses property: The list of all referenced PublicIPAddresses.
-     *
+     * 
      * @return the publicIpAddresses value.
      */
     public List<ReferencedPublicIpAddress> publicIpAddresses() {
@@ -162,7 +160,7 @@ public final class PublicIpPrefixPropertiesFormatInner {
     /**
      * Get the loadBalancerFrontendIpConfiguration property: The reference to load balancer frontend IP configuration
      * associated with the public IP prefix.
-     *
+     * 
      * @return the loadBalancerFrontendIpConfiguration value.
      */
     public SubResource loadBalancerFrontendIpConfiguration() {
@@ -171,7 +169,7 @@ public final class PublicIpPrefixPropertiesFormatInner {
 
     /**
      * Get the customIpPrefix property: The customIpPrefix that this prefix is associated with.
-     *
+     * 
      * @return the customIpPrefix value.
      */
     public SubResource customIpPrefix() {
@@ -180,7 +178,7 @@ public final class PublicIpPrefixPropertiesFormatInner {
 
     /**
      * Set the customIpPrefix property: The customIpPrefix that this prefix is associated with.
-     *
+     * 
      * @param customIpPrefix the customIpPrefix value to set.
      * @return the PublicIpPrefixPropertiesFormatInner object itself.
      */
@@ -191,7 +189,7 @@ public final class PublicIpPrefixPropertiesFormatInner {
 
     /**
      * Get the resourceGuid property: The resource GUID property of the public IP prefix resource.
-     *
+     * 
      * @return the resourceGuid value.
      */
     public String resourceGuid() {
@@ -200,7 +198,7 @@ public final class PublicIpPrefixPropertiesFormatInner {
 
     /**
      * Get the provisioningState property: The provisioning state of the public IP prefix resource.
-     *
+     * 
      * @return the provisioningState value.
      */
     public ProvisioningState provisioningState() {
@@ -209,7 +207,7 @@ public final class PublicIpPrefixPropertiesFormatInner {
 
     /**
      * Get the natGateway property: NatGateway of Public IP Prefix.
-     *
+     * 
      * @return the natGateway value.
      */
     public NatGatewayInner natGateway() {
@@ -218,7 +216,7 @@ public final class PublicIpPrefixPropertiesFormatInner {
 
     /**
      * Set the natGateway property: NatGateway of Public IP Prefix.
-     *
+     * 
      * @param natGateway the natGateway value to set.
      * @return the PublicIpPrefixPropertiesFormatInner object itself.
      */
@@ -229,7 +227,7 @@ public final class PublicIpPrefixPropertiesFormatInner {
 
     /**
      * Validates the instance.
-     *
+     * 
      * @throws IllegalArgumentException thrown if the instance is not valid.
      */
     public void validate() {
@@ -242,5 +240,72 @@ public final class PublicIpPrefixPropertiesFormatInner {
         if (natGateway() != null) {
             natGateway().validate();
         }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public JsonWriter toJson(JsonWriter jsonWriter) throws IOException {
+        jsonWriter.writeStartObject();
+        jsonWriter.writeStringField("publicIPAddressVersion",
+            this.publicIpAddressVersion == null ? null : this.publicIpAddressVersion.toString());
+        jsonWriter.writeArrayField("ipTags", this.ipTags, (writer, element) -> writer.writeJson(element));
+        jsonWriter.writeNumberField("prefixLength", this.prefixLength);
+        jsonWriter.writeJsonField("customIPPrefix", this.customIpPrefix);
+        jsonWriter.writeJsonField("natGateway", this.natGateway);
+        return jsonWriter.writeEndObject();
+    }
+
+    /**
+     * Reads an instance of PublicIpPrefixPropertiesFormatInner from the JsonReader.
+     * 
+     * @param jsonReader The JsonReader being read.
+     * @return An instance of PublicIpPrefixPropertiesFormatInner if the JsonReader was pointing to an instance of it,
+     * or null if it was pointing to JSON null.
+     * @throws IOException If an error occurs while reading the PublicIpPrefixPropertiesFormatInner.
+     */
+    public static PublicIpPrefixPropertiesFormatInner fromJson(JsonReader jsonReader) throws IOException {
+        return jsonReader.readObject(reader -> {
+            PublicIpPrefixPropertiesFormatInner deserializedPublicIpPrefixPropertiesFormatInner
+                = new PublicIpPrefixPropertiesFormatInner();
+            while (reader.nextToken() != JsonToken.END_OBJECT) {
+                String fieldName = reader.getFieldName();
+                reader.nextToken();
+
+                if ("publicIPAddressVersion".equals(fieldName)) {
+                    deserializedPublicIpPrefixPropertiesFormatInner.publicIpAddressVersion
+                        = IpVersion.fromString(reader.getString());
+                } else if ("ipTags".equals(fieldName)) {
+                    List<IpTag> ipTags = reader.readArray(reader1 -> IpTag.fromJson(reader1));
+                    deserializedPublicIpPrefixPropertiesFormatInner.ipTags = ipTags;
+                } else if ("prefixLength".equals(fieldName)) {
+                    deserializedPublicIpPrefixPropertiesFormatInner.prefixLength
+                        = reader.getNullable(JsonReader::getInt);
+                } else if ("ipPrefix".equals(fieldName)) {
+                    deserializedPublicIpPrefixPropertiesFormatInner.ipPrefix = reader.getString();
+                } else if ("publicIPAddresses".equals(fieldName)) {
+                    List<ReferencedPublicIpAddress> publicIpAddresses
+                        = reader.readArray(reader1 -> ReferencedPublicIpAddress.fromJson(reader1));
+                    deserializedPublicIpPrefixPropertiesFormatInner.publicIpAddresses = publicIpAddresses;
+                } else if ("loadBalancerFrontendIpConfiguration".equals(fieldName)) {
+                    deserializedPublicIpPrefixPropertiesFormatInner.loadBalancerFrontendIpConfiguration
+                        = SubResource.fromJson(reader);
+                } else if ("customIPPrefix".equals(fieldName)) {
+                    deserializedPublicIpPrefixPropertiesFormatInner.customIpPrefix = SubResource.fromJson(reader);
+                } else if ("resourceGuid".equals(fieldName)) {
+                    deserializedPublicIpPrefixPropertiesFormatInner.resourceGuid = reader.getString();
+                } else if ("provisioningState".equals(fieldName)) {
+                    deserializedPublicIpPrefixPropertiesFormatInner.provisioningState
+                        = ProvisioningState.fromString(reader.getString());
+                } else if ("natGateway".equals(fieldName)) {
+                    deserializedPublicIpPrefixPropertiesFormatInner.natGateway = NatGatewayInner.fromJson(reader);
+                } else {
+                    reader.skipChildren();
+                }
+            }
+
+            return deserializedPublicIpPrefixPropertiesFormatInner;
+        });
     }
 }

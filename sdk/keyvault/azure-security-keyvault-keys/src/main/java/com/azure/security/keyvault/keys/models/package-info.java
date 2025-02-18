@@ -1,8 +1,8 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
-
 /**
- * Package containing classes used for representing keys, deleted keys and their attributes in
- * Azure Key Vault.
+ * <!-- @formatter:off -->
+ * Package containing the data models for KeyClient. The key vault client performs cryptographic key operations and
+ * vault operations against the Key Vault service.
  */
 package com.azure.security.keyvault.keys.models;

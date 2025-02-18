@@ -1,3 +1,7 @@
+# Default Assets restore directory
+.assets
+test-proxy.log
+
 *.class
 
 #Javadoc files
@@ -11,6 +15,7 @@ temp/
 
 # Sensitive files
 *.json.env
+.env
 
 #javadoc overview files generated from README.md
 readme_overview.html
@@ -78,13 +83,18 @@ package-lock.json
 .vscode/
 .factorypath
 jacoco.exec
+.vs/
 
 # Generated client pom file
 ClientAggregatePom.xml
 ClientFromSourcePom.xml
 
+# Generated aggregate coverage reports pom file
+aggregate-pom.xml
+
 # Anaconda virtual env
 venv
+.venv
 
 # NetBeans
 nbproject
@@ -100,3 +110,14 @@ scalastyle-output.xml
 # Flatten-pom
 .flattened-pom.xml
 flatter.pom
+/.vs/
+
+
+# stress-tests
+Chart.lock
+generatedValues.yaml
+stress-test-resources.json
+stress-test-addons*
+
+# Temp typespec files
+TempTypeSpecFiles/

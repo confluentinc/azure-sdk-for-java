@@ -5,29 +5,46 @@
 package com.azure.resourcemanager.security.models;
 
 import com.azure.core.util.ExpandableStringEnum;
-import com.fasterxml.jackson.annotation.JsonCreator;
 import java.util.Collection;
 
-/** Defines values for Status. */
+/**
+ * The status of the port.
+ */
 public final class Status extends ExpandableStringEnum<Status> {
-    /** Static value Revoked for Status. */
+    /**
+     * Static value Revoked for Status.
+     */
     public static final Status REVOKED = fromString("Revoked");
 
-    /** Static value Initiated for Status. */
+    /**
+     * Static value Initiated for Status.
+     */
     public static final Status INITIATED = fromString("Initiated");
 
     /**
+     * Creates a new instance of Status value.
+     * 
+     * @deprecated Use the {@link #fromString(String)} factory method.
+     */
+    @Deprecated
+    public Status() {
+    }
+
+    /**
      * Creates or finds a Status from its string representation.
-     *
+     * 
      * @param name a name to look for.
      * @return the corresponding Status.
      */
-    @JsonCreator
     public static Status fromString(String name) {
         return fromString(name, Status.class);
     }
 
-    /** @return known Status values. */
+    /**
+     * Gets known Status values.
+     * 
+     * @return known Status values.
+     */
     public static Collection<Status> values() {
         return values(Status.class);
     }

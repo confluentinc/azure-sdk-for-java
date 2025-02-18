@@ -5,40 +5,42 @@
 package com.azure.resourcemanager.datafactory.fluent.models;
 
 import com.azure.core.annotation.Fluent;
-import com.azure.core.util.logging.ClientLogger;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.azure.json.JsonReader;
+import com.azure.json.JsonSerializable;
+import com.azure.json.JsonToken;
+import com.azure.json.JsonWriter;
+import java.io.IOException;
 
-/** Impala Dataset Properties. */
+/**
+ * Impala Dataset Properties.
+ */
 @Fluent
-public final class ImpalaDatasetTypeProperties {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(ImpalaDatasetTypeProperties.class);
-
+public final class ImpalaDatasetTypeProperties implements JsonSerializable<ImpalaDatasetTypeProperties> {
     /*
-     * This property will be retired. Please consider using schema + table
-     * properties instead.
+     * This property will be retired. Please consider using schema + table properties instead.
      */
-    @JsonProperty(value = "tableName")
     private Object tableName;
 
     /*
-     * The table name of the Impala. Type: string (or Expression with
-     * resultType string).
+     * The table name of the Impala. Type: string (or Expression with resultType string).
      */
-    @JsonProperty(value = "table")
     private Object table;
 
     /*
-     * The schema name of the Impala. Type: string (or Expression with
-     * resultType string).
+     * The schema name of the Impala. Type: string (or Expression with resultType string).
      */
-    @JsonProperty(value = "schema")
     private Object schema;
+
+    /**
+     * Creates an instance of ImpalaDatasetTypeProperties class.
+     */
+    public ImpalaDatasetTypeProperties() {
+    }
 
     /**
      * Get the tableName property: This property will be retired. Please consider using schema + table properties
      * instead.
-     *
+     * 
      * @return the tableName value.
      */
     public Object tableName() {
@@ -48,7 +50,7 @@ public final class ImpalaDatasetTypeProperties {
     /**
      * Set the tableName property: This property will be retired. Please consider using schema + table properties
      * instead.
-     *
+     * 
      * @param tableName the tableName value to set.
      * @return the ImpalaDatasetTypeProperties object itself.
      */
@@ -59,7 +61,7 @@ public final class ImpalaDatasetTypeProperties {
 
     /**
      * Get the table property: The table name of the Impala. Type: string (or Expression with resultType string).
-     *
+     * 
      * @return the table value.
      */
     public Object table() {
@@ -68,7 +70,7 @@ public final class ImpalaDatasetTypeProperties {
 
     /**
      * Set the table property: The table name of the Impala. Type: string (or Expression with resultType string).
-     *
+     * 
      * @param table the table value to set.
      * @return the ImpalaDatasetTypeProperties object itself.
      */
@@ -79,7 +81,7 @@ public final class ImpalaDatasetTypeProperties {
 
     /**
      * Get the schema property: The schema name of the Impala. Type: string (or Expression with resultType string).
-     *
+     * 
      * @return the schema value.
      */
     public Object schema() {
@@ -88,7 +90,7 @@ public final class ImpalaDatasetTypeProperties {
 
     /**
      * Set the schema property: The schema name of the Impala. Type: string (or Expression with resultType string).
-     *
+     * 
      * @param schema the schema value to set.
      * @return the ImpalaDatasetTypeProperties object itself.
      */
@@ -99,9 +101,51 @@ public final class ImpalaDatasetTypeProperties {
 
     /**
      * Validates the instance.
-     *
+     * 
      * @throws IllegalArgumentException thrown if the instance is not valid.
      */
     public void validate() {
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public JsonWriter toJson(JsonWriter jsonWriter) throws IOException {
+        jsonWriter.writeStartObject();
+        jsonWriter.writeUntypedField("tableName", this.tableName);
+        jsonWriter.writeUntypedField("table", this.table);
+        jsonWriter.writeUntypedField("schema", this.schema);
+        return jsonWriter.writeEndObject();
+    }
+
+    /**
+     * Reads an instance of ImpalaDatasetTypeProperties from the JsonReader.
+     * 
+     * @param jsonReader The JsonReader being read.
+     * @return An instance of ImpalaDatasetTypeProperties if the JsonReader was pointing to an instance of it, or null
+     * if it was pointing to JSON null.
+     * @throws IOException If an error occurs while reading the ImpalaDatasetTypeProperties.
+     */
+    public static ImpalaDatasetTypeProperties fromJson(JsonReader jsonReader) throws IOException {
+        return jsonReader.readObject(reader -> {
+            ImpalaDatasetTypeProperties deserializedImpalaDatasetTypeProperties = new ImpalaDatasetTypeProperties();
+            while (reader.nextToken() != JsonToken.END_OBJECT) {
+                String fieldName = reader.getFieldName();
+                reader.nextToken();
+
+                if ("tableName".equals(fieldName)) {
+                    deserializedImpalaDatasetTypeProperties.tableName = reader.readUntyped();
+                } else if ("table".equals(fieldName)) {
+                    deserializedImpalaDatasetTypeProperties.table = reader.readUntyped();
+                } else if ("schema".equals(fieldName)) {
+                    deserializedImpalaDatasetTypeProperties.schema = reader.readUntyped();
+                } else {
+                    reader.skipChildren();
+                }
+            }
+
+            return deserializedImpalaDatasetTypeProperties;
+        });
     }
 }

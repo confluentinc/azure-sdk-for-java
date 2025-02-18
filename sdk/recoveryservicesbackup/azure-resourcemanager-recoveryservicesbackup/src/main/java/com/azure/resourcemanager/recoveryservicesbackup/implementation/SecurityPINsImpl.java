@@ -13,41 +13,36 @@ import com.azure.resourcemanager.recoveryservicesbackup.fluent.models.TokenInfor
 import com.azure.resourcemanager.recoveryservicesbackup.models.SecurityPINs;
 import com.azure.resourcemanager.recoveryservicesbackup.models.SecurityPinBase;
 import com.azure.resourcemanager.recoveryservicesbackup.models.TokenInformation;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 public final class SecurityPINsImpl implements SecurityPINs {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(SecurityPINsImpl.class);
+    private static final ClientLogger LOGGER = new ClientLogger(SecurityPINsImpl.class);
 
     private final SecurityPINsClient innerClient;
 
     private final com.azure.resourcemanager.recoveryservicesbackup.RecoveryServicesBackupManager serviceManager;
 
-    public SecurityPINsImpl(
-        SecurityPINsClient innerClient,
+    public SecurityPINsImpl(SecurityPINsClient innerClient,
         com.azure.resourcemanager.recoveryservicesbackup.RecoveryServicesBackupManager serviceManager) {
         this.innerClient = innerClient;
         this.serviceManager = serviceManager;
+    }
+
+    public Response<TokenInformation> getWithResponse(String vaultName, String resourceGroupName,
+        SecurityPinBase parameters, Context context) {
+        Response<TokenInformationInner> inner
+            = this.serviceClient().getWithResponse(vaultName, resourceGroupName, parameters, context);
+        if (inner != null) {
+            return new SimpleResponse<>(inner.getRequest(), inner.getStatusCode(), inner.getHeaders(),
+                new TokenInformationImpl(inner.getValue(), this.manager()));
+        } else {
+            return null;
+        }
     }
 
     public TokenInformation get(String vaultName, String resourceGroupName) {
         TokenInformationInner inner = this.serviceClient().get(vaultName, resourceGroupName);
         if (inner != null) {
             return new TokenInformationImpl(inner, this.manager());
-        } else {
-            return null;
-        }
-    }
-
-    public Response<TokenInformation> getWithResponse(
-        String vaultName, String resourceGroupName, SecurityPinBase parameters, Context context) {
-        Response<TokenInformationInner> inner =
-            this.serviceClient().getWithResponse(vaultName, resourceGroupName, parameters, context);
-        if (inner != null) {
-            return new SimpleResponse<>(
-                inner.getRequest(),
-                inner.getStatusCode(),
-                inner.getHeaders(),
-                new TokenInformationImpl(inner.getValue(), this.manager()));
         } else {
             return null;
         }

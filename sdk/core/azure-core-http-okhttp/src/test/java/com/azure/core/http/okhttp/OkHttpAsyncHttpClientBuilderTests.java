@@ -4,22 +4,24 @@
 package com.azure.core.http.okhttp;
 
 import com.azure.core.http.HttpClient;
+import com.azure.core.http.HttpHeaderName;
 import com.azure.core.http.HttpMethod;
 import com.azure.core.http.HttpRequest;
 import com.azure.core.http.ProxyOptions;
+import com.azure.core.util.SharedExecutorService;
+import com.azure.core.validation.http.models.TestConfigurationSource;
 import com.azure.core.util.Configuration;
-import com.github.tomakehurst.wiremock.WireMockServer;
-import com.github.tomakehurst.wiremock.client.WireMock;
-import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
+import com.azure.core.util.ConfigurationBuilder;
+import com.azure.core.util.ConfigurationSource;
 import okhttp3.Call;
 import okhttp3.ConnectionPool;
 import okhttp3.Dispatcher;
 import okhttp3.EventListener;
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Execution;
+import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -32,12 +34,16 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
+import static com.azure.core.http.okhttp.OkHttpClientLocalTestServer.COOKIE_VALIDATOR_PATH;
+import static com.azure.core.http.okhttp.OkHttpClientLocalTestServer.DEFAULT_PATH;
+import static com.azure.core.http.okhttp.OkHttpClientLocalTestServer.DISPATCHER_PATH;
+import static com.azure.core.http.okhttp.OkHttpClientLocalTestServer.LOCATION_PATH;
+import static com.azure.core.http.okhttp.OkHttpClientLocalTestServer.REDIRECT_PATH;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -45,11 +51,8 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 /**
  * Tests {@link OkHttpAsyncHttpClientBuilder}.
  */
+@Execution(ExecutionMode.SAME_THREAD)
 public class OkHttpAsyncHttpClientBuilderTests {
-    private static final String COOKIE_VALIDATOR_PATH = "/cookieValidator";
-    private static final String DEFAULT_PATH = "/default";
-    private static final String DISPATCHER_PATH = "/dispatcher";
-
     private static final String JAVA_SYSTEM_PROXY_PREREQUISITE = "java.net.useSystemProxies";
     private static final String JAVA_NON_PROXY_HOSTS = "http.nonProxyHosts";
 
@@ -57,41 +60,9 @@ public class OkHttpAsyncHttpClientBuilderTests {
     private static final String JAVA_HTTP_PROXY_PORT = "http.proxyPort";
     private static final String JAVA_HTTP_PROXY_USER = "http.proxyUser";
     private static final String JAVA_HTTP_PROXY_PASSWORD = "http.proxyPassword";
+    private static final ConfigurationSource EMPTY_SOURCE = new TestConfigurationSource();
 
-    private static WireMockServer server;
-
-    private static String cookieValidatorUrl;
-    private static String defaultUrl;
-    private static String dispatcherUrl;
-
-    @BeforeAll
-    public static void setupWireMock() {
-        server = new WireMockServer(WireMockConfiguration.options().dynamicPort().disableRequestJournal());
-
-        // Mocked endpoint to test building a client with a prebuilt OkHttpClient.
-        server.stubFor(WireMock.get(COOKIE_VALIDATOR_PATH).withCookie("test", WireMock.matching("success"))
-            .willReturn(WireMock.aResponse().withStatus(200)));
-
-        // Mocked endpoint to test building a client with a timeout.
-        server.stubFor(WireMock.get(DEFAULT_PATH).willReturn(WireMock.aResponse().withStatus(200)));
-
-        // Mocked endpoint to test building a client with a dispatcher and uses a delayed response.
-        server.stubFor(WireMock.get(DISPATCHER_PATH).willReturn(WireMock.aResponse().withStatus(200)
-            .withFixedDelay(5000)));
-
-        server.start();
-
-        cookieValidatorUrl = "http://localhost:" + server.port() + COOKIE_VALIDATOR_PATH;
-        defaultUrl = "http://localhost:" + server.port() + DEFAULT_PATH;
-        dispatcherUrl = "http://localhost:" + server.port() + DISPATCHER_PATH;
-    }
-
-    @AfterAll
-    public static void shutdownWireMock() {
-        if (server.isRunning()) {
-            server.shutdown();
-        }
-    }
+    private static final String SERVER_HTTP_URI = OkHttpClientLocalTestServer.getServer().getHttpUri();
 
     /**
      * Tests that an {@link OkHttpAsyncHttpClient} is able to be built from an existing {@link OkHttpClient}.
@@ -99,13 +70,13 @@ public class OkHttpAsyncHttpClientBuilderTests {
     @Test
     public void buildClientWithExistingClient() {
         OkHttpClient existingClient = new OkHttpClient.Builder()
-            .addInterceptor(chain -> chain
-                .proceed(chain.request().newBuilder().addHeader("Cookie", "test=success").build()))
+            .addInterceptor(
+                chain -> chain.proceed(chain.request().newBuilder().addHeader("Cookie", "test=success").build()))
             .build();
 
         HttpClient client = new OkHttpAsyncHttpClientBuilder(existingClient).build();
 
-        StepVerifier.create(client.send(new HttpRequest(HttpMethod.GET, cookieValidatorUrl)))
+        StepVerifier.create(client.send(new HttpRequest(HttpMethod.GET, SERVER_HTTP_URI + COOKIE_VALIDATOR_PATH)))
             .assertNext(response -> assertEquals(200, response.getStatusCode()))
             .verifyComplete();
     }
@@ -124,14 +95,12 @@ public class OkHttpAsyncHttpClientBuilderTests {
      */
     @Test
     public void addNetworkInterceptor() {
-        Interceptor testInterceptor = chain -> chain.proceed(chain.request().newBuilder()
-            .addHeader("Cookie", "test=success").build());
+        Interceptor testInterceptor
+            = chain -> chain.proceed(chain.request().newBuilder().addHeader("Cookie", "test=success").build());
 
-        HttpClient client = new OkHttpAsyncHttpClientBuilder()
-            .addNetworkInterceptor(testInterceptor)
-            .build();
+        HttpClient client = new OkHttpAsyncHttpClientBuilder().addNetworkInterceptor(testInterceptor).build();
 
-        StepVerifier.create(client.send(new HttpRequest(HttpMethod.GET, cookieValidatorUrl)))
+        StepVerifier.create(client.send(new HttpRequest(HttpMethod.GET, SERVER_HTTP_URI + COOKIE_VALIDATOR_PATH)))
             .assertNext(response -> assertEquals(200, response.getStatusCode()))
             .verifyComplete();
     }
@@ -150,24 +119,23 @@ public class OkHttpAsyncHttpClientBuilderTests {
      */
     @Test
     public void setNetworkInterceptors() {
-        Interceptor badCookieSetter = chain -> chain.proceed(chain.request().newBuilder()
-            .addHeader("Cookie", "test=failure").build());
-        Interceptor goodCookieSetter = chain -> chain.proceed(chain.request().newBuilder()
-            .addHeader("Cookie", "test=success").build());
+        Interceptor badCookieSetter
+            = chain -> chain.proceed(chain.request().newBuilder().addHeader("Cookie", "test=failure").build());
+        Interceptor goodCookieSetter
+            = chain -> chain.proceed(chain.request().newBuilder().addHeader("Cookie", "test=success").build());
 
-        HttpClient client = new OkHttpAsyncHttpClientBuilder()
-            .addNetworkInterceptor(badCookieSetter)
+        HttpClient client = new OkHttpAsyncHttpClientBuilder().addNetworkInterceptor(badCookieSetter)
             .networkInterceptors(Collections.singletonList(goodCookieSetter))
             .build();
 
-        StepVerifier.create(client.send(new HttpRequest(HttpMethod.GET, cookieValidatorUrl)))
+        StepVerifier.create(client.send(new HttpRequest(HttpMethod.GET, SERVER_HTTP_URI + COOKIE_VALIDATOR_PATH)))
             .assertNext(response -> assertEquals(200, response.getStatusCode()))
             .verifyComplete();
     }
 
     /**
-     * Tests that setting the {@link Interceptor interceptors} to {@code null} will throw a {@link
-     * NullPointerException}.
+     * Tests that setting the {@link Interceptor interceptors} to {@code null} will throw a
+     * {@link NullPointerException}.
      */
     @Test
     public void nullNetworkInterceptorsThrows() {
@@ -185,13 +153,41 @@ public class OkHttpAsyncHttpClientBuilderTests {
             return chain.proceed(chain.request());
         };
 
-        HttpClient okClient = new OkHttpAsyncHttpClientBuilder()
-            .addNetworkInterceptor(validatorInterceptor)
+        HttpClient okClient = new OkHttpAsyncHttpClientBuilder().addNetworkInterceptor(validatorInterceptor)
             .connectionTimeout(Duration.ofSeconds(3600))
             .build();
 
-        StepVerifier.create(okClient.send(new HttpRequest(HttpMethod.GET, defaultUrl)))
+        StepVerifier.create(okClient.send(new HttpRequest(HttpMethod.GET, SERVER_HTTP_URI + DEFAULT_PATH)))
             .assertNext(response -> assertEquals(200, response.getStatusCode()))
+            .verifyComplete();
+    }
+
+    @Test
+    public void buildWithFollowRedirectSetToTrue() {
+        HttpClient okClient = new OkHttpAsyncHttpClientBuilder().followRedirects(true).build();
+
+        StepVerifier
+            .create(okClient.send(new HttpRequest(HttpMethod.GET, SERVER_HTTP_URI + REDIRECT_PATH)
+                .setHeader(HttpHeaderName.LOCATION, SERVER_HTTP_URI + LOCATION_PATH)))
+            .assertNext(response -> assertEquals(200, response.getStatusCode()))
+            .verifyComplete();
+    }
+
+    @Test
+    public void buildWithFollowRedirectSetToFalse() {
+        HttpClient okClient = new OkHttpAsyncHttpClientBuilder().followRedirects(false).build();
+
+        StepVerifier.create(okClient.send(new HttpRequest(HttpMethod.GET, SERVER_HTTP_URI + REDIRECT_PATH)))
+            .assertNext(response -> assertEquals(307, response.getStatusCode()))
+            .verifyComplete();
+    }
+
+    @Test
+    public void buildWithFollowRedirectDefault() {
+        HttpClient okClient = new OkHttpAsyncHttpClientBuilder().build();
+
+        StepVerifier.create(okClient.send(new HttpRequest(HttpMethod.GET, SERVER_HTTP_URI + REDIRECT_PATH)))
+            .assertNext(response -> assertEquals(307, response.getStatusCode()))
             .verifyComplete();
     }
 
@@ -206,12 +202,61 @@ public class OkHttpAsyncHttpClientBuilderTests {
             return chain.proceed(chain.request());
         };
 
-        HttpClient okClient = new OkHttpAsyncHttpClientBuilder()
-            .addNetworkInterceptor(validatorInterceptor)
+        HttpClient okClient = new OkHttpAsyncHttpClientBuilder().addNetworkInterceptor(validatorInterceptor)
             .readTimeout(Duration.ofSeconds(3600))
             .build();
 
-        StepVerifier.create(okClient.send(new HttpRequest(HttpMethod.GET, defaultUrl)))
+        StepVerifier.create(okClient.send(new HttpRequest(HttpMethod.GET, SERVER_HTTP_URI + DEFAULT_PATH)))
+            .assertNext(response -> assertEquals(200, response.getStatusCode()))
+            .verifyComplete();
+    }
+
+    /**
+     * Tests building a client with a given {@code callTimeout}.
+     */
+    @Test
+    public void buildWithCallTimeout() {
+        long expectedCallTimeoutNanos = 3600000000000L;
+        Interceptor validatorInterceptor = chain -> {
+            assertEquals(expectedCallTimeoutNanos, chain.call().timeout().timeoutNanos());
+            return chain.proceed(chain.request());
+        };
+
+        HttpClient okClient = new OkHttpAsyncHttpClientBuilder().addNetworkInterceptor(validatorInterceptor)
+            .callTimeout(Duration.ofSeconds(3600))
+            .build();
+
+        StepVerifier.create(okClient.send(new HttpRequest(HttpMethod.GET, SERVER_HTTP_URI + DEFAULT_PATH)))
+            .assertNext(response -> assertEquals(200, response.getStatusCode()))
+            .verifyComplete();
+    }
+
+    /**
+     * Tests building a client with negative callTimeout.
+     */
+    @Test
+    public void throwsWithNegativeCallTimeout() {
+        assertThrows(IllegalArgumentException.class, () -> {
+            new OkHttpAsyncHttpClientBuilder().callTimeout(Duration.ofSeconds(-1));
+        });
+    }
+
+    /**
+     * Tests building a client with default timeouts.
+     */
+    @Test
+    public void buildWithDefaultTimeouts() {
+        Interceptor validatorInterceptor = chain -> {
+            assertEquals(0L, chain.call().timeout().timeoutNanos());
+            assertEquals(60000, chain.readTimeoutMillis());
+            assertEquals(60000, chain.writeTimeoutMillis());
+            assertEquals(10000, chain.connectTimeoutMillis());
+            return chain.proceed(chain.request());
+        };
+
+        HttpClient okClient = new OkHttpAsyncHttpClientBuilder().addNetworkInterceptor(validatorInterceptor).build();
+
+        StepVerifier.create(okClient.send(new HttpRequest(HttpMethod.GET, SERVER_HTTP_URI + DEFAULT_PATH)))
             .assertNext(response -> assertEquals(200, response.getStatusCode()))
             .verifyComplete();
     }
@@ -223,11 +268,9 @@ public class OkHttpAsyncHttpClientBuilderTests {
     public void buildWithConnectionPool() {
         ConnectionPool connectionPool = new ConnectionPool();
 
-        HttpClient okClient = new OkHttpAsyncHttpClientBuilder()
-            .connectionPool(connectionPool)
-            .build();
+        HttpClient okClient = new OkHttpAsyncHttpClientBuilder().connectionPool(connectionPool).build();
 
-        StepVerifier.create(okClient.send(new HttpRequest(HttpMethod.GET, defaultUrl)))
+        StepVerifier.create(okClient.send(new HttpRequest(HttpMethod.GET, SERVER_HTTP_URI + DEFAULT_PATH)))
             .assertNext(response -> assertEquals(200, response.getStatusCode()))
             .verifyComplete();
 
@@ -235,8 +278,8 @@ public class OkHttpAsyncHttpClientBuilderTests {
     }
 
     /**
-     * Tests that passing a {@code null} {@code connectionPool} to the builder will throw a {@link
-     * NullPointerException}.
+     * Tests that passing a {@code null} {@code connectionPool} to the builder will throw a
+     * {@link NullPointerException}.
      */
     @Test
     public void nullConnectionPoolThrows() {
@@ -249,27 +292,22 @@ public class OkHttpAsyncHttpClientBuilderTests {
     @Test
     public void buildWithDispatcher() {
         String expectedThreadName = "testDispatcher";
-        Dispatcher dispatcher = new Dispatcher(Executors
-            .newFixedThreadPool(1, (Runnable r) -> new Thread(r, expectedThreadName)));
+        Dispatcher dispatcher
+            = new Dispatcher(Executors.newFixedThreadPool(1, (Runnable r) -> new Thread(r, expectedThreadName)));
 
-        HttpClient okClient = new OkHttpAsyncHttpClientBuilder()
-            .dispatcher(dispatcher)
-            .build();
+        HttpClient okClient = new OkHttpAsyncHttpClientBuilder().dispatcher(dispatcher).build();
 
         /*
          * Schedule a task that will run in one second to cancel all requests sent using the dispatcher. This should
-         * result in the request we are about to send to be cancelled since WireMock will wait 5 seconds before
+         * result in the request we are about to send to be cancelled since the server will wait 5 seconds before
          * returning a response.
          */
-        new Timer().schedule(new TimerTask() {
-            @Override
-            public void run() {
-                assertEquals(1, dispatcher.runningCallsCount());
-                dispatcher.cancelAll();
-            }
-        }, 1000);
+        SharedExecutorService.getInstance().schedule(() -> {
+            assertEquals(1, dispatcher.runningCallsCount());
+            dispatcher.cancelAll();
+        }, 1000, TimeUnit.MILLISECONDS);
 
-        StepVerifier.create(okClient.send(new HttpRequest(HttpMethod.GET, dispatcherUrl)))
+        StepVerifier.create(okClient.send(new HttpRequest(HttpMethod.GET, SERVER_HTTP_URI + DISPATCHER_PATH)))
             .verifyError();
     }
 
@@ -290,13 +328,11 @@ public class OkHttpAsyncHttpClientBuilderTests {
         String requestUrl) {
         OkHttpClient validatorClient = okHttpClientWithProxyValidation(shouldHaveProxy, proxyType);
 
-        HttpClient okClient = new OkHttpAsyncHttpClientBuilder(validatorClient)
-            .proxy(proxyOptions)
-            .build();
+        HttpClient okClient = new OkHttpAsyncHttpClientBuilder(validatorClient).proxy(proxyOptions).build();
 
         StepVerifier.create(okClient.send(new HttpRequest(HttpMethod.GET, requestUrl)))
-            .verifyErrorMatches(throwable -> throwable.getMessage()
-                .contains(TestEventListenerValidator.EXPECTED_EXCEPTION_MESSAGE));
+            .verifyErrorMatches(
+                throwable -> throwable.getMessage().contains(TestEventListenerValidator.EXPECTED_EXCEPTION_MESSAGE));
     }
 
     private static Stream<Arguments> buildWithProxySupplier() {
@@ -311,36 +347,37 @@ public class OkHttpAsyncHttpClientBuilderTests {
         /*
          * Simple non-authenticated proxies without non-proxy hosts configured.
          */
-        arguments.add(Arguments.of(true, Proxy.Type.SOCKS, socks4Proxy, defaultUrl));
-        arguments.add(Arguments.of(true, Proxy.Type.SOCKS, socks5Proxy, defaultUrl));
-        arguments.add(Arguments.of(true, Proxy.Type.HTTP, simpleHttpProxy, defaultUrl));
+        arguments.add(Arguments.of(true, Proxy.Type.SOCKS, socks4Proxy, SERVER_HTTP_URI + DEFAULT_PATH));
+        arguments.add(Arguments.of(true, Proxy.Type.SOCKS, socks5Proxy, SERVER_HTTP_URI + DEFAULT_PATH));
+        arguments.add(Arguments.of(true, Proxy.Type.HTTP, simpleHttpProxy, SERVER_HTTP_URI + DEFAULT_PATH));
 
         /*
          * HTTP proxy with authentication configured.
          */
-        ProxyOptions authenticatedHttpProxy = new ProxyOptions(ProxyOptions.Type.HTTP, proxyAddress)
-            .setCredentials("1", "1");
+        ProxyOptions authenticatedHttpProxy
+            = new ProxyOptions(ProxyOptions.Type.HTTP, proxyAddress).setCredentials("1", "1");
 
-        arguments.add(Arguments.of(true, Proxy.Type.HTTP, authenticatedHttpProxy, defaultUrl));
+        arguments.add(Arguments.of(true, Proxy.Type.HTTP, authenticatedHttpProxy, SERVER_HTTP_URI + DEFAULT_PATH));
 
         /*
          * Information for non-proxy hosts testing.
          */
         String rawNonProxyHosts = String.join("|", "localhost", "127.0.0.1", "*.microsoft.com", "*.linkedin.com");
 
-        String[] requestUrlsWithoutProxying = new String[]{
-            "http://localhost", "http://127.0.0.1", "http://azure.microsoft.com", "http://careers.linkedin.com"
-        };
+        String[] requestUrlsWithoutProxying = new String[] {
+            "http://localhost",
+            "http://127.0.0.1",
+            "http://azure.microsoft.com",
+            "http://careers.linkedin.com" };
 
-        String[] requestUrlsWithProxying = new String[]{
-            "http://example.com", "http://portal.azure.com", "http://linkedin.com", "http://8.8.8.8"
-        };
+        String[] requestUrlsWithProxying
+            = new String[] { "http://example.com", "http://portal.azure.com", "http://linkedin.com", "http://8.8.8.8" };
 
         /*
          * HTTP proxies with non-proxy hosts configured.
          */
-        Supplier<ProxyOptions> nonProxyHostsSupplier = () ->
-            new ProxyOptions(ProxyOptions.Type.HTTP, proxyAddress).setNonProxyHosts(rawNonProxyHosts);
+        Supplier<ProxyOptions> nonProxyHostsSupplier
+            = () -> new ProxyOptions(ProxyOptions.Type.HTTP, proxyAddress).setNonProxyHosts(rawNonProxyHosts);
 
         for (String requestUrl : requestUrlsWithoutProxying) {
             arguments.add(Arguments.of(false, Proxy.Type.HTTP, nonProxyHostsSupplier.get(), requestUrl));
@@ -353,8 +390,8 @@ public class OkHttpAsyncHttpClientBuilderTests {
         /*
          * HTTP proxies with authentication and non-proxy hosts configured.
          */
-        Supplier<ProxyOptions> authenticatedNonProxyHostsSupplier = () -> nonProxyHostsSupplier.get()
-            .setCredentials("1", "1");
+        Supplier<ProxyOptions> authenticatedNonProxyHostsSupplier
+            = () -> nonProxyHostsSupplier.get().setCredentials("1", "1");
 
         for (String requestUrl : requestUrlsWithoutProxying) {
             arguments.add(Arguments.of(false, Proxy.Type.HTTP, authenticatedNonProxyHostsSupplier.get(), requestUrl));
@@ -369,58 +406,70 @@ public class OkHttpAsyncHttpClientBuilderTests {
 
     @Test
     public void buildWithConfigurationNone() {
-        HttpClient okClient = new OkHttpAsyncHttpClientBuilder()
-            .configuration(Configuration.NONE)
-            .build();
+        HttpClient okClient = new OkHttpAsyncHttpClientBuilder().configuration(Configuration.NONE).build();
 
-        StepVerifier.create(okClient.send(new HttpRequest(HttpMethod.GET, defaultUrl)))
+        StepVerifier.create(okClient.send(new HttpRequest(HttpMethod.GET, SERVER_HTTP_URI + DEFAULT_PATH)))
             .assertNext(response -> assertEquals(200, response.getStatusCode()))
             .verifyComplete();
     }
 
     @ParameterizedTest
-    @MethodSource("buildWithConfigurationProxySupplier")
-    public void buildWithConfigurationProxy(boolean shouldHaveProxy, Configuration configuration, String requestUrl) {
+    @MethodSource("buildWithEnvConfigurationProxySupplier")
+    public void buildWithEnvConfigurationProxy(boolean shouldHaveProxy, Configuration configuration,
+        String requestUrl) {
         OkHttpClient validatorClient = okHttpClientWithProxyValidation(shouldHaveProxy, Proxy.Type.HTTP);
 
-        HttpClient okClient = new OkHttpAsyncHttpClientBuilder(validatorClient)
-            .configuration(configuration)
-            .build();
+        HttpClient okClient = new OkHttpAsyncHttpClientBuilder(validatorClient).configuration(configuration).build();
 
         StepVerifier.create(okClient.send(new HttpRequest(HttpMethod.GET, requestUrl)))
-            .verifyErrorMatches(throwable -> throwable.getMessage()
-                .contains(TestEventListenerValidator.EXPECTED_EXCEPTION_MESSAGE));
+            .verifyErrorMatches(
+                throwable -> throwable.getMessage().contains(TestEventListenerValidator.EXPECTED_EXCEPTION_MESSAGE));
     }
 
-    private static Stream<Arguments> buildWithConfigurationProxySupplier() {
-        Supplier<Configuration> baseJavaProxyConfigurationSupplier = () -> new Configuration()
-            .put(JAVA_HTTP_PROXY_HOST, "localhost")
-            .put(JAVA_HTTP_PROXY_PORT, "12345");
+    @ParameterizedTest
+    @MethodSource("buildWithExplicitConfigurationProxySupplier")
+    public void buildWithExplicitConfigurationProxySupplier(boolean shouldHaveProxy, Configuration configuration,
+        String requestUrl) {
+        OkHttpClient validatorClient = okHttpClientWithProxyValidation(shouldHaveProxy, Proxy.Type.HTTP);
+
+        HttpClient okClient = new OkHttpAsyncHttpClientBuilder(validatorClient).configuration(configuration).build();
+
+        StepVerifier.create(okClient.send(new HttpRequest(HttpMethod.GET, requestUrl)))
+            .verifyErrorMatches(
+                throwable -> throwable.getMessage().contains(TestEventListenerValidator.EXPECTED_EXCEPTION_MESSAGE));
+    }
+
+    private static Stream<Arguments> buildWithEnvConfigurationProxySupplier() {
+        Supplier<TestConfigurationSource> baseJavaProxyConfigurationSupplier
+            = () -> new TestConfigurationSource().put(JAVA_HTTP_PROXY_HOST, "localhost")
+                .put(JAVA_HTTP_PROXY_PORT, "12345");
 
         List<Arguments> arguments = new ArrayList<>();
 
         /*
          * Simple non-authenticated HTTP proxies.
          */
-        arguments.add(Arguments.of(true, baseJavaProxyConfigurationSupplier.get(), defaultUrl));
+        arguments.add(Arguments.of(true,
+            new ConfigurationBuilder(EMPTY_SOURCE, baseJavaProxyConfigurationSupplier.get(), EMPTY_SOURCE).build(),
+            SERVER_HTTP_URI + DEFAULT_PATH));
 
-        Configuration simpleEnvProxy = new Configuration()
-            .put(Configuration.PROPERTY_HTTP_PROXY, "http://localhost:12345")
-            .put(JAVA_SYSTEM_PROXY_PREREQUISITE, "true");
-        arguments.add(Arguments.of(true, simpleEnvProxy, defaultUrl));
+        Configuration simpleEnvProxy = new ConfigurationBuilder(EMPTY_SOURCE, EMPTY_SOURCE,
+            new TestConfigurationSource().put(Configuration.PROPERTY_HTTP_PROXY, "http://localhost:12345")
+                .put(JAVA_SYSTEM_PROXY_PREREQUISITE, "true")).build();
+        arguments.add(Arguments.of(true, simpleEnvProxy, SERVER_HTTP_URI + DEFAULT_PATH));
 
         /*
          * HTTP proxy with authentication configured.
          */
-        Configuration javaProxyWithAuthentication = baseJavaProxyConfigurationSupplier.get()
-            .put(JAVA_HTTP_PROXY_USER, "1")
-            .put(JAVA_HTTP_PROXY_PASSWORD, "1");
-        arguments.add(Arguments.of(true, javaProxyWithAuthentication, defaultUrl));
+        Configuration javaProxyWithAuthentication = new ConfigurationBuilder(EMPTY_SOURCE,
+            baseJavaProxyConfigurationSupplier.get().put(JAVA_HTTP_PROXY_USER, "1").put(JAVA_HTTP_PROXY_PASSWORD, "1"),
+            EMPTY_SOURCE).build();
+        arguments.add(Arguments.of(true, javaProxyWithAuthentication, SERVER_HTTP_URI + DEFAULT_PATH));
 
-        Configuration envProxyWithAuthentication = new Configuration()
-            .put(Configuration.PROPERTY_HTTP_PROXY, "http://1:1@localhost:12345")
-            .put(JAVA_SYSTEM_PROXY_PREREQUISITE, "true");
-        arguments.add(Arguments.of(true, envProxyWithAuthentication, defaultUrl));
+        Configuration envProxyWithAuthentication = new ConfigurationBuilder(EMPTY_SOURCE, EMPTY_SOURCE,
+            new TestConfigurationSource().put(Configuration.PROPERTY_HTTP_PROXY, "http://1:1@localhost:12345")
+                .put(JAVA_SYSTEM_PROXY_PREREQUISITE, "true")).build();
+        arguments.add(Arguments.of(true, envProxyWithAuthentication, SERVER_HTTP_URI + DEFAULT_PATH));
 
         /*
          * Information for non-proxy hosts testing.
@@ -428,67 +477,142 @@ public class OkHttpAsyncHttpClientBuilderTests {
         String rawJavaNonProxyHosts = String.join("|", "localhost", "127.0.0.1", "*.microsoft.com", "*.linkedin.com");
         String rawEnvNonProxyHosts = String.join(",", "localhost", "127.0.0.1", "*.microsoft.com", "*.linkedin.com");
 
-        String[] requestUrlsWithoutProxying = new String[]{
-            "http://localhost", "http://127.0.0.1", "http://azure.microsoft.com", "http://careers.linkedin.com"
-        };
+        String[] requestUrlsWithoutProxying = new String[] {
+            "http://localhost",
+            "http://127.0.0.1",
+            "http://azure.microsoft.com",
+            "http://careers.linkedin.com" };
 
-        String[] requestUrlsWithProxying = new String[]{
-            "http://example.com", "http://portal.azure.com", "http://linkedin.com", "http://8.8.8.8"
-        };
+        String[] requestUrlsWithProxying
+            = new String[] { "http://example.com", "http://portal.azure.com", "http://linkedin.com", "http://8.8.8.8" };
 
         /*
          * HTTP proxies with non-proxy hosts configured.
          */
-        Supplier<Configuration> javaNonProxyHostsSupplier = () -> baseJavaProxyConfigurationSupplier.get()
-            .put(JAVA_NON_PROXY_HOSTS, rawJavaNonProxyHosts);
-        Supplier<Configuration> envNonProxyHostsSupplier = () -> new Configuration()
-            .put(Configuration.PROPERTY_HTTP_PROXY, "http://localhost:12345")
-            .put(Configuration.PROPERTY_NO_PROXY, rawEnvNonProxyHosts)
-            .put(JAVA_SYSTEM_PROXY_PREREQUISITE, "true");
+        Supplier<TestConfigurationSource> javaNonProxyHostsSupplier
+            = () -> baseJavaProxyConfigurationSupplier.get().put(JAVA_NON_PROXY_HOSTS, rawJavaNonProxyHosts);
+        Supplier<TestConfigurationSource> envNonProxyHostsSupplier
+            = () -> new TestConfigurationSource().put(Configuration.PROPERTY_HTTP_PROXY, "http://localhost:12345")
+                .put(Configuration.PROPERTY_NO_PROXY, rawEnvNonProxyHosts)
+                .put(JAVA_SYSTEM_PROXY_PREREQUISITE, "true");
 
-        List<Supplier<Configuration>> nonProxyHostsSuppliers = Arrays.asList(javaNonProxyHostsSupplier,
-            envNonProxyHostsSupplier);
+        List<Supplier<TestConfigurationSource>> nonProxyHostsSuppliers
+            = Arrays.asList(javaNonProxyHostsSupplier, envNonProxyHostsSupplier);
 
-        for (Supplier<Configuration> configurationSupplier : nonProxyHostsSuppliers) {
+        for (Supplier<TestConfigurationSource> configurationSupplier : nonProxyHostsSuppliers) {
             for (String requestUrl : requestUrlsWithoutProxying) {
-                arguments.add(Arguments.of(false, configurationSupplier.get(), requestUrl));
+                arguments.add(Arguments.of(false,
+                    new ConfigurationBuilder(EMPTY_SOURCE, configurationSupplier.get(), EMPTY_SOURCE).build(),
+                    requestUrl));
             }
 
             for (String requestUrl : requestUrlsWithProxying) {
-                arguments.add(Arguments.of(true, configurationSupplier.get(), requestUrl));
+                arguments.add(Arguments.of(true,
+                    new ConfigurationBuilder(EMPTY_SOURCE, configurationSupplier.get(), EMPTY_SOURCE).build(),
+                    requestUrl));
             }
         }
 
         /*
          * HTTP proxies with authentication and non-proxy hosts configured.
          */
-        Supplier<Configuration> authenticatedJavaNonProxyHostsSupplier = () -> javaNonProxyHostsSupplier.get()
-            .put(JAVA_HTTP_PROXY_USER, "1")
-            .put(JAVA_HTTP_PROXY_PASSWORD, "1");
-        Supplier<Configuration> authenticatedEnvNonProxyHostsSupplier = () -> new Configuration()
-            .put(Configuration.PROPERTY_HTTP_PROXY, "http://1:1@localhost:12345")
-            .put(Configuration.PROPERTY_NO_PROXY, rawEnvNonProxyHosts)
-            .put(JAVA_SYSTEM_PROXY_PREREQUISITE, "true");
+        Supplier<TestConfigurationSource> authenticatedJavaNonProxyHostsSupplier
+            = () -> javaNonProxyHostsSupplier.get().put(JAVA_HTTP_PROXY_USER, "1").put(JAVA_HTTP_PROXY_PASSWORD, "1");
+        Supplier<TestConfigurationSource> authenticatedEnvNonProxyHostsSupplier
+            = () -> new TestConfigurationSource().put(Configuration.PROPERTY_HTTP_PROXY, "http://1:1@localhost:12345")
+                .put(Configuration.PROPERTY_NO_PROXY, rawEnvNonProxyHosts)
+                .put(JAVA_SYSTEM_PROXY_PREREQUISITE, "true");
 
-        List<Supplier<Configuration>> authenticatedNonProxyHostsSuppliers = Arrays.asList(
-            authenticatedJavaNonProxyHostsSupplier, authenticatedEnvNonProxyHostsSupplier);
+        List<Supplier<TestConfigurationSource>> authenticatedNonProxyHostsSuppliers
+            = Arrays.asList(authenticatedJavaNonProxyHostsSupplier, authenticatedEnvNonProxyHostsSupplier);
 
-        for (Supplier<Configuration> configurationSupplier : authenticatedNonProxyHostsSuppliers) {
+        for (Supplier<TestConfigurationSource> configurationSupplier : authenticatedNonProxyHostsSuppliers) {
             for (String requestUrl : requestUrlsWithoutProxying) {
-                arguments.add(Arguments.of(false, configurationSupplier.get(), requestUrl));
+                arguments.add(Arguments.of(false,
+                    new ConfigurationBuilder(EMPTY_SOURCE, configurationSupplier.get(), EMPTY_SOURCE).build(),
+                    requestUrl));
             }
 
             for (String requestUrl : requestUrlsWithProxying) {
-                arguments.add(Arguments.of(true, configurationSupplier.get(), requestUrl));
+                arguments.add(Arguments.of(true,
+                    new ConfigurationBuilder(EMPTY_SOURCE, configurationSupplier.get(), EMPTY_SOURCE).build(),
+                    requestUrl));
             }
         }
 
         return arguments.stream();
     }
 
+    private static Stream<Arguments> buildWithExplicitConfigurationProxySupplier() {
+        Supplier<ConfigurationBuilder> baseHttpProxy
+            = () -> new ConfigurationBuilder().putProperty("http.proxy.hostname", "localhost")
+                .putProperty("http.proxy.port", "12345");
+
+        List<Arguments> arguments = new ArrayList<>();
+
+        /*
+         * Simple non-authenticated HTTP proxies.
+         */
+        arguments.add(Arguments.of(true, baseHttpProxy.get().build(), SERVER_HTTP_URI + DEFAULT_PATH));
+
+        /*
+         * HTTP proxy with authentication configured.
+         */
+        Configuration httpProxyWithAuthentication = baseHttpProxy.get()
+            .putProperty("http.proxy.username", "1")
+            .putProperty("http.proxy.password", "1")
+            .build();
+
+        arguments.add(Arguments.of(true, httpProxyWithAuthentication, SERVER_HTTP_URI + DEFAULT_PATH));
+
+        /*
+         * Information for non-proxy hosts testing.
+         */
+        String rawJavaNonProxyHosts = String.join("|", "localhost", "127.0.0.1", "*.microsoft.com", "*.linkedin.com");
+        String rawEnvNonProxyHosts = String.join(",", "localhost", "127.0.0.1", "*.microsoft.com", "*.linkedin.com");
+
+        String[] requestUrlsWithoutProxying = new String[] {
+            "http://localhost",
+            "http://127.0.0.1",
+            "http://azure.microsoft.com",
+            "http://careers.linkedin.com" };
+
+        String[] requestUrlsWithProxying
+            = new String[] { "http://portal.azure.com", "http://linkedin.com", "http://8.8.8.8" };
+
+        /*
+         * HTTP proxies with non-proxy hosts configured.
+         */
+        Supplier<ConfigurationBuilder> javaNonProxyHostsSupplier
+            = () -> baseHttpProxy.get().putProperty("http.proxy.non-proxy-hosts", rawJavaNonProxyHosts);
+        for (String requestUrl : requestUrlsWithoutProxying) {
+            arguments.add(Arguments.of(false, javaNonProxyHostsSupplier.get().build(), requestUrl));
+        }
+
+        for (String requestUrl : requestUrlsWithProxying) {
+            arguments.add(Arguments.of(true, javaNonProxyHostsSupplier.get().build(), requestUrl));
+        }
+
+        /*
+         * HTTP proxies with authentication and non-proxy hosts configured.
+         */
+        Supplier<ConfigurationBuilder> authenticatedJavaNonProxyHostsSupplier = () -> javaNonProxyHostsSupplier.get()
+            .putProperty("http.proxy.username", "1")
+            .putProperty("http.proxy.password", "1");
+
+        for (String requestUrl : requestUrlsWithoutProxying) {
+            arguments.add(Arguments.of(false, authenticatedJavaNonProxyHostsSupplier.get().build(), requestUrl));
+        }
+
+        for (String requestUrl : requestUrlsWithProxying) {
+            arguments.add(Arguments.of(true, authenticatedJavaNonProxyHostsSupplier.get().build(), requestUrl));
+        }
+
+        return arguments.stream();
+    }
+
     private static OkHttpClient okHttpClientWithProxyValidation(boolean shouldHaveProxy, Proxy.Type proxyType) {
-        return new OkHttpClient.Builder()
-            .eventListener(new TestEventListenerValidator(shouldHaveProxy, proxyType))
+        return new OkHttpClient.Builder().eventListener(new TestEventListenerValidator(shouldHaveProxy, proxyType))
             // Use a custom Dispatcher and ExecutorService which overrides the uncaught exception handler.
             // This is done to prevent the tests using this from printing their error stack trace.
             // The reason this happens is the test throws an exception which goes uncaught in a thread, and this is an
@@ -505,8 +629,8 @@ public class OkHttpAsyncHttpClientBuilderTests {
     }
 
     private static final class TestEventListenerValidator extends EventListener {
-        private static final String EXPECTED_EXCEPTION_MESSAGE = "This is a local test so we cannot connect to remote "
-            + "hosts eagerly. This is exception is expected.";
+        private static final String EXPECTED_EXCEPTION_MESSAGE
+            = "This is a local test so we cannot connect to remote " + "hosts eagerly. This is exception is expected.";
 
         private static final RuntimeException EXPECTED_EXCEPTION = new RuntimeException(EXPECTED_EXCEPTION_MESSAGE);
 

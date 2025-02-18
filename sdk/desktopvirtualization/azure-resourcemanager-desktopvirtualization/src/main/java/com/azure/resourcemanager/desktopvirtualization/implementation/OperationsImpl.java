@@ -11,17 +11,15 @@ import com.azure.resourcemanager.desktopvirtualization.fluent.OperationsClient;
 import com.azure.resourcemanager.desktopvirtualization.fluent.models.ResourceProviderOperationInner;
 import com.azure.resourcemanager.desktopvirtualization.models.Operations;
 import com.azure.resourcemanager.desktopvirtualization.models.ResourceProviderOperation;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 public final class OperationsImpl implements Operations {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(OperationsImpl.class);
+    private static final ClientLogger LOGGER = new ClientLogger(OperationsImpl.class);
 
     private final OperationsClient innerClient;
 
     private final com.azure.resourcemanager.desktopvirtualization.DesktopVirtualizationManager serviceManager;
 
-    public OperationsImpl(
-        OperationsClient innerClient,
+    public OperationsImpl(OperationsClient innerClient,
         com.azure.resourcemanager.desktopvirtualization.DesktopVirtualizationManager serviceManager) {
         this.innerClient = innerClient;
         this.serviceManager = serviceManager;
@@ -29,12 +27,12 @@ public final class OperationsImpl implements Operations {
 
     public PagedIterable<ResourceProviderOperation> list() {
         PagedIterable<ResourceProviderOperationInner> inner = this.serviceClient().list();
-        return Utils.mapPage(inner, inner1 -> new ResourceProviderOperationImpl(inner1, this.manager()));
+        return ResourceManagerUtils.mapPage(inner, inner1 -> new ResourceProviderOperationImpl(inner1, this.manager()));
     }
 
     public PagedIterable<ResourceProviderOperation> list(Context context) {
         PagedIterable<ResourceProviderOperationInner> inner = this.serviceClient().list(context);
-        return Utils.mapPage(inner, inner1 -> new ResourceProviderOperationImpl(inner1, this.manager()));
+        return ResourceManagerUtils.mapPage(inner, inner1 -> new ResourceProviderOperationImpl(inner1, this.manager()));
     }
 
     private OperationsClient serviceClient() {

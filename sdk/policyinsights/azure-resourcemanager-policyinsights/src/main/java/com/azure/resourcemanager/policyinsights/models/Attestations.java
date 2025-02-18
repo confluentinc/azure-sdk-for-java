@@ -9,33 +9,35 @@ import com.azure.core.http.rest.Response;
 import com.azure.core.util.Context;
 import com.azure.resourcemanager.policyinsights.fluent.models.AttestationInner;
 
-/** Resource collection API of Attestations. */
+/**
+ * Resource collection API of Attestations.
+ */
 public interface Attestations {
     /**
      * Gets all attestations for the subscription.
-     *
+     * 
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return all attestations for the subscription.
+     * @return all attestations for the subscription as paginated response with {@link PagedIterable}.
      */
     PagedIterable<Attestation> list();
 
     /**
      * Gets all attestations for the subscription.
-     *
+     * 
      * @param top Maximum number of records to return.
      * @param filter OData filter expression.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return all attestations for the subscription.
+     * @return all attestations for the subscription as paginated response with {@link PagedIterable}.
      */
     PagedIterable<Attestation> list(Integer top, String filter, Context context);
 
     /**
      * Creates or updates an attestation at subscription scope.
-     *
+     * 
      * @param attestationName The name of the attestation.
      * @param parameters The attestation parameters.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
@@ -47,7 +49,7 @@ public interface Attestations {
 
     /**
      * Creates or updates an attestation at subscription scope.
-     *
+     * 
      * @param attestationName The name of the attestation.
      * @param parameters The attestation parameters.
      * @param context The context to associate with this operation.
@@ -60,7 +62,19 @@ public interface Attestations {
 
     /**
      * Gets an existing attestation at subscription scope.
-     *
+     * 
+     * @param attestationName The name of the attestation.
+     * @param context The context to associate with this operation.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return an existing attestation at subscription scope along with {@link Response}.
+     */
+    Response<Attestation> getAtSubscriptionWithResponse(String attestationName, Context context);
+
+    /**
+     * Gets an existing attestation at subscription scope.
+     * 
      * @param attestationName The name of the attestation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
@@ -70,20 +84,20 @@ public interface Attestations {
     Attestation getAtSubscription(String attestationName);
 
     /**
-     * Gets an existing attestation at subscription scope.
-     *
+     * Deletes an existing attestation at subscription scope.
+     * 
      * @param attestationName The name of the attestation.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return an existing attestation at subscription scope.
+     * @return the {@link Response}.
      */
-    Response<Attestation> getAtSubscriptionWithResponse(String attestationName, Context context);
+    Response<Void> deleteAtSubscriptionWithResponse(String attestationName, Context context);
 
     /**
      * Deletes an existing attestation at subscription scope.
-     *
+     * 
      * @param attestationName The name of the attestation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
@@ -92,31 +106,19 @@ public interface Attestations {
     void deleteAtSubscription(String attestationName);
 
     /**
-     * Deletes an existing attestation at subscription scope.
-     *
-     * @param attestationName The name of the attestation.
-     * @param context The context to associate with this operation.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the response.
-     */
-    Response<Void> deleteAtSubscriptionWithResponse(String attestationName, Context context);
-
-    /**
      * Gets all attestations for the resource group.
-     *
+     * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return all attestations for the resource group.
+     * @return all attestations for the resource group as paginated response with {@link PagedIterable}.
      */
     PagedIterable<Attestation> listByResourceGroup(String resourceGroupName);
 
     /**
      * Gets all attestations for the resource group.
-     *
+     * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
      * @param top Maximum number of records to return.
      * @param filter OData filter expression.
@@ -124,14 +126,28 @@ public interface Attestations {
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return all attestations for the resource group.
+     * @return all attestations for the resource group as paginated response with {@link PagedIterable}.
      */
-    PagedIterable<Attestation> listByResourceGroup(
-        String resourceGroupName, Integer top, String filter, Context context);
+    PagedIterable<Attestation> listByResourceGroup(String resourceGroupName, Integer top, String filter,
+        Context context);
 
     /**
      * Gets an existing attestation at resource group scope.
-     *
+     * 
+     * @param resourceGroupName The name of the resource group. The name is case insensitive.
+     * @param attestationName The name of the attestation.
+     * @param context The context to associate with this operation.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return an existing attestation at resource group scope along with {@link Response}.
+     */
+    Response<Attestation> getByResourceGroupWithResponse(String resourceGroupName, String attestationName,
+        Context context);
+
+    /**
+     * Gets an existing attestation at resource group scope.
+     * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
      * @param attestationName The name of the attestation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
@@ -142,22 +158,21 @@ public interface Attestations {
     Attestation getByResourceGroup(String resourceGroupName, String attestationName);
 
     /**
-     * Gets an existing attestation at resource group scope.
-     *
+     * Deletes an existing attestation at resource group scope.
+     * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
      * @param attestationName The name of the attestation.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return an existing attestation at resource group scope.
+     * @return the {@link Response}.
      */
-    Response<Attestation> getByResourceGroupWithResponse(
-        String resourceGroupName, String attestationName, Context context);
+    Response<Void> deleteByResourceGroupWithResponse(String resourceGroupName, String attestationName, Context context);
 
     /**
      * Deletes an existing attestation at resource group scope.
-     *
+     * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
      * @param attestationName The name of the attestation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
@@ -167,32 +182,19 @@ public interface Attestations {
     void deleteByResourceGroup(String resourceGroupName, String attestationName);
 
     /**
-     * Deletes an existing attestation at resource group scope.
-     *
-     * @param resourceGroupName The name of the resource group. The name is case insensitive.
-     * @param attestationName The name of the attestation.
-     * @param context The context to associate with this operation.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the response.
-     */
-    Response<Void> deleteWithResponse(String resourceGroupName, String attestationName, Context context);
-
-    /**
      * Gets all attestations for a resource.
-     *
+     * 
      * @param resourceId Resource ID.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return all attestations for a resource.
+     * @return all attestations for a resource as paginated response with {@link PagedIterable}.
      */
     PagedIterable<Attestation> listForResource(String resourceId);
 
     /**
      * Gets all attestations for a resource.
-     *
+     * 
      * @param resourceId Resource ID.
      * @param top Maximum number of records to return.
      * @param filter OData filter expression.
@@ -200,13 +202,13 @@ public interface Attestations {
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return all attestations for a resource.
+     * @return all attestations for a resource as paginated response with {@link PagedIterable}.
      */
     PagedIterable<Attestation> listForResource(String resourceId, Integer top, String filter, Context context);
 
     /**
      * Creates or updates an attestation at resource scope.
-     *
+     * 
      * @param resourceId Resource ID.
      * @param attestationName The name of the attestation.
      * @param parameters The attestation parameters.
@@ -219,7 +221,7 @@ public interface Attestations {
 
     /**
      * Creates or updates an attestation at resource scope.
-     *
+     * 
      * @param resourceId Resource ID.
      * @param attestationName The name of the attestation.
      * @param parameters The attestation parameters.
@@ -229,12 +231,25 @@ public interface Attestations {
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
      * @return an attestation resource.
      */
-    Attestation createOrUpdateAtResource(
-        String resourceId, String attestationName, AttestationInner parameters, Context context);
+    Attestation createOrUpdateAtResource(String resourceId, String attestationName, AttestationInner parameters,
+        Context context);
 
     /**
      * Gets an existing attestation at resource scope.
-     *
+     * 
+     * @param resourceId Resource ID.
+     * @param attestationName The name of the attestation.
+     * @param context The context to associate with this operation.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return an existing attestation at resource scope along with {@link Response}.
+     */
+    Response<Attestation> getAtResourceWithResponse(String resourceId, String attestationName, Context context);
+
+    /**
+     * Gets an existing attestation at resource scope.
+     * 
      * @param resourceId Resource ID.
      * @param attestationName The name of the attestation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
@@ -245,21 +260,21 @@ public interface Attestations {
     Attestation getAtResource(String resourceId, String attestationName);
 
     /**
-     * Gets an existing attestation at resource scope.
-     *
+     * Deletes an existing attestation at individual resource scope.
+     * 
      * @param resourceId Resource ID.
      * @param attestationName The name of the attestation.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return an existing attestation at resource scope.
+     * @return the {@link Response}.
      */
-    Response<Attestation> getAtResourceWithResponse(String resourceId, String attestationName, Context context);
+    Response<Void> deleteAtResourceWithResponse(String resourceId, String attestationName, Context context);
 
     /**
      * Deletes an existing attestation at individual resource scope.
-     *
+     * 
      * @param resourceId Resource ID.
      * @param attestationName The name of the attestation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
@@ -269,44 +284,31 @@ public interface Attestations {
     void deleteAtResource(String resourceId, String attestationName);
 
     /**
-     * Deletes an existing attestation at individual resource scope.
-     *
-     * @param resourceId Resource ID.
-     * @param attestationName The name of the attestation.
-     * @param context The context to associate with this operation.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the response.
-     */
-    Response<Void> deleteAtResourceWithResponse(String resourceId, String attestationName, Context context);
-
-    /**
      * Gets an existing attestation at resource group scope.
-     *
+     * 
      * @param id the resource ID.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return an existing attestation at resource group scope.
+     * @return an existing attestation at resource group scope along with {@link Response}.
      */
     Attestation getById(String id);
 
     /**
      * Gets an existing attestation at resource group scope.
-     *
+     * 
      * @param id the resource ID.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return an existing attestation at resource group scope.
+     * @return an existing attestation at resource group scope along with {@link Response}.
      */
     Response<Attestation> getByIdWithResponse(String id, Context context);
 
     /**
      * Deletes an existing attestation at resource group scope.
-     *
+     * 
      * @param id the resource ID.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
@@ -316,19 +318,19 @@ public interface Attestations {
 
     /**
      * Deletes an existing attestation at resource group scope.
-     *
+     * 
      * @param id the resource ID.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the response.
+     * @return the {@link Response}.
      */
     Response<Void> deleteByIdWithResponse(String id, Context context);
 
     /**
      * Begins definition for a new Attestation resource.
-     *
+     * 
      * @param name resource name.
      * @return the first stage of the new Attestation definition.
      */

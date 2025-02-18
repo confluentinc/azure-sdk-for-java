@@ -8,36 +8,53 @@ import com.azure.core.http.rest.PagedIterable;
 import com.azure.core.http.rest.Response;
 import com.azure.core.util.Context;
 
-/** Resource collection API of DigitalTwinsEndpoints. */
+/**
+ * Resource collection API of DigitalTwinsEndpoints.
+ */
 public interface DigitalTwinsEndpoints {
     /**
      * Get DigitalTwinsInstance Endpoints.
-     *
+     * 
      * @param resourceGroupName The name of the resource group that contains the DigitalTwinsInstance.
      * @param resourceName The name of the DigitalTwinsInstance.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return digitalTwinsInstance Endpoints.
+     * @return digitalTwinsInstance Endpoints as paginated response with {@link PagedIterable}.
      */
     PagedIterable<DigitalTwinsEndpointResource> list(String resourceGroupName, String resourceName);
 
     /**
      * Get DigitalTwinsInstance Endpoints.
-     *
+     * 
      * @param resourceGroupName The name of the resource group that contains the DigitalTwinsInstance.
      * @param resourceName The name of the DigitalTwinsInstance.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return digitalTwinsInstance Endpoints.
+     * @return digitalTwinsInstance Endpoints as paginated response with {@link PagedIterable}.
      */
     PagedIterable<DigitalTwinsEndpointResource> list(String resourceGroupName, String resourceName, Context context);
 
     /**
      * Get DigitalTwinsInstances Endpoint.
-     *
+     * 
+     * @param resourceGroupName The name of the resource group that contains the DigitalTwinsInstance.
+     * @param resourceName The name of the DigitalTwinsInstance.
+     * @param endpointName Name of Endpoint Resource.
+     * @param context The context to associate with this operation.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return digitalTwinsInstances Endpoint along with {@link Response}.
+     */
+    Response<DigitalTwinsEndpointResource> getWithResponse(String resourceGroupName, String resourceName,
+        String endpointName, Context context);
+
+    /**
+     * Get DigitalTwinsInstances Endpoint.
+     * 
      * @param resourceGroupName The name of the resource group that contains the DigitalTwinsInstance.
      * @param resourceName The name of the DigitalTwinsInstance.
      * @param endpointName Name of Endpoint Resource.
@@ -49,23 +66,8 @@ public interface DigitalTwinsEndpoints {
     DigitalTwinsEndpointResource get(String resourceGroupName, String resourceName, String endpointName);
 
     /**
-     * Get DigitalTwinsInstances Endpoint.
-     *
-     * @param resourceGroupName The name of the resource group that contains the DigitalTwinsInstance.
-     * @param resourceName The name of the DigitalTwinsInstance.
-     * @param endpointName Name of Endpoint Resource.
-     * @param context The context to associate with this operation.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return digitalTwinsInstances Endpoint.
-     */
-    Response<DigitalTwinsEndpointResource> getWithResponse(
-        String resourceGroupName, String resourceName, String endpointName, Context context);
-
-    /**
      * Delete a DigitalTwinsInstance endpoint.
-     *
+     * 
      * @param resourceGroupName The name of the resource group that contains the DigitalTwinsInstance.
      * @param resourceName The name of the DigitalTwinsInstance.
      * @param endpointName Name of Endpoint Resource.
@@ -78,7 +80,7 @@ public interface DigitalTwinsEndpoints {
 
     /**
      * Delete a DigitalTwinsInstance endpoint.
-     *
+     * 
      * @param resourceGroupName The name of the resource group that contains the DigitalTwinsInstance.
      * @param resourceName The name of the DigitalTwinsInstance.
      * @param endpointName Name of Endpoint Resource.
@@ -88,35 +90,35 @@ public interface DigitalTwinsEndpoints {
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
      * @return digitalTwinsInstance endpoint resource.
      */
-    DigitalTwinsEndpointResource delete(
-        String resourceGroupName, String resourceName, String endpointName, Context context);
+    DigitalTwinsEndpointResource delete(String resourceGroupName, String resourceName, String endpointName,
+        Context context);
 
     /**
      * Get DigitalTwinsInstances Endpoint.
-     *
+     * 
      * @param id the resource ID.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return digitalTwinsInstances Endpoint.
+     * @return digitalTwinsInstances Endpoint along with {@link Response}.
      */
     DigitalTwinsEndpointResource getById(String id);
 
     /**
      * Get DigitalTwinsInstances Endpoint.
-     *
+     * 
      * @param id the resource ID.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return digitalTwinsInstances Endpoint.
+     * @return digitalTwinsInstances Endpoint along with {@link Response}.
      */
     Response<DigitalTwinsEndpointResource> getByIdWithResponse(String id, Context context);
 
     /**
      * Delete a DigitalTwinsInstance endpoint.
-     *
+     * 
      * @param id the resource ID.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
@@ -127,7 +129,7 @@ public interface DigitalTwinsEndpoints {
 
     /**
      * Delete a DigitalTwinsInstance endpoint.
-     *
+     * 
      * @param id the resource ID.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
@@ -139,7 +141,7 @@ public interface DigitalTwinsEndpoints {
 
     /**
      * Begins definition for a new DigitalTwinsEndpointResource resource.
-     *
+     * 
      * @param name resource name.
      * @return the first stage of the new DigitalTwinsEndpointResource definition.
      */

@@ -10,33 +10,35 @@ import com.azure.core.http.rest.PagedIterable;
 import com.azure.core.util.Context;
 import com.azure.resourcemanager.datafactory.fluent.models.PrivateEndpointConnectionResourceInner;
 
-/** An instance of this class provides access to all the operations defined in PrivateEndPointConnectionsClient. */
+/**
+ * An instance of this class provides access to all the operations defined in PrivateEndPointConnectionsClient.
+ */
 public interface PrivateEndPointConnectionsClient {
     /**
      * Lists Private endpoint connections.
-     *
+     * 
      * @param resourceGroupName The resource group name.
      * @param factoryName The factory name.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return a list of linked service resources.
+     * @return a list of linked service resources as paginated response with {@link PagedIterable}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
     PagedIterable<PrivateEndpointConnectionResourceInner> listByFactory(String resourceGroupName, String factoryName);
 
     /**
      * Lists Private endpoint connections.
-     *
+     * 
      * @param resourceGroupName The resource group name.
      * @param factoryName The factory name.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return a list of linked service resources.
+     * @return a list of linked service resources as paginated response with {@link PagedIterable}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
-    PagedIterable<PrivateEndpointConnectionResourceInner> listByFactory(
-        String resourceGroupName, String factoryName, Context context);
+    PagedIterable<PrivateEndpointConnectionResourceInner> listByFactory(String resourceGroupName, String factoryName,
+        Context context);
 }

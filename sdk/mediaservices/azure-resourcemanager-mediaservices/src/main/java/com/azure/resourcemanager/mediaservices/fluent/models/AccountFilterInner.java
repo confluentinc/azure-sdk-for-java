@@ -5,50 +5,65 @@
 package com.azure.resourcemanager.mediaservices.fluent.models;
 
 import com.azure.core.annotation.Fluent;
-import com.azure.core.annotation.JsonFlatten;
 import com.azure.core.management.ProxyResource;
 import com.azure.core.management.SystemData;
-import com.azure.core.util.logging.ClientLogger;
+import com.azure.json.JsonReader;
+import com.azure.json.JsonToken;
+import com.azure.json.JsonWriter;
 import com.azure.resourcemanager.mediaservices.models.FilterTrackSelection;
 import com.azure.resourcemanager.mediaservices.models.FirstQuality;
 import com.azure.resourcemanager.mediaservices.models.PresentationTimeRange;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import java.io.IOException;
 import java.util.List;
 
-/** An Account Filter. */
-@JsonFlatten
+/**
+ * An Account Filter.
+ */
 @Fluent
-public class AccountFilterInner extends ProxyResource {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(AccountFilterInner.class);
+public final class AccountFilterInner extends ProxyResource {
+    /*
+     * The Media Filter properties.
+     */
+    private MediaFilterProperties innerProperties;
 
     /*
      * The system metadata relating to this resource.
      */
-    @JsonProperty(value = "systemData", access = JsonProperty.Access.WRITE_ONLY)
     private SystemData systemData;
 
     /*
-     * The presentation time range.
+     * The type of the resource.
      */
-    @JsonProperty(value = "properties.presentationTimeRange")
-    private PresentationTimeRange presentationTimeRange;
+    private String type;
 
     /*
-     * The first quality.
+     * The name of the resource.
      */
-    @JsonProperty(value = "properties.firstQuality")
-    private FirstQuality firstQuality;
+    private String name;
 
     /*
-     * The tracks selection conditions.
+     * Fully qualified resource Id for the resource.
      */
-    @JsonProperty(value = "properties.tracks")
-    private List<FilterTrackSelection> tracks;
+    private String id;
+
+    /**
+     * Creates an instance of AccountFilterInner class.
+     */
+    public AccountFilterInner() {
+    }
+
+    /**
+     * Get the innerProperties property: The Media Filter properties.
+     * 
+     * @return the innerProperties value.
+     */
+    private MediaFilterProperties innerProperties() {
+        return this.innerProperties;
+    }
 
     /**
      * Get the systemData property: The system metadata relating to this resource.
-     *
+     * 
      * @return the systemData value.
      */
     public SystemData systemData() {
@@ -56,79 +71,157 @@ public class AccountFilterInner extends ProxyResource {
     }
 
     /**
+     * Get the type property: The type of the resource.
+     * 
+     * @return the type value.
+     */
+    @Override
+    public String type() {
+        return this.type;
+    }
+
+    /**
+     * Get the name property: The name of the resource.
+     * 
+     * @return the name value.
+     */
+    @Override
+    public String name() {
+        return this.name;
+    }
+
+    /**
+     * Get the id property: Fully qualified resource Id for the resource.
+     * 
+     * @return the id value.
+     */
+    @Override
+    public String id() {
+        return this.id;
+    }
+
+    /**
      * Get the presentationTimeRange property: The presentation time range.
-     *
+     * 
      * @return the presentationTimeRange value.
      */
     public PresentationTimeRange presentationTimeRange() {
-        return this.presentationTimeRange;
+        return this.innerProperties() == null ? null : this.innerProperties().presentationTimeRange();
     }
 
     /**
      * Set the presentationTimeRange property: The presentation time range.
-     *
+     * 
      * @param presentationTimeRange the presentationTimeRange value to set.
      * @return the AccountFilterInner object itself.
      */
     public AccountFilterInner withPresentationTimeRange(PresentationTimeRange presentationTimeRange) {
-        this.presentationTimeRange = presentationTimeRange;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new MediaFilterProperties();
+        }
+        this.innerProperties().withPresentationTimeRange(presentationTimeRange);
         return this;
     }
 
     /**
      * Get the firstQuality property: The first quality.
-     *
+     * 
      * @return the firstQuality value.
      */
     public FirstQuality firstQuality() {
-        return this.firstQuality;
+        return this.innerProperties() == null ? null : this.innerProperties().firstQuality();
     }
 
     /**
      * Set the firstQuality property: The first quality.
-     *
+     * 
      * @param firstQuality the firstQuality value to set.
      * @return the AccountFilterInner object itself.
      */
     public AccountFilterInner withFirstQuality(FirstQuality firstQuality) {
-        this.firstQuality = firstQuality;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new MediaFilterProperties();
+        }
+        this.innerProperties().withFirstQuality(firstQuality);
         return this;
     }
 
     /**
      * Get the tracks property: The tracks selection conditions.
-     *
+     * 
      * @return the tracks value.
      */
     public List<FilterTrackSelection> tracks() {
-        return this.tracks;
+        return this.innerProperties() == null ? null : this.innerProperties().tracks();
     }
 
     /**
      * Set the tracks property: The tracks selection conditions.
-     *
+     * 
      * @param tracks the tracks value to set.
      * @return the AccountFilterInner object itself.
      */
     public AccountFilterInner withTracks(List<FilterTrackSelection> tracks) {
-        this.tracks = tracks;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new MediaFilterProperties();
+        }
+        this.innerProperties().withTracks(tracks);
         return this;
     }
 
     /**
      * Validates the instance.
-     *
+     * 
      * @throws IllegalArgumentException thrown if the instance is not valid.
      */
     public void validate() {
-        if (presentationTimeRange() != null) {
-            presentationTimeRange().validate();
+        if (innerProperties() != null) {
+            innerProperties().validate();
         }
-        if (firstQuality() != null) {
-            firstQuality().validate();
-        }
-        if (tracks() != null) {
-            tracks().forEach(e -> e.validate());
-        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public JsonWriter toJson(JsonWriter jsonWriter) throws IOException {
+        jsonWriter.writeStartObject();
+        jsonWriter.writeJsonField("properties", this.innerProperties);
+        return jsonWriter.writeEndObject();
+    }
+
+    /**
+     * Reads an instance of AccountFilterInner from the JsonReader.
+     * 
+     * @param jsonReader The JsonReader being read.
+     * @return An instance of AccountFilterInner if the JsonReader was pointing to an instance of it, or null if it was
+     * pointing to JSON null.
+     * @throws IllegalStateException If the deserialized JSON object was missing any required properties.
+     * @throws IOException If an error occurs while reading the AccountFilterInner.
+     */
+    public static AccountFilterInner fromJson(JsonReader jsonReader) throws IOException {
+        return jsonReader.readObject(reader -> {
+            AccountFilterInner deserializedAccountFilterInner = new AccountFilterInner();
+            while (reader.nextToken() != JsonToken.END_OBJECT) {
+                String fieldName = reader.getFieldName();
+                reader.nextToken();
+
+                if ("id".equals(fieldName)) {
+                    deserializedAccountFilterInner.id = reader.getString();
+                } else if ("name".equals(fieldName)) {
+                    deserializedAccountFilterInner.name = reader.getString();
+                } else if ("type".equals(fieldName)) {
+                    deserializedAccountFilterInner.type = reader.getString();
+                } else if ("properties".equals(fieldName)) {
+                    deserializedAccountFilterInner.innerProperties = MediaFilterProperties.fromJson(reader);
+                } else if ("systemData".equals(fieldName)) {
+                    deserializedAccountFilterInner.systemData = SystemData.fromJson(reader);
+                } else {
+                    reader.skipChildren();
+                }
+            }
+
+            return deserializedAccountFilterInner;
+        });
     }
 }

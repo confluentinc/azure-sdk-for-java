@@ -12,12 +12,31 @@ import com.azure.core.util.Context;
 import com.azure.core.util.polling.SyncPoller;
 import com.azure.resourcemanager.recoveryservicesbackup.fluent.models.ProtectionPolicyResourceInner;
 
-/** An instance of this class provides access to all the operations defined in ProtectionPoliciesClient. */
+/**
+ * An instance of this class provides access to all the operations defined in ProtectionPoliciesClient.
+ */
 public interface ProtectionPoliciesClient {
     /**
      * Provides the details of the backup policies associated to Recovery Services Vault. This is an asynchronous
      * operation. Status of the operation can be fetched using GetPolicyOperationResult API.
-     *
+     * 
+     * @param vaultName The name of the recovery services vault.
+     * @param resourceGroupName The name of the resource group where the recovery services vault is present.
+     * @param policyName Backup policy information to be fetched.
+     * @param context The context to associate with this operation.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return base class for backup policy along with {@link Response}.
+     */
+    @ServiceMethod(returns = ReturnType.SINGLE)
+    Response<ProtectionPolicyResourceInner> getWithResponse(String vaultName, String resourceGroupName,
+        String policyName, Context context);
+
+    /**
+     * Provides the details of the backup policies associated to Recovery Services Vault. This is an asynchronous
+     * operation. Status of the operation can be fetched using GetPolicyOperationResult API.
+     * 
      * @param vaultName The name of the recovery services vault.
      * @param resourceGroupName The name of the resource group where the recovery services vault is present.
      * @param policyName Backup policy information to be fetched.
@@ -30,26 +49,27 @@ public interface ProtectionPoliciesClient {
     ProtectionPolicyResourceInner get(String vaultName, String resourceGroupName, String policyName);
 
     /**
-     * Provides the details of the backup policies associated to Recovery Services Vault. This is an asynchronous
-     * operation. Status of the operation can be fetched using GetPolicyOperationResult API.
-     *
+     * Creates or modifies a backup policy. This is an asynchronous operation. Status of the operation can be fetched
+     * using GetPolicyOperationResult API.
+     * 
      * @param vaultName The name of the recovery services vault.
      * @param resourceGroupName The name of the resource group where the recovery services vault is present.
-     * @param policyName Backup policy information to be fetched.
+     * @param policyName Backup policy to be created.
+     * @param parameters resource backup policy.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return base class for backup policy.
+     * @return base class for backup policy along with {@link Response}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    Response<ProtectionPolicyResourceInner> getWithResponse(
-        String vaultName, String resourceGroupName, String policyName, Context context);
+    Response<ProtectionPolicyResourceInner> createOrUpdateWithResponse(String vaultName, String resourceGroupName,
+        String policyName, ProtectionPolicyResourceInner parameters, Context context);
 
     /**
      * Creates or modifies a backup policy. This is an asynchronous operation. Status of the operation can be fetched
      * using GetPolicyOperationResult API.
-     *
+     * 
      * @param vaultName The name of the recovery services vault.
      * @param resourceGroupName The name of the resource group where the recovery services vault is present.
      * @param policyName Backup policy to be created.
@@ -60,50 +80,30 @@ public interface ProtectionPoliciesClient {
      * @return base class for backup policy.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    ProtectionPolicyResourceInner createOrUpdate(
-        String vaultName, String resourceGroupName, String policyName, ProtectionPolicyResourceInner parameters);
-
-    /**
-     * Creates or modifies a backup policy. This is an asynchronous operation. Status of the operation can be fetched
-     * using GetPolicyOperationResult API.
-     *
-     * @param vaultName The name of the recovery services vault.
-     * @param resourceGroupName The name of the resource group where the recovery services vault is present.
-     * @param policyName Backup policy to be created.
-     * @param parameters resource backup policy.
-     * @param context The context to associate with this operation.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return base class for backup policy.
-     */
-    @ServiceMethod(returns = ReturnType.SINGLE)
-    Response<ProtectionPolicyResourceInner> createOrUpdateWithResponse(
-        String vaultName,
-        String resourceGroupName,
-        String policyName,
-        ProtectionPolicyResourceInner parameters,
-        Context context);
+    ProtectionPolicyResourceInner createOrUpdate(String vaultName, String resourceGroupName, String policyName,
+        ProtectionPolicyResourceInner parameters);
 
     /**
      * Deletes specified backup policy from your Recovery Services Vault. This is an asynchronous operation. Status of
-     * the operation can be fetched using GetProtectionPolicyOperationResult API.
-     *
+     * the
+     * operation can be fetched using GetProtectionPolicyOperationResult API.
+     * 
      * @param vaultName The name of the recovery services vault.
      * @param resourceGroupName The name of the resource group where the recovery services vault is present.
      * @param policyName Backup policy to be deleted.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the completion.
+     * @return the {@link SyncPoller} for polling of long-running operation.
      */
     @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
     SyncPoller<PollResult<Void>, Void> beginDelete(String vaultName, String resourceGroupName, String policyName);
 
     /**
      * Deletes specified backup policy from your Recovery Services Vault. This is an asynchronous operation. Status of
-     * the operation can be fetched using GetProtectionPolicyOperationResult API.
-     *
+     * the
+     * operation can be fetched using GetProtectionPolicyOperationResult API.
+     * 
      * @param vaultName The name of the recovery services vault.
      * @param resourceGroupName The name of the resource group where the recovery services vault is present.
      * @param policyName Backup policy to be deleted.
@@ -111,16 +111,17 @@ public interface ProtectionPoliciesClient {
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the completion.
+     * @return the {@link SyncPoller} for polling of long-running operation.
      */
     @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
-    SyncPoller<PollResult<Void>, Void> beginDelete(
-        String vaultName, String resourceGroupName, String policyName, Context context);
+    SyncPoller<PollResult<Void>, Void> beginDelete(String vaultName, String resourceGroupName, String policyName,
+        Context context);
 
     /**
      * Deletes specified backup policy from your Recovery Services Vault. This is an asynchronous operation. Status of
-     * the operation can be fetched using GetProtectionPolicyOperationResult API.
-     *
+     * the
+     * operation can be fetched using GetProtectionPolicyOperationResult API.
+     * 
      * @param vaultName The name of the recovery services vault.
      * @param resourceGroupName The name of the resource group where the recovery services vault is present.
      * @param policyName Backup policy to be deleted.
@@ -133,8 +134,9 @@ public interface ProtectionPoliciesClient {
 
     /**
      * Deletes specified backup policy from your Recovery Services Vault. This is an asynchronous operation. Status of
-     * the operation can be fetched using GetProtectionPolicyOperationResult API.
-     *
+     * the
+     * operation can be fetched using GetProtectionPolicyOperationResult API.
+     * 
      * @param vaultName The name of the recovery services vault.
      * @param resourceGroupName The name of the resource group where the recovery services vault is present.
      * @param policyName Backup policy to be deleted.

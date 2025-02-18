@@ -9,6 +9,7 @@ This package allows you to interact with Azure Blob Storage through the standard
 ### Prerequisites
 
 - [Java Development Kit (JDK)][jdk] with version 8 or above
+  - Here are details about [Java 8 client compatibility with Azure Certificate Authority](https://learn.microsoft.com/azure/security/fundamentals/azure-ca-details?tabs=root-and-subordinate-cas-list#client-compatibility-for-public-pkis).
 - [Azure Subscription][azure_subscription]
 - [Create Storage Account][storage_account]
 
@@ -19,7 +20,7 @@ This package allows you to interact with Azure Blob Storage through the standard
 <dependency>
     <groupId>com.azure</groupId>
     <artifactId>azure-storage-blob-nio</artifactId>
-    <version>12.0.0-beta.14</version>
+    <version>12.0.0-beta.29</version>
 </dependency>
 ```
 [//]: # ({x-version-update-end})
@@ -129,6 +130,7 @@ committed or available to be read until the write stream is closed.
 
 The following sections provide several code snippets covering some of the most common Azure Storage Blob NIO tasks, including:
 
+- [URI format](#uri-format)
 - [Create a `FileSystem`](#create-a-filesystem)
 - [Create a directory](#create-a-directory)
 - [Iterate over directory contents](#iterate-over-directory-contents)
@@ -138,6 +140,19 @@ The following sections provide several code snippets covering some of the most c
 - [Delete a file](#delete-a-file)
 - [Read attributes on a file](#read-attributes-on-a-file)
 - [Write attributes to a file](#write-attributes-to-a-file)
+
+### URI format
+URIs are the fundamental way of identifying a resource. This package defines its URI format as follows:
+
+The scheme for this provider is `"azb"`, and the format of the URI to identify an `AzureFileSystem` is 
+`"azb://?endpoint=<endpoint>"`. The endpoint of the Storage account is used to uniquely identify the filesystem.
+
+The root component, if it is present, is the first element of the path and is denoted by a `':'` as the last character.
+Hence, only one instance of `':'` may appear in a path string, and it may only be the last character of the first 
+element in the path. The root component is used to identify which container a path belongs to.
+
+All other path elements, including separators, are considered as the blob name. `AzurePath#fromBlobUrl`
+may be used to convert a typical http url pointing to a blob into an `AzurePath` object pointing to the same resource.
 
 ### Create a `FileSystem`
 
@@ -251,7 +266,7 @@ When using the NIO implementation for Azure Blob Storage, errors returned by the
 ### Default HTTP Client
 All client libraries by default use the Netty HTTP client. Adding the above dependency will automatically configure 
 the client library to use the Netty HTTP client. Configuring or changing the HTTP client is detailed in the
-[HTTP clients wiki](https://github.com/Azure/azure-sdk-for-java/wiki/HTTP-clients).
+[HTTP clients wiki](https://learn.microsoft.com/azure/developer/java/sdk/http-client-pipeline#http-clients).
 
 ### Default SSL library
 All client libraries, by default, use the Tomcat-native Boring SSL library to enable native-level performance for SSL 
@@ -296,17 +311,17 @@ This project has adopted the [Microsoft Open Source Code of Conduct][coc]. For m
 [source]: https://github.com/Azure/azure-sdk-for-java/blob/main/sdk/storage/azure-storage-blob-nio/src
 [samples_readme]: https://github.com/Azure/azure-sdk-for-java/blob/main/sdk/storage/azure-storage-blob-nio/src/samples/README.md
 [docs]: https://azure.github.io/azure-sdk-for-java/
-[rest_docs]: https://docs.microsoft.com/rest/api/storageservices/blob-service-rest-api
-[product_docs]: https://docs.microsoft.com/azure/storage/blobs/storage-blobs-overview
-[sas_token]: https://docs.microsoft.com/azure/storage/common/storage-dotnet-shared-access-signature-part-1
-[shared_key]: https://docs.microsoft.com/rest/api/storageservices/authorize-with-shared-key
-[jdk]: https://docs.microsoft.com/java/azure/jdk/
+[rest_docs]: https://learn.microsoft.com/rest/api/storageservices/blob-service-rest-api
+[product_docs]: https://learn.microsoft.com/azure/storage/blobs/storage-blobs-overview
+[sas_token]: https://learn.microsoft.com/azure/storage/common/storage-dotnet-shared-access-signature-part-1
+[shared_key]: https://learn.microsoft.com/rest/api/storageservices/authorize-with-shared-key
+[jdk]: https://learn.microsoft.com/java/azure/jdk/
 [azure_subscription]: https://azure.microsoft.com/free/
-[storage_account]: https://docs.microsoft.com/azure/storage/common/storage-quickstart-create-account?tabs=azure-portal
-[storage_account_create_cli]: https://docs.microsoft.com/azure/storage/common/storage-quickstart-create-account?tabs=azure-cli
-[storage_account_create_portal]: https://docs.microsoft.com/azure/storage/common/storage-quickstart-create-account?tabs=azure-portal
+[storage_account]: https://learn.microsoft.com/azure/storage/common/storage-quickstart-create-account?tabs=azure-portal
+[storage_account_create_cli]: https://learn.microsoft.com/azure/storage/common/storage-quickstart-create-account?tabs=azure-cli
+[storage_account_create_portal]: https://learn.microsoft.com/azure/storage/common/storage-quickstart-create-account?tabs=azure-portal
 [identity]: https://github.com/Azure/azure-sdk-for-java/blob/main/sdk/identity/azure-identity/README.md
-[error_codes]: https://docs.microsoft.com/rest/api/storageservices/blob-service-error-codes
+[error_codes]: https://learn.microsoft.com/rest/api/storageservices/blob-service-error-codes
 [samples]: https://docs.oracle.com/javase/tutorial/essential/io/fileio.html
 [cla]: https://cla.microsoft.com
 [coc]: https://opensource.microsoft.com/codeofconduct/
@@ -316,4 +331,4 @@ This project has adopted the [Microsoft Open Source Code of Conduct][coc]. For m
 [file_system]: https://docs.oracle.com/javase/7/docs/api/java/nio/file/FileSystem.html
 [file_systems]: https://docs.oracle.com/javase/7/docs/api/java/nio/file/FileSystems.html
 
-![Impressions](https://azure-sdk-impressions.azurewebsites.net/api/impressions/azure-sdk-for-java%2Fsdk%2Fstorage%2Fazure-storage-blob%2FREADME.png)
+

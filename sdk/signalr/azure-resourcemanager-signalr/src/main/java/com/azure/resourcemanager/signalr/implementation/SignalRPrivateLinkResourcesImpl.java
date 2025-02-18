@@ -11,17 +11,15 @@ import com.azure.resourcemanager.signalr.fluent.SignalRPrivateLinkResourcesClien
 import com.azure.resourcemanager.signalr.fluent.models.PrivateLinkResourceInner;
 import com.azure.resourcemanager.signalr.models.PrivateLinkResource;
 import com.azure.resourcemanager.signalr.models.SignalRPrivateLinkResources;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 public final class SignalRPrivateLinkResourcesImpl implements SignalRPrivateLinkResources {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(SignalRPrivateLinkResourcesImpl.class);
+    private static final ClientLogger LOGGER = new ClientLogger(SignalRPrivateLinkResourcesImpl.class);
 
     private final SignalRPrivateLinkResourcesClient innerClient;
 
     private final com.azure.resourcemanager.signalr.SignalRManager serviceManager;
 
-    public SignalRPrivateLinkResourcesImpl(
-        SignalRPrivateLinkResourcesClient innerClient,
+    public SignalRPrivateLinkResourcesImpl(SignalRPrivateLinkResourcesClient innerClient,
         com.azure.resourcemanager.signalr.SignalRManager serviceManager) {
         this.innerClient = innerClient;
         this.serviceManager = serviceManager;
@@ -29,13 +27,13 @@ public final class SignalRPrivateLinkResourcesImpl implements SignalRPrivateLink
 
     public PagedIterable<PrivateLinkResource> list(String resourceGroupName, String resourceName) {
         PagedIterable<PrivateLinkResourceInner> inner = this.serviceClient().list(resourceGroupName, resourceName);
-        return Utils.mapPage(inner, inner1 -> new PrivateLinkResourceImpl(inner1, this.manager()));
+        return ResourceManagerUtils.mapPage(inner, inner1 -> new PrivateLinkResourceImpl(inner1, this.manager()));
     }
 
     public PagedIterable<PrivateLinkResource> list(String resourceGroupName, String resourceName, Context context) {
-        PagedIterable<PrivateLinkResourceInner> inner =
-            this.serviceClient().list(resourceGroupName, resourceName, context);
-        return Utils.mapPage(inner, inner1 -> new PrivateLinkResourceImpl(inner1, this.manager()));
+        PagedIterable<PrivateLinkResourceInner> inner
+            = this.serviceClient().list(resourceGroupName, resourceName, context);
+        return ResourceManagerUtils.mapPage(inner, inner1 -> new PrivateLinkResourceImpl(inner1, this.manager()));
     }
 
     private SignalRPrivateLinkResourcesClient serviceClient() {

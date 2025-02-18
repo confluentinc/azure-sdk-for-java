@@ -4,18 +4,23 @@
 
 package com.azure.resourcemanager.storage.models;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonValue;
-
-/** Defines values for KeyPermission. */
+/**
+ * Permissions for the key -- read-only or full permissions.
+ */
 public enum KeyPermission {
-    /** Enum value Read. */
+    /**
+     * Enum value Read.
+     */
     READ("Read"),
 
-    /** Enum value Full. */
+    /**
+     * Enum value Full.
+     */
     FULL("Full");
 
-    /** The actual serialized value for a KeyPermission instance. */
+    /**
+     * The actual serialized value for a KeyPermission instance.
+     */
     private final String value;
 
     KeyPermission(String value) {
@@ -24,12 +29,14 @@ public enum KeyPermission {
 
     /**
      * Parses a serialized value to a KeyPermission instance.
-     *
+     * 
      * @param value the serialized value to parse.
      * @return the parsed KeyPermission object, or null if unable to parse.
      */
-    @JsonCreator
     public static KeyPermission fromString(String value) {
+        if (value == null) {
+            return null;
+        }
         KeyPermission[] items = KeyPermission.values();
         for (KeyPermission item : items) {
             if (item.toString().equalsIgnoreCase(value)) {
@@ -39,7 +46,9 @@ public enum KeyPermission {
         return null;
     }
 
-    @JsonValue
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String toString() {
         return this.value;

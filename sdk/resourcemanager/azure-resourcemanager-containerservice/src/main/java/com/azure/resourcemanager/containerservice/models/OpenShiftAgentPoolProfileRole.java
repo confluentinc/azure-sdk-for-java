@@ -5,29 +5,46 @@
 package com.azure.resourcemanager.containerservice.models;
 
 import com.azure.core.util.ExpandableStringEnum;
-import com.fasterxml.jackson.annotation.JsonCreator;
 import java.util.Collection;
 
-/** Defines values for OpenShiftAgentPoolProfileRole. */
+/**
+ * OpenShiftAgentPoolProfileRole represents the role of the AgentPoolProfile.
+ */
 public final class OpenShiftAgentPoolProfileRole extends ExpandableStringEnum<OpenShiftAgentPoolProfileRole> {
-    /** Static value compute for OpenShiftAgentPoolProfileRole. */
+    /**
+     * Static value compute for OpenShiftAgentPoolProfileRole.
+     */
     public static final OpenShiftAgentPoolProfileRole COMPUTE = fromString("compute");
 
-    /** Static value infra for OpenShiftAgentPoolProfileRole. */
+    /**
+     * Static value infra for OpenShiftAgentPoolProfileRole.
+     */
     public static final OpenShiftAgentPoolProfileRole INFRA = fromString("infra");
 
     /**
+     * Creates a new instance of OpenShiftAgentPoolProfileRole value.
+     * 
+     * @deprecated Use the {@link #fromString(String)} factory method.
+     */
+    @Deprecated
+    public OpenShiftAgentPoolProfileRole() {
+    }
+
+    /**
      * Creates or finds a OpenShiftAgentPoolProfileRole from its string representation.
-     *
+     * 
      * @param name a name to look for.
      * @return the corresponding OpenShiftAgentPoolProfileRole.
      */
-    @JsonCreator
     public static OpenShiftAgentPoolProfileRole fromString(String name) {
         return fromString(name, OpenShiftAgentPoolProfileRole.class);
     }
 
-    /** @return known OpenShiftAgentPoolProfileRole values. */
+    /**
+     * Gets known OpenShiftAgentPoolProfileRole values.
+     * 
+     * @return known OpenShiftAgentPoolProfileRole values.
+     */
     public static Collection<OpenShiftAgentPoolProfileRole> values() {
         return values(OpenShiftAgentPoolProfileRole.class);
     }

@@ -27,7 +27,6 @@ import com.azure.core.management.exception.ManagementException;
 import com.azure.core.management.polling.PollResult;
 import com.azure.core.util.Context;
 import com.azure.core.util.FluxUtil;
-import com.azure.core.util.logging.ClientLogger;
 import com.azure.core.util.polling.PollerFlux;
 import com.azure.core.util.polling.SyncPoller;
 import com.azure.resourcemanager.policyinsights.fluent.PolicyStatesClient;
@@ -35,29 +34,34 @@ import com.azure.resourcemanager.policyinsights.fluent.models.PolicyStateInner;
 import com.azure.resourcemanager.policyinsights.fluent.models.SummarizeResultsInner;
 import com.azure.resourcemanager.policyinsights.models.PolicyStatesQueryResults;
 import com.azure.resourcemanager.policyinsights.models.PolicyStatesResource;
+import com.azure.resourcemanager.policyinsights.models.PolicyStatesSummaryResourceType;
 import java.nio.ByteBuffer;
 import java.time.OffsetDateTime;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-/** An instance of this class provides access to all the operations defined in PolicyStatesClient. */
+/**
+ * An instance of this class provides access to all the operations defined in PolicyStatesClient.
+ */
 public final class PolicyStatesClientImpl implements PolicyStatesClient {
-    private final ClientLogger logger = new ClientLogger(PolicyStatesClientImpl.class);
-
-    /** The proxy service used to perform REST calls. */
+    /**
+     * The proxy service used to perform REST calls.
+     */
     private final PolicyStatesService service;
 
-    /** The service client containing this operation class. */
+    /**
+     * The service client containing this operation class.
+     */
     private final PolicyInsightsClientImpl client;
 
     /**
      * Initializes an instance of PolicyStatesClientImpl.
-     *
+     * 
      * @param client the instance of the service client containing this operation class.
      */
     PolicyStatesClientImpl(PolicyInsightsClientImpl client) {
-        this.service =
-            RestProxy.create(PolicyStatesService.class, client.getHttpPipeline(), client.getSerializerAdapter());
+        this.service
+            = RestProxy.create(PolicyStatesService.class, client.getHttpPipeline(), client.getSerializerAdapter());
         this.client = client;
     }
 
@@ -67,200 +71,128 @@ public final class PolicyStatesClientImpl implements PolicyStatesClient {
      */
     @Host("{$host}")
     @ServiceInterface(name = "PolicyInsightsClient")
-    private interface PolicyStatesService {
-        @Headers({"Content-Type: application/json"})
-        @Post(
-            "/providers/{managementGroupsNamespace}/managementGroups/{managementGroupName}/providers"
-                + "/Microsoft.PolicyInsights/policyStates/{policyStatesResource}/queryResults")
-        @ExpectedResponses({200})
+    public interface PolicyStatesService {
+        @Headers({ "Content-Type: application/json" })
+        @Post("/providers/{managementGroupsNamespace}/managementGroups/{managementGroupName}/providers/Microsoft.PolicyInsights/policyStates/{policyStatesResource}/queryResults")
+        @ExpectedResponses({ 200 })
         @UnexpectedResponseExceptionType(ManagementException.class)
-        Mono<Response<PolicyStatesQueryResults>> listQueryResultsForManagementGroup(
-            @HostParam("$host") String endpoint,
+        Mono<Response<PolicyStatesQueryResults>> listQueryResultsForManagementGroup(@HostParam("$host") String endpoint,
             @PathParam("policyStatesResource") PolicyStatesResource policyStatesResource,
             @PathParam("managementGroupsNamespace") String managementGroupsNamespace,
-            @PathParam("managementGroupName") String managementGroupName,
-            @QueryParam("api-version") String apiVersion,
-            @QueryParam("$top") Integer top,
-            @QueryParam("$orderby") String orderBy,
-            @QueryParam("$select") String select,
-            @QueryParam("$from") OffsetDateTime from,
-            @QueryParam("$to") OffsetDateTime to,
-            @QueryParam("$filter") String filter,
-            @QueryParam("$apply") String apply,
-            @QueryParam("$skiptoken") String skipToken,
-            @HeaderParam("Accept") String accept,
-            Context context);
+            @PathParam("managementGroupName") String managementGroupName, @QueryParam("api-version") String apiVersion,
+            @QueryParam("$top") Integer top, @QueryParam("$orderby") String orderBy,
+            @QueryParam("$select") String select, @QueryParam("$from") OffsetDateTime from,
+            @QueryParam("$to") OffsetDateTime to, @QueryParam("$filter") String filter,
+            @QueryParam("$apply") String apply, @QueryParam("$skiptoken") String skipToken,
+            @HeaderParam("Accept") String accept, Context context);
 
-        @Headers({"Content-Type: application/json"})
-        @Post(
-            "/providers/{managementGroupsNamespace}/managementGroups/{managementGroupName}/providers"
-                + "/Microsoft.PolicyInsights/policyStates/{policyStatesSummaryResource}/summarize")
-        @ExpectedResponses({200})
+        @Headers({ "Content-Type: application/json" })
+        @Post("/providers/{managementGroupsNamespace}/managementGroups/{managementGroupName}/providers/Microsoft.PolicyInsights/policyStates/{policyStatesSummaryResource}/summarize")
+        @ExpectedResponses({ 200 })
         @UnexpectedResponseExceptionType(ManagementException.class)
-        Mono<Response<SummarizeResultsInner>> summarizeForManagementGroup(
-            @HostParam("$host") String endpoint,
-            @PathParam("policyStatesSummaryResource") String policyStatesSummaryResource,
+        Mono<Response<SummarizeResultsInner>> summarizeForManagementGroup(@HostParam("$host") String endpoint,
+            @PathParam("policyStatesSummaryResource") PolicyStatesSummaryResourceType policyStatesSummaryResource,
             @PathParam("managementGroupsNamespace") String managementGroupsNamespace,
-            @PathParam("managementGroupName") String managementGroupName,
-            @QueryParam("api-version") String apiVersion,
-            @QueryParam("$top") Integer top,
-            @QueryParam("$from") OffsetDateTime from,
-            @QueryParam("$to") OffsetDateTime to,
-            @QueryParam("$filter") String filter,
-            @HeaderParam("Accept") String accept,
-            Context context);
+            @PathParam("managementGroupName") String managementGroupName, @QueryParam("api-version") String apiVersion,
+            @QueryParam("$top") Integer top, @QueryParam("$from") OffsetDateTime from,
+            @QueryParam("$to") OffsetDateTime to, @QueryParam("$filter") String filter,
+            @HeaderParam("Accept") String accept, Context context);
 
-        @Headers({"Content-Type: application/json"})
-        @Post(
-            "/subscriptions/{subscriptionId}/providers/Microsoft.PolicyInsights/policyStates/{policyStatesResource}"
-                + "/queryResults")
-        @ExpectedResponses({200})
+        @Headers({ "Content-Type: application/json" })
+        @Post("/subscriptions/{subscriptionId}/providers/Microsoft.PolicyInsights/policyStates/{policyStatesResource}/queryResults")
+        @ExpectedResponses({ 200 })
         @UnexpectedResponseExceptionType(ManagementException.class)
-        Mono<Response<PolicyStatesQueryResults>> listQueryResultsForSubscription(
-            @HostParam("$host") String endpoint,
+        Mono<Response<PolicyStatesQueryResults>> listQueryResultsForSubscription(@HostParam("$host") String endpoint,
+            @PathParam("policyStatesResource") PolicyStatesResource policyStatesResource,
+            @PathParam("subscriptionId") String subscriptionId, @QueryParam("api-version") String apiVersion,
+            @QueryParam("$top") Integer top, @QueryParam("$orderby") String orderBy,
+            @QueryParam("$select") String select, @QueryParam("$from") OffsetDateTime from,
+            @QueryParam("$to") OffsetDateTime to, @QueryParam("$filter") String filter,
+            @QueryParam("$apply") String apply, @QueryParam("$skiptoken") String skipToken,
+            @HeaderParam("Accept") String accept, Context context);
+
+        @Headers({ "Content-Type: application/json" })
+        @Post("/subscriptions/{subscriptionId}/providers/Microsoft.PolicyInsights/policyStates/{policyStatesSummaryResource}/summarize")
+        @ExpectedResponses({ 200 })
+        @UnexpectedResponseExceptionType(ManagementException.class)
+        Mono<Response<SummarizeResultsInner>> summarizeForSubscription(@HostParam("$host") String endpoint,
+            @PathParam("policyStatesSummaryResource") PolicyStatesSummaryResourceType policyStatesSummaryResource,
+            @PathParam("subscriptionId") String subscriptionId, @QueryParam("api-version") String apiVersion,
+            @QueryParam("$top") Integer top, @QueryParam("$from") OffsetDateTime from,
+            @QueryParam("$to") OffsetDateTime to, @QueryParam("$filter") String filter,
+            @HeaderParam("Accept") String accept, Context context);
+
+        @Headers({ "Content-Type: application/json" })
+        @Post("/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.PolicyInsights/policyStates/{policyStatesResource}/queryResults")
+        @ExpectedResponses({ 200 })
+        @UnexpectedResponseExceptionType(ManagementException.class)
+        Mono<Response<PolicyStatesQueryResults>> listQueryResultsForResourceGroup(@HostParam("$host") String endpoint,
             @PathParam("policyStatesResource") PolicyStatesResource policyStatesResource,
             @PathParam("subscriptionId") String subscriptionId,
-            @QueryParam("api-version") String apiVersion,
-            @QueryParam("$top") Integer top,
-            @QueryParam("$orderby") String orderBy,
-            @QueryParam("$select") String select,
-            @QueryParam("$from") OffsetDateTime from,
-            @QueryParam("$to") OffsetDateTime to,
-            @QueryParam("$filter") String filter,
-            @QueryParam("$apply") String apply,
-            @QueryParam("$skiptoken") String skipToken,
-            @HeaderParam("Accept") String accept,
-            Context context);
+            @PathParam("resourceGroupName") String resourceGroupName, @QueryParam("api-version") String apiVersion,
+            @QueryParam("$top") Integer top, @QueryParam("$orderby") String orderBy,
+            @QueryParam("$select") String select, @QueryParam("$from") OffsetDateTime from,
+            @QueryParam("$to") OffsetDateTime to, @QueryParam("$filter") String filter,
+            @QueryParam("$apply") String apply, @QueryParam("$skiptoken") String skipToken,
+            @HeaderParam("Accept") String accept, Context context);
 
-        @Headers({"Content-Type: application/json"})
-        @Post(
-            "/subscriptions/{subscriptionId}/providers/Microsoft.PolicyInsights/policyStates"
-                + "/{policyStatesSummaryResource}/summarize")
-        @ExpectedResponses({200})
+        @Headers({ "Content-Type: application/json" })
+        @Post("/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.PolicyInsights/policyStates/{policyStatesSummaryResource}/summarize")
+        @ExpectedResponses({ 200 })
         @UnexpectedResponseExceptionType(ManagementException.class)
-        Mono<Response<SummarizeResultsInner>> summarizeForSubscription(
-            @HostParam("$host") String endpoint,
-            @PathParam("policyStatesSummaryResource") String policyStatesSummaryResource,
+        Mono<Response<SummarizeResultsInner>> summarizeForResourceGroup(@HostParam("$host") String endpoint,
+            @PathParam("policyStatesSummaryResource") PolicyStatesSummaryResourceType policyStatesSummaryResource,
             @PathParam("subscriptionId") String subscriptionId,
-            @QueryParam("api-version") String apiVersion,
-            @QueryParam("$top") Integer top,
-            @QueryParam("$from") OffsetDateTime from,
-            @QueryParam("$to") OffsetDateTime to,
-            @QueryParam("$filter") String filter,
-            @HeaderParam("Accept") String accept,
-            Context context);
+            @PathParam("resourceGroupName") String resourceGroupName, @QueryParam("api-version") String apiVersion,
+            @QueryParam("$top") Integer top, @QueryParam("$from") OffsetDateTime from,
+            @QueryParam("$to") OffsetDateTime to, @QueryParam("$filter") String filter,
+            @HeaderParam("Accept") String accept, Context context);
 
-        @Headers({"Content-Type: application/json"})
-        @Post(
-            "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.PolicyInsights"
-                + "/policyStates/{policyStatesResource}/queryResults")
-        @ExpectedResponses({200})
-        @UnexpectedResponseExceptionType(ManagementException.class)
-        Mono<Response<PolicyStatesQueryResults>> listQueryResultsForResourceGroup(
-            @HostParam("$host") String endpoint,
-            @PathParam("policyStatesResource") PolicyStatesResource policyStatesResource,
-            @PathParam("subscriptionId") String subscriptionId,
-            @PathParam("resourceGroupName") String resourceGroupName,
-            @QueryParam("api-version") String apiVersion,
-            @QueryParam("$top") Integer top,
-            @QueryParam("$orderby") String orderBy,
-            @QueryParam("$select") String select,
-            @QueryParam("$from") OffsetDateTime from,
-            @QueryParam("$to") OffsetDateTime to,
-            @QueryParam("$filter") String filter,
-            @QueryParam("$apply") String apply,
-            @QueryParam("$skiptoken") String skipToken,
-            @HeaderParam("Accept") String accept,
-            Context context);
-
-        @Headers({"Content-Type: application/json"})
-        @Post(
-            "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.PolicyInsights"
-                + "/policyStates/{policyStatesSummaryResource}/summarize")
-        @ExpectedResponses({200})
-        @UnexpectedResponseExceptionType(ManagementException.class)
-        Mono<Response<SummarizeResultsInner>> summarizeForResourceGroup(
-            @HostParam("$host") String endpoint,
-            @PathParam("policyStatesSummaryResource") String policyStatesSummaryResource,
-            @PathParam("subscriptionId") String subscriptionId,
-            @PathParam("resourceGroupName") String resourceGroupName,
-            @QueryParam("api-version") String apiVersion,
-            @QueryParam("$top") Integer top,
-            @QueryParam("$from") OffsetDateTime from,
-            @QueryParam("$to") OffsetDateTime to,
-            @QueryParam("$filter") String filter,
-            @HeaderParam("Accept") String accept,
-            Context context);
-
-        @Headers({"Content-Type: application/json"})
+        @Headers({ "Content-Type: application/json" })
         @Post("/{resourceId}/providers/Microsoft.PolicyInsights/policyStates/{policyStatesResource}/queryResults")
-        @ExpectedResponses({200})
+        @ExpectedResponses({ 200 })
         @UnexpectedResponseExceptionType(ManagementException.class)
-        Mono<Response<PolicyStatesQueryResults>> listQueryResultsForResource(
-            @HostParam("$host") String endpoint,
+        Mono<Response<PolicyStatesQueryResults>> listQueryResultsForResource(@HostParam("$host") String endpoint,
             @PathParam("policyStatesResource") PolicyStatesResource policyStatesResource,
             @PathParam(value = "resourceId", encoded = true) String resourceId,
-            @QueryParam("api-version") String apiVersion,
-            @QueryParam("$top") Integer top,
-            @QueryParam("$orderby") String orderBy,
-            @QueryParam("$select") String select,
-            @QueryParam("$from") OffsetDateTime from,
-            @QueryParam("$to") OffsetDateTime to,
-            @QueryParam("$filter") String filter,
-            @QueryParam("$apply") String apply,
-            @QueryParam("$expand") String expand,
-            @QueryParam("$skiptoken") String skipToken,
-            @HeaderParam("Accept") String accept,
-            Context context);
+            @QueryParam("api-version") String apiVersion, @QueryParam("$top") Integer top,
+            @QueryParam("$orderby") String orderBy, @QueryParam("$select") String select,
+            @QueryParam("$from") OffsetDateTime from, @QueryParam("$to") OffsetDateTime to,
+            @QueryParam("$filter") String filter, @QueryParam("$apply") String apply,
+            @QueryParam("$expand") String expand, @QueryParam("$skiptoken") String skipToken,
+            @HeaderParam("Accept") String accept, Context context);
 
-        @Headers({"Content-Type: application/json"})
+        @Headers({ "Content-Type: application/json" })
         @Post("/{resourceId}/providers/Microsoft.PolicyInsights/policyStates/{policyStatesSummaryResource}/summarize")
-        @ExpectedResponses({200})
+        @ExpectedResponses({ 200 })
         @UnexpectedResponseExceptionType(ManagementException.class)
-        Mono<Response<SummarizeResultsInner>> summarizeForResource(
-            @HostParam("$host") String endpoint,
-            @PathParam("policyStatesSummaryResource") String policyStatesSummaryResource,
+        Mono<Response<SummarizeResultsInner>> summarizeForResource(@HostParam("$host") String endpoint,
+            @PathParam("policyStatesSummaryResource") PolicyStatesSummaryResourceType policyStatesSummaryResource,
             @PathParam(value = "resourceId", encoded = true) String resourceId,
-            @QueryParam("api-version") String apiVersion,
-            @QueryParam("$top") Integer top,
-            @QueryParam("$from") OffsetDateTime from,
-            @QueryParam("$to") OffsetDateTime to,
-            @QueryParam("$filter") String filter,
-            @HeaderParam("Accept") String accept,
-            Context context);
+            @QueryParam("api-version") String apiVersion, @QueryParam("$top") Integer top,
+            @QueryParam("$from") OffsetDateTime from, @QueryParam("$to") OffsetDateTime to,
+            @QueryParam("$filter") String filter, @HeaderParam("Accept") String accept, Context context);
 
-        @Headers({"Content-Type: application/json"})
-        @Post(
-            "/subscriptions/{subscriptionId}/providers/Microsoft.PolicyInsights/policyStates/latest/triggerEvaluation")
-        @ExpectedResponses({200, 202})
+        @Headers({ "Content-Type: application/json" })
+        @Post("/subscriptions/{subscriptionId}/providers/Microsoft.PolicyInsights/policyStates/latest/triggerEvaluation")
+        @ExpectedResponses({ 200, 202 })
         @UnexpectedResponseExceptionType(ManagementException.class)
-        Mono<Response<Flux<ByteBuffer>>> triggerSubscriptionEvaluation(
-            @HostParam("$host") String endpoint,
-            @PathParam("subscriptionId") String subscriptionId,
-            @QueryParam("api-version") String apiVersion,
-            @HeaderParam("Accept") String accept,
-            Context context);
+        Mono<Response<Flux<ByteBuffer>>> triggerSubscriptionEvaluation(@HostParam("$host") String endpoint,
+            @PathParam("subscriptionId") String subscriptionId, @QueryParam("api-version") String apiVersion,
+            @HeaderParam("Accept") String accept, Context context);
 
-        @Headers({"Content-Type: application/json"})
-        @Post(
-            "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.PolicyInsights"
-                + "/policyStates/latest/triggerEvaluation")
-        @ExpectedResponses({200, 202})
+        @Headers({ "Content-Type: application/json" })
+        @Post("/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.PolicyInsights/policyStates/latest/triggerEvaluation")
+        @ExpectedResponses({ 200, 202 })
         @UnexpectedResponseExceptionType(ManagementException.class)
-        Mono<Response<Flux<ByteBuffer>>> triggerResourceGroupEvaluation(
-            @HostParam("$host") String endpoint,
+        Mono<Response<Flux<ByteBuffer>>> triggerResourceGroupEvaluation(@HostParam("$host") String endpoint,
             @PathParam("subscriptionId") String subscriptionId,
-            @PathParam("resourceGroupName") String resourceGroupName,
-            @QueryParam("api-version") String apiVersion,
-            @HeaderParam("Accept") String accept,
-            Context context);
+            @PathParam("resourceGroupName") String resourceGroupName, @QueryParam("api-version") String apiVersion,
+            @HeaderParam("Accept") String accept, Context context);
 
-        @Headers({"Content-Type: application/json"})
-        @Post(
-            "/subscriptions/{subscriptionId}/providers/{authorizationNamespace}/policySetDefinitions"
-                + "/{policySetDefinitionName}/providers/Microsoft.PolicyInsights/policyStates/{policyStatesResource}"
-                + "/queryResults")
-        @ExpectedResponses({200})
+        @Headers({ "Content-Type: application/json" })
+        @Post("/subscriptions/{subscriptionId}/providers/{authorizationNamespace}/policySetDefinitions/{policySetDefinitionName}/providers/Microsoft.PolicyInsights/policyStates/{policyStatesResource}/queryResults")
+        @ExpectedResponses({ 200 })
         @UnexpectedResponseExceptionType(ManagementException.class)
         Mono<Response<PolicyStatesQueryResults>> listQueryResultsForPolicySetDefinition(
             @HostParam("$host") String endpoint,
@@ -268,45 +200,28 @@ public final class PolicyStatesClientImpl implements PolicyStatesClient {
             @PathParam("subscriptionId") String subscriptionId,
             @PathParam("authorizationNamespace") String authorizationNamespace,
             @PathParam("policySetDefinitionName") String policySetDefinitionName,
-            @QueryParam("api-version") String apiVersion,
-            @QueryParam("$top") Integer top,
-            @QueryParam("$orderby") String orderBy,
-            @QueryParam("$select") String select,
-            @QueryParam("$from") OffsetDateTime from,
-            @QueryParam("$to") OffsetDateTime to,
-            @QueryParam("$filter") String filter,
-            @QueryParam("$apply") String apply,
-            @QueryParam("$skiptoken") String skipToken,
-            @HeaderParam("Accept") String accept,
-            Context context);
+            @QueryParam("api-version") String apiVersion, @QueryParam("$top") Integer top,
+            @QueryParam("$orderby") String orderBy, @QueryParam("$select") String select,
+            @QueryParam("$from") OffsetDateTime from, @QueryParam("$to") OffsetDateTime to,
+            @QueryParam("$filter") String filter, @QueryParam("$apply") String apply,
+            @QueryParam("$skiptoken") String skipToken, @HeaderParam("Accept") String accept, Context context);
 
-        @Headers({"Content-Type: application/json"})
-        @Post(
-            "/subscriptions/{subscriptionId}/providers/{authorizationNamespace}/policySetDefinitions"
-                + "/{policySetDefinitionName}/providers/Microsoft.PolicyInsights/policyStates"
-                + "/{policyStatesSummaryResource}/summarize")
-        @ExpectedResponses({200})
+        @Headers({ "Content-Type: application/json" })
+        @Post("/subscriptions/{subscriptionId}/providers/{authorizationNamespace}/policySetDefinitions/{policySetDefinitionName}/providers/Microsoft.PolicyInsights/policyStates/{policyStatesSummaryResource}/summarize")
+        @ExpectedResponses({ 200 })
         @UnexpectedResponseExceptionType(ManagementException.class)
-        Mono<Response<SummarizeResultsInner>> summarizeForPolicySetDefinition(
-            @HostParam("$host") String endpoint,
-            @PathParam("policyStatesSummaryResource") String policyStatesSummaryResource,
+        Mono<Response<SummarizeResultsInner>> summarizeForPolicySetDefinition(@HostParam("$host") String endpoint,
+            @PathParam("policyStatesSummaryResource") PolicyStatesSummaryResourceType policyStatesSummaryResource,
             @PathParam("subscriptionId") String subscriptionId,
             @PathParam("authorizationNamespace") String authorizationNamespace,
             @PathParam("policySetDefinitionName") String policySetDefinitionName,
-            @QueryParam("api-version") String apiVersion,
-            @QueryParam("$top") Integer top,
-            @QueryParam("$from") OffsetDateTime from,
-            @QueryParam("$to") OffsetDateTime to,
-            @QueryParam("$filter") String filter,
-            @HeaderParam("Accept") String accept,
-            Context context);
+            @QueryParam("api-version") String apiVersion, @QueryParam("$top") Integer top,
+            @QueryParam("$from") OffsetDateTime from, @QueryParam("$to") OffsetDateTime to,
+            @QueryParam("$filter") String filter, @HeaderParam("Accept") String accept, Context context);
 
-        @Headers({"Content-Type: application/json"})
-        @Post(
-            "/subscriptions/{subscriptionId}/providers/{authorizationNamespace}/policyDefinitions"
-                + "/{policyDefinitionName}/providers/Microsoft.PolicyInsights/policyStates/{policyStatesResource}"
-                + "/queryResults")
-        @ExpectedResponses({200})
+        @Headers({ "Content-Type: application/json" })
+        @Post("/subscriptions/{subscriptionId}/providers/{authorizationNamespace}/policyDefinitions/{policyDefinitionName}/providers/Microsoft.PolicyInsights/policyStates/{policyStatesResource}/queryResults")
+        @ExpectedResponses({ 200 })
         @UnexpectedResponseExceptionType(ManagementException.class)
         Mono<Response<PolicyStatesQueryResults>> listQueryResultsForPolicyDefinition(
             @HostParam("$host") String endpoint,
@@ -314,45 +229,28 @@ public final class PolicyStatesClientImpl implements PolicyStatesClient {
             @PathParam("subscriptionId") String subscriptionId,
             @PathParam("authorizationNamespace") String authorizationNamespace,
             @PathParam("policyDefinitionName") String policyDefinitionName,
-            @QueryParam("api-version") String apiVersion,
-            @QueryParam("$top") Integer top,
-            @QueryParam("$orderby") String orderBy,
-            @QueryParam("$select") String select,
-            @QueryParam("$from") OffsetDateTime from,
-            @QueryParam("$to") OffsetDateTime to,
-            @QueryParam("$filter") String filter,
-            @QueryParam("$apply") String apply,
-            @QueryParam("$skiptoken") String skipToken,
-            @HeaderParam("Accept") String accept,
-            Context context);
+            @QueryParam("api-version") String apiVersion, @QueryParam("$top") Integer top,
+            @QueryParam("$orderby") String orderBy, @QueryParam("$select") String select,
+            @QueryParam("$from") OffsetDateTime from, @QueryParam("$to") OffsetDateTime to,
+            @QueryParam("$filter") String filter, @QueryParam("$apply") String apply,
+            @QueryParam("$skiptoken") String skipToken, @HeaderParam("Accept") String accept, Context context);
 
-        @Headers({"Content-Type: application/json"})
-        @Post(
-            "/subscriptions/{subscriptionId}/providers/{authorizationNamespace}/policyDefinitions"
-                + "/{policyDefinitionName}/providers/Microsoft.PolicyInsights/policyStates"
-                + "/{policyStatesSummaryResource}/summarize")
-        @ExpectedResponses({200})
+        @Headers({ "Content-Type: application/json" })
+        @Post("/subscriptions/{subscriptionId}/providers/{authorizationNamespace}/policyDefinitions/{policyDefinitionName}/providers/Microsoft.PolicyInsights/policyStates/{policyStatesSummaryResource}/summarize")
+        @ExpectedResponses({ 200 })
         @UnexpectedResponseExceptionType(ManagementException.class)
-        Mono<Response<SummarizeResultsInner>> summarizeForPolicyDefinition(
-            @HostParam("$host") String endpoint,
-            @PathParam("policyStatesSummaryResource") String policyStatesSummaryResource,
+        Mono<Response<SummarizeResultsInner>> summarizeForPolicyDefinition(@HostParam("$host") String endpoint,
+            @PathParam("policyStatesSummaryResource") PolicyStatesSummaryResourceType policyStatesSummaryResource,
             @PathParam("subscriptionId") String subscriptionId,
             @PathParam("authorizationNamespace") String authorizationNamespace,
             @PathParam("policyDefinitionName") String policyDefinitionName,
-            @QueryParam("api-version") String apiVersion,
-            @QueryParam("$top") Integer top,
-            @QueryParam("$from") OffsetDateTime from,
-            @QueryParam("$to") OffsetDateTime to,
-            @QueryParam("$filter") String filter,
-            @HeaderParam("Accept") String accept,
-            Context context);
+            @QueryParam("api-version") String apiVersion, @QueryParam("$top") Integer top,
+            @QueryParam("$from") OffsetDateTime from, @QueryParam("$to") OffsetDateTime to,
+            @QueryParam("$filter") String filter, @HeaderParam("Accept") String accept, Context context);
 
-        @Headers({"Content-Type: application/json"})
-        @Post(
-            "/subscriptions/{subscriptionId}/providers/{authorizationNamespace}/policyAssignments"
-                + "/{policyAssignmentName}/providers/Microsoft.PolicyInsights/policyStates/{policyStatesResource}"
-                + "/queryResults")
-        @ExpectedResponses({200})
+        @Headers({ "Content-Type: application/json" })
+        @Post("/subscriptions/{subscriptionId}/providers/{authorizationNamespace}/policyAssignments/{policyAssignmentName}/providers/Microsoft.PolicyInsights/policyStates/{policyStatesResource}/queryResults")
+        @ExpectedResponses({ 200 })
         @UnexpectedResponseExceptionType(ManagementException.class)
         Mono<Response<PolicyStatesQueryResults>> listQueryResultsForSubscriptionLevelPolicyAssignment(
             @HostParam("$host") String endpoint,
@@ -360,45 +258,29 @@ public final class PolicyStatesClientImpl implements PolicyStatesClient {
             @PathParam("subscriptionId") String subscriptionId,
             @PathParam("authorizationNamespace") String authorizationNamespace,
             @PathParam("policyAssignmentName") String policyAssignmentName,
-            @QueryParam("api-version") String apiVersion,
-            @QueryParam("$top") Integer top,
-            @QueryParam("$orderby") String orderBy,
-            @QueryParam("$select") String select,
-            @QueryParam("$from") OffsetDateTime from,
-            @QueryParam("$to") OffsetDateTime to,
-            @QueryParam("$filter") String filter,
-            @QueryParam("$apply") String apply,
-            @QueryParam("$skiptoken") String skipToken,
-            @HeaderParam("Accept") String accept,
-            Context context);
+            @QueryParam("api-version") String apiVersion, @QueryParam("$top") Integer top,
+            @QueryParam("$orderby") String orderBy, @QueryParam("$select") String select,
+            @QueryParam("$from") OffsetDateTime from, @QueryParam("$to") OffsetDateTime to,
+            @QueryParam("$filter") String filter, @QueryParam("$apply") String apply,
+            @QueryParam("$skiptoken") String skipToken, @HeaderParam("Accept") String accept, Context context);
 
-        @Headers({"Content-Type: application/json"})
-        @Post(
-            "/subscriptions/{subscriptionId}/providers/{authorizationNamespace}/policyAssignments"
-                + "/{policyAssignmentName}/providers/Microsoft.PolicyInsights/policyStates"
-                + "/{policyStatesSummaryResource}/summarize")
-        @ExpectedResponses({200})
+        @Headers({ "Content-Type: application/json" })
+        @Post("/subscriptions/{subscriptionId}/providers/{authorizationNamespace}/policyAssignments/{policyAssignmentName}/providers/Microsoft.PolicyInsights/policyStates/{policyStatesSummaryResource}/summarize")
+        @ExpectedResponses({ 200 })
         @UnexpectedResponseExceptionType(ManagementException.class)
         Mono<Response<SummarizeResultsInner>> summarizeForSubscriptionLevelPolicyAssignment(
             @HostParam("$host") String endpoint,
-            @PathParam("policyStatesSummaryResource") String policyStatesSummaryResource,
+            @PathParam("policyStatesSummaryResource") PolicyStatesSummaryResourceType policyStatesSummaryResource,
             @PathParam("subscriptionId") String subscriptionId,
             @PathParam("authorizationNamespace") String authorizationNamespace,
             @PathParam("policyAssignmentName") String policyAssignmentName,
-            @QueryParam("api-version") String apiVersion,
-            @QueryParam("$top") Integer top,
-            @QueryParam("$from") OffsetDateTime from,
-            @QueryParam("$to") OffsetDateTime to,
-            @QueryParam("$filter") String filter,
-            @HeaderParam("Accept") String accept,
-            Context context);
+            @QueryParam("api-version") String apiVersion, @QueryParam("$top") Integer top,
+            @QueryParam("$from") OffsetDateTime from, @QueryParam("$to") OffsetDateTime to,
+            @QueryParam("$filter") String filter, @HeaderParam("Accept") String accept, Context context);
 
-        @Headers({"Content-Type: application/json"})
-        @Post(
-            "/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/{authorizationNamespace}"
-                + "/policyAssignments/{policyAssignmentName}/providers/Microsoft.PolicyInsights/policyStates"
-                + "/{policyStatesResource}/queryResults")
-        @ExpectedResponses({200})
+        @Headers({ "Content-Type: application/json" })
+        @Post("/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/{authorizationNamespace}/policyAssignments/{policyAssignmentName}/providers/Microsoft.PolicyInsights/policyStates/{policyStatesResource}/queryResults")
+        @ExpectedResponses({ 200 })
         @UnexpectedResponseExceptionType(ManagementException.class)
         Mono<Response<PolicyStatesQueryResults>> listQueryResultsForResourceGroupLevelPolicyAssignment(
             @HostParam("$host") String endpoint,
@@ -407,89 +289,66 @@ public final class PolicyStatesClientImpl implements PolicyStatesClient {
             @PathParam("resourceGroupName") String resourceGroupName,
             @PathParam("authorizationNamespace") String authorizationNamespace,
             @PathParam("policyAssignmentName") String policyAssignmentName,
-            @QueryParam("api-version") String apiVersion,
-            @QueryParam("$top") Integer top,
-            @QueryParam("$orderby") String orderBy,
-            @QueryParam("$select") String select,
-            @QueryParam("$from") OffsetDateTime from,
-            @QueryParam("$to") OffsetDateTime to,
-            @QueryParam("$filter") String filter,
-            @QueryParam("$apply") String apply,
-            @QueryParam("$skiptoken") String skipToken,
-            @HeaderParam("Accept") String accept,
-            Context context);
+            @QueryParam("api-version") String apiVersion, @QueryParam("$top") Integer top,
+            @QueryParam("$orderby") String orderBy, @QueryParam("$select") String select,
+            @QueryParam("$from") OffsetDateTime from, @QueryParam("$to") OffsetDateTime to,
+            @QueryParam("$filter") String filter, @QueryParam("$apply") String apply,
+            @QueryParam("$skiptoken") String skipToken, @HeaderParam("Accept") String accept, Context context);
 
-        @Headers({"Content-Type: application/json"})
-        @Post(
-            "/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/{authorizationNamespace}"
-                + "/policyAssignments/{policyAssignmentName}/providers/Microsoft.PolicyInsights/policyStates"
-                + "/{policyStatesSummaryResource}/summarize")
-        @ExpectedResponses({200})
+        @Headers({ "Content-Type: application/json" })
+        @Post("/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/{authorizationNamespace}/policyAssignments/{policyAssignmentName}/providers/Microsoft.PolicyInsights/policyStates/{policyStatesSummaryResource}/summarize")
+        @ExpectedResponses({ 200 })
         @UnexpectedResponseExceptionType(ManagementException.class)
         Mono<Response<SummarizeResultsInner>> summarizeForResourceGroupLevelPolicyAssignment(
             @HostParam("$host") String endpoint,
-            @PathParam("policyStatesSummaryResource") String policyStatesSummaryResource,
+            @PathParam("policyStatesSummaryResource") PolicyStatesSummaryResourceType policyStatesSummaryResource,
             @PathParam("subscriptionId") String subscriptionId,
             @PathParam("resourceGroupName") String resourceGroupName,
             @PathParam("authorizationNamespace") String authorizationNamespace,
             @PathParam("policyAssignmentName") String policyAssignmentName,
-            @QueryParam("api-version") String apiVersion,
-            @QueryParam("$top") Integer top,
-            @QueryParam("$from") OffsetDateTime from,
-            @QueryParam("$to") OffsetDateTime to,
-            @QueryParam("$filter") String filter,
-            @HeaderParam("Accept") String accept,
-            Context context);
+            @QueryParam("api-version") String apiVersion, @QueryParam("$top") Integer top,
+            @QueryParam("$from") OffsetDateTime from, @QueryParam("$to") OffsetDateTime to,
+            @QueryParam("$filter") String filter, @HeaderParam("Accept") String accept, Context context);
 
-        @Headers({"Accept: application/json", "Content-Type: application/json"})
+        @Headers({ "Accept: application/json", "Content-Type: application/json" })
         @Get("{nextLink}")
-        @ExpectedResponses({200})
+        @ExpectedResponses({ 200 })
         @UnexpectedResponseExceptionType(ManagementException.class)
-        Mono<Response<PolicyStatesQueryResults>> nextLink(
-            @PathParam(value = "nextLink", encoded = true) String nextLink, Context context);
+        Mono<Response<PolicyStatesQueryResults>>
+            nextLink(@PathParam(value = "nextLink", encoded = true) String nextLink, Context context);
     }
 
     /**
      * Queries policy states for the resources under the management group.
-     *
+     * 
      * @param policyStatesResource The virtual resource under PolicyStates resource type. In a given time range,
-     *     'latest' represents the latest policy state(s), whereas 'default' represents all policy state(s).
+     * 'latest' represents the latest policy state(s), whereas 'default' represents all policy state(s).
      * @param managementGroupName Management group name.
      * @param top Maximum number of records to return.
      * @param orderBy Ordering expression using OData notation. One or more comma-separated column names with an
-     *     optional "desc" (the default) or "asc", e.g. "$orderby=PolicyAssignmentId, ResourceId asc".
+     * optional "desc" (the default) or "asc", e.g. "$orderby=PolicyAssignmentId, ResourceId asc".
      * @param select Select expression using OData notation. Limits the columns on each record to just those requested,
-     *     e.g. "$select=PolicyAssignmentId, ResourceId".
+     * e.g. "$select=PolicyAssignmentId, ResourceId".
      * @param from ISO 8601 formatted timestamp specifying the start time of the interval to query. When not specified,
-     *     the service uses ($to - 1-day).
+     * the service uses ($to - 1-day).
      * @param to ISO 8601 formatted timestamp specifying the end time of the interval to query. When not specified, the
-     *     service uses request time.
+     * service uses request time.
      * @param filter OData filter expression.
      * @param apply OData apply expression for aggregations.
      * @param skipToken Skiptoken is only provided if a previous response returned a partial result as a part of
-     *     nextLink element.
+     * nextLink element.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return query results.
+     * @return query results along with {@link PagedResponse} on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
     private Mono<PagedResponse<PolicyStateInner>> listQueryResultsForManagementGroupSinglePageAsync(
-        PolicyStatesResource policyStatesResource,
-        String managementGroupName,
-        Integer top,
-        String orderBy,
-        String select,
-        OffsetDateTime from,
-        OffsetDateTime to,
-        String filter,
-        String apply,
-        String skipToken) {
+        PolicyStatesResource policyStatesResource, String managementGroupName, Integer top, String orderBy,
+        String select, OffsetDateTime from, OffsetDateTime to, String filter, String apply, String skipToken) {
         if (this.client.getEndpoint() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getEndpoint() is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
         }
         if (policyStatesResource == null) {
             return Mono
@@ -503,80 +362,47 @@ public final class PolicyStatesClientImpl implements PolicyStatesClient {
         final String apiVersion = "2019-10-01";
         final String accept = "application/json";
         return FluxUtil
-            .withContext(
-                context ->
-                    service
-                        .listQueryResultsForManagementGroup(
-                            this.client.getEndpoint(),
-                            policyStatesResource,
-                            managementGroupsNamespace,
-                            managementGroupName,
-                            apiVersion,
-                            top,
-                            orderBy,
-                            select,
-                            from,
-                            to,
-                            filter,
-                            apply,
-                            skipToken,
-                            accept,
-                            context))
-            .<PagedResponse<PolicyStateInner>>map(
-                res ->
-                    new PagedResponseBase<>(
-                        res.getRequest(),
-                        res.getStatusCode(),
-                        res.getHeaders(),
-                        res.getValue().value(),
-                        res.getValue().odataNextLink(),
-                        null))
+            .withContext(context -> service.listQueryResultsForManagementGroup(this.client.getEndpoint(),
+                policyStatesResource, managementGroupsNamespace, managementGroupName, apiVersion, top, orderBy, select,
+                from, to, filter, apply, skipToken, accept, context))
+            .<PagedResponse<PolicyStateInner>>map(res -> new PagedResponseBase<>(res.getRequest(), res.getStatusCode(),
+                res.getHeaders(), res.getValue().value(), res.getValue().odataNextLink(), null))
             .contextWrite(context -> context.putAll(FluxUtil.toReactorContext(this.client.getContext()).readOnly()));
     }
 
     /**
      * Queries policy states for the resources under the management group.
-     *
+     * 
      * @param policyStatesResource The virtual resource under PolicyStates resource type. In a given time range,
-     *     'latest' represents the latest policy state(s), whereas 'default' represents all policy state(s).
+     * 'latest' represents the latest policy state(s), whereas 'default' represents all policy state(s).
      * @param managementGroupName Management group name.
      * @param top Maximum number of records to return.
      * @param orderBy Ordering expression using OData notation. One or more comma-separated column names with an
-     *     optional "desc" (the default) or "asc", e.g. "$orderby=PolicyAssignmentId, ResourceId asc".
+     * optional "desc" (the default) or "asc", e.g. "$orderby=PolicyAssignmentId, ResourceId asc".
      * @param select Select expression using OData notation. Limits the columns on each record to just those requested,
-     *     e.g. "$select=PolicyAssignmentId, ResourceId".
+     * e.g. "$select=PolicyAssignmentId, ResourceId".
      * @param from ISO 8601 formatted timestamp specifying the start time of the interval to query. When not specified,
-     *     the service uses ($to - 1-day).
+     * the service uses ($to - 1-day).
      * @param to ISO 8601 formatted timestamp specifying the end time of the interval to query. When not specified, the
-     *     service uses request time.
+     * service uses request time.
      * @param filter OData filter expression.
      * @param apply OData apply expression for aggregations.
      * @param skipToken Skiptoken is only provided if a previous response returned a partial result as a part of
-     *     nextLink element.
+     * nextLink element.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return query results.
+     * @return query results along with {@link PagedResponse} on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
     private Mono<PagedResponse<PolicyStateInner>> listQueryResultsForManagementGroupSinglePageAsync(
-        PolicyStatesResource policyStatesResource,
-        String managementGroupName,
-        Integer top,
-        String orderBy,
-        String select,
-        OffsetDateTime from,
-        OffsetDateTime to,
-        String filter,
-        String apply,
-        String skipToken,
+        PolicyStatesResource policyStatesResource, String managementGroupName, Integer top, String orderBy,
+        String select, OffsetDateTime from, OffsetDateTime to, String filter, String apply, String skipToken,
         Context context) {
         if (this.client.getEndpoint() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getEndpoint() is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
         }
         if (policyStatesResource == null) {
             return Mono
@@ -591,99 +417,60 @@ public final class PolicyStatesClientImpl implements PolicyStatesClient {
         final String accept = "application/json";
         context = this.client.mergeContext(context);
         return service
-            .listQueryResultsForManagementGroup(
-                this.client.getEndpoint(),
-                policyStatesResource,
-                managementGroupsNamespace,
-                managementGroupName,
-                apiVersion,
-                top,
-                orderBy,
-                select,
-                from,
-                to,
-                filter,
-                apply,
-                skipToken,
-                accept,
-                context)
-            .map(
-                res ->
-                    new PagedResponseBase<>(
-                        res.getRequest(),
-                        res.getStatusCode(),
-                        res.getHeaders(),
-                        res.getValue().value(),
-                        res.getValue().odataNextLink(),
-                        null));
+            .listQueryResultsForManagementGroup(this.client.getEndpoint(), policyStatesResource,
+                managementGroupsNamespace, managementGroupName, apiVersion, top, orderBy, select, from, to, filter,
+                apply, skipToken, accept, context)
+            .map(res -> new PagedResponseBase<>(res.getRequest(), res.getStatusCode(), res.getHeaders(),
+                res.getValue().value(), res.getValue().odataNextLink(), null));
     }
 
     /**
      * Queries policy states for the resources under the management group.
-     *
+     * 
      * @param policyStatesResource The virtual resource under PolicyStates resource type. In a given time range,
-     *     'latest' represents the latest policy state(s), whereas 'default' represents all policy state(s).
+     * 'latest' represents the latest policy state(s), whereas 'default' represents all policy state(s).
      * @param managementGroupName Management group name.
      * @param top Maximum number of records to return.
      * @param orderBy Ordering expression using OData notation. One or more comma-separated column names with an
-     *     optional "desc" (the default) or "asc", e.g. "$orderby=PolicyAssignmentId, ResourceId asc".
+     * optional "desc" (the default) or "asc", e.g. "$orderby=PolicyAssignmentId, ResourceId asc".
      * @param select Select expression using OData notation. Limits the columns on each record to just those requested,
-     *     e.g. "$select=PolicyAssignmentId, ResourceId".
+     * e.g. "$select=PolicyAssignmentId, ResourceId".
      * @param from ISO 8601 formatted timestamp specifying the start time of the interval to query. When not specified,
-     *     the service uses ($to - 1-day).
+     * the service uses ($to - 1-day).
      * @param to ISO 8601 formatted timestamp specifying the end time of the interval to query. When not specified, the
-     *     service uses request time.
+     * service uses request time.
      * @param filter OData filter expression.
      * @param apply OData apply expression for aggregations.
      * @param skipToken Skiptoken is only provided if a previous response returned a partial result as a part of
-     *     nextLink element.
+     * nextLink element.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return query results.
+     * @return query results as paginated response with {@link PagedFlux}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
     private PagedFlux<PolicyStateInner> listQueryResultsForManagementGroupAsync(
-        PolicyStatesResource policyStatesResource,
-        String managementGroupName,
-        Integer top,
-        String orderBy,
-        String select,
-        OffsetDateTime from,
-        OffsetDateTime to,
-        String filter,
-        String apply,
-        String skipToken) {
-        return new PagedFlux<>(
-            () ->
-                listQueryResultsForManagementGroupSinglePageAsync(
-                    policyStatesResource,
-                    managementGroupName,
-                    top,
-                    orderBy,
-                    select,
-                    from,
-                    to,
-                    filter,
-                    apply,
-                    skipToken),
+        PolicyStatesResource policyStatesResource, String managementGroupName, Integer top, String orderBy,
+        String select, OffsetDateTime from, OffsetDateTime to, String filter, String apply, String skipToken) {
+        return new PagedFlux<>(() -> listQueryResultsForManagementGroupSinglePageAsync(policyStatesResource,
+            managementGroupName, top, orderBy, select, from, to, filter, apply, skipToken),
             nextLink -> nextLinkSinglePageAsync(nextLink));
     }
 
     /**
      * Queries policy states for the resources under the management group.
-     *
+     * 
      * @param policyStatesResource The virtual resource under PolicyStates resource type. In a given time range,
-     *     'latest' represents the latest policy state(s), whereas 'default' represents all policy state(s).
+     * 'latest' represents the latest policy state(s), whereas 'default' represents all policy state(s).
      * @param managementGroupName Management group name.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return query results.
+     * @return query results as paginated response with {@link PagedFlux}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
-    private PagedFlux<PolicyStateInner> listQueryResultsForManagementGroupAsync(
-        PolicyStatesResource policyStatesResource, String managementGroupName) {
+    private PagedFlux<PolicyStateInner>
+        listQueryResultsForManagementGroupAsync(PolicyStatesResource policyStatesResource, String managementGroupName) {
         final Integer top = null;
         final String orderBy = null;
         final String select = null;
@@ -692,91 +479,61 @@ public final class PolicyStatesClientImpl implements PolicyStatesClient {
         final String filter = null;
         final String apply = null;
         final String skipToken = null;
-        return new PagedFlux<>(
-            () ->
-                listQueryResultsForManagementGroupSinglePageAsync(
-                    policyStatesResource,
-                    managementGroupName,
-                    top,
-                    orderBy,
-                    select,
-                    from,
-                    to,
-                    filter,
-                    apply,
-                    skipToken),
+        return new PagedFlux<>(() -> listQueryResultsForManagementGroupSinglePageAsync(policyStatesResource,
+            managementGroupName, top, orderBy, select, from, to, filter, apply, skipToken),
             nextLink -> nextLinkSinglePageAsync(nextLink));
     }
 
     /**
      * Queries policy states for the resources under the management group.
-     *
+     * 
      * @param policyStatesResource The virtual resource under PolicyStates resource type. In a given time range,
-     *     'latest' represents the latest policy state(s), whereas 'default' represents all policy state(s).
+     * 'latest' represents the latest policy state(s), whereas 'default' represents all policy state(s).
      * @param managementGroupName Management group name.
      * @param top Maximum number of records to return.
      * @param orderBy Ordering expression using OData notation. One or more comma-separated column names with an
-     *     optional "desc" (the default) or "asc", e.g. "$orderby=PolicyAssignmentId, ResourceId asc".
+     * optional "desc" (the default) or "asc", e.g. "$orderby=PolicyAssignmentId, ResourceId asc".
      * @param select Select expression using OData notation. Limits the columns on each record to just those requested,
-     *     e.g. "$select=PolicyAssignmentId, ResourceId".
+     * e.g. "$select=PolicyAssignmentId, ResourceId".
      * @param from ISO 8601 formatted timestamp specifying the start time of the interval to query. When not specified,
-     *     the service uses ($to - 1-day).
+     * the service uses ($to - 1-day).
      * @param to ISO 8601 formatted timestamp specifying the end time of the interval to query. When not specified, the
-     *     service uses request time.
+     * service uses request time.
      * @param filter OData filter expression.
      * @param apply OData apply expression for aggregations.
      * @param skipToken Skiptoken is only provided if a previous response returned a partial result as a part of
-     *     nextLink element.
+     * nextLink element.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return query results.
+     * @return query results as paginated response with {@link PagedFlux}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
     private PagedFlux<PolicyStateInner> listQueryResultsForManagementGroupAsync(
-        PolicyStatesResource policyStatesResource,
-        String managementGroupName,
-        Integer top,
-        String orderBy,
-        String select,
-        OffsetDateTime from,
-        OffsetDateTime to,
-        String filter,
-        String apply,
-        String skipToken,
+        PolicyStatesResource policyStatesResource, String managementGroupName, Integer top, String orderBy,
+        String select, OffsetDateTime from, OffsetDateTime to, String filter, String apply, String skipToken,
         Context context) {
         return new PagedFlux<>(
-            () ->
-                listQueryResultsForManagementGroupSinglePageAsync(
-                    policyStatesResource,
-                    managementGroupName,
-                    top,
-                    orderBy,
-                    select,
-                    from,
-                    to,
-                    filter,
-                    apply,
-                    skipToken,
-                    context),
+            () -> listQueryResultsForManagementGroupSinglePageAsync(policyStatesResource, managementGroupName, top,
+                orderBy, select, from, to, filter, apply, skipToken, context),
             nextLink -> nextLinkSinglePageAsync(nextLink, context));
     }
 
     /**
      * Queries policy states for the resources under the management group.
-     *
+     * 
      * @param policyStatesResource The virtual resource under PolicyStates resource type. In a given time range,
-     *     'latest' represents the latest policy state(s), whereas 'default' represents all policy state(s).
+     * 'latest' represents the latest policy state(s), whereas 'default' represents all policy state(s).
      * @param managementGroupName Management group name.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return query results.
+     * @return query results as paginated response with {@link PagedIterable}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
-    public PagedIterable<PolicyStateInner> listQueryResultsForManagementGroup(
-        PolicyStatesResource policyStatesResource, String managementGroupName) {
+    public PagedIterable<PolicyStateInner> listQueryResultsForManagementGroup(PolicyStatesResource policyStatesResource,
+        String managementGroupName) {
         final Integer top = null;
         final String orderBy = null;
         final String select = null;
@@ -785,311 +542,229 @@ public final class PolicyStatesClientImpl implements PolicyStatesClient {
         final String filter = null;
         final String apply = null;
         final String skipToken = null;
-        return new PagedIterable<>(
-            listQueryResultsForManagementGroupAsync(
-                policyStatesResource, managementGroupName, top, orderBy, select, from, to, filter, apply, skipToken));
+        return new PagedIterable<>(listQueryResultsForManagementGroupAsync(policyStatesResource, managementGroupName,
+            top, orderBy, select, from, to, filter, apply, skipToken));
     }
 
     /**
      * Queries policy states for the resources under the management group.
-     *
+     * 
      * @param policyStatesResource The virtual resource under PolicyStates resource type. In a given time range,
-     *     'latest' represents the latest policy state(s), whereas 'default' represents all policy state(s).
+     * 'latest' represents the latest policy state(s), whereas 'default' represents all policy state(s).
      * @param managementGroupName Management group name.
      * @param top Maximum number of records to return.
      * @param orderBy Ordering expression using OData notation. One or more comma-separated column names with an
-     *     optional "desc" (the default) or "asc", e.g. "$orderby=PolicyAssignmentId, ResourceId asc".
+     * optional "desc" (the default) or "asc", e.g. "$orderby=PolicyAssignmentId, ResourceId asc".
      * @param select Select expression using OData notation. Limits the columns on each record to just those requested,
-     *     e.g. "$select=PolicyAssignmentId, ResourceId".
+     * e.g. "$select=PolicyAssignmentId, ResourceId".
      * @param from ISO 8601 formatted timestamp specifying the start time of the interval to query. When not specified,
-     *     the service uses ($to - 1-day).
+     * the service uses ($to - 1-day).
      * @param to ISO 8601 formatted timestamp specifying the end time of the interval to query. When not specified, the
-     *     service uses request time.
+     * service uses request time.
      * @param filter OData filter expression.
      * @param apply OData apply expression for aggregations.
      * @param skipToken Skiptoken is only provided if a previous response returned a partial result as a part of
-     *     nextLink element.
+     * nextLink element.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return query results.
+     * @return query results as paginated response with {@link PagedIterable}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
-    public PagedIterable<PolicyStateInner> listQueryResultsForManagementGroup(
-        PolicyStatesResource policyStatesResource,
-        String managementGroupName,
-        Integer top,
-        String orderBy,
-        String select,
-        OffsetDateTime from,
-        OffsetDateTime to,
-        String filter,
-        String apply,
-        String skipToken,
-        Context context) {
-        return new PagedIterable<>(
-            listQueryResultsForManagementGroupAsync(
-                policyStatesResource,
-                managementGroupName,
-                top,
-                orderBy,
-                select,
-                from,
-                to,
-                filter,
-                apply,
-                skipToken,
-                context));
+    public PagedIterable<PolicyStateInner> listQueryResultsForManagementGroup(PolicyStatesResource policyStatesResource,
+        String managementGroupName, Integer top, String orderBy, String select, OffsetDateTime from, OffsetDateTime to,
+        String filter, String apply, String skipToken, Context context) {
+        return new PagedIterable<>(listQueryResultsForManagementGroupAsync(policyStatesResource, managementGroupName,
+            top, orderBy, select, from, to, filter, apply, skipToken, context));
     }
 
     /**
      * Summarizes policy states for the resources under the management group.
-     *
+     * 
+     * @param policyStatesSummaryResource The virtual resource under PolicyStates resource type for summarize action. In
+     * a given time range, 'latest' represents the latest policy state(s) and is the only allowed value.
      * @param managementGroupName Management group name.
      * @param top Maximum number of records to return.
      * @param from ISO 8601 formatted timestamp specifying the start time of the interval to query. When not specified,
-     *     the service uses ($to - 1-day).
+     * the service uses ($to - 1-day).
      * @param to ISO 8601 formatted timestamp specifying the end time of the interval to query. When not specified, the
-     *     service uses request time.
+     * service uses request time.
      * @param filter OData filter expression.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return summarize action results.
+     * @return summarize action results along with {@link Response} on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
     private Mono<Response<SummarizeResultsInner>> summarizeForManagementGroupWithResponseAsync(
-        String managementGroupName, Integer top, OffsetDateTime from, OffsetDateTime to, String filter) {
+        PolicyStatesSummaryResourceType policyStatesSummaryResource, String managementGroupName, Integer top,
+        OffsetDateTime from, OffsetDateTime to, String filter) {
         if (this.client.getEndpoint() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getEndpoint() is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
+        }
+        if (policyStatesSummaryResource == null) {
+            return Mono.error(
+                new IllegalArgumentException("Parameter policyStatesSummaryResource is required and cannot be null."));
         }
         if (managementGroupName == null) {
             return Mono
                 .error(new IllegalArgumentException("Parameter managementGroupName is required and cannot be null."));
         }
-        final String policyStatesSummaryResource = "latest";
         final String managementGroupsNamespace = "Microsoft.Management";
         final String apiVersion = "2019-10-01";
         final String accept = "application/json";
         return FluxUtil
             .withContext(
-                context ->
-                    service
-                        .summarizeForManagementGroup(
-                            this.client.getEndpoint(),
-                            policyStatesSummaryResource,
-                            managementGroupsNamespace,
-                            managementGroupName,
-                            apiVersion,
-                            top,
-                            from,
-                            to,
-                            filter,
-                            accept,
-                            context))
+                context -> service.summarizeForManagementGroup(this.client.getEndpoint(), policyStatesSummaryResource,
+                    managementGroupsNamespace, managementGroupName, apiVersion, top, from, to, filter, accept, context))
             .contextWrite(context -> context.putAll(FluxUtil.toReactorContext(this.client.getContext()).readOnly()));
     }
 
     /**
      * Summarizes policy states for the resources under the management group.
-     *
+     * 
+     * @param policyStatesSummaryResource The virtual resource under PolicyStates resource type for summarize action. In
+     * a given time range, 'latest' represents the latest policy state(s) and is the only allowed value.
      * @param managementGroupName Management group name.
      * @param top Maximum number of records to return.
      * @param from ISO 8601 formatted timestamp specifying the start time of the interval to query. When not specified,
-     *     the service uses ($to - 1-day).
+     * the service uses ($to - 1-day).
      * @param to ISO 8601 formatted timestamp specifying the end time of the interval to query. When not specified, the
-     *     service uses request time.
+     * service uses request time.
      * @param filter OData filter expression.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return summarize action results.
+     * @return summarize action results along with {@link Response} on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
     private Mono<Response<SummarizeResultsInner>> summarizeForManagementGroupWithResponseAsync(
-        String managementGroupName,
-        Integer top,
-        OffsetDateTime from,
-        OffsetDateTime to,
-        String filter,
-        Context context) {
+        PolicyStatesSummaryResourceType policyStatesSummaryResource, String managementGroupName, Integer top,
+        OffsetDateTime from, OffsetDateTime to, String filter, Context context) {
         if (this.client.getEndpoint() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getEndpoint() is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
+        }
+        if (policyStatesSummaryResource == null) {
+            return Mono.error(
+                new IllegalArgumentException("Parameter policyStatesSummaryResource is required and cannot be null."));
         }
         if (managementGroupName == null) {
             return Mono
                 .error(new IllegalArgumentException("Parameter managementGroupName is required and cannot be null."));
         }
-        final String policyStatesSummaryResource = "latest";
         final String managementGroupsNamespace = "Microsoft.Management";
         final String apiVersion = "2019-10-01";
         final String accept = "application/json";
         context = this.client.mergeContext(context);
-        return service
-            .summarizeForManagementGroup(
-                this.client.getEndpoint(),
-                policyStatesSummaryResource,
-                managementGroupsNamespace,
-                managementGroupName,
-                apiVersion,
-                top,
-                from,
-                to,
-                filter,
-                accept,
-                context);
+        return service.summarizeForManagementGroup(this.client.getEndpoint(), policyStatesSummaryResource,
+            managementGroupsNamespace, managementGroupName, apiVersion, top, from, to, filter, accept, context);
     }
 
     /**
      * Summarizes policy states for the resources under the management group.
-     *
+     * 
+     * @param policyStatesSummaryResource The virtual resource under PolicyStates resource type for summarize action. In
+     * a given time range, 'latest' represents the latest policy state(s) and is the only allowed value.
      * @param managementGroupName Management group name.
-     * @param top Maximum number of records to return.
-     * @param from ISO 8601 formatted timestamp specifying the start time of the interval to query. When not specified,
-     *     the service uses ($to - 1-day).
-     * @param to ISO 8601 formatted timestamp specifying the end time of the interval to query. When not specified, the
-     *     service uses request time.
-     * @param filter OData filter expression.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return summarize action results.
+     * @return summarize action results on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
     private Mono<SummarizeResultsInner> summarizeForManagementGroupAsync(
-        String managementGroupName, Integer top, OffsetDateTime from, OffsetDateTime to, String filter) {
-        return summarizeForManagementGroupWithResponseAsync(managementGroupName, top, from, to, filter)
-            .flatMap(
-                (Response<SummarizeResultsInner> res) -> {
-                    if (res.getValue() != null) {
-                        return Mono.just(res.getValue());
-                    } else {
-                        return Mono.empty();
-                    }
-                });
-    }
-
-    /**
-     * Summarizes policy states for the resources under the management group.
-     *
-     * @param managementGroupName Management group name.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return summarize action results.
-     */
-    @ServiceMethod(returns = ReturnType.SINGLE)
-    private Mono<SummarizeResultsInner> summarizeForManagementGroupAsync(String managementGroupName) {
+        PolicyStatesSummaryResourceType policyStatesSummaryResource, String managementGroupName) {
         final Integer top = null;
         final OffsetDateTime from = null;
         final OffsetDateTime to = null;
         final String filter = null;
-        return summarizeForManagementGroupWithResponseAsync(managementGroupName, top, from, to, filter)
-            .flatMap(
-                (Response<SummarizeResultsInner> res) -> {
-                    if (res.getValue() != null) {
-                        return Mono.just(res.getValue());
-                    } else {
-                        return Mono.empty();
-                    }
-                });
+        return summarizeForManagementGroupWithResponseAsync(policyStatesSummaryResource, managementGroupName, top, from,
+            to, filter).flatMap(res -> Mono.justOrEmpty(res.getValue()));
     }
 
     /**
      * Summarizes policy states for the resources under the management group.
-     *
-     * @param managementGroupName Management group name.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return summarize action results.
-     */
-    @ServiceMethod(returns = ReturnType.SINGLE)
-    public SummarizeResultsInner summarizeForManagementGroup(String managementGroupName) {
-        final Integer top = null;
-        final OffsetDateTime from = null;
-        final OffsetDateTime to = null;
-        final String filter = null;
-        return summarizeForManagementGroupAsync(managementGroupName, top, from, to, filter).block();
-    }
-
-    /**
-     * Summarizes policy states for the resources under the management group.
-     *
+     * 
+     * @param policyStatesSummaryResource The virtual resource under PolicyStates resource type for summarize action. In
+     * a given time range, 'latest' represents the latest policy state(s) and is the only allowed value.
      * @param managementGroupName Management group name.
      * @param top Maximum number of records to return.
      * @param from ISO 8601 formatted timestamp specifying the start time of the interval to query. When not specified,
-     *     the service uses ($to - 1-day).
+     * the service uses ($to - 1-day).
      * @param to ISO 8601 formatted timestamp specifying the end time of the interval to query. When not specified, the
-     *     service uses request time.
+     * service uses request time.
      * @param filter OData filter expression.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return summarize action results.
+     * @return summarize action results along with {@link Response}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
     public Response<SummarizeResultsInner> summarizeForManagementGroupWithResponse(
-        String managementGroupName,
-        Integer top,
-        OffsetDateTime from,
-        OffsetDateTime to,
-        String filter,
-        Context context) {
-        return summarizeForManagementGroupWithResponseAsync(managementGroupName, top, from, to, filter, context)
-            .block();
+        PolicyStatesSummaryResourceType policyStatesSummaryResource, String managementGroupName, Integer top,
+        OffsetDateTime from, OffsetDateTime to, String filter, Context context) {
+        return summarizeForManagementGroupWithResponseAsync(policyStatesSummaryResource, managementGroupName, top, from,
+            to, filter, context).block();
+    }
+
+    /**
+     * Summarizes policy states for the resources under the management group.
+     * 
+     * @param policyStatesSummaryResource The virtual resource under PolicyStates resource type for summarize action. In
+     * a given time range, 'latest' represents the latest policy state(s) and is the only allowed value.
+     * @param managementGroupName Management group name.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return summarize action results.
+     */
+    @ServiceMethod(returns = ReturnType.SINGLE)
+    public SummarizeResultsInner summarizeForManagementGroup(
+        PolicyStatesSummaryResourceType policyStatesSummaryResource, String managementGroupName) {
+        final Integer top = null;
+        final OffsetDateTime from = null;
+        final OffsetDateTime to = null;
+        final String filter = null;
+        return summarizeForManagementGroupWithResponse(policyStatesSummaryResource, managementGroupName, top, from, to,
+            filter, Context.NONE).getValue();
     }
 
     /**
      * Queries policy states for the resources under the subscription.
-     *
+     * 
      * @param policyStatesResource The virtual resource under PolicyStates resource type. In a given time range,
-     *     'latest' represents the latest policy state(s), whereas 'default' represents all policy state(s).
+     * 'latest' represents the latest policy state(s), whereas 'default' represents all policy state(s).
      * @param subscriptionId Microsoft Azure subscription ID.
      * @param top Maximum number of records to return.
      * @param orderBy Ordering expression using OData notation. One or more comma-separated column names with an
-     *     optional "desc" (the default) or "asc", e.g. "$orderby=PolicyAssignmentId, ResourceId asc".
+     * optional "desc" (the default) or "asc", e.g. "$orderby=PolicyAssignmentId, ResourceId asc".
      * @param select Select expression using OData notation. Limits the columns on each record to just those requested,
-     *     e.g. "$select=PolicyAssignmentId, ResourceId".
+     * e.g. "$select=PolicyAssignmentId, ResourceId".
      * @param from ISO 8601 formatted timestamp specifying the start time of the interval to query. When not specified,
-     *     the service uses ($to - 1-day).
+     * the service uses ($to - 1-day).
      * @param to ISO 8601 formatted timestamp specifying the end time of the interval to query. When not specified, the
-     *     service uses request time.
+     * service uses request time.
      * @param filter OData filter expression.
      * @param apply OData apply expression for aggregations.
      * @param skipToken Skiptoken is only provided if a previous response returned a partial result as a part of
-     *     nextLink element.
+     * nextLink element.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return query results.
+     * @return query results along with {@link PagedResponse} on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
     private Mono<PagedResponse<PolicyStateInner>> listQueryResultsForSubscriptionSinglePageAsync(
-        PolicyStatesResource policyStatesResource,
-        String subscriptionId,
-        Integer top,
-        String orderBy,
-        String select,
-        OffsetDateTime from,
-        OffsetDateTime to,
-        String filter,
-        String apply,
-        String skipToken) {
+        PolicyStatesResource policyStatesResource, String subscriptionId, Integer top, String orderBy, String select,
+        OffsetDateTime from, OffsetDateTime to, String filter, String apply, String skipToken) {
         if (this.client.getEndpoint() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getEndpoint() is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
         }
         if (policyStatesResource == null) {
             return Mono
@@ -1101,79 +776,46 @@ public final class PolicyStatesClientImpl implements PolicyStatesClient {
         final String apiVersion = "2019-10-01";
         final String accept = "application/json";
         return FluxUtil
-            .withContext(
-                context ->
-                    service
-                        .listQueryResultsForSubscription(
-                            this.client.getEndpoint(),
-                            policyStatesResource,
-                            subscriptionId,
-                            apiVersion,
-                            top,
-                            orderBy,
-                            select,
-                            from,
-                            to,
-                            filter,
-                            apply,
-                            skipToken,
-                            accept,
-                            context))
-            .<PagedResponse<PolicyStateInner>>map(
-                res ->
-                    new PagedResponseBase<>(
-                        res.getRequest(),
-                        res.getStatusCode(),
-                        res.getHeaders(),
-                        res.getValue().value(),
-                        res.getValue().odataNextLink(),
-                        null))
+            .withContext(context -> service.listQueryResultsForSubscription(this.client.getEndpoint(),
+                policyStatesResource, subscriptionId, apiVersion, top, orderBy, select, from, to, filter, apply,
+                skipToken, accept, context))
+            .<PagedResponse<PolicyStateInner>>map(res -> new PagedResponseBase<>(res.getRequest(), res.getStatusCode(),
+                res.getHeaders(), res.getValue().value(), res.getValue().odataNextLink(), null))
             .contextWrite(context -> context.putAll(FluxUtil.toReactorContext(this.client.getContext()).readOnly()));
     }
 
     /**
      * Queries policy states for the resources under the subscription.
-     *
+     * 
      * @param policyStatesResource The virtual resource under PolicyStates resource type. In a given time range,
-     *     'latest' represents the latest policy state(s), whereas 'default' represents all policy state(s).
+     * 'latest' represents the latest policy state(s), whereas 'default' represents all policy state(s).
      * @param subscriptionId Microsoft Azure subscription ID.
      * @param top Maximum number of records to return.
      * @param orderBy Ordering expression using OData notation. One or more comma-separated column names with an
-     *     optional "desc" (the default) or "asc", e.g. "$orderby=PolicyAssignmentId, ResourceId asc".
+     * optional "desc" (the default) or "asc", e.g. "$orderby=PolicyAssignmentId, ResourceId asc".
      * @param select Select expression using OData notation. Limits the columns on each record to just those requested,
-     *     e.g. "$select=PolicyAssignmentId, ResourceId".
+     * e.g. "$select=PolicyAssignmentId, ResourceId".
      * @param from ISO 8601 formatted timestamp specifying the start time of the interval to query. When not specified,
-     *     the service uses ($to - 1-day).
+     * the service uses ($to - 1-day).
      * @param to ISO 8601 formatted timestamp specifying the end time of the interval to query. When not specified, the
-     *     service uses request time.
+     * service uses request time.
      * @param filter OData filter expression.
      * @param apply OData apply expression for aggregations.
      * @param skipToken Skiptoken is only provided if a previous response returned a partial result as a part of
-     *     nextLink element.
+     * nextLink element.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return query results.
+     * @return query results along with {@link PagedResponse} on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
     private Mono<PagedResponse<PolicyStateInner>> listQueryResultsForSubscriptionSinglePageAsync(
-        PolicyStatesResource policyStatesResource,
-        String subscriptionId,
-        Integer top,
-        String orderBy,
-        String select,
-        OffsetDateTime from,
-        OffsetDateTime to,
-        String filter,
-        String apply,
-        String skipToken,
-        Context context) {
+        PolicyStatesResource policyStatesResource, String subscriptionId, Integer top, String orderBy, String select,
+        OffsetDateTime from, OffsetDateTime to, String filter, String apply, String skipToken, Context context) {
         if (this.client.getEndpoint() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getEndpoint() is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
         }
         if (policyStatesResource == null) {
             return Mono
@@ -1186,89 +828,59 @@ public final class PolicyStatesClientImpl implements PolicyStatesClient {
         final String accept = "application/json";
         context = this.client.mergeContext(context);
         return service
-            .listQueryResultsForSubscription(
-                this.client.getEndpoint(),
-                policyStatesResource,
-                subscriptionId,
-                apiVersion,
-                top,
-                orderBy,
-                select,
-                from,
-                to,
-                filter,
-                apply,
-                skipToken,
-                accept,
-                context)
-            .map(
-                res ->
-                    new PagedResponseBase<>(
-                        res.getRequest(),
-                        res.getStatusCode(),
-                        res.getHeaders(),
-                        res.getValue().value(),
-                        res.getValue().odataNextLink(),
-                        null));
+            .listQueryResultsForSubscription(this.client.getEndpoint(), policyStatesResource, subscriptionId,
+                apiVersion, top, orderBy, select, from, to, filter, apply, skipToken, accept, context)
+            .map(res -> new PagedResponseBase<>(res.getRequest(), res.getStatusCode(), res.getHeaders(),
+                res.getValue().value(), res.getValue().odataNextLink(), null));
     }
 
     /**
      * Queries policy states for the resources under the subscription.
-     *
+     * 
      * @param policyStatesResource The virtual resource under PolicyStates resource type. In a given time range,
-     *     'latest' represents the latest policy state(s), whereas 'default' represents all policy state(s).
+     * 'latest' represents the latest policy state(s), whereas 'default' represents all policy state(s).
      * @param subscriptionId Microsoft Azure subscription ID.
      * @param top Maximum number of records to return.
      * @param orderBy Ordering expression using OData notation. One or more comma-separated column names with an
-     *     optional "desc" (the default) or "asc", e.g. "$orderby=PolicyAssignmentId, ResourceId asc".
+     * optional "desc" (the default) or "asc", e.g. "$orderby=PolicyAssignmentId, ResourceId asc".
      * @param select Select expression using OData notation. Limits the columns on each record to just those requested,
-     *     e.g. "$select=PolicyAssignmentId, ResourceId".
+     * e.g. "$select=PolicyAssignmentId, ResourceId".
      * @param from ISO 8601 formatted timestamp specifying the start time of the interval to query. When not specified,
-     *     the service uses ($to - 1-day).
+     * the service uses ($to - 1-day).
      * @param to ISO 8601 formatted timestamp specifying the end time of the interval to query. When not specified, the
-     *     service uses request time.
+     * service uses request time.
      * @param filter OData filter expression.
      * @param apply OData apply expression for aggregations.
      * @param skipToken Skiptoken is only provided if a previous response returned a partial result as a part of
-     *     nextLink element.
+     * nextLink element.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return query results.
+     * @return query results as paginated response with {@link PagedFlux}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
-    private PagedFlux<PolicyStateInner> listQueryResultsForSubscriptionAsync(
-        PolicyStatesResource policyStatesResource,
-        String subscriptionId,
-        Integer top,
-        String orderBy,
-        String select,
-        OffsetDateTime from,
-        OffsetDateTime to,
-        String filter,
-        String apply,
-        String skipToken) {
-        return new PagedFlux<>(
-            () ->
-                listQueryResultsForSubscriptionSinglePageAsync(
-                    policyStatesResource, subscriptionId, top, orderBy, select, from, to, filter, apply, skipToken),
+    private PagedFlux<PolicyStateInner> listQueryResultsForSubscriptionAsync(PolicyStatesResource policyStatesResource,
+        String subscriptionId, Integer top, String orderBy, String select, OffsetDateTime from, OffsetDateTime to,
+        String filter, String apply, String skipToken) {
+        return new PagedFlux<>(() -> listQueryResultsForSubscriptionSinglePageAsync(policyStatesResource,
+            subscriptionId, top, orderBy, select, from, to, filter, apply, skipToken),
             nextLink -> nextLinkSinglePageAsync(nextLink));
     }
 
     /**
      * Queries policy states for the resources under the subscription.
-     *
+     * 
      * @param policyStatesResource The virtual resource under PolicyStates resource type. In a given time range,
-     *     'latest' represents the latest policy state(s), whereas 'default' represents all policy state(s).
+     * 'latest' represents the latest policy state(s), whereas 'default' represents all policy state(s).
      * @param subscriptionId Microsoft Azure subscription ID.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return query results.
+     * @return query results as paginated response with {@link PagedFlux}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
-    private PagedFlux<PolicyStateInner> listQueryResultsForSubscriptionAsync(
-        PolicyStatesResource policyStatesResource, String subscriptionId) {
+    private PagedFlux<PolicyStateInner> listQueryResultsForSubscriptionAsync(PolicyStatesResource policyStatesResource,
+        String subscriptionId) {
         final Integer top = null;
         final String orderBy = null;
         final String select = null;
@@ -1277,82 +889,60 @@ public final class PolicyStatesClientImpl implements PolicyStatesClient {
         final String filter = null;
         final String apply = null;
         final String skipToken = null;
-        return new PagedFlux<>(
-            () ->
-                listQueryResultsForSubscriptionSinglePageAsync(
-                    policyStatesResource, subscriptionId, top, orderBy, select, from, to, filter, apply, skipToken),
+        return new PagedFlux<>(() -> listQueryResultsForSubscriptionSinglePageAsync(policyStatesResource,
+            subscriptionId, top, orderBy, select, from, to, filter, apply, skipToken),
             nextLink -> nextLinkSinglePageAsync(nextLink));
     }
 
     /**
      * Queries policy states for the resources under the subscription.
-     *
+     * 
      * @param policyStatesResource The virtual resource under PolicyStates resource type. In a given time range,
-     *     'latest' represents the latest policy state(s), whereas 'default' represents all policy state(s).
+     * 'latest' represents the latest policy state(s), whereas 'default' represents all policy state(s).
      * @param subscriptionId Microsoft Azure subscription ID.
      * @param top Maximum number of records to return.
      * @param orderBy Ordering expression using OData notation. One or more comma-separated column names with an
-     *     optional "desc" (the default) or "asc", e.g. "$orderby=PolicyAssignmentId, ResourceId asc".
+     * optional "desc" (the default) or "asc", e.g. "$orderby=PolicyAssignmentId, ResourceId asc".
      * @param select Select expression using OData notation. Limits the columns on each record to just those requested,
-     *     e.g. "$select=PolicyAssignmentId, ResourceId".
+     * e.g. "$select=PolicyAssignmentId, ResourceId".
      * @param from ISO 8601 formatted timestamp specifying the start time of the interval to query. When not specified,
-     *     the service uses ($to - 1-day).
+     * the service uses ($to - 1-day).
      * @param to ISO 8601 formatted timestamp specifying the end time of the interval to query. When not specified, the
-     *     service uses request time.
+     * service uses request time.
      * @param filter OData filter expression.
      * @param apply OData apply expression for aggregations.
      * @param skipToken Skiptoken is only provided if a previous response returned a partial result as a part of
-     *     nextLink element.
+     * nextLink element.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return query results.
+     * @return query results as paginated response with {@link PagedFlux}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
-    private PagedFlux<PolicyStateInner> listQueryResultsForSubscriptionAsync(
-        PolicyStatesResource policyStatesResource,
-        String subscriptionId,
-        Integer top,
-        String orderBy,
-        String select,
-        OffsetDateTime from,
-        OffsetDateTime to,
-        String filter,
-        String apply,
-        String skipToken,
-        Context context) {
+    private PagedFlux<PolicyStateInner> listQueryResultsForSubscriptionAsync(PolicyStatesResource policyStatesResource,
+        String subscriptionId, Integer top, String orderBy, String select, OffsetDateTime from, OffsetDateTime to,
+        String filter, String apply, String skipToken, Context context) {
         return new PagedFlux<>(
-            () ->
-                listQueryResultsForSubscriptionSinglePageAsync(
-                    policyStatesResource,
-                    subscriptionId,
-                    top,
-                    orderBy,
-                    select,
-                    from,
-                    to,
-                    filter,
-                    apply,
-                    skipToken,
-                    context),
+            () -> listQueryResultsForSubscriptionSinglePageAsync(policyStatesResource, subscriptionId, top, orderBy,
+                select, from, to, filter, apply, skipToken, context),
             nextLink -> nextLinkSinglePageAsync(nextLink, context));
     }
 
     /**
      * Queries policy states for the resources under the subscription.
-     *
+     * 
      * @param policyStatesResource The virtual resource under PolicyStates resource type. In a given time range,
-     *     'latest' represents the latest policy state(s), whereas 'default' represents all policy state(s).
+     * 'latest' represents the latest policy state(s), whereas 'default' represents all policy state(s).
      * @param subscriptionId Microsoft Azure subscription ID.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return query results.
+     * @return query results as paginated response with {@link PagedIterable}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
-    public PagedIterable<PolicyStateInner> listQueryResultsForSubscription(
-        PolicyStatesResource policyStatesResource, String subscriptionId) {
+    public PagedIterable<PolicyStateInner> listQueryResultsForSubscription(PolicyStatesResource policyStatesResource,
+        String subscriptionId) {
         final Integer top = null;
         final String orderBy = null;
         final String select = null;
@@ -1361,296 +951,226 @@ public final class PolicyStatesClientImpl implements PolicyStatesClient {
         final String filter = null;
         final String apply = null;
         final String skipToken = null;
-        return new PagedIterable<>(
-            listQueryResultsForSubscriptionAsync(
-                policyStatesResource, subscriptionId, top, orderBy, select, from, to, filter, apply, skipToken));
+        return new PagedIterable<>(listQueryResultsForSubscriptionAsync(policyStatesResource, subscriptionId, top,
+            orderBy, select, from, to, filter, apply, skipToken));
     }
 
     /**
      * Queries policy states for the resources under the subscription.
-     *
+     * 
      * @param policyStatesResource The virtual resource under PolicyStates resource type. In a given time range,
-     *     'latest' represents the latest policy state(s), whereas 'default' represents all policy state(s).
+     * 'latest' represents the latest policy state(s), whereas 'default' represents all policy state(s).
      * @param subscriptionId Microsoft Azure subscription ID.
      * @param top Maximum number of records to return.
      * @param orderBy Ordering expression using OData notation. One or more comma-separated column names with an
-     *     optional "desc" (the default) or "asc", e.g. "$orderby=PolicyAssignmentId, ResourceId asc".
+     * optional "desc" (the default) or "asc", e.g. "$orderby=PolicyAssignmentId, ResourceId asc".
      * @param select Select expression using OData notation. Limits the columns on each record to just those requested,
-     *     e.g. "$select=PolicyAssignmentId, ResourceId".
+     * e.g. "$select=PolicyAssignmentId, ResourceId".
      * @param from ISO 8601 formatted timestamp specifying the start time of the interval to query. When not specified,
-     *     the service uses ($to - 1-day).
+     * the service uses ($to - 1-day).
      * @param to ISO 8601 formatted timestamp specifying the end time of the interval to query. When not specified, the
-     *     service uses request time.
+     * service uses request time.
      * @param filter OData filter expression.
      * @param apply OData apply expression for aggregations.
      * @param skipToken Skiptoken is only provided if a previous response returned a partial result as a part of
-     *     nextLink element.
+     * nextLink element.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return query results.
+     * @return query results as paginated response with {@link PagedIterable}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
-    public PagedIterable<PolicyStateInner> listQueryResultsForSubscription(
-        PolicyStatesResource policyStatesResource,
-        String subscriptionId,
-        Integer top,
-        String orderBy,
-        String select,
-        OffsetDateTime from,
-        OffsetDateTime to,
-        String filter,
-        String apply,
-        String skipToken,
-        Context context) {
-        return new PagedIterable<>(
-            listQueryResultsForSubscriptionAsync(
-                policyStatesResource,
-                subscriptionId,
-                top,
-                orderBy,
-                select,
-                from,
-                to,
-                filter,
-                apply,
-                skipToken,
-                context));
+    public PagedIterable<PolicyStateInner> listQueryResultsForSubscription(PolicyStatesResource policyStatesResource,
+        String subscriptionId, Integer top, String orderBy, String select, OffsetDateTime from, OffsetDateTime to,
+        String filter, String apply, String skipToken, Context context) {
+        return new PagedIterable<>(listQueryResultsForSubscriptionAsync(policyStatesResource, subscriptionId, top,
+            orderBy, select, from, to, filter, apply, skipToken, context));
     }
 
     /**
      * Summarizes policy states for the resources under the subscription.
-     *
+     * 
+     * @param policyStatesSummaryResource The virtual resource under PolicyStates resource type for summarize action. In
+     * a given time range, 'latest' represents the latest policy state(s) and is the only allowed value.
      * @param subscriptionId Microsoft Azure subscription ID.
      * @param top Maximum number of records to return.
      * @param from ISO 8601 formatted timestamp specifying the start time of the interval to query. When not specified,
-     *     the service uses ($to - 1-day).
+     * the service uses ($to - 1-day).
      * @param to ISO 8601 formatted timestamp specifying the end time of the interval to query. When not specified, the
-     *     service uses request time.
+     * service uses request time.
      * @param filter OData filter expression.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return summarize action results.
+     * @return summarize action results along with {@link Response} on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
     private Mono<Response<SummarizeResultsInner>> summarizeForSubscriptionWithResponseAsync(
-        String subscriptionId, Integer top, OffsetDateTime from, OffsetDateTime to, String filter) {
+        PolicyStatesSummaryResourceType policyStatesSummaryResource, String subscriptionId, Integer top,
+        OffsetDateTime from, OffsetDateTime to, String filter) {
         if (this.client.getEndpoint() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getEndpoint() is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
+        }
+        if (policyStatesSummaryResource == null) {
+            return Mono.error(
+                new IllegalArgumentException("Parameter policyStatesSummaryResource is required and cannot be null."));
         }
         if (subscriptionId == null) {
             return Mono.error(new IllegalArgumentException("Parameter subscriptionId is required and cannot be null."));
         }
-        final String policyStatesSummaryResource = "latest";
         final String apiVersion = "2019-10-01";
         final String accept = "application/json";
         return FluxUtil
-            .withContext(
-                context ->
-                    service
-                        .summarizeForSubscription(
-                            this.client.getEndpoint(),
-                            policyStatesSummaryResource,
-                            subscriptionId,
-                            apiVersion,
-                            top,
-                            from,
-                            to,
-                            filter,
-                            accept,
-                            context))
+            .withContext(context -> service.summarizeForSubscription(this.client.getEndpoint(),
+                policyStatesSummaryResource, subscriptionId, apiVersion, top, from, to, filter, accept, context))
             .contextWrite(context -> context.putAll(FluxUtil.toReactorContext(this.client.getContext()).readOnly()));
     }
 
     /**
      * Summarizes policy states for the resources under the subscription.
-     *
+     * 
+     * @param policyStatesSummaryResource The virtual resource under PolicyStates resource type for summarize action. In
+     * a given time range, 'latest' represents the latest policy state(s) and is the only allowed value.
      * @param subscriptionId Microsoft Azure subscription ID.
      * @param top Maximum number of records to return.
      * @param from ISO 8601 formatted timestamp specifying the start time of the interval to query. When not specified,
-     *     the service uses ($to - 1-day).
+     * the service uses ($to - 1-day).
      * @param to ISO 8601 formatted timestamp specifying the end time of the interval to query. When not specified, the
-     *     service uses request time.
+     * service uses request time.
      * @param filter OData filter expression.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return summarize action results.
+     * @return summarize action results along with {@link Response} on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
     private Mono<Response<SummarizeResultsInner>> summarizeForSubscriptionWithResponseAsync(
-        String subscriptionId, Integer top, OffsetDateTime from, OffsetDateTime to, String filter, Context context) {
+        PolicyStatesSummaryResourceType policyStatesSummaryResource, String subscriptionId, Integer top,
+        OffsetDateTime from, OffsetDateTime to, String filter, Context context) {
         if (this.client.getEndpoint() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getEndpoint() is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
+        }
+        if (policyStatesSummaryResource == null) {
+            return Mono.error(
+                new IllegalArgumentException("Parameter policyStatesSummaryResource is required and cannot be null."));
         }
         if (subscriptionId == null) {
             return Mono.error(new IllegalArgumentException("Parameter subscriptionId is required and cannot be null."));
         }
-        final String policyStatesSummaryResource = "latest";
         final String apiVersion = "2019-10-01";
         final String accept = "application/json";
         context = this.client.mergeContext(context);
-        return service
-            .summarizeForSubscription(
-                this.client.getEndpoint(),
-                policyStatesSummaryResource,
-                subscriptionId,
-                apiVersion,
-                top,
-                from,
-                to,
-                filter,
-                accept,
-                context);
+        return service.summarizeForSubscription(this.client.getEndpoint(), policyStatesSummaryResource, subscriptionId,
+            apiVersion, top, from, to, filter, accept, context);
     }
 
     /**
      * Summarizes policy states for the resources under the subscription.
-     *
+     * 
+     * @param policyStatesSummaryResource The virtual resource under PolicyStates resource type for summarize action. In
+     * a given time range, 'latest' represents the latest policy state(s) and is the only allowed value.
      * @param subscriptionId Microsoft Azure subscription ID.
-     * @param top Maximum number of records to return.
-     * @param from ISO 8601 formatted timestamp specifying the start time of the interval to query. When not specified,
-     *     the service uses ($to - 1-day).
-     * @param to ISO 8601 formatted timestamp specifying the end time of the interval to query. When not specified, the
-     *     service uses request time.
-     * @param filter OData filter expression.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return summarize action results.
+     * @return summarize action results on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
     private Mono<SummarizeResultsInner> summarizeForSubscriptionAsync(
-        String subscriptionId, Integer top, OffsetDateTime from, OffsetDateTime to, String filter) {
-        return summarizeForSubscriptionWithResponseAsync(subscriptionId, top, from, to, filter)
-            .flatMap(
-                (Response<SummarizeResultsInner> res) -> {
-                    if (res.getValue() != null) {
-                        return Mono.just(res.getValue());
-                    } else {
-                        return Mono.empty();
-                    }
-                });
-    }
-
-    /**
-     * Summarizes policy states for the resources under the subscription.
-     *
-     * @param subscriptionId Microsoft Azure subscription ID.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return summarize action results.
-     */
-    @ServiceMethod(returns = ReturnType.SINGLE)
-    private Mono<SummarizeResultsInner> summarizeForSubscriptionAsync(String subscriptionId) {
+        PolicyStatesSummaryResourceType policyStatesSummaryResource, String subscriptionId) {
         final Integer top = null;
         final OffsetDateTime from = null;
         final OffsetDateTime to = null;
         final String filter = null;
-        return summarizeForSubscriptionWithResponseAsync(subscriptionId, top, from, to, filter)
-            .flatMap(
-                (Response<SummarizeResultsInner> res) -> {
-                    if (res.getValue() != null) {
-                        return Mono.just(res.getValue());
-                    } else {
-                        return Mono.empty();
-                    }
-                });
+        return summarizeForSubscriptionWithResponseAsync(policyStatesSummaryResource, subscriptionId, top, from, to,
+            filter).flatMap(res -> Mono.justOrEmpty(res.getValue()));
     }
 
     /**
      * Summarizes policy states for the resources under the subscription.
-     *
-     * @param subscriptionId Microsoft Azure subscription ID.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return summarize action results.
-     */
-    @ServiceMethod(returns = ReturnType.SINGLE)
-    public SummarizeResultsInner summarizeForSubscription(String subscriptionId) {
-        final Integer top = null;
-        final OffsetDateTime from = null;
-        final OffsetDateTime to = null;
-        final String filter = null;
-        return summarizeForSubscriptionAsync(subscriptionId, top, from, to, filter).block();
-    }
-
-    /**
-     * Summarizes policy states for the resources under the subscription.
-     *
+     * 
+     * @param policyStatesSummaryResource The virtual resource under PolicyStates resource type for summarize action. In
+     * a given time range, 'latest' represents the latest policy state(s) and is the only allowed value.
      * @param subscriptionId Microsoft Azure subscription ID.
      * @param top Maximum number of records to return.
      * @param from ISO 8601 formatted timestamp specifying the start time of the interval to query. When not specified,
-     *     the service uses ($to - 1-day).
+     * the service uses ($to - 1-day).
      * @param to ISO 8601 formatted timestamp specifying the end time of the interval to query. When not specified, the
-     *     service uses request time.
+     * service uses request time.
      * @param filter OData filter expression.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return summarize action results.
+     * @return summarize action results along with {@link Response}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
     public Response<SummarizeResultsInner> summarizeForSubscriptionWithResponse(
-        String subscriptionId, Integer top, OffsetDateTime from, OffsetDateTime to, String filter, Context context) {
-        return summarizeForSubscriptionWithResponseAsync(subscriptionId, top, from, to, filter, context).block();
+        PolicyStatesSummaryResourceType policyStatesSummaryResource, String subscriptionId, Integer top,
+        OffsetDateTime from, OffsetDateTime to, String filter, Context context) {
+        return summarizeForSubscriptionWithResponseAsync(policyStatesSummaryResource, subscriptionId, top, from, to,
+            filter, context).block();
+    }
+
+    /**
+     * Summarizes policy states for the resources under the subscription.
+     * 
+     * @param policyStatesSummaryResource The virtual resource under PolicyStates resource type for summarize action. In
+     * a given time range, 'latest' represents the latest policy state(s) and is the only allowed value.
+     * @param subscriptionId Microsoft Azure subscription ID.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return summarize action results.
+     */
+    @ServiceMethod(returns = ReturnType.SINGLE)
+    public SummarizeResultsInner summarizeForSubscription(PolicyStatesSummaryResourceType policyStatesSummaryResource,
+        String subscriptionId) {
+        final Integer top = null;
+        final OffsetDateTime from = null;
+        final OffsetDateTime to = null;
+        final String filter = null;
+        return summarizeForSubscriptionWithResponse(policyStatesSummaryResource, subscriptionId, top, from, to, filter,
+            Context.NONE).getValue();
     }
 
     /**
      * Queries policy states for the resources under the resource group.
-     *
+     * 
      * @param policyStatesResource The virtual resource under PolicyStates resource type. In a given time range,
-     *     'latest' represents the latest policy state(s), whereas 'default' represents all policy state(s).
+     * 'latest' represents the latest policy state(s), whereas 'default' represents all policy state(s).
      * @param subscriptionId Microsoft Azure subscription ID.
      * @param resourceGroupName Resource group name.
      * @param top Maximum number of records to return.
      * @param orderBy Ordering expression using OData notation. One or more comma-separated column names with an
-     *     optional "desc" (the default) or "asc", e.g. "$orderby=PolicyAssignmentId, ResourceId asc".
+     * optional "desc" (the default) or "asc", e.g. "$orderby=PolicyAssignmentId, ResourceId asc".
      * @param select Select expression using OData notation. Limits the columns on each record to just those requested,
-     *     e.g. "$select=PolicyAssignmentId, ResourceId".
+     * e.g. "$select=PolicyAssignmentId, ResourceId".
      * @param from ISO 8601 formatted timestamp specifying the start time of the interval to query. When not specified,
-     *     the service uses ($to - 1-day).
+     * the service uses ($to - 1-day).
      * @param to ISO 8601 formatted timestamp specifying the end time of the interval to query. When not specified, the
-     *     service uses request time.
+     * service uses request time.
      * @param filter OData filter expression.
      * @param apply OData apply expression for aggregations.
      * @param skipToken Skiptoken is only provided if a previous response returned a partial result as a part of
-     *     nextLink element.
+     * nextLink element.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return query results.
+     * @return query results along with {@link PagedResponse} on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
     private Mono<PagedResponse<PolicyStateInner>> listQueryResultsForResourceGroupSinglePageAsync(
-        PolicyStatesResource policyStatesResource,
-        String subscriptionId,
-        String resourceGroupName,
-        Integer top,
-        String orderBy,
-        String select,
-        OffsetDateTime from,
-        OffsetDateTime to,
-        String filter,
-        String apply,
+        PolicyStatesResource policyStatesResource, String subscriptionId, String resourceGroupName, Integer top,
+        String orderBy, String select, OffsetDateTime from, OffsetDateTime to, String filter, String apply,
         String skipToken) {
         if (this.client.getEndpoint() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getEndpoint() is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
         }
         if (policyStatesResource == null) {
             return Mono
@@ -1666,82 +1186,48 @@ public final class PolicyStatesClientImpl implements PolicyStatesClient {
         final String apiVersion = "2019-10-01";
         final String accept = "application/json";
         return FluxUtil
-            .withContext(
-                context ->
-                    service
-                        .listQueryResultsForResourceGroup(
-                            this.client.getEndpoint(),
-                            policyStatesResource,
-                            subscriptionId,
-                            resourceGroupName,
-                            apiVersion,
-                            top,
-                            orderBy,
-                            select,
-                            from,
-                            to,
-                            filter,
-                            apply,
-                            skipToken,
-                            accept,
-                            context))
-            .<PagedResponse<PolicyStateInner>>map(
-                res ->
-                    new PagedResponseBase<>(
-                        res.getRequest(),
-                        res.getStatusCode(),
-                        res.getHeaders(),
-                        res.getValue().value(),
-                        res.getValue().odataNextLink(),
-                        null))
+            .withContext(context -> service.listQueryResultsForResourceGroup(this.client.getEndpoint(),
+                policyStatesResource, subscriptionId, resourceGroupName, apiVersion, top, orderBy, select, from, to,
+                filter, apply, skipToken, accept, context))
+            .<PagedResponse<PolicyStateInner>>map(res -> new PagedResponseBase<>(res.getRequest(), res.getStatusCode(),
+                res.getHeaders(), res.getValue().value(), res.getValue().odataNextLink(), null))
             .contextWrite(context -> context.putAll(FluxUtil.toReactorContext(this.client.getContext()).readOnly()));
     }
 
     /**
      * Queries policy states for the resources under the resource group.
-     *
+     * 
      * @param policyStatesResource The virtual resource under PolicyStates resource type. In a given time range,
-     *     'latest' represents the latest policy state(s), whereas 'default' represents all policy state(s).
+     * 'latest' represents the latest policy state(s), whereas 'default' represents all policy state(s).
      * @param subscriptionId Microsoft Azure subscription ID.
      * @param resourceGroupName Resource group name.
      * @param top Maximum number of records to return.
      * @param orderBy Ordering expression using OData notation. One or more comma-separated column names with an
-     *     optional "desc" (the default) or "asc", e.g. "$orderby=PolicyAssignmentId, ResourceId asc".
+     * optional "desc" (the default) or "asc", e.g. "$orderby=PolicyAssignmentId, ResourceId asc".
      * @param select Select expression using OData notation. Limits the columns on each record to just those requested,
-     *     e.g. "$select=PolicyAssignmentId, ResourceId".
+     * e.g. "$select=PolicyAssignmentId, ResourceId".
      * @param from ISO 8601 formatted timestamp specifying the start time of the interval to query. When not specified,
-     *     the service uses ($to - 1-day).
+     * the service uses ($to - 1-day).
      * @param to ISO 8601 formatted timestamp specifying the end time of the interval to query. When not specified, the
-     *     service uses request time.
+     * service uses request time.
      * @param filter OData filter expression.
      * @param apply OData apply expression for aggregations.
      * @param skipToken Skiptoken is only provided if a previous response returned a partial result as a part of
-     *     nextLink element.
+     * nextLink element.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return query results.
+     * @return query results along with {@link PagedResponse} on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
     private Mono<PagedResponse<PolicyStateInner>> listQueryResultsForResourceGroupSinglePageAsync(
-        PolicyStatesResource policyStatesResource,
-        String subscriptionId,
-        String resourceGroupName,
-        Integer top,
-        String orderBy,
-        String select,
-        OffsetDateTime from,
-        OffsetDateTime to,
-        String filter,
-        String apply,
-        String skipToken,
-        Context context) {
+        PolicyStatesResource policyStatesResource, String subscriptionId, String resourceGroupName, Integer top,
+        String orderBy, String select, OffsetDateTime from, OffsetDateTime to, String filter, String apply,
+        String skipToken, Context context) {
         if (this.client.getEndpoint() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getEndpoint() is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
         }
         if (policyStatesResource == null) {
             return Mono
@@ -1757,104 +1243,62 @@ public final class PolicyStatesClientImpl implements PolicyStatesClient {
         final String apiVersion = "2019-10-01";
         final String accept = "application/json";
         context = this.client.mergeContext(context);
-        return service
-            .listQueryResultsForResourceGroup(
-                this.client.getEndpoint(),
-                policyStatesResource,
-                subscriptionId,
-                resourceGroupName,
-                apiVersion,
-                top,
-                orderBy,
-                select,
-                from,
-                to,
-                filter,
-                apply,
-                skipToken,
-                accept,
-                context)
-            .map(
-                res ->
-                    new PagedResponseBase<>(
-                        res.getRequest(),
-                        res.getStatusCode(),
-                        res.getHeaders(),
-                        res.getValue().value(),
-                        res.getValue().odataNextLink(),
-                        null));
+        return service.listQueryResultsForResourceGroup(this.client.getEndpoint(), policyStatesResource, subscriptionId,
+            resourceGroupName, apiVersion, top, orderBy, select, from, to, filter, apply, skipToken, accept, context)
+            .map(res -> new PagedResponseBase<>(res.getRequest(), res.getStatusCode(), res.getHeaders(),
+                res.getValue().value(), res.getValue().odataNextLink(), null));
     }
 
     /**
      * Queries policy states for the resources under the resource group.
-     *
+     * 
      * @param policyStatesResource The virtual resource under PolicyStates resource type. In a given time range,
-     *     'latest' represents the latest policy state(s), whereas 'default' represents all policy state(s).
+     * 'latest' represents the latest policy state(s), whereas 'default' represents all policy state(s).
      * @param subscriptionId Microsoft Azure subscription ID.
      * @param resourceGroupName Resource group name.
      * @param top Maximum number of records to return.
      * @param orderBy Ordering expression using OData notation. One or more comma-separated column names with an
-     *     optional "desc" (the default) or "asc", e.g. "$orderby=PolicyAssignmentId, ResourceId asc".
+     * optional "desc" (the default) or "asc", e.g. "$orderby=PolicyAssignmentId, ResourceId asc".
      * @param select Select expression using OData notation. Limits the columns on each record to just those requested,
-     *     e.g. "$select=PolicyAssignmentId, ResourceId".
+     * e.g. "$select=PolicyAssignmentId, ResourceId".
      * @param from ISO 8601 formatted timestamp specifying the start time of the interval to query. When not specified,
-     *     the service uses ($to - 1-day).
+     * the service uses ($to - 1-day).
      * @param to ISO 8601 formatted timestamp specifying the end time of the interval to query. When not specified, the
-     *     service uses request time.
+     * service uses request time.
      * @param filter OData filter expression.
      * @param apply OData apply expression for aggregations.
      * @param skipToken Skiptoken is only provided if a previous response returned a partial result as a part of
-     *     nextLink element.
+     * nextLink element.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return query results.
+     * @return query results as paginated response with {@link PagedFlux}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
-    private PagedFlux<PolicyStateInner> listQueryResultsForResourceGroupAsync(
-        PolicyStatesResource policyStatesResource,
-        String subscriptionId,
-        String resourceGroupName,
-        Integer top,
-        String orderBy,
-        String select,
-        OffsetDateTime from,
-        OffsetDateTime to,
-        String filter,
-        String apply,
-        String skipToken) {
+    private PagedFlux<PolicyStateInner> listQueryResultsForResourceGroupAsync(PolicyStatesResource policyStatesResource,
+        String subscriptionId, String resourceGroupName, Integer top, String orderBy, String select,
+        OffsetDateTime from, OffsetDateTime to, String filter, String apply, String skipToken) {
         return new PagedFlux<>(
-            () ->
-                listQueryResultsForResourceGroupSinglePageAsync(
-                    policyStatesResource,
-                    subscriptionId,
-                    resourceGroupName,
-                    top,
-                    orderBy,
-                    select,
-                    from,
-                    to,
-                    filter,
-                    apply,
-                    skipToken),
+            () -> listQueryResultsForResourceGroupSinglePageAsync(policyStatesResource, subscriptionId,
+                resourceGroupName, top, orderBy, select, from, to, filter, apply, skipToken),
             nextLink -> nextLinkSinglePageAsync(nextLink));
     }
 
     /**
      * Queries policy states for the resources under the resource group.
-     *
+     * 
      * @param policyStatesResource The virtual resource under PolicyStates resource type. In a given time range,
-     *     'latest' represents the latest policy state(s), whereas 'default' represents all policy state(s).
+     * 'latest' represents the latest policy state(s), whereas 'default' represents all policy state(s).
      * @param subscriptionId Microsoft Azure subscription ID.
      * @param resourceGroupName Resource group name.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return query results.
+     * @return query results as paginated response with {@link PagedFlux}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
-    private PagedFlux<PolicyStateInner> listQueryResultsForResourceGroupAsync(
-        PolicyStatesResource policyStatesResource, String subscriptionId, String resourceGroupName) {
+    private PagedFlux<PolicyStateInner> listQueryResultsForResourceGroupAsync(PolicyStatesResource policyStatesResource,
+        String subscriptionId, String resourceGroupName) {
         final Integer top = null;
         final String orderBy = null;
         final String select = null;
@@ -1864,95 +1308,62 @@ public final class PolicyStatesClientImpl implements PolicyStatesClient {
         final String apply = null;
         final String skipToken = null;
         return new PagedFlux<>(
-            () ->
-                listQueryResultsForResourceGroupSinglePageAsync(
-                    policyStatesResource,
-                    subscriptionId,
-                    resourceGroupName,
-                    top,
-                    orderBy,
-                    select,
-                    from,
-                    to,
-                    filter,
-                    apply,
-                    skipToken),
+            () -> listQueryResultsForResourceGroupSinglePageAsync(policyStatesResource, subscriptionId,
+                resourceGroupName, top, orderBy, select, from, to, filter, apply, skipToken),
             nextLink -> nextLinkSinglePageAsync(nextLink));
     }
 
     /**
      * Queries policy states for the resources under the resource group.
-     *
+     * 
      * @param policyStatesResource The virtual resource under PolicyStates resource type. In a given time range,
-     *     'latest' represents the latest policy state(s), whereas 'default' represents all policy state(s).
+     * 'latest' represents the latest policy state(s), whereas 'default' represents all policy state(s).
      * @param subscriptionId Microsoft Azure subscription ID.
      * @param resourceGroupName Resource group name.
      * @param top Maximum number of records to return.
      * @param orderBy Ordering expression using OData notation. One or more comma-separated column names with an
-     *     optional "desc" (the default) or "asc", e.g. "$orderby=PolicyAssignmentId, ResourceId asc".
+     * optional "desc" (the default) or "asc", e.g. "$orderby=PolicyAssignmentId, ResourceId asc".
      * @param select Select expression using OData notation. Limits the columns on each record to just those requested,
-     *     e.g. "$select=PolicyAssignmentId, ResourceId".
+     * e.g. "$select=PolicyAssignmentId, ResourceId".
      * @param from ISO 8601 formatted timestamp specifying the start time of the interval to query. When not specified,
-     *     the service uses ($to - 1-day).
+     * the service uses ($to - 1-day).
      * @param to ISO 8601 formatted timestamp specifying the end time of the interval to query. When not specified, the
-     *     service uses request time.
+     * service uses request time.
      * @param filter OData filter expression.
      * @param apply OData apply expression for aggregations.
      * @param skipToken Skiptoken is only provided if a previous response returned a partial result as a part of
-     *     nextLink element.
+     * nextLink element.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return query results.
+     * @return query results as paginated response with {@link PagedFlux}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
-    private PagedFlux<PolicyStateInner> listQueryResultsForResourceGroupAsync(
-        PolicyStatesResource policyStatesResource,
-        String subscriptionId,
-        String resourceGroupName,
-        Integer top,
-        String orderBy,
-        String select,
-        OffsetDateTime from,
-        OffsetDateTime to,
-        String filter,
-        String apply,
-        String skipToken,
-        Context context) {
+    private PagedFlux<PolicyStateInner> listQueryResultsForResourceGroupAsync(PolicyStatesResource policyStatesResource,
+        String subscriptionId, String resourceGroupName, Integer top, String orderBy, String select,
+        OffsetDateTime from, OffsetDateTime to, String filter, String apply, String skipToken, Context context) {
         return new PagedFlux<>(
-            () ->
-                listQueryResultsForResourceGroupSinglePageAsync(
-                    policyStatesResource,
-                    subscriptionId,
-                    resourceGroupName,
-                    top,
-                    orderBy,
-                    select,
-                    from,
-                    to,
-                    filter,
-                    apply,
-                    skipToken,
-                    context),
+            () -> listQueryResultsForResourceGroupSinglePageAsync(policyStatesResource, subscriptionId,
+                resourceGroupName, top, orderBy, select, from, to, filter, apply, skipToken, context),
             nextLink -> nextLinkSinglePageAsync(nextLink, context));
     }
 
     /**
      * Queries policy states for the resources under the resource group.
-     *
+     * 
      * @param policyStatesResource The virtual resource under PolicyStates resource type. In a given time range,
-     *     'latest' represents the latest policy state(s), whereas 'default' represents all policy state(s).
+     * 'latest' represents the latest policy state(s), whereas 'default' represents all policy state(s).
      * @param subscriptionId Microsoft Azure subscription ID.
      * @param resourceGroupName Resource group name.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return query results.
+     * @return query results as paginated response with {@link PagedIterable}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
-    public PagedIterable<PolicyStateInner> listQueryResultsForResourceGroup(
-        PolicyStatesResource policyStatesResource, String subscriptionId, String resourceGroupName) {
+    public PagedIterable<PolicyStateInner> listQueryResultsForResourceGroup(PolicyStatesResource policyStatesResource,
+        String subscriptionId, String resourceGroupName) {
         final Integer top = null;
         final String orderBy = null;
         final String select = null;
@@ -1961,106 +1372,73 @@ public final class PolicyStatesClientImpl implements PolicyStatesClient {
         final String filter = null;
         final String apply = null;
         final String skipToken = null;
-        return new PagedIterable<>(
-            listQueryResultsForResourceGroupAsync(
-                policyStatesResource,
-                subscriptionId,
-                resourceGroupName,
-                top,
-                orderBy,
-                select,
-                from,
-                to,
-                filter,
-                apply,
-                skipToken));
+        return new PagedIterable<>(listQueryResultsForResourceGroupAsync(policyStatesResource, subscriptionId,
+            resourceGroupName, top, orderBy, select, from, to, filter, apply, skipToken));
     }
 
     /**
      * Queries policy states for the resources under the resource group.
-     *
+     * 
      * @param policyStatesResource The virtual resource under PolicyStates resource type. In a given time range,
-     *     'latest' represents the latest policy state(s), whereas 'default' represents all policy state(s).
+     * 'latest' represents the latest policy state(s), whereas 'default' represents all policy state(s).
      * @param subscriptionId Microsoft Azure subscription ID.
      * @param resourceGroupName Resource group name.
      * @param top Maximum number of records to return.
      * @param orderBy Ordering expression using OData notation. One or more comma-separated column names with an
-     *     optional "desc" (the default) or "asc", e.g. "$orderby=PolicyAssignmentId, ResourceId asc".
+     * optional "desc" (the default) or "asc", e.g. "$orderby=PolicyAssignmentId, ResourceId asc".
      * @param select Select expression using OData notation. Limits the columns on each record to just those requested,
-     *     e.g. "$select=PolicyAssignmentId, ResourceId".
+     * e.g. "$select=PolicyAssignmentId, ResourceId".
      * @param from ISO 8601 formatted timestamp specifying the start time of the interval to query. When not specified,
-     *     the service uses ($to - 1-day).
+     * the service uses ($to - 1-day).
      * @param to ISO 8601 formatted timestamp specifying the end time of the interval to query. When not specified, the
-     *     service uses request time.
+     * service uses request time.
      * @param filter OData filter expression.
      * @param apply OData apply expression for aggregations.
      * @param skipToken Skiptoken is only provided if a previous response returned a partial result as a part of
-     *     nextLink element.
+     * nextLink element.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return query results.
+     * @return query results as paginated response with {@link PagedIterable}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
-    public PagedIterable<PolicyStateInner> listQueryResultsForResourceGroup(
-        PolicyStatesResource policyStatesResource,
-        String subscriptionId,
-        String resourceGroupName,
-        Integer top,
-        String orderBy,
-        String select,
-        OffsetDateTime from,
-        OffsetDateTime to,
-        String filter,
-        String apply,
-        String skipToken,
-        Context context) {
-        return new PagedIterable<>(
-            listQueryResultsForResourceGroupAsync(
-                policyStatesResource,
-                subscriptionId,
-                resourceGroupName,
-                top,
-                orderBy,
-                select,
-                from,
-                to,
-                filter,
-                apply,
-                skipToken,
-                context));
+    public PagedIterable<PolicyStateInner> listQueryResultsForResourceGroup(PolicyStatesResource policyStatesResource,
+        String subscriptionId, String resourceGroupName, Integer top, String orderBy, String select,
+        OffsetDateTime from, OffsetDateTime to, String filter, String apply, String skipToken, Context context) {
+        return new PagedIterable<>(listQueryResultsForResourceGroupAsync(policyStatesResource, subscriptionId,
+            resourceGroupName, top, orderBy, select, from, to, filter, apply, skipToken, context));
     }
 
     /**
      * Summarizes policy states for the resources under the resource group.
-     *
+     * 
+     * @param policyStatesSummaryResource The virtual resource under PolicyStates resource type for summarize action. In
+     * a given time range, 'latest' represents the latest policy state(s) and is the only allowed value.
      * @param subscriptionId Microsoft Azure subscription ID.
      * @param resourceGroupName Resource group name.
      * @param top Maximum number of records to return.
      * @param from ISO 8601 formatted timestamp specifying the start time of the interval to query. When not specified,
-     *     the service uses ($to - 1-day).
+     * the service uses ($to - 1-day).
      * @param to ISO 8601 formatted timestamp specifying the end time of the interval to query. When not specified, the
-     *     service uses request time.
+     * service uses request time.
      * @param filter OData filter expression.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return summarize action results.
+     * @return summarize action results along with {@link Response} on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
     private Mono<Response<SummarizeResultsInner>> summarizeForResourceGroupWithResponseAsync(
-        String subscriptionId,
-        String resourceGroupName,
-        Integer top,
-        OffsetDateTime from,
-        OffsetDateTime to,
-        String filter) {
+        PolicyStatesSummaryResourceType policyStatesSummaryResource, String subscriptionId, String resourceGroupName,
+        Integer top, OffsetDateTime from, OffsetDateTime to, String filter) {
         if (this.client.getEndpoint() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getEndpoint() is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
+        }
+        if (policyStatesSummaryResource == null) {
+            return Mono.error(
+                new IllegalArgumentException("Parameter policyStatesSummaryResource is required and cannot be null."));
         }
         if (subscriptionId == null) {
             return Mono.error(new IllegalArgumentException("Parameter subscriptionId is required and cannot be null."));
@@ -2069,59 +1447,45 @@ public final class PolicyStatesClientImpl implements PolicyStatesClient {
             return Mono
                 .error(new IllegalArgumentException("Parameter resourceGroupName is required and cannot be null."));
         }
-        final String policyStatesSummaryResource = "latest";
         final String apiVersion = "2019-10-01";
         final String accept = "application/json";
         return FluxUtil
             .withContext(
-                context ->
-                    service
-                        .summarizeForResourceGroup(
-                            this.client.getEndpoint(),
-                            policyStatesSummaryResource,
-                            subscriptionId,
-                            resourceGroupName,
-                            apiVersion,
-                            top,
-                            from,
-                            to,
-                            filter,
-                            accept,
-                            context))
+                context -> service.summarizeForResourceGroup(this.client.getEndpoint(), policyStatesSummaryResource,
+                    subscriptionId, resourceGroupName, apiVersion, top, from, to, filter, accept, context))
             .contextWrite(context -> context.putAll(FluxUtil.toReactorContext(this.client.getContext()).readOnly()));
     }
 
     /**
      * Summarizes policy states for the resources under the resource group.
-     *
+     * 
+     * @param policyStatesSummaryResource The virtual resource under PolicyStates resource type for summarize action. In
+     * a given time range, 'latest' represents the latest policy state(s) and is the only allowed value.
      * @param subscriptionId Microsoft Azure subscription ID.
      * @param resourceGroupName Resource group name.
      * @param top Maximum number of records to return.
      * @param from ISO 8601 formatted timestamp specifying the start time of the interval to query. When not specified,
-     *     the service uses ($to - 1-day).
+     * the service uses ($to - 1-day).
      * @param to ISO 8601 formatted timestamp specifying the end time of the interval to query. When not specified, the
-     *     service uses request time.
+     * service uses request time.
      * @param filter OData filter expression.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return summarize action results.
+     * @return summarize action results along with {@link Response} on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
     private Mono<Response<SummarizeResultsInner>> summarizeForResourceGroupWithResponseAsync(
-        String subscriptionId,
-        String resourceGroupName,
-        Integer top,
-        OffsetDateTime from,
-        OffsetDateTime to,
-        String filter,
-        Context context) {
+        PolicyStatesSummaryResourceType policyStatesSummaryResource, String subscriptionId, String resourceGroupName,
+        Integer top, OffsetDateTime from, OffsetDateTime to, String filter, Context context) {
         if (this.client.getEndpoint() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getEndpoint() is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
+        }
+        if (policyStatesSummaryResource == null) {
+            return Mono.error(
+                new IllegalArgumentException("Parameter policyStatesSummaryResource is required and cannot be null."));
         }
         if (subscriptionId == null) {
             return Mono.error(new IllegalArgumentException("Parameter subscriptionId is required and cannot be null."));
@@ -2130,63 +1494,68 @@ public final class PolicyStatesClientImpl implements PolicyStatesClient {
             return Mono
                 .error(new IllegalArgumentException("Parameter resourceGroupName is required and cannot be null."));
         }
-        final String policyStatesSummaryResource = "latest";
         final String apiVersion = "2019-10-01";
         final String accept = "application/json";
         context = this.client.mergeContext(context);
-        return service
-            .summarizeForResourceGroup(
-                this.client.getEndpoint(),
-                policyStatesSummaryResource,
-                subscriptionId,
-                resourceGroupName,
-                apiVersion,
-                top,
-                from,
-                to,
-                filter,
-                accept,
-                context);
+        return service.summarizeForResourceGroup(this.client.getEndpoint(), policyStatesSummaryResource, subscriptionId,
+            resourceGroupName, apiVersion, top, from, to, filter, accept, context);
     }
 
     /**
      * Summarizes policy states for the resources under the resource group.
-     *
+     * 
+     * @param policyStatesSummaryResource The virtual resource under PolicyStates resource type for summarize action. In
+     * a given time range, 'latest' represents the latest policy state(s) and is the only allowed value.
+     * @param subscriptionId Microsoft Azure subscription ID.
+     * @param resourceGroupName Resource group name.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return summarize action results on successful completion of {@link Mono}.
+     */
+    @ServiceMethod(returns = ReturnType.SINGLE)
+    private Mono<SummarizeResultsInner> summarizeForResourceGroupAsync(
+        PolicyStatesSummaryResourceType policyStatesSummaryResource, String subscriptionId, String resourceGroupName) {
+        final Integer top = null;
+        final OffsetDateTime from = null;
+        final OffsetDateTime to = null;
+        final String filter = null;
+        return summarizeForResourceGroupWithResponseAsync(policyStatesSummaryResource, subscriptionId,
+            resourceGroupName, top, from, to, filter).flatMap(res -> Mono.justOrEmpty(res.getValue()));
+    }
+
+    /**
+     * Summarizes policy states for the resources under the resource group.
+     * 
+     * @param policyStatesSummaryResource The virtual resource under PolicyStates resource type for summarize action. In
+     * a given time range, 'latest' represents the latest policy state(s) and is the only allowed value.
      * @param subscriptionId Microsoft Azure subscription ID.
      * @param resourceGroupName Resource group name.
      * @param top Maximum number of records to return.
      * @param from ISO 8601 formatted timestamp specifying the start time of the interval to query. When not specified,
-     *     the service uses ($to - 1-day).
+     * the service uses ($to - 1-day).
      * @param to ISO 8601 formatted timestamp specifying the end time of the interval to query. When not specified, the
-     *     service uses request time.
+     * service uses request time.
      * @param filter OData filter expression.
+     * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return summarize action results.
+     * @return summarize action results along with {@link Response}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    private Mono<SummarizeResultsInner> summarizeForResourceGroupAsync(
-        String subscriptionId,
-        String resourceGroupName,
-        Integer top,
-        OffsetDateTime from,
-        OffsetDateTime to,
-        String filter) {
-        return summarizeForResourceGroupWithResponseAsync(subscriptionId, resourceGroupName, top, from, to, filter)
-            .flatMap(
-                (Response<SummarizeResultsInner> res) -> {
-                    if (res.getValue() != null) {
-                        return Mono.just(res.getValue());
-                    } else {
-                        return Mono.empty();
-                    }
-                });
+    public Response<SummarizeResultsInner> summarizeForResourceGroupWithResponse(
+        PolicyStatesSummaryResourceType policyStatesSummaryResource, String subscriptionId, String resourceGroupName,
+        Integer top, OffsetDateTime from, OffsetDateTime to, String filter, Context context) {
+        return summarizeForResourceGroupWithResponseAsync(policyStatesSummaryResource, subscriptionId,
+            resourceGroupName, top, from, to, filter, context).block();
     }
 
     /**
      * Summarizes policy states for the resources under the resource group.
-     *
+     * 
+     * @param policyStatesSummaryResource The virtual resource under PolicyStates resource type for summarize action. In
+     * a given time range, 'latest' represents the latest policy state(s) and is the only allowed value.
      * @param subscriptionId Microsoft Azure subscription ID.
      * @param resourceGroupName Resource group name.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
@@ -2195,116 +1564,48 @@ public final class PolicyStatesClientImpl implements PolicyStatesClient {
      * @return summarize action results.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    private Mono<SummarizeResultsInner> summarizeForResourceGroupAsync(
+    public SummarizeResultsInner summarizeForResourceGroup(PolicyStatesSummaryResourceType policyStatesSummaryResource,
         String subscriptionId, String resourceGroupName) {
         final Integer top = null;
         final OffsetDateTime from = null;
         final OffsetDateTime to = null;
         final String filter = null;
-        return summarizeForResourceGroupWithResponseAsync(subscriptionId, resourceGroupName, top, from, to, filter)
-            .flatMap(
-                (Response<SummarizeResultsInner> res) -> {
-                    if (res.getValue() != null) {
-                        return Mono.just(res.getValue());
-                    } else {
-                        return Mono.empty();
-                    }
-                });
-    }
-
-    /**
-     * Summarizes policy states for the resources under the resource group.
-     *
-     * @param subscriptionId Microsoft Azure subscription ID.
-     * @param resourceGroupName Resource group name.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return summarize action results.
-     */
-    @ServiceMethod(returns = ReturnType.SINGLE)
-    public SummarizeResultsInner summarizeForResourceGroup(String subscriptionId, String resourceGroupName) {
-        final Integer top = null;
-        final OffsetDateTime from = null;
-        final OffsetDateTime to = null;
-        final String filter = null;
-        return summarizeForResourceGroupAsync(subscriptionId, resourceGroupName, top, from, to, filter).block();
-    }
-
-    /**
-     * Summarizes policy states for the resources under the resource group.
-     *
-     * @param subscriptionId Microsoft Azure subscription ID.
-     * @param resourceGroupName Resource group name.
-     * @param top Maximum number of records to return.
-     * @param from ISO 8601 formatted timestamp specifying the start time of the interval to query. When not specified,
-     *     the service uses ($to - 1-day).
-     * @param to ISO 8601 formatted timestamp specifying the end time of the interval to query. When not specified, the
-     *     service uses request time.
-     * @param filter OData filter expression.
-     * @param context The context to associate with this operation.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return summarize action results.
-     */
-    @ServiceMethod(returns = ReturnType.SINGLE)
-    public Response<SummarizeResultsInner> summarizeForResourceGroupWithResponse(
-        String subscriptionId,
-        String resourceGroupName,
-        Integer top,
-        OffsetDateTime from,
-        OffsetDateTime to,
-        String filter,
-        Context context) {
-        return summarizeForResourceGroupWithResponseAsync(
-                subscriptionId, resourceGroupName, top, from, to, filter, context)
-            .block();
+        return summarizeForResourceGroupWithResponse(policyStatesSummaryResource, subscriptionId, resourceGroupName,
+            top, from, to, filter, Context.NONE).getValue();
     }
 
     /**
      * Queries policy states for the resource.
-     *
+     * 
      * @param policyStatesResource The virtual resource under PolicyStates resource type. In a given time range,
-     *     'latest' represents the latest policy state(s), whereas 'default' represents all policy state(s).
+     * 'latest' represents the latest policy state(s), whereas 'default' represents all policy state(s).
      * @param resourceId Resource ID.
      * @param top Maximum number of records to return.
      * @param orderBy Ordering expression using OData notation. One or more comma-separated column names with an
-     *     optional "desc" (the default) or "asc", e.g. "$orderby=PolicyAssignmentId, ResourceId asc".
+     * optional "desc" (the default) or "asc", e.g. "$orderby=PolicyAssignmentId, ResourceId asc".
      * @param select Select expression using OData notation. Limits the columns on each record to just those requested,
-     *     e.g. "$select=PolicyAssignmentId, ResourceId".
+     * e.g. "$select=PolicyAssignmentId, ResourceId".
      * @param from ISO 8601 formatted timestamp specifying the start time of the interval to query. When not specified,
-     *     the service uses ($to - 1-day).
+     * the service uses ($to - 1-day).
      * @param to ISO 8601 formatted timestamp specifying the end time of the interval to query. When not specified, the
-     *     service uses request time.
+     * service uses request time.
      * @param filter OData filter expression.
      * @param apply OData apply expression for aggregations.
      * @param expand The $expand query parameter. For example, to expand components use $expand=components.
      * @param skipToken Skiptoken is only provided if a previous response returned a partial result as a part of
-     *     nextLink element.
+     * nextLink element.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return query results.
+     * @return query results along with {@link PagedResponse} on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
     private Mono<PagedResponse<PolicyStateInner>> listQueryResultsForResourceSinglePageAsync(
-        PolicyStatesResource policyStatesResource,
-        String resourceId,
-        Integer top,
-        String orderBy,
-        String select,
-        OffsetDateTime from,
-        OffsetDateTime to,
-        String filter,
-        String apply,
-        String expand,
-        String skipToken) {
+        PolicyStatesResource policyStatesResource, String resourceId, Integer top, String orderBy, String select,
+        OffsetDateTime from, OffsetDateTime to, String filter, String apply, String expand, String skipToken) {
         if (this.client.getEndpoint() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getEndpoint() is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
         }
         if (policyStatesResource == null) {
             return Mono
@@ -2316,82 +1617,48 @@ public final class PolicyStatesClientImpl implements PolicyStatesClient {
         final String apiVersion = "2019-10-01";
         final String accept = "application/json";
         return FluxUtil
-            .withContext(
-                context ->
-                    service
-                        .listQueryResultsForResource(
-                            this.client.getEndpoint(),
-                            policyStatesResource,
-                            resourceId,
-                            apiVersion,
-                            top,
-                            orderBy,
-                            select,
-                            from,
-                            to,
-                            filter,
-                            apply,
-                            expand,
-                            skipToken,
-                            accept,
-                            context))
-            .<PagedResponse<PolicyStateInner>>map(
-                res ->
-                    new PagedResponseBase<>(
-                        res.getRequest(),
-                        res.getStatusCode(),
-                        res.getHeaders(),
-                        res.getValue().value(),
-                        res.getValue().odataNextLink(),
-                        null))
+            .withContext(context -> service.listQueryResultsForResource(this.client.getEndpoint(), policyStatesResource,
+                resourceId, apiVersion, top, orderBy, select, from, to, filter, apply, expand, skipToken, accept,
+                context))
+            .<PagedResponse<PolicyStateInner>>map(res -> new PagedResponseBase<>(res.getRequest(), res.getStatusCode(),
+                res.getHeaders(), res.getValue().value(), res.getValue().odataNextLink(), null))
             .contextWrite(context -> context.putAll(FluxUtil.toReactorContext(this.client.getContext()).readOnly()));
     }
 
     /**
      * Queries policy states for the resource.
-     *
+     * 
      * @param policyStatesResource The virtual resource under PolicyStates resource type. In a given time range,
-     *     'latest' represents the latest policy state(s), whereas 'default' represents all policy state(s).
+     * 'latest' represents the latest policy state(s), whereas 'default' represents all policy state(s).
      * @param resourceId Resource ID.
      * @param top Maximum number of records to return.
      * @param orderBy Ordering expression using OData notation. One or more comma-separated column names with an
-     *     optional "desc" (the default) or "asc", e.g. "$orderby=PolicyAssignmentId, ResourceId asc".
+     * optional "desc" (the default) or "asc", e.g. "$orderby=PolicyAssignmentId, ResourceId asc".
      * @param select Select expression using OData notation. Limits the columns on each record to just those requested,
-     *     e.g. "$select=PolicyAssignmentId, ResourceId".
+     * e.g. "$select=PolicyAssignmentId, ResourceId".
      * @param from ISO 8601 formatted timestamp specifying the start time of the interval to query. When not specified,
-     *     the service uses ($to - 1-day).
+     * the service uses ($to - 1-day).
      * @param to ISO 8601 formatted timestamp specifying the end time of the interval to query. When not specified, the
-     *     service uses request time.
+     * service uses request time.
      * @param filter OData filter expression.
      * @param apply OData apply expression for aggregations.
      * @param expand The $expand query parameter. For example, to expand components use $expand=components.
      * @param skipToken Skiptoken is only provided if a previous response returned a partial result as a part of
-     *     nextLink element.
+     * nextLink element.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return query results.
+     * @return query results along with {@link PagedResponse} on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
     private Mono<PagedResponse<PolicyStateInner>> listQueryResultsForResourceSinglePageAsync(
-        PolicyStatesResource policyStatesResource,
-        String resourceId,
-        Integer top,
-        String orderBy,
-        String select,
-        OffsetDateTime from,
-        OffsetDateTime to,
-        String filter,
-        String apply,
-        String expand,
-        String skipToken,
+        PolicyStatesResource policyStatesResource, String resourceId, Integer top, String orderBy, String select,
+        OffsetDateTime from, OffsetDateTime to, String filter, String apply, String expand, String skipToken,
         Context context) {
         if (this.client.getEndpoint() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getEndpoint() is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
         }
         if (policyStatesResource == null) {
             return Mono
@@ -2404,92 +1671,60 @@ public final class PolicyStatesClientImpl implements PolicyStatesClient {
         final String accept = "application/json";
         context = this.client.mergeContext(context);
         return service
-            .listQueryResultsForResource(
-                this.client.getEndpoint(),
-                policyStatesResource,
-                resourceId,
-                apiVersion,
-                top,
-                orderBy,
-                select,
-                from,
-                to,
-                filter,
-                apply,
-                expand,
-                skipToken,
-                accept,
-                context)
-            .map(
-                res ->
-                    new PagedResponseBase<>(
-                        res.getRequest(),
-                        res.getStatusCode(),
-                        res.getHeaders(),
-                        res.getValue().value(),
-                        res.getValue().odataNextLink(),
-                        null));
+            .listQueryResultsForResource(this.client.getEndpoint(), policyStatesResource, resourceId, apiVersion, top,
+                orderBy, select, from, to, filter, apply, expand, skipToken, accept, context)
+            .map(res -> new PagedResponseBase<>(res.getRequest(), res.getStatusCode(), res.getHeaders(),
+                res.getValue().value(), res.getValue().odataNextLink(), null));
     }
 
     /**
      * Queries policy states for the resource.
-     *
+     * 
      * @param policyStatesResource The virtual resource under PolicyStates resource type. In a given time range,
-     *     'latest' represents the latest policy state(s), whereas 'default' represents all policy state(s).
+     * 'latest' represents the latest policy state(s), whereas 'default' represents all policy state(s).
      * @param resourceId Resource ID.
      * @param top Maximum number of records to return.
      * @param orderBy Ordering expression using OData notation. One or more comma-separated column names with an
-     *     optional "desc" (the default) or "asc", e.g. "$orderby=PolicyAssignmentId, ResourceId asc".
+     * optional "desc" (the default) or "asc", e.g. "$orderby=PolicyAssignmentId, ResourceId asc".
      * @param select Select expression using OData notation. Limits the columns on each record to just those requested,
-     *     e.g. "$select=PolicyAssignmentId, ResourceId".
+     * e.g. "$select=PolicyAssignmentId, ResourceId".
      * @param from ISO 8601 formatted timestamp specifying the start time of the interval to query. When not specified,
-     *     the service uses ($to - 1-day).
+     * the service uses ($to - 1-day).
      * @param to ISO 8601 formatted timestamp specifying the end time of the interval to query. When not specified, the
-     *     service uses request time.
+     * service uses request time.
      * @param filter OData filter expression.
      * @param apply OData apply expression for aggregations.
      * @param expand The $expand query parameter. For example, to expand components use $expand=components.
      * @param skipToken Skiptoken is only provided if a previous response returned a partial result as a part of
-     *     nextLink element.
+     * nextLink element.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return query results.
+     * @return query results as paginated response with {@link PagedFlux}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
-    private PagedFlux<PolicyStateInner> listQueryResultsForResourceAsync(
-        PolicyStatesResource policyStatesResource,
-        String resourceId,
-        Integer top,
-        String orderBy,
-        String select,
-        OffsetDateTime from,
-        OffsetDateTime to,
-        String filter,
-        String apply,
-        String expand,
-        String skipToken) {
-        return new PagedFlux<>(
-            () ->
-                listQueryResultsForResourceSinglePageAsync(
-                    policyStatesResource, resourceId, top, orderBy, select, from, to, filter, apply, expand, skipToken),
+    private PagedFlux<PolicyStateInner> listQueryResultsForResourceAsync(PolicyStatesResource policyStatesResource,
+        String resourceId, Integer top, String orderBy, String select, OffsetDateTime from, OffsetDateTime to,
+        String filter, String apply, String expand, String skipToken) {
+        return new PagedFlux<>(() -> listQueryResultsForResourceSinglePageAsync(policyStatesResource, resourceId, top,
+            orderBy, select, from, to, filter, apply, expand, skipToken),
             nextLink -> nextLinkSinglePageAsync(nextLink));
     }
 
     /**
      * Queries policy states for the resource.
-     *
+     * 
      * @param policyStatesResource The virtual resource under PolicyStates resource type. In a given time range,
-     *     'latest' represents the latest policy state(s), whereas 'default' represents all policy state(s).
+     * 'latest' represents the latest policy state(s), whereas 'default' represents all policy state(s).
      * @param resourceId Resource ID.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return query results.
+     * @return query results as paginated response with {@link PagedFlux}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
-    private PagedFlux<PolicyStateInner> listQueryResultsForResourceAsync(
-        PolicyStatesResource policyStatesResource, String resourceId) {
+    private PagedFlux<PolicyStateInner> listQueryResultsForResourceAsync(PolicyStatesResource policyStatesResource,
+        String resourceId) {
         final Integer top = null;
         final String orderBy = null;
         final String select = null;
@@ -2499,85 +1734,61 @@ public final class PolicyStatesClientImpl implements PolicyStatesClient {
         final String apply = null;
         final String expand = null;
         final String skipToken = null;
-        return new PagedFlux<>(
-            () ->
-                listQueryResultsForResourceSinglePageAsync(
-                    policyStatesResource, resourceId, top, orderBy, select, from, to, filter, apply, expand, skipToken),
+        return new PagedFlux<>(() -> listQueryResultsForResourceSinglePageAsync(policyStatesResource, resourceId, top,
+            orderBy, select, from, to, filter, apply, expand, skipToken),
             nextLink -> nextLinkSinglePageAsync(nextLink));
     }
 
     /**
      * Queries policy states for the resource.
-     *
+     * 
      * @param policyStatesResource The virtual resource under PolicyStates resource type. In a given time range,
-     *     'latest' represents the latest policy state(s), whereas 'default' represents all policy state(s).
+     * 'latest' represents the latest policy state(s), whereas 'default' represents all policy state(s).
      * @param resourceId Resource ID.
      * @param top Maximum number of records to return.
      * @param orderBy Ordering expression using OData notation. One or more comma-separated column names with an
-     *     optional "desc" (the default) or "asc", e.g. "$orderby=PolicyAssignmentId, ResourceId asc".
+     * optional "desc" (the default) or "asc", e.g. "$orderby=PolicyAssignmentId, ResourceId asc".
      * @param select Select expression using OData notation. Limits the columns on each record to just those requested,
-     *     e.g. "$select=PolicyAssignmentId, ResourceId".
+     * e.g. "$select=PolicyAssignmentId, ResourceId".
      * @param from ISO 8601 formatted timestamp specifying the start time of the interval to query. When not specified,
-     *     the service uses ($to - 1-day).
+     * the service uses ($to - 1-day).
      * @param to ISO 8601 formatted timestamp specifying the end time of the interval to query. When not specified, the
-     *     service uses request time.
+     * service uses request time.
      * @param filter OData filter expression.
      * @param apply OData apply expression for aggregations.
      * @param expand The $expand query parameter. For example, to expand components use $expand=components.
      * @param skipToken Skiptoken is only provided if a previous response returned a partial result as a part of
-     *     nextLink element.
+     * nextLink element.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return query results.
+     * @return query results as paginated response with {@link PagedFlux}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
-    private PagedFlux<PolicyStateInner> listQueryResultsForResourceAsync(
-        PolicyStatesResource policyStatesResource,
-        String resourceId,
-        Integer top,
-        String orderBy,
-        String select,
-        OffsetDateTime from,
-        OffsetDateTime to,
-        String filter,
-        String apply,
-        String expand,
-        String skipToken,
-        Context context) {
+    private PagedFlux<PolicyStateInner> listQueryResultsForResourceAsync(PolicyStatesResource policyStatesResource,
+        String resourceId, Integer top, String orderBy, String select, OffsetDateTime from, OffsetDateTime to,
+        String filter, String apply, String expand, String skipToken, Context context) {
         return new PagedFlux<>(
-            () ->
-                listQueryResultsForResourceSinglePageAsync(
-                    policyStatesResource,
-                    resourceId,
-                    top,
-                    orderBy,
-                    select,
-                    from,
-                    to,
-                    filter,
-                    apply,
-                    expand,
-                    skipToken,
-                    context),
+            () -> listQueryResultsForResourceSinglePageAsync(policyStatesResource, resourceId, top, orderBy, select,
+                from, to, filter, apply, expand, skipToken, context),
             nextLink -> nextLinkSinglePageAsync(nextLink, context));
     }
 
     /**
      * Queries policy states for the resource.
-     *
+     * 
      * @param policyStatesResource The virtual resource under PolicyStates resource type. In a given time range,
-     *     'latest' represents the latest policy state(s), whereas 'default' represents all policy state(s).
+     * 'latest' represents the latest policy state(s), whereas 'default' represents all policy state(s).
      * @param resourceId Resource ID.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return query results.
+     * @return query results as paginated response with {@link PagedIterable}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
-    public PagedIterable<PolicyStateInner> listQueryResultsForResource(
-        PolicyStatesResource policyStatesResource, String resourceId) {
+    public PagedIterable<PolicyStateInner> listQueryResultsForResource(PolicyStatesResource policyStatesResource,
+        String resourceId) {
         final Integer top = null;
         final String orderBy = null;
         final String select = null;
@@ -2587,272 +1798,208 @@ public final class PolicyStatesClientImpl implements PolicyStatesClient {
         final String apply = null;
         final String expand = null;
         final String skipToken = null;
-        return new PagedIterable<>(
-            listQueryResultsForResourceAsync(
-                policyStatesResource, resourceId, top, orderBy, select, from, to, filter, apply, expand, skipToken));
+        return new PagedIterable<>(listQueryResultsForResourceAsync(policyStatesResource, resourceId, top, orderBy,
+            select, from, to, filter, apply, expand, skipToken));
     }
 
     /**
      * Queries policy states for the resource.
-     *
+     * 
      * @param policyStatesResource The virtual resource under PolicyStates resource type. In a given time range,
-     *     'latest' represents the latest policy state(s), whereas 'default' represents all policy state(s).
+     * 'latest' represents the latest policy state(s), whereas 'default' represents all policy state(s).
      * @param resourceId Resource ID.
      * @param top Maximum number of records to return.
      * @param orderBy Ordering expression using OData notation. One or more comma-separated column names with an
-     *     optional "desc" (the default) or "asc", e.g. "$orderby=PolicyAssignmentId, ResourceId asc".
+     * optional "desc" (the default) or "asc", e.g. "$orderby=PolicyAssignmentId, ResourceId asc".
      * @param select Select expression using OData notation. Limits the columns on each record to just those requested,
-     *     e.g. "$select=PolicyAssignmentId, ResourceId".
+     * e.g. "$select=PolicyAssignmentId, ResourceId".
      * @param from ISO 8601 formatted timestamp specifying the start time of the interval to query. When not specified,
-     *     the service uses ($to - 1-day).
+     * the service uses ($to - 1-day).
      * @param to ISO 8601 formatted timestamp specifying the end time of the interval to query. When not specified, the
-     *     service uses request time.
+     * service uses request time.
      * @param filter OData filter expression.
      * @param apply OData apply expression for aggregations.
      * @param expand The $expand query parameter. For example, to expand components use $expand=components.
      * @param skipToken Skiptoken is only provided if a previous response returned a partial result as a part of
-     *     nextLink element.
+     * nextLink element.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return query results.
+     * @return query results as paginated response with {@link PagedIterable}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
-    public PagedIterable<PolicyStateInner> listQueryResultsForResource(
-        PolicyStatesResource policyStatesResource,
-        String resourceId,
-        Integer top,
-        String orderBy,
-        String select,
-        OffsetDateTime from,
-        OffsetDateTime to,
-        String filter,
-        String apply,
-        String expand,
-        String skipToken,
-        Context context) {
-        return new PagedIterable<>(
-            listQueryResultsForResourceAsync(
-                policyStatesResource,
-                resourceId,
-                top,
-                orderBy,
-                select,
-                from,
-                to,
-                filter,
-                apply,
-                expand,
-                skipToken,
-                context));
+    public PagedIterable<PolicyStateInner> listQueryResultsForResource(PolicyStatesResource policyStatesResource,
+        String resourceId, Integer top, String orderBy, String select, OffsetDateTime from, OffsetDateTime to,
+        String filter, String apply, String expand, String skipToken, Context context) {
+        return new PagedIterable<>(listQueryResultsForResourceAsync(policyStatesResource, resourceId, top, orderBy,
+            select, from, to, filter, apply, expand, skipToken, context));
     }
 
     /**
      * Summarizes policy states for the resource.
-     *
+     * 
+     * @param policyStatesSummaryResource The virtual resource under PolicyStates resource type for summarize action. In
+     * a given time range, 'latest' represents the latest policy state(s) and is the only allowed value.
      * @param resourceId Resource ID.
      * @param top Maximum number of records to return.
      * @param from ISO 8601 formatted timestamp specifying the start time of the interval to query. When not specified,
-     *     the service uses ($to - 1-day).
+     * the service uses ($to - 1-day).
      * @param to ISO 8601 formatted timestamp specifying the end time of the interval to query. When not specified, the
-     *     service uses request time.
+     * service uses request time.
      * @param filter OData filter expression.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return summarize action results.
+     * @return summarize action results along with {@link Response} on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
     private Mono<Response<SummarizeResultsInner>> summarizeForResourceWithResponseAsync(
-        String resourceId, Integer top, OffsetDateTime from, OffsetDateTime to, String filter) {
+        PolicyStatesSummaryResourceType policyStatesSummaryResource, String resourceId, Integer top,
+        OffsetDateTime from, OffsetDateTime to, String filter) {
         if (this.client.getEndpoint() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getEndpoint() is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
+        }
+        if (policyStatesSummaryResource == null) {
+            return Mono.error(
+                new IllegalArgumentException("Parameter policyStatesSummaryResource is required and cannot be null."));
         }
         if (resourceId == null) {
             return Mono.error(new IllegalArgumentException("Parameter resourceId is required and cannot be null."));
         }
-        final String policyStatesSummaryResource = "latest";
         final String apiVersion = "2019-10-01";
         final String accept = "application/json";
         return FluxUtil
-            .withContext(
-                context ->
-                    service
-                        .summarizeForResource(
-                            this.client.getEndpoint(),
-                            policyStatesSummaryResource,
-                            resourceId,
-                            apiVersion,
-                            top,
-                            from,
-                            to,
-                            filter,
-                            accept,
-                            context))
+            .withContext(context -> service.summarizeForResource(this.client.getEndpoint(), policyStatesSummaryResource,
+                resourceId, apiVersion, top, from, to, filter, accept, context))
             .contextWrite(context -> context.putAll(FluxUtil.toReactorContext(this.client.getContext()).readOnly()));
     }
 
     /**
      * Summarizes policy states for the resource.
-     *
+     * 
+     * @param policyStatesSummaryResource The virtual resource under PolicyStates resource type for summarize action. In
+     * a given time range, 'latest' represents the latest policy state(s) and is the only allowed value.
      * @param resourceId Resource ID.
      * @param top Maximum number of records to return.
      * @param from ISO 8601 formatted timestamp specifying the start time of the interval to query. When not specified,
-     *     the service uses ($to - 1-day).
+     * the service uses ($to - 1-day).
      * @param to ISO 8601 formatted timestamp specifying the end time of the interval to query. When not specified, the
-     *     service uses request time.
+     * service uses request time.
      * @param filter OData filter expression.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return summarize action results.
+     * @return summarize action results along with {@link Response} on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
     private Mono<Response<SummarizeResultsInner>> summarizeForResourceWithResponseAsync(
-        String resourceId, Integer top, OffsetDateTime from, OffsetDateTime to, String filter, Context context) {
+        PolicyStatesSummaryResourceType policyStatesSummaryResource, String resourceId, Integer top,
+        OffsetDateTime from, OffsetDateTime to, String filter, Context context) {
         if (this.client.getEndpoint() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getEndpoint() is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
+        }
+        if (policyStatesSummaryResource == null) {
+            return Mono.error(
+                new IllegalArgumentException("Parameter policyStatesSummaryResource is required and cannot be null."));
         }
         if (resourceId == null) {
             return Mono.error(new IllegalArgumentException("Parameter resourceId is required and cannot be null."));
         }
-        final String policyStatesSummaryResource = "latest";
         final String apiVersion = "2019-10-01";
         final String accept = "application/json";
         context = this.client.mergeContext(context);
-        return service
-            .summarizeForResource(
-                this.client.getEndpoint(),
-                policyStatesSummaryResource,
-                resourceId,
-                apiVersion,
-                top,
-                from,
-                to,
-                filter,
-                accept,
-                context);
+        return service.summarizeForResource(this.client.getEndpoint(), policyStatesSummaryResource, resourceId,
+            apiVersion, top, from, to, filter, accept, context);
     }
 
     /**
      * Summarizes policy states for the resource.
-     *
-     * @param resourceId Resource ID.
-     * @param top Maximum number of records to return.
-     * @param from ISO 8601 formatted timestamp specifying the start time of the interval to query. When not specified,
-     *     the service uses ($to - 1-day).
-     * @param to ISO 8601 formatted timestamp specifying the end time of the interval to query. When not specified, the
-     *     service uses request time.
-     * @param filter OData filter expression.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return summarize action results.
-     */
-    @ServiceMethod(returns = ReturnType.SINGLE)
-    private Mono<SummarizeResultsInner> summarizeForResourceAsync(
-        String resourceId, Integer top, OffsetDateTime from, OffsetDateTime to, String filter) {
-        return summarizeForResourceWithResponseAsync(resourceId, top, from, to, filter)
-            .flatMap(
-                (Response<SummarizeResultsInner> res) -> {
-                    if (res.getValue() != null) {
-                        return Mono.just(res.getValue());
-                    } else {
-                        return Mono.empty();
-                    }
-                });
-    }
-
-    /**
-     * Summarizes policy states for the resource.
-     *
+     * 
+     * @param policyStatesSummaryResource The virtual resource under PolicyStates resource type for summarize action. In
+     * a given time range, 'latest' represents the latest policy state(s) and is the only allowed value.
      * @param resourceId Resource ID.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return summarize action results.
+     * @return summarize action results on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    private Mono<SummarizeResultsInner> summarizeForResourceAsync(String resourceId) {
+    private Mono<SummarizeResultsInner>
+        summarizeForResourceAsync(PolicyStatesSummaryResourceType policyStatesSummaryResource, String resourceId) {
         final Integer top = null;
         final OffsetDateTime from = null;
         final OffsetDateTime to = null;
         final String filter = null;
-        return summarizeForResourceWithResponseAsync(resourceId, top, from, to, filter)
-            .flatMap(
-                (Response<SummarizeResultsInner> res) -> {
-                    if (res.getValue() != null) {
-                        return Mono.just(res.getValue());
-                    } else {
-                        return Mono.empty();
-                    }
-                });
+        return summarizeForResourceWithResponseAsync(policyStatesSummaryResource, resourceId, top, from, to, filter)
+            .flatMap(res -> Mono.justOrEmpty(res.getValue()));
     }
 
     /**
      * Summarizes policy states for the resource.
-     *
-     * @param resourceId Resource ID.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return summarize action results.
-     */
-    @ServiceMethod(returns = ReturnType.SINGLE)
-    public SummarizeResultsInner summarizeForResource(String resourceId) {
-        final Integer top = null;
-        final OffsetDateTime from = null;
-        final OffsetDateTime to = null;
-        final String filter = null;
-        return summarizeForResourceAsync(resourceId, top, from, to, filter).block();
-    }
-
-    /**
-     * Summarizes policy states for the resource.
-     *
+     * 
+     * @param policyStatesSummaryResource The virtual resource under PolicyStates resource type for summarize action. In
+     * a given time range, 'latest' represents the latest policy state(s) and is the only allowed value.
      * @param resourceId Resource ID.
      * @param top Maximum number of records to return.
      * @param from ISO 8601 formatted timestamp specifying the start time of the interval to query. When not specified,
-     *     the service uses ($to - 1-day).
+     * the service uses ($to - 1-day).
      * @param to ISO 8601 formatted timestamp specifying the end time of the interval to query. When not specified, the
-     *     service uses request time.
+     * service uses request time.
      * @param filter OData filter expression.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return summarize action results.
+     * @return summarize action results along with {@link Response}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
     public Response<SummarizeResultsInner> summarizeForResourceWithResponse(
-        String resourceId, Integer top, OffsetDateTime from, OffsetDateTime to, String filter, Context context) {
-        return summarizeForResourceWithResponseAsync(resourceId, top, from, to, filter, context).block();
+        PolicyStatesSummaryResourceType policyStatesSummaryResource, String resourceId, Integer top,
+        OffsetDateTime from, OffsetDateTime to, String filter, Context context) {
+        return summarizeForResourceWithResponseAsync(policyStatesSummaryResource, resourceId, top, from, to, filter,
+            context).block();
+    }
+
+    /**
+     * Summarizes policy states for the resource.
+     * 
+     * @param policyStatesSummaryResource The virtual resource under PolicyStates resource type for summarize action. In
+     * a given time range, 'latest' represents the latest policy state(s) and is the only allowed value.
+     * @param resourceId Resource ID.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return summarize action results.
+     */
+    @ServiceMethod(returns = ReturnType.SINGLE)
+    public SummarizeResultsInner summarizeForResource(PolicyStatesSummaryResourceType policyStatesSummaryResource,
+        String resourceId) {
+        final Integer top = null;
+        final OffsetDateTime from = null;
+        final OffsetDateTime to = null;
+        final String filter = null;
+        return summarizeForResourceWithResponse(policyStatesSummaryResource, resourceId, top, from, to, filter,
+            Context.NONE).getValue();
     }
 
     /**
      * Triggers a policy evaluation scan for all the resources under the subscription.
-     *
+     * 
      * @param subscriptionId Microsoft Azure subscription ID.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the completion.
+     * @return the {@link Response} on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
     private Mono<Response<Flux<ByteBuffer>>> triggerSubscriptionEvaluationWithResponseAsync(String subscriptionId) {
         if (this.client.getEndpoint() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getEndpoint() is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
         }
         if (subscriptionId == null) {
             return Mono.error(new IllegalArgumentException("Parameter subscriptionId is required and cannot be null."));
@@ -2860,32 +2007,27 @@ public final class PolicyStatesClientImpl implements PolicyStatesClient {
         final String apiVersion = "2019-10-01";
         final String accept = "application/json";
         return FluxUtil
-            .withContext(
-                context ->
-                    service
-                        .triggerSubscriptionEvaluation(
-                            this.client.getEndpoint(), subscriptionId, apiVersion, accept, context))
+            .withContext(context -> service.triggerSubscriptionEvaluation(this.client.getEndpoint(), subscriptionId,
+                apiVersion, accept, context))
             .contextWrite(context -> context.putAll(FluxUtil.toReactorContext(this.client.getContext()).readOnly()));
     }
 
     /**
      * Triggers a policy evaluation scan for all the resources under the subscription.
-     *
+     * 
      * @param subscriptionId Microsoft Azure subscription ID.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the completion.
+     * @return the {@link Response} on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    private Mono<Response<Flux<ByteBuffer>>> triggerSubscriptionEvaluationWithResponseAsync(
-        String subscriptionId, Context context) {
+    private Mono<Response<Flux<ByteBuffer>>> triggerSubscriptionEvaluationWithResponseAsync(String subscriptionId,
+        Context context) {
         if (this.client.getEndpoint() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getEndpoint() is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
         }
         if (subscriptionId == null) {
             return Mono.error(new IllegalArgumentException("Parameter subscriptionId is required and cannot be null."));
@@ -2893,114 +2035,109 @@ public final class PolicyStatesClientImpl implements PolicyStatesClient {
         final String apiVersion = "2019-10-01";
         final String accept = "application/json";
         context = this.client.mergeContext(context);
-        return service
-            .triggerSubscriptionEvaluation(this.client.getEndpoint(), subscriptionId, apiVersion, accept, context);
+        return service.triggerSubscriptionEvaluation(this.client.getEndpoint(), subscriptionId, apiVersion, accept,
+            context);
     }
 
     /**
      * Triggers a policy evaluation scan for all the resources under the subscription.
-     *
+     * 
      * @param subscriptionId Microsoft Azure subscription ID.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the completion.
+     * @return the {@link PollerFlux} for polling of long-running operation.
      */
     @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
     private PollerFlux<PollResult<Void>, Void> beginTriggerSubscriptionEvaluationAsync(String subscriptionId) {
         Mono<Response<Flux<ByteBuffer>>> mono = triggerSubscriptionEvaluationWithResponseAsync(subscriptionId);
-        return this
-            .client
-            .<Void, Void>getLroResult(
-                mono, this.client.getHttpPipeline(), Void.class, Void.class, this.client.getContext());
+        return this.client.<Void, Void>getLroResult(mono, this.client.getHttpPipeline(), Void.class, Void.class,
+            this.client.getContext());
     }
 
     /**
      * Triggers a policy evaluation scan for all the resources under the subscription.
-     *
+     * 
      * @param subscriptionId Microsoft Azure subscription ID.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the completion.
+     * @return the {@link PollerFlux} for polling of long-running operation.
      */
     @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
-    private PollerFlux<PollResult<Void>, Void> beginTriggerSubscriptionEvaluationAsync(
-        String subscriptionId, Context context) {
+    private PollerFlux<PollResult<Void>, Void> beginTriggerSubscriptionEvaluationAsync(String subscriptionId,
+        Context context) {
         context = this.client.mergeContext(context);
         Mono<Response<Flux<ByteBuffer>>> mono = triggerSubscriptionEvaluationWithResponseAsync(subscriptionId, context);
-        return this
-            .client
-            .<Void, Void>getLroResult(mono, this.client.getHttpPipeline(), Void.class, Void.class, context);
+        return this.client.<Void, Void>getLroResult(mono, this.client.getHttpPipeline(), Void.class, Void.class,
+            context);
     }
 
     /**
      * Triggers a policy evaluation scan for all the resources under the subscription.
-     *
+     * 
      * @param subscriptionId Microsoft Azure subscription ID.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the completion.
+     * @return the {@link SyncPoller} for polling of long-running operation.
      */
     @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
     public SyncPoller<PollResult<Void>, Void> beginTriggerSubscriptionEvaluation(String subscriptionId) {
-        return beginTriggerSubscriptionEvaluationAsync(subscriptionId).getSyncPoller();
+        return this.beginTriggerSubscriptionEvaluationAsync(subscriptionId).getSyncPoller();
     }
 
     /**
      * Triggers a policy evaluation scan for all the resources under the subscription.
-     *
+     * 
      * @param subscriptionId Microsoft Azure subscription ID.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the completion.
+     * @return the {@link SyncPoller} for polling of long-running operation.
      */
     @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
-    public SyncPoller<PollResult<Void>, Void> beginTriggerSubscriptionEvaluation(
-        String subscriptionId, Context context) {
-        return beginTriggerSubscriptionEvaluationAsync(subscriptionId, context).getSyncPoller();
+    public SyncPoller<PollResult<Void>, Void> beginTriggerSubscriptionEvaluation(String subscriptionId,
+        Context context) {
+        return this.beginTriggerSubscriptionEvaluationAsync(subscriptionId, context).getSyncPoller();
     }
 
     /**
      * Triggers a policy evaluation scan for all the resources under the subscription.
-     *
+     * 
      * @param subscriptionId Microsoft Azure subscription ID.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the completion.
+     * @return A {@link Mono} that completes when a successful response is received.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
     private Mono<Void> triggerSubscriptionEvaluationAsync(String subscriptionId) {
-        return beginTriggerSubscriptionEvaluationAsync(subscriptionId)
-            .last()
+        return beginTriggerSubscriptionEvaluationAsync(subscriptionId).last()
             .flatMap(this.client::getLroFinalResultOrError);
     }
 
     /**
      * Triggers a policy evaluation scan for all the resources under the subscription.
-     *
+     * 
      * @param subscriptionId Microsoft Azure subscription ID.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the completion.
+     * @return A {@link Mono} that completes when a successful response is received.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
     private Mono<Void> triggerSubscriptionEvaluationAsync(String subscriptionId, Context context) {
-        return beginTriggerSubscriptionEvaluationAsync(subscriptionId, context)
-            .last()
+        return beginTriggerSubscriptionEvaluationAsync(subscriptionId, context).last()
             .flatMap(this.client::getLroFinalResultOrError);
     }
 
     /**
      * Triggers a policy evaluation scan for all the resources under the subscription.
-     *
+     * 
      * @param subscriptionId Microsoft Azure subscription ID.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
@@ -3013,7 +2150,7 @@ public final class PolicyStatesClientImpl implements PolicyStatesClient {
 
     /**
      * Triggers a policy evaluation scan for all the resources under the subscription.
-     *
+     * 
      * @param subscriptionId Microsoft Azure subscription ID.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
@@ -3027,22 +2164,20 @@ public final class PolicyStatesClientImpl implements PolicyStatesClient {
 
     /**
      * Triggers a policy evaluation scan for all the resources under the resource group.
-     *
+     * 
      * @param subscriptionId Microsoft Azure subscription ID.
      * @param resourceGroupName Resource group name.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the completion.
+     * @return the {@link Response} on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    private Mono<Response<Flux<ByteBuffer>>> triggerResourceGroupEvaluationWithResponseAsync(
-        String subscriptionId, String resourceGroupName) {
+    private Mono<Response<Flux<ByteBuffer>>> triggerResourceGroupEvaluationWithResponseAsync(String subscriptionId,
+        String resourceGroupName) {
         if (this.client.getEndpoint() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getEndpoint() is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
         }
         if (subscriptionId == null) {
             return Mono.error(new IllegalArgumentException("Parameter subscriptionId is required and cannot be null."));
@@ -3054,33 +2189,28 @@ public final class PolicyStatesClientImpl implements PolicyStatesClient {
         final String apiVersion = "2019-10-01";
         final String accept = "application/json";
         return FluxUtil
-            .withContext(
-                context ->
-                    service
-                        .triggerResourceGroupEvaluation(
-                            this.client.getEndpoint(), subscriptionId, resourceGroupName, apiVersion, accept, context))
+            .withContext(context -> service.triggerResourceGroupEvaluation(this.client.getEndpoint(), subscriptionId,
+                resourceGroupName, apiVersion, accept, context))
             .contextWrite(context -> context.putAll(FluxUtil.toReactorContext(this.client.getContext()).readOnly()));
     }
 
     /**
      * Triggers a policy evaluation scan for all the resources under the resource group.
-     *
+     * 
      * @param subscriptionId Microsoft Azure subscription ID.
      * @param resourceGroupName Resource group name.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the completion.
+     * @return the {@link Response} on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    private Mono<Response<Flux<ByteBuffer>>> triggerResourceGroupEvaluationWithResponseAsync(
-        String subscriptionId, String resourceGroupName, Context context) {
+    private Mono<Response<Flux<ByteBuffer>>> triggerResourceGroupEvaluationWithResponseAsync(String subscriptionId,
+        String resourceGroupName, Context context) {
         if (this.client.getEndpoint() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getEndpoint() is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
         }
         if (subscriptionId == null) {
             return Mono.error(new IllegalArgumentException("Parameter subscriptionId is required and cannot be null."));
@@ -3092,126 +2222,121 @@ public final class PolicyStatesClientImpl implements PolicyStatesClient {
         final String apiVersion = "2019-10-01";
         final String accept = "application/json";
         context = this.client.mergeContext(context);
-        return service
-            .triggerResourceGroupEvaluation(
-                this.client.getEndpoint(), subscriptionId, resourceGroupName, apiVersion, accept, context);
+        return service.triggerResourceGroupEvaluation(this.client.getEndpoint(), subscriptionId, resourceGroupName,
+            apiVersion, accept, context);
     }
 
     /**
      * Triggers a policy evaluation scan for all the resources under the resource group.
-     *
+     * 
      * @param subscriptionId Microsoft Azure subscription ID.
      * @param resourceGroupName Resource group name.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the completion.
+     * @return the {@link PollerFlux} for polling of long-running operation.
      */
     @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
-    private PollerFlux<PollResult<Void>, Void> beginTriggerResourceGroupEvaluationAsync(
-        String subscriptionId, String resourceGroupName) {
-        Mono<Response<Flux<ByteBuffer>>> mono =
-            triggerResourceGroupEvaluationWithResponseAsync(subscriptionId, resourceGroupName);
-        return this
-            .client
-            .<Void, Void>getLroResult(
-                mono, this.client.getHttpPipeline(), Void.class, Void.class, this.client.getContext());
+    private PollerFlux<PollResult<Void>, Void> beginTriggerResourceGroupEvaluationAsync(String subscriptionId,
+        String resourceGroupName) {
+        Mono<Response<Flux<ByteBuffer>>> mono
+            = triggerResourceGroupEvaluationWithResponseAsync(subscriptionId, resourceGroupName);
+        return this.client.<Void, Void>getLroResult(mono, this.client.getHttpPipeline(), Void.class, Void.class,
+            this.client.getContext());
     }
 
     /**
      * Triggers a policy evaluation scan for all the resources under the resource group.
-     *
+     * 
      * @param subscriptionId Microsoft Azure subscription ID.
      * @param resourceGroupName Resource group name.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the completion.
+     * @return the {@link PollerFlux} for polling of long-running operation.
      */
     @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
-    private PollerFlux<PollResult<Void>, Void> beginTriggerResourceGroupEvaluationAsync(
-        String subscriptionId, String resourceGroupName, Context context) {
+    private PollerFlux<PollResult<Void>, Void> beginTriggerResourceGroupEvaluationAsync(String subscriptionId,
+        String resourceGroupName, Context context) {
         context = this.client.mergeContext(context);
-        Mono<Response<Flux<ByteBuffer>>> mono =
-            triggerResourceGroupEvaluationWithResponseAsync(subscriptionId, resourceGroupName, context);
-        return this
-            .client
-            .<Void, Void>getLroResult(mono, this.client.getHttpPipeline(), Void.class, Void.class, context);
+        Mono<Response<Flux<ByteBuffer>>> mono
+            = triggerResourceGroupEvaluationWithResponseAsync(subscriptionId, resourceGroupName, context);
+        return this.client.<Void, Void>getLroResult(mono, this.client.getHttpPipeline(), Void.class, Void.class,
+            context);
     }
 
     /**
      * Triggers a policy evaluation scan for all the resources under the resource group.
-     *
+     * 
      * @param subscriptionId Microsoft Azure subscription ID.
      * @param resourceGroupName Resource group name.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the completion.
+     * @return the {@link SyncPoller} for polling of long-running operation.
      */
     @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
-    public SyncPoller<PollResult<Void>, Void> beginTriggerResourceGroupEvaluation(
-        String subscriptionId, String resourceGroupName) {
-        return beginTriggerResourceGroupEvaluationAsync(subscriptionId, resourceGroupName).getSyncPoller();
+    public SyncPoller<PollResult<Void>, Void> beginTriggerResourceGroupEvaluation(String subscriptionId,
+        String resourceGroupName) {
+        return this.beginTriggerResourceGroupEvaluationAsync(subscriptionId, resourceGroupName).getSyncPoller();
     }
 
     /**
      * Triggers a policy evaluation scan for all the resources under the resource group.
-     *
+     * 
      * @param subscriptionId Microsoft Azure subscription ID.
      * @param resourceGroupName Resource group name.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the completion.
+     * @return the {@link SyncPoller} for polling of long-running operation.
      */
     @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
-    public SyncPoller<PollResult<Void>, Void> beginTriggerResourceGroupEvaluation(
-        String subscriptionId, String resourceGroupName, Context context) {
-        return beginTriggerResourceGroupEvaluationAsync(subscriptionId, resourceGroupName, context).getSyncPoller();
+    public SyncPoller<PollResult<Void>, Void> beginTriggerResourceGroupEvaluation(String subscriptionId,
+        String resourceGroupName, Context context) {
+        return this.beginTriggerResourceGroupEvaluationAsync(subscriptionId, resourceGroupName, context)
+            .getSyncPoller();
     }
 
     /**
      * Triggers a policy evaluation scan for all the resources under the resource group.
-     *
+     * 
      * @param subscriptionId Microsoft Azure subscription ID.
      * @param resourceGroupName Resource group name.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the completion.
+     * @return A {@link Mono} that completes when a successful response is received.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
     private Mono<Void> triggerResourceGroupEvaluationAsync(String subscriptionId, String resourceGroupName) {
-        return beginTriggerResourceGroupEvaluationAsync(subscriptionId, resourceGroupName)
-            .last()
+        return beginTriggerResourceGroupEvaluationAsync(subscriptionId, resourceGroupName).last()
             .flatMap(this.client::getLroFinalResultOrError);
     }
 
     /**
      * Triggers a policy evaluation scan for all the resources under the resource group.
-     *
+     * 
      * @param subscriptionId Microsoft Azure subscription ID.
      * @param resourceGroupName Resource group name.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the completion.
+     * @return A {@link Mono} that completes when a successful response is received.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    private Mono<Void> triggerResourceGroupEvaluationAsync(
-        String subscriptionId, String resourceGroupName, Context context) {
-        return beginTriggerResourceGroupEvaluationAsync(subscriptionId, resourceGroupName, context)
-            .last()
+    private Mono<Void> triggerResourceGroupEvaluationAsync(String subscriptionId, String resourceGroupName,
+        Context context) {
+        return beginTriggerResourceGroupEvaluationAsync(subscriptionId, resourceGroupName, context).last()
             .flatMap(this.client::getLroFinalResultOrError);
     }
 
     /**
      * Triggers a policy evaluation scan for all the resources under the resource group.
-     *
+     * 
      * @param subscriptionId Microsoft Azure subscription ID.
      * @param resourceGroupName Resource group name.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
@@ -3225,7 +2350,7 @@ public final class PolicyStatesClientImpl implements PolicyStatesClient {
 
     /**
      * Triggers a policy evaluation scan for all the resources under the resource group.
-     *
+     * 
      * @param subscriptionId Microsoft Azure subscription ID.
      * @param resourceGroupName Resource group name.
      * @param context The context to associate with this operation.
@@ -3240,47 +2365,37 @@ public final class PolicyStatesClientImpl implements PolicyStatesClient {
 
     /**
      * Queries policy states for the subscription level policy set definition.
-     *
+     * 
      * @param policyStatesResource The virtual resource under PolicyStates resource type. In a given time range,
-     *     'latest' represents the latest policy state(s), whereas 'default' represents all policy state(s).
+     * 'latest' represents the latest policy state(s), whereas 'default' represents all policy state(s).
      * @param subscriptionId Microsoft Azure subscription ID.
      * @param policySetDefinitionName Policy set definition name.
      * @param top Maximum number of records to return.
      * @param orderBy Ordering expression using OData notation. One or more comma-separated column names with an
-     *     optional "desc" (the default) or "asc", e.g. "$orderby=PolicyAssignmentId, ResourceId asc".
+     * optional "desc" (the default) or "asc", e.g. "$orderby=PolicyAssignmentId, ResourceId asc".
      * @param select Select expression using OData notation. Limits the columns on each record to just those requested,
-     *     e.g. "$select=PolicyAssignmentId, ResourceId".
+     * e.g. "$select=PolicyAssignmentId, ResourceId".
      * @param from ISO 8601 formatted timestamp specifying the start time of the interval to query. When not specified,
-     *     the service uses ($to - 1-day).
+     * the service uses ($to - 1-day).
      * @param to ISO 8601 formatted timestamp specifying the end time of the interval to query. When not specified, the
-     *     service uses request time.
+     * service uses request time.
      * @param filter OData filter expression.
      * @param apply OData apply expression for aggregations.
      * @param skipToken Skiptoken is only provided if a previous response returned a partial result as a part of
-     *     nextLink element.
+     * nextLink element.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return query results.
+     * @return query results along with {@link PagedResponse} on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
     private Mono<PagedResponse<PolicyStateInner>> listQueryResultsForPolicySetDefinitionSinglePageAsync(
-        PolicyStatesResource policyStatesResource,
-        String subscriptionId,
-        String policySetDefinitionName,
-        Integer top,
-        String orderBy,
-        String select,
-        OffsetDateTime from,
-        OffsetDateTime to,
-        String filter,
-        String apply,
+        PolicyStatesResource policyStatesResource, String subscriptionId, String policySetDefinitionName, Integer top,
+        String orderBy, String select, OffsetDateTime from, OffsetDateTime to, String filter, String apply,
         String skipToken) {
         if (this.client.getEndpoint() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getEndpoint() is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
         }
         if (policyStatesResource == null) {
             return Mono
@@ -3290,91 +2405,55 @@ public final class PolicyStatesClientImpl implements PolicyStatesClient {
             return Mono.error(new IllegalArgumentException("Parameter subscriptionId is required and cannot be null."));
         }
         if (policySetDefinitionName == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException("Parameter policySetDefinitionName is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter policySetDefinitionName is required and cannot be null."));
         }
         final String authorizationNamespace = "Microsoft.Authorization";
         final String apiVersion = "2019-10-01";
         final String accept = "application/json";
         return FluxUtil
-            .withContext(
-                context ->
-                    service
-                        .listQueryResultsForPolicySetDefinition(
-                            this.client.getEndpoint(),
-                            policyStatesResource,
-                            subscriptionId,
-                            authorizationNamespace,
-                            policySetDefinitionName,
-                            apiVersion,
-                            top,
-                            orderBy,
-                            select,
-                            from,
-                            to,
-                            filter,
-                            apply,
-                            skipToken,
-                            accept,
-                            context))
-            .<PagedResponse<PolicyStateInner>>map(
-                res ->
-                    new PagedResponseBase<>(
-                        res.getRequest(),
-                        res.getStatusCode(),
-                        res.getHeaders(),
-                        res.getValue().value(),
-                        res.getValue().odataNextLink(),
-                        null))
+            .withContext(context -> service.listQueryResultsForPolicySetDefinition(this.client.getEndpoint(),
+                policyStatesResource, subscriptionId, authorizationNamespace, policySetDefinitionName, apiVersion, top,
+                orderBy, select, from, to, filter, apply, skipToken, accept, context))
+            .<PagedResponse<PolicyStateInner>>map(res -> new PagedResponseBase<>(res.getRequest(), res.getStatusCode(),
+                res.getHeaders(), res.getValue().value(), res.getValue().odataNextLink(), null))
             .contextWrite(context -> context.putAll(FluxUtil.toReactorContext(this.client.getContext()).readOnly()));
     }
 
     /**
      * Queries policy states for the subscription level policy set definition.
-     *
+     * 
      * @param policyStatesResource The virtual resource under PolicyStates resource type. In a given time range,
-     *     'latest' represents the latest policy state(s), whereas 'default' represents all policy state(s).
+     * 'latest' represents the latest policy state(s), whereas 'default' represents all policy state(s).
      * @param subscriptionId Microsoft Azure subscription ID.
      * @param policySetDefinitionName Policy set definition name.
      * @param top Maximum number of records to return.
      * @param orderBy Ordering expression using OData notation. One or more comma-separated column names with an
-     *     optional "desc" (the default) or "asc", e.g. "$orderby=PolicyAssignmentId, ResourceId asc".
+     * optional "desc" (the default) or "asc", e.g. "$orderby=PolicyAssignmentId, ResourceId asc".
      * @param select Select expression using OData notation. Limits the columns on each record to just those requested,
-     *     e.g. "$select=PolicyAssignmentId, ResourceId".
+     * e.g. "$select=PolicyAssignmentId, ResourceId".
      * @param from ISO 8601 formatted timestamp specifying the start time of the interval to query. When not specified,
-     *     the service uses ($to - 1-day).
+     * the service uses ($to - 1-day).
      * @param to ISO 8601 formatted timestamp specifying the end time of the interval to query. When not specified, the
-     *     service uses request time.
+     * service uses request time.
      * @param filter OData filter expression.
      * @param apply OData apply expression for aggregations.
      * @param skipToken Skiptoken is only provided if a previous response returned a partial result as a part of
-     *     nextLink element.
+     * nextLink element.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return query results.
+     * @return query results along with {@link PagedResponse} on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
     private Mono<PagedResponse<PolicyStateInner>> listQueryResultsForPolicySetDefinitionSinglePageAsync(
-        PolicyStatesResource policyStatesResource,
-        String subscriptionId,
-        String policySetDefinitionName,
-        Integer top,
-        String orderBy,
-        String select,
-        OffsetDateTime from,
-        OffsetDateTime to,
-        String filter,
-        String apply,
-        String skipToken,
-        Context context) {
+        PolicyStatesResource policyStatesResource, String subscriptionId, String policySetDefinitionName, Integer top,
+        String orderBy, String select, OffsetDateTime from, OffsetDateTime to, String filter, String apply,
+        String skipToken, Context context) {
         if (this.client.getEndpoint() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getEndpoint() is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
         }
         if (policyStatesResource == null) {
             return Mono
@@ -3384,109 +2463,68 @@ public final class PolicyStatesClientImpl implements PolicyStatesClient {
             return Mono.error(new IllegalArgumentException("Parameter subscriptionId is required and cannot be null."));
         }
         if (policySetDefinitionName == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException("Parameter policySetDefinitionName is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter policySetDefinitionName is required and cannot be null."));
         }
         final String authorizationNamespace = "Microsoft.Authorization";
         final String apiVersion = "2019-10-01";
         final String accept = "application/json";
         context = this.client.mergeContext(context);
         return service
-            .listQueryResultsForPolicySetDefinition(
-                this.client.getEndpoint(),
-                policyStatesResource,
-                subscriptionId,
-                authorizationNamespace,
-                policySetDefinitionName,
-                apiVersion,
-                top,
-                orderBy,
-                select,
-                from,
-                to,
-                filter,
-                apply,
-                skipToken,
-                accept,
-                context)
-            .map(
-                res ->
-                    new PagedResponseBase<>(
-                        res.getRequest(),
-                        res.getStatusCode(),
-                        res.getHeaders(),
-                        res.getValue().value(),
-                        res.getValue().odataNextLink(),
-                        null));
+            .listQueryResultsForPolicySetDefinition(this.client.getEndpoint(), policyStatesResource, subscriptionId,
+                authorizationNamespace, policySetDefinitionName, apiVersion, top, orderBy, select, from, to, filter,
+                apply, skipToken, accept, context)
+            .map(res -> new PagedResponseBase<>(res.getRequest(), res.getStatusCode(), res.getHeaders(),
+                res.getValue().value(), res.getValue().odataNextLink(), null));
     }
 
     /**
      * Queries policy states for the subscription level policy set definition.
-     *
+     * 
      * @param policyStatesResource The virtual resource under PolicyStates resource type. In a given time range,
-     *     'latest' represents the latest policy state(s), whereas 'default' represents all policy state(s).
+     * 'latest' represents the latest policy state(s), whereas 'default' represents all policy state(s).
      * @param subscriptionId Microsoft Azure subscription ID.
      * @param policySetDefinitionName Policy set definition name.
      * @param top Maximum number of records to return.
      * @param orderBy Ordering expression using OData notation. One or more comma-separated column names with an
-     *     optional "desc" (the default) or "asc", e.g. "$orderby=PolicyAssignmentId, ResourceId asc".
+     * optional "desc" (the default) or "asc", e.g. "$orderby=PolicyAssignmentId, ResourceId asc".
      * @param select Select expression using OData notation. Limits the columns on each record to just those requested,
-     *     e.g. "$select=PolicyAssignmentId, ResourceId".
+     * e.g. "$select=PolicyAssignmentId, ResourceId".
      * @param from ISO 8601 formatted timestamp specifying the start time of the interval to query. When not specified,
-     *     the service uses ($to - 1-day).
+     * the service uses ($to - 1-day).
      * @param to ISO 8601 formatted timestamp specifying the end time of the interval to query. When not specified, the
-     *     service uses request time.
+     * service uses request time.
      * @param filter OData filter expression.
      * @param apply OData apply expression for aggregations.
      * @param skipToken Skiptoken is only provided if a previous response returned a partial result as a part of
-     *     nextLink element.
+     * nextLink element.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return query results.
+     * @return query results as paginated response with {@link PagedFlux}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
     private PagedFlux<PolicyStateInner> listQueryResultsForPolicySetDefinitionAsync(
-        PolicyStatesResource policyStatesResource,
-        String subscriptionId,
-        String policySetDefinitionName,
-        Integer top,
-        String orderBy,
-        String select,
-        OffsetDateTime from,
-        OffsetDateTime to,
-        String filter,
-        String apply,
+        PolicyStatesResource policyStatesResource, String subscriptionId, String policySetDefinitionName, Integer top,
+        String orderBy, String select, OffsetDateTime from, OffsetDateTime to, String filter, String apply,
         String skipToken) {
         return new PagedFlux<>(
-            () ->
-                listQueryResultsForPolicySetDefinitionSinglePageAsync(
-                    policyStatesResource,
-                    subscriptionId,
-                    policySetDefinitionName,
-                    top,
-                    orderBy,
-                    select,
-                    from,
-                    to,
-                    filter,
-                    apply,
-                    skipToken),
+            () -> listQueryResultsForPolicySetDefinitionSinglePageAsync(policyStatesResource, subscriptionId,
+                policySetDefinitionName, top, orderBy, select, from, to, filter, apply, skipToken),
             nextLink -> nextLinkSinglePageAsync(nextLink));
     }
 
     /**
      * Queries policy states for the subscription level policy set definition.
-     *
+     * 
      * @param policyStatesResource The virtual resource under PolicyStates resource type. In a given time range,
-     *     'latest' represents the latest policy state(s), whereas 'default' represents all policy state(s).
+     * 'latest' represents the latest policy state(s), whereas 'default' represents all policy state(s).
      * @param subscriptionId Microsoft Azure subscription ID.
      * @param policySetDefinitionName Policy set definition name.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return query results.
+     * @return query results as paginated response with {@link PagedFlux}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
     private PagedFlux<PolicyStateInner> listQueryResultsForPolicySetDefinitionAsync(
@@ -3500,91 +2538,59 @@ public final class PolicyStatesClientImpl implements PolicyStatesClient {
         final String apply = null;
         final String skipToken = null;
         return new PagedFlux<>(
-            () ->
-                listQueryResultsForPolicySetDefinitionSinglePageAsync(
-                    policyStatesResource,
-                    subscriptionId,
-                    policySetDefinitionName,
-                    top,
-                    orderBy,
-                    select,
-                    from,
-                    to,
-                    filter,
-                    apply,
-                    skipToken),
+            () -> listQueryResultsForPolicySetDefinitionSinglePageAsync(policyStatesResource, subscriptionId,
+                policySetDefinitionName, top, orderBy, select, from, to, filter, apply, skipToken),
             nextLink -> nextLinkSinglePageAsync(nextLink));
     }
 
     /**
      * Queries policy states for the subscription level policy set definition.
-     *
+     * 
      * @param policyStatesResource The virtual resource under PolicyStates resource type. In a given time range,
-     *     'latest' represents the latest policy state(s), whereas 'default' represents all policy state(s).
+     * 'latest' represents the latest policy state(s), whereas 'default' represents all policy state(s).
      * @param subscriptionId Microsoft Azure subscription ID.
      * @param policySetDefinitionName Policy set definition name.
      * @param top Maximum number of records to return.
      * @param orderBy Ordering expression using OData notation. One or more comma-separated column names with an
-     *     optional "desc" (the default) or "asc", e.g. "$orderby=PolicyAssignmentId, ResourceId asc".
+     * optional "desc" (the default) or "asc", e.g. "$orderby=PolicyAssignmentId, ResourceId asc".
      * @param select Select expression using OData notation. Limits the columns on each record to just those requested,
-     *     e.g. "$select=PolicyAssignmentId, ResourceId".
+     * e.g. "$select=PolicyAssignmentId, ResourceId".
      * @param from ISO 8601 formatted timestamp specifying the start time of the interval to query. When not specified,
-     *     the service uses ($to - 1-day).
+     * the service uses ($to - 1-day).
      * @param to ISO 8601 formatted timestamp specifying the end time of the interval to query. When not specified, the
-     *     service uses request time.
+     * service uses request time.
      * @param filter OData filter expression.
      * @param apply OData apply expression for aggregations.
      * @param skipToken Skiptoken is only provided if a previous response returned a partial result as a part of
-     *     nextLink element.
+     * nextLink element.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return query results.
+     * @return query results as paginated response with {@link PagedFlux}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
     private PagedFlux<PolicyStateInner> listQueryResultsForPolicySetDefinitionAsync(
-        PolicyStatesResource policyStatesResource,
-        String subscriptionId,
-        String policySetDefinitionName,
-        Integer top,
-        String orderBy,
-        String select,
-        OffsetDateTime from,
-        OffsetDateTime to,
-        String filter,
-        String apply,
-        String skipToken,
-        Context context) {
+        PolicyStatesResource policyStatesResource, String subscriptionId, String policySetDefinitionName, Integer top,
+        String orderBy, String select, OffsetDateTime from, OffsetDateTime to, String filter, String apply,
+        String skipToken, Context context) {
         return new PagedFlux<>(
-            () ->
-                listQueryResultsForPolicySetDefinitionSinglePageAsync(
-                    policyStatesResource,
-                    subscriptionId,
-                    policySetDefinitionName,
-                    top,
-                    orderBy,
-                    select,
-                    from,
-                    to,
-                    filter,
-                    apply,
-                    skipToken,
-                    context),
+            () -> listQueryResultsForPolicySetDefinitionSinglePageAsync(policyStatesResource, subscriptionId,
+                policySetDefinitionName, top, orderBy, select, from, to, filter, apply, skipToken, context),
             nextLink -> nextLinkSinglePageAsync(nextLink, context));
     }
 
     /**
      * Queries policy states for the subscription level policy set definition.
-     *
+     * 
      * @param policyStatesResource The virtual resource under PolicyStates resource type. In a given time range,
-     *     'latest' represents the latest policy state(s), whereas 'default' represents all policy state(s).
+     * 'latest' represents the latest policy state(s), whereas 'default' represents all policy state(s).
      * @param subscriptionId Microsoft Azure subscription ID.
      * @param policySetDefinitionName Policy set definition name.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return query results.
+     * @return query results as paginated response with {@link PagedIterable}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
     public PagedIterable<PolicyStateInner> listQueryResultsForPolicySetDefinition(
@@ -3597,268 +2603,197 @@ public final class PolicyStatesClientImpl implements PolicyStatesClient {
         final String filter = null;
         final String apply = null;
         final String skipToken = null;
-        return new PagedIterable<>(
-            listQueryResultsForPolicySetDefinitionAsync(
-                policyStatesResource,
-                subscriptionId,
-                policySetDefinitionName,
-                top,
-                orderBy,
-                select,
-                from,
-                to,
-                filter,
-                apply,
-                skipToken));
+        return new PagedIterable<>(listQueryResultsForPolicySetDefinitionAsync(policyStatesResource, subscriptionId,
+            policySetDefinitionName, top, orderBy, select, from, to, filter, apply, skipToken));
     }
 
     /**
      * Queries policy states for the subscription level policy set definition.
-     *
+     * 
      * @param policyStatesResource The virtual resource under PolicyStates resource type. In a given time range,
-     *     'latest' represents the latest policy state(s), whereas 'default' represents all policy state(s).
+     * 'latest' represents the latest policy state(s), whereas 'default' represents all policy state(s).
      * @param subscriptionId Microsoft Azure subscription ID.
      * @param policySetDefinitionName Policy set definition name.
      * @param top Maximum number of records to return.
      * @param orderBy Ordering expression using OData notation. One or more comma-separated column names with an
-     *     optional "desc" (the default) or "asc", e.g. "$orderby=PolicyAssignmentId, ResourceId asc".
+     * optional "desc" (the default) or "asc", e.g. "$orderby=PolicyAssignmentId, ResourceId asc".
      * @param select Select expression using OData notation. Limits the columns on each record to just those requested,
-     *     e.g. "$select=PolicyAssignmentId, ResourceId".
+     * e.g. "$select=PolicyAssignmentId, ResourceId".
      * @param from ISO 8601 formatted timestamp specifying the start time of the interval to query. When not specified,
-     *     the service uses ($to - 1-day).
+     * the service uses ($to - 1-day).
      * @param to ISO 8601 formatted timestamp specifying the end time of the interval to query. When not specified, the
-     *     service uses request time.
+     * service uses request time.
      * @param filter OData filter expression.
      * @param apply OData apply expression for aggregations.
      * @param skipToken Skiptoken is only provided if a previous response returned a partial result as a part of
-     *     nextLink element.
+     * nextLink element.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return query results.
+     * @return query results as paginated response with {@link PagedIterable}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
     public PagedIterable<PolicyStateInner> listQueryResultsForPolicySetDefinition(
-        PolicyStatesResource policyStatesResource,
-        String subscriptionId,
-        String policySetDefinitionName,
-        Integer top,
-        String orderBy,
-        String select,
-        OffsetDateTime from,
-        OffsetDateTime to,
-        String filter,
-        String apply,
-        String skipToken,
-        Context context) {
-        return new PagedIterable<>(
-            listQueryResultsForPolicySetDefinitionAsync(
-                policyStatesResource,
-                subscriptionId,
-                policySetDefinitionName,
-                top,
-                orderBy,
-                select,
-                from,
-                to,
-                filter,
-                apply,
-                skipToken,
-                context));
+        PolicyStatesResource policyStatesResource, String subscriptionId, String policySetDefinitionName, Integer top,
+        String orderBy, String select, OffsetDateTime from, OffsetDateTime to, String filter, String apply,
+        String skipToken, Context context) {
+        return new PagedIterable<>(listQueryResultsForPolicySetDefinitionAsync(policyStatesResource, subscriptionId,
+            policySetDefinitionName, top, orderBy, select, from, to, filter, apply, skipToken, context));
     }
 
     /**
      * Summarizes policy states for the subscription level policy set definition.
-     *
+     * 
+     * @param policyStatesSummaryResource The virtual resource under PolicyStates resource type for summarize action. In
+     * a given time range, 'latest' represents the latest policy state(s) and is the only allowed value.
      * @param subscriptionId Microsoft Azure subscription ID.
      * @param policySetDefinitionName Policy set definition name.
      * @param top Maximum number of records to return.
      * @param from ISO 8601 formatted timestamp specifying the start time of the interval to query. When not specified,
-     *     the service uses ($to - 1-day).
+     * the service uses ($to - 1-day).
      * @param to ISO 8601 formatted timestamp specifying the end time of the interval to query. When not specified, the
-     *     service uses request time.
+     * service uses request time.
      * @param filter OData filter expression.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return summarize action results.
+     * @return summarize action results along with {@link Response} on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
     private Mono<Response<SummarizeResultsInner>> summarizeForPolicySetDefinitionWithResponseAsync(
-        String subscriptionId,
-        String policySetDefinitionName,
-        Integer top,
-        OffsetDateTime from,
-        OffsetDateTime to,
-        String filter) {
+        PolicyStatesSummaryResourceType policyStatesSummaryResource, String subscriptionId,
+        String policySetDefinitionName, Integer top, OffsetDateTime from, OffsetDateTime to, String filter) {
         if (this.client.getEndpoint() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getEndpoint() is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
+        }
+        if (policyStatesSummaryResource == null) {
+            return Mono.error(
+                new IllegalArgumentException("Parameter policyStatesSummaryResource is required and cannot be null."));
         }
         if (subscriptionId == null) {
             return Mono.error(new IllegalArgumentException("Parameter subscriptionId is required and cannot be null."));
         }
         if (policySetDefinitionName == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException("Parameter policySetDefinitionName is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter policySetDefinitionName is required and cannot be null."));
         }
-        final String policyStatesSummaryResource = "latest";
         final String authorizationNamespace = "Microsoft.Authorization";
         final String apiVersion = "2019-10-01";
         final String accept = "application/json";
         return FluxUtil
-            .withContext(
-                context ->
-                    service
-                        .summarizeForPolicySetDefinition(
-                            this.client.getEndpoint(),
-                            policyStatesSummaryResource,
-                            subscriptionId,
-                            authorizationNamespace,
-                            policySetDefinitionName,
-                            apiVersion,
-                            top,
-                            from,
-                            to,
-                            filter,
-                            accept,
-                            context))
+            .withContext(context -> service.summarizeForPolicySetDefinition(this.client.getEndpoint(),
+                policyStatesSummaryResource, subscriptionId, authorizationNamespace, policySetDefinitionName,
+                apiVersion, top, from, to, filter, accept, context))
             .contextWrite(context -> context.putAll(FluxUtil.toReactorContext(this.client.getContext()).readOnly()));
     }
 
     /**
      * Summarizes policy states for the subscription level policy set definition.
-     *
+     * 
+     * @param policyStatesSummaryResource The virtual resource under PolicyStates resource type for summarize action. In
+     * a given time range, 'latest' represents the latest policy state(s) and is the only allowed value.
      * @param subscriptionId Microsoft Azure subscription ID.
      * @param policySetDefinitionName Policy set definition name.
      * @param top Maximum number of records to return.
      * @param from ISO 8601 formatted timestamp specifying the start time of the interval to query. When not specified,
-     *     the service uses ($to - 1-day).
+     * the service uses ($to - 1-day).
      * @param to ISO 8601 formatted timestamp specifying the end time of the interval to query. When not specified, the
-     *     service uses request time.
+     * service uses request time.
      * @param filter OData filter expression.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return summarize action results.
+     * @return summarize action results along with {@link Response} on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
     private Mono<Response<SummarizeResultsInner>> summarizeForPolicySetDefinitionWithResponseAsync(
-        String subscriptionId,
-        String policySetDefinitionName,
-        Integer top,
-        OffsetDateTime from,
-        OffsetDateTime to,
-        String filter,
+        PolicyStatesSummaryResourceType policyStatesSummaryResource, String subscriptionId,
+        String policySetDefinitionName, Integer top, OffsetDateTime from, OffsetDateTime to, String filter,
         Context context) {
         if (this.client.getEndpoint() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getEndpoint() is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
+        }
+        if (policyStatesSummaryResource == null) {
+            return Mono.error(
+                new IllegalArgumentException("Parameter policyStatesSummaryResource is required and cannot be null."));
         }
         if (subscriptionId == null) {
             return Mono.error(new IllegalArgumentException("Parameter subscriptionId is required and cannot be null."));
         }
         if (policySetDefinitionName == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException("Parameter policySetDefinitionName is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter policySetDefinitionName is required and cannot be null."));
         }
-        final String policyStatesSummaryResource = "latest";
         final String authorizationNamespace = "Microsoft.Authorization";
         final String apiVersion = "2019-10-01";
         final String accept = "application/json";
         context = this.client.mergeContext(context);
-        return service
-            .summarizeForPolicySetDefinition(
-                this.client.getEndpoint(),
-                policyStatesSummaryResource,
-                subscriptionId,
-                authorizationNamespace,
-                policySetDefinitionName,
-                apiVersion,
-                top,
-                from,
-                to,
-                filter,
-                accept,
-                context);
+        return service.summarizeForPolicySetDefinition(this.client.getEndpoint(), policyStatesSummaryResource,
+            subscriptionId, authorizationNamespace, policySetDefinitionName, apiVersion, top, from, to, filter, accept,
+            context);
     }
 
     /**
      * Summarizes policy states for the subscription level policy set definition.
-     *
-     * @param subscriptionId Microsoft Azure subscription ID.
-     * @param policySetDefinitionName Policy set definition name.
-     * @param top Maximum number of records to return.
-     * @param from ISO 8601 formatted timestamp specifying the start time of the interval to query. When not specified,
-     *     the service uses ($to - 1-day).
-     * @param to ISO 8601 formatted timestamp specifying the end time of the interval to query. When not specified, the
-     *     service uses request time.
-     * @param filter OData filter expression.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return summarize action results.
-     */
-    @ServiceMethod(returns = ReturnType.SINGLE)
-    private Mono<SummarizeResultsInner> summarizeForPolicySetDefinitionAsync(
-        String subscriptionId,
-        String policySetDefinitionName,
-        Integer top,
-        OffsetDateTime from,
-        OffsetDateTime to,
-        String filter) {
-        return summarizeForPolicySetDefinitionWithResponseAsync(
-                subscriptionId, policySetDefinitionName, top, from, to, filter)
-            .flatMap(
-                (Response<SummarizeResultsInner> res) -> {
-                    if (res.getValue() != null) {
-                        return Mono.just(res.getValue());
-                    } else {
-                        return Mono.empty();
-                    }
-                });
-    }
-
-    /**
-     * Summarizes policy states for the subscription level policy set definition.
-     *
+     * 
+     * @param policyStatesSummaryResource The virtual resource under PolicyStates resource type for summarize action. In
+     * a given time range, 'latest' represents the latest policy state(s) and is the only allowed value.
      * @param subscriptionId Microsoft Azure subscription ID.
      * @param policySetDefinitionName Policy set definition name.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return summarize action results.
+     * @return summarize action results on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
     private Mono<SummarizeResultsInner> summarizeForPolicySetDefinitionAsync(
-        String subscriptionId, String policySetDefinitionName) {
+        PolicyStatesSummaryResourceType policyStatesSummaryResource, String subscriptionId,
+        String policySetDefinitionName) {
         final Integer top = null;
         final OffsetDateTime from = null;
         final OffsetDateTime to = null;
         final String filter = null;
-        return summarizeForPolicySetDefinitionWithResponseAsync(
-                subscriptionId, policySetDefinitionName, top, from, to, filter)
-            .flatMap(
-                (Response<SummarizeResultsInner> res) -> {
-                    if (res.getValue() != null) {
-                        return Mono.just(res.getValue());
-                    } else {
-                        return Mono.empty();
-                    }
-                });
+        return summarizeForPolicySetDefinitionWithResponseAsync(policyStatesSummaryResource, subscriptionId,
+            policySetDefinitionName, top, from, to, filter).flatMap(res -> Mono.justOrEmpty(res.getValue()));
     }
 
     /**
      * Summarizes policy states for the subscription level policy set definition.
-     *
+     * 
+     * @param policyStatesSummaryResource The virtual resource under PolicyStates resource type for summarize action. In
+     * a given time range, 'latest' represents the latest policy state(s) and is the only allowed value.
+     * @param subscriptionId Microsoft Azure subscription ID.
+     * @param policySetDefinitionName Policy set definition name.
+     * @param top Maximum number of records to return.
+     * @param from ISO 8601 formatted timestamp specifying the start time of the interval to query. When not specified,
+     * the service uses ($to - 1-day).
+     * @param to ISO 8601 formatted timestamp specifying the end time of the interval to query. When not specified, the
+     * service uses request time.
+     * @param filter OData filter expression.
+     * @param context The context to associate with this operation.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return summarize action results along with {@link Response}.
+     */
+    @ServiceMethod(returns = ReturnType.SINGLE)
+    public Response<SummarizeResultsInner> summarizeForPolicySetDefinitionWithResponse(
+        PolicyStatesSummaryResourceType policyStatesSummaryResource, String subscriptionId,
+        String policySetDefinitionName, Integer top, OffsetDateTime from, OffsetDateTime to, String filter,
+        Context context) {
+        return summarizeForPolicySetDefinitionWithResponseAsync(policyStatesSummaryResource, subscriptionId,
+            policySetDefinitionName, top, from, to, filter, context).block();
+    }
+
+    /**
+     * Summarizes policy states for the subscription level policy set definition.
+     * 
+     * @param policyStatesSummaryResource The virtual resource under PolicyStates resource type for summarize action. In
+     * a given time range, 'latest' represents the latest policy state(s) and is the only allowed value.
      * @param subscriptionId Microsoft Azure subscription ID.
      * @param policySetDefinitionName Policy set definition name.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
@@ -3868,89 +2803,49 @@ public final class PolicyStatesClientImpl implements PolicyStatesClient {
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
     public SummarizeResultsInner summarizeForPolicySetDefinition(
-        String subscriptionId, String policySetDefinitionName) {
+        PolicyStatesSummaryResourceType policyStatesSummaryResource, String subscriptionId,
+        String policySetDefinitionName) {
         final Integer top = null;
         final OffsetDateTime from = null;
         final OffsetDateTime to = null;
         final String filter = null;
-        return summarizeForPolicySetDefinitionAsync(subscriptionId, policySetDefinitionName, top, from, to, filter)
-            .block();
-    }
-
-    /**
-     * Summarizes policy states for the subscription level policy set definition.
-     *
-     * @param subscriptionId Microsoft Azure subscription ID.
-     * @param policySetDefinitionName Policy set definition name.
-     * @param top Maximum number of records to return.
-     * @param from ISO 8601 formatted timestamp specifying the start time of the interval to query. When not specified,
-     *     the service uses ($to - 1-day).
-     * @param to ISO 8601 formatted timestamp specifying the end time of the interval to query. When not specified, the
-     *     service uses request time.
-     * @param filter OData filter expression.
-     * @param context The context to associate with this operation.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return summarize action results.
-     */
-    @ServiceMethod(returns = ReturnType.SINGLE)
-    public Response<SummarizeResultsInner> summarizeForPolicySetDefinitionWithResponse(
-        String subscriptionId,
-        String policySetDefinitionName,
-        Integer top,
-        OffsetDateTime from,
-        OffsetDateTime to,
-        String filter,
-        Context context) {
-        return summarizeForPolicySetDefinitionWithResponseAsync(
-                subscriptionId, policySetDefinitionName, top, from, to, filter, context)
-            .block();
+        return summarizeForPolicySetDefinitionWithResponse(policyStatesSummaryResource, subscriptionId,
+            policySetDefinitionName, top, from, to, filter, Context.NONE).getValue();
     }
 
     /**
      * Queries policy states for the subscription level policy definition.
-     *
+     * 
      * @param policyStatesResource The virtual resource under PolicyStates resource type. In a given time range,
-     *     'latest' represents the latest policy state(s), whereas 'default' represents all policy state(s).
+     * 'latest' represents the latest policy state(s), whereas 'default' represents all policy state(s).
      * @param subscriptionId Microsoft Azure subscription ID.
      * @param policyDefinitionName Policy definition name.
      * @param top Maximum number of records to return.
      * @param orderBy Ordering expression using OData notation. One or more comma-separated column names with an
-     *     optional "desc" (the default) or "asc", e.g. "$orderby=PolicyAssignmentId, ResourceId asc".
+     * optional "desc" (the default) or "asc", e.g. "$orderby=PolicyAssignmentId, ResourceId asc".
      * @param select Select expression using OData notation. Limits the columns on each record to just those requested,
-     *     e.g. "$select=PolicyAssignmentId, ResourceId".
+     * e.g. "$select=PolicyAssignmentId, ResourceId".
      * @param from ISO 8601 formatted timestamp specifying the start time of the interval to query. When not specified,
-     *     the service uses ($to - 1-day).
+     * the service uses ($to - 1-day).
      * @param to ISO 8601 formatted timestamp specifying the end time of the interval to query. When not specified, the
-     *     service uses request time.
+     * service uses request time.
      * @param filter OData filter expression.
      * @param apply OData apply expression for aggregations.
      * @param skipToken Skiptoken is only provided if a previous response returned a partial result as a part of
-     *     nextLink element.
+     * nextLink element.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return query results.
+     * @return query results along with {@link PagedResponse} on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
     private Mono<PagedResponse<PolicyStateInner>> listQueryResultsForPolicyDefinitionSinglePageAsync(
-        PolicyStatesResource policyStatesResource,
-        String subscriptionId,
-        String policyDefinitionName,
-        Integer top,
-        String orderBy,
-        String select,
-        OffsetDateTime from,
-        OffsetDateTime to,
-        String filter,
-        String apply,
+        PolicyStatesResource policyStatesResource, String subscriptionId, String policyDefinitionName, Integer top,
+        String orderBy, String select, OffsetDateTime from, OffsetDateTime to, String filter, String apply,
         String skipToken) {
         if (this.client.getEndpoint() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getEndpoint() is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
         }
         if (policyStatesResource == null) {
             return Mono
@@ -3967,83 +2862,48 @@ public final class PolicyStatesClientImpl implements PolicyStatesClient {
         final String apiVersion = "2019-10-01";
         final String accept = "application/json";
         return FluxUtil
-            .withContext(
-                context ->
-                    service
-                        .listQueryResultsForPolicyDefinition(
-                            this.client.getEndpoint(),
-                            policyStatesResource,
-                            subscriptionId,
-                            authorizationNamespace,
-                            policyDefinitionName,
-                            apiVersion,
-                            top,
-                            orderBy,
-                            select,
-                            from,
-                            to,
-                            filter,
-                            apply,
-                            skipToken,
-                            accept,
-                            context))
-            .<PagedResponse<PolicyStateInner>>map(
-                res ->
-                    new PagedResponseBase<>(
-                        res.getRequest(),
-                        res.getStatusCode(),
-                        res.getHeaders(),
-                        res.getValue().value(),
-                        res.getValue().odataNextLink(),
-                        null))
+            .withContext(context -> service.listQueryResultsForPolicyDefinition(this.client.getEndpoint(),
+                policyStatesResource, subscriptionId, authorizationNamespace, policyDefinitionName, apiVersion, top,
+                orderBy, select, from, to, filter, apply, skipToken, accept, context))
+            .<PagedResponse<PolicyStateInner>>map(res -> new PagedResponseBase<>(res.getRequest(), res.getStatusCode(),
+                res.getHeaders(), res.getValue().value(), res.getValue().odataNextLink(), null))
             .contextWrite(context -> context.putAll(FluxUtil.toReactorContext(this.client.getContext()).readOnly()));
     }
 
     /**
      * Queries policy states for the subscription level policy definition.
-     *
+     * 
      * @param policyStatesResource The virtual resource under PolicyStates resource type. In a given time range,
-     *     'latest' represents the latest policy state(s), whereas 'default' represents all policy state(s).
+     * 'latest' represents the latest policy state(s), whereas 'default' represents all policy state(s).
      * @param subscriptionId Microsoft Azure subscription ID.
      * @param policyDefinitionName Policy definition name.
      * @param top Maximum number of records to return.
      * @param orderBy Ordering expression using OData notation. One or more comma-separated column names with an
-     *     optional "desc" (the default) or "asc", e.g. "$orderby=PolicyAssignmentId, ResourceId asc".
+     * optional "desc" (the default) or "asc", e.g. "$orderby=PolicyAssignmentId, ResourceId asc".
      * @param select Select expression using OData notation. Limits the columns on each record to just those requested,
-     *     e.g. "$select=PolicyAssignmentId, ResourceId".
+     * e.g. "$select=PolicyAssignmentId, ResourceId".
      * @param from ISO 8601 formatted timestamp specifying the start time of the interval to query. When not specified,
-     *     the service uses ($to - 1-day).
+     * the service uses ($to - 1-day).
      * @param to ISO 8601 formatted timestamp specifying the end time of the interval to query. When not specified, the
-     *     service uses request time.
+     * service uses request time.
      * @param filter OData filter expression.
      * @param apply OData apply expression for aggregations.
      * @param skipToken Skiptoken is only provided if a previous response returned a partial result as a part of
-     *     nextLink element.
+     * nextLink element.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return query results.
+     * @return query results along with {@link PagedResponse} on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
     private Mono<PagedResponse<PolicyStateInner>> listQueryResultsForPolicyDefinitionSinglePageAsync(
-        PolicyStatesResource policyStatesResource,
-        String subscriptionId,
-        String policyDefinitionName,
-        Integer top,
-        String orderBy,
-        String select,
-        OffsetDateTime from,
-        OffsetDateTime to,
-        String filter,
-        String apply,
-        String skipToken,
-        Context context) {
+        PolicyStatesResource policyStatesResource, String subscriptionId, String policyDefinitionName, Integer top,
+        String orderBy, String select, OffsetDateTime from, OffsetDateTime to, String filter, String apply,
+        String skipToken, Context context) {
         if (this.client.getEndpoint() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getEndpoint() is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
         }
         if (policyStatesResource == null) {
             return Mono
@@ -4061,100 +2921,60 @@ public final class PolicyStatesClientImpl implements PolicyStatesClient {
         final String accept = "application/json";
         context = this.client.mergeContext(context);
         return service
-            .listQueryResultsForPolicyDefinition(
-                this.client.getEndpoint(),
-                policyStatesResource,
-                subscriptionId,
-                authorizationNamespace,
-                policyDefinitionName,
-                apiVersion,
-                top,
-                orderBy,
-                select,
-                from,
-                to,
-                filter,
-                apply,
-                skipToken,
-                accept,
-                context)
-            .map(
-                res ->
-                    new PagedResponseBase<>(
-                        res.getRequest(),
-                        res.getStatusCode(),
-                        res.getHeaders(),
-                        res.getValue().value(),
-                        res.getValue().odataNextLink(),
-                        null));
+            .listQueryResultsForPolicyDefinition(this.client.getEndpoint(), policyStatesResource, subscriptionId,
+                authorizationNamespace, policyDefinitionName, apiVersion, top, orderBy, select, from, to, filter, apply,
+                skipToken, accept, context)
+            .map(res -> new PagedResponseBase<>(res.getRequest(), res.getStatusCode(), res.getHeaders(),
+                res.getValue().value(), res.getValue().odataNextLink(), null));
     }
 
     /**
      * Queries policy states for the subscription level policy definition.
-     *
+     * 
      * @param policyStatesResource The virtual resource under PolicyStates resource type. In a given time range,
-     *     'latest' represents the latest policy state(s), whereas 'default' represents all policy state(s).
+     * 'latest' represents the latest policy state(s), whereas 'default' represents all policy state(s).
      * @param subscriptionId Microsoft Azure subscription ID.
      * @param policyDefinitionName Policy definition name.
      * @param top Maximum number of records to return.
      * @param orderBy Ordering expression using OData notation. One or more comma-separated column names with an
-     *     optional "desc" (the default) or "asc", e.g. "$orderby=PolicyAssignmentId, ResourceId asc".
+     * optional "desc" (the default) or "asc", e.g. "$orderby=PolicyAssignmentId, ResourceId asc".
      * @param select Select expression using OData notation. Limits the columns on each record to just those requested,
-     *     e.g. "$select=PolicyAssignmentId, ResourceId".
+     * e.g. "$select=PolicyAssignmentId, ResourceId".
      * @param from ISO 8601 formatted timestamp specifying the start time of the interval to query. When not specified,
-     *     the service uses ($to - 1-day).
+     * the service uses ($to - 1-day).
      * @param to ISO 8601 formatted timestamp specifying the end time of the interval to query. When not specified, the
-     *     service uses request time.
+     * service uses request time.
      * @param filter OData filter expression.
      * @param apply OData apply expression for aggregations.
      * @param skipToken Skiptoken is only provided if a previous response returned a partial result as a part of
-     *     nextLink element.
+     * nextLink element.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return query results.
+     * @return query results as paginated response with {@link PagedFlux}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
     private PagedFlux<PolicyStateInner> listQueryResultsForPolicyDefinitionAsync(
-        PolicyStatesResource policyStatesResource,
-        String subscriptionId,
-        String policyDefinitionName,
-        Integer top,
-        String orderBy,
-        String select,
-        OffsetDateTime from,
-        OffsetDateTime to,
-        String filter,
-        String apply,
+        PolicyStatesResource policyStatesResource, String subscriptionId, String policyDefinitionName, Integer top,
+        String orderBy, String select, OffsetDateTime from, OffsetDateTime to, String filter, String apply,
         String skipToken) {
         return new PagedFlux<>(
-            () ->
-                listQueryResultsForPolicyDefinitionSinglePageAsync(
-                    policyStatesResource,
-                    subscriptionId,
-                    policyDefinitionName,
-                    top,
-                    orderBy,
-                    select,
-                    from,
-                    to,
-                    filter,
-                    apply,
-                    skipToken),
+            () -> listQueryResultsForPolicyDefinitionSinglePageAsync(policyStatesResource, subscriptionId,
+                policyDefinitionName, top, orderBy, select, from, to, filter, apply, skipToken),
             nextLink -> nextLinkSinglePageAsync(nextLink));
     }
 
     /**
      * Queries policy states for the subscription level policy definition.
-     *
+     * 
      * @param policyStatesResource The virtual resource under PolicyStates resource type. In a given time range,
-     *     'latest' represents the latest policy state(s), whereas 'default' represents all policy state(s).
+     * 'latest' represents the latest policy state(s), whereas 'default' represents all policy state(s).
      * @param subscriptionId Microsoft Azure subscription ID.
      * @param policyDefinitionName Policy definition name.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return query results.
+     * @return query results as paginated response with {@link PagedFlux}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
     private PagedFlux<PolicyStateInner> listQueryResultsForPolicyDefinitionAsync(
@@ -4168,91 +2988,59 @@ public final class PolicyStatesClientImpl implements PolicyStatesClient {
         final String apply = null;
         final String skipToken = null;
         return new PagedFlux<>(
-            () ->
-                listQueryResultsForPolicyDefinitionSinglePageAsync(
-                    policyStatesResource,
-                    subscriptionId,
-                    policyDefinitionName,
-                    top,
-                    orderBy,
-                    select,
-                    from,
-                    to,
-                    filter,
-                    apply,
-                    skipToken),
+            () -> listQueryResultsForPolicyDefinitionSinglePageAsync(policyStatesResource, subscriptionId,
+                policyDefinitionName, top, orderBy, select, from, to, filter, apply, skipToken),
             nextLink -> nextLinkSinglePageAsync(nextLink));
     }
 
     /**
      * Queries policy states for the subscription level policy definition.
-     *
+     * 
      * @param policyStatesResource The virtual resource under PolicyStates resource type. In a given time range,
-     *     'latest' represents the latest policy state(s), whereas 'default' represents all policy state(s).
+     * 'latest' represents the latest policy state(s), whereas 'default' represents all policy state(s).
      * @param subscriptionId Microsoft Azure subscription ID.
      * @param policyDefinitionName Policy definition name.
      * @param top Maximum number of records to return.
      * @param orderBy Ordering expression using OData notation. One or more comma-separated column names with an
-     *     optional "desc" (the default) or "asc", e.g. "$orderby=PolicyAssignmentId, ResourceId asc".
+     * optional "desc" (the default) or "asc", e.g. "$orderby=PolicyAssignmentId, ResourceId asc".
      * @param select Select expression using OData notation. Limits the columns on each record to just those requested,
-     *     e.g. "$select=PolicyAssignmentId, ResourceId".
+     * e.g. "$select=PolicyAssignmentId, ResourceId".
      * @param from ISO 8601 formatted timestamp specifying the start time of the interval to query. When not specified,
-     *     the service uses ($to - 1-day).
+     * the service uses ($to - 1-day).
      * @param to ISO 8601 formatted timestamp specifying the end time of the interval to query. When not specified, the
-     *     service uses request time.
+     * service uses request time.
      * @param filter OData filter expression.
      * @param apply OData apply expression for aggregations.
      * @param skipToken Skiptoken is only provided if a previous response returned a partial result as a part of
-     *     nextLink element.
+     * nextLink element.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return query results.
+     * @return query results as paginated response with {@link PagedFlux}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
     private PagedFlux<PolicyStateInner> listQueryResultsForPolicyDefinitionAsync(
-        PolicyStatesResource policyStatesResource,
-        String subscriptionId,
-        String policyDefinitionName,
-        Integer top,
-        String orderBy,
-        String select,
-        OffsetDateTime from,
-        OffsetDateTime to,
-        String filter,
-        String apply,
-        String skipToken,
-        Context context) {
+        PolicyStatesResource policyStatesResource, String subscriptionId, String policyDefinitionName, Integer top,
+        String orderBy, String select, OffsetDateTime from, OffsetDateTime to, String filter, String apply,
+        String skipToken, Context context) {
         return new PagedFlux<>(
-            () ->
-                listQueryResultsForPolicyDefinitionSinglePageAsync(
-                    policyStatesResource,
-                    subscriptionId,
-                    policyDefinitionName,
-                    top,
-                    orderBy,
-                    select,
-                    from,
-                    to,
-                    filter,
-                    apply,
-                    skipToken,
-                    context),
+            () -> listQueryResultsForPolicyDefinitionSinglePageAsync(policyStatesResource, subscriptionId,
+                policyDefinitionName, top, orderBy, select, from, to, filter, apply, skipToken, context),
             nextLink -> nextLinkSinglePageAsync(nextLink, context));
     }
 
     /**
      * Queries policy states for the subscription level policy definition.
-     *
+     * 
      * @param policyStatesResource The virtual resource under PolicyStates resource type. In a given time range,
-     *     'latest' represents the latest policy state(s), whereas 'default' represents all policy state(s).
+     * 'latest' represents the latest policy state(s), whereas 'default' represents all policy state(s).
      * @param subscriptionId Microsoft Azure subscription ID.
      * @param policyDefinitionName Policy definition name.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return query results.
+     * @return query results as paginated response with {@link PagedIterable}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
     public PagedIterable<PolicyStateInner> listQueryResultsForPolicyDefinition(
@@ -4265,106 +3053,74 @@ public final class PolicyStatesClientImpl implements PolicyStatesClient {
         final String filter = null;
         final String apply = null;
         final String skipToken = null;
-        return new PagedIterable<>(
-            listQueryResultsForPolicyDefinitionAsync(
-                policyStatesResource,
-                subscriptionId,
-                policyDefinitionName,
-                top,
-                orderBy,
-                select,
-                from,
-                to,
-                filter,
-                apply,
-                skipToken));
+        return new PagedIterable<>(listQueryResultsForPolicyDefinitionAsync(policyStatesResource, subscriptionId,
+            policyDefinitionName, top, orderBy, select, from, to, filter, apply, skipToken));
     }
 
     /**
      * Queries policy states for the subscription level policy definition.
-     *
+     * 
      * @param policyStatesResource The virtual resource under PolicyStates resource type. In a given time range,
-     *     'latest' represents the latest policy state(s), whereas 'default' represents all policy state(s).
+     * 'latest' represents the latest policy state(s), whereas 'default' represents all policy state(s).
      * @param subscriptionId Microsoft Azure subscription ID.
      * @param policyDefinitionName Policy definition name.
      * @param top Maximum number of records to return.
      * @param orderBy Ordering expression using OData notation. One or more comma-separated column names with an
-     *     optional "desc" (the default) or "asc", e.g. "$orderby=PolicyAssignmentId, ResourceId asc".
+     * optional "desc" (the default) or "asc", e.g. "$orderby=PolicyAssignmentId, ResourceId asc".
      * @param select Select expression using OData notation. Limits the columns on each record to just those requested,
-     *     e.g. "$select=PolicyAssignmentId, ResourceId".
+     * e.g. "$select=PolicyAssignmentId, ResourceId".
      * @param from ISO 8601 formatted timestamp specifying the start time of the interval to query. When not specified,
-     *     the service uses ($to - 1-day).
+     * the service uses ($to - 1-day).
      * @param to ISO 8601 formatted timestamp specifying the end time of the interval to query. When not specified, the
-     *     service uses request time.
+     * service uses request time.
      * @param filter OData filter expression.
      * @param apply OData apply expression for aggregations.
      * @param skipToken Skiptoken is only provided if a previous response returned a partial result as a part of
-     *     nextLink element.
+     * nextLink element.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return query results.
+     * @return query results as paginated response with {@link PagedIterable}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
     public PagedIterable<PolicyStateInner> listQueryResultsForPolicyDefinition(
-        PolicyStatesResource policyStatesResource,
-        String subscriptionId,
-        String policyDefinitionName,
-        Integer top,
-        String orderBy,
-        String select,
-        OffsetDateTime from,
-        OffsetDateTime to,
-        String filter,
-        String apply,
-        String skipToken,
-        Context context) {
-        return new PagedIterable<>(
-            listQueryResultsForPolicyDefinitionAsync(
-                policyStatesResource,
-                subscriptionId,
-                policyDefinitionName,
-                top,
-                orderBy,
-                select,
-                from,
-                to,
-                filter,
-                apply,
-                skipToken,
-                context));
+        PolicyStatesResource policyStatesResource, String subscriptionId, String policyDefinitionName, Integer top,
+        String orderBy, String select, OffsetDateTime from, OffsetDateTime to, String filter, String apply,
+        String skipToken, Context context) {
+        return new PagedIterable<>(listQueryResultsForPolicyDefinitionAsync(policyStatesResource, subscriptionId,
+            policyDefinitionName, top, orderBy, select, from, to, filter, apply, skipToken, context));
     }
 
     /**
      * Summarizes policy states for the subscription level policy definition.
-     *
+     * 
+     * @param policyStatesSummaryResource The virtual resource under PolicyStates resource type for summarize action. In
+     * a given time range, 'latest' represents the latest policy state(s) and is the only allowed value.
      * @param subscriptionId Microsoft Azure subscription ID.
      * @param policyDefinitionName Policy definition name.
      * @param top Maximum number of records to return.
      * @param from ISO 8601 formatted timestamp specifying the start time of the interval to query. When not specified,
-     *     the service uses ($to - 1-day).
+     * the service uses ($to - 1-day).
      * @param to ISO 8601 formatted timestamp specifying the end time of the interval to query. When not specified, the
-     *     service uses request time.
+     * service uses request time.
      * @param filter OData filter expression.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return summarize action results.
+     * @return summarize action results along with {@link Response} on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
     private Mono<Response<SummarizeResultsInner>> summarizeForPolicyDefinitionWithResponseAsync(
-        String subscriptionId,
-        String policyDefinitionName,
-        Integer top,
-        OffsetDateTime from,
-        OffsetDateTime to,
-        String filter) {
+        PolicyStatesSummaryResourceType policyStatesSummaryResource, String subscriptionId, String policyDefinitionName,
+        Integer top, OffsetDateTime from, OffsetDateTime to, String filter) {
         if (this.client.getEndpoint() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getEndpoint() is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
+        }
+        if (policyStatesSummaryResource == null) {
+            return Mono.error(
+                new IllegalArgumentException("Parameter policyStatesSummaryResource is required and cannot be null."));
         }
         if (subscriptionId == null) {
             return Mono.error(new IllegalArgumentException("Parameter subscriptionId is required and cannot be null."));
@@ -4373,61 +3129,46 @@ public final class PolicyStatesClientImpl implements PolicyStatesClient {
             return Mono
                 .error(new IllegalArgumentException("Parameter policyDefinitionName is required and cannot be null."));
         }
-        final String policyStatesSummaryResource = "latest";
         final String authorizationNamespace = "Microsoft.Authorization";
         final String apiVersion = "2019-10-01";
         final String accept = "application/json";
         return FluxUtil
-            .withContext(
-                context ->
-                    service
-                        .summarizeForPolicyDefinition(
-                            this.client.getEndpoint(),
-                            policyStatesSummaryResource,
-                            subscriptionId,
-                            authorizationNamespace,
-                            policyDefinitionName,
-                            apiVersion,
-                            top,
-                            from,
-                            to,
-                            filter,
-                            accept,
-                            context))
+            .withContext(context -> service.summarizeForPolicyDefinition(this.client.getEndpoint(),
+                policyStatesSummaryResource, subscriptionId, authorizationNamespace, policyDefinitionName, apiVersion,
+                top, from, to, filter, accept, context))
             .contextWrite(context -> context.putAll(FluxUtil.toReactorContext(this.client.getContext()).readOnly()));
     }
 
     /**
      * Summarizes policy states for the subscription level policy definition.
-     *
+     * 
+     * @param policyStatesSummaryResource The virtual resource under PolicyStates resource type for summarize action. In
+     * a given time range, 'latest' represents the latest policy state(s) and is the only allowed value.
      * @param subscriptionId Microsoft Azure subscription ID.
      * @param policyDefinitionName Policy definition name.
      * @param top Maximum number of records to return.
      * @param from ISO 8601 formatted timestamp specifying the start time of the interval to query. When not specified,
-     *     the service uses ($to - 1-day).
+     * the service uses ($to - 1-day).
      * @param to ISO 8601 formatted timestamp specifying the end time of the interval to query. When not specified, the
-     *     service uses request time.
+     * service uses request time.
      * @param filter OData filter expression.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return summarize action results.
+     * @return summarize action results along with {@link Response} on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
     private Mono<Response<SummarizeResultsInner>> summarizeForPolicyDefinitionWithResponseAsync(
-        String subscriptionId,
-        String policyDefinitionName,
-        Integer top,
-        OffsetDateTime from,
-        OffsetDateTime to,
-        String filter,
-        Context context) {
+        PolicyStatesSummaryResourceType policyStatesSummaryResource, String subscriptionId, String policyDefinitionName,
+        Integer top, OffsetDateTime from, OffsetDateTime to, String filter, Context context) {
         if (this.client.getEndpoint() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getEndpoint() is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
+        }
+        if (policyStatesSummaryResource == null) {
+            return Mono.error(
+                new IllegalArgumentException("Parameter policyStatesSummaryResource is required and cannot be null."));
         }
         if (subscriptionId == null) {
             return Mono.error(new IllegalArgumentException("Parameter subscriptionId is required and cannot be null."));
@@ -4436,185 +3177,123 @@ public final class PolicyStatesClientImpl implements PolicyStatesClient {
             return Mono
                 .error(new IllegalArgumentException("Parameter policyDefinitionName is required and cannot be null."));
         }
-        final String policyStatesSummaryResource = "latest";
         final String authorizationNamespace = "Microsoft.Authorization";
         final String apiVersion = "2019-10-01";
         final String accept = "application/json";
         context = this.client.mergeContext(context);
-        return service
-            .summarizeForPolicyDefinition(
-                this.client.getEndpoint(),
-                policyStatesSummaryResource,
-                subscriptionId,
-                authorizationNamespace,
-                policyDefinitionName,
-                apiVersion,
-                top,
-                from,
-                to,
-                filter,
-                accept,
-                context);
+        return service.summarizeForPolicyDefinition(this.client.getEndpoint(), policyStatesSummaryResource,
+            subscriptionId, authorizationNamespace, policyDefinitionName, apiVersion, top, from, to, filter, accept,
+            context);
     }
 
     /**
      * Summarizes policy states for the subscription level policy definition.
-     *
-     * @param subscriptionId Microsoft Azure subscription ID.
-     * @param policyDefinitionName Policy definition name.
-     * @param top Maximum number of records to return.
-     * @param from ISO 8601 formatted timestamp specifying the start time of the interval to query. When not specified,
-     *     the service uses ($to - 1-day).
-     * @param to ISO 8601 formatted timestamp specifying the end time of the interval to query. When not specified, the
-     *     service uses request time.
-     * @param filter OData filter expression.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return summarize action results.
-     */
-    @ServiceMethod(returns = ReturnType.SINGLE)
-    private Mono<SummarizeResultsInner> summarizeForPolicyDefinitionAsync(
-        String subscriptionId,
-        String policyDefinitionName,
-        Integer top,
-        OffsetDateTime from,
-        OffsetDateTime to,
-        String filter) {
-        return summarizeForPolicyDefinitionWithResponseAsync(
-                subscriptionId, policyDefinitionName, top, from, to, filter)
-            .flatMap(
-                (Response<SummarizeResultsInner> res) -> {
-                    if (res.getValue() != null) {
-                        return Mono.just(res.getValue());
-                    } else {
-                        return Mono.empty();
-                    }
-                });
-    }
-
-    /**
-     * Summarizes policy states for the subscription level policy definition.
-     *
+     * 
+     * @param policyStatesSummaryResource The virtual resource under PolicyStates resource type for summarize action. In
+     * a given time range, 'latest' represents the latest policy state(s) and is the only allowed value.
      * @param subscriptionId Microsoft Azure subscription ID.
      * @param policyDefinitionName Policy definition name.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return summarize action results.
+     * @return summarize action results on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
     private Mono<SummarizeResultsInner> summarizeForPolicyDefinitionAsync(
-        String subscriptionId, String policyDefinitionName) {
+        PolicyStatesSummaryResourceType policyStatesSummaryResource, String subscriptionId,
+        String policyDefinitionName) {
         final Integer top = null;
         final OffsetDateTime from = null;
         final OffsetDateTime to = null;
         final String filter = null;
-        return summarizeForPolicyDefinitionWithResponseAsync(
-                subscriptionId, policyDefinitionName, top, from, to, filter)
-            .flatMap(
-                (Response<SummarizeResultsInner> res) -> {
-                    if (res.getValue() != null) {
-                        return Mono.just(res.getValue());
-                    } else {
-                        return Mono.empty();
-                    }
-                });
+        return summarizeForPolicyDefinitionWithResponseAsync(policyStatesSummaryResource, subscriptionId,
+            policyDefinitionName, top, from, to, filter).flatMap(res -> Mono.justOrEmpty(res.getValue()));
     }
 
     /**
      * Summarizes policy states for the subscription level policy definition.
-     *
-     * @param subscriptionId Microsoft Azure subscription ID.
-     * @param policyDefinitionName Policy definition name.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return summarize action results.
-     */
-    @ServiceMethod(returns = ReturnType.SINGLE)
-    public SummarizeResultsInner summarizeForPolicyDefinition(String subscriptionId, String policyDefinitionName) {
-        final Integer top = null;
-        final OffsetDateTime from = null;
-        final OffsetDateTime to = null;
-        final String filter = null;
-        return summarizeForPolicyDefinitionAsync(subscriptionId, policyDefinitionName, top, from, to, filter).block();
-    }
-
-    /**
-     * Summarizes policy states for the subscription level policy definition.
-     *
+     * 
+     * @param policyStatesSummaryResource The virtual resource under PolicyStates resource type for summarize action. In
+     * a given time range, 'latest' represents the latest policy state(s) and is the only allowed value.
      * @param subscriptionId Microsoft Azure subscription ID.
      * @param policyDefinitionName Policy definition name.
      * @param top Maximum number of records to return.
      * @param from ISO 8601 formatted timestamp specifying the start time of the interval to query. When not specified,
-     *     the service uses ($to - 1-day).
+     * the service uses ($to - 1-day).
      * @param to ISO 8601 formatted timestamp specifying the end time of the interval to query. When not specified, the
-     *     service uses request time.
+     * service uses request time.
      * @param filter OData filter expression.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return summarize action results.
+     * @return summarize action results along with {@link Response}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
     public Response<SummarizeResultsInner> summarizeForPolicyDefinitionWithResponse(
-        String subscriptionId,
-        String policyDefinitionName,
-        Integer top,
-        OffsetDateTime from,
-        OffsetDateTime to,
-        String filter,
-        Context context) {
-        return summarizeForPolicyDefinitionWithResponseAsync(
-                subscriptionId, policyDefinitionName, top, from, to, filter, context)
-            .block();
+        PolicyStatesSummaryResourceType policyStatesSummaryResource, String subscriptionId, String policyDefinitionName,
+        Integer top, OffsetDateTime from, OffsetDateTime to, String filter, Context context) {
+        return summarizeForPolicyDefinitionWithResponseAsync(policyStatesSummaryResource, subscriptionId,
+            policyDefinitionName, top, from, to, filter, context).block();
+    }
+
+    /**
+     * Summarizes policy states for the subscription level policy definition.
+     * 
+     * @param policyStatesSummaryResource The virtual resource under PolicyStates resource type for summarize action. In
+     * a given time range, 'latest' represents the latest policy state(s) and is the only allowed value.
+     * @param subscriptionId Microsoft Azure subscription ID.
+     * @param policyDefinitionName Policy definition name.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return summarize action results.
+     */
+    @ServiceMethod(returns = ReturnType.SINGLE)
+    public SummarizeResultsInner summarizeForPolicyDefinition(
+        PolicyStatesSummaryResourceType policyStatesSummaryResource, String subscriptionId,
+        String policyDefinitionName) {
+        final Integer top = null;
+        final OffsetDateTime from = null;
+        final OffsetDateTime to = null;
+        final String filter = null;
+        return summarizeForPolicyDefinitionWithResponse(policyStatesSummaryResource, subscriptionId,
+            policyDefinitionName, top, from, to, filter, Context.NONE).getValue();
     }
 
     /**
      * Queries policy states for the subscription level policy assignment.
-     *
+     * 
      * @param policyStatesResource The virtual resource under PolicyStates resource type. In a given time range,
-     *     'latest' represents the latest policy state(s), whereas 'default' represents all policy state(s).
+     * 'latest' represents the latest policy state(s), whereas 'default' represents all policy state(s).
      * @param subscriptionId Microsoft Azure subscription ID.
      * @param policyAssignmentName Policy assignment name.
      * @param top Maximum number of records to return.
      * @param orderBy Ordering expression using OData notation. One or more comma-separated column names with an
-     *     optional "desc" (the default) or "asc", e.g. "$orderby=PolicyAssignmentId, ResourceId asc".
+     * optional "desc" (the default) or "asc", e.g. "$orderby=PolicyAssignmentId, ResourceId asc".
      * @param select Select expression using OData notation. Limits the columns on each record to just those requested,
-     *     e.g. "$select=PolicyAssignmentId, ResourceId".
+     * e.g. "$select=PolicyAssignmentId, ResourceId".
      * @param from ISO 8601 formatted timestamp specifying the start time of the interval to query. When not specified,
-     *     the service uses ($to - 1-day).
+     * the service uses ($to - 1-day).
      * @param to ISO 8601 formatted timestamp specifying the end time of the interval to query. When not specified, the
-     *     service uses request time.
+     * service uses request time.
      * @param filter OData filter expression.
      * @param apply OData apply expression for aggregations.
      * @param skipToken Skiptoken is only provided if a previous response returned a partial result as a part of
-     *     nextLink element.
+     * nextLink element.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return query results.
+     * @return query results along with {@link PagedResponse} on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
     private Mono<PagedResponse<PolicyStateInner>> listQueryResultsForSubscriptionLevelPolicyAssignmentSinglePageAsync(
-        PolicyStatesResource policyStatesResource,
-        String subscriptionId,
-        String policyAssignmentName,
-        Integer top,
-        String orderBy,
-        String select,
-        OffsetDateTime from,
-        OffsetDateTime to,
-        String filter,
-        String apply,
+        PolicyStatesResource policyStatesResource, String subscriptionId, String policyAssignmentName, Integer top,
+        String orderBy, String select, OffsetDateTime from, OffsetDateTime to, String filter, String apply,
         String skipToken) {
         if (this.client.getEndpoint() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getEndpoint() is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
         }
         if (policyStatesResource == null) {
             return Mono
@@ -4632,82 +3311,48 @@ public final class PolicyStatesClientImpl implements PolicyStatesClient {
         final String accept = "application/json";
         return FluxUtil
             .withContext(
-                context ->
-                    service
-                        .listQueryResultsForSubscriptionLevelPolicyAssignment(
-                            this.client.getEndpoint(),
-                            policyStatesResource,
-                            subscriptionId,
-                            authorizationNamespace,
-                            policyAssignmentName,
-                            apiVersion,
-                            top,
-                            orderBy,
-                            select,
-                            from,
-                            to,
-                            filter,
-                            apply,
-                            skipToken,
-                            accept,
-                            context))
-            .<PagedResponse<PolicyStateInner>>map(
-                res ->
-                    new PagedResponseBase<>(
-                        res.getRequest(),
-                        res.getStatusCode(),
-                        res.getHeaders(),
-                        res.getValue().value(),
-                        res.getValue().odataNextLink(),
-                        null))
+                context -> service.listQueryResultsForSubscriptionLevelPolicyAssignment(this.client.getEndpoint(),
+                    policyStatesResource, subscriptionId, authorizationNamespace, policyAssignmentName, apiVersion, top,
+                    orderBy, select, from, to, filter, apply, skipToken, accept, context))
+            .<PagedResponse<PolicyStateInner>>map(res -> new PagedResponseBase<>(res.getRequest(), res.getStatusCode(),
+                res.getHeaders(), res.getValue().value(), res.getValue().odataNextLink(), null))
             .contextWrite(context -> context.putAll(FluxUtil.toReactorContext(this.client.getContext()).readOnly()));
     }
 
     /**
      * Queries policy states for the subscription level policy assignment.
-     *
+     * 
      * @param policyStatesResource The virtual resource under PolicyStates resource type. In a given time range,
-     *     'latest' represents the latest policy state(s), whereas 'default' represents all policy state(s).
+     * 'latest' represents the latest policy state(s), whereas 'default' represents all policy state(s).
      * @param subscriptionId Microsoft Azure subscription ID.
      * @param policyAssignmentName Policy assignment name.
      * @param top Maximum number of records to return.
      * @param orderBy Ordering expression using OData notation. One or more comma-separated column names with an
-     *     optional "desc" (the default) or "asc", e.g. "$orderby=PolicyAssignmentId, ResourceId asc".
+     * optional "desc" (the default) or "asc", e.g. "$orderby=PolicyAssignmentId, ResourceId asc".
      * @param select Select expression using OData notation. Limits the columns on each record to just those requested,
-     *     e.g. "$select=PolicyAssignmentId, ResourceId".
+     * e.g. "$select=PolicyAssignmentId, ResourceId".
      * @param from ISO 8601 formatted timestamp specifying the start time of the interval to query. When not specified,
-     *     the service uses ($to - 1-day).
+     * the service uses ($to - 1-day).
      * @param to ISO 8601 formatted timestamp specifying the end time of the interval to query. When not specified, the
-     *     service uses request time.
+     * service uses request time.
      * @param filter OData filter expression.
      * @param apply OData apply expression for aggregations.
      * @param skipToken Skiptoken is only provided if a previous response returned a partial result as a part of
-     *     nextLink element.
+     * nextLink element.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return query results.
+     * @return query results along with {@link PagedResponse} on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
     private Mono<PagedResponse<PolicyStateInner>> listQueryResultsForSubscriptionLevelPolicyAssignmentSinglePageAsync(
-        PolicyStatesResource policyStatesResource,
-        String subscriptionId,
-        String policyAssignmentName,
-        Integer top,
-        String orderBy,
-        String select,
-        OffsetDateTime from,
-        OffsetDateTime to,
-        String filter,
-        String apply,
-        String skipToken,
-        Context context) {
+        PolicyStatesResource policyStatesResource, String subscriptionId, String policyAssignmentName, Integer top,
+        String orderBy, String select, OffsetDateTime from, OffsetDateTime to, String filter, String apply,
+        String skipToken, Context context) {
         if (this.client.getEndpoint() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getEndpoint() is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
         }
         if (policyStatesResource == null) {
             return Mono
@@ -4725,100 +3370,60 @@ public final class PolicyStatesClientImpl implements PolicyStatesClient {
         final String accept = "application/json";
         context = this.client.mergeContext(context);
         return service
-            .listQueryResultsForSubscriptionLevelPolicyAssignment(
-                this.client.getEndpoint(),
-                policyStatesResource,
-                subscriptionId,
-                authorizationNamespace,
-                policyAssignmentName,
-                apiVersion,
-                top,
-                orderBy,
-                select,
-                from,
-                to,
-                filter,
-                apply,
-                skipToken,
-                accept,
-                context)
-            .map(
-                res ->
-                    new PagedResponseBase<>(
-                        res.getRequest(),
-                        res.getStatusCode(),
-                        res.getHeaders(),
-                        res.getValue().value(),
-                        res.getValue().odataNextLink(),
-                        null));
+            .listQueryResultsForSubscriptionLevelPolicyAssignment(this.client.getEndpoint(), policyStatesResource,
+                subscriptionId, authorizationNamespace, policyAssignmentName, apiVersion, top, orderBy, select, from,
+                to, filter, apply, skipToken, accept, context)
+            .map(res -> new PagedResponseBase<>(res.getRequest(), res.getStatusCode(), res.getHeaders(),
+                res.getValue().value(), res.getValue().odataNextLink(), null));
     }
 
     /**
      * Queries policy states for the subscription level policy assignment.
-     *
+     * 
      * @param policyStatesResource The virtual resource under PolicyStates resource type. In a given time range,
-     *     'latest' represents the latest policy state(s), whereas 'default' represents all policy state(s).
+     * 'latest' represents the latest policy state(s), whereas 'default' represents all policy state(s).
      * @param subscriptionId Microsoft Azure subscription ID.
      * @param policyAssignmentName Policy assignment name.
      * @param top Maximum number of records to return.
      * @param orderBy Ordering expression using OData notation. One or more comma-separated column names with an
-     *     optional "desc" (the default) or "asc", e.g. "$orderby=PolicyAssignmentId, ResourceId asc".
+     * optional "desc" (the default) or "asc", e.g. "$orderby=PolicyAssignmentId, ResourceId asc".
      * @param select Select expression using OData notation. Limits the columns on each record to just those requested,
-     *     e.g. "$select=PolicyAssignmentId, ResourceId".
+     * e.g. "$select=PolicyAssignmentId, ResourceId".
      * @param from ISO 8601 formatted timestamp specifying the start time of the interval to query. When not specified,
-     *     the service uses ($to - 1-day).
+     * the service uses ($to - 1-day).
      * @param to ISO 8601 formatted timestamp specifying the end time of the interval to query. When not specified, the
-     *     service uses request time.
+     * service uses request time.
      * @param filter OData filter expression.
      * @param apply OData apply expression for aggregations.
      * @param skipToken Skiptoken is only provided if a previous response returned a partial result as a part of
-     *     nextLink element.
+     * nextLink element.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return query results.
+     * @return query results as paginated response with {@link PagedFlux}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
     private PagedFlux<PolicyStateInner> listQueryResultsForSubscriptionLevelPolicyAssignmentAsync(
-        PolicyStatesResource policyStatesResource,
-        String subscriptionId,
-        String policyAssignmentName,
-        Integer top,
-        String orderBy,
-        String select,
-        OffsetDateTime from,
-        OffsetDateTime to,
-        String filter,
-        String apply,
+        PolicyStatesResource policyStatesResource, String subscriptionId, String policyAssignmentName, Integer top,
+        String orderBy, String select, OffsetDateTime from, OffsetDateTime to, String filter, String apply,
         String skipToken) {
         return new PagedFlux<>(
-            () ->
-                listQueryResultsForSubscriptionLevelPolicyAssignmentSinglePageAsync(
-                    policyStatesResource,
-                    subscriptionId,
-                    policyAssignmentName,
-                    top,
-                    orderBy,
-                    select,
-                    from,
-                    to,
-                    filter,
-                    apply,
-                    skipToken),
+            () -> listQueryResultsForSubscriptionLevelPolicyAssignmentSinglePageAsync(policyStatesResource,
+                subscriptionId, policyAssignmentName, top, orderBy, select, from, to, filter, apply, skipToken),
             nextLink -> nextLinkSinglePageAsync(nextLink));
     }
 
     /**
      * Queries policy states for the subscription level policy assignment.
-     *
+     * 
      * @param policyStatesResource The virtual resource under PolicyStates resource type. In a given time range,
-     *     'latest' represents the latest policy state(s), whereas 'default' represents all policy state(s).
+     * 'latest' represents the latest policy state(s), whereas 'default' represents all policy state(s).
      * @param subscriptionId Microsoft Azure subscription ID.
      * @param policyAssignmentName Policy assignment name.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return query results.
+     * @return query results as paginated response with {@link PagedFlux}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
     private PagedFlux<PolicyStateInner> listQueryResultsForSubscriptionLevelPolicyAssignmentAsync(
@@ -4832,91 +3437,58 @@ public final class PolicyStatesClientImpl implements PolicyStatesClient {
         final String apply = null;
         final String skipToken = null;
         return new PagedFlux<>(
-            () ->
-                listQueryResultsForSubscriptionLevelPolicyAssignmentSinglePageAsync(
-                    policyStatesResource,
-                    subscriptionId,
-                    policyAssignmentName,
-                    top,
-                    orderBy,
-                    select,
-                    from,
-                    to,
-                    filter,
-                    apply,
-                    skipToken),
+            () -> listQueryResultsForSubscriptionLevelPolicyAssignmentSinglePageAsync(policyStatesResource,
+                subscriptionId, policyAssignmentName, top, orderBy, select, from, to, filter, apply, skipToken),
             nextLink -> nextLinkSinglePageAsync(nextLink));
     }
 
     /**
      * Queries policy states for the subscription level policy assignment.
-     *
+     * 
      * @param policyStatesResource The virtual resource under PolicyStates resource type. In a given time range,
-     *     'latest' represents the latest policy state(s), whereas 'default' represents all policy state(s).
+     * 'latest' represents the latest policy state(s), whereas 'default' represents all policy state(s).
      * @param subscriptionId Microsoft Azure subscription ID.
      * @param policyAssignmentName Policy assignment name.
      * @param top Maximum number of records to return.
      * @param orderBy Ordering expression using OData notation. One or more comma-separated column names with an
-     *     optional "desc" (the default) or "asc", e.g. "$orderby=PolicyAssignmentId, ResourceId asc".
+     * optional "desc" (the default) or "asc", e.g. "$orderby=PolicyAssignmentId, ResourceId asc".
      * @param select Select expression using OData notation. Limits the columns on each record to just those requested,
-     *     e.g. "$select=PolicyAssignmentId, ResourceId".
+     * e.g. "$select=PolicyAssignmentId, ResourceId".
      * @param from ISO 8601 formatted timestamp specifying the start time of the interval to query. When not specified,
-     *     the service uses ($to - 1-day).
+     * the service uses ($to - 1-day).
      * @param to ISO 8601 formatted timestamp specifying the end time of the interval to query. When not specified, the
-     *     service uses request time.
+     * service uses request time.
      * @param filter OData filter expression.
      * @param apply OData apply expression for aggregations.
      * @param skipToken Skiptoken is only provided if a previous response returned a partial result as a part of
-     *     nextLink element.
+     * nextLink element.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return query results.
+     * @return query results as paginated response with {@link PagedFlux}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
     private PagedFlux<PolicyStateInner> listQueryResultsForSubscriptionLevelPolicyAssignmentAsync(
-        PolicyStatesResource policyStatesResource,
-        String subscriptionId,
-        String policyAssignmentName,
-        Integer top,
-        String orderBy,
-        String select,
-        OffsetDateTime from,
-        OffsetDateTime to,
-        String filter,
-        String apply,
-        String skipToken,
-        Context context) {
-        return new PagedFlux<>(
-            () ->
-                listQueryResultsForSubscriptionLevelPolicyAssignmentSinglePageAsync(
-                    policyStatesResource,
-                    subscriptionId,
-                    policyAssignmentName,
-                    top,
-                    orderBy,
-                    select,
-                    from,
-                    to,
-                    filter,
-                    apply,
-                    skipToken,
-                    context),
-            nextLink -> nextLinkSinglePageAsync(nextLink, context));
+        PolicyStatesResource policyStatesResource, String subscriptionId, String policyAssignmentName, Integer top,
+        String orderBy, String select, OffsetDateTime from, OffsetDateTime to, String filter, String apply,
+        String skipToken, Context context) {
+        return new PagedFlux<>(() -> listQueryResultsForSubscriptionLevelPolicyAssignmentSinglePageAsync(
+            policyStatesResource, subscriptionId, policyAssignmentName, top, orderBy, select, from, to, filter, apply,
+            skipToken, context), nextLink -> nextLinkSinglePageAsync(nextLink, context));
     }
 
     /**
      * Queries policy states for the subscription level policy assignment.
-     *
+     * 
      * @param policyStatesResource The virtual resource under PolicyStates resource type. In a given time range,
-     *     'latest' represents the latest policy state(s), whereas 'default' represents all policy state(s).
+     * 'latest' represents the latest policy state(s), whereas 'default' represents all policy state(s).
      * @param subscriptionId Microsoft Azure subscription ID.
      * @param policyAssignmentName Policy assignment name.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return query results.
+     * @return query results as paginated response with {@link PagedIterable}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
     public PagedIterable<PolicyStateInner> listQueryResultsForSubscriptionLevelPolicyAssignment(
@@ -4929,106 +3501,74 @@ public final class PolicyStatesClientImpl implements PolicyStatesClient {
         final String filter = null;
         final String apply = null;
         final String skipToken = null;
-        return new PagedIterable<>(
-            listQueryResultsForSubscriptionLevelPolicyAssignmentAsync(
-                policyStatesResource,
-                subscriptionId,
-                policyAssignmentName,
-                top,
-                orderBy,
-                select,
-                from,
-                to,
-                filter,
-                apply,
-                skipToken));
+        return new PagedIterable<>(listQueryResultsForSubscriptionLevelPolicyAssignmentAsync(policyStatesResource,
+            subscriptionId, policyAssignmentName, top, orderBy, select, from, to, filter, apply, skipToken));
     }
 
     /**
      * Queries policy states for the subscription level policy assignment.
-     *
+     * 
      * @param policyStatesResource The virtual resource under PolicyStates resource type. In a given time range,
-     *     'latest' represents the latest policy state(s), whereas 'default' represents all policy state(s).
+     * 'latest' represents the latest policy state(s), whereas 'default' represents all policy state(s).
      * @param subscriptionId Microsoft Azure subscription ID.
      * @param policyAssignmentName Policy assignment name.
      * @param top Maximum number of records to return.
      * @param orderBy Ordering expression using OData notation. One or more comma-separated column names with an
-     *     optional "desc" (the default) or "asc", e.g. "$orderby=PolicyAssignmentId, ResourceId asc".
+     * optional "desc" (the default) or "asc", e.g. "$orderby=PolicyAssignmentId, ResourceId asc".
      * @param select Select expression using OData notation. Limits the columns on each record to just those requested,
-     *     e.g. "$select=PolicyAssignmentId, ResourceId".
+     * e.g. "$select=PolicyAssignmentId, ResourceId".
      * @param from ISO 8601 formatted timestamp specifying the start time of the interval to query. When not specified,
-     *     the service uses ($to - 1-day).
+     * the service uses ($to - 1-day).
      * @param to ISO 8601 formatted timestamp specifying the end time of the interval to query. When not specified, the
-     *     service uses request time.
+     * service uses request time.
      * @param filter OData filter expression.
      * @param apply OData apply expression for aggregations.
      * @param skipToken Skiptoken is only provided if a previous response returned a partial result as a part of
-     *     nextLink element.
+     * nextLink element.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return query results.
+     * @return query results as paginated response with {@link PagedIterable}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
     public PagedIterable<PolicyStateInner> listQueryResultsForSubscriptionLevelPolicyAssignment(
-        PolicyStatesResource policyStatesResource,
-        String subscriptionId,
-        String policyAssignmentName,
-        Integer top,
-        String orderBy,
-        String select,
-        OffsetDateTime from,
-        OffsetDateTime to,
-        String filter,
-        String apply,
-        String skipToken,
-        Context context) {
-        return new PagedIterable<>(
-            listQueryResultsForSubscriptionLevelPolicyAssignmentAsync(
-                policyStatesResource,
-                subscriptionId,
-                policyAssignmentName,
-                top,
-                orderBy,
-                select,
-                from,
-                to,
-                filter,
-                apply,
-                skipToken,
-                context));
+        PolicyStatesResource policyStatesResource, String subscriptionId, String policyAssignmentName, Integer top,
+        String orderBy, String select, OffsetDateTime from, OffsetDateTime to, String filter, String apply,
+        String skipToken, Context context) {
+        return new PagedIterable<>(listQueryResultsForSubscriptionLevelPolicyAssignmentAsync(policyStatesResource,
+            subscriptionId, policyAssignmentName, top, orderBy, select, from, to, filter, apply, skipToken, context));
     }
 
     /**
      * Summarizes policy states for the subscription level policy assignment.
-     *
+     * 
+     * @param policyStatesSummaryResource The virtual resource under PolicyStates resource type for summarize action. In
+     * a given time range, 'latest' represents the latest policy state(s) and is the only allowed value.
      * @param subscriptionId Microsoft Azure subscription ID.
      * @param policyAssignmentName Policy assignment name.
      * @param top Maximum number of records to return.
      * @param from ISO 8601 formatted timestamp specifying the start time of the interval to query. When not specified,
-     *     the service uses ($to - 1-day).
+     * the service uses ($to - 1-day).
      * @param to ISO 8601 formatted timestamp specifying the end time of the interval to query. When not specified, the
-     *     service uses request time.
+     * service uses request time.
      * @param filter OData filter expression.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return summarize action results.
+     * @return summarize action results along with {@link Response} on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
     private Mono<Response<SummarizeResultsInner>> summarizeForSubscriptionLevelPolicyAssignmentWithResponseAsync(
-        String subscriptionId,
-        String policyAssignmentName,
-        Integer top,
-        OffsetDateTime from,
-        OffsetDateTime to,
-        String filter) {
+        PolicyStatesSummaryResourceType policyStatesSummaryResource, String subscriptionId, String policyAssignmentName,
+        Integer top, OffsetDateTime from, OffsetDateTime to, String filter) {
         if (this.client.getEndpoint() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getEndpoint() is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
+        }
+        if (policyStatesSummaryResource == null) {
+            return Mono.error(
+                new IllegalArgumentException("Parameter policyStatesSummaryResource is required and cannot be null."));
         }
         if (subscriptionId == null) {
             return Mono.error(new IllegalArgumentException("Parameter subscriptionId is required and cannot be null."));
@@ -5037,61 +3577,46 @@ public final class PolicyStatesClientImpl implements PolicyStatesClient {
             return Mono
                 .error(new IllegalArgumentException("Parameter policyAssignmentName is required and cannot be null."));
         }
-        final String policyStatesSummaryResource = "latest";
         final String authorizationNamespace = "Microsoft.Authorization";
         final String apiVersion = "2019-10-01";
         final String accept = "application/json";
         return FluxUtil
-            .withContext(
-                context ->
-                    service
-                        .summarizeForSubscriptionLevelPolicyAssignment(
-                            this.client.getEndpoint(),
-                            policyStatesSummaryResource,
-                            subscriptionId,
-                            authorizationNamespace,
-                            policyAssignmentName,
-                            apiVersion,
-                            top,
-                            from,
-                            to,
-                            filter,
-                            accept,
-                            context))
+            .withContext(context -> service.summarizeForSubscriptionLevelPolicyAssignment(this.client.getEndpoint(),
+                policyStatesSummaryResource, subscriptionId, authorizationNamespace, policyAssignmentName, apiVersion,
+                top, from, to, filter, accept, context))
             .contextWrite(context -> context.putAll(FluxUtil.toReactorContext(this.client.getContext()).readOnly()));
     }
 
     /**
      * Summarizes policy states for the subscription level policy assignment.
-     *
+     * 
+     * @param policyStatesSummaryResource The virtual resource under PolicyStates resource type for summarize action. In
+     * a given time range, 'latest' represents the latest policy state(s) and is the only allowed value.
      * @param subscriptionId Microsoft Azure subscription ID.
      * @param policyAssignmentName Policy assignment name.
      * @param top Maximum number of records to return.
      * @param from ISO 8601 formatted timestamp specifying the start time of the interval to query. When not specified,
-     *     the service uses ($to - 1-day).
+     * the service uses ($to - 1-day).
      * @param to ISO 8601 formatted timestamp specifying the end time of the interval to query. When not specified, the
-     *     service uses request time.
+     * service uses request time.
      * @param filter OData filter expression.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return summarize action results.
+     * @return summarize action results along with {@link Response} on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
     private Mono<Response<SummarizeResultsInner>> summarizeForSubscriptionLevelPolicyAssignmentWithResponseAsync(
-        String subscriptionId,
-        String policyAssignmentName,
-        Integer top,
-        OffsetDateTime from,
-        OffsetDateTime to,
-        String filter,
-        Context context) {
+        PolicyStatesSummaryResourceType policyStatesSummaryResource, String subscriptionId, String policyAssignmentName,
+        Integer top, OffsetDateTime from, OffsetDateTime to, String filter, Context context) {
         if (this.client.getEndpoint() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getEndpoint() is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
+        }
+        if (policyStatesSummaryResource == null) {
+            return Mono.error(
+                new IllegalArgumentException("Parameter policyStatesSummaryResource is required and cannot be null."));
         }
         if (subscriptionId == null) {
             return Mono.error(new IllegalArgumentException("Parameter subscriptionId is required and cannot be null."));
@@ -5100,95 +3625,72 @@ public final class PolicyStatesClientImpl implements PolicyStatesClient {
             return Mono
                 .error(new IllegalArgumentException("Parameter policyAssignmentName is required and cannot be null."));
         }
-        final String policyStatesSummaryResource = "latest";
         final String authorizationNamespace = "Microsoft.Authorization";
         final String apiVersion = "2019-10-01";
         final String accept = "application/json";
         context = this.client.mergeContext(context);
-        return service
-            .summarizeForSubscriptionLevelPolicyAssignment(
-                this.client.getEndpoint(),
-                policyStatesSummaryResource,
-                subscriptionId,
-                authorizationNamespace,
-                policyAssignmentName,
-                apiVersion,
-                top,
-                from,
-                to,
-                filter,
-                accept,
-                context);
+        return service.summarizeForSubscriptionLevelPolicyAssignment(this.client.getEndpoint(),
+            policyStatesSummaryResource, subscriptionId, authorizationNamespace, policyAssignmentName, apiVersion, top,
+            from, to, filter, accept, context);
     }
 
     /**
      * Summarizes policy states for the subscription level policy assignment.
-     *
-     * @param subscriptionId Microsoft Azure subscription ID.
-     * @param policyAssignmentName Policy assignment name.
-     * @param top Maximum number of records to return.
-     * @param from ISO 8601 formatted timestamp specifying the start time of the interval to query. When not specified,
-     *     the service uses ($to - 1-day).
-     * @param to ISO 8601 formatted timestamp specifying the end time of the interval to query. When not specified, the
-     *     service uses request time.
-     * @param filter OData filter expression.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return summarize action results.
-     */
-    @ServiceMethod(returns = ReturnType.SINGLE)
-    private Mono<SummarizeResultsInner> summarizeForSubscriptionLevelPolicyAssignmentAsync(
-        String subscriptionId,
-        String policyAssignmentName,
-        Integer top,
-        OffsetDateTime from,
-        OffsetDateTime to,
-        String filter) {
-        return summarizeForSubscriptionLevelPolicyAssignmentWithResponseAsync(
-                subscriptionId, policyAssignmentName, top, from, to, filter)
-            .flatMap(
-                (Response<SummarizeResultsInner> res) -> {
-                    if (res.getValue() != null) {
-                        return Mono.just(res.getValue());
-                    } else {
-                        return Mono.empty();
-                    }
-                });
-    }
-
-    /**
-     * Summarizes policy states for the subscription level policy assignment.
-     *
+     * 
+     * @param policyStatesSummaryResource The virtual resource under PolicyStates resource type for summarize action. In
+     * a given time range, 'latest' represents the latest policy state(s) and is the only allowed value.
      * @param subscriptionId Microsoft Azure subscription ID.
      * @param policyAssignmentName Policy assignment name.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return summarize action results.
+     * @return summarize action results on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
     private Mono<SummarizeResultsInner> summarizeForSubscriptionLevelPolicyAssignmentAsync(
-        String subscriptionId, String policyAssignmentName) {
+        PolicyStatesSummaryResourceType policyStatesSummaryResource, String subscriptionId,
+        String policyAssignmentName) {
         final Integer top = null;
         final OffsetDateTime from = null;
         final OffsetDateTime to = null;
         final String filter = null;
-        return summarizeForSubscriptionLevelPolicyAssignmentWithResponseAsync(
-                subscriptionId, policyAssignmentName, top, from, to, filter)
-            .flatMap(
-                (Response<SummarizeResultsInner> res) -> {
-                    if (res.getValue() != null) {
-                        return Mono.just(res.getValue());
-                    } else {
-                        return Mono.empty();
-                    }
-                });
+        return summarizeForSubscriptionLevelPolicyAssignmentWithResponseAsync(policyStatesSummaryResource,
+            subscriptionId, policyAssignmentName, top, from, to, filter)
+                .flatMap(res -> Mono.justOrEmpty(res.getValue()));
     }
 
     /**
      * Summarizes policy states for the subscription level policy assignment.
-     *
+     * 
+     * @param policyStatesSummaryResource The virtual resource under PolicyStates resource type for summarize action. In
+     * a given time range, 'latest' represents the latest policy state(s) and is the only allowed value.
+     * @param subscriptionId Microsoft Azure subscription ID.
+     * @param policyAssignmentName Policy assignment name.
+     * @param top Maximum number of records to return.
+     * @param from ISO 8601 formatted timestamp specifying the start time of the interval to query. When not specified,
+     * the service uses ($to - 1-day).
+     * @param to ISO 8601 formatted timestamp specifying the end time of the interval to query. When not specified, the
+     * service uses request time.
+     * @param filter OData filter expression.
+     * @param context The context to associate with this operation.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return summarize action results along with {@link Response}.
+     */
+    @ServiceMethod(returns = ReturnType.SINGLE)
+    public Response<SummarizeResultsInner> summarizeForSubscriptionLevelPolicyAssignmentWithResponse(
+        PolicyStatesSummaryResourceType policyStatesSummaryResource, String subscriptionId, String policyAssignmentName,
+        Integer top, OffsetDateTime from, OffsetDateTime to, String filter, Context context) {
+        return summarizeForSubscriptionLevelPolicyAssignmentWithResponseAsync(policyStatesSummaryResource,
+            subscriptionId, policyAssignmentName, top, from, to, filter, context).block();
+    }
+
+    /**
+     * Summarizes policy states for the subscription level policy assignment.
+     * 
+     * @param policyStatesSummaryResource The virtual resource under PolicyStates resource type for summarize action. In
+     * a given time range, 'latest' represents the latest policy state(s) and is the only allowed value.
      * @param subscriptionId Microsoft Azure subscription ID.
      * @param policyAssignmentName Policy assignment name.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
@@ -5198,92 +3700,50 @@ public final class PolicyStatesClientImpl implements PolicyStatesClient {
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
     public SummarizeResultsInner summarizeForSubscriptionLevelPolicyAssignment(
-        String subscriptionId, String policyAssignmentName) {
+        PolicyStatesSummaryResourceType policyStatesSummaryResource, String subscriptionId,
+        String policyAssignmentName) {
         final Integer top = null;
         final OffsetDateTime from = null;
         final OffsetDateTime to = null;
         final String filter = null;
-        return summarizeForSubscriptionLevelPolicyAssignmentAsync(
-                subscriptionId, policyAssignmentName, top, from, to, filter)
-            .block();
-    }
-
-    /**
-     * Summarizes policy states for the subscription level policy assignment.
-     *
-     * @param subscriptionId Microsoft Azure subscription ID.
-     * @param policyAssignmentName Policy assignment name.
-     * @param top Maximum number of records to return.
-     * @param from ISO 8601 formatted timestamp specifying the start time of the interval to query. When not specified,
-     *     the service uses ($to - 1-day).
-     * @param to ISO 8601 formatted timestamp specifying the end time of the interval to query. When not specified, the
-     *     service uses request time.
-     * @param filter OData filter expression.
-     * @param context The context to associate with this operation.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return summarize action results.
-     */
-    @ServiceMethod(returns = ReturnType.SINGLE)
-    public Response<SummarizeResultsInner> summarizeForSubscriptionLevelPolicyAssignmentWithResponse(
-        String subscriptionId,
-        String policyAssignmentName,
-        Integer top,
-        OffsetDateTime from,
-        OffsetDateTime to,
-        String filter,
-        Context context) {
-        return summarizeForSubscriptionLevelPolicyAssignmentWithResponseAsync(
-                subscriptionId, policyAssignmentName, top, from, to, filter, context)
-            .block();
+        return summarizeForSubscriptionLevelPolicyAssignmentWithResponse(policyStatesSummaryResource, subscriptionId,
+            policyAssignmentName, top, from, to, filter, Context.NONE).getValue();
     }
 
     /**
      * Queries policy states for the resource group level policy assignment.
-     *
+     * 
      * @param policyStatesResource The virtual resource under PolicyStates resource type. In a given time range,
-     *     'latest' represents the latest policy state(s), whereas 'default' represents all policy state(s).
+     * 'latest' represents the latest policy state(s), whereas 'default' represents all policy state(s).
      * @param subscriptionId Microsoft Azure subscription ID.
      * @param resourceGroupName Resource group name.
      * @param policyAssignmentName Policy assignment name.
      * @param top Maximum number of records to return.
      * @param orderBy Ordering expression using OData notation. One or more comma-separated column names with an
-     *     optional "desc" (the default) or "asc", e.g. "$orderby=PolicyAssignmentId, ResourceId asc".
+     * optional "desc" (the default) or "asc", e.g. "$orderby=PolicyAssignmentId, ResourceId asc".
      * @param select Select expression using OData notation. Limits the columns on each record to just those requested,
-     *     e.g. "$select=PolicyAssignmentId, ResourceId".
+     * e.g. "$select=PolicyAssignmentId, ResourceId".
      * @param from ISO 8601 formatted timestamp specifying the start time of the interval to query. When not specified,
-     *     the service uses ($to - 1-day).
+     * the service uses ($to - 1-day).
      * @param to ISO 8601 formatted timestamp specifying the end time of the interval to query. When not specified, the
-     *     service uses request time.
+     * service uses request time.
      * @param filter OData filter expression.
      * @param apply OData apply expression for aggregations.
      * @param skipToken Skiptoken is only provided if a previous response returned a partial result as a part of
-     *     nextLink element.
+     * nextLink element.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return query results.
+     * @return query results along with {@link PagedResponse} on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
     private Mono<PagedResponse<PolicyStateInner>> listQueryResultsForResourceGroupLevelPolicyAssignmentSinglePageAsync(
-        PolicyStatesResource policyStatesResource,
-        String subscriptionId,
-        String resourceGroupName,
-        String policyAssignmentName,
-        Integer top,
-        String orderBy,
-        String select,
-        OffsetDateTime from,
-        OffsetDateTime to,
-        String filter,
-        String apply,
-        String skipToken) {
+        PolicyStatesResource policyStatesResource, String subscriptionId, String resourceGroupName,
+        String policyAssignmentName, Integer top, String orderBy, String select, OffsetDateTime from, OffsetDateTime to,
+        String filter, String apply, String skipToken) {
         if (this.client.getEndpoint() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getEndpoint() is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
         }
         if (policyStatesResource == null) {
             return Mono
@@ -5304,86 +3764,50 @@ public final class PolicyStatesClientImpl implements PolicyStatesClient {
         final String apiVersion = "2019-10-01";
         final String accept = "application/json";
         return FluxUtil
-            .withContext(
-                context ->
-                    service
-                        .listQueryResultsForResourceGroupLevelPolicyAssignment(
-                            this.client.getEndpoint(),
-                            policyStatesResource,
-                            subscriptionId,
-                            resourceGroupName,
-                            authorizationNamespace,
-                            policyAssignmentName,
-                            apiVersion,
-                            top,
-                            orderBy,
-                            select,
-                            from,
-                            to,
-                            filter,
-                            apply,
-                            skipToken,
-                            accept,
-                            context))
-            .<PagedResponse<PolicyStateInner>>map(
-                res ->
-                    new PagedResponseBase<>(
-                        res.getRequest(),
-                        res.getStatusCode(),
-                        res.getHeaders(),
-                        res.getValue().value(),
-                        res.getValue().odataNextLink(),
-                        null))
+            .withContext(context -> service.listQueryResultsForResourceGroupLevelPolicyAssignment(
+                this.client.getEndpoint(), policyStatesResource, subscriptionId, resourceGroupName,
+                authorizationNamespace, policyAssignmentName, apiVersion, top, orderBy, select, from, to, filter, apply,
+                skipToken, accept, context))
+            .<PagedResponse<PolicyStateInner>>map(res -> new PagedResponseBase<>(res.getRequest(), res.getStatusCode(),
+                res.getHeaders(), res.getValue().value(), res.getValue().odataNextLink(), null))
             .contextWrite(context -> context.putAll(FluxUtil.toReactorContext(this.client.getContext()).readOnly()));
     }
 
     /**
      * Queries policy states for the resource group level policy assignment.
-     *
+     * 
      * @param policyStatesResource The virtual resource under PolicyStates resource type. In a given time range,
-     *     'latest' represents the latest policy state(s), whereas 'default' represents all policy state(s).
+     * 'latest' represents the latest policy state(s), whereas 'default' represents all policy state(s).
      * @param subscriptionId Microsoft Azure subscription ID.
      * @param resourceGroupName Resource group name.
      * @param policyAssignmentName Policy assignment name.
      * @param top Maximum number of records to return.
      * @param orderBy Ordering expression using OData notation. One or more comma-separated column names with an
-     *     optional "desc" (the default) or "asc", e.g. "$orderby=PolicyAssignmentId, ResourceId asc".
+     * optional "desc" (the default) or "asc", e.g. "$orderby=PolicyAssignmentId, ResourceId asc".
      * @param select Select expression using OData notation. Limits the columns on each record to just those requested,
-     *     e.g. "$select=PolicyAssignmentId, ResourceId".
+     * e.g. "$select=PolicyAssignmentId, ResourceId".
      * @param from ISO 8601 formatted timestamp specifying the start time of the interval to query. When not specified,
-     *     the service uses ($to - 1-day).
+     * the service uses ($to - 1-day).
      * @param to ISO 8601 formatted timestamp specifying the end time of the interval to query. When not specified, the
-     *     service uses request time.
+     * service uses request time.
      * @param filter OData filter expression.
      * @param apply OData apply expression for aggregations.
      * @param skipToken Skiptoken is only provided if a previous response returned a partial result as a part of
-     *     nextLink element.
+     * nextLink element.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return query results.
+     * @return query results along with {@link PagedResponse} on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
     private Mono<PagedResponse<PolicyStateInner>> listQueryResultsForResourceGroupLevelPolicyAssignmentSinglePageAsync(
-        PolicyStatesResource policyStatesResource,
-        String subscriptionId,
-        String resourceGroupName,
-        String policyAssignmentName,
-        Integer top,
-        String orderBy,
-        String select,
-        OffsetDateTime from,
-        OffsetDateTime to,
-        String filter,
-        String apply,
-        String skipToken,
-        Context context) {
+        PolicyStatesResource policyStatesResource, String subscriptionId, String resourceGroupName,
+        String policyAssignmentName, Integer top, String orderBy, String select, OffsetDateTime from, OffsetDateTime to,
+        String filter, String apply, String skipToken, Context context) {
         if (this.client.getEndpoint() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getEndpoint() is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
         }
         if (policyStatesResource == null) {
             return Mono
@@ -5405,111 +3829,65 @@ public final class PolicyStatesClientImpl implements PolicyStatesClient {
         final String accept = "application/json";
         context = this.client.mergeContext(context);
         return service
-            .listQueryResultsForResourceGroupLevelPolicyAssignment(
-                this.client.getEndpoint(),
-                policyStatesResource,
-                subscriptionId,
-                resourceGroupName,
-                authorizationNamespace,
-                policyAssignmentName,
-                apiVersion,
-                top,
-                orderBy,
-                select,
-                from,
-                to,
-                filter,
-                apply,
-                skipToken,
-                accept,
-                context)
-            .map(
-                res ->
-                    new PagedResponseBase<>(
-                        res.getRequest(),
-                        res.getStatusCode(),
-                        res.getHeaders(),
-                        res.getValue().value(),
-                        res.getValue().odataNextLink(),
-                        null));
+            .listQueryResultsForResourceGroupLevelPolicyAssignment(this.client.getEndpoint(), policyStatesResource,
+                subscriptionId, resourceGroupName, authorizationNamespace, policyAssignmentName, apiVersion, top,
+                orderBy, select, from, to, filter, apply, skipToken, accept, context)
+            .map(res -> new PagedResponseBase<>(res.getRequest(), res.getStatusCode(), res.getHeaders(),
+                res.getValue().value(), res.getValue().odataNextLink(), null));
     }
 
     /**
      * Queries policy states for the resource group level policy assignment.
-     *
+     * 
      * @param policyStatesResource The virtual resource under PolicyStates resource type. In a given time range,
-     *     'latest' represents the latest policy state(s), whereas 'default' represents all policy state(s).
+     * 'latest' represents the latest policy state(s), whereas 'default' represents all policy state(s).
      * @param subscriptionId Microsoft Azure subscription ID.
      * @param resourceGroupName Resource group name.
      * @param policyAssignmentName Policy assignment name.
      * @param top Maximum number of records to return.
      * @param orderBy Ordering expression using OData notation. One or more comma-separated column names with an
-     *     optional "desc" (the default) or "asc", e.g. "$orderby=PolicyAssignmentId, ResourceId asc".
+     * optional "desc" (the default) or "asc", e.g. "$orderby=PolicyAssignmentId, ResourceId asc".
      * @param select Select expression using OData notation. Limits the columns on each record to just those requested,
-     *     e.g. "$select=PolicyAssignmentId, ResourceId".
+     * e.g. "$select=PolicyAssignmentId, ResourceId".
      * @param from ISO 8601 formatted timestamp specifying the start time of the interval to query. When not specified,
-     *     the service uses ($to - 1-day).
+     * the service uses ($to - 1-day).
      * @param to ISO 8601 formatted timestamp specifying the end time of the interval to query. When not specified, the
-     *     service uses request time.
+     * service uses request time.
      * @param filter OData filter expression.
      * @param apply OData apply expression for aggregations.
      * @param skipToken Skiptoken is only provided if a previous response returned a partial result as a part of
-     *     nextLink element.
+     * nextLink element.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return query results.
+     * @return query results as paginated response with {@link PagedFlux}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
     private PagedFlux<PolicyStateInner> listQueryResultsForResourceGroupLevelPolicyAssignmentAsync(
-        PolicyStatesResource policyStatesResource,
-        String subscriptionId,
-        String resourceGroupName,
-        String policyAssignmentName,
-        Integer top,
-        String orderBy,
-        String select,
-        OffsetDateTime from,
-        OffsetDateTime to,
-        String filter,
-        String apply,
-        String skipToken) {
-        return new PagedFlux<>(
-            () ->
-                listQueryResultsForResourceGroupLevelPolicyAssignmentSinglePageAsync(
-                    policyStatesResource,
-                    subscriptionId,
-                    resourceGroupName,
-                    policyAssignmentName,
-                    top,
-                    orderBy,
-                    select,
-                    from,
-                    to,
-                    filter,
-                    apply,
-                    skipToken),
-            nextLink -> nextLinkSinglePageAsync(nextLink));
+        PolicyStatesResource policyStatesResource, String subscriptionId, String resourceGroupName,
+        String policyAssignmentName, Integer top, String orderBy, String select, OffsetDateTime from, OffsetDateTime to,
+        String filter, String apply, String skipToken) {
+        return new PagedFlux<>(() -> listQueryResultsForResourceGroupLevelPolicyAssignmentSinglePageAsync(
+            policyStatesResource, subscriptionId, resourceGroupName, policyAssignmentName, top, orderBy, select, from,
+            to, filter, apply, skipToken), nextLink -> nextLinkSinglePageAsync(nextLink));
     }
 
     /**
      * Queries policy states for the resource group level policy assignment.
-     *
+     * 
      * @param policyStatesResource The virtual resource under PolicyStates resource type. In a given time range,
-     *     'latest' represents the latest policy state(s), whereas 'default' represents all policy state(s).
+     * 'latest' represents the latest policy state(s), whereas 'default' represents all policy state(s).
      * @param subscriptionId Microsoft Azure subscription ID.
      * @param resourceGroupName Resource group name.
      * @param policyAssignmentName Policy assignment name.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return query results.
+     * @return query results as paginated response with {@link PagedFlux}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
     private PagedFlux<PolicyStateInner> listQueryResultsForResourceGroupLevelPolicyAssignmentAsync(
-        PolicyStatesResource policyStatesResource,
-        String subscriptionId,
-        String resourceGroupName,
+        PolicyStatesResource policyStatesResource, String subscriptionId, String resourceGroupName,
         String policyAssignmentName) {
         final Integer top = null;
         final String orderBy = null;
@@ -5519,103 +3897,64 @@ public final class PolicyStatesClientImpl implements PolicyStatesClient {
         final String filter = null;
         final String apply = null;
         final String skipToken = null;
-        return new PagedFlux<>(
-            () ->
-                listQueryResultsForResourceGroupLevelPolicyAssignmentSinglePageAsync(
-                    policyStatesResource,
-                    subscriptionId,
-                    resourceGroupName,
-                    policyAssignmentName,
-                    top,
-                    orderBy,
-                    select,
-                    from,
-                    to,
-                    filter,
-                    apply,
-                    skipToken),
-            nextLink -> nextLinkSinglePageAsync(nextLink));
+        return new PagedFlux<>(() -> listQueryResultsForResourceGroupLevelPolicyAssignmentSinglePageAsync(
+            policyStatesResource, subscriptionId, resourceGroupName, policyAssignmentName, top, orderBy, select, from,
+            to, filter, apply, skipToken), nextLink -> nextLinkSinglePageAsync(nextLink));
     }
 
     /**
      * Queries policy states for the resource group level policy assignment.
-     *
+     * 
      * @param policyStatesResource The virtual resource under PolicyStates resource type. In a given time range,
-     *     'latest' represents the latest policy state(s), whereas 'default' represents all policy state(s).
+     * 'latest' represents the latest policy state(s), whereas 'default' represents all policy state(s).
      * @param subscriptionId Microsoft Azure subscription ID.
      * @param resourceGroupName Resource group name.
      * @param policyAssignmentName Policy assignment name.
      * @param top Maximum number of records to return.
      * @param orderBy Ordering expression using OData notation. One or more comma-separated column names with an
-     *     optional "desc" (the default) or "asc", e.g. "$orderby=PolicyAssignmentId, ResourceId asc".
+     * optional "desc" (the default) or "asc", e.g. "$orderby=PolicyAssignmentId, ResourceId asc".
      * @param select Select expression using OData notation. Limits the columns on each record to just those requested,
-     *     e.g. "$select=PolicyAssignmentId, ResourceId".
+     * e.g. "$select=PolicyAssignmentId, ResourceId".
      * @param from ISO 8601 formatted timestamp specifying the start time of the interval to query. When not specified,
-     *     the service uses ($to - 1-day).
+     * the service uses ($to - 1-day).
      * @param to ISO 8601 formatted timestamp specifying the end time of the interval to query. When not specified, the
-     *     service uses request time.
+     * service uses request time.
      * @param filter OData filter expression.
      * @param apply OData apply expression for aggregations.
      * @param skipToken Skiptoken is only provided if a previous response returned a partial result as a part of
-     *     nextLink element.
+     * nextLink element.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return query results.
+     * @return query results as paginated response with {@link PagedFlux}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
     private PagedFlux<PolicyStateInner> listQueryResultsForResourceGroupLevelPolicyAssignmentAsync(
-        PolicyStatesResource policyStatesResource,
-        String subscriptionId,
-        String resourceGroupName,
-        String policyAssignmentName,
-        Integer top,
-        String orderBy,
-        String select,
-        OffsetDateTime from,
-        OffsetDateTime to,
-        String filter,
-        String apply,
-        String skipToken,
-        Context context) {
-        return new PagedFlux<>(
-            () ->
-                listQueryResultsForResourceGroupLevelPolicyAssignmentSinglePageAsync(
-                    policyStatesResource,
-                    subscriptionId,
-                    resourceGroupName,
-                    policyAssignmentName,
-                    top,
-                    orderBy,
-                    select,
-                    from,
-                    to,
-                    filter,
-                    apply,
-                    skipToken,
-                    context),
-            nextLink -> nextLinkSinglePageAsync(nextLink, context));
+        PolicyStatesResource policyStatesResource, String subscriptionId, String resourceGroupName,
+        String policyAssignmentName, Integer top, String orderBy, String select, OffsetDateTime from, OffsetDateTime to,
+        String filter, String apply, String skipToken, Context context) {
+        return new PagedFlux<>(() -> listQueryResultsForResourceGroupLevelPolicyAssignmentSinglePageAsync(
+            policyStatesResource, subscriptionId, resourceGroupName, policyAssignmentName, top, orderBy, select, from,
+            to, filter, apply, skipToken, context), nextLink -> nextLinkSinglePageAsync(nextLink, context));
     }
 
     /**
      * Queries policy states for the resource group level policy assignment.
-     *
+     * 
      * @param policyStatesResource The virtual resource under PolicyStates resource type. In a given time range,
-     *     'latest' represents the latest policy state(s), whereas 'default' represents all policy state(s).
+     * 'latest' represents the latest policy state(s), whereas 'default' represents all policy state(s).
      * @param subscriptionId Microsoft Azure subscription ID.
      * @param resourceGroupName Resource group name.
      * @param policyAssignmentName Policy assignment name.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return query results.
+     * @return query results as paginated response with {@link PagedIterable}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
     public PagedIterable<PolicyStateInner> listQueryResultsForResourceGroupLevelPolicyAssignment(
-        PolicyStatesResource policyStatesResource,
-        String subscriptionId,
-        String resourceGroupName,
+        PolicyStatesResource policyStatesResource, String subscriptionId, String resourceGroupName,
         String policyAssignmentName) {
         final Integer top = null;
         final String orderBy = null;
@@ -5626,111 +3965,77 @@ public final class PolicyStatesClientImpl implements PolicyStatesClient {
         final String apply = null;
         final String skipToken = null;
         return new PagedIterable<>(
-            listQueryResultsForResourceGroupLevelPolicyAssignmentAsync(
-                policyStatesResource,
-                subscriptionId,
-                resourceGroupName,
-                policyAssignmentName,
-                top,
-                orderBy,
-                select,
-                from,
-                to,
-                filter,
-                apply,
-                skipToken));
+            listQueryResultsForResourceGroupLevelPolicyAssignmentAsync(policyStatesResource, subscriptionId,
+                resourceGroupName, policyAssignmentName, top, orderBy, select, from, to, filter, apply, skipToken));
     }
 
     /**
      * Queries policy states for the resource group level policy assignment.
-     *
+     * 
      * @param policyStatesResource The virtual resource under PolicyStates resource type. In a given time range,
-     *     'latest' represents the latest policy state(s), whereas 'default' represents all policy state(s).
+     * 'latest' represents the latest policy state(s), whereas 'default' represents all policy state(s).
      * @param subscriptionId Microsoft Azure subscription ID.
      * @param resourceGroupName Resource group name.
      * @param policyAssignmentName Policy assignment name.
      * @param top Maximum number of records to return.
      * @param orderBy Ordering expression using OData notation. One or more comma-separated column names with an
-     *     optional "desc" (the default) or "asc", e.g. "$orderby=PolicyAssignmentId, ResourceId asc".
+     * optional "desc" (the default) or "asc", e.g. "$orderby=PolicyAssignmentId, ResourceId asc".
      * @param select Select expression using OData notation. Limits the columns on each record to just those requested,
-     *     e.g. "$select=PolicyAssignmentId, ResourceId".
+     * e.g. "$select=PolicyAssignmentId, ResourceId".
      * @param from ISO 8601 formatted timestamp specifying the start time of the interval to query. When not specified,
-     *     the service uses ($to - 1-day).
+     * the service uses ($to - 1-day).
      * @param to ISO 8601 formatted timestamp specifying the end time of the interval to query. When not specified, the
-     *     service uses request time.
+     * service uses request time.
      * @param filter OData filter expression.
      * @param apply OData apply expression for aggregations.
      * @param skipToken Skiptoken is only provided if a previous response returned a partial result as a part of
-     *     nextLink element.
+     * nextLink element.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return query results.
+     * @return query results as paginated response with {@link PagedIterable}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
     public PagedIterable<PolicyStateInner> listQueryResultsForResourceGroupLevelPolicyAssignment(
-        PolicyStatesResource policyStatesResource,
-        String subscriptionId,
-        String resourceGroupName,
-        String policyAssignmentName,
-        Integer top,
-        String orderBy,
-        String select,
-        OffsetDateTime from,
-        OffsetDateTime to,
-        String filter,
-        String apply,
-        String skipToken,
-        Context context) {
-        return new PagedIterable<>(
-            listQueryResultsForResourceGroupLevelPolicyAssignmentAsync(
-                policyStatesResource,
-                subscriptionId,
-                resourceGroupName,
-                policyAssignmentName,
-                top,
-                orderBy,
-                select,
-                from,
-                to,
-                filter,
-                apply,
-                skipToken,
-                context));
+        PolicyStatesResource policyStatesResource, String subscriptionId, String resourceGroupName,
+        String policyAssignmentName, Integer top, String orderBy, String select, OffsetDateTime from, OffsetDateTime to,
+        String filter, String apply, String skipToken, Context context) {
+        return new PagedIterable<>(listQueryResultsForResourceGroupLevelPolicyAssignmentAsync(policyStatesResource,
+            subscriptionId, resourceGroupName, policyAssignmentName, top, orderBy, select, from, to, filter, apply,
+            skipToken, context));
     }
 
     /**
      * Summarizes policy states for the resource group level policy assignment.
-     *
+     * 
+     * @param policyStatesSummaryResource The virtual resource under PolicyStates resource type for summarize action. In
+     * a given time range, 'latest' represents the latest policy state(s) and is the only allowed value.
      * @param subscriptionId Microsoft Azure subscription ID.
      * @param resourceGroupName Resource group name.
      * @param policyAssignmentName Policy assignment name.
      * @param top Maximum number of records to return.
      * @param from ISO 8601 formatted timestamp specifying the start time of the interval to query. When not specified,
-     *     the service uses ($to - 1-day).
+     * the service uses ($to - 1-day).
      * @param to ISO 8601 formatted timestamp specifying the end time of the interval to query. When not specified, the
-     *     service uses request time.
+     * service uses request time.
      * @param filter OData filter expression.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return summarize action results.
+     * @return summarize action results along with {@link Response} on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
     private Mono<Response<SummarizeResultsInner>> summarizeForResourceGroupLevelPolicyAssignmentWithResponseAsync(
-        String subscriptionId,
-        String resourceGroupName,
-        String policyAssignmentName,
-        Integer top,
-        OffsetDateTime from,
-        OffsetDateTime to,
-        String filter) {
+        PolicyStatesSummaryResourceType policyStatesSummaryResource, String subscriptionId, String resourceGroupName,
+        String policyAssignmentName, Integer top, OffsetDateTime from, OffsetDateTime to, String filter) {
         if (this.client.getEndpoint() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getEndpoint() is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
+        }
+        if (policyStatesSummaryResource == null) {
+            return Mono.error(
+                new IllegalArgumentException("Parameter policyStatesSummaryResource is required and cannot be null."));
         }
         if (subscriptionId == null) {
             return Mono.error(new IllegalArgumentException("Parameter subscriptionId is required and cannot be null."));
@@ -5743,64 +4048,48 @@ public final class PolicyStatesClientImpl implements PolicyStatesClient {
             return Mono
                 .error(new IllegalArgumentException("Parameter policyAssignmentName is required and cannot be null."));
         }
-        final String policyStatesSummaryResource = "latest";
         final String authorizationNamespace = "Microsoft.Authorization";
         final String apiVersion = "2019-10-01";
         final String accept = "application/json";
         return FluxUtil
-            .withContext(
-                context ->
-                    service
-                        .summarizeForResourceGroupLevelPolicyAssignment(
-                            this.client.getEndpoint(),
-                            policyStatesSummaryResource,
-                            subscriptionId,
-                            resourceGroupName,
-                            authorizationNamespace,
-                            policyAssignmentName,
-                            apiVersion,
-                            top,
-                            from,
-                            to,
-                            filter,
-                            accept,
-                            context))
+            .withContext(context -> service.summarizeForResourceGroupLevelPolicyAssignment(this.client.getEndpoint(),
+                policyStatesSummaryResource, subscriptionId, resourceGroupName, authorizationNamespace,
+                policyAssignmentName, apiVersion, top, from, to, filter, accept, context))
             .contextWrite(context -> context.putAll(FluxUtil.toReactorContext(this.client.getContext()).readOnly()));
     }
 
     /**
      * Summarizes policy states for the resource group level policy assignment.
-     *
+     * 
+     * @param policyStatesSummaryResource The virtual resource under PolicyStates resource type for summarize action. In
+     * a given time range, 'latest' represents the latest policy state(s) and is the only allowed value.
      * @param subscriptionId Microsoft Azure subscription ID.
      * @param resourceGroupName Resource group name.
      * @param policyAssignmentName Policy assignment name.
      * @param top Maximum number of records to return.
      * @param from ISO 8601 formatted timestamp specifying the start time of the interval to query. When not specified,
-     *     the service uses ($to - 1-day).
+     * the service uses ($to - 1-day).
      * @param to ISO 8601 formatted timestamp specifying the end time of the interval to query. When not specified, the
-     *     service uses request time.
+     * service uses request time.
      * @param filter OData filter expression.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return summarize action results.
+     * @return summarize action results along with {@link Response} on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
     private Mono<Response<SummarizeResultsInner>> summarizeForResourceGroupLevelPolicyAssignmentWithResponseAsync(
-        String subscriptionId,
-        String resourceGroupName,
-        String policyAssignmentName,
-        Integer top,
-        OffsetDateTime from,
-        OffsetDateTime to,
-        String filter,
+        PolicyStatesSummaryResourceType policyStatesSummaryResource, String subscriptionId, String resourceGroupName,
+        String policyAssignmentName, Integer top, OffsetDateTime from, OffsetDateTime to, String filter,
         Context context) {
         if (this.client.getEndpoint() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getEndpoint() is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
+        }
+        if (policyStatesSummaryResource == null) {
+            return Mono.error(
+                new IllegalArgumentException("Parameter policyStatesSummaryResource is required and cannot be null."));
         }
         if (subscriptionId == null) {
             return Mono.error(new IllegalArgumentException("Parameter subscriptionId is required and cannot be null."));
@@ -5813,99 +4102,75 @@ public final class PolicyStatesClientImpl implements PolicyStatesClient {
             return Mono
                 .error(new IllegalArgumentException("Parameter policyAssignmentName is required and cannot be null."));
         }
-        final String policyStatesSummaryResource = "latest";
         final String authorizationNamespace = "Microsoft.Authorization";
         final String apiVersion = "2019-10-01";
         final String accept = "application/json";
         context = this.client.mergeContext(context);
-        return service
-            .summarizeForResourceGroupLevelPolicyAssignment(
-                this.client.getEndpoint(),
-                policyStatesSummaryResource,
-                subscriptionId,
-                resourceGroupName,
-                authorizationNamespace,
-                policyAssignmentName,
-                apiVersion,
-                top,
-                from,
-                to,
-                filter,
-                accept,
-                context);
+        return service.summarizeForResourceGroupLevelPolicyAssignment(this.client.getEndpoint(),
+            policyStatesSummaryResource, subscriptionId, resourceGroupName, authorizationNamespace,
+            policyAssignmentName, apiVersion, top, from, to, filter, accept, context);
     }
 
     /**
      * Summarizes policy states for the resource group level policy assignment.
-     *
+     * 
+     * @param policyStatesSummaryResource The virtual resource under PolicyStates resource type for summarize action. In
+     * a given time range, 'latest' represents the latest policy state(s) and is the only allowed value.
+     * @param subscriptionId Microsoft Azure subscription ID.
+     * @param resourceGroupName Resource group name.
+     * @param policyAssignmentName Policy assignment name.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return summarize action results on successful completion of {@link Mono}.
+     */
+    @ServiceMethod(returns = ReturnType.SINGLE)
+    private Mono<SummarizeResultsInner> summarizeForResourceGroupLevelPolicyAssignmentAsync(
+        PolicyStatesSummaryResourceType policyStatesSummaryResource, String subscriptionId, String resourceGroupName,
+        String policyAssignmentName) {
+        final Integer top = null;
+        final OffsetDateTime from = null;
+        final OffsetDateTime to = null;
+        final String filter = null;
+        return summarizeForResourceGroupLevelPolicyAssignmentWithResponseAsync(policyStatesSummaryResource,
+            subscriptionId, resourceGroupName, policyAssignmentName, top, from, to, filter)
+                .flatMap(res -> Mono.justOrEmpty(res.getValue()));
+    }
+
+    /**
+     * Summarizes policy states for the resource group level policy assignment.
+     * 
+     * @param policyStatesSummaryResource The virtual resource under PolicyStates resource type for summarize action. In
+     * a given time range, 'latest' represents the latest policy state(s) and is the only allowed value.
      * @param subscriptionId Microsoft Azure subscription ID.
      * @param resourceGroupName Resource group name.
      * @param policyAssignmentName Policy assignment name.
      * @param top Maximum number of records to return.
      * @param from ISO 8601 formatted timestamp specifying the start time of the interval to query. When not specified,
-     *     the service uses ($to - 1-day).
+     * the service uses ($to - 1-day).
      * @param to ISO 8601 formatted timestamp specifying the end time of the interval to query. When not specified, the
-     *     service uses request time.
+     * service uses request time.
      * @param filter OData filter expression.
+     * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return summarize action results.
+     * @return summarize action results along with {@link Response}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    private Mono<SummarizeResultsInner> summarizeForResourceGroupLevelPolicyAssignmentAsync(
-        String subscriptionId,
-        String resourceGroupName,
-        String policyAssignmentName,
-        Integer top,
-        OffsetDateTime from,
-        OffsetDateTime to,
-        String filter) {
-        return summarizeForResourceGroupLevelPolicyAssignmentWithResponseAsync(
-                subscriptionId, resourceGroupName, policyAssignmentName, top, from, to, filter)
-            .flatMap(
-                (Response<SummarizeResultsInner> res) -> {
-                    if (res.getValue() != null) {
-                        return Mono.just(res.getValue());
-                    } else {
-                        return Mono.empty();
-                    }
-                });
+    public Response<SummarizeResultsInner> summarizeForResourceGroupLevelPolicyAssignmentWithResponse(
+        PolicyStatesSummaryResourceType policyStatesSummaryResource, String subscriptionId, String resourceGroupName,
+        String policyAssignmentName, Integer top, OffsetDateTime from, OffsetDateTime to, String filter,
+        Context context) {
+        return summarizeForResourceGroupLevelPolicyAssignmentWithResponseAsync(policyStatesSummaryResource,
+            subscriptionId, resourceGroupName, policyAssignmentName, top, from, to, filter, context).block();
     }
 
     /**
      * Summarizes policy states for the resource group level policy assignment.
-     *
-     * @param subscriptionId Microsoft Azure subscription ID.
-     * @param resourceGroupName Resource group name.
-     * @param policyAssignmentName Policy assignment name.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return summarize action results.
-     */
-    @ServiceMethod(returns = ReturnType.SINGLE)
-    private Mono<SummarizeResultsInner> summarizeForResourceGroupLevelPolicyAssignmentAsync(
-        String subscriptionId, String resourceGroupName, String policyAssignmentName) {
-        final Integer top = null;
-        final OffsetDateTime from = null;
-        final OffsetDateTime to = null;
-        final String filter = null;
-        return summarizeForResourceGroupLevelPolicyAssignmentWithResponseAsync(
-                subscriptionId, resourceGroupName, policyAssignmentName, top, from, to, filter)
-            .flatMap(
-                (Response<SummarizeResultsInner> res) -> {
-                    if (res.getValue() != null) {
-                        return Mono.just(res.getValue());
-                    } else {
-                        return Mono.empty();
-                    }
-                });
-    }
-
-    /**
-     * Summarizes policy states for the resource group level policy assignment.
-     *
+     * 
+     * @param policyStatesSummaryResource The virtual resource under PolicyStates resource type for summarize action. In
+     * a given time range, 'latest' represents the latest policy state(s) and is the only allowed value.
      * @param subscriptionId Microsoft Azure subscription ID.
      * @param resourceGroupName Resource group name.
      * @param policyAssignmentName Policy assignment name.
@@ -5916,86 +4181,45 @@ public final class PolicyStatesClientImpl implements PolicyStatesClient {
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
     public SummarizeResultsInner summarizeForResourceGroupLevelPolicyAssignment(
-        String subscriptionId, String resourceGroupName, String policyAssignmentName) {
+        PolicyStatesSummaryResourceType policyStatesSummaryResource, String subscriptionId, String resourceGroupName,
+        String policyAssignmentName) {
         final Integer top = null;
         final OffsetDateTime from = null;
         final OffsetDateTime to = null;
         final String filter = null;
-        return summarizeForResourceGroupLevelPolicyAssignmentAsync(
-                subscriptionId, resourceGroupName, policyAssignmentName, top, from, to, filter)
-            .block();
-    }
-
-    /**
-     * Summarizes policy states for the resource group level policy assignment.
-     *
-     * @param subscriptionId Microsoft Azure subscription ID.
-     * @param resourceGroupName Resource group name.
-     * @param policyAssignmentName Policy assignment name.
-     * @param top Maximum number of records to return.
-     * @param from ISO 8601 formatted timestamp specifying the start time of the interval to query. When not specified,
-     *     the service uses ($to - 1-day).
-     * @param to ISO 8601 formatted timestamp specifying the end time of the interval to query. When not specified, the
-     *     service uses request time.
-     * @param filter OData filter expression.
-     * @param context The context to associate with this operation.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return summarize action results.
-     */
-    @ServiceMethod(returns = ReturnType.SINGLE)
-    public Response<SummarizeResultsInner> summarizeForResourceGroupLevelPolicyAssignmentWithResponse(
-        String subscriptionId,
-        String resourceGroupName,
-        String policyAssignmentName,
-        Integer top,
-        OffsetDateTime from,
-        OffsetDateTime to,
-        String filter,
-        Context context) {
-        return summarizeForResourceGroupLevelPolicyAssignmentWithResponseAsync(
-                subscriptionId, resourceGroupName, policyAssignmentName, top, from, to, filter, context)
-            .block();
+        return summarizeForResourceGroupLevelPolicyAssignmentWithResponse(policyStatesSummaryResource, subscriptionId,
+            resourceGroupName, policyAssignmentName, top, from, to, filter, Context.NONE).getValue();
     }
 
     /**
      * Get the next page of items.
-     *
-     * @param nextLink The nextLink parameter.
+     * 
+     * @param nextLink The URL to get the next list of items.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return query results.
+     * @return query results along with {@link PagedResponse} on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
     private Mono<PagedResponse<PolicyStateInner>> nextLinkSinglePageAsync(String nextLink) {
         if (nextLink == null) {
             return Mono.error(new IllegalArgumentException("Parameter nextLink is required and cannot be null."));
         }
-        return FluxUtil
-            .withContext(context -> service.nextLink(nextLink, context))
-            .<PagedResponse<PolicyStateInner>>map(
-                res ->
-                    new PagedResponseBase<>(
-                        res.getRequest(),
-                        res.getStatusCode(),
-                        res.getHeaders(),
-                        res.getValue().value(),
-                        res.getValue().odataNextLink(),
-                        null))
+        return FluxUtil.withContext(context -> service.nextLink(nextLink, context))
+            .<PagedResponse<PolicyStateInner>>map(res -> new PagedResponseBase<>(res.getRequest(), res.getStatusCode(),
+                res.getHeaders(), res.getValue().value(), res.getValue().odataNextLink(), null))
             .contextWrite(context -> context.putAll(FluxUtil.toReactorContext(this.client.getContext()).readOnly()));
     }
 
     /**
      * Get the next page of items.
-     *
-     * @param nextLink The nextLink parameter.
+     * 
+     * @param nextLink The URL to get the next list of items.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return query results.
+     * @return query results along with {@link PagedResponse} on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
     private Mono<PagedResponse<PolicyStateInner>> nextLinkSinglePageAsync(String nextLink, Context context) {
@@ -6003,16 +4227,8 @@ public final class PolicyStatesClientImpl implements PolicyStatesClient {
             return Mono.error(new IllegalArgumentException("Parameter nextLink is required and cannot be null."));
         }
         context = this.client.mergeContext(context);
-        return service
-            .nextLink(nextLink, context)
-            .map(
-                res ->
-                    new PagedResponseBase<>(
-                        res.getRequest(),
-                        res.getStatusCode(),
-                        res.getHeaders(),
-                        res.getValue().value(),
-                        res.getValue().odataNextLink(),
-                        null));
+        return service.nextLink(nextLink, context)
+            .map(res -> new PagedResponseBase<>(res.getRequest(), res.getStatusCode(), res.getHeaders(),
+                res.getValue().value(), res.getValue().odataNextLink(), null));
     }
 }

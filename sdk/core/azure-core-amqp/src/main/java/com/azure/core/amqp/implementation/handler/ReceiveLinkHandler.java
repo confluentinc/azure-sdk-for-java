@@ -3,6 +3,7 @@
 
 package com.azure.core.amqp.implementation.handler;
 
+import com.azure.core.amqp.implementation.AmqpMetricsProvider;
 import com.azure.core.util.logging.LoggingEventBuilder;
 import org.apache.qpid.proton.amqp.Symbol;
 import org.apache.qpid.proton.amqp.messaging.Modified;
@@ -29,7 +30,6 @@ import static com.azure.core.amqp.implementation.ClientConstants.EMIT_RESULT_KEY
 import static com.azure.core.amqp.implementation.ClientConstants.ENTITY_PATH_KEY;
 import static com.azure.core.amqp.implementation.ClientConstants.LINK_NAME_KEY;
 
-
 /**
  * Handler that receives events from its corresponding {@link Receiver}. Handlers must be associated to a
  * {@link Receiver} to receive its events.
@@ -50,22 +50,42 @@ public class ReceiveLinkHandler extends LinkHandler {
     private final Set<Delivery> queuedDeliveries = Collections.newSetFromMap(new ConcurrentHashMap<>());
     private final String entityPath;
 
-    public ReceiveLinkHandler(String connectionId, String hostname, String linkName, String entityPath) {
-        super(connectionId, hostname, entityPath);
+    /**
+     * Creates a new instance of ReceiveLinkHandler.
+     *
+     * @param connectionId Identifier for the connection.
+     * @param hostname Hostname of the connection.
+     * @param linkName Name of the link.
+     * @param entityPath Address to the entity.
+     * @param metricsProvider A provider that supplies the required metrics for this link.
+     */
+    public ReceiveLinkHandler(String connectionId, String hostname, String linkName, String entityPath,
+        AmqpMetricsProvider metricsProvider) {
+        super(connectionId, hostname, entityPath, metricsProvider);
         this.linkName = Objects.requireNonNull(linkName, "'linkName' cannot be null.");
         this.entityPath = Objects.requireNonNull(entityPath, "'entityPath' cannot be null.");
     }
 
+    /**
+     * Gets the name of the link.
+     *
+     * @return The name of the link.
+     */
     public String getLinkName() {
         return linkName;
     }
 
+    /**
+     * Gets the delivered messages.
+     *
+     * @return The delivered messages.
+     */
     public Flux<Delivery> getDeliveredMessages() {
         return deliveries.asFlux().doOnNext(queuedDeliveries::remove);
     }
 
     /**
-     * Closes the handler by completing the completing the queued deliveries and deliveries then publishes {@link
+     * Closes the handler by completing the queued deliveries and deliveries then publishes {@link
      * EndpointState#CLOSED}. {@link #getEndpointStates()} is completely closed when {@link #onLinkRemoteClose(Event)},
      * {@link #onLinkRemoteDetach(Event)}, or {@link #onLinkFinal(Event)} is called.
      */
@@ -99,9 +119,8 @@ public class ReceiveLinkHandler extends LinkHandler {
             return;
         }
 
-        LoggingEventBuilder logBuilder =  logger.atInfo()
-            .addKeyValue(ENTITY_PATH_KEY, entityPath)
-            .addKeyValue(LINK_NAME_KEY, link.getName());
+        LoggingEventBuilder logBuilder
+            = logger.atInfo().addKeyValue(ENTITY_PATH_KEY, entityPath).addKeyValue(LINK_NAME_KEY, link.getName());
 
         if (link.getRemoteSource() != null) {
             logBuilder.addKeyValue("remoteSource", link.getRemoteSource());
@@ -110,8 +129,7 @@ public class ReceiveLinkHandler extends LinkHandler {
                 onNext(EndpointState.ACTIVE);
             }
         } else {
-            logBuilder
-                .addKeyValue("action", "waitingForError");
+            logBuilder.addKeyValue("action", "waitingForError");
         }
 
         logBuilder.log("onLinkRemoteOpen");
@@ -185,8 +203,7 @@ public class ReceiveLinkHandler extends LinkHandler {
 
         if (link != null) {
             final ErrorCondition condition = link.getRemoteCondition();
-            addErrorCondition(logger.atVerbose(), condition)
-                .addKeyValue(ENTITY_PATH_KEY, entityPath)
+            addErrorCondition(logger.atVerbose(), condition).addKeyValue(ENTITY_PATH_KEY, entityPath)
                 .addKeyValue(LINK_NAME_KEY, linkName)
                 .addKeyValue("updatedLinkCredit", link.getCredit())
                 .addKeyValue("remoteCredit", link.getRemoteCredit())

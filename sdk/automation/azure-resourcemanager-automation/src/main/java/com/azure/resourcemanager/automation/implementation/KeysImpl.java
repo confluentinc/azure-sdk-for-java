@@ -12,10 +12,9 @@ import com.azure.resourcemanager.automation.fluent.KeysClient;
 import com.azure.resourcemanager.automation.fluent.models.KeyListResultInner;
 import com.azure.resourcemanager.automation.models.KeyListResult;
 import com.azure.resourcemanager.automation.models.Keys;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 public final class KeysImpl implements Keys {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(KeysImpl.class);
+    private static final ClientLogger LOGGER = new ClientLogger(KeysImpl.class);
 
     private final KeysClient innerClient;
 
@@ -26,26 +25,23 @@ public final class KeysImpl implements Keys {
         this.serviceManager = serviceManager;
     }
 
-    public KeyListResult listByAutomationAccount(String resourceGroupName, String automationAccountName) {
-        KeyListResultInner inner =
-            this.serviceClient().listByAutomationAccount(resourceGroupName, automationAccountName);
+    public Response<KeyListResult> listByAutomationAccountWithResponse(String resourceGroupName,
+        String automationAccountName, Context context) {
+        Response<KeyListResultInner> inner = this.serviceClient()
+            .listByAutomationAccountWithResponse(resourceGroupName, automationAccountName, context);
         if (inner != null) {
-            return new KeyListResultImpl(inner, this.manager());
+            return new SimpleResponse<>(inner.getRequest(), inner.getStatusCode(), inner.getHeaders(),
+                new KeyListResultImpl(inner.getValue(), this.manager()));
         } else {
             return null;
         }
     }
 
-    public Response<KeyListResult> listByAutomationAccountWithResponse(
-        String resourceGroupName, String automationAccountName, Context context) {
-        Response<KeyListResultInner> inner =
-            this.serviceClient().listByAutomationAccountWithResponse(resourceGroupName, automationAccountName, context);
+    public KeyListResult listByAutomationAccount(String resourceGroupName, String automationAccountName) {
+        KeyListResultInner inner
+            = this.serviceClient().listByAutomationAccount(resourceGroupName, automationAccountName);
         if (inner != null) {
-            return new SimpleResponse<>(
-                inner.getRequest(),
-                inner.getStatusCode(),
-                inner.getHeaders(),
-                new KeyListResultImpl(inner.getValue(), this.manager()));
+            return new KeyListResultImpl(inner, this.manager());
         } else {
             return null;
         }

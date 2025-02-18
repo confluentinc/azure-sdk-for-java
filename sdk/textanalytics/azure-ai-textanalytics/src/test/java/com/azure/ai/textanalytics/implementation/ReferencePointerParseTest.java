@@ -3,9 +3,9 @@
 
 package com.azure.ai.textanalytics.implementation;
 
-import com.azure.ai.textanalytics.implementation.models.DocumentSentiment;
 import com.azure.ai.textanalytics.implementation.models.SentenceAssessment;
 import com.azure.ai.textanalytics.implementation.models.SentenceSentiment;
+import com.azure.ai.textanalytics.implementation.models.SentimentResponseDocumentsItem;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -37,64 +37,68 @@ public class ReferencePointerParseTest {
     @Test
     public void parseInvalidNamePatternStringTest() {
         final String referencePointer = "#/a/1/b/2/c/3";
-        final IllegalStateException illegalStateException = assertThrows(IllegalStateException.class, () ->
-            parseRefPointerToIndexArray(referencePointer));
+        final IllegalStateException illegalStateException
+            = assertThrows(IllegalStateException.class, () -> parseRefPointerToIndexArray(referencePointer));
         assertEquals(String.format(INVALID_POINTER_EXCEPTION, referencePointer), illegalStateException.getMessage());
     }
 
     @Test
     public void parseInvalidNumberFormatStringTest() {
         final String referencePointer = "#/documents/a/sentences/b/assessments/c";
-        final IllegalStateException illegalStateException = assertThrows(IllegalStateException.class, () ->
-            parseRefPointerToIndexArray(referencePointer));
+        final IllegalStateException illegalStateException
+            = assertThrows(IllegalStateException.class, () -> parseRefPointerToIndexArray(referencePointer));
         assertEquals(String.format(INVALID_POINTER_EXCEPTION, referencePointer), illegalStateException.getMessage());
     }
 
     @Test
     public void parseIncompleteReferencePointerStringTest() {
         final String referencePointer = "#/documents/1/sentences/2";
-        final IllegalStateException illegalStateException = assertThrows(IllegalStateException.class, () ->
-            parseRefPointerToIndexArray(referencePointer));
+        final IllegalStateException illegalStateException
+            = assertThrows(IllegalStateException.class, () -> parseRefPointerToIndexArray(referencePointer));
         assertEquals(String.format(INVALID_POINTER_EXCEPTION, referencePointer), illegalStateException.getMessage());
     }
 
     @Test
     public void findSentimentAssessmentTest() {
-        final SentenceAssessment sentimentAssessment = findSentimentAssessment(
-            VALID_OPINION_POINTER, getDocumentSentiments());
+        final SentenceAssessment sentimentAssessment
+            = findSentimentAssessment(VALID_OPINION_POINTER, getDocumentSentiments());
         assertEquals(SentenceAssessment.class, sentimentAssessment.getClass());
     }
 
     @Test
     public void findSentimentOpinionWithInvalidDocumentIndex() {
         final String referencePointer = "#/documents/2/sentences/1/assessments/1";
-        final IllegalStateException illegalStateException = assertThrows(IllegalStateException.class, () ->
-            findSentimentAssessment(referencePointer, getDocumentSentiments()));
-        assertEquals(String.format(INVALID_DOCUMENT_INDEX_EXCEPTION, 2, referencePointer), illegalStateException.getMessage());
+        final IllegalStateException illegalStateException = assertThrows(IllegalStateException.class,
+            () -> findSentimentAssessment(referencePointer, getDocumentSentiments()));
+        assertEquals(String.format(INVALID_DOCUMENT_INDEX_EXCEPTION, 2, referencePointer),
+            illegalStateException.getMessage());
     }
 
     @Test
     public void findSentimentOpinionWithInvalidSentenceIndex() {
         final String referencePointer = "#/documents/1/sentences/4/assessments/1";
-        final IllegalStateException illegalStateException = assertThrows(IllegalStateException.class, () ->
-            findSentimentAssessment(referencePointer, getDocumentSentiments()));
-        assertEquals(String.format(INVALID_SENTENCE_INDEX_EXCEPTION, 4, referencePointer), illegalStateException.getMessage());
+        final IllegalStateException illegalStateException = assertThrows(IllegalStateException.class,
+            () -> findSentimentAssessment(referencePointer, getDocumentSentiments()));
+        assertEquals(String.format(INVALID_SENTENCE_INDEX_EXCEPTION, 4, referencePointer),
+            illegalStateException.getMessage());
     }
 
     @Test
     public void findSentimentOpinionWithInvalidOpinionIndex() {
         final String referencePointer = "#/documents/1/sentences/3/assessments/6";
-        final IllegalStateException illegalStateException = assertThrows(IllegalStateException.class, () ->
-            findSentimentAssessment(referencePointer, getDocumentSentiments()));
-        assertEquals(String.format(INVALID_OPINION_INDEX_EXCEPTION, 6, referencePointer), illegalStateException.getMessage());
+        final IllegalStateException illegalStateException = assertThrows(IllegalStateException.class,
+            () -> findSentimentAssessment(referencePointer, getDocumentSentiments()));
+        assertEquals(String.format(INVALID_OPINION_INDEX_EXCEPTION, 6, referencePointer),
+            illegalStateException.getMessage());
     }
 
-    private List<DocumentSentiment> getDocumentSentiments() {
-        List<DocumentSentiment> documentSentiments = new ArrayList<>();
+    private List<SentimentResponseDocumentsItem> getDocumentSentiments() {
+        List<SentimentResponseDocumentsItem> documentSentiments = new ArrayList<>();
         for (int i = 0; i < 2; i++) {
-            documentSentiments.add(new DocumentSentiment()
-                .setId(Integer.toString(i))
-                .setSentences(getSentenceSentiments()));
+            final SentimentResponseDocumentsItem documentsItem
+                = new SentimentResponseDocumentsItem().setId(Integer.toString(i));
+            documentsItem.setSentences(getSentenceSentiments());
+            documentSentiments.add(documentsItem);
         }
         return documentSentiments;
     }

@@ -5,29 +5,47 @@
 package com.azure.resourcemanager.kusto.models;
 
 import com.azure.core.util.ExpandableStringEnum;
-import com.fasterxml.jackson.annotation.JsonCreator;
 import java.util.Collection;
 
-/** Defines values for ClusterNetworkAccessFlag. */
+/**
+ * Whether or not to restrict outbound network access. Value is optional but if passed in, must be 'Enabled' or
+ * 'Disabled'.
+ */
 public final class ClusterNetworkAccessFlag extends ExpandableStringEnum<ClusterNetworkAccessFlag> {
-    /** Static value Enabled for ClusterNetworkAccessFlag. */
+    /**
+     * Static value Enabled for ClusterNetworkAccessFlag.
+     */
     public static final ClusterNetworkAccessFlag ENABLED = fromString("Enabled");
 
-    /** Static value Disabled for ClusterNetworkAccessFlag. */
+    /**
+     * Static value Disabled for ClusterNetworkAccessFlag.
+     */
     public static final ClusterNetworkAccessFlag DISABLED = fromString("Disabled");
 
     /**
+     * Creates a new instance of ClusterNetworkAccessFlag value.
+     * 
+     * @deprecated Use the {@link #fromString(String)} factory method.
+     */
+    @Deprecated
+    public ClusterNetworkAccessFlag() {
+    }
+
+    /**
      * Creates or finds a ClusterNetworkAccessFlag from its string representation.
-     *
+     * 
      * @param name a name to look for.
      * @return the corresponding ClusterNetworkAccessFlag.
      */
-    @JsonCreator
     public static ClusterNetworkAccessFlag fromString(String name) {
         return fromString(name, ClusterNetworkAccessFlag.class);
     }
 
-    /** @return known ClusterNetworkAccessFlag values. */
+    /**
+     * Gets known ClusterNetworkAccessFlag values.
+     * 
+     * @return known ClusterNetworkAccessFlag values.
+     */
     public static Collection<ClusterNetworkAccessFlag> values() {
         return values(ClusterNetworkAccessFlag.class);
     }

@@ -12,21 +12,49 @@ Azure Attestation receives evidence from compute entities, turns them into a set
 
 ## Getting started
 
-### Adding the package to your project
+### Include the package
 
-Maven dependency for the Azure Attestation  library. Add it to your project's POM file.
+#### Include the BOM file
 
-[//]: # ({x-version-update-start;com.azure:azure-security-attestation;current})
+Please include the azure-sdk-bom to your project to take dependency on the General Availability (GA) version of the library. In the following snippet, replace the {bom_version_to_target} placeholder with the version number.
+To learn more about the BOM, see the [AZURE SDK BOM README](https://github.com/Azure/azure-sdk-for-java/blob/main/sdk/boms/azure-sdk-bom/README.md).
 
 ```xml
-<!-- Install the Azure Attestation SDK -->
+<dependencyManagement>
+    <dependencies>
+        <dependency>
+            <groupId>com.azure</groupId>
+            <artifactId>azure-sdk-bom</artifactId>
+            <version>{bom_version_to_target}</version>
+            <type>pom</type>
+            <scope>import</scope>
+        </dependency>
+    </dependencies>
+</dependencyManagement>
+```
+and then include the direct dependency in the dependencies section without the version tag as shown below.
+
+```xml
+<dependencies>
+  <dependency>
+    <groupId>com.azure</groupId>
+    <artifactId>azure-security-attestation</artifactId>
+  </dependency>
+</dependencies>
+```
+
+#### Include direct dependency
+If you want to take dependency on a particular version of the library that is not present in the BOM,
+add the direct dependency to your project as follows.
+
+[//]: # ({x-version-update-start;com.azure:azure-security-attestation;current})
+```xml
 <dependency>
     <groupId>com.azure</groupId>
     <artifactId>azure-security-attestation</artifactId>
-    <version>1.0.0-beta.1</version>
+    <version>1.1.15</version>
 </dependency>
 ```
-
 [//]: # ({x-version-update-end})
 
 ### Prerequisites
@@ -36,7 +64,7 @@ Maven dependency for the Azure Attestation  library. Add it to your project's PO
 - An existing [Azure Attestation instance][azure_attestation]. If you need to create an attestation instance, you can use the [Azure Cloud Shell][azure_cloud_shell] to create one with this Azure CLI command. Replace `<your-resource-group-name>` and `<your-instance-name>` with your own, unique names:
 
 ```bash
-az attestation create --resource-group <your-resource-group-name> --name <your-key-vault-name>
+az attestation create --resource-group <your-resource-group-name> --name <your-instance-name>
 ```
 
 ### Authenticate the client
@@ -85,7 +113,7 @@ the certificate issued by the server can be verified using the [oe_verify_attest
 
 Each attestation service instance has a policy applied to it which defines additional criteria which the customer has defined.
 
-For more information on attestation policies, see [Attestation Policy](https://docs.microsoft.com/azure/attestation/author-sign-policy)
+For more information on attestation policies, see [Attestation Policy](https://learn.microsoft.com/azure/attestation/author-sign-policy)
 
 ### Policy Management certificate management
 
@@ -96,17 +124,18 @@ clients to add, remove or enumerate the policy management certificates.
 
 ## Examples
 
-- [Instantiate a synchronous attestation client](#create-a-synchronous-attestation-client)
-- [Retrieve token validation certificates](#retrieve-token-certificates)
+- [Instantiate a synchronous attestation client](#instantiate-a-synchronous-attestation-client)
+- [Retrieve token validation certificates](#retrieve-token-validation-certificates)
 - [Attest an SGX enclave](#attest-an-sgx-enclave)
-- [Instantiate a synchronous administrative client](#create-a-synchronous-administrative-client)
-- [Get attestation policy](#retrieve-current-attestation-policy-for-openenclave)
-- [Set unsigned attestation policy](#set-unsigned-attestation-policy-aad-clients-only)
+- [Instantiate a synchronous administrative client](#instantiate-a-synchronous-administrative-client)
+- [Get attestation policy](#get-attestation-policy)
+- [Set unsigned attestation policy](#set-unsigned-attestation-policy)
 - [Set signed attestation policy](#set-signed-attestation-policy)
-- [List policy management certificates](#list-attestation-signing-certificates)
-- [Add policy management certificate](#add-attestation-signing-certificate)
+- [List policy management certificates](#list-policy-management-certificates)
+- [Add policy management certificate](#add-policy-management-certificate)
+- [Remove attestation signing certificate](#remove-attestation-signing-certificate)
 
-### Create a synchronous attestation client
+### Instantiate a synchronous attestation client
 
 The `AttestationClientBuilder` class is used to create instances of the attestation client:
 
@@ -118,7 +147,7 @@ AttestationClient client = attestationBuilder
     .buildClient();
 ```
 
-### Retrieve Token Certificates
+### Retrieve token validation certificates
 
 Use `listAttestationSigners` to retrieve the set of certificates, which can be used to validate the token returned from the attestation service.
 Normally, this information is not required as the attestation SDK will perform the validation as a part of the interaction with the
@@ -162,7 +191,7 @@ System.out.println("Attest Sgx Enclave completed. Issuer: " + issuer);
 System.out.printf("Runtime Data Length: %d\n", result.getEnclaveHeldData().getLength());
 ```
 
-### Create a synchronous administrative client
+### Instantiate a synchronous administrative client
 
 All administrative clients are authenticated.
 
@@ -175,7 +204,7 @@ AttestationAdministrationClient client = attestationBuilder
     .buildClient();
 ```
 
-### Retrieve current attestation policy for OpenEnclave
+### Get attestation policy
 
 Use the `getAttestationPolicy` API to retrieve the current attestation policy for a given TEE.
 
@@ -184,7 +213,7 @@ String currentPolicy = client.getAttestationPolicy(AttestationType.OPEN_ENCLAVE)
 System.out.printf("Current policy for OpenEnclave is: %s\n", currentPolicy);
 ```
 
-### Set unsigned attestation policy (AAD clients only)
+### Set unsigned attestation policy
 
 When an attestation instance is in AAD mode, the caller can use a convenience method to set an unsigned attestation
 policy on the instance.
@@ -211,7 +240,7 @@ PolicyResult policyResult = client.setAttestationPolicy(AttestationType.SGX_ENCL
 System.out.printf("Policy set for Sgx result: %s\n", policyResult.getPolicyResolution());
 ```
 
-### List attestation signing certificates
+### List policy management certificates
 
 When an attestation instance is in `Isolated` mode, the policy APIs need additional proof of authorization. This proof is
 provided via the `AttestationSigningKey` parameter passed into the set and reset policy APIs.
@@ -232,7 +261,7 @@ for (AttestationSigner signer : signers.getAttestationSigners()) {
 }
 ```
 
-### Add attestation signing certificate
+### Add policy management certificate
 
 Adds a new certificate to the set of policy management certificates. The request to add the policy management certificate
 must be signed with the private key associated with one of the existing policy management certificates (this ensures that
@@ -272,11 +301,11 @@ System.out.printf("Removed certificate thumbprint: %s\n", modificationResult.get
 
 ## Troubleshooting
 
-Troubleshooting information for the MAA service can be found [here](https://docs.microsoft.com/azure/attestation/troubleshoot-guide)
+Troubleshooting information for the MAA service can be found [here](https://learn.microsoft.com/azure/attestation/troubleshoot-guide)
 
 ## Next steps
 
-For more information about the Microsoft Azure Attestation service, please see our [documentation page](https://docs.microsoft.com/azure/attestation/).
+For more information about the Microsoft Azure Attestation service, please see our [documentation page](https://learn.microsoft.com/azure/attestation/).
 
 ## Contributing
 
@@ -287,19 +316,19 @@ When you submit a pull request, a CLA-bot will automatically determine whether y
 This project has adopted the [Microsoft Open Source Code of Conduct][microsoft_code_of_conduct]. For more information, see the Code of Conduct FAQ or contact <opencode@microsoft.com> with any additional questions or comments.
 
 <!-- LINKS -->
-[style-guide-msft]: https://docs.microsoft.com/style-guide/capitalization
+[style-guide-msft]: https://learn.microsoft.com/style-guide/capitalization
 [api_documentation]: https://azure.github.io/azure-sdk-for-java
-[azure_attestation]: https://docs.microsoft.com/azure/attestation
+[azure_attestation]: https://learn.microsoft.com/azure/attestation
 [azure_identity]: https://github.com/Azure/azure-sdk-for-java/tree/main/sdk/identity/azure-identity
 [maven]: https://maven.apache.org/
 [azure_subscription]: https://azure.microsoft.com/
-[azure_cli]: https://docs.microsoft.com/cli/azure
-[rest_api]: https://docs.microsoft.com/rest/api/attestation/
-[azure_create_application_in_portal]: https://docs.microsoft.com/azure/active-directory/develop/howto-create-service-principal-portal
+[azure_cli]: https://learn.microsoft.com/cli/azure
+[rest_api]: https://learn.microsoft.com/rest/api/attestation/
+[azure_create_application_in_portal]: https://learn.microsoft.com/azure/active-directory/develop/howto-create-service-principal-portal
 [performance_tuning]: https://github.com/Azure/azure-sdk-for-java/wiki/Performance-Tuning
-[jdk_link]: https://docs.microsoft.com/java/azure/jdk/?view=azure-java-stable
+[jdk_link]: https://learn.microsoft.com/java/azure/jdk/?view=azure-java-stable
 [azure_cloud_shell]: https://shell.azure.com/bash
-[http_clients_wiki]: https://github.com/Azure/azure-sdk-for-java/wiki/HTTP-clients
+[http_clients_wiki]: https://learn.microsoft.com/azure/developer/java/sdk/http-client-pipeline#http-clients
 [microsoft_code_of_conduct]: https://opensource.microsoft.com/codeofconduct/
 
-![Impressions](https://azure-sdk-impressions.azurewebsites.net/api/impressions/azure-sdk-for-java%2Fsdk%2Fattestation%2Fazure-security-attestation%2FREADME.png)
+

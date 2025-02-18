@@ -13,42 +13,38 @@ import com.azure.resourcemanager.mediaservices.fluent.models.EntityNameAvailabil
 import com.azure.resourcemanager.mediaservices.models.CheckNameAvailabilityInput;
 import com.azure.resourcemanager.mediaservices.models.EntityNameAvailabilityCheckOutput;
 import com.azure.resourcemanager.mediaservices.models.Locations;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 public final class LocationsImpl implements Locations {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(LocationsImpl.class);
+    private static final ClientLogger LOGGER = new ClientLogger(LocationsImpl.class);
 
     private final LocationsClient innerClient;
 
     private final com.azure.resourcemanager.mediaservices.MediaServicesManager serviceManager;
 
-    public LocationsImpl(
-        LocationsClient innerClient, com.azure.resourcemanager.mediaservices.MediaServicesManager serviceManager) {
+    public LocationsImpl(LocationsClient innerClient,
+        com.azure.resourcemanager.mediaservices.MediaServicesManager serviceManager) {
         this.innerClient = innerClient;
         this.serviceManager = serviceManager;
     }
 
-    public EntityNameAvailabilityCheckOutput checkNameAvailability(
-        String locationName, CheckNameAvailabilityInput parameters) {
-        EntityNameAvailabilityCheckOutputInner inner =
-            this.serviceClient().checkNameAvailability(locationName, parameters);
+    public Response<EntityNameAvailabilityCheckOutput> checkNameAvailabilityWithResponse(String locationName,
+        CheckNameAvailabilityInput parameters, Context context) {
+        Response<EntityNameAvailabilityCheckOutputInner> inner
+            = this.serviceClient().checkNameAvailabilityWithResponse(locationName, parameters, context);
         if (inner != null) {
-            return new EntityNameAvailabilityCheckOutputImpl(inner, this.manager());
+            return new SimpleResponse<>(inner.getRequest(), inner.getStatusCode(), inner.getHeaders(),
+                new EntityNameAvailabilityCheckOutputImpl(inner.getValue(), this.manager()));
         } else {
             return null;
         }
     }
 
-    public Response<EntityNameAvailabilityCheckOutput> checkNameAvailabilityWithResponse(
-        String locationName, CheckNameAvailabilityInput parameters, Context context) {
-        Response<EntityNameAvailabilityCheckOutputInner> inner =
-            this.serviceClient().checkNameAvailabilityWithResponse(locationName, parameters, context);
+    public EntityNameAvailabilityCheckOutput checkNameAvailability(String locationName,
+        CheckNameAvailabilityInput parameters) {
+        EntityNameAvailabilityCheckOutputInner inner
+            = this.serviceClient().checkNameAvailability(locationName, parameters);
         if (inner != null) {
-            return new SimpleResponse<>(
-                inner.getRequest(),
-                inner.getStatusCode(),
-                inner.getHeaders(),
-                new EntityNameAvailabilityCheckOutputImpl(inner.getValue(), this.manager()));
+            return new EntityNameAvailabilityCheckOutputImpl(inner, this.manager());
         } else {
             return null;
         }

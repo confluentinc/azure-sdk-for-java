@@ -11,17 +11,15 @@ import com.azure.resourcemanager.recoveryservicesbackup.fluent.BackupProtectionI
 import com.azure.resourcemanager.recoveryservicesbackup.fluent.models.ProtectionIntentResourceInner;
 import com.azure.resourcemanager.recoveryservicesbackup.models.BackupProtectionIntents;
 import com.azure.resourcemanager.recoveryservicesbackup.models.ProtectionIntentResource;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 public final class BackupProtectionIntentsImpl implements BackupProtectionIntents {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(BackupProtectionIntentsImpl.class);
+    private static final ClientLogger LOGGER = new ClientLogger(BackupProtectionIntentsImpl.class);
 
     private final BackupProtectionIntentsClient innerClient;
 
     private final com.azure.resourcemanager.recoveryservicesbackup.RecoveryServicesBackupManager serviceManager;
 
-    public BackupProtectionIntentsImpl(
-        BackupProtectionIntentsClient innerClient,
+    public BackupProtectionIntentsImpl(BackupProtectionIntentsClient innerClient,
         com.azure.resourcemanager.recoveryservicesbackup.RecoveryServicesBackupManager serviceManager) {
         this.innerClient = innerClient;
         this.serviceManager = serviceManager;
@@ -29,14 +27,14 @@ public final class BackupProtectionIntentsImpl implements BackupProtectionIntent
 
     public PagedIterable<ProtectionIntentResource> list(String vaultName, String resourceGroupName) {
         PagedIterable<ProtectionIntentResourceInner> inner = this.serviceClient().list(vaultName, resourceGroupName);
-        return Utils.mapPage(inner, inner1 -> new ProtectionIntentResourceImpl(inner1, this.manager()));
+        return ResourceManagerUtils.mapPage(inner, inner1 -> new ProtectionIntentResourceImpl(inner1, this.manager()));
     }
 
-    public PagedIterable<ProtectionIntentResource> list(
-        String vaultName, String resourceGroupName, String filter, String skipToken, Context context) {
-        PagedIterable<ProtectionIntentResourceInner> inner =
-            this.serviceClient().list(vaultName, resourceGroupName, filter, skipToken, context);
-        return Utils.mapPage(inner, inner1 -> new ProtectionIntentResourceImpl(inner1, this.manager()));
+    public PagedIterable<ProtectionIntentResource> list(String vaultName, String resourceGroupName, String filter,
+        String skipToken, Context context) {
+        PagedIterable<ProtectionIntentResourceInner> inner
+            = this.serviceClient().list(vaultName, resourceGroupName, filter, skipToken, context);
+        return ResourceManagerUtils.mapPage(inner, inner1 -> new ProtectionIntentResourceImpl(inner1, this.manager()));
     }
 
     private BackupProtectionIntentsClient serviceClient() {

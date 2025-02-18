@@ -12,42 +12,44 @@ import com.azure.core.util.Context;
 import com.azure.core.util.polling.SyncPoller;
 import com.azure.resourcemanager.recoveryservicesbackup.fluent.models.PrivateEndpointConnectionResourceInner;
 
-/** An instance of this class provides access to all the operations defined in PrivateEndpointConnectionsClient. */
+/**
+ * An instance of this class provides access to all the operations defined in PrivateEndpointConnectionsClient.
+ */
 public interface PrivateEndpointConnectionsClient {
     /**
      * Get Private Endpoint Connection. This call is made by Backup Admin.
-     *
+     * 
      * @param vaultName The name of the recovery services vault.
      * @param resourceGroupName The name of the resource group where the recovery services vault is present.
      * @param privateEndpointConnectionName The name of the private endpoint connection.
+     * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return private Endpoint Connection.
+     * @return private Endpoint Connection along with {@link Response}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    PrivateEndpointConnectionResourceInner get(
-        String vaultName, String resourceGroupName, String privateEndpointConnectionName);
+    Response<PrivateEndpointConnectionResourceInner> getWithResponse(String vaultName, String resourceGroupName,
+        String privateEndpointConnectionName, Context context);
 
     /**
      * Get Private Endpoint Connection. This call is made by Backup Admin.
-     *
+     * 
      * @param vaultName The name of the recovery services vault.
      * @param resourceGroupName The name of the resource group where the recovery services vault is present.
      * @param privateEndpointConnectionName The name of the private endpoint connection.
-     * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
      * @return private Endpoint Connection.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    Response<PrivateEndpointConnectionResourceInner> getWithResponse(
-        String vaultName, String resourceGroupName, String privateEndpointConnectionName, Context context);
+    PrivateEndpointConnectionResourceInner get(String vaultName, String resourceGroupName,
+        String privateEndpointConnectionName);
 
     /**
      * Approve or Reject Private Endpoint requests. This call is made by Backup Admin.
-     *
+     * 
      * @param vaultName The name of the recovery services vault.
      * @param resourceGroupName The name of the resource group where the recovery services vault is present.
      * @param privateEndpointConnectionName The name of the private endpoint connection.
@@ -55,18 +57,16 @@ public interface PrivateEndpointConnectionsClient {
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return private Endpoint Connection Response Properties.
+     * @return the {@link SyncPoller} for polling of private Endpoint Connection Response Properties.
      */
     @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
     SyncPoller<PollResult<PrivateEndpointConnectionResourceInner>, PrivateEndpointConnectionResourceInner> beginPut(
-        String vaultName,
-        String resourceGroupName,
-        String privateEndpointConnectionName,
+        String vaultName, String resourceGroupName, String privateEndpointConnectionName,
         PrivateEndpointConnectionResourceInner parameters);
 
     /**
      * Approve or Reject Private Endpoint requests. This call is made by Backup Admin.
-     *
+     * 
      * @param vaultName The name of the recovery services vault.
      * @param resourceGroupName The name of the resource group where the recovery services vault is present.
      * @param privateEndpointConnectionName The name of the private endpoint connection.
@@ -75,19 +75,16 @@ public interface PrivateEndpointConnectionsClient {
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return private Endpoint Connection Response Properties.
+     * @return the {@link SyncPoller} for polling of private Endpoint Connection Response Properties.
      */
     @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
     SyncPoller<PollResult<PrivateEndpointConnectionResourceInner>, PrivateEndpointConnectionResourceInner> beginPut(
-        String vaultName,
-        String resourceGroupName,
-        String privateEndpointConnectionName,
-        PrivateEndpointConnectionResourceInner parameters,
-        Context context);
+        String vaultName, String resourceGroupName, String privateEndpointConnectionName,
+        PrivateEndpointConnectionResourceInner parameters, Context context);
 
     /**
      * Approve or Reject Private Endpoint requests. This call is made by Backup Admin.
-     *
+     * 
      * @param vaultName The name of the recovery services vault.
      * @param resourceGroupName The name of the resource group where the recovery services vault is present.
      * @param privateEndpointConnectionName The name of the private endpoint connection.
@@ -98,15 +95,12 @@ public interface PrivateEndpointConnectionsClient {
      * @return private Endpoint Connection Response Properties.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    PrivateEndpointConnectionResourceInner put(
-        String vaultName,
-        String resourceGroupName,
-        String privateEndpointConnectionName,
-        PrivateEndpointConnectionResourceInner parameters);
+    PrivateEndpointConnectionResourceInner put(String vaultName, String resourceGroupName,
+        String privateEndpointConnectionName, PrivateEndpointConnectionResourceInner parameters);
 
     /**
      * Approve or Reject Private Endpoint requests. This call is made by Backup Admin.
-     *
+     * 
      * @param vaultName The name of the recovery services vault.
      * @param resourceGroupName The name of the resource group where the recovery services vault is present.
      * @param privateEndpointConnectionName The name of the private endpoint connection.
@@ -118,31 +112,27 @@ public interface PrivateEndpointConnectionsClient {
      * @return private Endpoint Connection Response Properties.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    PrivateEndpointConnectionResourceInner put(
-        String vaultName,
-        String resourceGroupName,
-        String privateEndpointConnectionName,
-        PrivateEndpointConnectionResourceInner parameters,
-        Context context);
+    PrivateEndpointConnectionResourceInner put(String vaultName, String resourceGroupName,
+        String privateEndpointConnectionName, PrivateEndpointConnectionResourceInner parameters, Context context);
 
     /**
      * Delete Private Endpoint requests. This call is made by Backup Admin.
-     *
+     * 
      * @param vaultName The name of the recovery services vault.
      * @param resourceGroupName The name of the resource group where the recovery services vault is present.
      * @param privateEndpointConnectionName The name of the private endpoint connection.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the completion.
+     * @return the {@link SyncPoller} for polling of long-running operation.
      */
     @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
-    SyncPoller<PollResult<Void>, Void> beginDelete(
-        String vaultName, String resourceGroupName, String privateEndpointConnectionName);
+    SyncPoller<PollResult<Void>, Void> beginDelete(String vaultName, String resourceGroupName,
+        String privateEndpointConnectionName);
 
     /**
      * Delete Private Endpoint requests. This call is made by Backup Admin.
-     *
+     * 
      * @param vaultName The name of the recovery services vault.
      * @param resourceGroupName The name of the resource group where the recovery services vault is present.
      * @param privateEndpointConnectionName The name of the private endpoint connection.
@@ -150,15 +140,15 @@ public interface PrivateEndpointConnectionsClient {
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the completion.
+     * @return the {@link SyncPoller} for polling of long-running operation.
      */
     @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
-    SyncPoller<PollResult<Void>, Void> beginDelete(
-        String vaultName, String resourceGroupName, String privateEndpointConnectionName, Context context);
+    SyncPoller<PollResult<Void>, Void> beginDelete(String vaultName, String resourceGroupName,
+        String privateEndpointConnectionName, Context context);
 
     /**
      * Delete Private Endpoint requests. This call is made by Backup Admin.
-     *
+     * 
      * @param vaultName The name of the recovery services vault.
      * @param resourceGroupName The name of the resource group where the recovery services vault is present.
      * @param privateEndpointConnectionName The name of the private endpoint connection.
@@ -171,7 +161,7 @@ public interface PrivateEndpointConnectionsClient {
 
     /**
      * Delete Private Endpoint requests. This call is made by Backup Admin.
-     *
+     * 
      * @param vaultName The name of the recovery services vault.
      * @param resourceGroupName The name of the resource group where the recovery services vault is present.
      * @param privateEndpointConnectionName The name of the private endpoint connection.

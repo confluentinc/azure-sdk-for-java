@@ -11,10 +11,9 @@ import com.azure.resourcemanager.automation.fluent.FieldsClient;
 import com.azure.resourcemanager.automation.fluent.models.TypeFieldInner;
 import com.azure.resourcemanager.automation.models.Fields;
 import com.azure.resourcemanager.automation.models.TypeField;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 public final class FieldsImpl implements Fields {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(FieldsImpl.class);
+    private static final ClientLogger LOGGER = new ClientLogger(FieldsImpl.class);
 
     private final FieldsClient innerClient;
 
@@ -25,18 +24,18 @@ public final class FieldsImpl implements Fields {
         this.serviceManager = serviceManager;
     }
 
-    public PagedIterable<TypeField> listByType(
-        String resourceGroupName, String automationAccountName, String moduleName, String typeName) {
-        PagedIterable<TypeFieldInner> inner =
-            this.serviceClient().listByType(resourceGroupName, automationAccountName, moduleName, typeName);
-        return Utils.mapPage(inner, inner1 -> new TypeFieldImpl(inner1, this.manager()));
+    public PagedIterable<TypeField> listByType(String resourceGroupName, String automationAccountName,
+        String moduleName, String typeName) {
+        PagedIterable<TypeFieldInner> inner
+            = this.serviceClient().listByType(resourceGroupName, automationAccountName, moduleName, typeName);
+        return ResourceManagerUtils.mapPage(inner, inner1 -> new TypeFieldImpl(inner1, this.manager()));
     }
 
-    public PagedIterable<TypeField> listByType(
-        String resourceGroupName, String automationAccountName, String moduleName, String typeName, Context context) {
-        PagedIterable<TypeFieldInner> inner =
-            this.serviceClient().listByType(resourceGroupName, automationAccountName, moduleName, typeName, context);
-        return Utils.mapPage(inner, inner1 -> new TypeFieldImpl(inner1, this.manager()));
+    public PagedIterable<TypeField> listByType(String resourceGroupName, String automationAccountName,
+        String moduleName, String typeName, Context context) {
+        PagedIterable<TypeFieldInner> inner
+            = this.serviceClient().listByType(resourceGroupName, automationAccountName, moduleName, typeName, context);
+        return ResourceManagerUtils.mapPage(inner, inner1 -> new TypeFieldImpl(inner1, this.manager()));
     }
 
     private FieldsClient serviceClient() {

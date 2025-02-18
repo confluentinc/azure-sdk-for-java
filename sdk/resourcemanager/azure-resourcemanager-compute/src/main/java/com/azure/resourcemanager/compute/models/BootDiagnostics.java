@@ -5,36 +5,39 @@
 package com.azure.resourcemanager.compute.models;
 
 import com.azure.core.annotation.Fluent;
-import com.azure.core.util.logging.ClientLogger;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.azure.json.JsonReader;
+import com.azure.json.JsonSerializable;
+import com.azure.json.JsonToken;
+import com.azure.json.JsonWriter;
+import java.io.IOException;
 
 /**
  * Boot Diagnostics is a debugging feature which allows you to view Console Output and Screenshot to diagnose VM status.
- * &lt;br&gt;&lt;br&gt; You can easily view the output of your console log. &lt;br&gt;&lt;br&gt; Azure also enables you
- * to see a screenshot of the VM from the hypervisor.
+ * You can easily view the output of your console log. Azure also enables you to see a screenshot of the VM from the
+ * hypervisor.
  */
 @Fluent
-public final class BootDiagnostics {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(BootDiagnostics.class);
-
+public final class BootDiagnostics implements JsonSerializable<BootDiagnostics> {
     /*
      * Whether boot diagnostics should be enabled on the Virtual Machine.
      */
-    @JsonProperty(value = "enabled")
     private Boolean enabled;
 
     /*
-     * Uri of the storage account to use for placing the console output and
-     * screenshot. <br><br>If storageUri is not specified while enabling boot
-     * diagnostics, managed storage will be used.
+     * Uri of the storage account to use for placing the console output and screenshot. If storageUri is not specified
+     * while enabling boot diagnostics, managed storage will be used.
      */
-    @JsonProperty(value = "storageUri")
     private String storageUri;
 
     /**
+     * Creates an instance of BootDiagnostics class.
+     */
+    public BootDiagnostics() {
+    }
+
+    /**
      * Get the enabled property: Whether boot diagnostics should be enabled on the Virtual Machine.
-     *
+     * 
      * @return the enabled value.
      */
     public Boolean enabled() {
@@ -43,7 +46,7 @@ public final class BootDiagnostics {
 
     /**
      * Set the enabled property: Whether boot diagnostics should be enabled on the Virtual Machine.
-     *
+     * 
      * @param enabled the enabled value to set.
      * @return the BootDiagnostics object itself.
      */
@@ -53,9 +56,9 @@ public final class BootDiagnostics {
     }
 
     /**
-     * Get the storageUri property: Uri of the storage account to use for placing the console output and screenshot.
-     * &lt;br&gt;&lt;br&gt;If storageUri is not specified while enabling boot diagnostics, managed storage will be used.
-     *
+     * Get the storageUri property: Uri of the storage account to use for placing the console output and screenshot. If
+     * storageUri is not specified while enabling boot diagnostics, managed storage will be used.
+     * 
      * @return the storageUri value.
      */
     public String storageUri() {
@@ -63,9 +66,9 @@ public final class BootDiagnostics {
     }
 
     /**
-     * Set the storageUri property: Uri of the storage account to use for placing the console output and screenshot.
-     * &lt;br&gt;&lt;br&gt;If storageUri is not specified while enabling boot diagnostics, managed storage will be used.
-     *
+     * Set the storageUri property: Uri of the storage account to use for placing the console output and screenshot. If
+     * storageUri is not specified while enabling boot diagnostics, managed storage will be used.
+     * 
      * @param storageUri the storageUri value to set.
      * @return the BootDiagnostics object itself.
      */
@@ -76,9 +79,48 @@ public final class BootDiagnostics {
 
     /**
      * Validates the instance.
-     *
+     * 
      * @throws IllegalArgumentException thrown if the instance is not valid.
      */
     public void validate() {
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public JsonWriter toJson(JsonWriter jsonWriter) throws IOException {
+        jsonWriter.writeStartObject();
+        jsonWriter.writeBooleanField("enabled", this.enabled);
+        jsonWriter.writeStringField("storageUri", this.storageUri);
+        return jsonWriter.writeEndObject();
+    }
+
+    /**
+     * Reads an instance of BootDiagnostics from the JsonReader.
+     * 
+     * @param jsonReader The JsonReader being read.
+     * @return An instance of BootDiagnostics if the JsonReader was pointing to an instance of it, or null if it was
+     * pointing to JSON null.
+     * @throws IOException If an error occurs while reading the BootDiagnostics.
+     */
+    public static BootDiagnostics fromJson(JsonReader jsonReader) throws IOException {
+        return jsonReader.readObject(reader -> {
+            BootDiagnostics deserializedBootDiagnostics = new BootDiagnostics();
+            while (reader.nextToken() != JsonToken.END_OBJECT) {
+                String fieldName = reader.getFieldName();
+                reader.nextToken();
+
+                if ("enabled".equals(fieldName)) {
+                    deserializedBootDiagnostics.enabled = reader.getNullable(JsonReader::getBoolean);
+                } else if ("storageUri".equals(fieldName)) {
+                    deserializedBootDiagnostics.storageUri = reader.getString();
+                } else {
+                    reader.skipChildren();
+                }
+            }
+
+            return deserializedBootDiagnostics;
+        });
     }
 }

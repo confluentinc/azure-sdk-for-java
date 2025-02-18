@@ -8,11 +8,26 @@ import com.azure.core.http.rest.PagedIterable;
 import com.azure.core.http.rest.Response;
 import com.azure.core.util.Context;
 
-/** Resource collection API of Bots. */
+/**
+ * Resource collection API of Bots.
+ */
 public interface Bots {
     /**
      * Get a HealthBot.
-     *
+     * 
+     * @param resourceGroupName The name of the Bot resource group in the user subscription.
+     * @param botName The name of the Bot resource.
+     * @param context The context to associate with this operation.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return a HealthBot along with {@link Response}.
+     */
+    Response<HealthBot> getByResourceGroupWithResponse(String resourceGroupName, String botName, Context context);
+
+    /**
+     * Get a HealthBot.
+     * 
      * @param resourceGroupName The name of the Bot resource group in the user subscription.
      * @param botName The name of the Bot resource.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
@@ -23,21 +38,8 @@ public interface Bots {
     HealthBot getByResourceGroup(String resourceGroupName, String botName);
 
     /**
-     * Get a HealthBot.
-     *
-     * @param resourceGroupName The name of the Bot resource group in the user subscription.
-     * @param botName The name of the Bot resource.
-     * @param context The context to associate with this operation.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return a HealthBot.
-     */
-    Response<HealthBot> getByResourceGroupWithResponse(String resourceGroupName, String botName, Context context);
-
-    /**
      * Delete a HealthBot.
-     *
+     * 
      * @param resourceGroupName The name of the Bot resource group in the user subscription.
      * @param botName The name of the Bot resource.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
@@ -48,7 +50,7 @@ public interface Bots {
 
     /**
      * Delete a HealthBot.
-     *
+     * 
      * @param resourceGroupName The name of the Bot resource group in the user subscription.
      * @param botName The name of the Bot resource.
      * @param context The context to associate with this operation.
@@ -60,73 +62,73 @@ public interface Bots {
 
     /**
      * Returns all the resources of a particular type belonging to a resource group.
-     *
+     * 
      * @param resourceGroupName The name of the Bot resource group in the user subscription.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the list of Healthbot operation response.
+     * @return the list of Healthbot operation response as paginated response with {@link PagedIterable}.
      */
     PagedIterable<HealthBot> listByResourceGroup(String resourceGroupName);
 
     /**
      * Returns all the resources of a particular type belonging to a resource group.
-     *
+     * 
      * @param resourceGroupName The name of the Bot resource group in the user subscription.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the list of Healthbot operation response.
+     * @return the list of Healthbot operation response as paginated response with {@link PagedIterable}.
      */
     PagedIterable<HealthBot> listByResourceGroup(String resourceGroupName, Context context);
 
     /**
      * Returns all the resources of a particular type belonging to a subscription.
-     *
+     * 
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the list of Healthbot operation response.
+     * @return the list of Healthbot operation response as paginated response with {@link PagedIterable}.
      */
     PagedIterable<HealthBot> list();
 
     /**
      * Returns all the resources of a particular type belonging to a subscription.
-     *
+     * 
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the list of Healthbot operation response.
+     * @return the list of Healthbot operation response as paginated response with {@link PagedIterable}.
      */
     PagedIterable<HealthBot> list(Context context);
 
     /**
      * Get a HealthBot.
-     *
+     * 
      * @param id the resource ID.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return a HealthBot.
+     * @return a HealthBot along with {@link Response}.
      */
     HealthBot getById(String id);
 
     /**
      * Get a HealthBot.
-     *
+     * 
      * @param id the resource ID.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return a HealthBot.
+     * @return a HealthBot along with {@link Response}.
      */
     Response<HealthBot> getByIdWithResponse(String id, Context context);
 
     /**
      * Delete a HealthBot.
-     *
+     * 
      * @param id the resource ID.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
@@ -136,7 +138,7 @@ public interface Bots {
 
     /**
      * Delete a HealthBot.
-     *
+     * 
      * @param id the resource ID.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
@@ -147,7 +149,7 @@ public interface Bots {
 
     /**
      * Begins definition for a new HealthBot resource.
-     *
+     * 
      * @param name resource name.
      * @return the first stage of the new HealthBot definition.
      */

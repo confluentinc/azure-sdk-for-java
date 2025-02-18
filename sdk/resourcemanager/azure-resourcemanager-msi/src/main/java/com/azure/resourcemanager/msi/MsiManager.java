@@ -11,10 +11,12 @@ import com.azure.resourcemanager.msi.implementation.ManagedServiceIdentityClient
 import com.azure.resourcemanager.msi.implementation.IdentitesImpl;
 import com.azure.resourcemanager.msi.models.Identities;
 import com.azure.resourcemanager.resources.fluentcore.arm.AzureConfigurable;
-import com.azure.resourcemanager.resources.fluentcore.arm.implementation.AzureConfigurableImpl;
 import com.azure.resourcemanager.resources.fluentcore.arm.Manager;
 import com.azure.core.management.profile.AzureProfile;
+import com.azure.resourcemanager.resources.fluentcore.arm.implementation.AzureConfigurableImpl;
 import com.azure.resourcemanager.resources.fluentcore.utils.HttpPipelineProvider;
+
+import java.util.Objects;
 
 /**
  * Entry point to Azure Managed Service Identity (MSI) resource management.
@@ -42,6 +44,8 @@ public final class MsiManager extends Manager<ManagedServiceIdentityClient> {
      * @return the MsiManager
      */
     public static MsiManager authenticate(TokenCredential credential, AzureProfile profile) {
+        Objects.requireNonNull(credential, "'credential' cannot be null.");
+        Objects.requireNonNull(profile, "'profile' cannot be null.");
         return new MsiManager(HttpPipelineProvider.buildHttpPipeline(credential, profile), profile);
     }
 
@@ -49,12 +53,14 @@ public final class MsiManager extends Manager<ManagedServiceIdentityClient> {
      * Creates an instance of MsiManager that exposes Managed Service Identity (MSI)
      * resource management API entry points.
      *
-     * @param httpPipeline the HttpPipeline to be used for API calls.
+     * @param httpPipeline the {@link HttpPipeline} configured with Azure authentication credential.
      * @param profile the profile to use
      * @return the MsiManager
      */
-    private static MsiManager authenticate(HttpPipeline httpPipeline, AzureProfile profile) {
-        return  new MsiManager(httpPipeline, profile);
+    public static MsiManager authenticate(HttpPipeline httpPipeline, AzureProfile profile) {
+        Objects.requireNonNull(httpPipeline, "'httpPipeline' cannot be null.");
+        Objects.requireNonNull(profile, "'profile' cannot be null.");
+        return new MsiManager(httpPipeline, profile);
     }
 
     /**
@@ -82,17 +88,17 @@ public final class MsiManager extends Manager<ManagedServiceIdentityClient> {
     }
 
     private MsiManager(HttpPipeline httpPipeline, AzureProfile profile) {
-        super(httpPipeline, profile, new ManagedServiceIdentityClientBuilder()
-                .pipeline(httpPipeline)
+        super(httpPipeline, profile,
+            new ManagedServiceIdentityClientBuilder().pipeline(httpPipeline)
                 .endpoint(profile.getEnvironment().getResourceManagerEndpoint())
                 .subscriptionId(profile.getSubscriptionId())
                 .buildClient());
-        authorizationManager = AzureConfigurableImpl
-            .configureHttpPipeline(httpPipeline, AuthorizationManager.configure())
-            .authenticate(null, profile);
+        authorizationManager = AuthorizationManager.authenticate(httpPipeline, profile);
     }
 
     /**
+     * Gets entry point to Azure MSI Identity resource management API.
+     *
      * @return entry point to Azure MSI Identity resource management API
      */
     public Identities identities() {
@@ -103,6 +109,8 @@ public final class MsiManager extends Manager<ManagedServiceIdentityClient> {
     }
 
     /**
+     * Gets the authorization manager.
+     *
      * @return the authorization manager.
      */
     public AuthorizationManager authorizationManager() {

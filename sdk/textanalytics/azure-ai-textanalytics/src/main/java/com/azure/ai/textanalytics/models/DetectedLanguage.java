@@ -7,7 +7,7 @@ import com.azure.core.annotation.Immutable;
 import com.azure.core.util.IterableStream;
 
 /**
- * The {@link DetectedLanguage} model.
+ * The {@code DetectedLanguage} model.
  */
 @Immutable
 public final class DetectedLanguage {
@@ -34,7 +34,7 @@ public final class DetectedLanguage {
     private final IterableStream<TextAnalyticsWarning> warnings;
 
     /**
-     * Creates a {@link DetectedLanguage} model that describes detected language content.
+     * Creates a {@code DetectedLanguage} model that describes detected language content.
      *
      * @param name The name of a detected language.
      * @param iso6391Name A two letter representation of the detected language according to the ISO 639-1 standard.
@@ -42,7 +42,7 @@ public final class DetectedLanguage {
      * @param warnings An {@link IterableStream} of {@link TextAnalyticsWarning warnings}.
      */
     public DetectedLanguage(String name, String iso6391Name, double confidenceScore,
-                            IterableStream<TextAnalyticsWarning> warnings) {
+        IterableStream<TextAnalyticsWarning> warnings) {
         this.name = name;
         this.iso6391Name = iso6391Name;
         this.confidenceScore = confidenceScore;

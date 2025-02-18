@@ -5,49 +5,63 @@
 package com.azure.resourcemanager.loganalytics.fluent.models;
 
 import com.azure.core.annotation.Fluent;
-import com.azure.core.annotation.JsonFlatten;
 import com.azure.core.management.ProxyResource;
 import com.azure.core.util.logging.ClientLogger;
+import com.azure.json.JsonReader;
+import com.azure.json.JsonToken;
+import com.azure.json.JsonWriter;
 import com.azure.resourcemanager.loganalytics.models.LinkedServiceEntityStatus;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import java.io.IOException;
 import java.util.Map;
 
-/** The top level Linked service resource container. */
-@JsonFlatten
+/**
+ * The top level Linked service resource container.
+ */
 @Fluent
-public class LinkedServiceInner extends ProxyResource {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(LinkedServiceInner.class);
+public final class LinkedServiceInner extends ProxyResource {
+    /*
+     * The properties of the linked service.
+     */
+    private LinkedServiceProperties innerProperties = new LinkedServiceProperties();
 
     /*
      * Resource tags.
      */
-    @JsonProperty(value = "tags")
     private Map<String, String> tags;
 
     /*
-     * The resource id of the resource that will be linked to the workspace.
-     * This should be used for linking resources which require read access
+     * The type of the resource.
      */
-    @JsonProperty(value = "properties.resourceId")
-    private String resourceId;
+    private String type;
 
     /*
-     * The resource id of the resource that will be linked to the workspace.
-     * This should be used for linking resources which require write access
+     * The name of the resource.
      */
-    @JsonProperty(value = "properties.writeAccessResourceId")
-    private String writeAccessResourceId;
+    private String name;
 
     /*
-     * The provisioning state of the linked service.
+     * Fully qualified resource Id for the resource.
      */
-    @JsonProperty(value = "properties.provisioningState")
-    private LinkedServiceEntityStatus provisioningState;
+    private String id;
+
+    /**
+     * Creates an instance of LinkedServiceInner class.
+     */
+    public LinkedServiceInner() {
+    }
+
+    /**
+     * Get the innerProperties property: The properties of the linked service.
+     * 
+     * @return the innerProperties value.
+     */
+    private LinkedServiceProperties innerProperties() {
+        return this.innerProperties;
+    }
 
     /**
      * Get the tags property: Resource tags.
-     *
+     * 
      * @return the tags value.
      */
     public Map<String, String> tags() {
@@ -56,7 +70,7 @@ public class LinkedServiceInner extends ProxyResource {
 
     /**
      * Set the tags property: Resource tags.
-     *
+     * 
      * @param tags the tags value to set.
      * @return the LinkedServiceInner object itself.
      */
@@ -66,74 +80,169 @@ public class LinkedServiceInner extends ProxyResource {
     }
 
     /**
+     * Get the type property: The type of the resource.
+     * 
+     * @return the type value.
+     */
+    @Override
+    public String type() {
+        return this.type;
+    }
+
+    /**
+     * Get the name property: The name of the resource.
+     * 
+     * @return the name value.
+     */
+    @Override
+    public String name() {
+        return this.name;
+    }
+
+    /**
+     * Get the id property: Fully qualified resource Id for the resource.
+     * 
+     * @return the id value.
+     */
+    @Override
+    public String id() {
+        return this.id;
+    }
+
+    /**
      * Get the resourceId property: The resource id of the resource that will be linked to the workspace. This should be
      * used for linking resources which require read access.
-     *
+     * 
      * @return the resourceId value.
      */
     public String resourceId() {
-        return this.resourceId;
+        return this.innerProperties() == null ? null : this.innerProperties().resourceId();
     }
 
     /**
      * Set the resourceId property: The resource id of the resource that will be linked to the workspace. This should be
      * used for linking resources which require read access.
-     *
+     * 
      * @param resourceId the resourceId value to set.
      * @return the LinkedServiceInner object itself.
      */
     public LinkedServiceInner withResourceId(String resourceId) {
-        this.resourceId = resourceId;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new LinkedServiceProperties();
+        }
+        this.innerProperties().withResourceId(resourceId);
         return this;
     }
 
     /**
      * Get the writeAccessResourceId property: The resource id of the resource that will be linked to the workspace.
      * This should be used for linking resources which require write access.
-     *
+     * 
      * @return the writeAccessResourceId value.
      */
     public String writeAccessResourceId() {
-        return this.writeAccessResourceId;
+        return this.innerProperties() == null ? null : this.innerProperties().writeAccessResourceId();
     }
 
     /**
      * Set the writeAccessResourceId property: The resource id of the resource that will be linked to the workspace.
      * This should be used for linking resources which require write access.
-     *
+     * 
      * @param writeAccessResourceId the writeAccessResourceId value to set.
      * @return the LinkedServiceInner object itself.
      */
     public LinkedServiceInner withWriteAccessResourceId(String writeAccessResourceId) {
-        this.writeAccessResourceId = writeAccessResourceId;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new LinkedServiceProperties();
+        }
+        this.innerProperties().withWriteAccessResourceId(writeAccessResourceId);
         return this;
     }
 
     /**
      * Get the provisioningState property: The provisioning state of the linked service.
-     *
+     * 
      * @return the provisioningState value.
      */
     public LinkedServiceEntityStatus provisioningState() {
-        return this.provisioningState;
+        return this.innerProperties() == null ? null : this.innerProperties().provisioningState();
     }
 
     /**
      * Set the provisioningState property: The provisioning state of the linked service.
-     *
+     * 
      * @param provisioningState the provisioningState value to set.
      * @return the LinkedServiceInner object itself.
      */
     public LinkedServiceInner withProvisioningState(LinkedServiceEntityStatus provisioningState) {
-        this.provisioningState = provisioningState;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new LinkedServiceProperties();
+        }
+        this.innerProperties().withProvisioningState(provisioningState);
         return this;
     }
 
     /**
      * Validates the instance.
-     *
+     * 
      * @throws IllegalArgumentException thrown if the instance is not valid.
      */
     public void validate() {
+        if (innerProperties() == null) {
+            throw LOGGER.atError()
+                .log(new IllegalArgumentException(
+                    "Missing required property innerProperties in model LinkedServiceInner"));
+        } else {
+            innerProperties().validate();
+        }
+    }
+
+    private static final ClientLogger LOGGER = new ClientLogger(LinkedServiceInner.class);
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public JsonWriter toJson(JsonWriter jsonWriter) throws IOException {
+        jsonWriter.writeStartObject();
+        jsonWriter.writeJsonField("properties", this.innerProperties);
+        jsonWriter.writeMapField("tags", this.tags, (writer, element) -> writer.writeString(element));
+        return jsonWriter.writeEndObject();
+    }
+
+    /**
+     * Reads an instance of LinkedServiceInner from the JsonReader.
+     * 
+     * @param jsonReader The JsonReader being read.
+     * @return An instance of LinkedServiceInner if the JsonReader was pointing to an instance of it, or null if it was
+     * pointing to JSON null.
+     * @throws IllegalStateException If the deserialized JSON object was missing any required properties.
+     * @throws IOException If an error occurs while reading the LinkedServiceInner.
+     */
+    public static LinkedServiceInner fromJson(JsonReader jsonReader) throws IOException {
+        return jsonReader.readObject(reader -> {
+            LinkedServiceInner deserializedLinkedServiceInner = new LinkedServiceInner();
+            while (reader.nextToken() != JsonToken.END_OBJECT) {
+                String fieldName = reader.getFieldName();
+                reader.nextToken();
+
+                if ("id".equals(fieldName)) {
+                    deserializedLinkedServiceInner.id = reader.getString();
+                } else if ("name".equals(fieldName)) {
+                    deserializedLinkedServiceInner.name = reader.getString();
+                } else if ("type".equals(fieldName)) {
+                    deserializedLinkedServiceInner.type = reader.getString();
+                } else if ("properties".equals(fieldName)) {
+                    deserializedLinkedServiceInner.innerProperties = LinkedServiceProperties.fromJson(reader);
+                } else if ("tags".equals(fieldName)) {
+                    Map<String, String> tags = reader.readMap(reader1 -> reader1.getString());
+                    deserializedLinkedServiceInner.tags = tags;
+                } else {
+                    reader.skipChildren();
+                }
+            }
+
+            return deserializedLinkedServiceInner;
+        });
     }
 }

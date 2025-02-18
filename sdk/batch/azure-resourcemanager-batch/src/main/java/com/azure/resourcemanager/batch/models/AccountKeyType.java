@@ -4,18 +4,23 @@
 
 package com.azure.resourcemanager.batch.models;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonValue;
-
-/** Defines values for AccountKeyType. */
+/**
+ * The type of account key to regenerate.
+ */
 public enum AccountKeyType {
-    /** Enum value Primary. */
+    /**
+     * Enum value Primary.
+     */
     PRIMARY("Primary"),
 
-    /** Enum value Secondary. */
+    /**
+     * Enum value Secondary.
+     */
     SECONDARY("Secondary");
 
-    /** The actual serialized value for a AccountKeyType instance. */
+    /**
+     * The actual serialized value for a AccountKeyType instance.
+     */
     private final String value;
 
     AccountKeyType(String value) {
@@ -24,12 +29,14 @@ public enum AccountKeyType {
 
     /**
      * Parses a serialized value to a AccountKeyType instance.
-     *
+     * 
      * @param value the serialized value to parse.
      * @return the parsed AccountKeyType object, or null if unable to parse.
      */
-    @JsonCreator
     public static AccountKeyType fromString(String value) {
+        if (value == null) {
+            return null;
+        }
         AccountKeyType[] items = AccountKeyType.values();
         for (AccountKeyType item : items) {
             if (item.toString().equalsIgnoreCase(value)) {
@@ -39,7 +46,9 @@ public enum AccountKeyType {
         return null;
     }
 
-    @JsonValue
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String toString() {
         return this.value;

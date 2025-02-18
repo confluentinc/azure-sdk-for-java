@@ -4,21 +4,31 @@
 
 package com.azure.resourcemanager.compute.models;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonValue;
-
-/** Defines values for UpgradeMode. */
+/**
+ * Specifies the mode of an upgrade to virtual machines in the scale set.&lt;br /&gt;&lt;br /&gt; Possible values
+ * are:&lt;br /&gt;&lt;br /&gt; **Manual** - You control the application of updates to virtual machines in the scale
+ * set. You do this by using the manualUpgrade action.&lt;br /&gt;&lt;br /&gt; **Automatic** - All virtual machines in
+ * the scale set are automatically updated at the same time.
+ */
 public enum UpgradeMode {
-    /** Enum value Automatic. */
+    /**
+     * Enum value Automatic.
+     */
     AUTOMATIC("Automatic"),
 
-    /** Enum value Manual. */
+    /**
+     * Enum value Manual.
+     */
     MANUAL("Manual"),
 
-    /** Enum value Rolling. */
+    /**
+     * Enum value Rolling.
+     */
     ROLLING("Rolling");
 
-    /** The actual serialized value for a UpgradeMode instance. */
+    /**
+     * The actual serialized value for a UpgradeMode instance.
+     */
     private final String value;
 
     UpgradeMode(String value) {
@@ -27,12 +37,14 @@ public enum UpgradeMode {
 
     /**
      * Parses a serialized value to a UpgradeMode instance.
-     *
+     * 
      * @param value the serialized value to parse.
      * @return the parsed UpgradeMode object, or null if unable to parse.
      */
-    @JsonCreator
     public static UpgradeMode fromString(String value) {
+        if (value == null) {
+            return null;
+        }
         UpgradeMode[] items = UpgradeMode.values();
         for (UpgradeMode item : items) {
             if (item.toString().equalsIgnoreCase(value)) {
@@ -42,7 +54,9 @@ public enum UpgradeMode {
         return null;
     }
 
-    @JsonValue
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String toString() {
         return this.value;

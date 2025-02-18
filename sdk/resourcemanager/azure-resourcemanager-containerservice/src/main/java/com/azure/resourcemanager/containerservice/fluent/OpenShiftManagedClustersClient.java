@@ -22,116 +22,160 @@ import java.nio.ByteBuffer;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-/** An instance of this class provides access to all the operations defined in OpenShiftManagedClustersClient. */
-public interface OpenShiftManagedClustersClient
-    extends InnerSupportsGet<OpenShiftManagedClusterInner>,
-        InnerSupportsListing<OpenShiftManagedClusterInner>,
-        InnerSupportsDelete<Void> {
+/**
+ * An instance of this class provides access to all the operations defined in OpenShiftManagedClustersClient.
+ */
+public interface OpenShiftManagedClustersClient extends InnerSupportsGet<OpenShiftManagedClusterInner>,
+    InnerSupportsListing<OpenShiftManagedClusterInner>, InnerSupportsDelete<Void> {
     /**
+     * Gets a list of OpenShift managed clusters in the specified subscription.
+     * 
      * Gets a list of OpenShift managed clusters in the specified subscription. The operation returns properties of each
      * OpenShift managed cluster.
-     *
+     * 
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return a list of OpenShift managed clusters in the specified subscription.
+     * @return a list of OpenShift managed clusters in the specified subscription as paginated response with
+     * {@link PagedFlux}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
     PagedFlux<OpenShiftManagedClusterInner> listAsync();
 
     /**
+     * Gets a list of OpenShift managed clusters in the specified subscription.
+     * 
      * Gets a list of OpenShift managed clusters in the specified subscription. The operation returns properties of each
      * OpenShift managed cluster.
-     *
+     * 
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return a list of OpenShift managed clusters in the specified subscription.
+     * @return a list of OpenShift managed clusters in the specified subscription as paginated response with
+     * {@link PagedIterable}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
     PagedIterable<OpenShiftManagedClusterInner> list();
 
     /**
+     * Gets a list of OpenShift managed clusters in the specified subscription.
+     * 
      * Gets a list of OpenShift managed clusters in the specified subscription. The operation returns properties of each
      * OpenShift managed cluster.
-     *
+     * 
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return a list of OpenShift managed clusters in the specified subscription.
+     * @return a list of OpenShift managed clusters in the specified subscription as paginated response with
+     * {@link PagedIterable}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
     PagedIterable<OpenShiftManagedClusterInner> list(Context context);
 
     /**
+     * Lists OpenShift managed clusters in the specified subscription and resource group.
+     * 
      * Lists OpenShift managed clusters in the specified subscription and resource group. The operation returns
      * properties of each OpenShift managed cluster.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the response from the List OpenShift Managed Clusters operation.
+     * @return the response from the List OpenShift Managed Clusters operation as paginated response with
+     * {@link PagedFlux}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
     PagedFlux<OpenShiftManagedClusterInner> listByResourceGroupAsync(String resourceGroupName);
 
     /**
+     * Lists OpenShift managed clusters in the specified subscription and resource group.
+     * 
      * Lists OpenShift managed clusters in the specified subscription and resource group. The operation returns
      * properties of each OpenShift managed cluster.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the response from the List OpenShift Managed Clusters operation.
+     * @return the response from the List OpenShift Managed Clusters operation as paginated response with
+     * {@link PagedIterable}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
     PagedIterable<OpenShiftManagedClusterInner> listByResourceGroup(String resourceGroupName);
 
     /**
+     * Lists OpenShift managed clusters in the specified subscription and resource group.
+     * 
      * Lists OpenShift managed clusters in the specified subscription and resource group. The operation returns
      * properties of each OpenShift managed cluster.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the response from the List OpenShift Managed Clusters operation.
+     * @return the response from the List OpenShift Managed Clusters operation as paginated response with
+     * {@link PagedIterable}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
     PagedIterable<OpenShiftManagedClusterInner> listByResourceGroup(String resourceGroupName, Context context);
 
     /**
+     * Gets a OpenShift managed cluster.
+     * 
      * Gets the details of the managed OpenShift cluster with a specified resource group and name.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param resourceName The name of the OpenShift managed cluster resource.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the details of the managed OpenShift cluster with a specified resource group and name.
+     * @return the details of the managed OpenShift cluster with a specified resource group and name along with
+     * {@link Response} on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    Mono<Response<OpenShiftManagedClusterInner>> getByResourceGroupWithResponseAsync(
-        String resourceGroupName, String resourceName);
+    Mono<Response<OpenShiftManagedClusterInner>> getByResourceGroupWithResponseAsync(String resourceGroupName,
+        String resourceName);
 
     /**
+     * Gets a OpenShift managed cluster.
+     * 
      * Gets the details of the managed OpenShift cluster with a specified resource group and name.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param resourceName The name of the OpenShift managed cluster resource.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the details of the managed OpenShift cluster with a specified resource group and name.
+     * @return the details of the managed OpenShift cluster with a specified resource group and name on successful
+     * completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
     Mono<OpenShiftManagedClusterInner> getByResourceGroupAsync(String resourceGroupName, String resourceName);
 
     /**
+     * Gets a OpenShift managed cluster.
+     * 
      * Gets the details of the managed OpenShift cluster with a specified resource group and name.
-     *
+     * 
+     * @param resourceGroupName The name of the resource group.
+     * @param resourceName The name of the OpenShift managed cluster resource.
+     * @param context The context to associate with this operation.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return the details of the managed OpenShift cluster with a specified resource group and name along with
+     * {@link Response}.
+     */
+    @ServiceMethod(returns = ReturnType.SINGLE)
+    Response<OpenShiftManagedClusterInner> getByResourceGroupWithResponse(String resourceGroupName, String resourceName,
+        Context context);
+
+    /**
+     * Gets a OpenShift managed cluster.
+     * 
+     * Gets the details of the managed OpenShift cluster with a specified resource group and name.
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param resourceName The name of the OpenShift managed cluster resource.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
@@ -143,68 +187,61 @@ public interface OpenShiftManagedClustersClient
     OpenShiftManagedClusterInner getByResourceGroup(String resourceGroupName, String resourceName);
 
     /**
-     * Gets the details of the managed OpenShift cluster with a specified resource group and name.
-     *
-     * @param resourceGroupName The name of the resource group.
-     * @param resourceName The name of the OpenShift managed cluster resource.
-     * @param context The context to associate with this operation.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the details of the managed OpenShift cluster with a specified resource group and name.
-     */
-    @ServiceMethod(returns = ReturnType.SINGLE)
-    Response<OpenShiftManagedClusterInner> getByResourceGroupWithResponse(
-        String resourceGroupName, String resourceName, Context context);
-
-    /**
+     * Creates or updates an OpenShift managed cluster.
+     * 
      * Creates or updates a OpenShift managed cluster with the specified configuration for agents and OpenShift version.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param resourceName The name of the OpenShift managed cluster resource.
      * @param parameters Parameters supplied to the Create or Update an OpenShift Managed Cluster operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return openShift Managed cluster.
+     * @return openShift Managed cluster along with {@link Response} on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    Mono<Response<Flux<ByteBuffer>>> createOrUpdateWithResponseAsync(
-        String resourceGroupName, String resourceName, OpenShiftManagedClusterInner parameters);
+    Mono<Response<Flux<ByteBuffer>>> createOrUpdateWithResponseAsync(String resourceGroupName, String resourceName,
+        OpenShiftManagedClusterInner parameters);
 
     /**
+     * Creates or updates an OpenShift managed cluster.
+     * 
      * Creates or updates a OpenShift managed cluster with the specified configuration for agents and OpenShift version.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param resourceName The name of the OpenShift managed cluster resource.
      * @param parameters Parameters supplied to the Create or Update an OpenShift Managed Cluster operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return openShift Managed cluster.
+     * @return the {@link PollerFlux} for polling of openShift Managed cluster.
      */
     @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
     PollerFlux<PollResult<OpenShiftManagedClusterInner>, OpenShiftManagedClusterInner> beginCreateOrUpdateAsync(
         String resourceGroupName, String resourceName, OpenShiftManagedClusterInner parameters);
 
     /**
+     * Creates or updates an OpenShift managed cluster.
+     * 
      * Creates or updates a OpenShift managed cluster with the specified configuration for agents and OpenShift version.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param resourceName The name of the OpenShift managed cluster resource.
      * @param parameters Parameters supplied to the Create or Update an OpenShift Managed Cluster operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return openShift Managed cluster.
+     * @return the {@link SyncPoller} for polling of openShift Managed cluster.
      */
     @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
-    SyncPoller<PollResult<OpenShiftManagedClusterInner>, OpenShiftManagedClusterInner> beginCreateOrUpdate(
-        String resourceGroupName, String resourceName, OpenShiftManagedClusterInner parameters);
+    SyncPoller<PollResult<OpenShiftManagedClusterInner>, OpenShiftManagedClusterInner>
+        beginCreateOrUpdate(String resourceGroupName, String resourceName, OpenShiftManagedClusterInner parameters);
 
     /**
+     * Creates or updates an OpenShift managed cluster.
+     * 
      * Creates or updates a OpenShift managed cluster with the specified configuration for agents and OpenShift version.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param resourceName The name of the OpenShift managed cluster resource.
      * @param parameters Parameters supplied to the Create or Update an OpenShift Managed Cluster operation.
@@ -212,15 +249,34 @@ public interface OpenShiftManagedClustersClient
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return openShift Managed cluster.
+     * @return the {@link SyncPoller} for polling of openShift Managed cluster.
      */
     @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
     SyncPoller<PollResult<OpenShiftManagedClusterInner>, OpenShiftManagedClusterInner> beginCreateOrUpdate(
         String resourceGroupName, String resourceName, OpenShiftManagedClusterInner parameters, Context context);
 
     /**
+     * Creates or updates an OpenShift managed cluster.
+     * 
      * Creates or updates a OpenShift managed cluster with the specified configuration for agents and OpenShift version.
-     *
+     * 
+     * @param resourceGroupName The name of the resource group.
+     * @param resourceName The name of the OpenShift managed cluster resource.
+     * @param parameters Parameters supplied to the Create or Update an OpenShift Managed Cluster operation.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return openShift Managed cluster on successful completion of {@link Mono}.
+     */
+    @ServiceMethod(returns = ReturnType.SINGLE)
+    Mono<OpenShiftManagedClusterInner> createOrUpdateAsync(String resourceGroupName, String resourceName,
+        OpenShiftManagedClusterInner parameters);
+
+    /**
+     * Creates or updates an OpenShift managed cluster.
+     * 
+     * Creates or updates a OpenShift managed cluster with the specified configuration for agents and OpenShift version.
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param resourceName The name of the OpenShift managed cluster resource.
      * @param parameters Parameters supplied to the Create or Update an OpenShift Managed Cluster operation.
@@ -230,27 +286,14 @@ public interface OpenShiftManagedClustersClient
      * @return openShift Managed cluster.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    Mono<OpenShiftManagedClusterInner> createOrUpdateAsync(
-        String resourceGroupName, String resourceName, OpenShiftManagedClusterInner parameters);
+    OpenShiftManagedClusterInner createOrUpdate(String resourceGroupName, String resourceName,
+        OpenShiftManagedClusterInner parameters);
 
     /**
+     * Creates or updates an OpenShift managed cluster.
+     * 
      * Creates or updates a OpenShift managed cluster with the specified configuration for agents and OpenShift version.
-     *
-     * @param resourceGroupName The name of the resource group.
-     * @param resourceName The name of the OpenShift managed cluster resource.
-     * @param parameters Parameters supplied to the Create or Update an OpenShift Managed Cluster operation.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return openShift Managed cluster.
-     */
-    @ServiceMethod(returns = ReturnType.SINGLE)
-    OpenShiftManagedClusterInner createOrUpdate(
-        String resourceGroupName, String resourceName, OpenShiftManagedClusterInner parameters);
-
-    /**
-     * Creates or updates a OpenShift managed cluster with the specified configuration for agents and OpenShift version.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param resourceName The name of the OpenShift managed cluster resource.
      * @param parameters Parameters supplied to the Create or Update an OpenShift Managed Cluster operation.
@@ -261,57 +304,65 @@ public interface OpenShiftManagedClustersClient
      * @return openShift Managed cluster.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    OpenShiftManagedClusterInner createOrUpdate(
-        String resourceGroupName, String resourceName, OpenShiftManagedClusterInner parameters, Context context);
+    OpenShiftManagedClusterInner createOrUpdate(String resourceGroupName, String resourceName,
+        OpenShiftManagedClusterInner parameters, Context context);
 
     /**
+     * Updates tags on an OpenShift managed cluster.
+     * 
      * Updates an OpenShift managed cluster with the specified tags.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param resourceName The name of the OpenShift managed cluster resource.
      * @param parameters Parameters supplied to the Update OpenShift Managed Cluster Tags operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return openShift Managed cluster.
+     * @return openShift Managed cluster along with {@link Response} on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    Mono<Response<Flux<ByteBuffer>>> updateTagsWithResponseAsync(
-        String resourceGroupName, String resourceName, TagsObject parameters);
+    Mono<Response<Flux<ByteBuffer>>> updateTagsWithResponseAsync(String resourceGroupName, String resourceName,
+        TagsObject parameters);
 
     /**
+     * Updates tags on an OpenShift managed cluster.
+     * 
      * Updates an OpenShift managed cluster with the specified tags.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param resourceName The name of the OpenShift managed cluster resource.
      * @param parameters Parameters supplied to the Update OpenShift Managed Cluster Tags operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return openShift Managed cluster.
+     * @return the {@link PollerFlux} for polling of openShift Managed cluster.
      */
     @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
-    PollerFlux<PollResult<OpenShiftManagedClusterInner>, OpenShiftManagedClusterInner> beginUpdateTagsAsync(
-        String resourceGroupName, String resourceName, TagsObject parameters);
+    PollerFlux<PollResult<OpenShiftManagedClusterInner>, OpenShiftManagedClusterInner>
+        beginUpdateTagsAsync(String resourceGroupName, String resourceName, TagsObject parameters);
 
     /**
+     * Updates tags on an OpenShift managed cluster.
+     * 
      * Updates an OpenShift managed cluster with the specified tags.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param resourceName The name of the OpenShift managed cluster resource.
      * @param parameters Parameters supplied to the Update OpenShift Managed Cluster Tags operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return openShift Managed cluster.
+     * @return the {@link SyncPoller} for polling of openShift Managed cluster.
      */
     @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
-    SyncPoller<PollResult<OpenShiftManagedClusterInner>, OpenShiftManagedClusterInner> beginUpdateTags(
-        String resourceGroupName, String resourceName, TagsObject parameters);
+    SyncPoller<PollResult<OpenShiftManagedClusterInner>, OpenShiftManagedClusterInner>
+        beginUpdateTags(String resourceGroupName, String resourceName, TagsObject parameters);
 
     /**
+     * Updates tags on an OpenShift managed cluster.
+     * 
      * Updates an OpenShift managed cluster with the specified tags.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param resourceName The name of the OpenShift managed cluster resource.
      * @param parameters Parameters supplied to the Update OpenShift Managed Cluster Tags operation.
@@ -319,30 +370,34 @@ public interface OpenShiftManagedClustersClient
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return openShift Managed cluster.
+     * @return the {@link SyncPoller} for polling of openShift Managed cluster.
      */
     @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
-    SyncPoller<PollResult<OpenShiftManagedClusterInner>, OpenShiftManagedClusterInner> beginUpdateTags(
-        String resourceGroupName, String resourceName, TagsObject parameters, Context context);
+    SyncPoller<PollResult<OpenShiftManagedClusterInner>, OpenShiftManagedClusterInner>
+        beginUpdateTags(String resourceGroupName, String resourceName, TagsObject parameters, Context context);
 
     /**
+     * Updates tags on an OpenShift managed cluster.
+     * 
      * Updates an OpenShift managed cluster with the specified tags.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param resourceName The name of the OpenShift managed cluster resource.
      * @param parameters Parameters supplied to the Update OpenShift Managed Cluster Tags operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return openShift Managed cluster.
+     * @return openShift Managed cluster on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    Mono<OpenShiftManagedClusterInner> updateTagsAsync(
-        String resourceGroupName, String resourceName, TagsObject parameters);
+    Mono<OpenShiftManagedClusterInner> updateTagsAsync(String resourceGroupName, String resourceName,
+        TagsObject parameters);
 
     /**
+     * Updates tags on an OpenShift managed cluster.
+     * 
      * Updates an OpenShift managed cluster with the specified tags.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param resourceName The name of the OpenShift managed cluster resource.
      * @param parameters Parameters supplied to the Update OpenShift Managed Cluster Tags operation.
@@ -355,8 +410,10 @@ public interface OpenShiftManagedClustersClient
     OpenShiftManagedClusterInner updateTags(String resourceGroupName, String resourceName, TagsObject parameters);
 
     /**
+     * Updates tags on an OpenShift managed cluster.
+     * 
      * Updates an OpenShift managed cluster with the specified tags.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param resourceName The name of the OpenShift managed cluster resource.
      * @param parameters Parameters supplied to the Update OpenShift Managed Cluster Tags operation.
@@ -367,78 +424,90 @@ public interface OpenShiftManagedClustersClient
      * @return openShift Managed cluster.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    OpenShiftManagedClusterInner updateTags(
-        String resourceGroupName, String resourceName, TagsObject parameters, Context context);
+    OpenShiftManagedClusterInner updateTags(String resourceGroupName, String resourceName, TagsObject parameters,
+        Context context);
 
     /**
+     * Deletes an OpenShift managed cluster.
+     * 
      * Deletes the OpenShift managed cluster with a specified resource group and name.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param resourceName The name of the OpenShift managed cluster resource.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the completion.
+     * @return the {@link Response} on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
     Mono<Response<Flux<ByteBuffer>>> deleteWithResponseAsync(String resourceGroupName, String resourceName);
 
     /**
+     * Deletes an OpenShift managed cluster.
+     * 
      * Deletes the OpenShift managed cluster with a specified resource group and name.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param resourceName The name of the OpenShift managed cluster resource.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the completion.
+     * @return the {@link PollerFlux} for polling of long-running operation.
      */
     @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
     PollerFlux<PollResult<Void>, Void> beginDeleteAsync(String resourceGroupName, String resourceName);
 
     /**
+     * Deletes an OpenShift managed cluster.
+     * 
      * Deletes the OpenShift managed cluster with a specified resource group and name.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param resourceName The name of the OpenShift managed cluster resource.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the completion.
+     * @return the {@link SyncPoller} for polling of long-running operation.
      */
     @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
     SyncPoller<PollResult<Void>, Void> beginDelete(String resourceGroupName, String resourceName);
 
     /**
+     * Deletes an OpenShift managed cluster.
+     * 
      * Deletes the OpenShift managed cluster with a specified resource group and name.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param resourceName The name of the OpenShift managed cluster resource.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the completion.
+     * @return the {@link SyncPoller} for polling of long-running operation.
      */
     @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
     SyncPoller<PollResult<Void>, Void> beginDelete(String resourceGroupName, String resourceName, Context context);
 
     /**
+     * Deletes an OpenShift managed cluster.
+     * 
      * Deletes the OpenShift managed cluster with a specified resource group and name.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param resourceName The name of the OpenShift managed cluster resource.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the completion.
+     * @return A {@link Mono} that completes when a successful response is received.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
     Mono<Void> deleteAsync(String resourceGroupName, String resourceName);
 
     /**
+     * Deletes an OpenShift managed cluster.
+     * 
      * Deletes the OpenShift managed cluster with a specified resource group and name.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param resourceName The name of the OpenShift managed cluster resource.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
@@ -449,8 +518,10 @@ public interface OpenShiftManagedClustersClient
     void delete(String resourceGroupName, String resourceName);
 
     /**
+     * Deletes an OpenShift managed cluster.
+     * 
      * Deletes the OpenShift managed cluster with a specified resource group and name.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param resourceName The name of the OpenShift managed cluster resource.
      * @param context The context to associate with this operation.

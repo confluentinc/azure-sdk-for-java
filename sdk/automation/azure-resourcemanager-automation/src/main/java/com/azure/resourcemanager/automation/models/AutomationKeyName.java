@@ -5,29 +5,46 @@
 package com.azure.resourcemanager.automation.models;
 
 import com.azure.core.util.ExpandableStringEnum;
-import com.fasterxml.jackson.annotation.JsonCreator;
 import java.util.Collection;
 
-/** Defines values for AutomationKeyName. */
+/**
+ * Automation key name.
+ */
 public final class AutomationKeyName extends ExpandableStringEnum<AutomationKeyName> {
-    /** Static value Primary for AutomationKeyName. */
+    /**
+     * Static value Primary for AutomationKeyName.
+     */
     public static final AutomationKeyName PRIMARY = fromString("Primary");
 
-    /** Static value Secondary for AutomationKeyName. */
+    /**
+     * Static value Secondary for AutomationKeyName.
+     */
     public static final AutomationKeyName SECONDARY = fromString("Secondary");
 
     /**
+     * Creates a new instance of AutomationKeyName value.
+     * 
+     * @deprecated Use the {@link #fromString(String)} factory method.
+     */
+    @Deprecated
+    public AutomationKeyName() {
+    }
+
+    /**
      * Creates or finds a AutomationKeyName from its string representation.
-     *
+     * 
      * @param name a name to look for.
      * @return the corresponding AutomationKeyName.
      */
-    @JsonCreator
     public static AutomationKeyName fromString(String name) {
         return fromString(name, AutomationKeyName.class);
     }
 
-    /** @return known AutomationKeyName values. */
+    /**
+     * Gets known AutomationKeyName values.
+     * 
+     * @return known AutomationKeyName values.
+     */
     public static Collection<AutomationKeyName> values() {
         return values(AutomationKeyName.class);
     }

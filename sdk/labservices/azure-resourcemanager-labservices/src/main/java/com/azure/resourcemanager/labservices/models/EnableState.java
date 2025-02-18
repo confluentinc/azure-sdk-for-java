@@ -4,18 +4,23 @@
 
 package com.azure.resourcemanager.labservices.models;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonValue;
-
-/** Defines values for EnableState. */
+/**
+ * Property enabled state.
+ */
 public enum EnableState {
-    /** Enum value Enabled. */
+    /**
+     * Enum value Enabled.
+     */
     ENABLED("Enabled"),
 
-    /** Enum value Disabled. */
+    /**
+     * Enum value Disabled.
+     */
     DISABLED("Disabled");
 
-    /** The actual serialized value for a EnableState instance. */
+    /**
+     * The actual serialized value for a EnableState instance.
+     */
     private final String value;
 
     EnableState(String value) {
@@ -24,12 +29,14 @@ public enum EnableState {
 
     /**
      * Parses a serialized value to a EnableState instance.
-     *
+     * 
      * @param value the serialized value to parse.
      * @return the parsed EnableState object, or null if unable to parse.
      */
-    @JsonCreator
     public static EnableState fromString(String value) {
+        if (value == null) {
+            return null;
+        }
         EnableState[] items = EnableState.values();
         for (EnableState item : items) {
             if (item.toString().equalsIgnoreCase(value)) {
@@ -39,7 +46,9 @@ public enum EnableState {
         return null;
     }
 
-    @JsonValue
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String toString() {
         return this.value;

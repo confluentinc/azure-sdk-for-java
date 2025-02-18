@@ -5,24 +5,31 @@
 package com.azure.resourcemanager.netapp.models;
 
 import com.azure.core.annotation.Fluent;
-import com.azure.core.util.logging.ClientLogger;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.azure.json.JsonReader;
+import com.azure.json.JsonSerializable;
+import com.azure.json.JsonToken;
+import com.azure.json.JsonWriter;
+import java.io.IOException;
 
-/** Volume Snapshot Properties. */
+/**
+ * Volume Snapshot Properties.
+ */
 @Fluent
-public final class VolumeSnapshotProperties {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(VolumeSnapshotProperties.class);
-
+public final class VolumeSnapshotProperties implements JsonSerializable<VolumeSnapshotProperties> {
     /*
      * Snapshot Policy ResourceId
      */
-    @JsonProperty(value = "snapshotPolicyId")
     private String snapshotPolicyId;
 
     /**
+     * Creates an instance of VolumeSnapshotProperties class.
+     */
+    public VolumeSnapshotProperties() {
+    }
+
+    /**
      * Get the snapshotPolicyId property: Snapshot Policy ResourceId.
-     *
+     * 
      * @return the snapshotPolicyId value.
      */
     public String snapshotPolicyId() {
@@ -31,7 +38,7 @@ public final class VolumeSnapshotProperties {
 
     /**
      * Set the snapshotPolicyId property: Snapshot Policy ResourceId.
-     *
+     * 
      * @param snapshotPolicyId the snapshotPolicyId value to set.
      * @return the VolumeSnapshotProperties object itself.
      */
@@ -42,9 +49,45 @@ public final class VolumeSnapshotProperties {
 
     /**
      * Validates the instance.
-     *
+     * 
      * @throws IllegalArgumentException thrown if the instance is not valid.
      */
     public void validate() {
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public JsonWriter toJson(JsonWriter jsonWriter) throws IOException {
+        jsonWriter.writeStartObject();
+        jsonWriter.writeStringField("snapshotPolicyId", this.snapshotPolicyId);
+        return jsonWriter.writeEndObject();
+    }
+
+    /**
+     * Reads an instance of VolumeSnapshotProperties from the JsonReader.
+     * 
+     * @param jsonReader The JsonReader being read.
+     * @return An instance of VolumeSnapshotProperties if the JsonReader was pointing to an instance of it, or null if
+     * it was pointing to JSON null.
+     * @throws IOException If an error occurs while reading the VolumeSnapshotProperties.
+     */
+    public static VolumeSnapshotProperties fromJson(JsonReader jsonReader) throws IOException {
+        return jsonReader.readObject(reader -> {
+            VolumeSnapshotProperties deserializedVolumeSnapshotProperties = new VolumeSnapshotProperties();
+            while (reader.nextToken() != JsonToken.END_OBJECT) {
+                String fieldName = reader.getFieldName();
+                reader.nextToken();
+
+                if ("snapshotPolicyId".equals(fieldName)) {
+                    deserializedVolumeSnapshotProperties.snapshotPolicyId = reader.getString();
+                } else {
+                    reader.skipChildren();
+                }
+            }
+
+            return deserializedVolumeSnapshotProperties;
+        });
     }
 }

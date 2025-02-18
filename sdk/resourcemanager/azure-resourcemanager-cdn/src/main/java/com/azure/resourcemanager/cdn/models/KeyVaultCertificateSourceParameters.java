@@ -6,93 +6,87 @@ package com.azure.resourcemanager.cdn.models;
 
 import com.azure.core.annotation.Fluent;
 import com.azure.core.util.logging.ClientLogger;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.azure.json.JsonReader;
+import com.azure.json.JsonSerializable;
+import com.azure.json.JsonToken;
+import com.azure.json.JsonWriter;
+import java.io.IOException;
 
-/** Describes the parameters for using a user's KeyVault certificate for securing custom domain. */
+/**
+ * Describes the parameters for using a user's KeyVault certificate for securing custom domain.
+ */
 @Fluent
-public final class KeyVaultCertificateSourceParameters {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(KeyVaultCertificateSourceParameters.class);
-
+public final class KeyVaultCertificateSourceParameters
+    implements JsonSerializable<KeyVaultCertificateSourceParameters> {
     /*
-     * The @odata.type property.
+     * The typeName property.
      */
-    @JsonProperty(value = "@odata.type", required = true)
-    private String odataType;
+    private String typeName = "KeyVaultCertificateSourceParameters";
 
     /*
      * Subscription Id of the user's Key Vault containing the SSL certificate
      */
-    @JsonProperty(value = "subscriptionId", required = true)
     private String subscriptionId;
 
     /*
      * Resource group of the user's Key Vault containing the SSL certificate
      */
-    @JsonProperty(value = "resourceGroupName", required = true)
     private String resourceGroupName;
 
     /*
      * The name of the user's Key Vault containing the SSL certificate
      */
-    @JsonProperty(value = "vaultName", required = true)
     private String vaultName;
 
     /*
-     * The name of Key Vault Secret (representing the full certificate PFX) in
-     * Key Vault.
+     * The name of Key Vault Secret (representing the full certificate PFX) in Key Vault.
      */
-    @JsonProperty(value = "secretName", required = true)
     private String secretName;
 
     /*
      * The version(GUID) of Key Vault Secret in Key Vault.
      */
-    @JsonProperty(value = "secretVersion")
     private String secretVersion;
 
     /*
-     * Describes the action that shall be taken when the certificate is updated
-     * in Key Vault.
+     * Describes the action that shall be taken when the certificate is updated in Key Vault.
      */
-    @JsonProperty(value = "updateRule", required = true)
     private UpdateRule updateRule;
 
     /*
-     * Describes the action that shall be taken when the certificate is removed
-     * from Key Vault.
+     * Describes the action that shall be taken when the certificate is removed from Key Vault.
      */
-    @JsonProperty(value = "deleteRule", required = true)
     private DeleteRule deleteRule;
 
-    /** Creates an instance of KeyVaultCertificateSourceParameters class. */
-    public KeyVaultCertificateSourceParameters() {
-        odataType = "#Microsoft.Azure.Cdn.Models.KeyVaultCertificateSourceParameters";
-    }
-
     /**
-     * Get the odataType property: The @odata.type property.
-     *
-     * @return the odataType value.
+     * Creates an instance of KeyVaultCertificateSourceParameters class.
      */
-    public String odataType() {
-        return this.odataType;
+    public KeyVaultCertificateSourceParameters() {
     }
 
     /**
-     * Set the odataType property: The @odata.type property.
-     *
-     * @param odataType the odataType value to set.
+     * Get the typeName property: The typeName property.
+     * 
+     * @return the typeName value.
+     */
+    public String typeName() {
+        return this.typeName;
+    }
+
+    /**
+     * Set the typeName property: The typeName property.
+     * 
+     * @param typeName the typeName value to set.
      * @return the KeyVaultCertificateSourceParameters object itself.
      */
-    public KeyVaultCertificateSourceParameters withOdataType(String odataType) {
-        this.odataType = odataType;
+    public KeyVaultCertificateSourceParameters withTypeName(String typeName) {
+        this.typeName = typeName;
         return this;
     }
 
     /**
      * Get the subscriptionId property: Subscription Id of the user's Key Vault containing the SSL certificate.
-     *
+     * 
      * @return the subscriptionId value.
      */
     public String subscriptionId() {
@@ -101,7 +95,7 @@ public final class KeyVaultCertificateSourceParameters {
 
     /**
      * Set the subscriptionId property: Subscription Id of the user's Key Vault containing the SSL certificate.
-     *
+     * 
      * @param subscriptionId the subscriptionId value to set.
      * @return the KeyVaultCertificateSourceParameters object itself.
      */
@@ -112,7 +106,7 @@ public final class KeyVaultCertificateSourceParameters {
 
     /**
      * Get the resourceGroupName property: Resource group of the user's Key Vault containing the SSL certificate.
-     *
+     * 
      * @return the resourceGroupName value.
      */
     public String resourceGroupName() {
@@ -121,7 +115,7 @@ public final class KeyVaultCertificateSourceParameters {
 
     /**
      * Set the resourceGroupName property: Resource group of the user's Key Vault containing the SSL certificate.
-     *
+     * 
      * @param resourceGroupName the resourceGroupName value to set.
      * @return the KeyVaultCertificateSourceParameters object itself.
      */
@@ -132,7 +126,7 @@ public final class KeyVaultCertificateSourceParameters {
 
     /**
      * Get the vaultName property: The name of the user's Key Vault containing the SSL certificate.
-     *
+     * 
      * @return the vaultName value.
      */
     public String vaultName() {
@@ -141,7 +135,7 @@ public final class KeyVaultCertificateSourceParameters {
 
     /**
      * Set the vaultName property: The name of the user's Key Vault containing the SSL certificate.
-     *
+     * 
      * @param vaultName the vaultName value to set.
      * @return the KeyVaultCertificateSourceParameters object itself.
      */
@@ -152,7 +146,7 @@ public final class KeyVaultCertificateSourceParameters {
 
     /**
      * Get the secretName property: The name of Key Vault Secret (representing the full certificate PFX) in Key Vault.
-     *
+     * 
      * @return the secretName value.
      */
     public String secretName() {
@@ -161,7 +155,7 @@ public final class KeyVaultCertificateSourceParameters {
 
     /**
      * Set the secretName property: The name of Key Vault Secret (representing the full certificate PFX) in Key Vault.
-     *
+     * 
      * @param secretName the secretName value to set.
      * @return the KeyVaultCertificateSourceParameters object itself.
      */
@@ -172,7 +166,7 @@ public final class KeyVaultCertificateSourceParameters {
 
     /**
      * Get the secretVersion property: The version(GUID) of Key Vault Secret in Key Vault.
-     *
+     * 
      * @return the secretVersion value.
      */
     public String secretVersion() {
@@ -181,7 +175,7 @@ public final class KeyVaultCertificateSourceParameters {
 
     /**
      * Set the secretVersion property: The version(GUID) of Key Vault Secret in Key Vault.
-     *
+     * 
      * @param secretVersion the secretVersion value to set.
      * @return the KeyVaultCertificateSourceParameters object itself.
      */
@@ -193,7 +187,7 @@ public final class KeyVaultCertificateSourceParameters {
     /**
      * Get the updateRule property: Describes the action that shall be taken when the certificate is updated in Key
      * Vault.
-     *
+     * 
      * @return the updateRule value.
      */
     public UpdateRule updateRule() {
@@ -203,7 +197,7 @@ public final class KeyVaultCertificateSourceParameters {
     /**
      * Set the updateRule property: Describes the action that shall be taken when the certificate is updated in Key
      * Vault.
-     *
+     * 
      * @param updateRule the updateRule value to set.
      * @return the KeyVaultCertificateSourceParameters object itself.
      */
@@ -215,7 +209,7 @@ public final class KeyVaultCertificateSourceParameters {
     /**
      * Get the deleteRule property: Describes the action that shall be taken when the certificate is removed from Key
      * Vault.
-     *
+     * 
      * @return the deleteRule value.
      */
     public DeleteRule deleteRule() {
@@ -225,7 +219,7 @@ public final class KeyVaultCertificateSourceParameters {
     /**
      * Set the deleteRule property: Describes the action that shall be taken when the certificate is removed from Key
      * Vault.
-     *
+     * 
      * @param deleteRule the deleteRule value to set.
      * @return the KeyVaultCertificateSourceParameters object itself.
      */
@@ -236,45 +230,100 @@ public final class KeyVaultCertificateSourceParameters {
 
     /**
      * Validates the instance.
-     *
+     * 
      * @throws IllegalArgumentException thrown if the instance is not valid.
      */
     public void validate() {
         if (subscriptionId() == null) {
-            throw logger
-                .logExceptionAsError(
-                    new IllegalArgumentException(
-                        "Missing required property subscriptionId in model KeyVaultCertificateSourceParameters"));
+            throw LOGGER.atError()
+                .log(new IllegalArgumentException(
+                    "Missing required property subscriptionId in model KeyVaultCertificateSourceParameters"));
         }
         if (resourceGroupName() == null) {
-            throw logger
-                .logExceptionAsError(
-                    new IllegalArgumentException(
-                        "Missing required property resourceGroupName in model KeyVaultCertificateSourceParameters"));
+            throw LOGGER.atError()
+                .log(new IllegalArgumentException(
+                    "Missing required property resourceGroupName in model KeyVaultCertificateSourceParameters"));
         }
         if (vaultName() == null) {
-            throw logger
-                .logExceptionAsError(
-                    new IllegalArgumentException(
-                        "Missing required property vaultName in model KeyVaultCertificateSourceParameters"));
+            throw LOGGER.atError()
+                .log(new IllegalArgumentException(
+                    "Missing required property vaultName in model KeyVaultCertificateSourceParameters"));
         }
         if (secretName() == null) {
-            throw logger
-                .logExceptionAsError(
-                    new IllegalArgumentException(
-                        "Missing required property secretName in model KeyVaultCertificateSourceParameters"));
+            throw LOGGER.atError()
+                .log(new IllegalArgumentException(
+                    "Missing required property secretName in model KeyVaultCertificateSourceParameters"));
         }
         if (updateRule() == null) {
-            throw logger
-                .logExceptionAsError(
-                    new IllegalArgumentException(
-                        "Missing required property updateRule in model KeyVaultCertificateSourceParameters"));
+            throw LOGGER.atError()
+                .log(new IllegalArgumentException(
+                    "Missing required property updateRule in model KeyVaultCertificateSourceParameters"));
         }
         if (deleteRule() == null) {
-            throw logger
-                .logExceptionAsError(
-                    new IllegalArgumentException(
-                        "Missing required property deleteRule in model KeyVaultCertificateSourceParameters"));
+            throw LOGGER.atError()
+                .log(new IllegalArgumentException(
+                    "Missing required property deleteRule in model KeyVaultCertificateSourceParameters"));
         }
+    }
+
+    private static final ClientLogger LOGGER = new ClientLogger(KeyVaultCertificateSourceParameters.class);
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public JsonWriter toJson(JsonWriter jsonWriter) throws IOException {
+        jsonWriter.writeStartObject();
+        jsonWriter.writeStringField("typeName", this.typeName);
+        jsonWriter.writeStringField("subscriptionId", this.subscriptionId);
+        jsonWriter.writeStringField("resourceGroupName", this.resourceGroupName);
+        jsonWriter.writeStringField("vaultName", this.vaultName);
+        jsonWriter.writeStringField("secretName", this.secretName);
+        jsonWriter.writeStringField("updateRule", this.updateRule == null ? null : this.updateRule.toString());
+        jsonWriter.writeStringField("deleteRule", this.deleteRule == null ? null : this.deleteRule.toString());
+        jsonWriter.writeStringField("secretVersion", this.secretVersion);
+        return jsonWriter.writeEndObject();
+    }
+
+    /**
+     * Reads an instance of KeyVaultCertificateSourceParameters from the JsonReader.
+     * 
+     * @param jsonReader The JsonReader being read.
+     * @return An instance of KeyVaultCertificateSourceParameters if the JsonReader was pointing to an instance of it,
+     * or null if it was pointing to JSON null.
+     * @throws IllegalStateException If the deserialized JSON object was missing any required properties.
+     * @throws IOException If an error occurs while reading the KeyVaultCertificateSourceParameters.
+     */
+    public static KeyVaultCertificateSourceParameters fromJson(JsonReader jsonReader) throws IOException {
+        return jsonReader.readObject(reader -> {
+            KeyVaultCertificateSourceParameters deserializedKeyVaultCertificateSourceParameters
+                = new KeyVaultCertificateSourceParameters();
+            while (reader.nextToken() != JsonToken.END_OBJECT) {
+                String fieldName = reader.getFieldName();
+                reader.nextToken();
+
+                if ("subscriptionId".equals(fieldName)) {
+                    deserializedKeyVaultCertificateSourceParameters.subscriptionId = reader.getString();
+                } else if ("resourceGroupName".equals(fieldName)) {
+                    deserializedKeyVaultCertificateSourceParameters.resourceGroupName = reader.getString();
+                } else if ("vaultName".equals(fieldName)) {
+                    deserializedKeyVaultCertificateSourceParameters.vaultName = reader.getString();
+                } else if ("secretName".equals(fieldName)) {
+                    deserializedKeyVaultCertificateSourceParameters.secretName = reader.getString();
+                } else if ("updateRule".equals(fieldName)) {
+                    deserializedKeyVaultCertificateSourceParameters.updateRule
+                        = UpdateRule.fromString(reader.getString());
+                } else if ("deleteRule".equals(fieldName)) {
+                    deserializedKeyVaultCertificateSourceParameters.deleteRule
+                        = DeleteRule.fromString(reader.getString());
+                } else if ("secretVersion".equals(fieldName)) {
+                    deserializedKeyVaultCertificateSourceParameters.secretVersion = reader.getString();
+                } else {
+                    reader.skipChildren();
+                }
+            }
+
+            return deserializedKeyVaultCertificateSourceParameters;
+        });
     }
 }

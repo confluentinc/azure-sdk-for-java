@@ -6,15 +6,14 @@ package com.azure.resourcemanager.deviceprovisioningservices.implementation;
 
 import com.azure.resourcemanager.deviceprovisioningservices.fluent.models.AsyncOperationResultInner;
 import com.azure.resourcemanager.deviceprovisioningservices.models.AsyncOperationResult;
-import com.azure.resourcemanager.deviceprovisioningservices.models.ErrorMesssage;
+import com.azure.resourcemanager.deviceprovisioningservices.models.ErrorMessage;
 
 public final class AsyncOperationResultImpl implements AsyncOperationResult {
     private AsyncOperationResultInner innerObject;
 
     private final com.azure.resourcemanager.deviceprovisioningservices.IotDpsManager serviceManager;
 
-    AsyncOperationResultImpl(
-        AsyncOperationResultInner innerObject,
+    AsyncOperationResultImpl(AsyncOperationResultInner innerObject,
         com.azure.resourcemanager.deviceprovisioningservices.IotDpsManager serviceManager) {
         this.innerObject = innerObject;
         this.serviceManager = serviceManager;
@@ -24,7 +23,7 @@ public final class AsyncOperationResultImpl implements AsyncOperationResult {
         return this.innerModel().status();
     }
 
-    public ErrorMesssage error() {
+    public ErrorMessage error() {
         return this.innerModel().error();
     }
 

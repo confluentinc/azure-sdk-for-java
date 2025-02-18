@@ -8,37 +8,62 @@ import com.azure.core.http.rest.PagedIterable;
 import com.azure.core.http.rest.Response;
 import com.azure.core.util.Context;
 
-/** Resource collection API of BackupPolicies. */
+/**
+ * Resource collection API of BackupPolicies.
+ */
 public interface BackupPolicies {
     /**
+     * List backup policies
+     * 
      * List backup policies for Netapp Account.
-     *
-     * @param resourceGroupName The name of the resource group.
+     * 
+     * @param resourceGroupName The name of the resource group. The name is case insensitive.
      * @param accountName The name of the NetApp account.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return list of Backup Policies.
+     * @return list of Backup Policies as paginated response with {@link PagedIterable}.
      */
     PagedIterable<BackupPolicy> list(String resourceGroupName, String accountName);
 
     /**
+     * List backup policies
+     * 
      * List backup policies for Netapp Account.
-     *
-     * @param resourceGroupName The name of the resource group.
+     * 
+     * @param resourceGroupName The name of the resource group. The name is case insensitive.
      * @param accountName The name of the NetApp account.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return list of Backup Policies.
+     * @return list of Backup Policies as paginated response with {@link PagedIterable}.
      */
     PagedIterable<BackupPolicy> list(String resourceGroupName, String accountName, Context context);
 
     /**
+     * Get a backup Policy
+     * 
      * Get a particular backup Policy.
-     *
-     * @param resourceGroupName The name of the resource group.
+     * 
+     * @param resourceGroupName The name of the resource group. The name is case insensitive.
+     * @param accountName The name of the NetApp account.
+     * @param backupPolicyName Backup policy Name which uniquely identify backup policy.
+     * @param context The context to associate with this operation.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return a particular backup Policy along with {@link Response}.
+     */
+    Response<BackupPolicy> getWithResponse(String resourceGroupName, String accountName, String backupPolicyName,
+        Context context);
+
+    /**
+     * Get a backup Policy
+     * 
+     * Get a particular backup Policy.
+     * 
+     * @param resourceGroupName The name of the resource group. The name is case insensitive.
      * @param accountName The name of the NetApp account.
      * @param backupPolicyName Backup policy Name which uniquely identify backup policy.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
@@ -49,24 +74,11 @@ public interface BackupPolicies {
     BackupPolicy get(String resourceGroupName, String accountName, String backupPolicyName);
 
     /**
-     * Get a particular backup Policy.
-     *
-     * @param resourceGroupName The name of the resource group.
-     * @param accountName The name of the NetApp account.
-     * @param backupPolicyName Backup policy Name which uniquely identify backup policy.
-     * @param context The context to associate with this operation.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return a particular backup Policy.
-     */
-    Response<BackupPolicy> getWithResponse(
-        String resourceGroupName, String accountName, String backupPolicyName, Context context);
-
-    /**
+     * Delete a backup policy
+     * 
      * Delete backup policy.
-     *
-     * @param resourceGroupName The name of the resource group.
+     * 
+     * @param resourceGroupName The name of the resource group. The name is case insensitive.
      * @param accountName The name of the NetApp account.
      * @param backupPolicyName Backup policy Name which uniquely identify backup policy.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
@@ -76,9 +88,11 @@ public interface BackupPolicies {
     void delete(String resourceGroupName, String accountName, String backupPolicyName);
 
     /**
+     * Delete a backup policy
+     * 
      * Delete backup policy.
-     *
-     * @param resourceGroupName The name of the resource group.
+     * 
+     * @param resourceGroupName The name of the resource group. The name is case insensitive.
      * @param accountName The name of the NetApp account.
      * @param backupPolicyName Backup policy Name which uniquely identify backup policy.
      * @param context The context to associate with this operation.
@@ -89,31 +103,37 @@ public interface BackupPolicies {
     void delete(String resourceGroupName, String accountName, String backupPolicyName, Context context);
 
     /**
+     * Get a backup Policy
+     * 
      * Get a particular backup Policy.
-     *
+     * 
      * @param id the resource ID.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return a particular backup Policy.
+     * @return a particular backup Policy along with {@link Response}.
      */
     BackupPolicy getById(String id);
 
     /**
+     * Get a backup Policy
+     * 
      * Get a particular backup Policy.
-     *
+     * 
      * @param id the resource ID.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return a particular backup Policy.
+     * @return a particular backup Policy along with {@link Response}.
      */
     Response<BackupPolicy> getByIdWithResponse(String id, Context context);
 
     /**
+     * Delete a backup policy
+     * 
      * Delete backup policy.
-     *
+     * 
      * @param id the resource ID.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
@@ -122,8 +142,10 @@ public interface BackupPolicies {
     void deleteById(String id);
 
     /**
+     * Delete a backup policy
+     * 
      * Delete backup policy.
-     *
+     * 
      * @param id the resource ID.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
@@ -134,7 +156,7 @@ public interface BackupPolicies {
 
     /**
      * Begins definition for a new BackupPolicy resource.
-     *
+     * 
      * @param name resource name.
      * @return the first stage of the new BackupPolicy definition.
      */

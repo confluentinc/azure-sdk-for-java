@@ -5,6 +5,7 @@ package com.azure.monitor.query.models;
 
 import com.azure.core.annotation.Immutable;
 import com.azure.core.util.CoreUtils;
+import com.azure.monitor.query.implementation.metrics.models.MetricsHelper;
 
 import java.time.Duration;
 import java.util.List;
@@ -23,6 +24,12 @@ public final class MetricsQueryResult {
     private final String resourceRegion;
     private final List<MetricResult> metrics;
 
+    private String resourceId;
+
+    static {
+        MetricsHelper.setMetricsQueryResultAccessor(MetricsQueryResult::setResourceId);
+    }
+
     /**
      * Creates an instance of the response to a metrics query.
      * @param cost the integer value representing the cost of the query, for data case.
@@ -33,7 +40,7 @@ public final class MetricsQueryResult {
      * @param metrics the value of the collection.
      */
     public MetricsQueryResult(Integer cost, QueryTimeInterval timeInterval, Duration granularity, String namespace,
-                              String resourceRegion, List<MetricResult> metrics) {
+        String resourceRegion, List<MetricResult> metrics) {
         this.cost = cost;
         this.timeInterval = timeInterval;
         this.granularity = granularity;
@@ -91,6 +98,18 @@ public final class MetricsQueryResult {
     }
 
     /**
+     * Returns the resource id of the resource this metrics result belongs to.
+     * @return the resource id of the resource this metrics result belongs to.
+     */
+    public String getResourceId() {
+        return resourceId;
+    }
+
+    private void setResourceId(String resourceId) {
+        this.resourceId = resourceId;
+    }
+
+    /**
      * Returns the metric result for the {@code metricName}.
      *
      * @param metricName The name of the metric to look up the result for.
@@ -103,8 +122,8 @@ public final class MetricsQueryResult {
         }
 
         return metrics.stream()
-                .filter(metricResult -> metricResult.getMetricName().equals(metricName))
-                .findFirst()
-                .orElse(null);
+            .filter(metricResult -> metricResult.getMetricName().equals(metricName))
+            .findFirst()
+            .orElse(null);
     }
 }

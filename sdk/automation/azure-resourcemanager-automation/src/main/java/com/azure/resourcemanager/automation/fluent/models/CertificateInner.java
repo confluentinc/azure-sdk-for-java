@@ -5,125 +5,202 @@
 package com.azure.resourcemanager.automation.fluent.models;
 
 import com.azure.core.annotation.Fluent;
-import com.azure.core.annotation.JsonFlatten;
 import com.azure.core.management.ProxyResource;
-import com.azure.core.util.logging.ClientLogger;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.azure.json.JsonReader;
+import com.azure.json.JsonToken;
+import com.azure.json.JsonWriter;
+import java.io.IOException;
 import java.time.OffsetDateTime;
 
-/** Definition of the certificate. */
-@JsonFlatten
+/**
+ * Definition of the certificate.
+ */
 @Fluent
-public class CertificateInner extends ProxyResource {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(CertificateInner.class);
+public final class CertificateInner extends ProxyResource {
+    /*
+     * Gets or sets the properties of the certificate.
+     */
+    private CertificateProperties innerProperties;
 
     /*
-     * Gets the thumbprint of the certificate.
+     * The type of the resource.
      */
-    @JsonProperty(value = "properties.thumbprint", access = JsonProperty.Access.WRITE_ONLY)
-    private String thumbprint;
+    private String type;
 
     /*
-     * Gets the expiry time of the certificate.
+     * The name of the resource.
      */
-    @JsonProperty(value = "properties.expiryTime", access = JsonProperty.Access.WRITE_ONLY)
-    private OffsetDateTime expiryTime;
+    private String name;
 
     /*
-     * Gets the is exportable flag of the certificate.
+     * Fully qualified resource Id for the resource.
      */
-    @JsonProperty(value = "properties.isExportable", access = JsonProperty.Access.WRITE_ONLY)
-    private Boolean isExportable;
+    private String id;
 
-    /*
-     * Gets the creation time.
+    /**
+     * Creates an instance of CertificateInner class.
      */
-    @JsonProperty(value = "properties.creationTime", access = JsonProperty.Access.WRITE_ONLY)
-    private OffsetDateTime creationTime;
+    public CertificateInner() {
+    }
 
-    /*
-     * Gets the last modified time.
+    /**
+     * Get the innerProperties property: Gets or sets the properties of the certificate.
+     * 
+     * @return the innerProperties value.
      */
-    @JsonProperty(value = "properties.lastModifiedTime", access = JsonProperty.Access.WRITE_ONLY)
-    private OffsetDateTime lastModifiedTime;
+    private CertificateProperties innerProperties() {
+        return this.innerProperties;
+    }
 
-    /*
-     * Gets or sets the description.
+    /**
+     * Get the type property: The type of the resource.
+     * 
+     * @return the type value.
      */
-    @JsonProperty(value = "properties.description")
-    private String description;
+    @Override
+    public String type() {
+        return this.type;
+    }
+
+    /**
+     * Get the name property: The name of the resource.
+     * 
+     * @return the name value.
+     */
+    @Override
+    public String name() {
+        return this.name;
+    }
+
+    /**
+     * Get the id property: Fully qualified resource Id for the resource.
+     * 
+     * @return the id value.
+     */
+    @Override
+    public String id() {
+        return this.id;
+    }
 
     /**
      * Get the thumbprint property: Gets the thumbprint of the certificate.
-     *
+     * 
      * @return the thumbprint value.
      */
     public String thumbprint() {
-        return this.thumbprint;
+        return this.innerProperties() == null ? null : this.innerProperties().thumbprint();
     }
 
     /**
      * Get the expiryTime property: Gets the expiry time of the certificate.
-     *
+     * 
      * @return the expiryTime value.
      */
     public OffsetDateTime expiryTime() {
-        return this.expiryTime;
+        return this.innerProperties() == null ? null : this.innerProperties().expiryTime();
     }
 
     /**
      * Get the isExportable property: Gets the is exportable flag of the certificate.
-     *
+     * 
      * @return the isExportable value.
      */
     public Boolean isExportable() {
-        return this.isExportable;
+        return this.innerProperties() == null ? null : this.innerProperties().isExportable();
     }
 
     /**
      * Get the creationTime property: Gets the creation time.
-     *
+     * 
      * @return the creationTime value.
      */
     public OffsetDateTime creationTime() {
-        return this.creationTime;
+        return this.innerProperties() == null ? null : this.innerProperties().creationTime();
     }
 
     /**
      * Get the lastModifiedTime property: Gets the last modified time.
-     *
+     * 
      * @return the lastModifiedTime value.
      */
     public OffsetDateTime lastModifiedTime() {
-        return this.lastModifiedTime;
+        return this.innerProperties() == null ? null : this.innerProperties().lastModifiedTime();
     }
 
     /**
      * Get the description property: Gets or sets the description.
-     *
+     * 
      * @return the description value.
      */
     public String description() {
-        return this.description;
+        return this.innerProperties() == null ? null : this.innerProperties().description();
     }
 
     /**
      * Set the description property: Gets or sets the description.
-     *
+     * 
      * @param description the description value to set.
      * @return the CertificateInner object itself.
      */
     public CertificateInner withDescription(String description) {
-        this.description = description;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new CertificateProperties();
+        }
+        this.innerProperties().withDescription(description);
         return this;
     }
 
     /**
      * Validates the instance.
-     *
+     * 
      * @throws IllegalArgumentException thrown if the instance is not valid.
      */
     public void validate() {
+        if (innerProperties() != null) {
+            innerProperties().validate();
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public JsonWriter toJson(JsonWriter jsonWriter) throws IOException {
+        jsonWriter.writeStartObject();
+        jsonWriter.writeJsonField("properties", this.innerProperties);
+        return jsonWriter.writeEndObject();
+    }
+
+    /**
+     * Reads an instance of CertificateInner from the JsonReader.
+     * 
+     * @param jsonReader The JsonReader being read.
+     * @return An instance of CertificateInner if the JsonReader was pointing to an instance of it, or null if it was
+     * pointing to JSON null.
+     * @throws IllegalStateException If the deserialized JSON object was missing any required properties.
+     * @throws IOException If an error occurs while reading the CertificateInner.
+     */
+    public static CertificateInner fromJson(JsonReader jsonReader) throws IOException {
+        return jsonReader.readObject(reader -> {
+            CertificateInner deserializedCertificateInner = new CertificateInner();
+            while (reader.nextToken() != JsonToken.END_OBJECT) {
+                String fieldName = reader.getFieldName();
+                reader.nextToken();
+
+                if ("id".equals(fieldName)) {
+                    deserializedCertificateInner.id = reader.getString();
+                } else if ("name".equals(fieldName)) {
+                    deserializedCertificateInner.name = reader.getString();
+                } else if ("type".equals(fieldName)) {
+                    deserializedCertificateInner.type = reader.getString();
+                } else if ("properties".equals(fieldName)) {
+                    deserializedCertificateInner.innerProperties = CertificateProperties.fromJson(reader);
+                } else {
+                    reader.skipChildren();
+                }
+            }
+
+            return deserializedCertificateInner;
+        });
     }
 }

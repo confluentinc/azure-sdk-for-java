@@ -5,38 +5,65 @@
 package com.azure.resourcemanager.mediaservices.models;
 
 import com.azure.core.util.ExpandableStringEnum;
-import com.fasterxml.jackson.annotation.JsonCreator;
 import java.util.Collection;
 
-/** Defines values for LiveEventEncodingType. */
+/**
+ * Live event type. When encodingType is set to PassthroughBasic or PassthroughStandard, the service simply passes
+ * through the incoming video and audio layer(s) to the output. When encodingType is set to Standard or Premium1080p, a
+ * live encoder transcodes the incoming stream into multiple bitrates or layers. See
+ * https://go.microsoft.com/fwlink/?linkid=2095101 for more information. This property cannot be modified after the live
+ * event is created.
+ */
 public final class LiveEventEncodingType extends ExpandableStringEnum<LiveEventEncodingType> {
-    /** Static value None for LiveEventEncodingType. */
+    /**
+     * Static value None for LiveEventEncodingType.
+     */
     public static final LiveEventEncodingType NONE = fromString("None");
 
-    /** Static value Standard for LiveEventEncodingType. */
+    /**
+     * Static value Standard for LiveEventEncodingType.
+     */
     public static final LiveEventEncodingType STANDARD = fromString("Standard");
 
-    /** Static value Premium1080p for LiveEventEncodingType. */
+    /**
+     * Static value Premium1080p for LiveEventEncodingType.
+     */
     public static final LiveEventEncodingType PREMIUM1080P = fromString("Premium1080p");
 
-    /** Static value PassthroughBasic for LiveEventEncodingType. */
+    /**
+     * Static value PassthroughBasic for LiveEventEncodingType.
+     */
     public static final LiveEventEncodingType PASSTHROUGH_BASIC = fromString("PassthroughBasic");
 
-    /** Static value PassthroughStandard for LiveEventEncodingType. */
+    /**
+     * Static value PassthroughStandard for LiveEventEncodingType.
+     */
     public static final LiveEventEncodingType PASSTHROUGH_STANDARD = fromString("PassthroughStandard");
 
     /**
+     * Creates a new instance of LiveEventEncodingType value.
+     * 
+     * @deprecated Use the {@link #fromString(String)} factory method.
+     */
+    @Deprecated
+    public LiveEventEncodingType() {
+    }
+
+    /**
      * Creates or finds a LiveEventEncodingType from its string representation.
-     *
+     * 
      * @param name a name to look for.
      * @return the corresponding LiveEventEncodingType.
      */
-    @JsonCreator
     public static LiveEventEncodingType fromString(String name) {
         return fromString(name, LiveEventEncodingType.class);
     }
 
-    /** @return known LiveEventEncodingType values. */
+    /**
+     * Gets known LiveEventEncodingType values.
+     * 
+     * @return known LiveEventEncodingType values.
+     */
     public static Collection<LiveEventEncodingType> values() {
         return values(LiveEventEncodingType.class);
     }

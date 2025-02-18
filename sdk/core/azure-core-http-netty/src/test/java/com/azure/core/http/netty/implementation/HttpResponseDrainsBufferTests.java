@@ -8,7 +8,6 @@ import com.azure.core.http.HttpMethod;
 import com.azure.core.http.HttpRequest;
 import com.azure.core.http.HttpResponse;
 import com.azure.core.http.netty.NettyAsyncHttpClientProvider;
-import com.github.tomakehurst.wiremock.WireMockServer;
 import io.netty.util.ResourceLeakDetector;
 import io.netty.util.ResourceLeakDetectorFactory;
 import org.junit.jupiter.api.AfterAll;
@@ -24,16 +23,20 @@ import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
 import reactor.test.StepVerifier;
 
-import java.security.SecureRandom;
+import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.nio.channels.AsynchronousByteChannel;
+import java.nio.channels.CompletionHandler;
+import java.nio.channels.WritableByteChannel;
 import java.time.Duration;
 import java.util.Collection;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentLinkedDeque;
+import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
 
-import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
-import static com.github.tomakehurst.wiremock.client.WireMock.get;
-import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
+import static com.azure.core.http.netty.implementation.NettyHttpClientLocalTestServer.LONG_BODY_PATH;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
@@ -45,36 +48,17 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @Isolated
 @Execution(ExecutionMode.SAME_THREAD)
 public class HttpResponseDrainsBufferTests {
-    private static final String LONG_BODY_PATH = "/long";
-    private static final byte[] LONG_BODY = new byte[4 * 1024 * 1024]; // 4 MB
-
     private static ResourceLeakDetector.Level originalLevel;
-    private static WireMockServer wireMockServer;
-    private static String url;
-
-    static {
-        new SecureRandom().nextBytes(LONG_BODY);
-    }
+    private static final String URL = NettyHttpClientLocalTestServer.getServer().getHttpUri() + LONG_BODY_PATH;
 
     private ResourceLeakDetectorFactory originalLeakDetectorFactory;
-    private final TestResourceLeakDetectorFactory testResourceLeakDetectorFactory =
-        new TestResourceLeakDetectorFactory();
+    private final TestResourceLeakDetectorFactory testResourceLeakDetectorFactory
+        = new TestResourceLeakDetectorFactory();
 
     @BeforeAll
-    public static void setupMockServer() {
+    public static void startTestServer() {
         originalLevel = ResourceLeakDetector.getLevel();
         ResourceLeakDetector.setLevel(ResourceLeakDetector.Level.PARANOID);
-
-        wireMockServer = new WireMockServer(wireMockConfig()
-            .dynamicPort()
-            .disableRequestJournal()
-            .asynchronousResponseEnabled(true)
-            .gzipDisabled(true));
-
-        wireMockServer.stubFor(get(LONG_BODY_PATH).willReturn(aResponse().withBody(LONG_BODY)));
-        wireMockServer.start();
-
-        url = wireMockServer.baseUrl() + LONG_BODY_PATH;
     }
 
     @BeforeEach
@@ -89,11 +73,8 @@ public class HttpResponseDrainsBufferTests {
     }
 
     @AfterAll
-    public static void tearDownMockServer() {
+    public static void stopTestServer() {
         ResourceLeakDetector.setLevel(originalLevel);
-        if (wireMockServer != null) {
-            wireMockServer.shutdown();
-        }
     }
 
     @Test
@@ -104,6 +85,99 @@ public class HttpResponseDrainsBufferTests {
     @Test
     public void closeHttpResponseWithConsumingPartialBody() {
         runScenario(response -> response.getBody().next().flatMap(ignored -> Mono.fromRunnable(response::close)));
+    }
+
+    @Test
+    public void closeHttpResponseWithConsumingPartialWriteAsync() {
+        runScenario(response -> response.writeBodyToAsync(new ThrowingAsynchronousByteChannel())
+            .onErrorResume(throwable -> Mono.empty()));
+    }
+
+    private static final class ThrowingAsynchronousByteChannel implements AsynchronousByteChannel {
+        private boolean open = true;
+        int writeCount = 0;
+
+        @Override
+        public <A> void read(ByteBuffer dst, A attachment, CompletionHandler<Integer, ? super A> handler) {
+        }
+
+        @Override
+        public Future<Integer> read(ByteBuffer dst) {
+            return null;
+        }
+
+        @Override
+        public <A> void write(ByteBuffer src, A attachment, CompletionHandler<Integer, ? super A> handler) {
+            if (writeCount++ < 3) {
+                int remaining = src.remaining();
+                src.position(src.position() + remaining);
+                handler.completed(remaining, attachment);
+            } else {
+                handler.failed(new IOException(), attachment);
+            }
+        }
+
+        @Override
+        public Future<Integer> write(ByteBuffer src) {
+            if (writeCount++ < 3) {
+                int remaining = src.remaining();
+                src.position(src.position() + remaining);
+
+                return CompletableFuture.completedFuture(remaining);
+            } else {
+                CompletableFuture<Integer> failed = new CompletableFuture<>();
+                failed.completeExceptionally(new IOException());
+                return failed;
+            }
+        }
+
+        @Override
+        public boolean isOpen() {
+            return open;
+        }
+
+        @Override
+        public void close() {
+            open = false;
+        }
+    }
+
+    @Test
+    public void closeHttpResponseWithConsumingPartialWrite() {
+        runScenario(response -> {
+            try {
+                response.writeBodyTo(new ThrowingWritableByteChannel());
+            } catch (Exception ignored) {
+            }
+
+            return Mono.empty();
+        });
+    }
+
+    private static final class ThrowingWritableByteChannel implements WritableByteChannel {
+        private boolean open = true;
+        int writeCount = 0;
+
+        @Override
+        public int write(ByteBuffer src) throws IOException {
+            if (writeCount++ < 3) {
+                int remaining = src.remaining();
+                src.position(src.position() + remaining);
+                return remaining;
+            } else {
+                throw new IOException();
+            }
+        }
+
+        @Override
+        public boolean isOpen() {
+            return open;
+        }
+
+        @Override
+        public void close() throws IOException {
+            open = false;
+        }
     }
 
     @Test
@@ -121,7 +195,8 @@ public class HttpResponseDrainsBufferTests {
 
             sink.next(callCount);
             return callCount + 1;
-        }).concatMap(ignored -> httpClient.send(new HttpRequest(HttpMethod.GET, url)).flatMap(responseConsumer))
+        })
+            .concatMap(ignored -> httpClient.send(new HttpRequest(HttpMethod.GET, URL)).flatMap(responseConsumer))
             .parallel(10)
             .runOn(Schedulers.boundedElastic())
             .then();
@@ -145,13 +220,12 @@ public class HttpResponseDrainsBufferTests {
     @Test
     public void closingHttpResponseIsIdempotent() {
         HttpClient httpClient = new NettyAsyncHttpClientProvider().createInstance();
-        StepVerifier.create(httpClient.send(new HttpRequest(HttpMethod.GET, url))
-                .flatMap(response -> Mono.fromRunnable(response::close).thenReturn(response))
-                .delayElement(Duration.ofSeconds(1))
-                .flatMap(response -> Mono.fromRunnable(response::close))
-                .delayElement(Duration.ofSeconds(1))
-                .then())
-            .verifyComplete();
+        StepVerifier.create(httpClient.send(new HttpRequest(HttpMethod.GET, URL))
+            .flatMap(response -> Mono.fromRunnable(response::close).thenReturn(response))
+            .delayElement(Duration.ofSeconds(1))
+            .flatMap(response -> Mono.fromRunnable(response::close))
+            .delayElement(Duration.ofSeconds(1))
+            .then()).verifyComplete();
     }
 
     private static final class TestResourceLeakDetectorFactory extends ResourceLeakDetectorFactory {
@@ -161,8 +235,8 @@ public class HttpResponseDrainsBufferTests {
         @SuppressWarnings("deprecation") // API is deprecated but abstract
         public <T> ResourceLeakDetector<T> newResourceLeakDetector(Class<T> resource, int samplingInterval,
             long maxActive) {
-            TestResourceLeakDetector<T> leakDetector = new TestResourceLeakDetector<>(resource, samplingInterval,
-                maxActive);
+            TestResourceLeakDetector<T> leakDetector
+                = new TestResourceLeakDetector<>(resource, samplingInterval, maxActive);
             createdDetectors.add(leakDetector);
             return leakDetector;
         }

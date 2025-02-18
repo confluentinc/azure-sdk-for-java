@@ -24,7 +24,6 @@ import com.azure.core.http.rest.Response;
 import com.azure.core.http.rest.RestProxy;
 import com.azure.core.util.Context;
 import com.azure.core.util.FluxUtil;
-import com.azure.core.util.logging.ClientLogger;
 import com.azure.resourcemanager.compute.fluent.CloudServiceOperatingSystemsClient;
 import com.azure.resourcemanager.compute.fluent.models.OSFamilyInner;
 import com.azure.resourcemanager.compute.fluent.models.OSVersionInner;
@@ -33,26 +32,28 @@ import com.azure.resourcemanager.compute.models.OSFamilyListResult;
 import com.azure.resourcemanager.compute.models.OSVersionListResult;
 import reactor.core.publisher.Mono;
 
-/** An instance of this class provides access to all the operations defined in CloudServiceOperatingSystemsClient. */
+/**
+ * An instance of this class provides access to all the operations defined in CloudServiceOperatingSystemsClient.
+ */
 public final class CloudServiceOperatingSystemsClientImpl implements CloudServiceOperatingSystemsClient {
-    private final ClientLogger logger = new ClientLogger(CloudServiceOperatingSystemsClientImpl.class);
-
-    /** The proxy service used to perform REST calls. */
+    /**
+     * The proxy service used to perform REST calls.
+     */
     private final CloudServiceOperatingSystemsService service;
 
-    /** The service client containing this operation class. */
+    /**
+     * The service client containing this operation class.
+     */
     private final ComputeManagementClientImpl client;
 
     /**
      * Initializes an instance of CloudServiceOperatingSystemsClientImpl.
-     *
+     * 
      * @param client the instance of the service client containing this operation class.
      */
     CloudServiceOperatingSystemsClientImpl(ComputeManagementClientImpl client) {
-        this.service =
-            RestProxy
-                .create(
-                    CloudServiceOperatingSystemsService.class, client.getHttpPipeline(), client.getSerializerAdapter());
+        this.service = RestProxy.create(CloudServiceOperatingSystemsService.class, client.getHttpPipeline(),
+            client.getSerializerAdapter());
         this.client = client;
     }
 
@@ -62,101 +63,75 @@ public final class CloudServiceOperatingSystemsClientImpl implements CloudServic
      */
     @Host("{$host}")
     @ServiceInterface(name = "ComputeManagementCli")
-    private interface CloudServiceOperatingSystemsService {
-        @Headers({"Content-Type: application/json"})
-        @Get(
-            "/subscriptions/{subscriptionId}/providers/Microsoft.Compute/locations/{location}/cloudServiceOsVersions"
-                + "/{osVersionName}")
-        @ExpectedResponses({200})
+    public interface CloudServiceOperatingSystemsService {
+        @Headers({ "Content-Type: application/json" })
+        @Get("/subscriptions/{subscriptionId}/providers/Microsoft.Compute/locations/{location}/cloudServiceOsVersions/{osVersionName}")
+        @ExpectedResponses({ 200 })
         @UnexpectedResponseExceptionType(ApiErrorException.class)
-        Mono<Response<OSVersionInner>> getOSVersion(
-            @HostParam("$host") String endpoint,
-            @PathParam("location") String location,
-            @PathParam("osVersionName") String osVersionName,
-            @PathParam("subscriptionId") String subscriptionId,
-            @QueryParam("api-version") String apiVersion,
-            @HeaderParam("Accept") String accept,
-            Context context);
+        Mono<Response<OSVersionInner>> getOSVersion(@HostParam("$host") String endpoint,
+            @PathParam("location") String location, @PathParam("osVersionName") String osVersionName,
+            @PathParam("subscriptionId") String subscriptionId, @QueryParam("api-version") String apiVersion,
+            @HeaderParam("Accept") String accept, Context context);
 
-        @Headers({"Content-Type: application/json"})
+        @Headers({ "Content-Type: application/json" })
         @Get("/subscriptions/{subscriptionId}/providers/Microsoft.Compute/locations/{location}/cloudServiceOsVersions")
-        @ExpectedResponses({200})
+        @ExpectedResponses({ 200 })
         @UnexpectedResponseExceptionType(ApiErrorException.class)
-        Mono<Response<OSVersionListResult>> listOSVersions(
-            @HostParam("$host") String endpoint,
-            @PathParam("location") String location,
-            @PathParam("subscriptionId") String subscriptionId,
-            @QueryParam("api-version") String apiVersion,
-            @HeaderParam("Accept") String accept,
-            Context context);
+        Mono<Response<OSVersionListResult>> listOSVersions(@HostParam("$host") String endpoint,
+            @PathParam("location") String location, @PathParam("subscriptionId") String subscriptionId,
+            @QueryParam("api-version") String apiVersion, @HeaderParam("Accept") String accept, Context context);
 
-        @Headers({"Content-Type: application/json"})
-        @Get(
-            "/subscriptions/{subscriptionId}/providers/Microsoft.Compute/locations/{location}/cloudServiceOsFamilies"
-                + "/{osFamilyName}")
-        @ExpectedResponses({200})
+        @Headers({ "Content-Type: application/json" })
+        @Get("/subscriptions/{subscriptionId}/providers/Microsoft.Compute/locations/{location}/cloudServiceOsFamilies/{osFamilyName}")
+        @ExpectedResponses({ 200 })
         @UnexpectedResponseExceptionType(ApiErrorException.class)
-        Mono<Response<OSFamilyInner>> getOSFamily(
-            @HostParam("$host") String endpoint,
-            @PathParam("location") String location,
-            @PathParam("osFamilyName") String osFamilyName,
-            @PathParam("subscriptionId") String subscriptionId,
-            @QueryParam("api-version") String apiVersion,
-            @HeaderParam("Accept") String accept,
-            Context context);
+        Mono<Response<OSFamilyInner>> getOSFamily(@HostParam("$host") String endpoint,
+            @PathParam("location") String location, @PathParam("osFamilyName") String osFamilyName,
+            @PathParam("subscriptionId") String subscriptionId, @QueryParam("api-version") String apiVersion,
+            @HeaderParam("Accept") String accept, Context context);
 
-        @Headers({"Content-Type: application/json"})
+        @Headers({ "Content-Type: application/json" })
         @Get("/subscriptions/{subscriptionId}/providers/Microsoft.Compute/locations/{location}/cloudServiceOsFamilies")
-        @ExpectedResponses({200})
+        @ExpectedResponses({ 200 })
         @UnexpectedResponseExceptionType(ApiErrorException.class)
-        Mono<Response<OSFamilyListResult>> listOSFamilies(
-            @HostParam("$host") String endpoint,
-            @PathParam("location") String location,
-            @PathParam("subscriptionId") String subscriptionId,
-            @QueryParam("api-version") String apiVersion,
-            @HeaderParam("Accept") String accept,
-            Context context);
+        Mono<Response<OSFamilyListResult>> listOSFamilies(@HostParam("$host") String endpoint,
+            @PathParam("location") String location, @PathParam("subscriptionId") String subscriptionId,
+            @QueryParam("api-version") String apiVersion, @HeaderParam("Accept") String accept, Context context);
 
-        @Headers({"Content-Type: application/json"})
+        @Headers({ "Content-Type: application/json" })
         @Get("{nextLink}")
-        @ExpectedResponses({200})
+        @ExpectedResponses({ 200 })
         @UnexpectedResponseExceptionType(ApiErrorException.class)
         Mono<Response<OSVersionListResult>> listOSVersionsNext(
-            @PathParam(value = "nextLink", encoded = true) String nextLink,
-            @HostParam("$host") String endpoint,
-            @HeaderParam("Accept") String accept,
-            Context context);
+            @PathParam(value = "nextLink", encoded = true) String nextLink, @HostParam("$host") String endpoint,
+            @HeaderParam("Accept") String accept, Context context);
 
-        @Headers({"Content-Type: application/json"})
+        @Headers({ "Content-Type: application/json" })
         @Get("{nextLink}")
-        @ExpectedResponses({200})
+        @ExpectedResponses({ 200 })
         @UnexpectedResponseExceptionType(ApiErrorException.class)
         Mono<Response<OSFamilyListResult>> listOSFamiliesNext(
-            @PathParam(value = "nextLink", encoded = true) String nextLink,
-            @HostParam("$host") String endpoint,
-            @HeaderParam("Accept") String accept,
-            Context context);
+            @PathParam(value = "nextLink", encoded = true) String nextLink, @HostParam("$host") String endpoint,
+            @HeaderParam("Accept") String accept, Context context);
     }
 
     /**
      * Gets properties of a guest operating system version that can be specified in the XML service configuration
      * (.cscfg) for a cloud service.
-     *
+     * 
      * @param location Name of the location that the OS version pertains to.
      * @param osVersionName Name of the OS version.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ApiErrorException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
      * @return properties of a guest operating system version that can be specified in the XML service configuration
-     *     (.cscfg) for a cloud service along with {@link Response} on successful completion of {@link Mono}.
+     * (.cscfg) for a cloud service along with {@link Response} on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
     public Mono<Response<OSVersionInner>> getOSVersionWithResponseAsync(String location, String osVersionName) {
         if (this.client.getEndpoint() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getEndpoint() is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
         }
         if (location == null) {
             return Mono.error(new IllegalArgumentException("Parameter location is required and cannot be null."));
@@ -165,32 +140,21 @@ public final class CloudServiceOperatingSystemsClientImpl implements CloudServic
             return Mono.error(new IllegalArgumentException("Parameter osVersionName is required and cannot be null."));
         }
         if (this.client.getSubscriptionId() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getSubscriptionId() is required and cannot be null."));
+            return Mono.error(new IllegalArgumentException(
+                "Parameter this.client.getSubscriptionId() is required and cannot be null."));
         }
-        final String apiVersion = "2021-03-01";
+        final String apiVersion = "2024-11-04";
         final String accept = "application/json";
         return FluxUtil
-            .withContext(
-                context ->
-                    service
-                        .getOSVersion(
-                            this.client.getEndpoint(),
-                            location,
-                            osVersionName,
-                            this.client.getSubscriptionId(),
-                            apiVersion,
-                            accept,
-                            context))
+            .withContext(context -> service.getOSVersion(this.client.getEndpoint(), location, osVersionName,
+                this.client.getSubscriptionId(), apiVersion, accept, context))
             .contextWrite(context -> context.putAll(FluxUtil.toReactorContext(this.client.getContext()).readOnly()));
     }
 
     /**
      * Gets properties of a guest operating system version that can be specified in the XML service configuration
      * (.cscfg) for a cloud service.
-     *
+     * 
      * @param location Name of the location that the OS version pertains to.
      * @param osVersionName Name of the OS version.
      * @param context The context to associate with this operation.
@@ -198,16 +162,14 @@ public final class CloudServiceOperatingSystemsClientImpl implements CloudServic
      * @throws ApiErrorException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
      * @return properties of a guest operating system version that can be specified in the XML service configuration
-     *     (.cscfg) for a cloud service along with {@link Response} on successful completion of {@link Mono}.
+     * (.cscfg) for a cloud service along with {@link Response} on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    private Mono<Response<OSVersionInner>> getOSVersionWithResponseAsync(
-        String location, String osVersionName, Context context) {
+    private Mono<Response<OSVersionInner>> getOSVersionWithResponseAsync(String location, String osVersionName,
+        Context context) {
         if (this.client.getEndpoint() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getEndpoint() is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
         }
         if (location == null) {
             return Mono.error(new IllegalArgumentException("Parameter location is required and cannot be null."));
@@ -216,71 +178,37 @@ public final class CloudServiceOperatingSystemsClientImpl implements CloudServic
             return Mono.error(new IllegalArgumentException("Parameter osVersionName is required and cannot be null."));
         }
         if (this.client.getSubscriptionId() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getSubscriptionId() is required and cannot be null."));
+            return Mono.error(new IllegalArgumentException(
+                "Parameter this.client.getSubscriptionId() is required and cannot be null."));
         }
-        final String apiVersion = "2021-03-01";
+        final String apiVersion = "2024-11-04";
         final String accept = "application/json";
         context = this.client.mergeContext(context);
-        return service
-            .getOSVersion(
-                this.client.getEndpoint(),
-                location,
-                osVersionName,
-                this.client.getSubscriptionId(),
-                apiVersion,
-                accept,
-                context);
+        return service.getOSVersion(this.client.getEndpoint(), location, osVersionName, this.client.getSubscriptionId(),
+            apiVersion, accept, context);
     }
 
     /**
      * Gets properties of a guest operating system version that can be specified in the XML service configuration
      * (.cscfg) for a cloud service.
-     *
+     * 
      * @param location Name of the location that the OS version pertains to.
      * @param osVersionName Name of the OS version.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ApiErrorException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
      * @return properties of a guest operating system version that can be specified in the XML service configuration
-     *     (.cscfg) for a cloud service on successful completion of {@link Mono}.
+     * (.cscfg) for a cloud service on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
     public Mono<OSVersionInner> getOSVersionAsync(String location, String osVersionName) {
-        return getOSVersionWithResponseAsync(location, osVersionName)
-            .flatMap(
-                (Response<OSVersionInner> res) -> {
-                    if (res.getValue() != null) {
-                        return Mono.just(res.getValue());
-                    } else {
-                        return Mono.empty();
-                    }
-                });
+        return getOSVersionWithResponseAsync(location, osVersionName).flatMap(res -> Mono.justOrEmpty(res.getValue()));
     }
 
     /**
      * Gets properties of a guest operating system version that can be specified in the XML service configuration
      * (.cscfg) for a cloud service.
-     *
-     * @param location Name of the location that the OS version pertains to.
-     * @param osVersionName Name of the OS version.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws ApiErrorException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return properties of a guest operating system version that can be specified in the XML service configuration
-     *     (.cscfg) for a cloud service.
-     */
-    @ServiceMethod(returns = ReturnType.SINGLE)
-    public OSVersionInner getOSVersion(String location, String osVersionName) {
-        return getOSVersionAsync(location, osVersionName).block();
-    }
-
-    /**
-     * Gets properties of a guest operating system version that can be specified in the XML service configuration
-     * (.cscfg) for a cloud service.
-     *
+     * 
      * @param location Name of the location that the OS version pertains to.
      * @param osVersionName Name of the OS version.
      * @param context The context to associate with this operation.
@@ -288,7 +216,7 @@ public final class CloudServiceOperatingSystemsClientImpl implements CloudServic
      * @throws ApiErrorException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
      * @return properties of a guest operating system version that can be specified in the XML service configuration
-     *     (.cscfg) for a cloud service along with {@link Response}.
+     * (.cscfg) for a cloud service along with {@link Response}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
     public Response<OSVersionInner> getOSVersionWithResponse(String location, String osVersionName, Context context) {
@@ -296,56 +224,54 @@ public final class CloudServiceOperatingSystemsClientImpl implements CloudServic
     }
 
     /**
+     * Gets properties of a guest operating system version that can be specified in the XML service configuration
+     * (.cscfg) for a cloud service.
+     * 
+     * @param location Name of the location that the OS version pertains to.
+     * @param osVersionName Name of the OS version.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws ApiErrorException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return properties of a guest operating system version that can be specified in the XML service configuration
+     * (.cscfg) for a cloud service.
+     */
+    @ServiceMethod(returns = ReturnType.SINGLE)
+    public OSVersionInner getOSVersion(String location, String osVersionName) {
+        return getOSVersionWithResponse(location, osVersionName, Context.NONE).getValue();
+    }
+
+    /**
      * Gets a list of all guest operating system versions available to be specified in the XML service configuration
      * (.cscfg) for a cloud service. Use nextLink property in the response to get the next page of OS versions. Do this
      * till nextLink is null to fetch all the OS versions.
-     *
+     * 
      * @param location Name of the location that the OS versions pertain to.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ApiErrorException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
      * @return a list of all guest operating system versions available to be specified in the XML service configuration
-     *     (.cscfg) for a cloud service along with {@link PagedResponse} on successful completion of {@link Mono}.
+     * (.cscfg) for a cloud service along with {@link PagedResponse} on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
     private Mono<PagedResponse<OSVersionInner>> listOSVersionsSinglePageAsync(String location) {
         if (this.client.getEndpoint() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getEndpoint() is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
         }
         if (location == null) {
             return Mono.error(new IllegalArgumentException("Parameter location is required and cannot be null."));
         }
         if (this.client.getSubscriptionId() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getSubscriptionId() is required and cannot be null."));
+            return Mono.error(new IllegalArgumentException(
+                "Parameter this.client.getSubscriptionId() is required and cannot be null."));
         }
-        final String apiVersion = "2021-03-01";
+        final String apiVersion = "2024-11-04";
         final String accept = "application/json";
         return FluxUtil
-            .withContext(
-                context ->
-                    service
-                        .listOSVersions(
-                            this.client.getEndpoint(),
-                            location,
-                            this.client.getSubscriptionId(),
-                            apiVersion,
-                            accept,
-                            context))
-            .<PagedResponse<OSVersionInner>>map(
-                res ->
-                    new PagedResponseBase<>(
-                        res.getRequest(),
-                        res.getStatusCode(),
-                        res.getHeaders(),
-                        res.getValue().value(),
-                        res.getValue().nextLink(),
-                        null))
+            .withContext(context -> service.listOSVersions(this.client.getEndpoint(), location,
+                this.client.getSubscriptionId(), apiVersion, accept, context))
+            .<PagedResponse<OSVersionInner>>map(res -> new PagedResponseBase<>(res.getRequest(), res.getStatusCode(),
+                res.getHeaders(), res.getValue().value(), res.getValue().nextLink(), null))
             .contextWrite(context -> context.putAll(FluxUtil.toReactorContext(this.client.getContext()).readOnly()));
     }
 
@@ -353,84 +279,72 @@ public final class CloudServiceOperatingSystemsClientImpl implements CloudServic
      * Gets a list of all guest operating system versions available to be specified in the XML service configuration
      * (.cscfg) for a cloud service. Use nextLink property in the response to get the next page of OS versions. Do this
      * till nextLink is null to fetch all the OS versions.
-     *
+     * 
      * @param location Name of the location that the OS versions pertain to.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ApiErrorException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
      * @return a list of all guest operating system versions available to be specified in the XML service configuration
-     *     (.cscfg) for a cloud service along with {@link PagedResponse} on successful completion of {@link Mono}.
+     * (.cscfg) for a cloud service along with {@link PagedResponse} on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
     private Mono<PagedResponse<OSVersionInner>> listOSVersionsSinglePageAsync(String location, Context context) {
         if (this.client.getEndpoint() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getEndpoint() is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
         }
         if (location == null) {
             return Mono.error(new IllegalArgumentException("Parameter location is required and cannot be null."));
         }
         if (this.client.getSubscriptionId() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getSubscriptionId() is required and cannot be null."));
+            return Mono.error(new IllegalArgumentException(
+                "Parameter this.client.getSubscriptionId() is required and cannot be null."));
         }
-        final String apiVersion = "2021-03-01";
+        final String apiVersion = "2024-11-04";
         final String accept = "application/json";
         context = this.client.mergeContext(context);
         return service
-            .listOSVersions(
-                this.client.getEndpoint(), location, this.client.getSubscriptionId(), apiVersion, accept, context)
-            .map(
-                res ->
-                    new PagedResponseBase<>(
-                        res.getRequest(),
-                        res.getStatusCode(),
-                        res.getHeaders(),
-                        res.getValue().value(),
-                        res.getValue().nextLink(),
-                        null));
+            .listOSVersions(this.client.getEndpoint(), location, this.client.getSubscriptionId(), apiVersion, accept,
+                context)
+            .map(res -> new PagedResponseBase<>(res.getRequest(), res.getStatusCode(), res.getHeaders(),
+                res.getValue().value(), res.getValue().nextLink(), null));
     }
 
     /**
      * Gets a list of all guest operating system versions available to be specified in the XML service configuration
      * (.cscfg) for a cloud service. Use nextLink property in the response to get the next page of OS versions. Do this
      * till nextLink is null to fetch all the OS versions.
-     *
+     * 
      * @param location Name of the location that the OS versions pertain to.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ApiErrorException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
      * @return a list of all guest operating system versions available to be specified in the XML service configuration
-     *     (.cscfg) for a cloud service.
+     * (.cscfg) for a cloud service as paginated response with {@link PagedFlux}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
     public PagedFlux<OSVersionInner> listOSVersionsAsync(String location) {
-        return new PagedFlux<>(
-            () -> listOSVersionsSinglePageAsync(location), nextLink -> listOSVersionsNextSinglePageAsync(nextLink));
+        return new PagedFlux<>(() -> listOSVersionsSinglePageAsync(location),
+            nextLink -> listOSVersionsNextSinglePageAsync(nextLink));
     }
 
     /**
      * Gets a list of all guest operating system versions available to be specified in the XML service configuration
      * (.cscfg) for a cloud service. Use nextLink property in the response to get the next page of OS versions. Do this
      * till nextLink is null to fetch all the OS versions.
-     *
+     * 
      * @param location Name of the location that the OS versions pertain to.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ApiErrorException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
      * @return a list of all guest operating system versions available to be specified in the XML service configuration
-     *     (.cscfg) for a cloud service.
+     * (.cscfg) for a cloud service as paginated response with {@link PagedFlux}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
     private PagedFlux<OSVersionInner> listOSVersionsAsync(String location, Context context) {
-        return new PagedFlux<>(
-            () -> listOSVersionsSinglePageAsync(location, context),
+        return new PagedFlux<>(() -> listOSVersionsSinglePageAsync(location, context),
             nextLink -> listOSVersionsNextSinglePageAsync(nextLink, context));
     }
 
@@ -438,13 +352,13 @@ public final class CloudServiceOperatingSystemsClientImpl implements CloudServic
      * Gets a list of all guest operating system versions available to be specified in the XML service configuration
      * (.cscfg) for a cloud service. Use nextLink property in the response to get the next page of OS versions. Do this
      * till nextLink is null to fetch all the OS versions.
-     *
+     * 
      * @param location Name of the location that the OS versions pertain to.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ApiErrorException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
      * @return a list of all guest operating system versions available to be specified in the XML service configuration
-     *     (.cscfg) for a cloud service.
+     * (.cscfg) for a cloud service as paginated response with {@link PagedIterable}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
     public PagedIterable<OSVersionInner> listOSVersions(String location) {
@@ -455,14 +369,14 @@ public final class CloudServiceOperatingSystemsClientImpl implements CloudServic
      * Gets a list of all guest operating system versions available to be specified in the XML service configuration
      * (.cscfg) for a cloud service. Use nextLink property in the response to get the next page of OS versions. Do this
      * till nextLink is null to fetch all the OS versions.
-     *
+     * 
      * @param location Name of the location that the OS versions pertain to.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ApiErrorException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
      * @return a list of all guest operating system versions available to be specified in the XML service configuration
-     *     (.cscfg) for a cloud service.
+     * (.cscfg) for a cloud service as paginated response with {@link PagedIterable}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
     public PagedIterable<OSVersionInner> listOSVersions(String location, Context context) {
@@ -472,22 +386,20 @@ public final class CloudServiceOperatingSystemsClientImpl implements CloudServic
     /**
      * Gets properties of a guest operating system family that can be specified in the XML service configuration
      * (.cscfg) for a cloud service.
-     *
+     * 
      * @param location Name of the location that the OS family pertains to.
      * @param osFamilyName Name of the OS family.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ApiErrorException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
      * @return properties of a guest operating system family that can be specified in the XML service configuration
-     *     (.cscfg) for a cloud service along with {@link Response} on successful completion of {@link Mono}.
+     * (.cscfg) for a cloud service along with {@link Response} on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
     public Mono<Response<OSFamilyInner>> getOSFamilyWithResponseAsync(String location, String osFamilyName) {
         if (this.client.getEndpoint() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getEndpoint() is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
         }
         if (location == null) {
             return Mono.error(new IllegalArgumentException("Parameter location is required and cannot be null."));
@@ -496,32 +408,21 @@ public final class CloudServiceOperatingSystemsClientImpl implements CloudServic
             return Mono.error(new IllegalArgumentException("Parameter osFamilyName is required and cannot be null."));
         }
         if (this.client.getSubscriptionId() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getSubscriptionId() is required and cannot be null."));
+            return Mono.error(new IllegalArgumentException(
+                "Parameter this.client.getSubscriptionId() is required and cannot be null."));
         }
-        final String apiVersion = "2021-03-01";
+        final String apiVersion = "2024-11-04";
         final String accept = "application/json";
         return FluxUtil
-            .withContext(
-                context ->
-                    service
-                        .getOSFamily(
-                            this.client.getEndpoint(),
-                            location,
-                            osFamilyName,
-                            this.client.getSubscriptionId(),
-                            apiVersion,
-                            accept,
-                            context))
+            .withContext(context -> service.getOSFamily(this.client.getEndpoint(), location, osFamilyName,
+                this.client.getSubscriptionId(), apiVersion, accept, context))
             .contextWrite(context -> context.putAll(FluxUtil.toReactorContext(this.client.getContext()).readOnly()));
     }
 
     /**
      * Gets properties of a guest operating system family that can be specified in the XML service configuration
      * (.cscfg) for a cloud service.
-     *
+     * 
      * @param location Name of the location that the OS family pertains to.
      * @param osFamilyName Name of the OS family.
      * @param context The context to associate with this operation.
@@ -529,16 +430,14 @@ public final class CloudServiceOperatingSystemsClientImpl implements CloudServic
      * @throws ApiErrorException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
      * @return properties of a guest operating system family that can be specified in the XML service configuration
-     *     (.cscfg) for a cloud service along with {@link Response} on successful completion of {@link Mono}.
+     * (.cscfg) for a cloud service along with {@link Response} on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    private Mono<Response<OSFamilyInner>> getOSFamilyWithResponseAsync(
-        String location, String osFamilyName, Context context) {
+    private Mono<Response<OSFamilyInner>> getOSFamilyWithResponseAsync(String location, String osFamilyName,
+        Context context) {
         if (this.client.getEndpoint() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getEndpoint() is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
         }
         if (location == null) {
             return Mono.error(new IllegalArgumentException("Parameter location is required and cannot be null."));
@@ -547,71 +446,37 @@ public final class CloudServiceOperatingSystemsClientImpl implements CloudServic
             return Mono.error(new IllegalArgumentException("Parameter osFamilyName is required and cannot be null."));
         }
         if (this.client.getSubscriptionId() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getSubscriptionId() is required and cannot be null."));
+            return Mono.error(new IllegalArgumentException(
+                "Parameter this.client.getSubscriptionId() is required and cannot be null."));
         }
-        final String apiVersion = "2021-03-01";
+        final String apiVersion = "2024-11-04";
         final String accept = "application/json";
         context = this.client.mergeContext(context);
-        return service
-            .getOSFamily(
-                this.client.getEndpoint(),
-                location,
-                osFamilyName,
-                this.client.getSubscriptionId(),
-                apiVersion,
-                accept,
-                context);
+        return service.getOSFamily(this.client.getEndpoint(), location, osFamilyName, this.client.getSubscriptionId(),
+            apiVersion, accept, context);
     }
 
     /**
      * Gets properties of a guest operating system family that can be specified in the XML service configuration
      * (.cscfg) for a cloud service.
-     *
+     * 
      * @param location Name of the location that the OS family pertains to.
      * @param osFamilyName Name of the OS family.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ApiErrorException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
      * @return properties of a guest operating system family that can be specified in the XML service configuration
-     *     (.cscfg) for a cloud service on successful completion of {@link Mono}.
+     * (.cscfg) for a cloud service on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
     public Mono<OSFamilyInner> getOSFamilyAsync(String location, String osFamilyName) {
-        return getOSFamilyWithResponseAsync(location, osFamilyName)
-            .flatMap(
-                (Response<OSFamilyInner> res) -> {
-                    if (res.getValue() != null) {
-                        return Mono.just(res.getValue());
-                    } else {
-                        return Mono.empty();
-                    }
-                });
+        return getOSFamilyWithResponseAsync(location, osFamilyName).flatMap(res -> Mono.justOrEmpty(res.getValue()));
     }
 
     /**
      * Gets properties of a guest operating system family that can be specified in the XML service configuration
      * (.cscfg) for a cloud service.
-     *
-     * @param location Name of the location that the OS family pertains to.
-     * @param osFamilyName Name of the OS family.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws ApiErrorException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return properties of a guest operating system family that can be specified in the XML service configuration
-     *     (.cscfg) for a cloud service.
-     */
-    @ServiceMethod(returns = ReturnType.SINGLE)
-    public OSFamilyInner getOSFamily(String location, String osFamilyName) {
-        return getOSFamilyAsync(location, osFamilyName).block();
-    }
-
-    /**
-     * Gets properties of a guest operating system family that can be specified in the XML service configuration
-     * (.cscfg) for a cloud service.
-     *
+     * 
      * @param location Name of the location that the OS family pertains to.
      * @param osFamilyName Name of the OS family.
      * @param context The context to associate with this operation.
@@ -619,7 +484,7 @@ public final class CloudServiceOperatingSystemsClientImpl implements CloudServic
      * @throws ApiErrorException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
      * @return properties of a guest operating system family that can be specified in the XML service configuration
-     *     (.cscfg) for a cloud service along with {@link Response}.
+     * (.cscfg) for a cloud service along with {@link Response}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
     public Response<OSFamilyInner> getOSFamilyWithResponse(String location, String osFamilyName, Context context) {
@@ -627,56 +492,54 @@ public final class CloudServiceOperatingSystemsClientImpl implements CloudServic
     }
 
     /**
+     * Gets properties of a guest operating system family that can be specified in the XML service configuration
+     * (.cscfg) for a cloud service.
+     * 
+     * @param location Name of the location that the OS family pertains to.
+     * @param osFamilyName Name of the OS family.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws ApiErrorException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return properties of a guest operating system family that can be specified in the XML service configuration
+     * (.cscfg) for a cloud service.
+     */
+    @ServiceMethod(returns = ReturnType.SINGLE)
+    public OSFamilyInner getOSFamily(String location, String osFamilyName) {
+        return getOSFamilyWithResponse(location, osFamilyName, Context.NONE).getValue();
+    }
+
+    /**
      * Gets a list of all guest operating system families available to be specified in the XML service configuration
      * (.cscfg) for a cloud service. Use nextLink property in the response to get the next page of OS Families. Do this
      * till nextLink is null to fetch all the OS Families.
-     *
+     * 
      * @param location Name of the location that the OS families pertain to.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ApiErrorException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
      * @return a list of all guest operating system families available to be specified in the XML service configuration
-     *     (.cscfg) for a cloud service along with {@link PagedResponse} on successful completion of {@link Mono}.
+     * (.cscfg) for a cloud service along with {@link PagedResponse} on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
     private Mono<PagedResponse<OSFamilyInner>> listOSFamiliesSinglePageAsync(String location) {
         if (this.client.getEndpoint() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getEndpoint() is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
         }
         if (location == null) {
             return Mono.error(new IllegalArgumentException("Parameter location is required and cannot be null."));
         }
         if (this.client.getSubscriptionId() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getSubscriptionId() is required and cannot be null."));
+            return Mono.error(new IllegalArgumentException(
+                "Parameter this.client.getSubscriptionId() is required and cannot be null."));
         }
-        final String apiVersion = "2021-03-01";
+        final String apiVersion = "2024-11-04";
         final String accept = "application/json";
         return FluxUtil
-            .withContext(
-                context ->
-                    service
-                        .listOSFamilies(
-                            this.client.getEndpoint(),
-                            location,
-                            this.client.getSubscriptionId(),
-                            apiVersion,
-                            accept,
-                            context))
-            .<PagedResponse<OSFamilyInner>>map(
-                res ->
-                    new PagedResponseBase<>(
-                        res.getRequest(),
-                        res.getStatusCode(),
-                        res.getHeaders(),
-                        res.getValue().value(),
-                        res.getValue().nextLink(),
-                        null))
+            .withContext(context -> service.listOSFamilies(this.client.getEndpoint(), location,
+                this.client.getSubscriptionId(), apiVersion, accept, context))
+            .<PagedResponse<OSFamilyInner>>map(res -> new PagedResponseBase<>(res.getRequest(), res.getStatusCode(),
+                res.getHeaders(), res.getValue().value(), res.getValue().nextLink(), null))
             .contextWrite(context -> context.putAll(FluxUtil.toReactorContext(this.client.getContext()).readOnly()));
     }
 
@@ -684,84 +547,72 @@ public final class CloudServiceOperatingSystemsClientImpl implements CloudServic
      * Gets a list of all guest operating system families available to be specified in the XML service configuration
      * (.cscfg) for a cloud service. Use nextLink property in the response to get the next page of OS Families. Do this
      * till nextLink is null to fetch all the OS Families.
-     *
+     * 
      * @param location Name of the location that the OS families pertain to.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ApiErrorException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
      * @return a list of all guest operating system families available to be specified in the XML service configuration
-     *     (.cscfg) for a cloud service along with {@link PagedResponse} on successful completion of {@link Mono}.
+     * (.cscfg) for a cloud service along with {@link PagedResponse} on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
     private Mono<PagedResponse<OSFamilyInner>> listOSFamiliesSinglePageAsync(String location, Context context) {
         if (this.client.getEndpoint() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getEndpoint() is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
         }
         if (location == null) {
             return Mono.error(new IllegalArgumentException("Parameter location is required and cannot be null."));
         }
         if (this.client.getSubscriptionId() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getSubscriptionId() is required and cannot be null."));
+            return Mono.error(new IllegalArgumentException(
+                "Parameter this.client.getSubscriptionId() is required and cannot be null."));
         }
-        final String apiVersion = "2021-03-01";
+        final String apiVersion = "2024-11-04";
         final String accept = "application/json";
         context = this.client.mergeContext(context);
         return service
-            .listOSFamilies(
-                this.client.getEndpoint(), location, this.client.getSubscriptionId(), apiVersion, accept, context)
-            .map(
-                res ->
-                    new PagedResponseBase<>(
-                        res.getRequest(),
-                        res.getStatusCode(),
-                        res.getHeaders(),
-                        res.getValue().value(),
-                        res.getValue().nextLink(),
-                        null));
+            .listOSFamilies(this.client.getEndpoint(), location, this.client.getSubscriptionId(), apiVersion, accept,
+                context)
+            .map(res -> new PagedResponseBase<>(res.getRequest(), res.getStatusCode(), res.getHeaders(),
+                res.getValue().value(), res.getValue().nextLink(), null));
     }
 
     /**
      * Gets a list of all guest operating system families available to be specified in the XML service configuration
      * (.cscfg) for a cloud service. Use nextLink property in the response to get the next page of OS Families. Do this
      * till nextLink is null to fetch all the OS Families.
-     *
+     * 
      * @param location Name of the location that the OS families pertain to.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ApiErrorException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
      * @return a list of all guest operating system families available to be specified in the XML service configuration
-     *     (.cscfg) for a cloud service.
+     * (.cscfg) for a cloud service as paginated response with {@link PagedFlux}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
     public PagedFlux<OSFamilyInner> listOSFamiliesAsync(String location) {
-        return new PagedFlux<>(
-            () -> listOSFamiliesSinglePageAsync(location), nextLink -> listOSFamiliesNextSinglePageAsync(nextLink));
+        return new PagedFlux<>(() -> listOSFamiliesSinglePageAsync(location),
+            nextLink -> listOSFamiliesNextSinglePageAsync(nextLink));
     }
 
     /**
      * Gets a list of all guest operating system families available to be specified in the XML service configuration
      * (.cscfg) for a cloud service. Use nextLink property in the response to get the next page of OS Families. Do this
      * till nextLink is null to fetch all the OS Families.
-     *
+     * 
      * @param location Name of the location that the OS families pertain to.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ApiErrorException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
      * @return a list of all guest operating system families available to be specified in the XML service configuration
-     *     (.cscfg) for a cloud service.
+     * (.cscfg) for a cloud service as paginated response with {@link PagedFlux}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
     private PagedFlux<OSFamilyInner> listOSFamiliesAsync(String location, Context context) {
-        return new PagedFlux<>(
-            () -> listOSFamiliesSinglePageAsync(location, context),
+        return new PagedFlux<>(() -> listOSFamiliesSinglePageAsync(location, context),
             nextLink -> listOSFamiliesNextSinglePageAsync(nextLink, context));
     }
 
@@ -769,13 +620,13 @@ public final class CloudServiceOperatingSystemsClientImpl implements CloudServic
      * Gets a list of all guest operating system families available to be specified in the XML service configuration
      * (.cscfg) for a cloud service. Use nextLink property in the response to get the next page of OS Families. Do this
      * till nextLink is null to fetch all the OS Families.
-     *
+     * 
      * @param location Name of the location that the OS families pertain to.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ApiErrorException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
      * @return a list of all guest operating system families available to be specified in the XML service configuration
-     *     (.cscfg) for a cloud service.
+     * (.cscfg) for a cloud service as paginated response with {@link PagedIterable}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
     public PagedIterable<OSFamilyInner> listOSFamilies(String location) {
@@ -786,14 +637,14 @@ public final class CloudServiceOperatingSystemsClientImpl implements CloudServic
      * Gets a list of all guest operating system families available to be specified in the XML service configuration
      * (.cscfg) for a cloud service. Use nextLink property in the response to get the next page of OS Families. Do this
      * till nextLink is null to fetch all the OS Families.
-     *
+     * 
      * @param location Name of the location that the OS families pertain to.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ApiErrorException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
      * @return a list of all guest operating system families available to be specified in the XML service configuration
-     *     (.cscfg) for a cloud service.
+     * (.cscfg) for a cloud service as paginated response with {@link PagedIterable}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
     public PagedIterable<OSFamilyInner> listOSFamilies(String location, Context context) {
@@ -802,12 +653,12 @@ public final class CloudServiceOperatingSystemsClientImpl implements CloudServic
 
     /**
      * Get the next page of items.
-     *
-     * @param nextLink The nextLink parameter.
+     * 
+     * @param nextLink The URL to get the next list of items.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ApiErrorException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the response body along with {@link PagedResponse} on successful completion of {@link Mono}.
+     * @return the list operation result along with {@link PagedResponse} on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
     private Mono<PagedResponse<OSVersionInner>> listOSVersionsNextSinglePageAsync(String nextLink) {
@@ -815,35 +666,26 @@ public final class CloudServiceOperatingSystemsClientImpl implements CloudServic
             return Mono.error(new IllegalArgumentException("Parameter nextLink is required and cannot be null."));
         }
         if (this.client.getEndpoint() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getEndpoint() is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
         }
         final String accept = "application/json";
         return FluxUtil
             .withContext(context -> service.listOSVersionsNext(nextLink, this.client.getEndpoint(), accept, context))
-            .<PagedResponse<OSVersionInner>>map(
-                res ->
-                    new PagedResponseBase<>(
-                        res.getRequest(),
-                        res.getStatusCode(),
-                        res.getHeaders(),
-                        res.getValue().value(),
-                        res.getValue().nextLink(),
-                        null))
+            .<PagedResponse<OSVersionInner>>map(res -> new PagedResponseBase<>(res.getRequest(), res.getStatusCode(),
+                res.getHeaders(), res.getValue().value(), res.getValue().nextLink(), null))
             .contextWrite(context -> context.putAll(FluxUtil.toReactorContext(this.client.getContext()).readOnly()));
     }
 
     /**
      * Get the next page of items.
-     *
-     * @param nextLink The nextLink parameter.
+     * 
+     * @param nextLink The URL to get the next list of items.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ApiErrorException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the response body along with {@link PagedResponse} on successful completion of {@link Mono}.
+     * @return the list operation result along with {@link PagedResponse} on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
     private Mono<PagedResponse<OSVersionInner>> listOSVersionsNextSinglePageAsync(String nextLink, Context context) {
@@ -851,34 +693,24 @@ public final class CloudServiceOperatingSystemsClientImpl implements CloudServic
             return Mono.error(new IllegalArgumentException("Parameter nextLink is required and cannot be null."));
         }
         if (this.client.getEndpoint() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getEndpoint() is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
         }
         final String accept = "application/json";
         context = this.client.mergeContext(context);
-        return service
-            .listOSVersionsNext(nextLink, this.client.getEndpoint(), accept, context)
-            .map(
-                res ->
-                    new PagedResponseBase<>(
-                        res.getRequest(),
-                        res.getStatusCode(),
-                        res.getHeaders(),
-                        res.getValue().value(),
-                        res.getValue().nextLink(),
-                        null));
+        return service.listOSVersionsNext(nextLink, this.client.getEndpoint(), accept, context)
+            .map(res -> new PagedResponseBase<>(res.getRequest(), res.getStatusCode(), res.getHeaders(),
+                res.getValue().value(), res.getValue().nextLink(), null));
     }
 
     /**
      * Get the next page of items.
-     *
-     * @param nextLink The nextLink parameter.
+     * 
+     * @param nextLink The URL to get the next list of items.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ApiErrorException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the response body along with {@link PagedResponse} on successful completion of {@link Mono}.
+     * @return the list operation result along with {@link PagedResponse} on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
     private Mono<PagedResponse<OSFamilyInner>> listOSFamiliesNextSinglePageAsync(String nextLink) {
@@ -886,35 +718,26 @@ public final class CloudServiceOperatingSystemsClientImpl implements CloudServic
             return Mono.error(new IllegalArgumentException("Parameter nextLink is required and cannot be null."));
         }
         if (this.client.getEndpoint() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getEndpoint() is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
         }
         final String accept = "application/json";
         return FluxUtil
             .withContext(context -> service.listOSFamiliesNext(nextLink, this.client.getEndpoint(), accept, context))
-            .<PagedResponse<OSFamilyInner>>map(
-                res ->
-                    new PagedResponseBase<>(
-                        res.getRequest(),
-                        res.getStatusCode(),
-                        res.getHeaders(),
-                        res.getValue().value(),
-                        res.getValue().nextLink(),
-                        null))
+            .<PagedResponse<OSFamilyInner>>map(res -> new PagedResponseBase<>(res.getRequest(), res.getStatusCode(),
+                res.getHeaders(), res.getValue().value(), res.getValue().nextLink(), null))
             .contextWrite(context -> context.putAll(FluxUtil.toReactorContext(this.client.getContext()).readOnly()));
     }
 
     /**
      * Get the next page of items.
-     *
-     * @param nextLink The nextLink parameter.
+     * 
+     * @param nextLink The URL to get the next list of items.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ApiErrorException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the response body along with {@link PagedResponse} on successful completion of {@link Mono}.
+     * @return the list operation result along with {@link PagedResponse} on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
     private Mono<PagedResponse<OSFamilyInner>> listOSFamiliesNextSinglePageAsync(String nextLink, Context context) {
@@ -922,23 +745,13 @@ public final class CloudServiceOperatingSystemsClientImpl implements CloudServic
             return Mono.error(new IllegalArgumentException("Parameter nextLink is required and cannot be null."));
         }
         if (this.client.getEndpoint() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getEndpoint() is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
         }
         final String accept = "application/json";
         context = this.client.mergeContext(context);
-        return service
-            .listOSFamiliesNext(nextLink, this.client.getEndpoint(), accept, context)
-            .map(
-                res ->
-                    new PagedResponseBase<>(
-                        res.getRequest(),
-                        res.getStatusCode(),
-                        res.getHeaders(),
-                        res.getValue().value(),
-                        res.getValue().nextLink(),
-                        null));
+        return service.listOSFamiliesNext(nextLink, this.client.getEndpoint(), accept, context)
+            .map(res -> new PagedResponseBase<>(res.getRequest(), res.getStatusCode(), res.getHeaders(),
+                res.getValue().value(), res.getValue().nextLink(), null));
     }
 }

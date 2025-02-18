@@ -3,31 +3,48 @@
 
 package com.azure.security.keyvault.keys.models;
 
-import com.azure.core.annotation.Immutable;
+import com.azure.security.keyvault.keys.implementation.KeyRotationLifetimeActionHelper;
+import com.azure.security.keyvault.keys.implementation.KeyRotationPolicyHelper;
+import com.azure.security.keyvault.keys.implementation.models.KeyRotationPolicyAttributes;
+import com.azure.security.keyvault.keys.implementation.models.LifetimeActions;
 
 import java.time.OffsetDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
  * The complete key rotation policy that belongs to a key.
  */
-@Immutable
-public final class KeyRotationPolicy extends KeyRotationPolicyProperties {
-    private final String id;
-    private final OffsetDateTime createdOn;
-    private final OffsetDateTime updatedOn;
+public final class KeyRotationPolicy {
+    static {
+        KeyRotationPolicyHelper.setAccessor(new KeyRotationPolicyHelper.KeyRotationPolicyAccessor() {
+            @Override
+            public KeyRotationPolicy
+                createPolicy(com.azure.security.keyvault.keys.implementation.models.KeyRotationPolicy impl) {
+                return new KeyRotationPolicy(impl);
+            }
+
+            @Override
+            public com.azure.security.keyvault.keys.implementation.models.KeyRotationPolicy
+                getImpl(KeyRotationPolicy policy) {
+                return policy.impl;
+            }
+        });
+    }
+
+    private final com.azure.security.keyvault.keys.implementation.models.KeyRotationPolicy impl;
+
+    private List<KeyRotationLifetimeAction> lifetimeActions;
 
     /**
      * Creates an instance of {@link KeyRotationPolicy}.
-     *
-     * @param id The identifier of the {@link KeyRotationPolicy policy}.
-     * @param createdOn The {@link KeyRotationPolicy policy's} created time in UTC.
-     * @param updatedOn The {@link KeyRotationPolicy policy's} last updated time in UTC.
      */
-    public KeyRotationPolicy(String id, OffsetDateTime createdOn, OffsetDateTime updatedOn) {
-        this.id = id;
-        this.createdOn = createdOn;
-        this.updatedOn = updatedOn;
+    public KeyRotationPolicy() {
+        this(new com.azure.security.keyvault.keys.implementation.models.KeyRotationPolicy());
+    }
+
+    KeyRotationPolicy(com.azure.security.keyvault.keys.implementation.models.KeyRotationPolicy impl) {
+        this.impl = impl;
     }
 
     /**
@@ -38,7 +55,92 @@ public final class KeyRotationPolicy extends KeyRotationPolicyProperties {
      * @return The identifier of the {@link KeyRotationPolicy policy}.
      */
     public String getId() {
-        return this.id;
+        return impl.getId();
+    }
+
+    /**
+     * Get the actions that will be performed by Key Vault over the lifetime of a key.
+     *
+     * <p>You may also pass an empty array to restore to its default values.</p>
+     *
+     * @return The {@link KeyRotationLifetimeAction actions} in this {@link KeyRotationPolicy policy}.
+     */
+    public List<KeyRotationLifetimeAction> getLifetimeActions() {
+        if (this.lifetimeActions == null && impl.getLifetimeActions() != null) {
+            List<KeyRotationLifetimeAction> mappedActions = new ArrayList<>(impl.getLifetimeActions().size());
+
+            for (LifetimeActions action : impl.getLifetimeActions()) {
+                KeyRotationLifetimeAction mappedAction
+                    = KeyRotationLifetimeActionHelper.createLifetimeAction(action.getTrigger(), action.getAction());
+
+                mappedActions.add(mappedAction);
+            }
+
+            this.lifetimeActions = mappedActions;
+        }
+
+        return this.lifetimeActions;
+    }
+
+    /**
+     * Set the actions that will be performed by Key Vault over the lifetime of a key.
+     *
+     * <p>You may also pass an empty array to restore to its default values.</p>
+     *
+     * @param lifetimeActions The {@link KeyRotationLifetimeAction actions} to set.
+     *
+     * @return The updated {@link KeyRotationPolicy} object.
+     */
+    public KeyRotationPolicy setLifetimeActions(List<KeyRotationLifetimeAction> lifetimeActions) {
+        if (lifetimeActions == null) {
+            this.lifetimeActions = null;
+            impl.setLifetimeActions(null);
+            return this;
+        }
+
+        List<LifetimeActions> mappedActions = new ArrayList<>(lifetimeActions.size());
+
+        for (KeyRotationLifetimeAction action : lifetimeActions) {
+            mappedActions.add(new LifetimeActions().setAction(KeyRotationLifetimeActionHelper.getActionType(action))
+                .setTrigger(KeyRotationLifetimeActionHelper.getTrigger(action)));
+        }
+
+        this.lifetimeActions = lifetimeActions;
+        impl.setLifetimeActions(mappedActions);
+
+        return this;
+    }
+
+    /**
+     * Get the optional key expiration period used to define the duration after which a newly rotated key will expire.
+     * It should be at least 28 days and should be defined as an ISO 8601 duration. For example, 90 days would be
+     * "P90D", 3 months would be "P3M" and 1 year and 10 days would be "P1Y10D". See
+     * <a href="https://wikipedia.org/wiki/ISO_8601#Durations">Wikipedia</a> for more information on ISO 8601 durations.
+     *
+     * @return The expiration time in ISO 8601 format.
+     */
+    public String getExpiresIn() {
+        return impl.getAttributes() == null ? null : impl.getAttributes().getExpiryTime();
+    }
+
+    /**
+     * Set the optional key expiration period used to define the duration after which a newly rotated key will expire.
+     * It should be at least 28 days and should be defined as an ISO 8601 duration. For example, 90 days would be
+     * "P90D", 3 months would be "P3M" and 1 year and 10 days would be "P1Y10D". See
+     * <a href="https://wikipedia.org/wiki/ISO_8601#Durations">Wikipedia</a> for more information on ISO 8601 durations.
+     *
+     * @param expiresIn The expiration time to set in ISO 8601 duration format.
+     *
+     * @return The updated {@link KeyRotationPolicy} object.
+     */
+    public KeyRotationPolicy setExpiresIn(String expiresIn) {
+        if (impl.getAttributes() == null) {
+            impl.setAttributes(new KeyRotationPolicyAttributes());
+        }
+
+        impl.getAttributes().setExpiryTime(expiresIn);
+
+        return this;
     }
 
     /**
@@ -49,7 +151,7 @@ public final class KeyRotationPolicy extends KeyRotationPolicyProperties {
      * @return The {@link KeyRotationPolicy policy's} created time in UTC.
      */
     public OffsetDateTime getCreatedOn() {
-        return this.createdOn;
+        return impl.getAttributes() == null ? null : impl.getAttributes().getCreated();
     }
 
     /**
@@ -60,36 +162,6 @@ public final class KeyRotationPolicy extends KeyRotationPolicyProperties {
      * @return The {@link KeyRotationPolicy policy's} last updated time in UTC.
      */
     public OffsetDateTime getUpdatedOn() {
-        return this.updatedOn;
-    }
-
-    /**
-     * Set the optional key expiration period used to define the duration after which a newly rotated key will expire.
-     * It should be defined as an ISO 8601 duration. For example, 90 days would be formatted as follows: "P90D", 3
-     * months would be "P3M", 48 hours would be "PT48H" and 1 year and 10 days would be "P1Y10D".
-     *
-     * @param expiryTime The expiry time to set in ISO 8601 format.
-     *
-     * @return The updated {@link KeyRotationPolicy} object.
-     */
-    public KeyRotationPolicy setExpiryTime(String expiryTime) {
-        this.expiryTime = expiryTime;
-
-        return this;
-    }
-
-    /**
-     * Set the actions that will be performed by Key Vault over the lifetime of a key.
-     *
-     * <p>You may also pass an empty array to restore to its default values.</p>
-     *
-     * @param keyRotationLifetimeActions The {@link KeyRotationLifetimeAction actions} to set.
-     *
-     * @return The updated {@link KeyRotationPolicy} object.
-     */
-    public KeyRotationPolicy setLifetimeActions(List<KeyRotationLifetimeAction> keyRotationLifetimeActions) {
-        this.keyRotationLifetimeActions = keyRotationLifetimeActions;
-
-        return this;
+        return impl.getAttributes() == null ? null : impl.getAttributes().getUpdated();
     }
 }

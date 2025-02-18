@@ -5,77 +5,55 @@
 package com.azure.resourcemanager.loganalytics.fluent.models;
 
 import com.azure.core.annotation.Fluent;
-import com.azure.core.annotation.JsonFlatten;
 import com.azure.core.management.ProxyResource;
 import com.azure.core.util.logging.ClientLogger;
+import com.azure.json.JsonReader;
+import com.azure.json.JsonToken;
+import com.azure.json.JsonWriter;
 import com.azure.resourcemanager.loganalytics.models.Tag;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import java.io.IOException;
 import java.util.List;
 
-/** Value object for saved search results. */
-@JsonFlatten
+/**
+ * Value object for saved search results.
+ */
 @Fluent
-public class SavedSearchInner extends ProxyResource {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(SavedSearchInner.class);
-
+public final class SavedSearchInner extends ProxyResource {
     /*
-     * The ETag of the saved search.
+     * The ETag of the saved search. To override an existing saved search, use "*" or specify the current Etag
      */
-    @JsonProperty(value = "etag")
     private String etag;
 
     /*
-     * The category of the saved search. This helps the user to find a saved
-     * search faster.
+     * The properties of the saved search.
      */
-    @JsonProperty(value = "properties.category", required = true)
-    private String category;
+    private SavedSearchProperties innerProperties = new SavedSearchProperties();
 
     /*
-     * Saved search display name.
+     * The type of the resource.
      */
-    @JsonProperty(value = "properties.displayName", required = true)
-    private String displayName;
+    private String type;
 
     /*
-     * The query expression for the saved search.
+     * The name of the resource.
      */
-    @JsonProperty(value = "properties.query", required = true)
-    private String query;
+    private String name;
 
     /*
-     * The function alias if query serves as a function.
+     * Fully qualified resource Id for the resource.
      */
-    @JsonProperty(value = "properties.functionAlias")
-    private String functionAlias;
-
-    /*
-     * The optional function parameters if query serves as a function. Value
-     * should be in the following format: 'param-name1:type1 = default_value1,
-     * param-name2:type2 = default_value2'. For more examples and proper syntax
-     * please refer to
-     * https://docs.microsoft.com/en-us/azure/kusto/query/functions/user-defined-functions.
-     */
-    @JsonProperty(value = "properties.functionParameters")
-    private String functionParameters;
-
-    /*
-     * The version number of the query language. The current version is 2 and
-     * is the default.
-     */
-    @JsonProperty(value = "properties.version")
-    private Long version;
-
-    /*
-     * The tags attached to the saved search.
-     */
-    @JsonProperty(value = "properties.tags")
-    private List<Tag> tags;
+    private String id;
 
     /**
-     * Get the etag property: The ETag of the saved search.
-     *
+     * Creates an instance of SavedSearchInner class.
+     */
+    public SavedSearchInner() {
+    }
+
+    /**
+     * Get the etag property: The ETag of the saved search. To override an existing saved search, use "*" or specify the
+     * current Etag.
+     * 
      * @return the etag value.
      */
     public String etag() {
@@ -83,8 +61,9 @@ public class SavedSearchInner extends ProxyResource {
     }
 
     /**
-     * Set the etag property: The ETag of the saved search.
-     *
+     * Set the etag property: The ETag of the saved search. To override an existing saved search, use "*" or specify the
+     * current Etag.
+     * 
      * @param etag the etag value to set.
      * @return the SavedSearchInner object itself.
      */
@@ -94,82 +73,133 @@ public class SavedSearchInner extends ProxyResource {
     }
 
     /**
+     * Get the innerProperties property: The properties of the saved search.
+     * 
+     * @return the innerProperties value.
+     */
+    private SavedSearchProperties innerProperties() {
+        return this.innerProperties;
+    }
+
+    /**
+     * Get the type property: The type of the resource.
+     * 
+     * @return the type value.
+     */
+    @Override
+    public String type() {
+        return this.type;
+    }
+
+    /**
+     * Get the name property: The name of the resource.
+     * 
+     * @return the name value.
+     */
+    @Override
+    public String name() {
+        return this.name;
+    }
+
+    /**
+     * Get the id property: Fully qualified resource Id for the resource.
+     * 
+     * @return the id value.
+     */
+    @Override
+    public String id() {
+        return this.id;
+    }
+
+    /**
      * Get the category property: The category of the saved search. This helps the user to find a saved search faster.
-     *
+     * 
      * @return the category value.
      */
     public String category() {
-        return this.category;
+        return this.innerProperties() == null ? null : this.innerProperties().category();
     }
 
     /**
      * Set the category property: The category of the saved search. This helps the user to find a saved search faster.
-     *
+     * 
      * @param category the category value to set.
      * @return the SavedSearchInner object itself.
      */
     public SavedSearchInner withCategory(String category) {
-        this.category = category;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new SavedSearchProperties();
+        }
+        this.innerProperties().withCategory(category);
         return this;
     }
 
     /**
      * Get the displayName property: Saved search display name.
-     *
+     * 
      * @return the displayName value.
      */
     public String displayName() {
-        return this.displayName;
+        return this.innerProperties() == null ? null : this.innerProperties().displayName();
     }
 
     /**
      * Set the displayName property: Saved search display name.
-     *
+     * 
      * @param displayName the displayName value to set.
      * @return the SavedSearchInner object itself.
      */
     public SavedSearchInner withDisplayName(String displayName) {
-        this.displayName = displayName;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new SavedSearchProperties();
+        }
+        this.innerProperties().withDisplayName(displayName);
         return this;
     }
 
     /**
      * Get the query property: The query expression for the saved search.
-     *
+     * 
      * @return the query value.
      */
     public String query() {
-        return this.query;
+        return this.innerProperties() == null ? null : this.innerProperties().query();
     }
 
     /**
      * Set the query property: The query expression for the saved search.
-     *
+     * 
      * @param query the query value to set.
      * @return the SavedSearchInner object itself.
      */
     public SavedSearchInner withQuery(String query) {
-        this.query = query;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new SavedSearchProperties();
+        }
+        this.innerProperties().withQuery(query);
         return this;
     }
 
     /**
      * Get the functionAlias property: The function alias if query serves as a function.
-     *
+     * 
      * @return the functionAlias value.
      */
     public String functionAlias() {
-        return this.functionAlias;
+        return this.innerProperties() == null ? null : this.innerProperties().functionAlias();
     }
 
     /**
      * Set the functionAlias property: The function alias if query serves as a function.
-     *
+     * 
      * @param functionAlias the functionAlias value to set.
      * @return the SavedSearchInner object itself.
      */
     public SavedSearchInner withFunctionAlias(String functionAlias) {
-        this.functionAlias = functionAlias;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new SavedSearchProperties();
+        }
+        this.innerProperties().withFunctionAlias(functionAlias);
         return this;
     }
 
@@ -178,11 +208,11 @@ public class SavedSearchInner extends ProxyResource {
      * be in the following format: 'param-name1:type1 = default_value1, param-name2:type2 = default_value2'. For more
      * examples and proper syntax please refer to
      * https://docs.microsoft.com/en-us/azure/kusto/query/functions/user-defined-functions.
-     *
+     * 
      * @return the functionParameters value.
      */
     public String functionParameters() {
-        return this.functionParameters;
+        return this.innerProperties() == null ? null : this.innerProperties().functionParameters();
     }
 
     /**
@@ -190,78 +220,124 @@ public class SavedSearchInner extends ProxyResource {
      * be in the following format: 'param-name1:type1 = default_value1, param-name2:type2 = default_value2'. For more
      * examples and proper syntax please refer to
      * https://docs.microsoft.com/en-us/azure/kusto/query/functions/user-defined-functions.
-     *
+     * 
      * @param functionParameters the functionParameters value to set.
      * @return the SavedSearchInner object itself.
      */
     public SavedSearchInner withFunctionParameters(String functionParameters) {
-        this.functionParameters = functionParameters;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new SavedSearchProperties();
+        }
+        this.innerProperties().withFunctionParameters(functionParameters);
         return this;
     }
 
     /**
      * Get the version property: The version number of the query language. The current version is 2 and is the default.
-     *
+     * 
      * @return the version value.
      */
     public Long version() {
-        return this.version;
+        return this.innerProperties() == null ? null : this.innerProperties().version();
     }
 
     /**
      * Set the version property: The version number of the query language. The current version is 2 and is the default.
-     *
+     * 
      * @param version the version value to set.
      * @return the SavedSearchInner object itself.
      */
     public SavedSearchInner withVersion(Long version) {
-        this.version = version;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new SavedSearchProperties();
+        }
+        this.innerProperties().withVersion(version);
         return this;
     }
 
     /**
      * Get the tags property: The tags attached to the saved search.
-     *
+     * 
      * @return the tags value.
      */
     public List<Tag> tags() {
-        return this.tags;
+        return this.innerProperties() == null ? null : this.innerProperties().tags();
     }
 
     /**
      * Set the tags property: The tags attached to the saved search.
-     *
+     * 
      * @param tags the tags value to set.
      * @return the SavedSearchInner object itself.
      */
     public SavedSearchInner withTags(List<Tag> tags) {
-        this.tags = tags;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new SavedSearchProperties();
+        }
+        this.innerProperties().withTags(tags);
         return this;
     }
 
     /**
      * Validates the instance.
-     *
+     * 
      * @throws IllegalArgumentException thrown if the instance is not valid.
      */
     public void validate() {
-        if (category() == null) {
-            throw logger
-                .logExceptionAsError(
-                    new IllegalArgumentException("Missing required property category in model SavedSearchInner"));
+        if (innerProperties() == null) {
+            throw LOGGER.atError()
+                .log(new IllegalArgumentException(
+                    "Missing required property innerProperties in model SavedSearchInner"));
+        } else {
+            innerProperties().validate();
         }
-        if (displayName() == null) {
-            throw logger
-                .logExceptionAsError(
-                    new IllegalArgumentException("Missing required property displayName in model SavedSearchInner"));
-        }
-        if (query() == null) {
-            throw logger
-                .logExceptionAsError(
-                    new IllegalArgumentException("Missing required property query in model SavedSearchInner"));
-        }
-        if (tags() != null) {
-            tags().forEach(e -> e.validate());
-        }
+    }
+
+    private static final ClientLogger LOGGER = new ClientLogger(SavedSearchInner.class);
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public JsonWriter toJson(JsonWriter jsonWriter) throws IOException {
+        jsonWriter.writeStartObject();
+        jsonWriter.writeJsonField("properties", this.innerProperties);
+        jsonWriter.writeStringField("etag", this.etag);
+        return jsonWriter.writeEndObject();
+    }
+
+    /**
+     * Reads an instance of SavedSearchInner from the JsonReader.
+     * 
+     * @param jsonReader The JsonReader being read.
+     * @return An instance of SavedSearchInner if the JsonReader was pointing to an instance of it, or null if it was
+     * pointing to JSON null.
+     * @throws IllegalStateException If the deserialized JSON object was missing any required properties.
+     * @throws IOException If an error occurs while reading the SavedSearchInner.
+     */
+    public static SavedSearchInner fromJson(JsonReader jsonReader) throws IOException {
+        return jsonReader.readObject(reader -> {
+            SavedSearchInner deserializedSavedSearchInner = new SavedSearchInner();
+            while (reader.nextToken() != JsonToken.END_OBJECT) {
+                String fieldName = reader.getFieldName();
+                reader.nextToken();
+
+                if ("id".equals(fieldName)) {
+                    deserializedSavedSearchInner.id = reader.getString();
+                } else if ("name".equals(fieldName)) {
+                    deserializedSavedSearchInner.name = reader.getString();
+                } else if ("type".equals(fieldName)) {
+                    deserializedSavedSearchInner.type = reader.getString();
+                } else if ("properties".equals(fieldName)) {
+                    deserializedSavedSearchInner.innerProperties = SavedSearchProperties.fromJson(reader);
+                } else if ("etag".equals(fieldName)) {
+                    deserializedSavedSearchInner.etag = reader.getString();
+                } else {
+                    reader.skipChildren();
+                }
+            }
+
+            return deserializedSavedSearchInner;
+        });
     }
 }

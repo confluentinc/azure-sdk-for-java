@@ -3,20 +3,35 @@
 
 package com.azure.cosmos.implementation
 
-import com.azure.cosmos.{CosmosAsyncContainer, CosmosClientBuilder, DirectConnectionConfig}
 import com.azure.cosmos.implementation.ImplementationBridgeHelpers.CosmosClientBuilderHelper
-import com.azure.cosmos.implementation.changefeed.implementation.{ChangeFeedState, ChangeFeedStateV1}
+import com.azure.cosmos.implementation.changefeed.common.{ChangeFeedMode, ChangeFeedStartFromInternal, ChangeFeedState, ChangeFeedStateV1}
+import com.azure.cosmos.implementation.guava25.base.MoreObjects.firstNonNull
+import com.azure.cosmos.implementation.guava25.base.Strings.emptyToNull
 import com.azure.cosmos.implementation.query.CompositeContinuationToken
 import com.azure.cosmos.implementation.routing.Range
-import com.azure.cosmos.models.{FeedRange, PartitionKey, PartitionKeyDefinition, SparkModelBridgeInternal}
-import com.azure.cosmos.spark.NormalizedRange
+import com.azure.cosmos.models.{FeedRange, PartitionKey, PartitionKeyBuilder, PartitionKeyDefinition, PartitionKind, SparkModelBridgeInternal}
+import com.azure.cosmos.spark.diagnostics.BasicLoggingTrait
+import com.azure.cosmos.spark.{ChangeFeedOffset, CosmosConstants, NormalizedRange}
+import com.azure.cosmos.{CosmosAsyncClient, CosmosClientBuilder, DirectConnectionConfig, SparkBridgeInternal}
+import com.fasterxml.jackson.databind.ObjectMapper
+
+import scala.collection.convert.ImplicitConversions.`list asScalaBuffer`
+import scala.collection.mutable
 
 // scalastyle:off underscore.import
 import com.azure.cosmos.implementation.feedranges._
 import scala.collection.JavaConverters._
 // scalastyle:on underscore.import
 
-private[cosmos] object SparkBridgeImplementationInternal {
+private[cosmos] object SparkBridgeImplementationInternal extends BasicLoggingTrait {
+  private val SPARK_MAX_CONNECTIONS_PER_ENDPOINT_PROPERTY = "COSMOS.SPARK_MAX_CONNECTIONS_PER_ENDPOINT"
+  private val SPARK_MAX_CONNECTIONS_PER_ENDPOINT_VARIABLE = "COSMOS_SPARK_MAX_CONNECTIONS_PER_ENDPOINT"
+  private val DEFAULT_SPARK_MAX_CONNECTIONS_PER_ENDPOINT: Int = DirectConnectionConfig.getDefaultConfig.getMaxConnectionsPerEndpoint
+
+  private val SPARK_IO_THREAD_COUNT_FACTOR_PER_CORE_PROPERTY = "COSMOS.SPARK_IO_THREAD_COUNT_FACTOR_PER_CORE"
+  private val SPARK_IO_THREAD_COUNT_FACTOR_PER_CORE_VARIABLE = "COSMOS_SPARK_IO_THREAD_COUNT_FACTOR_PER_CORE"
+  private val DEFAULT_SPARK_IO_THREAD_COUNT_FACTOR_PER_CORE: Int = CosmosConstants.defaultIoThreadCountFactorPerCore
+
   def setMetadataCacheSnapshot(cosmosClientBuilder: CosmosClientBuilder,
                                metadataCache: CosmosClientMetadataCachesSnapshot): Unit = {
 
@@ -54,6 +69,44 @@ private[cosmos] object SparkBridgeImplementationInternal {
     }).toArray
 
     ChangeFeedState.merge(states).toString
+  }
+
+  def extractCollectionRid(continuation: String): String = {
+    val state = ChangeFeedState.fromString(continuation)
+    state.getContainerRid
+  }
+
+  def validateCollectionRidOfChangeFeedState
+  (
+    continuation: String,
+    expectedCollectionRid: String,
+    ignoreOffsetWhenInvalid: Boolean
+  ): Boolean = {
+    val extractedRid = extractCollectionRid(continuation)
+    val isOffsetValid = extractedRid.equalsIgnoreCase(expectedCollectionRid)
+    if (!isOffsetValid) {
+      val message = s"The provided change feed continuation state is for a different container. Offset's " +
+        s"container: ${extractedRid}, Current container: $expectedCollectionRid, " +
+        s"Continuation: $continuation"
+
+      if (!ignoreOffsetWhenInvalid) {
+        throw new IllegalStateException(message)
+      }
+
+      logWarning(message)
+    }
+
+    isOffsetValid
+  }
+
+  def validateCollectionRidOfChangeFeedStates
+  (
+    continuationLeft: String,
+    continuationRight: String,
+  ): Boolean = {
+    val extractedRidLeft = extractCollectionRid(continuationLeft)
+    val extractedRidRight = extractCollectionRid(continuationRight)
+    extractedRidLeft.equalsIgnoreCase(extractedRidRight)
   }
 
   def createChangeFeedStateJson
@@ -133,8 +186,13 @@ private[cosmos] object SparkBridgeImplementationInternal {
     new FeedRangeEpkImpl(toCosmosRange(range))
   }
 
-  private[this] def toCosmosRange(range: NormalizedRange): Range[String] = {
+  private[cosmos] def toCosmosRange(range: NormalizedRange): Range[String] = {
     new Range[String](range.min, range.max, true, false)
+  }
+
+  private[cosmos] def toCosmosRange(range: String): Range[String] = {
+    val parts = range.split("-")
+    new Range[String](parts(0), parts(1), true, false)
   }
 
   def doRangesOverlap(left: NormalizedRange, right: NormalizedRange): Boolean = {
@@ -151,13 +209,106 @@ private[cosmos] object SparkBridgeImplementationInternal {
     partitionKeyValue: Object,
     partitionKeyDefinitionJson: String
   ): NormalizedRange = {
-
-    val feedRange = FeedRange
-      .forLogicalPartition(new PartitionKey(partitionKeyValue))
-      .asInstanceOf[FeedRangePartitionKeyImpl]
-
     val pkDefinition = SparkModelBridgeInternal.createPartitionKeyDefinitionFromJson(partitionKeyDefinitionJson)
-    rangeToNormalizedRange(feedRange.getEffectiveRange(pkDefinition))
+    partitionKeyToNormalizedRange(getPartitionKeyValue(pkDefinition, partitionKeyValue), pkDefinition)
+  }
+
+  private[cosmos] def partitionKeyToNormalizedRange(
+                                                    partitionKey: PartitionKey,
+                                                    partitionKeyDefinitionJson: PartitionKeyDefinition): NormalizedRange = {
+      val feedRange = FeedRange.forLogicalPartition(partitionKey).asInstanceOf[FeedRangePartitionKeyImpl]
+      val effectiveRange = feedRange.getEffectiveRange(partitionKeyDefinitionJson)
+      rangeToNormalizedRange(effectiveRange)
+  }
+
+  private[cosmos] def hierarchicalPartitionKeyValuesToNormalizedRange
+  (
+      partitionKeyValueJsonArray: Object,
+      partitionKeyDefinitionJson: String
+  ): NormalizedRange = {
+    val pkDefinition = SparkModelBridgeInternal.createPartitionKeyDefinitionFromJson(partitionKeyDefinitionJson)
+    val partitionKey = getPartitionKeyValue(pkDefinition, partitionKeyValueJsonArray)
+    val feedRange = FeedRange
+          .forLogicalPartition(partitionKey)
+          .asInstanceOf[FeedRangePartitionKeyImpl]
+
+    val effectiveRange = feedRange.getEffectiveRange(pkDefinition)
+      rangeToNormalizedRange(effectiveRange)
+  }
+
+  private[cosmos] def trySplitFeedRanges
+  (
+    cosmosClient: CosmosAsyncClient,
+    containerName: String,
+    databaseName: String,
+    targetedCount: Int
+  ): List[String] = {
+    val container = cosmosClient
+      .getDatabase(databaseName)
+      .getContainer(containerName)
+
+    val epkRange =  rangeToNormalizedRange(FeedRange.forFullRange().asInstanceOf[FeedRangeEpkImpl].getRange)
+    val feedRanges = SparkBridgeInternal.trySplitFeedRange(container, epkRange, targetedCount)
+    var normalizedRanges: List[String] = List()
+    for (i <- feedRanges.indices) {
+      normalizedRanges = normalizedRanges :+ s"${feedRanges(i).min}-${feedRanges(i).max}"
+    }
+    normalizedRanges
+  }
+
+  private[cosmos] def getFeedRangesForContainer
+  (
+    cosmosClient: CosmosAsyncClient,
+    containerName: String,
+    databaseName: String
+  ): List[String] = {
+    val container = cosmosClient
+      .getDatabase(databaseName)
+      .getContainer(containerName)
+
+    val feedRanges: List[String] = List()
+    container.getFeedRanges().block.map(feedRange => {
+      val effectiveRangeFromPk = feedRange.asInstanceOf[FeedRangeEpkImpl].getEffectiveRange(null, null, null).block
+      val normalizedRange = rangeToNormalizedRange(effectiveRangeFromPk)
+      s"${normalizedRange.min}-${normalizedRange.max}" :: feedRanges
+    })
+    feedRanges
+  }
+
+  def getOverlappingRange(feedRanges: Array[String], pkValue: Object, pkDefinition: PartitionKeyDefinition): String = {
+    val pk = getPartitionKeyValue(pkDefinition, pkValue)
+    val feedRangeFromPk = FeedRange.forLogicalPartition(pk).asInstanceOf[FeedRangePartitionKeyImpl]
+    val effectiveRangeFromPk = feedRangeFromPk.getEffectiveRange(pkDefinition)
+
+    for (i <- feedRanges.indices) {
+      val range = SparkBridgeImplementationInternal.toCosmosRange(feedRanges(i))
+      if (range.contains(effectiveRangeFromPk.getMin)) {
+        return feedRanges(i)
+      }
+    }
+    throw new IllegalArgumentException("The partition key value does not belong to any of the feed ranges")
+  }
+
+  private def getPartitionKeyValue(pkDefinition: PartitionKeyDefinition, pkValue: Object): PartitionKey = {
+    val partitionKey = new PartitionKeyBuilder()
+    var pk: PartitionKey = null
+    if (pkDefinition.getKind.equals(PartitionKind.MULTI_HASH)) {
+      val objectMapper = new ObjectMapper()
+      val json = pkValue.toString
+      try {
+        val partitionKeyValues = objectMapper.readValue(json, classOf[Array[String]])
+        for (value <- partitionKeyValues) {
+          partitionKey.add(value.trim)
+        }
+        pk = partitionKey.build()
+      } catch {
+        case e: Exception =>
+          logInfo("Invalid partition key paths: " + json, e)
+      }
+    } else if (pkDefinition.getKind.equals(PartitionKind.HASH)) {
+      pk = new PartitionKey(pkValue)
+    }
+    pk
   }
 
   def setIoThreadCountPerCoreFactor
@@ -172,7 +323,192 @@ private[cosmos] object SparkBridgeImplementationInternal {
       .setIoThreadCountPerCoreFactor(config, ioThreadCountPerCoreFactor)
   }
 
-  def setUserAgentWithSnapshotInsteadOfBeta() = {
-    HttpConstants.Versions.useSnapshotInsteadOfBeta();
+  def setIoThreadPriority
+  (
+    config: DirectConnectionConfig,
+    ioThreadPriority: Int
+  ): DirectConnectionConfig = {
+
+    ImplementationBridgeHelpers
+      .DirectConnectionConfigHelper
+      .getDirectConnectionConfigAccessor
+      .setIoThreadPriority(config, ioThreadPriority)
+  }
+
+  def setUserAgentWithSnapshotInsteadOfBeta(): Unit = {
+    HttpConstants.Versions.useSnapshotInsteadOfBeta()
+  }
+
+  def createChangeFeedOffsetFromSpark2
+  (
+    client: CosmosAsyncClient,
+    databaseResourceId: String,
+    containerResourceId: String,
+    tokens: Map[Int, Long]
+  ): String = {
+
+    val databaseName = client
+      .getDatabase(databaseResourceId)
+      .read()
+      .block()
+      .getProperties
+      .getId
+
+    val containerName = client
+      .getDatabase(databaseResourceId)
+      .getContainer(containerResourceId)
+      .read()
+      .block()
+      .getProperties
+      .getId
+
+    val container = client
+      .getDatabase(databaseName)
+      .getContainer(containerName)
+
+    val pkRanges = SparkBridgeInternal
+      .getPartitionKeyRanges(container)
+
+    val pkRangesByPkRangeId = mutable.Map[Int, PartitionKeyRange]()
+    val pkRangesByParentPkRangeId = mutable.Map[Int, List[PartitionKeyRange]]()
+
+    pkRanges
+      .foreach(pkRange => {
+        pkRangesByPkRangeId.put(pkRange.getId.toInt, pkRange)
+        if (pkRange.getParents != null && pkRange.getParents.size > 0) {
+          pkRange
+            .getParents
+            .forEach(parentId => {
+              if (pkRangesByParentPkRangeId.contains(parentId.toInt)) {
+                val existingChildren = pkRangesByParentPkRangeId.get(parentId.toInt).get
+                val newChildren = existingChildren :+ pkRange
+                pkRangesByParentPkRangeId.put(parentId.toInt, newChildren)
+              } else {
+                pkRangesByParentPkRangeId.put(parentId.toInt, List(pkRange))
+              }
+            })
+        }
+      })
+
+    val continuations = tokens
+      .map(token => {
+        val pkRangeId = token._1
+
+        val lsn: Long = token._2
+
+        val range: Range[String] = if (pkRangesByPkRangeId.contains(pkRangeId)) {
+          pkRangesByPkRangeId.get(pkRangeId).get.toRange
+        } else if (pkRangesByParentPkRangeId.contains(pkRangeId)) {
+          val normalizedChildRanges = pkRangesByParentPkRangeId
+            .get(pkRangeId)
+            .get
+            .map(childPkRange => rangeToNormalizedRange(childPkRange.toRange))
+            .sorted
+
+          toCosmosRange(new NormalizedRange(
+                      normalizedChildRanges.head.min,
+                      normalizedChildRanges.last.max))
+        } else {
+          throw new IllegalStateException(
+            s"Can't resolve PKRangeId $pkRangeId - it is possible that this partition has been split multiple times. " +
+              "In this case the change feed continuation can not be migrated - a new change feed needs to be " +
+              "started instead."
+          )
+        }
+
+        new CompositeContinuationToken(
+          "\"" + lsn + "\"",
+          range)
+      }).toList
+
+    val feedRangeContinuation: FeedRangeContinuation = FeedRangeContinuation
+      .create(
+        containerResourceId,
+        FeedRangeEpkImpl.forFullRange,
+        continuations.asJava
+      )
+
+    val changeFeedState: ChangeFeedState = new ChangeFeedStateV1(
+      containerResourceId,
+      FeedRangeEpkImpl.forFullRange,
+      ChangeFeedMode.INCREMENTAL,
+      ChangeFeedStartFromInternal.createFromLegacyContinuation(),
+      feedRangeContinuation
+    )
+
+    s"v1\n" +
+    new ChangeFeedOffset(
+      changeFeedState.toString,
+      None
+    ).json()
+  }
+
+  private def getMaxConnectionsPerEndpointOverride: Int = {
+    val maxConnectionsPerEndpointText = System.getProperty(
+      SPARK_MAX_CONNECTIONS_PER_ENDPOINT_PROPERTY,
+      firstNonNull(
+        emptyToNull(System.getenv.get(SPARK_MAX_CONNECTIONS_PER_ENDPOINT_VARIABLE)),
+        String.valueOf(DEFAULT_SPARK_MAX_CONNECTIONS_PER_ENDPOINT)))
+
+    try {
+      maxConnectionsPerEndpointText.toInt
+    }
+    catch {
+      case e: Exception =>
+        logError(s"Parsing spark max connections per endpoint failed. Using the default $DEFAULT_SPARK_MAX_CONNECTIONS_PER_ENDPOINT.", e)
+        DEFAULT_SPARK_MAX_CONNECTIONS_PER_ENDPOINT
+    }
+  }
+
+  def getIoThreadCountPerCoreOverride: Int = {
+    val ioThreadCountPerCoreText = System.getProperty(
+      SPARK_IO_THREAD_COUNT_FACTOR_PER_CORE_PROPERTY,
+      firstNonNull(
+        emptyToNull(System.getenv.get(SPARK_IO_THREAD_COUNT_FACTOR_PER_CORE_VARIABLE)),
+        String.valueOf(DEFAULT_SPARK_IO_THREAD_COUNT_FACTOR_PER_CORE)))
+
+    try {
+      ioThreadCountPerCoreText.toInt
+    }
+    catch {
+      case e: Exception =>
+        logError(s"Parsing spark I/O thread-count per core failed. Using the default $DEFAULT_SPARK_IO_THREAD_COUNT_FACTOR_PER_CORE.", e)
+        DEFAULT_SPARK_IO_THREAD_COUNT_FACTOR_PER_CORE
+    }
+  }
+
+
+  def configureSimpleObjectMapper(allowDuplicateProperties: Boolean) : Unit = {
+    Utils.configureSimpleObjectMapper(allowDuplicateProperties)
+  }
+
+  def overrideDefaultTcpOptionsForSparkUsage(): Unit = {
+    val overrideJson = "{\"timeoutDetectionEnabled\": true, \"timeoutDetectionDisableCPUThreshold\": 75.0," +
+      "\"timeoutDetectionTimeLimit\": \"PT90S\", \"timeoutDetectionHighFrequencyThreshold\": 10," +
+      "\"timeoutDetectionHighFrequencyTimeLimit\": \"PT30S\", \"timeoutDetectionOnWriteThreshold\": 10," +
+      "\"timeoutDetectionOnWriteTimeLimit\": \"PT90s\", \"tcpNetworkRequestTimeout\": \"PT7S\", " +
+      "\"connectTimeout\": \"PT10S\", \"maxChannelsPerEndpoint\": \"" +
+      s"$getMaxConnectionsPerEndpointOverride" +
+      "\"}"
+
+    if (System.getProperty("reactor.netty.tcp.sslHandshakeTimeout") == null) {
+      System.setProperty("reactor.netty.tcp.sslHandshakeTimeout", "20000")
+    }
+
+    if (System.getProperty(Configs.HTTP_MAX_REQUEST_TIMEOUT) == null) {
+      System.setProperty(
+        Configs.HTTP_MAX_REQUEST_TIMEOUT,
+        "70")
+    }
+
+    if (System.getProperty(Configs.HTTP_DEFAULT_CONNECTION_POOL_SIZE) == null) {
+      System.setProperty(
+        Configs.HTTP_DEFAULT_CONNECTION_POOL_SIZE,
+        "25000")
+    }
+
+    if (System.getProperty("azure.cosmos.directTcp.defaultOptions") == null) {
+      System.setProperty("azure.cosmos.directTcp.defaultOptions", overrideJson)
+    }
   }
 }

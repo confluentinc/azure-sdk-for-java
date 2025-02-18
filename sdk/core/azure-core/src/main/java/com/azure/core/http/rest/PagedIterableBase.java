@@ -3,16 +3,21 @@
 
 package com.azure.core.http.rest;
 
+import com.azure.core.util.CoreUtils;
 import com.azure.core.util.IterableStream;
 import com.azure.core.util.paging.ContinuablePagedIterable;
+import com.azure.core.util.paging.PageRetrieverSync;
 
+import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 /**
  * This class provides utility to iterate over responses that extend {@link PagedResponse} using {@link Stream} and
  * {@link Iterable} interfaces.
  *
- * <p><strong>Code sample using {@link Stream} by page</strong></p>
+ * <p>
+ * <strong>Code sample using {@link Stream} by page</strong>
+ * </p>
  *
  * <!-- src_embed com.azure.core.http.rest.pagedIterableBase.streamByPage -->
  * <pre>
@@ -28,7 +33,9 @@ import java.util.stream.Stream;
  * </pre>
  * <!-- end com.azure.core.http.rest.pagedIterableBase.streamByPage -->
  *
- * <p><strong>Code sample using {@link Iterable} by page</strong></p>
+ * <p>
+ * <strong>Code sample using {@link Iterable} by page</strong>
+ * </p>
  *
  * <!-- src_embed com.azure.core.http.rest.pagedIterableBase.iterableByPage -->
  * <pre>
@@ -41,7 +48,9 @@ import java.util.stream.Stream;
  * </pre>
  * <!-- end com.azure.core.http.rest.pagedIterableBase.iterableByPage -->
  *
- * <p><strong>Code sample using {@link Iterable} by page and while loop</strong></p>
+ * <p>
+ * <strong>Code sample using {@link Iterable} by page and while loop</strong>
+ * </p>
  *
  * <!-- src_embed com.azure.core.http.rest.pagedIterableBase.iterableByPage.while -->
  * <pre>
@@ -68,5 +77,14 @@ public class PagedIterableBase<T, P extends PagedResponse<T>> extends Continuabl
     @SuppressWarnings("deprecation")
     public PagedIterableBase(PagedFluxBase<T, P> pagedFluxBase) {
         super(pagedFluxBase);
+    }
+
+    /**
+     * Creates instance given the {@link PageRetrieverSync page retriever} {@link Supplier}.
+     *
+     * @param provider The page retriever {@link Supplier}.
+     */
+    public PagedIterableBase(Supplier<PageRetrieverSync<String, P>> provider) {
+        super(provider, null, token -> !CoreUtils.isNullOrEmpty(token));
     }
 }

@@ -5,26 +5,42 @@
 package com.azure.resourcemanager.sqlvirtualmachine.models;
 
 import com.azure.core.util.ExpandableStringEnum;
-import com.fasterxml.jackson.annotation.JsonCreator;
 import java.util.Collection;
 
-/** Defines values for ClusterManagerType. */
+/**
+ * Type of cluster manager: Windows Server Failover Cluster (WSFC), implied by the scale type of the group and the OS
+ * type.
+ */
 public final class ClusterManagerType extends ExpandableStringEnum<ClusterManagerType> {
-    /** Static value WSFC for ClusterManagerType. */
+    /**
+     * Static value WSFC for ClusterManagerType.
+     */
     public static final ClusterManagerType WSFC = fromString("WSFC");
 
     /**
+     * Creates a new instance of ClusterManagerType value.
+     * 
+     * @deprecated Use the {@link #fromString(String)} factory method.
+     */
+    @Deprecated
+    public ClusterManagerType() {
+    }
+
+    /**
      * Creates or finds a ClusterManagerType from its string representation.
-     *
+     * 
      * @param name a name to look for.
      * @return the corresponding ClusterManagerType.
      */
-    @JsonCreator
     public static ClusterManagerType fromString(String name) {
         return fromString(name, ClusterManagerType.class);
     }
 
-    /** @return known ClusterManagerType values. */
+    /**
+     * Gets known ClusterManagerType values.
+     * 
+     * @return known ClusterManagerType values.
+     */
     public static Collection<ClusterManagerType> values() {
         return values(ClusterManagerType.class);
     }

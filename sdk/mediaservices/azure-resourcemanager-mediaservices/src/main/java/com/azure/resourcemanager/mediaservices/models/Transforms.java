@@ -8,23 +8,29 @@ import com.azure.core.http.rest.PagedIterable;
 import com.azure.core.http.rest.Response;
 import com.azure.core.util.Context;
 
-/** Resource collection API of Transforms. */
+/**
+ * Resource collection API of Transforms.
+ */
 public interface Transforms {
     /**
+     * List Transforms
+     * 
      * Lists the Transforms in the account.
-     *
+     * 
      * @param resourceGroupName The name of the resource group within the Azure subscription.
      * @param accountName The Media Services account name.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return a collection of Transform items.
+     * @return a collection of Transform items as paginated response with {@link PagedIterable}.
      */
     PagedIterable<Transform> list(String resourceGroupName, String accountName);
 
     /**
+     * List Transforms
+     * 
      * Lists the Transforms in the account.
-     *
+     * 
      * @param resourceGroupName The name of the resource group within the Azure subscription.
      * @param accountName The Media Services account name.
      * @param filter Restricts the set of items returned.
@@ -33,14 +39,33 @@ public interface Transforms {
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return a collection of Transform items.
+     * @return a collection of Transform items as paginated response with {@link PagedIterable}.
      */
-    PagedIterable<Transform> list(
-        String resourceGroupName, String accountName, String filter, String orderby, Context context);
+    PagedIterable<Transform> list(String resourceGroupName, String accountName, String filter, String orderby,
+        Context context);
 
     /**
+     * Get Transform
+     * 
      * Gets a Transform.
-     *
+     * 
+     * @param resourceGroupName The name of the resource group within the Azure subscription.
+     * @param accountName The Media Services account name.
+     * @param transformName The Transform name.
+     * @param context The context to associate with this operation.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return a Transform along with {@link Response}.
+     */
+    Response<Transform> getWithResponse(String resourceGroupName, String accountName, String transformName,
+        Context context);
+
+    /**
+     * Get Transform
+     * 
+     * Gets a Transform.
+     * 
      * @param resourceGroupName The name of the resource group within the Azure subscription.
      * @param accountName The Media Services account name.
      * @param transformName The Transform name.
@@ -52,8 +77,10 @@ public interface Transforms {
     Transform get(String resourceGroupName, String accountName, String transformName);
 
     /**
-     * Gets a Transform.
-     *
+     * Delete Transform
+     * 
+     * Deletes a Transform.
+     * 
      * @param resourceGroupName The name of the resource group within the Azure subscription.
      * @param accountName The Media Services account name.
      * @param transformName The Transform name.
@@ -61,14 +88,16 @@ public interface Transforms {
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return a Transform.
+     * @return the {@link Response}.
      */
-    Response<Transform> getWithResponse(
-        String resourceGroupName, String accountName, String transformName, Context context);
+    Response<Void> deleteWithResponse(String resourceGroupName, String accountName, String transformName,
+        Context context);
 
     /**
+     * Delete Transform
+     * 
      * Deletes a Transform.
-     *
+     * 
      * @param resourceGroupName The name of the resource group within the Azure subscription.
      * @param accountName The Media Services account name.
      * @param transformName The Transform name.
@@ -79,46 +108,37 @@ public interface Transforms {
     void delete(String resourceGroupName, String accountName, String transformName);
 
     /**
-     * Deletes a Transform.
-     *
-     * @param resourceGroupName The name of the resource group within the Azure subscription.
-     * @param accountName The Media Services account name.
-     * @param transformName The Transform name.
-     * @param context The context to associate with this operation.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the response.
-     */
-    Response<Void> deleteWithResponse(
-        String resourceGroupName, String accountName, String transformName, Context context);
-
-    /**
+     * Get Transform
+     * 
      * Gets a Transform.
-     *
+     * 
      * @param id the resource ID.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return a Transform.
+     * @return a Transform along with {@link Response}.
      */
     Transform getById(String id);
 
     /**
+     * Get Transform
+     * 
      * Gets a Transform.
-     *
+     * 
      * @param id the resource ID.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return a Transform.
+     * @return a Transform along with {@link Response}.
      */
     Response<Transform> getByIdWithResponse(String id, Context context);
 
     /**
+     * Delete Transform
+     * 
      * Deletes a Transform.
-     *
+     * 
      * @param id the resource ID.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
@@ -127,20 +147,22 @@ public interface Transforms {
     void deleteById(String id);
 
     /**
+     * Delete Transform
+     * 
      * Deletes a Transform.
-     *
+     * 
      * @param id the resource ID.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the response.
+     * @return the {@link Response}.
      */
     Response<Void> deleteByIdWithResponse(String id, Context context);
 
     /**
      * Begins definition for a new Transform resource.
-     *
+     * 
      * @param name resource name.
      * @return the first stage of the new Transform definition.
      */

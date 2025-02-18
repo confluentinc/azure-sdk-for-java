@@ -12,6 +12,7 @@ param(
 
 $ErrorActionPreference = "Stop"
 
+. "${PSScriptRoot}/../common/scripts/common.ps1"
 . $PSScriptRoot\MavenPackaging.ps1
 
 # The Resolve-Path will normalize the path separators and throw if they don't exist.
@@ -127,23 +128,9 @@ foreach ($packageDetail in $packageDetails) {
   if ($packageReposityUrl -match "https://pkgs.dev.azure.com/azure-sdk/\b(internal|public)\b/*") {
     # Azure DevOps feeds don't support staging
     $shouldPublishPackage = $ShouldPublish -and !$StageOnly
-    $releaseType = 'AzureDevOps'
-  }
-  elseif ($packageReposityUrl -like "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
-    if ($packageDetail.IsSnapshot) {
-      # Snapshots don't go to the standard maven central url
-      $packageReposityUrl = "https://oss.sonatype.org/content/repositories/snapshots/"
-      $releaseType = 'MavenCentralSnapshot'
-    }
-    elseif ($StageOnly) {
-      $releaseType = 'MavenCentralStaging'
-    }
-    else {
-      $releaseType = 'MavenCentral'
-    }
   }
   else {
-    throw "Repository URL must be either an Azure Artifacts feed, or a SonaType Nexus feed."
+    throw "Repository URL must be an Azure Artifacts feed, anything else must be published through ESRP."
   }
 
   #Local GPG deployment is required when we're not going to publish a package, or when we're publishing to maven central
@@ -160,6 +147,12 @@ foreach ($packageDetail in $packageDetails) {
   $gpgexeOption = "-Dgpgexe=$GPGExecutablePath"
   Write-Information "GPG Executable Option is: $gpgexeOption"
 
+  # Just hard code the maven-gpg-plugin version rather than the previous logic where it determined it based on values
+  # in /eng/versions/external_dependencies.txt. This will prevent an issue with new scripts that remove unused
+  # dependencies (which this usage wouldn't be considered one) and from an errant update to the version breaking this
+  # release. Effectively, the usage is unique enough here to be handled separately from our normal dependency management.
+  $gpgSignAndDeployWithVer = "org.apache.maven.plugins:maven-gpg-plugin:3.2.7:sign-and-deploy-file"
+
   if ($requiresLocalGpg) {
     $localRepositoryDirectory = Get-RandomRepositoryDirectory
     $localRepositoryDirectoryUri = $([Uri]$localRepositoryDirectory.FullName).AbsoluteUri
@@ -169,8 +162,8 @@ foreach ($packageDetail in $packageDetails) {
     Write-Information "URL Option is: $urlOption"
 
     Write-Information "Signing and deploying package to $localRepositoryDirectoryUri"
-    Write-Information "mvn gpg:sign-and-deploy-file `"--batch-mode`" `"$pomOption`" `"$fileOption`" `"$javadocOption`" `"$sourcesOption`" `"$filesOption`" $classifiersOption `"$typesOption`" `"$urlOption`" `"$gpgexeOption`" `"-DrepositoryId=target-repo`" `"--settings=$PSScriptRoot\..\maven.publish.settings.xml`""
-    mvn gpg:sign-and-deploy-file "--batch-mode" "$pomOption" "$fileOption" "$javadocOption" "$sourcesOption" "$filesOption" $classifiersOption "$typesOption" "$urlOption" "$gpgexeOption" "-DrepositoryId=target-repo" "--settings=$PSScriptRoot\..\maven.publish.settings.xml"
+    Write-Information "mvn $gpgSignAndDeployWithVer `"--batch-mode`" `"$pomOption`" `"$fileOption`" `"$javadocOption`" `"$sourcesOption`" `"$filesOption`" $classifiersOption `"$typesOption`" `"$urlOption`" `"$gpgexeOption`" `"-DrepositoryId=target-repo`" `"--settings=$PSScriptRoot\..\maven.publish.settings.xml`""
+    mvn $gpgSignAndDeployWithVer "--batch-mode" "$pomOption" "$fileOption" "$javadocOption" "$sourcesOption" "$filesOption" $classifiersOption "$typesOption" "$urlOption" "$gpgexeOption" "-DrepositoryId=target-repo" "--settings=$PSScriptRoot\..\maven.publish.settings.xml"
     if ($LASTEXITCODE) { exit $LASTEXITCODE }
   }
 
@@ -180,87 +173,23 @@ foreach ($packageDetail in $packageDetails) {
     continue
   }
 
-  if ($releaseType -eq 'AzureDevOps') {
-    Write-Information "GPG Signing and deploying package in one step to devops feed: $packageReposityUrl"
-    Write-Information "mvn gpg:sign-and-deploy-file `"--batch-mode`" `"$pomOption`" `"$fileOption`" `"$javadocOption`" `"$sourcesOption`" `"$filesOption`" $classifiersOption `"$typesOption`" `"-Durl=$packageReposityUrl`" `"$gpgexeOption`" `"-DrepositoryId=target-repo`" `"-Drepo.password=[redacted]`" `"--settings=$PSScriptRoot\..\maven.publish.settings.xml`""
-    mvn gpg:sign-and-deploy-file "--batch-mode" "$pomOption" "$fileOption" "$javadocOption" "$sourcesOption" "$filesOption" $classifiersOption "$typesOption" "-Durl=$packageReposityUrl" "$gpgexeOption" "-DrepositoryId=target-repo" "-Drepo.password=$RepositoryPassword" "--settings=$PSScriptRoot\..\maven.publish.settings.xml"
+  Write-Information "GPG Signing and deploying package in one step to devops feed: $packageReposityUrl"
+  Write-Information "mvn $gpgSignAndDeployWithVer `"--batch-mode`" `"$pomOption`" `"$fileOption`" `"$javadocOption`" `"$sourcesOption`" `"$filesOption`" $classifiersOption `"$typesOption`" `"-Durl=$packageReposityUrl`" `"$gpgexeOption`" `"-DrepositoryId=target-repo`" `"-Drepo.password=[redacted]`" `"--settings=$PSScriptRoot\..\maven.publish.settings.xml`""
+  mvn $gpgSignAndDeployWithVer "--batch-mode" "$pomOption" "$fileOption" "$javadocOption" "$sourcesOption" "$filesOption" $classifiersOption "$typesOption" "-Durl=$packageReposityUrl" "$gpgexeOption" "-DrepositoryId=target-repo" "-Drepo.password=$RepositoryPassword" "--settings=$PSScriptRoot\..\maven.publish.settings.xml"
 
-    if ($LASTEXITCODE -eq 0) {
-      Write-Information "Package $($packageDetail.FullyQualifiedName) deployed"
-      continue
-    }
-
-    Write-Information "Release attempt $attemt exited with code $LASTEXITCODE"
-    Write-Information "Checking Azure DevOps to see if release was successful"
-    if (Test-ReleasedPackage -RepositoryUrl $packageReposityUrl -PackageDetail $packageDetail) {
-      Write-Information "Package $($packageDetail.FullyQualifiedName) deployed despite non-zero exit code."
-      continue
-    }
-
-    exit $LASTEXITCODE
+  if ($LASTEXITCODE -eq 0) {
+    Write-Information "Package $($packageDetail.FullyQualifiedName) deployed"
+    continue
   }
-  elseif ($releaseType -eq 'MavenCentralSnapshot') {
-    Write-Information "GPG Signing and deploying package in one step to Sonatype snapshots: $packageReposityUrl"
-    Write-Information "mvn gpg:sign-and-deploy-file `"--batch-mode`" `"$pomOption`" `"$fileOption`" `"$javadocOption`" `"$sourcesOption`" `"$filesOption`" $classifiersOption `"$typesOption`" `"-Durl=$packageReposityUrl`" `"$gpgexeOption`" `"-DrepositoryId=target-repo`" `"-Drepo.username=`"`"$RepositoryUsername`"`"`" `"-Drepo.password=[redacted]`" `"--settings=$PSScriptRoot\..\maven.publish.settings.xml`""
-    mvn gpg:sign-and-deploy-file "--batch-mode" "$pomOption" "$fileOption" "$javadocOption" "$sourcesOption" "$filesOption" $classifiersOption "$typesOption" "-Durl=$packageReposityUrl" "$gpgexeOption" "-DrepositoryId=target-repo" "-Drepo.username=""$RepositoryUsername""" "-Drepo.password=""$RepositoryPassword""" "--settings=$PSScriptRoot\..\maven.publish.settings.xml"
-    if ($LASTEXITCODE) { exit $LASTEXITCODE }
+
+  Write-Information "Release attempt $attemt exited with code $LASTEXITCODE"
+  Write-Information "Checking Azure DevOps to see if release was successful"
+  if (Test-ReleasedPackage -RepositoryUrl $packageReposityUrl -PackageDetail $packageDetail -BearerToken $RepositoryPassword) {
+    Write-Information "Package $($packageDetail.FullyQualifiedName) deployed despite non-zero exit code."
+    continue
   }
-  else {
-    # Maven Central Staging + optional Release
-    $repositoryDirectoryOption = "-DrepositoryDirectory=$localRepositoryDirectory"
-    Write-Information "Repository Directory Option is: $repositoryDirectoryOption"
 
-    $stagingProfileIdOption = "-DstagingProfileId=$($packageDetail.SonaTypeProfileID)"
-    Write-Information "Staging Profile ID Option is: $stagingProfileIdOption"
-
-    $stagingDescriptionOption = "-DstagingDescription=$($packageDetail.FullyQualifiedName)"
-    Write-Information "Staging Description Option is: $stagingDescriptionOption"
-
-    Write-Information "Staging package to Maven Central"
-    Write-Information "mvn org.sonatype.plugins:nexus-staging-maven-plugin:deploy-staged-repository `"--batch-mode`" `"-DnexusUrl=https://oss.sonatype.org`" `"$repositoryDirectoryOption`" `"$stagingProfileIdOption`" `"$stagingDescriptionOption`" `"-DrepositoryId=target-repo`" `"-DserverId=target-repo`" `"-Drepo.username=$RepositoryUsername`" `"-Drepo.password=`"[redacted]`"`" `"--settings=$PSScriptRoot\..\maven.publish.settings.xml`""
-    mvn org.sonatype.plugins:nexus-staging-maven-plugin:deploy-staged-repository "--batch-mode" "-DnexusUrl=https://oss.sonatype.org" "$repositoryDirectoryOption" "$stagingProfileIdOption" "$stagingDescriptionOption" "-DrepositoryId=target-repo" "-DserverId=target-repo" "-Drepo.username=$RepositoryUsername" "-Drepo.password=""$RepositoryPassword""" "--settings=$PSScriptRoot\..\maven.publish.settings.xml"
-
-    if ($LASTEXITCODE) {
-      Write-Information '##vso[task.logissue type=error]Staging to Maven Central failed. For troubleshooting, see https://aka.ms/azsdk/maven-central-tsg'
-      exit $LASTEXITCODE
-    }
-
-    Write-Information "Reading staging properties."
-    $stagedRepositoryProperties = ConvertFrom-StringData (Get-Content "$localRepositoryDirectory\$($packageDetail.SonaTypeProfileID).properties" -Raw)
-
-    $stagedRepositoryId = $stagedRepositoryProperties["stagingRepository.id"]
-    Write-Information "Staging Repository ID is: $stagedRepositoryId"
-
-    $stagedRepositoryUrl = $stagedRepositoryProperties["stagingRepository.url"]
-    Write-Information "Staging Repository URL is: $stagedRepositoryUrl"
-
-    if ($releaseType -eq 'MavenCentralStaging') {
-      Write-Information "Skipping release of staging repository because Stage Only == true."
-      continue
-    }
-
-    $attempt = 0
-    while ($attempt++ -lt 3) {
-      Write-Information "Releasing staging repostiory $stagedRepositoryId, attempt $attempt"
-      Write-Information "mvn org.sonatype.plugins:nexus-staging-maven-plugin:rc-release `"-DstagingRepositoryId=$stagedRepositoryId`" `"-DnexusUrl=https://oss.sonatype.org`" `"-DrepositoryId=target-repo`" `"-DserverId=target-repo`" `"-Drepo.username=$RepositoryUsername`" `"-Drepo.password=`"`"[redacted]`"`"`" `"--settings=$PSScriptRoot\..\maven.publish.settings.xml`""
-      mvn org.sonatype.plugins:nexus-staging-maven-plugin:rc-release "-DstagingRepositoryId=$stagedRepositoryId" "-DnexusUrl=https://oss.sonatype.org" "-DrepositoryId=target-repo" "-DserverId=target-repo" "-Drepo.username=$RepositoryUsername" "-Drepo.password=""$RepositoryPassword""" "--settings=$PSScriptRoot\..\maven.publish.settings.xml"
-
-      if ($LASTEXITCODE -eq 0) {
-        Write-Information "Package $($packageDetail.FullyQualifiedName) deployed"
-        break
-      }
-
-      Write-Information "Release attempt $attemt exited with code $LASTEXITCODE"
-      Write-Information "Checking Maven Central to see if release was successful"
-
-      if (Test-ReleasedPackage -RepositoryUrl $packageReposityUrl -PackageDetail $packageDetail) {
-        Write-Information "Package $($packageDetail.FullyQualifiedName) deployed despite non-zero exit code."
-        break
-      }
-
-      if ($attempt -ge 3) {
-        exit $LASTEXITCODE
-      }
-    }
-  }
+  exit $LASTEXITCODE
 }
+
+exit 0

@@ -5,73 +5,65 @@
 package com.azure.resourcemanager.mediaservices.models;
 
 import com.azure.core.annotation.Fluent;
-import com.azure.core.annotation.JsonFlatten;
-import com.azure.core.util.logging.ClientLogger;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import com.fasterxml.jackson.annotation.JsonTypeName;
+import com.azure.core.util.CoreUtils;
+import com.azure.json.JsonReader;
+import com.azure.json.JsonToken;
+import com.azure.json.JsonWriter;
+import java.io.IOException;
 import java.time.Duration;
 import java.util.List;
 
-/** Describes all the properties for encoding a video with the H.264 codec. */
-@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "@odata\\.type")
-@JsonTypeName("#Microsoft.Media.H264Video")
-@JsonFlatten
+/**
+ * Describes all the properties for encoding a video with the H.264 codec.
+ */
 @Fluent
-public class H264Video extends Video {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(H264Video.class);
+public final class H264Video extends Video {
+    /*
+     * The discriminator for derived types.
+     */
+    private String odataType = "#Microsoft.Media.H264Video";
 
     /*
-     * Whether or not the encoder should insert key frames at scene changes. If
-     * not specified, the default is false. This flag should be set to true
-     * only when the encoder is being configured to produce a single output
-     * video.
+     * Tells the encoder how to choose its encoding settings. The default value is Balanced.
      */
-    @JsonProperty(value = "sceneChangeDetection")
-    private Boolean sceneChangeDetection;
-
-    /*
-     * Tells the encoder how to choose its encoding settings. The default value
-     * is Balanced.
-     */
-    @JsonProperty(value = "complexity")
     private H264Complexity complexity;
 
     /*
      * The collection of output H.264 layers to be produced by the encoder.
      */
-    @JsonProperty(value = "layers")
     private List<H264Layer> layers;
 
-    /**
-     * Get the sceneChangeDetection property: Whether or not the encoder should insert key frames at scene changes. If
-     * not specified, the default is false. This flag should be set to true only when the encoder is being configured to
-     * produce a single output video.
-     *
-     * @return the sceneChangeDetection value.
+    /*
+     * The video rate control mode
      */
-    public Boolean sceneChangeDetection() {
-        return this.sceneChangeDetection;
+    private H264RateControlMode rateControlMode;
+
+    /*
+     * Whether or not the encoder should insert key frames at scene changes. If not specified, the default is false.
+     * This flag should be set to true only when the encoder is being configured to produce a single output video.
+     */
+    private Boolean sceneChangeDetection;
+
+    /**
+     * Creates an instance of H264Video class.
+     */
+    public H264Video() {
     }
 
     /**
-     * Set the sceneChangeDetection property: Whether or not the encoder should insert key frames at scene changes. If
-     * not specified, the default is false. This flag should be set to true only when the encoder is being configured to
-     * produce a single output video.
-     *
-     * @param sceneChangeDetection the sceneChangeDetection value to set.
-     * @return the H264Video object itself.
+     * Get the odataType property: The discriminator for derived types.
+     * 
+     * @return the odataType value.
      */
-    public H264Video withSceneChangeDetection(Boolean sceneChangeDetection) {
-        this.sceneChangeDetection = sceneChangeDetection;
-        return this;
+    @Override
+    public String odataType() {
+        return this.odataType;
     }
 
     /**
      * Get the complexity property: Tells the encoder how to choose its encoding settings. The default value is
      * Balanced.
-     *
+     * 
      * @return the complexity value.
      */
     public H264Complexity complexity() {
@@ -81,7 +73,7 @@ public class H264Video extends Video {
     /**
      * Set the complexity property: Tells the encoder how to choose its encoding settings. The default value is
      * Balanced.
-     *
+     * 
      * @param complexity the complexity value to set.
      * @return the H264Video object itself.
      */
@@ -92,7 +84,7 @@ public class H264Video extends Video {
 
     /**
      * Get the layers property: The collection of output H.264 layers to be produced by the encoder.
-     *
+     * 
      * @return the layers value.
      */
     public List<H264Layer> layers() {
@@ -101,7 +93,7 @@ public class H264Video extends Video {
 
     /**
      * Set the layers property: The collection of output H.264 layers to be produced by the encoder.
-     *
+     * 
      * @param layers the layers value to set.
      * @return the H264Video object itself.
      */
@@ -110,28 +102,80 @@ public class H264Video extends Video {
         return this;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * Get the rateControlMode property: The video rate control mode.
+     * 
+     * @return the rateControlMode value.
+     */
+    public H264RateControlMode rateControlMode() {
+        return this.rateControlMode;
+    }
+
+    /**
+     * Set the rateControlMode property: The video rate control mode.
+     * 
+     * @param rateControlMode the rateControlMode value to set.
+     * @return the H264Video object itself.
+     */
+    public H264Video withRateControlMode(H264RateControlMode rateControlMode) {
+        this.rateControlMode = rateControlMode;
+        return this;
+    }
+
+    /**
+     * Get the sceneChangeDetection property: Whether or not the encoder should insert key frames at scene changes. If
+     * not specified, the default is false. This flag should be set to true only when the encoder is being configured to
+     * produce a single output video.
+     * 
+     * @return the sceneChangeDetection value.
+     */
+    public Boolean sceneChangeDetection() {
+        return this.sceneChangeDetection;
+    }
+
+    /**
+     * Set the sceneChangeDetection property: Whether or not the encoder should insert key frames at scene changes. If
+     * not specified, the default is false. This flag should be set to true only when the encoder is being configured to
+     * produce a single output video.
+     * 
+     * @param sceneChangeDetection the sceneChangeDetection value to set.
+     * @return the H264Video object itself.
+     */
+    public H264Video withSceneChangeDetection(Boolean sceneChangeDetection) {
+        this.sceneChangeDetection = sceneChangeDetection;
+        return this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public H264Video withKeyFrameInterval(Duration keyFrameInterval) {
         super.withKeyFrameInterval(keyFrameInterval);
         return this;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public H264Video withStretchMode(StretchMode stretchMode) {
         super.withStretchMode(stretchMode);
         return this;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public H264Video withSyncMode(VideoSyncMode syncMode) {
         super.withSyncMode(syncMode);
         return this;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public H264Video withLabel(String label) {
         super.withLabel(label);
@@ -140,14 +184,76 @@ public class H264Video extends Video {
 
     /**
      * Validates the instance.
-     *
+     * 
      * @throws IllegalArgumentException thrown if the instance is not valid.
      */
     @Override
     public void validate() {
-        super.validate();
         if (layers() != null) {
             layers().forEach(e -> e.validate());
         }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public JsonWriter toJson(JsonWriter jsonWriter) throws IOException {
+        jsonWriter.writeStartObject();
+        jsonWriter.writeStringField("label", label());
+        jsonWriter.writeStringField("keyFrameInterval", CoreUtils.durationToStringWithDays(keyFrameInterval()));
+        jsonWriter.writeStringField("stretchMode", stretchMode() == null ? null : stretchMode().toString());
+        jsonWriter.writeStringField("syncMode", syncMode() == null ? null : syncMode().toString());
+        jsonWriter.writeStringField("@odata.type", this.odataType);
+        jsonWriter.writeStringField("complexity", this.complexity == null ? null : this.complexity.toString());
+        jsonWriter.writeArrayField("layers", this.layers, (writer, element) -> writer.writeJson(element));
+        jsonWriter.writeStringField("rateControlMode",
+            this.rateControlMode == null ? null : this.rateControlMode.toString());
+        jsonWriter.writeBooleanField("sceneChangeDetection", this.sceneChangeDetection);
+        return jsonWriter.writeEndObject();
+    }
+
+    /**
+     * Reads an instance of H264Video from the JsonReader.
+     * 
+     * @param jsonReader The JsonReader being read.
+     * @return An instance of H264Video if the JsonReader was pointing to an instance of it, or null if it was pointing
+     * to JSON null.
+     * @throws IOException If an error occurs while reading the H264Video.
+     */
+    public static H264Video fromJson(JsonReader jsonReader) throws IOException {
+        return jsonReader.readObject(reader -> {
+            H264Video deserializedH264Video = new H264Video();
+            while (reader.nextToken() != JsonToken.END_OBJECT) {
+                String fieldName = reader.getFieldName();
+                reader.nextToken();
+
+                if ("label".equals(fieldName)) {
+                    deserializedH264Video.withLabel(reader.getString());
+                } else if ("keyFrameInterval".equals(fieldName)) {
+                    deserializedH264Video.withKeyFrameInterval(
+                        reader.getNullable(nonNullReader -> Duration.parse(nonNullReader.getString())));
+                } else if ("stretchMode".equals(fieldName)) {
+                    deserializedH264Video.withStretchMode(StretchMode.fromString(reader.getString()));
+                } else if ("syncMode".equals(fieldName)) {
+                    deserializedH264Video.withSyncMode(VideoSyncMode.fromString(reader.getString()));
+                } else if ("@odata.type".equals(fieldName)) {
+                    deserializedH264Video.odataType = reader.getString();
+                } else if ("complexity".equals(fieldName)) {
+                    deserializedH264Video.complexity = H264Complexity.fromString(reader.getString());
+                } else if ("layers".equals(fieldName)) {
+                    List<H264Layer> layers = reader.readArray(reader1 -> H264Layer.fromJson(reader1));
+                    deserializedH264Video.layers = layers;
+                } else if ("rateControlMode".equals(fieldName)) {
+                    deserializedH264Video.rateControlMode = H264RateControlMode.fromString(reader.getString());
+                } else if ("sceneChangeDetection".equals(fieldName)) {
+                    deserializedH264Video.sceneChangeDetection = reader.getNullable(JsonReader::getBoolean);
+                } else {
+                    reader.skipChildren();
+                }
+            }
+
+            return deserializedH264Video;
+        });
     }
 }

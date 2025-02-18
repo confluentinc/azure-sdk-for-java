@@ -9,14 +9,36 @@ import com.azure.core.annotation.ServiceMethod;
 import com.azure.core.http.rest.Response;
 import com.azure.core.util.Context;
 
-/** An instance of this class provides access to all the operations defined in BackupOperationResultsClient. */
+/**
+ * An instance of this class provides access to all the operations defined in BackupOperationResultsClient.
+ */
 public interface BackupOperationResultsClient {
     /**
      * Provides the status of the delete operations such as deleting backed up item. Once the operation has started, the
      * status code in the response would be Accepted. It will continue to be in this state till it reaches completion.
-     * On successful completion, the status code will be OK. This method expects OperationID as an argument. OperationID
-     * is part of the Location header of the operation response.
-     *
+     * On
+     * successful completion, the status code will be OK. This method expects OperationID as an argument. OperationID is
+     * part of the Location header of the operation response.
+     * 
+     * @param vaultName The name of the recovery services vault.
+     * @param resourceGroupName The name of the resource group where the recovery services vault is present.
+     * @param operationId OperationID which represents the operation.
+     * @param context The context to associate with this operation.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return the {@link Response}.
+     */
+    @ServiceMethod(returns = ReturnType.SINGLE)
+    Response<Void> getWithResponse(String vaultName, String resourceGroupName, String operationId, Context context);
+
+    /**
+     * Provides the status of the delete operations such as deleting backed up item. Once the operation has started, the
+     * status code in the response would be Accepted. It will continue to be in this state till it reaches completion.
+     * On
+     * successful completion, the status code will be OK. This method expects OperationID as an argument. OperationID is
+     * part of the Location header of the operation response.
+     * 
      * @param vaultName The name of the recovery services vault.
      * @param resourceGroupName The name of the resource group where the recovery services vault is present.
      * @param operationId OperationID which represents the operation.
@@ -26,22 +48,4 @@ public interface BackupOperationResultsClient {
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
     void get(String vaultName, String resourceGroupName, String operationId);
-
-    /**
-     * Provides the status of the delete operations such as deleting backed up item. Once the operation has started, the
-     * status code in the response would be Accepted. It will continue to be in this state till it reaches completion.
-     * On successful completion, the status code will be OK. This method expects OperationID as an argument. OperationID
-     * is part of the Location header of the operation response.
-     *
-     * @param vaultName The name of the recovery services vault.
-     * @param resourceGroupName The name of the resource group where the recovery services vault is present.
-     * @param operationId OperationID which represents the operation.
-     * @param context The context to associate with this operation.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the response.
-     */
-    @ServiceMethod(returns = ReturnType.SINGLE)
-    Response<Void> getWithResponse(String vaultName, String resourceGroupName, String operationId, Context context);
 }

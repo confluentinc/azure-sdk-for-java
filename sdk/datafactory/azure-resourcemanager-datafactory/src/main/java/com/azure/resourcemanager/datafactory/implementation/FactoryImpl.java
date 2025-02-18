@@ -18,6 +18,7 @@ import com.azure.resourcemanager.datafactory.models.GitHubAccessTokenRequest;
 import com.azure.resourcemanager.datafactory.models.GitHubAccessTokenResponse;
 import com.azure.resourcemanager.datafactory.models.GlobalParameterSpecification;
 import com.azure.resourcemanager.datafactory.models.PublicNetworkAccess;
+import com.azure.resourcemanager.datafactory.models.PurviewConfiguration;
 import com.azure.resourcemanager.datafactory.models.UserAccessPolicy;
 import java.time.OffsetDateTime;
 import java.util.Collections;
@@ -82,6 +83,10 @@ public final class FactoryImpl implements Factory, Factory.Definition, Factory.U
         return this.innerModel().version();
     }
 
+    public PurviewConfiguration purviewConfiguration() {
+        return this.innerModel().purviewConfiguration();
+    }
+
     public FactoryRepoConfiguration repoConfiguration() {
         return this.innerModel().repoConfiguration();
     }
@@ -111,6 +116,10 @@ public final class FactoryImpl implements Factory, Factory.Definition, Factory.U
         return this.location();
     }
 
+    public String resourceGroupName() {
+        return resourceGroupName;
+    }
+
     public FactoryInner innerModel() {
         return this.innerObject;
     }
@@ -133,23 +142,18 @@ public final class FactoryImpl implements Factory, Factory.Definition, Factory.U
     }
 
     public Factory create() {
-        this.innerObject =
-            serviceManager
-                .serviceClient()
-                .getFactories()
-                .createOrUpdateWithResponse(
-                    resourceGroupName, factoryName, this.innerModel(), createIfMatch, Context.NONE)
-                .getValue();
+        this.innerObject = serviceManager.serviceClient()
+            .getFactories()
+            .createOrUpdateWithResponse(resourceGroupName, factoryName, this.innerModel(), createIfMatch, Context.NONE)
+            .getValue();
         return this;
     }
 
     public Factory create(Context context) {
-        this.innerObject =
-            serviceManager
-                .serviceClient()
-                .getFactories()
-                .createOrUpdateWithResponse(resourceGroupName, factoryName, this.innerModel(), createIfMatch, context)
-                .getValue();
+        this.innerObject = serviceManager.serviceClient()
+            .getFactories()
+            .createOrUpdateWithResponse(resourceGroupName, factoryName, this.innerModel(), createIfMatch, context)
+            .getValue();
         return this;
     }
 
@@ -166,75 +170,64 @@ public final class FactoryImpl implements Factory, Factory.Definition, Factory.U
     }
 
     public Factory apply() {
-        this.innerObject =
-            serviceManager
-                .serviceClient()
-                .getFactories()
-                .updateWithResponse(resourceGroupName, factoryName, updateFactoryUpdateParameters, Context.NONE)
-                .getValue();
+        this.innerObject = serviceManager.serviceClient()
+            .getFactories()
+            .updateWithResponse(resourceGroupName, factoryName, updateFactoryUpdateParameters, Context.NONE)
+            .getValue();
         return this;
     }
 
     public Factory apply(Context context) {
-        this.innerObject =
-            serviceManager
-                .serviceClient()
-                .getFactories()
-                .updateWithResponse(resourceGroupName, factoryName, updateFactoryUpdateParameters, context)
-                .getValue();
+        this.innerObject = serviceManager.serviceClient()
+            .getFactories()
+            .updateWithResponse(resourceGroupName, factoryName, updateFactoryUpdateParameters, context)
+            .getValue();
         return this;
     }
 
     FactoryImpl(FactoryInner innerObject, com.azure.resourcemanager.datafactory.DataFactoryManager serviceManager) {
         this.innerObject = innerObject;
         this.serviceManager = serviceManager;
-        this.resourceGroupName = Utils.getValueFromIdByName(innerObject.id(), "resourceGroups");
-        this.factoryName = Utils.getValueFromIdByName(innerObject.id(), "factories");
+        this.resourceGroupName = ResourceManagerUtils.getValueFromIdByName(innerObject.id(), "resourceGroups");
+        this.factoryName = ResourceManagerUtils.getValueFromIdByName(innerObject.id(), "factories");
     }
 
     public Factory refresh() {
         String localIfNoneMatch = null;
-        this.innerObject =
-            serviceManager
-                .serviceClient()
-                .getFactories()
-                .getByResourceGroupWithResponse(resourceGroupName, factoryName, localIfNoneMatch, Context.NONE)
-                .getValue();
+        this.innerObject = serviceManager.serviceClient()
+            .getFactories()
+            .getByResourceGroupWithResponse(resourceGroupName, factoryName, localIfNoneMatch, Context.NONE)
+            .getValue();
         return this;
     }
 
     public Factory refresh(Context context) {
         String localIfNoneMatch = null;
-        this.innerObject =
-            serviceManager
-                .serviceClient()
-                .getFactories()
-                .getByResourceGroupWithResponse(resourceGroupName, factoryName, localIfNoneMatch, context)
-                .getValue();
+        this.innerObject = serviceManager.serviceClient()
+            .getFactories()
+            .getByResourceGroupWithResponse(resourceGroupName, factoryName, localIfNoneMatch, context)
+            .getValue();
         return this;
     }
 
+    public Response<GitHubAccessTokenResponse>
+        getGitHubAccessTokenWithResponse(GitHubAccessTokenRequest gitHubAccessTokenRequest, Context context) {
+        return serviceManager.factories()
+            .getGitHubAccessTokenWithResponse(resourceGroupName, factoryName, gitHubAccessTokenRequest, context);
+    }
+
     public GitHubAccessTokenResponse getGitHubAccessToken(GitHubAccessTokenRequest gitHubAccessTokenRequest) {
-        return serviceManager
-            .factories()
+        return serviceManager.factories()
             .getGitHubAccessToken(resourceGroupName, factoryName, gitHubAccessTokenRequest);
     }
 
-    public Response<GitHubAccessTokenResponse> getGitHubAccessTokenWithResponse(
-        GitHubAccessTokenRequest gitHubAccessTokenRequest, Context context) {
-        return serviceManager
-            .factories()
-            .getGitHubAccessTokenWithResponse(resourceGroupName, factoryName, gitHubAccessTokenRequest, context);
+    public Response<AccessPolicyResponse> getDataPlaneAccessWithResponse(UserAccessPolicy policy, Context context) {
+        return serviceManager.factories()
+            .getDataPlaneAccessWithResponse(resourceGroupName, factoryName, policy, context);
     }
 
     public AccessPolicyResponse getDataPlaneAccess(UserAccessPolicy policy) {
         return serviceManager.factories().getDataPlaneAccess(resourceGroupName, factoryName, policy);
-    }
-
-    public Response<AccessPolicyResponse> getDataPlaneAccessWithResponse(UserAccessPolicy policy, Context context) {
-        return serviceManager
-            .factories()
-            .getDataPlaneAccessWithResponse(resourceGroupName, factoryName, policy, context);
     }
 
     public FactoryImpl withRegion(Region location) {
@@ -269,6 +262,11 @@ public final class FactoryImpl implements Factory, Factory.Definition, Factory.U
 
     public FactoryImpl withAdditionalProperties(Map<String, Object> additionalProperties) {
         this.innerModel().withAdditionalProperties(additionalProperties);
+        return this;
+    }
+
+    public FactoryImpl withPurviewConfiguration(PurviewConfiguration purviewConfiguration) {
+        this.innerModel().withPurviewConfiguration(purviewConfiguration);
         return this;
     }
 

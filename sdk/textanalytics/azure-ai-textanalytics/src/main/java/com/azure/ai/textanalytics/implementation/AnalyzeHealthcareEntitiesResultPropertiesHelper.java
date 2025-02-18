@@ -3,8 +3,8 @@
 
 package com.azure.ai.textanalytics.implementation;
 
-import com.azure.ai.textanalytics.models.HealthcareEntity;
 import com.azure.ai.textanalytics.models.AnalyzeHealthcareEntitiesResult;
+import com.azure.ai.textanalytics.models.HealthcareEntity;
 import com.azure.ai.textanalytics.models.HealthcareEntityRelation;
 import com.azure.ai.textanalytics.models.TextAnalyticsWarning;
 import com.azure.core.util.IterableStream;
@@ -15,7 +15,8 @@ import com.azure.core.util.IterableStream;
 public final class AnalyzeHealthcareEntitiesResultPropertiesHelper {
     private static AnalyzeHealthcareEntitiesResultAccessor accessor;
 
-    private AnalyzeHealthcareEntitiesResultPropertiesHelper() { }
+    private AnalyzeHealthcareEntitiesResultPropertiesHelper() {
+    }
 
     /**
      * Type defining the methods to set the non-public properties of an {@link AnalyzeHealthcareEntitiesResult}
@@ -23,8 +24,9 @@ public final class AnalyzeHealthcareEntitiesResultPropertiesHelper {
      */
     public interface AnalyzeHealthcareEntitiesResultAccessor {
         void setEntities(AnalyzeHealthcareEntitiesResult entitiesResult, IterableStream<HealthcareEntity> entities);
-        void setWarnings(AnalyzeHealthcareEntitiesResult entitiesResult,
-            IterableStream<TextAnalyticsWarning> warnings);
+
+        void setWarnings(AnalyzeHealthcareEntitiesResult entitiesResult, IterableStream<TextAnalyticsWarning> warnings);
+
         void setEntityRelations(AnalyzeHealthcareEntitiesResult entitiesResult,
             IterableStream<HealthcareEntityRelation> entityRelations);
     }
@@ -34,8 +36,8 @@ public final class AnalyzeHealthcareEntitiesResultPropertiesHelper {
      *
      * @param analyzeHealthcareEntitiesResultAccessor The accessor.
      */
-    public static void setAccessor(
-        final AnalyzeHealthcareEntitiesResultAccessor analyzeHealthcareEntitiesResultAccessor) {
+    public static void
+        setAccessor(final AnalyzeHealthcareEntitiesResultAccessor analyzeHealthcareEntitiesResultAccessor) {
         accessor = analyzeHealthcareEntitiesResultAccessor;
     }
 

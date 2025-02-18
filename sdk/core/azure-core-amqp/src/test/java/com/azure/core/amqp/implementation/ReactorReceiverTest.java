@@ -14,6 +14,10 @@ import com.azure.core.amqp.exception.AmqpErrorContext;
 import com.azure.core.amqp.exception.AmqpException;
 import com.azure.core.amqp.exception.AmqpResponseCode;
 import com.azure.core.amqp.implementation.handler.ReceiveLinkHandler;
+import com.azure.core.test.utils.metrics.TestGauge;
+import com.azure.core.test.utils.metrics.TestMeasurement;
+import com.azure.core.test.utils.metrics.TestMeter;
+import com.azure.core.util.Context;
 import org.apache.qpid.proton.amqp.Symbol;
 import org.apache.qpid.proton.amqp.messaging.Source;
 import org.apache.qpid.proton.amqp.transport.ErrorCondition;
@@ -35,14 +39,20 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import reactor.core.publisher.Mono;
+import reactor.core.scheduler.Scheduler;
+import reactor.core.scheduler.Schedulers;
 import reactor.test.StepVerifier;
 import reactor.test.publisher.TestPublisher;
 
 import java.io.IOException;
 import java.time.Duration;
+import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.RejectedExecutionException;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Supplier;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -102,15 +112,16 @@ class ReactorReceiverTest {
         when(reactor.attachments()).thenReturn(record);
 
         final String entityPath = "test-entity-path";
-        receiverHandler = new ReceiveLinkHandler("test-connection-id", "test-host",
-            "test-receiver-name", entityPath);
+        receiverHandler = new ReceiveLinkHandler("test-connection-id", "test-host", "test-receiver-name", entityPath,
+            AmqpMetricsProvider.noop());
 
         when(tokenManager.getAuthorizationResults()).thenReturn(authorizationResults.flux());
 
         when(amqpConnection.getShutdownSignals()).thenReturn(shutdownSignals.flux());
 
-        reactorReceiver = new ReactorReceiver(amqpConnection, entityPath, receiver, receiverHandler, tokenManager,
-            reactorDispatcher, retryOptions);
+        reactorReceiver
+            = new ReactorReceiver(amqpConnection, entityPath, receiver, new ReceiveLinkHandlerWrapper(receiverHandler),
+                tokenManager, reactorDispatcher, retryOptions, AmqpMetricsProvider.noop());
     }
 
     @AfterEach
@@ -138,9 +149,7 @@ class ReactorReceiverTest {
             return null;
         }).when(reactorDispatcher).invoke(any(Runnable.class));
 
-        StepVerifier.create(reactorReceiver.addCredits(credits))
-            .expectComplete()
-            .verify(VERIFY_TIMEOUT);
+        StepVerifier.create(reactorReceiver.addCredits(credits)).expectComplete().verify(VERIFY_TIMEOUT);
 
         // Assert
         verify(receiver).flow(credits);
@@ -191,7 +200,6 @@ class ReactorReceiverTest {
             .verify(VERIFY_TIMEOUT);
     }
 
-
     /**
      * Verifies EndpointStates are propagated.
      */
@@ -200,8 +208,8 @@ class ReactorReceiverTest {
         final Event closeEvent = mock(Event.class);
         final Receiver closeReceiver = mock(Receiver.class);
         final AmqpErrorCondition condition = AmqpErrorCondition.CONNECTION_FORCED;
-        final ErrorCondition errorCondition = new ErrorCondition(
-            Symbol.valueOf(condition.getErrorCondition()), "Forced error condition");
+        final ErrorCondition errorCondition
+            = new ErrorCondition(Symbol.valueOf(condition.getErrorCondition()), "Forced error condition");
         when(closeEvent.getLink()).thenReturn(closeReceiver);
         when(closeEvent.getReceiver()).thenReturn(closeReceiver);
 
@@ -233,8 +241,7 @@ class ReactorReceiverTest {
         // Arrange
         final Link link = mock(Link.class);
         final Session session = mock(Session.class);
-        final Symbol symbol = Symbol.getSymbol(
-            AmqpErrorCondition.UNAUTHORIZED_ACCESS.getErrorCondition());
+        final Symbol symbol = Symbol.getSymbol(AmqpErrorCondition.UNAUTHORIZED_ACCESS.getErrorCondition());
         final String description = "test-symbol-description";
         final ErrorCondition condition = new ErrorCondition(symbol, description);
         final ArgumentCaptor<ErrorCondition> captor = ArgumentCaptor.forClass(ErrorCondition.class);
@@ -264,8 +271,7 @@ class ReactorReceiverTest {
         // Arrange
         final Link link = mock(Link.class);
         final Session session = mock(Session.class);
-        final Symbol symbol = Symbol.getSymbol(
-            AmqpErrorCondition.NOT_IMPLEMENTED.getErrorCondition());
+        final Symbol symbol = Symbol.getSymbol(AmqpErrorCondition.NOT_IMPLEMENTED.getErrorCondition());
         final String description = "test-symbol-not implemented";
         final ErrorCondition condition = new ErrorCondition(symbol, description);
 
@@ -284,11 +290,102 @@ class ReactorReceiverTest {
     void addsMoreCreditsWhenPrefetchIsDone() throws IOException {
         // Arrange
         // This message was copied from one that was received.
-        final byte[] messageBytes = new byte[] { 0, 83, 114, -63, 73, 6, -93, 21, 120, 45, 111, 112, 116, 45, 115, 101,
-            113, 117, 101, 110, 99, 101, 45, 110, 117, 109, 98, 101, 114, 85, 0, -93, 12, 120, 45, 111, 112, 116, 45,
-            111, 102, 102, 115, 101, 116, -95, 1, 48, -93, 19, 120, 45, 111, 112, 116, 45, 101, 110, 113, 117, 101, 117,
-            101, 100, 45, 116, 105, 109, 101, -125, 0, 0, 1, 112, -54, 124, -41, 90, 0, 83, 117, -96, 12, 80, 111, 115,
-            105, 116, 105, 111, 110, 53, 58, 32, 48};
+        final byte[] messageBytes = new byte[] {
+            0,
+            83,
+            114,
+            -63,
+            73,
+            6,
+            -93,
+            21,
+            120,
+            45,
+            111,
+            112,
+            116,
+            45,
+            115,
+            101,
+            113,
+            117,
+            101,
+            110,
+            99,
+            101,
+            45,
+            110,
+            117,
+            109,
+            98,
+            101,
+            114,
+            85,
+            0,
+            -93,
+            12,
+            120,
+            45,
+            111,
+            112,
+            116,
+            45,
+            111,
+            102,
+            102,
+            115,
+            101,
+            116,
+            -95,
+            1,
+            48,
+            -93,
+            19,
+            120,
+            45,
+            111,
+            112,
+            116,
+            45,
+            101,
+            110,
+            113,
+            117,
+            101,
+            117,
+            101,
+            100,
+            45,
+            116,
+            105,
+            109,
+            101,
+            -125,
+            0,
+            0,
+            1,
+            112,
+            -54,
+            124,
+            -41,
+            90,
+            0,
+            83,
+            117,
+            -96,
+            12,
+            80,
+            111,
+            115,
+            105,
+            116,
+            105,
+            111,
+            110,
+            53,
+            58,
+            32,
+            48 };
         final Link link = mock(Link.class);
         final Delivery delivery = mock(Delivery.class);
 
@@ -332,8 +429,10 @@ class ReactorReceiverTest {
 
                 final Map<Symbol, Object> values = message.getMessageAnnotations().getValue();
                 assertTrue(values.containsKey(Symbol.getSymbol(AmqpMessageConstant.OFFSET_ANNOTATION_NAME.getValue())));
-                assertTrue(values.containsKey(Symbol.getSymbol(AmqpMessageConstant.SEQUENCE_NUMBER_ANNOTATION_NAME.getValue())));
-                assertTrue(values.containsKey(Symbol.getSymbol(AmqpMessageConstant.ENQUEUED_TIME_UTC_ANNOTATION_NAME.getValue())));
+                assertTrue(values
+                    .containsKey(Symbol.getSymbol(AmqpMessageConstant.SEQUENCE_NUMBER_ANNOTATION_NAME.getValue())));
+                assertTrue(values
+                    .containsKey(Symbol.getSymbol(AmqpMessageConstant.ENQUEUED_TIME_UTC_ANNOTATION_NAME.getValue())));
             })
             .thenCancel()
             .verify(VERIFY_TIMEOUT);
@@ -349,8 +448,7 @@ class ReactorReceiverTest {
     @Test
     void parentDisposesConnection() throws IOException {
         // Arrange
-        final AmqpShutdownSignal shutdownSignal = new AmqpShutdownSignal(false, false,
-            "Test-shutdown-signal");
+        final AmqpShutdownSignal shutdownSignal = new AmqpShutdownSignal(false, false, "Test-shutdown-signal");
         final Event event = mock(Event.class);
         final Link link = mock(Link.class);
 
@@ -422,7 +520,7 @@ class ReactorReceiverTest {
     }
 
     /**
-     * An error in the handler will also close the sender.
+     * An error in the handler will also close the receiver.
      */
     @Test
     void disposesOnHandlerError() {
@@ -430,8 +528,8 @@ class ReactorReceiverTest {
         final AmqpErrorCondition amqpErrorCondition = AmqpErrorCondition.CONNECTION_FRAMING_ERROR;
         final Event event = mock(Event.class);
         final Link link = mock(Link.class);
-        final ErrorCondition errorCondition = new ErrorCondition(
-            Symbol.getSymbol(amqpErrorCondition.getErrorCondition()), "Test error condition");
+        final ErrorCondition errorCondition
+            = new ErrorCondition(Symbol.getSymbol(amqpErrorCondition.getErrorCondition()), "Test error condition");
 
         when(link.getLocalState()).thenReturn(EndpointState.ACTIVE);
         when(link.getRemoteCondition()).thenReturn(errorCondition);
@@ -452,7 +550,7 @@ class ReactorReceiverTest {
     }
 
     /**
-     * A complete in the handler will also close the sender.
+     * A complete in the handler will also close the receiver.
      */
     @Test
     void disposesOnHandlerComplete() {
@@ -510,18 +608,107 @@ class ReactorReceiverTest {
         // Arrange
         final String message = "some-message";
         final AmqpErrorCondition errorCondition = AmqpErrorCondition.UNAUTHORIZED_ACCESS;
-        final ErrorCondition condition = new ErrorCondition(Symbol.getSymbol(errorCondition.getErrorCondition()),
-            "Test-users");
+        final ErrorCondition condition
+            = new ErrorCondition(Symbol.getSymbol(errorCondition.getErrorCondition()), "Test-users");
         final Event event = mock(Event.class);
 
         when(receiver.getLocalState()).thenReturn(EndpointState.ACTIVE, EndpointState.CLOSED);
 
         when(event.getLink()).thenReturn(receiver);
 
+        doAnswer(invocation -> {
+            // The ReactorDispatcher running localClose() work scheduled by beginClose(...).
+            final Runnable work = invocation.getArgument(0);
+            work.run();
+            return null;
+        }).when(reactorDispatcher).invoke(any(Runnable.class));
+
         doAnswer(invocationOnMock -> {
+            // The localClose() initiated local-close via receiver.close(), here we mock scenario where
+            // broker responded with remote-close ack for the local-close.
             receiverHandler.onLinkRemoteClose(event);
             return null;
         }).when(receiver).close();
+
+        // Act
+        StepVerifier.create(reactorReceiver.closeAsync(message, condition)).expectComplete().verify(VERIFY_TIMEOUT);
+
+        // Expect the same outcome.
+        StepVerifier.create(reactorReceiver.closeAsync("something", null)).expectComplete().verify(VERIFY_TIMEOUT);
+
+        StepVerifier.create(reactorReceiver.closeAsync()).expectComplete().verify(VERIFY_TIMEOUT);
+
+        // Assert
+        StepVerifier.create(reactorReceiver.getEndpointStates())
+            .expectNext(AmqpEndpointState.CLOSED)
+            .expectComplete()
+            .verify(VERIFY_TIMEOUT);
+
+        assertTrue(reactorReceiver.isDisposed());
+
+        verify(receiver).setCondition(condition);
+        verify(receiver).close();
+
+        shutdownSignals.assertNoSubscribers();
+    }
+
+    /**
+     * Tests the completion of {@link ReactorReceiver#getEndpointStates()}
+     * when {@link ReactorDispatcher} reject client initiated local-close.
+     */
+    @Test
+    void endpointStatesCompleteOnScheduleLocalCloseRejection() throws IOException {
+        // Arrange
+        final String message = "some-message";
+        final AmqpErrorCondition errorCondition = AmqpErrorCondition.UNAUTHORIZED_ACCESS;
+        final ErrorCondition condition
+            = new ErrorCondition(Symbol.getSymbol(errorCondition.getErrorCondition()), "Test-users");
+
+        when(receiver.getLocalState()).thenReturn(EndpointState.ACTIVE);
+
+        doAnswer(invocation -> {
+            final Runnable work = invocation.getArgument(0);
+            // The localClose() work from beginClose(), but dispatcher rejected it.
+            throw new RejectedExecutionException("local-close scheduling rejected");
+        }).when(reactorDispatcher).invoke(any(Runnable.class));
+
+        // Act
+        StepVerifier.create(reactorReceiver.closeAsync(message, condition)).expectComplete().verify(VERIFY_TIMEOUT);
+
+        // Assert
+        StepVerifier.create(reactorReceiver.getEndpointStates())
+            // Assert endpoint state completes if localClose() scheduling was rejected.
+            .expectComplete()
+            .verify(VERIFY_TIMEOUT);
+
+        assertTrue(reactorReceiver.isDisposed());
+
+        shutdownSignals.assertNoSubscribers();
+    }
+
+    /**
+     * Tests the completion of {@link ReactorReceiver#getEndpointStates()} if closeAsync.subscribe happen
+     * from (ProtonJ) EventLoop single-thread, where the same EventLoop single-thread is responsible
+     * for remote-close ack notification.
+     */
+    @Test
+    void endpointStatesCompleteWhenCloseFromEventLoopThread() throws IOException, InterruptedException {
+        // Arrange
+
+        /* A single threaded scheduler mimicking ProtonJ Reactor EventLoop Thread. */
+        final Scheduler eventLoopScheduler = Schedulers.newSingle("mock-reactor-executor");
+
+        final AtomicReference<StepVerifier> closeAsyncVerifier = new AtomicReference<>();
+        final CountDownLatch latch = new CountDownLatch(1);
+
+        final String message = "some-message";
+        final AmqpErrorCondition errorCondition = AmqpErrorCondition.UNAUTHORIZED_ACCESS;
+        final ErrorCondition condition
+            = new ErrorCondition(Symbol.getSymbol(errorCondition.getErrorCondition()), "Test-users");
+
+        when(receiver.getLocalState()).thenReturn(EndpointState.ACTIVE, EndpointState.CLOSED);
+
+        // Act
 
         doAnswer(invocation -> {
             final Runnable work = invocation.getArgument(0);
@@ -529,27 +716,36 @@ class ReactorReceiverTest {
             return null;
         }).when(reactorDispatcher).invoke(any(Runnable.class));
 
-        // Act
-        StepVerifier.create(reactorReceiver.closeAsync(message, condition))
-            .expectComplete()
-            .verify(VERIFY_TIMEOUT);
+        doAnswer(invocationOnMock -> {
+            eventLoopScheduler.schedule(() -> {
+                // mimicking broker's remote-close ack from event-loop single-thread.
+                receiverHandler.onLinkRemoteClose(event);
+            });
+            return null;
+        }).when(receiver).close();
 
-        // Expect the same outcome.
-        StepVerifier.create(reactorReceiver.closeAsync("something", null))
-            .expectComplete()
-            .verify(VERIFY_TIMEOUT);
+        eventLoopScheduler.schedule(() -> {
+            // mimicking closeAsync.subscribe() from event-loop single-thread.
+            StepVerifier stepVerifier
+                = StepVerifier.create(reactorReceiver.closeAsync(message, condition)).expectComplete().verifyLater();
 
-        StepVerifier.create(reactorReceiver.closeAsync())
-            .expectComplete()
-            .verify(VERIFY_TIMEOUT);
+            closeAsyncVerifier.set(stepVerifier);
+            latch.countDown();
+        });
 
-        // Assert
-        assertTrue(reactorReceiver.isDisposed());
+        try {
+            latch.await(VERIFY_TIMEOUT.toMillis(), TimeUnit.MILLISECONDS);
 
-        verify(receiver).setCondition(condition);
-        verify(receiver).close();
+            // Assert
+            closeAsyncVerifier.get().verify(VERIFY_TIMEOUT);
 
-        shutdownSignals.assertNoSubscribers();
+            StepVerifier.create(reactorReceiver.getEndpointStates())
+                .expectNext(AmqpEndpointState.CLOSED)
+                .expectComplete()
+                .verify(VERIFY_TIMEOUT);
+        } finally {
+            eventLoopScheduler.dispose();
+        }
     }
 
     /**
@@ -580,9 +776,7 @@ class ReactorReceiverTest {
         reactorReceiver.dispose();
 
         // Assert
-        StepVerifier.create(reactorReceiver.closeAsync())
-            .expectComplete()
-            .verify(VERIFY_TIMEOUT);
+        StepVerifier.create(reactorReceiver.closeAsync()).expectComplete().verify(VERIFY_TIMEOUT);
 
         assertTrue(reactorReceiver.isDisposed());
 
@@ -642,5 +836,178 @@ class ReactorReceiverTest {
             .then(authorizationResults::complete)
             .expectComplete()
             .verify(VERIFY_TIMEOUT);
+    }
+
+    @Test
+    void receiveMetricsAreReportedWithMessageIsReceived() throws IOException {
+        // Arrange
+        // This message was copied from one that was received.
+        final byte[] messageBytes = new byte[] {
+            0,
+            83,
+            114,
+            -63,
+            73,
+            6,
+            -93,
+            21,
+            120,
+            45,
+            111,
+            112,
+            116,
+            45,
+            115,
+            101,
+            113,
+            117,
+            101,
+            110,
+            99,
+            101,
+            45,
+            110,
+            117,
+            109,
+            98,
+            101,
+            114,
+            84,
+            42,
+            -93,
+            12,
+            120,
+            45,
+            111,
+            112,
+            116,
+            45,
+            111,
+            102,
+            102,
+            115,
+            101,
+            116,
+            -95,
+            1,
+            48,
+            -93,
+            19,
+            120,
+            45,
+            111,
+            112,
+            116,
+            45,
+            101,
+            110,
+            113,
+            117,
+            101,
+            117,
+            101,
+            100,
+            45,
+            116,
+            105,
+            109,
+            101,
+            -125,
+            0,
+            0,
+            1,
+            112,
+            -54,
+            124,
+            -41,
+            90,
+            0,
+            83,
+            117,
+            -96,
+            12,
+            80,
+            111,
+            115,
+            105,
+            116,
+            105,
+            111,
+            110,
+            53,
+            58,
+            32,
+            48 };
+
+        // change if changing message above
+        long sequenceNumber = 42;
+
+        final Link link = mock(Link.class);
+        final Delivery delivery = mock(Delivery.class);
+
+        when(event.getLink()).thenReturn(link);
+        when(event.getDelivery()).thenReturn(delivery);
+
+        when(delivery.getLink()).thenReturn(receiver);
+        when(delivery.isPartial()).thenReturn(false);
+        when(delivery.isSettled()).thenReturn(false);
+        when(delivery.pending()).thenReturn(messageBytes.length);
+
+        when(receiver.getRemoteCredit()).thenReturn(0);
+        when(receiver.recv(any(), eq(0), eq(messageBytes.length))).thenAnswer(invocation -> {
+            final byte[] buffer = invocation.getArgument(0);
+            System.arraycopy(messageBytes, 0, buffer, 0, messageBytes.length);
+            return messageBytes.length;
+        });
+
+        final int creditsToAdd = 10;
+
+        doAnswer(invocation -> {
+            final Runnable work = invocation.getArgument(0);
+            work.run();
+            return null;
+        }).when(reactorDispatcher).invoke(any(Runnable.class));
+
+        when(creditSupplier.get()).thenReturn(creditsToAdd);
+
+        TestMeter meter = new TestMeter();
+        AmqpMetricsProvider metricsProvider = new AmqpMetricsProvider(meter, "namespace", "name/and/partition");
+        ReactorReceiver reactorReceiverWithMetrics = new ReactorReceiver(amqpConnection, "name/and/partition", receiver,
+            new ReceiveLinkHandlerWrapper(receiverHandler), tokenManager, reactorDispatcher, retryOptions,
+            metricsProvider);
+
+        TestGauge sequenceNumberMetric = meter.getGauges().get("messaging.az.amqp.prefetch.sequence_number");
+        TestGauge.Subscription subscription = sequenceNumberMetric.getSubscriptions().get(0);
+
+        reactorReceiverWithMetrics.setEmptyCreditListener(creditSupplier);
+
+        doAnswer(invocationOnMock -> {
+            final Runnable work = invocationOnMock.getArgument(0);
+            work.run();
+            return null;
+        }).when(reactorDispatcher).invoke(any(Runnable.class));
+
+        // Act & Assert
+        StepVerifier.create(reactorReceiverWithMetrics.receive())
+            .then(() -> receiverHandler.onDelivery(event))
+            .thenCancel()
+            .verify(VERIFY_TIMEOUT);
+
+        // Assert
+        subscription.measure();
+        List<TestMeasurement<Long>> seqNumbers = subscription.getMeasurements();
+        assertEquals(1, seqNumbers.size());
+        TestMeasurement<Long> measurement = seqNumbers.get(0);
+        assertEquals(sequenceNumber, measurement.getValue());
+        assertEquals(Context.NONE, measurement.getContext());
+        assertEquals("namespace", measurement.getAttributes().get(ClientConstants.HOSTNAME_KEY));
+        assertEquals("name", measurement.getAttributes().get(ClientConstants.ENTITY_NAME_KEY));
+        assertEquals("name/and/partition", measurement.getAttributes().get(ClientConstants.ENTITY_PATH_KEY));
+
+        List<TestMeasurement<Long>> requestedCredits
+            = meter.getCounters().get("messaging.az.amqp.consumer.credits.requested").getMeasurements();
+        assertEquals(1, requestedCredits.size());
+        TestMeasurement<Long> measurement2 = requestedCredits.get(0);
+        assertEquals(creditsToAdd, measurement2.getValue());
     }
 }

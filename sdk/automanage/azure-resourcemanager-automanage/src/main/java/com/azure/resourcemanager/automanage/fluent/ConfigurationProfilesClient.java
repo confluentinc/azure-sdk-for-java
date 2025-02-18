@@ -12,26 +12,13 @@ import com.azure.core.util.Context;
 import com.azure.resourcemanager.automanage.fluent.models.ConfigurationProfileInner;
 import com.azure.resourcemanager.automanage.models.ConfigurationProfileUpdate;
 
-/** An instance of this class provides access to all the operations defined in ConfigurationProfilesClient. */
+/**
+ * An instance of this class provides access to all the operations defined in ConfigurationProfilesClient.
+ */
 public interface ConfigurationProfilesClient {
     /**
      * Creates a configuration profile.
-     *
-     * @param configurationProfileName Name of the configuration profile.
-     * @param resourceGroupName The name of the resource group. The name is case insensitive.
-     * @param parameters Parameters supplied to create or update configuration profile.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return definition of the configuration profile.
-     */
-    @ServiceMethod(returns = ReturnType.SINGLE)
-    ConfigurationProfileInner createOrUpdate(
-        String configurationProfileName, String resourceGroupName, ConfigurationProfileInner parameters);
-
-    /**
-     * Creates a configuration profile.
-     *
+     * 
      * @param configurationProfileName Name of the configuration profile.
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
      * @param parameters Parameters supplied to create or update configuration profile.
@@ -39,18 +26,45 @@ public interface ConfigurationProfilesClient {
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return definition of the configuration profile along with {@link Response}.
+     */
+    @ServiceMethod(returns = ReturnType.SINGLE)
+    Response<ConfigurationProfileInner> createOrUpdateWithResponse(String configurationProfileName,
+        String resourceGroupName, ConfigurationProfileInner parameters, Context context);
+
+    /**
+     * Creates a configuration profile.
+     * 
+     * @param configurationProfileName Name of the configuration profile.
+     * @param resourceGroupName The name of the resource group. The name is case insensitive.
+     * @param parameters Parameters supplied to create or update configuration profile.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
      * @return definition of the configuration profile.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    Response<ConfigurationProfileInner> createOrUpdateWithResponse(
-        String configurationProfileName,
-        String resourceGroupName,
-        ConfigurationProfileInner parameters,
-        Context context);
+    ConfigurationProfileInner createOrUpdate(String configurationProfileName, String resourceGroupName,
+        ConfigurationProfileInner parameters);
 
     /**
      * Get information about a configuration profile.
-     *
+     * 
+     * @param resourceGroupName The name of the resource group. The name is case insensitive.
+     * @param configurationProfileName The configuration profile name.
+     * @param context The context to associate with this operation.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return information about a configuration profile along with {@link Response}.
+     */
+    @ServiceMethod(returns = ReturnType.SINGLE)
+    Response<ConfigurationProfileInner> getByResourceGroupWithResponse(String resourceGroupName,
+        String configurationProfileName, Context context);
+
+    /**
+     * Get information about a configuration profile.
+     * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
      * @param configurationProfileName The configuration profile name.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
@@ -62,23 +76,22 @@ public interface ConfigurationProfilesClient {
     ConfigurationProfileInner getByResourceGroup(String resourceGroupName, String configurationProfileName);
 
     /**
-     * Get information about a configuration profile.
-     *
+     * Delete a configuration profile.
+     * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
-     * @param configurationProfileName The configuration profile name.
+     * @param configurationProfileName Name of the configuration profile.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return information about a configuration profile.
+     * @return the {@link Response}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    Response<ConfigurationProfileInner> getByResourceGroupWithResponse(
-        String resourceGroupName, String configurationProfileName, Context context);
+    Response<Void> deleteWithResponse(String resourceGroupName, String configurationProfileName, Context context);
 
     /**
      * Delete a configuration profile.
-     *
+     * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
      * @param configurationProfileName Name of the configuration profile.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
@@ -89,22 +102,24 @@ public interface ConfigurationProfilesClient {
     void delete(String resourceGroupName, String configurationProfileName);
 
     /**
-     * Delete a configuration profile.
-     *
-     * @param resourceGroupName The name of the resource group. The name is case insensitive.
+     * Updates a configuration profile.
+     * 
      * @param configurationProfileName Name of the configuration profile.
+     * @param resourceGroupName The name of the resource group. The name is case insensitive.
+     * @param parameters Parameters supplied to update configuration profile.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the response.
+     * @return definition of the configuration profile along with {@link Response}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    Response<Void> deleteWithResponse(String resourceGroupName, String configurationProfileName, Context context);
+    Response<ConfigurationProfileInner> updateWithResponse(String configurationProfileName, String resourceGroupName,
+        ConfigurationProfileUpdate parameters, Context context);
 
     /**
      * Updates a configuration profile.
-     *
+     * 
      * @param configurationProfileName Name of the configuration profile.
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
      * @param parameters Parameters supplied to update configuration profile.
@@ -114,71 +129,56 @@ public interface ConfigurationProfilesClient {
      * @return definition of the configuration profile.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    ConfigurationProfileInner update(
-        String configurationProfileName, String resourceGroupName, ConfigurationProfileUpdate parameters);
-
-    /**
-     * Updates a configuration profile.
-     *
-     * @param configurationProfileName Name of the configuration profile.
-     * @param resourceGroupName The name of the resource group. The name is case insensitive.
-     * @param parameters Parameters supplied to update configuration profile.
-     * @param context The context to associate with this operation.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return definition of the configuration profile.
-     */
-    @ServiceMethod(returns = ReturnType.SINGLE)
-    Response<ConfigurationProfileInner> updateWithResponse(
-        String configurationProfileName,
-        String resourceGroupName,
-        ConfigurationProfileUpdate parameters,
-        Context context);
+    ConfigurationProfileInner update(String configurationProfileName, String resourceGroupName,
+        ConfigurationProfileUpdate parameters);
 
     /**
      * Retrieve a list of configuration profile within a given resource group.
-     *
+     * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the response of the list configuration profile operation.
+     * @return the response of the list configuration profile operation as paginated response with
+     * {@link PagedIterable}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
     PagedIterable<ConfigurationProfileInner> listByResourceGroup(String resourceGroupName);
 
     /**
      * Retrieve a list of configuration profile within a given resource group.
-     *
+     * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the response of the list configuration profile operation.
+     * @return the response of the list configuration profile operation as paginated response with
+     * {@link PagedIterable}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
     PagedIterable<ConfigurationProfileInner> listByResourceGroup(String resourceGroupName, Context context);
 
     /**
      * Retrieve a list of configuration profile within a subscription.
-     *
+     * 
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the response of the list configuration profile operation.
+     * @return the response of the list configuration profile operation as paginated response with
+     * {@link PagedIterable}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
     PagedIterable<ConfigurationProfileInner> list();
 
     /**
      * Retrieve a list of configuration profile within a subscription.
-     *
+     * 
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the response of the list configuration profile operation.
+     * @return the response of the list configuration profile operation as paginated response with
+     * {@link PagedIterable}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
     PagedIterable<ConfigurationProfileInner> list(Context context);

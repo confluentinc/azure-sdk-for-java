@@ -6,22 +6,22 @@ package com.azure.ai.textanalytics.models;
 import com.azure.core.annotation.Immutable;
 
 /**
- * The {@link ExtractKeyPhraseResult} model.
+ * The {@code ExtractKeyPhraseResult} model.
  */
 @Immutable
 public final class ExtractKeyPhraseResult extends TextAnalyticsResult {
     private final KeyPhrasesCollection keyPhrases;
 
     /**
-     * Creates a {@link ExtractKeyPhraseResult} model that describes extracted key phrases result.
+     * Creates a {@code ExtractKeyPhraseResult} model that describes extracted key phrases result.
      *
      * @param id Unique, non-empty document identifier.
      * @param textDocumentStatistics The text document statistics.
      * @param error The document error.
      * @param keyPhrases A {@link KeyPhrasesCollection} contains a list of key phrases and warnings.
      */
-    public ExtractKeyPhraseResult(String id, TextDocumentStatistics textDocumentStatistics,
-                                  TextAnalyticsError error, KeyPhrasesCollection keyPhrases) {
+    public ExtractKeyPhraseResult(String id, TextDocumentStatistics textDocumentStatistics, TextAnalyticsError error,
+        KeyPhrasesCollection keyPhrases) {
         super(id, textDocumentStatistics, error);
         this.keyPhrases = keyPhrases;
     }

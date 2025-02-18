@@ -20,11 +20,13 @@ import java.nio.ByteBuffer;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-/** An instance of this class provides access to all the operations defined in DiskRestorePointsClient. */
+/**
+ * An instance of this class provides access to all the operations defined in DiskRestorePointsClient.
+ */
 public interface DiskRestorePointsClient {
     /**
      * Get disk restorePoint resource.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param restorePointCollectionName The name of the restore point collection that the disk restore point belongs.
      * @param vmRestorePointName The name of the vm restore point that the disk disk restore point belongs.
@@ -35,15 +37,12 @@ public interface DiskRestorePointsClient {
      * @return disk restorePoint resource along with {@link Response} on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    Mono<Response<DiskRestorePointInner>> getWithResponseAsync(
-        String resourceGroupName,
-        String restorePointCollectionName,
-        String vmRestorePointName,
-        String diskRestorePointName);
+    Mono<Response<DiskRestorePointInner>> getWithResponseAsync(String resourceGroupName,
+        String restorePointCollectionName, String vmRestorePointName, String diskRestorePointName);
 
     /**
      * Get disk restorePoint resource.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param restorePointCollectionName The name of the restore point collection that the disk restore point belongs.
      * @param vmRestorePointName The name of the vm restore point that the disk disk restore point belongs.
@@ -54,34 +53,12 @@ public interface DiskRestorePointsClient {
      * @return disk restorePoint resource on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    Mono<DiskRestorePointInner> getAsync(
-        String resourceGroupName,
-        String restorePointCollectionName,
-        String vmRestorePointName,
-        String diskRestorePointName);
+    Mono<DiskRestorePointInner> getAsync(String resourceGroupName, String restorePointCollectionName,
+        String vmRestorePointName, String diskRestorePointName);
 
     /**
      * Get disk restorePoint resource.
-     *
-     * @param resourceGroupName The name of the resource group.
-     * @param restorePointCollectionName The name of the restore point collection that the disk restore point belongs.
-     * @param vmRestorePointName The name of the vm restore point that the disk disk restore point belongs.
-     * @param diskRestorePointName The name of the disk restore point created.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws com.azure.resourcemanager.compute.models.ApiErrorException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return disk restorePoint resource.
-     */
-    @ServiceMethod(returns = ReturnType.SINGLE)
-    DiskRestorePointInner get(
-        String resourceGroupName,
-        String restorePointCollectionName,
-        String vmRestorePointName,
-        String diskRestorePointName);
-
-    /**
-     * Get disk restorePoint resource.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param restorePointCollectionName The name of the restore point collection that the disk restore point belongs.
      * @param vmRestorePointName The name of the vm restore point that the disk disk restore point belongs.
@@ -93,46 +70,58 @@ public interface DiskRestorePointsClient {
      * @return disk restorePoint resource along with {@link Response}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    Response<DiskRestorePointInner> getWithResponse(
-        String resourceGroupName,
-        String restorePointCollectionName,
-        String vmRestorePointName,
-        String diskRestorePointName,
-        Context context);
+    Response<DiskRestorePointInner> getWithResponse(String resourceGroupName, String restorePointCollectionName,
+        String vmRestorePointName, String diskRestorePointName, Context context);
+
+    /**
+     * Get disk restorePoint resource.
+     * 
+     * @param resourceGroupName The name of the resource group.
+     * @param restorePointCollectionName The name of the restore point collection that the disk restore point belongs.
+     * @param vmRestorePointName The name of the vm restore point that the disk disk restore point belongs.
+     * @param diskRestorePointName The name of the disk restore point created.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws com.azure.resourcemanager.compute.models.ApiErrorException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return disk restorePoint resource.
+     */
+    @ServiceMethod(returns = ReturnType.SINGLE)
+    DiskRestorePointInner get(String resourceGroupName, String restorePointCollectionName, String vmRestorePointName,
+        String diskRestorePointName);
 
     /**
      * Lists diskRestorePoints under a vmRestorePoint.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param restorePointCollectionName The name of the restore point collection that the disk restore point belongs.
      * @param vmRestorePointName The name of the vm restore point that the disk disk restore point belongs.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.resourcemanager.compute.models.ApiErrorException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the List Disk Restore Points operation response.
+     * @return the List Disk Restore Points operation response as paginated response with {@link PagedFlux}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
-    PagedFlux<DiskRestorePointInner> listByRestorePointAsync(
-        String resourceGroupName, String restorePointCollectionName, String vmRestorePointName);
+    PagedFlux<DiskRestorePointInner> listByRestorePointAsync(String resourceGroupName,
+        String restorePointCollectionName, String vmRestorePointName);
 
     /**
      * Lists diskRestorePoints under a vmRestorePoint.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param restorePointCollectionName The name of the restore point collection that the disk restore point belongs.
      * @param vmRestorePointName The name of the vm restore point that the disk disk restore point belongs.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.resourcemanager.compute.models.ApiErrorException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the List Disk Restore Points operation response.
+     * @return the List Disk Restore Points operation response as paginated response with {@link PagedIterable}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
-    PagedIterable<DiskRestorePointInner> listByRestorePoint(
-        String resourceGroupName, String restorePointCollectionName, String vmRestorePointName);
+    PagedIterable<DiskRestorePointInner> listByRestorePoint(String resourceGroupName, String restorePointCollectionName,
+        String vmRestorePointName);
 
     /**
      * Lists diskRestorePoints under a vmRestorePoint.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param restorePointCollectionName The name of the restore point collection that the disk restore point belongs.
      * @param vmRestorePointName The name of the vm restore point that the disk disk restore point belongs.
@@ -140,15 +129,15 @@ public interface DiskRestorePointsClient {
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.resourcemanager.compute.models.ApiErrorException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the List Disk Restore Points operation response.
+     * @return the List Disk Restore Points operation response as paginated response with {@link PagedIterable}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
-    PagedIterable<DiskRestorePointInner> listByRestorePoint(
-        String resourceGroupName, String restorePointCollectionName, String vmRestorePointName, Context context);
+    PagedIterable<DiskRestorePointInner> listByRestorePoint(String resourceGroupName, String restorePointCollectionName,
+        String vmRestorePointName, Context context);
 
     /**
      * Grants access to a diskRestorePoint.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param restorePointCollectionName The name of the restore point collection that the disk restore point belongs.
      * @param vmRestorePointName The name of the vm restore point that the disk disk restore point belongs.
@@ -160,16 +149,13 @@ public interface DiskRestorePointsClient {
      * @return a disk access SAS uri along with {@link Response} on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    Mono<Response<Flux<ByteBuffer>>> grantAccessWithResponseAsync(
-        String resourceGroupName,
-        String restorePointCollectionName,
-        String vmRestorePointName,
-        String diskRestorePointName,
+    Mono<Response<Flux<ByteBuffer>>> grantAccessWithResponseAsync(String resourceGroupName,
+        String restorePointCollectionName, String vmRestorePointName, String diskRestorePointName,
         GrantAccessData grantAccessData);
 
     /**
      * Grants access to a diskRestorePoint.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param restorePointCollectionName The name of the restore point collection that the disk restore point belongs.
      * @param vmRestorePointName The name of the vm restore point that the disk disk restore point belongs.
@@ -178,19 +164,16 @@ public interface DiskRestorePointsClient {
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.resourcemanager.compute.models.ApiErrorException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return a disk access SAS uri along with {@link Response} on successful completion of {@link Mono}.
+     * @return the {@link PollerFlux} for polling of a disk access SAS uri.
      */
     @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
-    PollerFlux<PollResult<AccessUriInner>, AccessUriInner> beginGrantAccessAsync(
-        String resourceGroupName,
-        String restorePointCollectionName,
-        String vmRestorePointName,
-        String diskRestorePointName,
+    PollerFlux<PollResult<AccessUriInner>, AccessUriInner> beginGrantAccessAsync(String resourceGroupName,
+        String restorePointCollectionName, String vmRestorePointName, String diskRestorePointName,
         GrantAccessData grantAccessData);
 
     /**
      * Grants access to a diskRestorePoint.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param restorePointCollectionName The name of the restore point collection that the disk restore point belongs.
      * @param vmRestorePointName The name of the vm restore point that the disk disk restore point belongs.
@@ -199,19 +182,16 @@ public interface DiskRestorePointsClient {
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.resourcemanager.compute.models.ApiErrorException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return a disk access SAS uri along with {@link Response} on successful completion of {@link Mono}.
+     * @return the {@link SyncPoller} for polling of a disk access SAS uri.
      */
     @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
-    SyncPoller<PollResult<AccessUriInner>, AccessUriInner> beginGrantAccess(
-        String resourceGroupName,
-        String restorePointCollectionName,
-        String vmRestorePointName,
-        String diskRestorePointName,
+    SyncPoller<PollResult<AccessUriInner>, AccessUriInner> beginGrantAccess(String resourceGroupName,
+        String restorePointCollectionName, String vmRestorePointName, String diskRestorePointName,
         GrantAccessData grantAccessData);
 
     /**
      * Grants access to a diskRestorePoint.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param restorePointCollectionName The name of the restore point collection that the disk restore point belongs.
      * @param vmRestorePointName The name of the vm restore point that the disk disk restore point belongs.
@@ -221,20 +201,16 @@ public interface DiskRestorePointsClient {
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.resourcemanager.compute.models.ApiErrorException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return a disk access SAS uri along with {@link Response} on successful completion of {@link Mono}.
+     * @return the {@link SyncPoller} for polling of a disk access SAS uri.
      */
     @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
-    SyncPoller<PollResult<AccessUriInner>, AccessUriInner> beginGrantAccess(
-        String resourceGroupName,
-        String restorePointCollectionName,
-        String vmRestorePointName,
-        String diskRestorePointName,
-        GrantAccessData grantAccessData,
-        Context context);
+    SyncPoller<PollResult<AccessUriInner>, AccessUriInner> beginGrantAccess(String resourceGroupName,
+        String restorePointCollectionName, String vmRestorePointName, String diskRestorePointName,
+        GrantAccessData grantAccessData, Context context);
 
     /**
      * Grants access to a diskRestorePoint.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param restorePointCollectionName The name of the restore point collection that the disk restore point belongs.
      * @param vmRestorePointName The name of the vm restore point that the disk disk restore point belongs.
@@ -246,16 +222,12 @@ public interface DiskRestorePointsClient {
      * @return a disk access SAS uri on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    Mono<AccessUriInner> grantAccessAsync(
-        String resourceGroupName,
-        String restorePointCollectionName,
-        String vmRestorePointName,
-        String diskRestorePointName,
-        GrantAccessData grantAccessData);
+    Mono<AccessUriInner> grantAccessAsync(String resourceGroupName, String restorePointCollectionName,
+        String vmRestorePointName, String diskRestorePointName, GrantAccessData grantAccessData);
 
     /**
      * Grants access to a diskRestorePoint.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param restorePointCollectionName The name of the restore point collection that the disk restore point belongs.
      * @param vmRestorePointName The name of the vm restore point that the disk disk restore point belongs.
@@ -267,16 +239,12 @@ public interface DiskRestorePointsClient {
      * @return a disk access SAS uri.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    AccessUriInner grantAccess(
-        String resourceGroupName,
-        String restorePointCollectionName,
-        String vmRestorePointName,
-        String diskRestorePointName,
-        GrantAccessData grantAccessData);
+    AccessUriInner grantAccess(String resourceGroupName, String restorePointCollectionName, String vmRestorePointName,
+        String diskRestorePointName, GrantAccessData grantAccessData);
 
     /**
      * Grants access to a diskRestorePoint.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param restorePointCollectionName The name of the restore point collection that the disk restore point belongs.
      * @param vmRestorePointName The name of the vm restore point that the disk disk restore point belongs.
@@ -289,17 +257,12 @@ public interface DiskRestorePointsClient {
      * @return a disk access SAS uri.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    AccessUriInner grantAccess(
-        String resourceGroupName,
-        String restorePointCollectionName,
-        String vmRestorePointName,
-        String diskRestorePointName,
-        GrantAccessData grantAccessData,
-        Context context);
+    AccessUriInner grantAccess(String resourceGroupName, String restorePointCollectionName, String vmRestorePointName,
+        String diskRestorePointName, GrantAccessData grantAccessData, Context context);
 
     /**
      * Revokes access to a diskRestorePoint.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param restorePointCollectionName The name of the restore point collection that the disk restore point belongs.
      * @param vmRestorePointName The name of the vm restore point that the disk disk restore point belongs.
@@ -310,15 +273,12 @@ public interface DiskRestorePointsClient {
      * @return the {@link Response} on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    Mono<Response<Flux<ByteBuffer>>> revokeAccessWithResponseAsync(
-        String resourceGroupName,
-        String restorePointCollectionName,
-        String vmRestorePointName,
-        String diskRestorePointName);
+    Mono<Response<Flux<ByteBuffer>>> revokeAccessWithResponseAsync(String resourceGroupName,
+        String restorePointCollectionName, String vmRestorePointName, String diskRestorePointName);
 
     /**
      * Revokes access to a diskRestorePoint.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param restorePointCollectionName The name of the restore point collection that the disk restore point belongs.
      * @param vmRestorePointName The name of the vm restore point that the disk disk restore point belongs.
@@ -326,18 +286,15 @@ public interface DiskRestorePointsClient {
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.resourcemanager.compute.models.ApiErrorException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the {@link Response} on successful completion of {@link Mono}.
+     * @return the {@link PollerFlux} for polling of long-running operation.
      */
     @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
-    PollerFlux<PollResult<Void>, Void> beginRevokeAccessAsync(
-        String resourceGroupName,
-        String restorePointCollectionName,
-        String vmRestorePointName,
-        String diskRestorePointName);
+    PollerFlux<PollResult<Void>, Void> beginRevokeAccessAsync(String resourceGroupName,
+        String restorePointCollectionName, String vmRestorePointName, String diskRestorePointName);
 
     /**
      * Revokes access to a diskRestorePoint.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param restorePointCollectionName The name of the restore point collection that the disk restore point belongs.
      * @param vmRestorePointName The name of the vm restore point that the disk disk restore point belongs.
@@ -345,18 +302,15 @@ public interface DiskRestorePointsClient {
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.resourcemanager.compute.models.ApiErrorException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the {@link Response} on successful completion of {@link Mono}.
+     * @return the {@link SyncPoller} for polling of long-running operation.
      */
     @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
-    SyncPoller<PollResult<Void>, Void> beginRevokeAccess(
-        String resourceGroupName,
-        String restorePointCollectionName,
-        String vmRestorePointName,
-        String diskRestorePointName);
+    SyncPoller<PollResult<Void>, Void> beginRevokeAccess(String resourceGroupName, String restorePointCollectionName,
+        String vmRestorePointName, String diskRestorePointName);
 
     /**
      * Revokes access to a diskRestorePoint.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param restorePointCollectionName The name of the restore point collection that the disk restore point belongs.
      * @param vmRestorePointName The name of the vm restore point that the disk disk restore point belongs.
@@ -365,19 +319,15 @@ public interface DiskRestorePointsClient {
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.resourcemanager.compute.models.ApiErrorException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the {@link Response} on successful completion of {@link Mono}.
+     * @return the {@link SyncPoller} for polling of long-running operation.
      */
     @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
-    SyncPoller<PollResult<Void>, Void> beginRevokeAccess(
-        String resourceGroupName,
-        String restorePointCollectionName,
-        String vmRestorePointName,
-        String diskRestorePointName,
-        Context context);
+    SyncPoller<PollResult<Void>, Void> beginRevokeAccess(String resourceGroupName, String restorePointCollectionName,
+        String vmRestorePointName, String diskRestorePointName, Context context);
 
     /**
      * Revokes access to a diskRestorePoint.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param restorePointCollectionName The name of the restore point collection that the disk restore point belongs.
      * @param vmRestorePointName The name of the vm restore point that the disk disk restore point belongs.
@@ -388,15 +338,12 @@ public interface DiskRestorePointsClient {
      * @return A {@link Mono} that completes when a successful response is received.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    Mono<Void> revokeAccessAsync(
-        String resourceGroupName,
-        String restorePointCollectionName,
-        String vmRestorePointName,
+    Mono<Void> revokeAccessAsync(String resourceGroupName, String restorePointCollectionName, String vmRestorePointName,
         String diskRestorePointName);
 
     /**
      * Revokes access to a diskRestorePoint.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param restorePointCollectionName The name of the restore point collection that the disk restore point belongs.
      * @param vmRestorePointName The name of the vm restore point that the disk disk restore point belongs.
@@ -406,15 +353,12 @@ public interface DiskRestorePointsClient {
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    void revokeAccess(
-        String resourceGroupName,
-        String restorePointCollectionName,
-        String vmRestorePointName,
+    void revokeAccess(String resourceGroupName, String restorePointCollectionName, String vmRestorePointName,
         String diskRestorePointName);
 
     /**
      * Revokes access to a diskRestorePoint.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param restorePointCollectionName The name of the restore point collection that the disk restore point belongs.
      * @param vmRestorePointName The name of the vm restore point that the disk disk restore point belongs.
@@ -425,10 +369,6 @@ public interface DiskRestorePointsClient {
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    void revokeAccess(
-        String resourceGroupName,
-        String restorePointCollectionName,
-        String vmRestorePointName,
-        String diskRestorePointName,
-        Context context);
+    void revokeAccess(String resourceGroupName, String restorePointCollectionName, String vmRestorePointName,
+        String diskRestorePointName, Context context);
 }

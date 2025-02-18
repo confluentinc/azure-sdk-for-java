@@ -12,31 +12,47 @@ import com.azure.resourcemanager.trafficmanager.fluent.models.DeleteOperationRes
 import com.azure.resourcemanager.trafficmanager.fluent.models.UserMetricsModelInner;
 import reactor.core.publisher.Mono;
 
-/** An instance of this class provides access to all the operations defined in TrafficManagerUserMetricsKeysClient. */
+/**
+ * An instance of this class provides access to all the operations defined in TrafficManagerUserMetricsKeysClient.
+ */
 public interface TrafficManagerUserMetricsKeysClient {
     /**
      * Get the subscription-level key used for Real User Metrics collection.
-     *
+     * 
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the subscription-level key used for Real User Metrics collection.
+     * @return the subscription-level key used for Real User Metrics collection along with {@link Response} on
+     * successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
     Mono<Response<UserMetricsModelInner>> getWithResponseAsync();
 
     /**
      * Get the subscription-level key used for Real User Metrics collection.
-     *
+     * 
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the subscription-level key used for Real User Metrics collection.
+     * @return the subscription-level key used for Real User Metrics collection on successful completion of
+     * {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
     Mono<UserMetricsModelInner> getAsync();
 
     /**
      * Get the subscription-level key used for Real User Metrics collection.
-     *
+     * 
+     * @param context The context to associate with this operation.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return the subscription-level key used for Real User Metrics collection along with {@link Response}.
+     */
+    @ServiceMethod(returns = ReturnType.SINGLE)
+    Response<UserMetricsModelInner> getWithResponse(Context context);
+
+    /**
+     * Get the subscription-level key used for Real User Metrics collection.
+     * 
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
      * @return the subscription-level key used for Real User Metrics collection.
@@ -45,40 +61,41 @@ public interface TrafficManagerUserMetricsKeysClient {
     UserMetricsModelInner get();
 
     /**
-     * Get the subscription-level key used for Real User Metrics collection.
-     *
-     * @param context The context to associate with this operation.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the subscription-level key used for Real User Metrics collection.
-     */
-    @ServiceMethod(returns = ReturnType.SINGLE)
-    Response<UserMetricsModelInner> getWithResponse(Context context);
-
-    /**
      * Create or update a subscription-level key used for Real User Metrics collection.
-     *
+     * 
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return class representing Traffic Manager User Metrics.
+     * @return class representing Traffic Manager User Metrics along with {@link Response} on successful completion of
+     * {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
     Mono<Response<UserMetricsModelInner>> createOrUpdateWithResponseAsync();
 
     /**
      * Create or update a subscription-level key used for Real User Metrics collection.
-     *
+     * 
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return class representing Traffic Manager User Metrics.
+     * @return class representing Traffic Manager User Metrics on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
     Mono<UserMetricsModelInner> createOrUpdateAsync();
 
     /**
      * Create or update a subscription-level key used for Real User Metrics collection.
-     *
+     * 
+     * @param context The context to associate with this operation.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return class representing Traffic Manager User Metrics along with {@link Response}.
+     */
+    @ServiceMethod(returns = ReturnType.SINGLE)
+    Response<UserMetricsModelInner> createOrUpdateWithResponse(Context context);
+
+    /**
+     * Create or update a subscription-level key used for Real User Metrics collection.
+     * 
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
      * @return class representing Traffic Manager User Metrics.
@@ -87,56 +104,45 @@ public interface TrafficManagerUserMetricsKeysClient {
     UserMetricsModelInner createOrUpdate();
 
     /**
-     * Create or update a subscription-level key used for Real User Metrics collection.
-     *
-     * @param context The context to associate with this operation.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return class representing Traffic Manager User Metrics.
-     */
-    @ServiceMethod(returns = ReturnType.SINGLE)
-    Response<UserMetricsModelInner> createOrUpdateWithResponse(Context context);
-
-    /**
      * Delete a subscription-level key used for Real User Metrics collection.
-     *
+     * 
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the result of the request or operation.
+     * @return the result of the request or operation along with {@link Response} on successful completion of
+     * {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
     Mono<Response<DeleteOperationResultInner>> deleteWithResponseAsync();
 
     /**
      * Delete a subscription-level key used for Real User Metrics collection.
-     *
+     * 
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the result of the request or operation.
+     * @return the result of the request or operation on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
     Mono<DeleteOperationResultInner> deleteAsync();
 
     /**
      * Delete a subscription-level key used for Real User Metrics collection.
-     *
+     * 
+     * @param context The context to associate with this operation.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return the result of the request or operation along with {@link Response}.
+     */
+    @ServiceMethod(returns = ReturnType.SINGLE)
+    Response<DeleteOperationResultInner> deleteWithResponse(Context context);
+
+    /**
+     * Delete a subscription-level key used for Real User Metrics collection.
+     * 
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
      * @return the result of the request or operation.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
     DeleteOperationResultInner delete();
-
-    /**
-     * Delete a subscription-level key used for Real User Metrics collection.
-     *
-     * @param context The context to associate with this operation.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the result of the request or operation.
-     */
-    @ServiceMethod(returns = ReturnType.SINGLE)
-    Response<DeleteOperationResultInner> deleteWithResponse(Context context);
 }

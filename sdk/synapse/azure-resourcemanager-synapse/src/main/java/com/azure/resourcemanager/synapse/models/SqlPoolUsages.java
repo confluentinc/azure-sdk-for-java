@@ -7,24 +7,30 @@ package com.azure.resourcemanager.synapse.models;
 import com.azure.core.http.rest.PagedIterable;
 import com.azure.core.util.Context;
 
-/** Resource collection API of SqlPoolUsages. */
+/**
+ * Resource collection API of SqlPoolUsages.
+ */
 public interface SqlPoolUsages {
     /**
+     * Gets SQL pool usages
+     * 
      * Gets SQL pool usages.
-     *
+     * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
      * @param workspaceName The name of the workspace.
      * @param sqlPoolName SQL pool name.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return sQL pool usages.
+     * @return sQL pool usages as paginated response with {@link PagedIterable}.
      */
     PagedIterable<SqlPoolUsage> list(String resourceGroupName, String workspaceName, String sqlPoolName);
 
     /**
+     * Gets SQL pool usages
+     * 
      * Gets SQL pool usages.
-     *
+     * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
      * @param workspaceName The name of the workspace.
      * @param sqlPoolName SQL pool name.
@@ -32,8 +38,8 @@ public interface SqlPoolUsages {
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return sQL pool usages.
+     * @return sQL pool usages as paginated response with {@link PagedIterable}.
      */
-    PagedIterable<SqlPoolUsage> list(
-        String resourceGroupName, String workspaceName, String sqlPoolName, Context context);
+    PagedIterable<SqlPoolUsage> list(String resourceGroupName, String workspaceName, String sqlPoolName,
+        Context context);
 }

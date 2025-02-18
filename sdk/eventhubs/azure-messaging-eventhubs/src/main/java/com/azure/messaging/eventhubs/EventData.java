@@ -3,71 +3,52 @@
 
 package com.azure.messaging.eventhubs;
 
+import com.azure.core.amqp.AmqpMessageConstant;
 import com.azure.core.amqp.models.AmqpAnnotatedMessage;
 import com.azure.core.amqp.models.AmqpMessageBody;
+import com.azure.core.amqp.models.AmqpMessageHeader;
 import com.azure.core.amqp.models.AmqpMessageId;
+import com.azure.core.amqp.models.AmqpMessageProperties;
+import com.azure.core.models.MessageContent;
 import com.azure.core.util.BinaryData;
 import com.azure.core.util.Context;
+import com.azure.core.util.FluxUtil;
 import com.azure.core.util.logging.ClientLogger;
 
 import java.nio.ByteBuffer;
 import java.time.Instant;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Set;
 
-import static com.azure.core.amqp.AmqpMessageConstant.ENQUEUED_TIME_UTC_ANNOTATION_NAME;
-import static com.azure.core.amqp.AmqpMessageConstant.OFFSET_ANNOTATION_NAME;
-import static com.azure.core.amqp.AmqpMessageConstant.PARTITION_KEY_ANNOTATION_NAME;
-import static com.azure.core.amqp.AmqpMessageConstant.PUBLISHER_ANNOTATION_NAME;
-import static com.azure.core.amqp.AmqpMessageConstant.SEQUENCE_NUMBER_ANNOTATION_NAME;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 /**
- * The data structure encapsulating the event being sent-to and received-from Event Hubs. Each Event Hub partition can
- * be visualized as a stream of {@link EventData}.
- *
- * <p>
- * Here's how AMQP message sections map to {@link EventData}. For reference, the specification can be found here:
- * <a href="http://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-complete-v1.0-os.pdf">AMQP 1.0 specification</a>
- *
- * <ol>
- * <li>{@link #getProperties()} - AMQPMessage.ApplicationProperties section</li>
- * <li>{@link #getBody()} - if AMQPMessage.Body has Data section</li>
- * </ol>
- *
- * <p>
- * Serializing a received {@link EventData} with AMQP sections other than ApplicationProperties (with primitive Java
- * types) and Data section is not supported.
- * </p>
+ * <p>The data structure encapsulating the event being sent-to and received-from Event Hubs. Each Event Hub partition
+ * can be visualized as a stream of {@link EventData}. This class is not thread-safe.</p>
  *
  * @see EventDataBatch
  * @see EventHubProducerClient
  * @see EventHubProducerAsyncClient
+ *
+ * @see <a href="http://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-complete-v1.0-os.pdf">AMQP 1.0 specification</a>
  */
-public class EventData {
-    /*
-     * These are properties owned by the service and set when a message is received.
-     */
-    static final Set<String> RESERVED_SYSTEM_PROPERTIES;
-
+public class EventData extends MessageContent {
+    private static final ClientLogger LOGGER = new ClientLogger(EventData.class);
     private final Map<String, Object> properties;
     private final SystemProperties systemProperties;
-    private final AmqpAnnotatedMessage annotatedMessage;
+    private AmqpAnnotatedMessage annotatedMessage;
     private Context context;
 
-    static {
-        final Set<String> properties = new HashSet<>();
-        properties.add(OFFSET_ANNOTATION_NAME.getValue());
-        properties.add(PARTITION_KEY_ANNOTATION_NAME.getValue());
-        properties.add(SEQUENCE_NUMBER_ANNOTATION_NAME.getValue());
-        properties.add(ENQUEUED_TIME_UTC_ANNOTATION_NAME.getValue());
-        properties.add(PUBLISHER_ANNOTATION_NAME.getValue());
-
-        RESERVED_SYSTEM_PROPERTIES = Collections.unmodifiableSet(properties);
+    /**
+     * Creates an event with an empty body.
+     */
+    public EventData() {
+        this.context = Context.NONE;
+        this.annotatedMessage = new AmqpAnnotatedMessage(AmqpMessageBody.fromData(new byte[0]));
+        this.properties = annotatedMessage.getApplicationProperties();
+        this.systemProperties = new SystemProperties();
     }
 
     /**
@@ -79,8 +60,8 @@ public class EventData {
      */
     public EventData(byte[] body) {
         this.context = Context.NONE;
-        final AmqpMessageBody messageBody = AmqpMessageBody.fromData(
-            Objects.requireNonNull(body, "'body' cannot be null."));
+        final AmqpMessageBody messageBody
+            = AmqpMessageBody.fromData(Objects.requireNonNull(body, "'body' cannot be null."));
 
         this.annotatedMessage = new AmqpAnnotatedMessage(messageBody);
         this.properties = annotatedMessage.getApplicationProperties();
@@ -95,7 +76,12 @@ public class EventData {
      * @throws NullPointerException if {@code body} is {@code null}.
      */
     public EventData(ByteBuffer body) {
-        this(Objects.requireNonNull(body, "'body' cannot be null.").array());
+        // Extract the ByteBuffer as it isn't guaranteed that the ByteBuffer will be a HeapByteBuffer and using
+        // .array() on a DirectByteBuffer or read-only ByteBuffer will throw an exception. Additionally, even if the
+        // ByteBuffer was a HeapByteBuffer the entire backing array may not have been written.
+        //
+        // Duplicate the ByteBuffer so the original body won't have its read position mutated.
+        this(FluxUtil.byteBufferToArray(Objects.requireNonNull(body, "'body' cannot be null.").duplicate()));
     }
 
     /**
@@ -131,21 +117,23 @@ public class EventData {
     EventData(AmqpAnnotatedMessage amqpAnnotatedMessage, SystemProperties systemProperties, Context context) {
         this.context = Objects.requireNonNull(context, "'context' cannot be null.");
         this.properties = Collections.unmodifiableMap(amqpAnnotatedMessage.getApplicationProperties());
-        this.annotatedMessage = Objects.requireNonNull(amqpAnnotatedMessage,
-            "'amqpAnnotatedMessage' cannot be null.");
+        this.annotatedMessage = Objects.requireNonNull(amqpAnnotatedMessage, "'amqpAnnotatedMessage' cannot be null.");
         this.systemProperties = systemProperties;
 
         switch (annotatedMessage.getBody().getBodyType()) {
             case DATA:
                 break;
+
             case SEQUENCE:
             case VALUE:
-                new ClientLogger(EventData.class).warning("Message body type '{}' is not supported in EH. "
-                    + " Getting contents of body may throw.", annotatedMessage.getBody().getBodyType());
+                LOGGER.warning(
+                    "Message body type '{}' is not supported in EH. " + " Getting contents of body may throw.",
+                    annotatedMessage.getBody().getBodyType());
                 break;
+
             default:
-                throw new ClientLogger(EventData.class).logExceptionAsError(new IllegalArgumentException(
-                    "Body type not valid " + annotatedMessage.getBody().getBodyType()));
+                throw LOGGER.logExceptionAsError(
+                    new IllegalArgumentException("Body type not valid " + annotatedMessage.getBody().getBodyType()));
         }
     }
 
@@ -166,6 +154,19 @@ public class EventData {
      * eventData.getProperties&#40;&#41;.put&#40;&quot;eventType&quot;, TelemetryEvent.class.getName&#40;&#41;&#41;;
      * </pre>
      * <!-- end com.azure.messaging.eventhubs.eventdata.getProperties -->
+     *
+     * <p>
+     * The following types are supported:
+     * <ul>
+     *     <li>{@link Character}</li>
+     *     <li>{@link java.util.Date}</li>
+     *     <li>{@link Double}</li>
+     *     <li>{@link Float}</li>
+     *     <li>{@link Integer}</li>
+     *     <li>{@link Long}</li>
+     *     <li>{@link Short}</li>
+     *     <li>{@link String}</li>
+     * </ul>
      *
      * @return Application properties associated with this {@link EventData}. For received {@link EventData}, the map is
      *     a read-only view.
@@ -216,8 +217,52 @@ public class EventData {
      *
      * @return the {@link BinaryData} payload associated with this event.
      */
+    @Override
     public BinaryData getBodyAsBinaryData() {
         return BinaryData.fromBytes(annotatedMessage.getBody().getFirstData());
+    }
+
+    /**
+     * Sets a new binary body and corresponding {@link AmqpAnnotatedMessage} on the event. Contents from
+     * {@link #getRawAmqpMessage()} are shallow copied to the new underlying message.
+     */
+    @Override
+    public EventData setBodyAsBinaryData(BinaryData binaryData) {
+        final AmqpAnnotatedMessage current = this.annotatedMessage;
+        this.annotatedMessage = new AmqpAnnotatedMessage(AmqpMessageBody.fromData(binaryData.toBytes()));
+
+        if (current == null) {
+            return this;
+        }
+
+        this.annotatedMessage.getApplicationProperties().putAll(current.getApplicationProperties());
+        this.annotatedMessage.getDeliveryAnnotations().putAll(current.getDeliveryAnnotations());
+        this.annotatedMessage.getFooter().putAll(current.getFooter());
+        this.annotatedMessage.getMessageAnnotations().putAll(current.getMessageAnnotations());
+
+        final AmqpMessageHeader header = this.annotatedMessage.getHeader();
+        header.setDeliveryCount(current.getHeader().getDeliveryCount())
+            .setDurable(current.getHeader().isDurable())
+            .setFirstAcquirer(current.getHeader().isFirstAcquirer())
+            .setPriority(current.getHeader().getPriority())
+            .setTimeToLive(current.getHeader().getTimeToLive());
+
+        final AmqpMessageProperties props = this.annotatedMessage.getProperties();
+        props.setAbsoluteExpiryTime(current.getProperties().getAbsoluteExpiryTime())
+            .setContentEncoding(current.getProperties().getContentEncoding())
+            .setContentType(current.getProperties().getContentType())
+            .setCorrelationId(current.getProperties().getCorrelationId())
+            .setCreationTime(current.getProperties().getCreationTime())
+            .setGroupId(current.getProperties().getGroupId())
+            .setGroupSequence(current.getProperties().getGroupSequence())
+            .setMessageId(current.getProperties().getMessageId())
+            .setReplyTo(current.getProperties().getReplyTo())
+            .setReplyToGroupId(current.getProperties().getReplyToGroupId())
+            .setSubject(current.getProperties().getSubject())
+            .setTo(current.getProperties().getTo())
+            .setUserId(current.getProperties().getUserId());
+
+        return this;
     }
 
     /**
@@ -276,7 +321,8 @@ public class EventData {
     }
 
     /**
-     * Gets the content type.
+     * Gets the MIME type describing the data contained in the {@link #getBody()}, intended to allow consumers to make
+     * informed decisions for inspecting and processing the event.
      *
      * @return The content type.
      */
@@ -285,7 +331,8 @@ public class EventData {
     }
 
     /**
-     * Sets the content type.
+     * Sets the MIME type describing the data contained in the {@link #getBody()}, intended to allow consumers to make
+     * informed decisions for inspecting and processing the event.
      *
      * @param contentType The content type.
      *
@@ -297,7 +344,9 @@ public class EventData {
     }
 
     /**
-     * Gets the correlation id.
+     * Gets an application-defined value that represents the context to use for correlation across one or more
+     * operations.  The identifier is a free-form value and may reflect a unique identity or a shared data element with
+     * significance to the application.
      *
      * @return The correlation id. {@code null} if there is none set.
      */
@@ -307,7 +356,9 @@ public class EventData {
     }
 
     /**
-     * Sets the correlation id.
+     * Sets an application-defined value that represents the context to use for correlation across one or more
+     * operations.  The identifier is a free-form value and may reflect a unique identity or a shared data element with
+     * significance to the application.
      *
      * @param correlationId The correlation id.
      *
@@ -321,7 +372,8 @@ public class EventData {
     }
 
     /**
-     * Gets the message id.
+     * Gets an application-defined value that uniquely identifies the event. The identifier is a free-form value and
+     * can reflect a GUID or an identifier derived from the application context.
      *
      * @return The message id. {@code null} if there is none set.
      */
@@ -331,7 +383,8 @@ public class EventData {
     }
 
     /**
-     * Sets the message id.
+     * Sets an application-defined value that uniquely identifies the event. The identifier is a free-form value and
+     * can reflect a GUID or an identifier derived from the application context.
      *
      * @param messageId The message id.
      *
@@ -345,7 +398,7 @@ public class EventData {
     }
 
     /**
-     * {@inheritDoc}
+     * True if the object is an {@link EventData} and the binary contents of {@link #getBody()} are equal.
      */
     @Override
     public boolean equals(Object o) {
@@ -362,7 +415,7 @@ public class EventData {
     }
 
     /**
-     * {@inheritDoc}
+     * Gets a hash of the binary contents in {@link #getBody()}.
      */
     @Override
     public int hashCode() {
@@ -376,6 +429,28 @@ public class EventData {
      */
     Context getContext() {
         return context;
+    }
+
+    /**
+     * Sets partition key on the message annotations.
+     * @param partitionKey The partition key to set on the message.
+     * @return The updated {@link EventData}.
+     */
+    EventData setPartitionKeyAnnotation(String partitionKey) {
+        Map<String, Object> messageAnnotations = annotatedMessage.getMessageAnnotations();
+        messageAnnotations.put(AmqpMessageConstant.PARTITION_KEY_ANNOTATION_NAME.getValue(), partitionKey);
+
+        return this;
+    }
+
+    /**
+     * Gets the partition key from the message annotations.
+     *
+     * @return The partition key.
+     */
+    String getPartitionKeyAnnotation() {
+        return (String) annotatedMessage.getMessageAnnotations()
+            .get(AmqpMessageConstant.PARTITION_KEY_ANNOTATION_NAME.getValue());
     }
 
     /**

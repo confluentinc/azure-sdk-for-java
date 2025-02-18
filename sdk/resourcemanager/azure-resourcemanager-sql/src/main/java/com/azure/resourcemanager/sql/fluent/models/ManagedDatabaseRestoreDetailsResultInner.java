@@ -5,175 +5,227 @@
 package com.azure.resourcemanager.sql.fluent.models;
 
 import com.azure.core.annotation.Immutable;
-import com.azure.core.annotation.JsonFlatten;
 import com.azure.core.management.ProxyResource;
-import com.azure.core.util.logging.ClientLogger;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.azure.json.JsonReader;
+import com.azure.json.JsonToken;
+import com.azure.json.JsonWriter;
+import java.io.IOException;
 import java.time.OffsetDateTime;
 import java.util.List;
 
-/** A managed database restore details. */
-@JsonFlatten
+/**
+ * A managed database restore details.
+ */
 @Immutable
-public class ManagedDatabaseRestoreDetailsResultInner extends ProxyResource {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(ManagedDatabaseRestoreDetailsResultInner.class);
+public final class ManagedDatabaseRestoreDetailsResultInner extends ProxyResource {
+    /*
+     * Resource properties.
+     */
+    private ManagedDatabaseRestoreDetailsProperties innerProperties;
 
     /*
-     * Restore status.
+     * The type of the resource.
      */
-    @JsonProperty(value = "properties.status", access = JsonProperty.Access.WRITE_ONLY)
-    private String status;
+    private String type;
 
     /*
-     * Current restoring file name.
+     * The name of the resource.
      */
-    @JsonProperty(value = "properties.currentRestoringFileName", access = JsonProperty.Access.WRITE_ONLY)
-    private String currentRestoringFileName;
+    private String name;
 
     /*
-     * Last restored file name.
+     * Fully qualified resource Id for the resource.
      */
-    @JsonProperty(value = "properties.lastRestoredFileName", access = JsonProperty.Access.WRITE_ONLY)
-    private String lastRestoredFileName;
+    private String id;
 
-    /*
-     * Last restored file time.
+    /**
+     * Creates an instance of ManagedDatabaseRestoreDetailsResultInner class.
      */
-    @JsonProperty(value = "properties.lastRestoredFileTime", access = JsonProperty.Access.WRITE_ONLY)
-    private OffsetDateTime lastRestoredFileTime;
+    public ManagedDatabaseRestoreDetailsResultInner() {
+    }
 
-    /*
-     * Percent completed.
+    /**
+     * Get the innerProperties property: Resource properties.
+     * 
+     * @return the innerProperties value.
      */
-    @JsonProperty(value = "properties.percentCompleted", access = JsonProperty.Access.WRITE_ONLY)
-    private Double percentCompleted;
+    private ManagedDatabaseRestoreDetailsProperties innerProperties() {
+        return this.innerProperties;
+    }
 
-    /*
-     * List of unrestorable files.
+    /**
+     * Get the type property: The type of the resource.
+     * 
+     * @return the type value.
      */
-    @JsonProperty(value = "properties.unrestorableFiles", access = JsonProperty.Access.WRITE_ONLY)
-    private List<String> unrestorableFiles;
+    @Override
+    public String type() {
+        return this.type;
+    }
 
-    /*
-     * Number of files detected.
+    /**
+     * Get the name property: The name of the resource.
+     * 
+     * @return the name value.
      */
-    @JsonProperty(value = "properties.numberOfFilesDetected", access = JsonProperty.Access.WRITE_ONLY)
-    private Long numberOfFilesDetected;
+    @Override
+    public String name() {
+        return this.name;
+    }
 
-    /*
-     * Last uploaded file name.
+    /**
+     * Get the id property: Fully qualified resource Id for the resource.
+     * 
+     * @return the id value.
      */
-    @JsonProperty(value = "properties.lastUploadedFileName", access = JsonProperty.Access.WRITE_ONLY)
-    private String lastUploadedFileName;
-
-    /*
-     * Last uploaded file time.
-     */
-    @JsonProperty(value = "properties.lastUploadedFileTime", access = JsonProperty.Access.WRITE_ONLY)
-    private OffsetDateTime lastUploadedFileTime;
-
-    /*
-     * The reason why restore is in Blocked state.
-     */
-    @JsonProperty(value = "properties.blockReason", access = JsonProperty.Access.WRITE_ONLY)
-    private String blockReason;
+    @Override
+    public String id() {
+        return this.id;
+    }
 
     /**
      * Get the status property: Restore status.
-     *
+     * 
      * @return the status value.
      */
     public String status() {
-        return this.status;
+        return this.innerProperties() == null ? null : this.innerProperties().status();
     }
 
     /**
      * Get the currentRestoringFileName property: Current restoring file name.
-     *
+     * 
      * @return the currentRestoringFileName value.
      */
     public String currentRestoringFileName() {
-        return this.currentRestoringFileName;
+        return this.innerProperties() == null ? null : this.innerProperties().currentRestoringFileName();
     }
 
     /**
      * Get the lastRestoredFileName property: Last restored file name.
-     *
+     * 
      * @return the lastRestoredFileName value.
      */
     public String lastRestoredFileName() {
-        return this.lastRestoredFileName;
+        return this.innerProperties() == null ? null : this.innerProperties().lastRestoredFileName();
     }
 
     /**
      * Get the lastRestoredFileTime property: Last restored file time.
-     *
+     * 
      * @return the lastRestoredFileTime value.
      */
     public OffsetDateTime lastRestoredFileTime() {
-        return this.lastRestoredFileTime;
+        return this.innerProperties() == null ? null : this.innerProperties().lastRestoredFileTime();
     }
 
     /**
      * Get the percentCompleted property: Percent completed.
-     *
+     * 
      * @return the percentCompleted value.
      */
     public Double percentCompleted() {
-        return this.percentCompleted;
+        return this.innerProperties() == null ? null : this.innerProperties().percentCompleted();
     }
 
     /**
      * Get the unrestorableFiles property: List of unrestorable files.
-     *
+     * 
      * @return the unrestorableFiles value.
      */
     public List<String> unrestorableFiles() {
-        return this.unrestorableFiles;
+        return this.innerProperties() == null ? null : this.innerProperties().unrestorableFiles();
     }
 
     /**
      * Get the numberOfFilesDetected property: Number of files detected.
-     *
+     * 
      * @return the numberOfFilesDetected value.
      */
     public Long numberOfFilesDetected() {
-        return this.numberOfFilesDetected;
+        return this.innerProperties() == null ? null : this.innerProperties().numberOfFilesDetected();
     }
 
     /**
      * Get the lastUploadedFileName property: Last uploaded file name.
-     *
+     * 
      * @return the lastUploadedFileName value.
      */
     public String lastUploadedFileName() {
-        return this.lastUploadedFileName;
+        return this.innerProperties() == null ? null : this.innerProperties().lastUploadedFileName();
     }
 
     /**
      * Get the lastUploadedFileTime property: Last uploaded file time.
-     *
+     * 
      * @return the lastUploadedFileTime value.
      */
     public OffsetDateTime lastUploadedFileTime() {
-        return this.lastUploadedFileTime;
+        return this.innerProperties() == null ? null : this.innerProperties().lastUploadedFileTime();
     }
 
     /**
      * Get the blockReason property: The reason why restore is in Blocked state.
-     *
+     * 
      * @return the blockReason value.
      */
     public String blockReason() {
-        return this.blockReason;
+        return this.innerProperties() == null ? null : this.innerProperties().blockReason();
     }
 
     /**
      * Validates the instance.
-     *
+     * 
      * @throws IllegalArgumentException thrown if the instance is not valid.
      */
     public void validate() {
+        if (innerProperties() != null) {
+            innerProperties().validate();
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public JsonWriter toJson(JsonWriter jsonWriter) throws IOException {
+        jsonWriter.writeStartObject();
+        jsonWriter.writeJsonField("properties", this.innerProperties);
+        return jsonWriter.writeEndObject();
+    }
+
+    /**
+     * Reads an instance of ManagedDatabaseRestoreDetailsResultInner from the JsonReader.
+     * 
+     * @param jsonReader The JsonReader being read.
+     * @return An instance of ManagedDatabaseRestoreDetailsResultInner if the JsonReader was pointing to an instance of
+     * it, or null if it was pointing to JSON null.
+     * @throws IllegalStateException If the deserialized JSON object was missing any required properties.
+     * @throws IOException If an error occurs while reading the ManagedDatabaseRestoreDetailsResultInner.
+     */
+    public static ManagedDatabaseRestoreDetailsResultInner fromJson(JsonReader jsonReader) throws IOException {
+        return jsonReader.readObject(reader -> {
+            ManagedDatabaseRestoreDetailsResultInner deserializedManagedDatabaseRestoreDetailsResultInner
+                = new ManagedDatabaseRestoreDetailsResultInner();
+            while (reader.nextToken() != JsonToken.END_OBJECT) {
+                String fieldName = reader.getFieldName();
+                reader.nextToken();
+
+                if ("id".equals(fieldName)) {
+                    deserializedManagedDatabaseRestoreDetailsResultInner.id = reader.getString();
+                } else if ("name".equals(fieldName)) {
+                    deserializedManagedDatabaseRestoreDetailsResultInner.name = reader.getString();
+                } else if ("type".equals(fieldName)) {
+                    deserializedManagedDatabaseRestoreDetailsResultInner.type = reader.getString();
+                } else if ("properties".equals(fieldName)) {
+                    deserializedManagedDatabaseRestoreDetailsResultInner.innerProperties
+                        = ManagedDatabaseRestoreDetailsProperties.fromJson(reader);
+                } else {
+                    reader.skipChildren();
+                }
+            }
+
+            return deserializedManagedDatabaseRestoreDetailsResultInner;
+        });
     }
 }

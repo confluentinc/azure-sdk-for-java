@@ -18,8 +18,8 @@ public final class LiveOutputImpl implements LiveOutput, LiveOutput.Definition {
 
     private final com.azure.resourcemanager.mediaservices.MediaServicesManager serviceManager;
 
-    LiveOutputImpl(
-        LiveOutputInner innerObject, com.azure.resourcemanager.mediaservices.MediaServicesManager serviceManager) {
+    LiveOutputImpl(LiveOutputInner innerObject,
+        com.azure.resourcemanager.mediaservices.MediaServicesManager serviceManager) {
         this.innerObject = innerObject;
         this.serviceManager = serviceManager;
     }
@@ -50,6 +50,10 @@ public final class LiveOutputImpl implements LiveOutput, LiveOutput.Definition {
 
     public Duration archiveWindowLength() {
         return this.innerModel().archiveWindowLength();
+    }
+
+    public Duration rewindWindowLength() {
+        return this.innerModel().rewindWindowLength();
     }
 
     public String manifestName() {
@@ -104,20 +108,16 @@ public final class LiveOutputImpl implements LiveOutput, LiveOutput.Definition {
     }
 
     public LiveOutput create() {
-        this.innerObject =
-            serviceManager
-                .serviceClient()
-                .getLiveOutputs()
-                .create(resourceGroupName, accountName, liveEventName, liveOutputName, this.innerModel(), Context.NONE);
+        this.innerObject = serviceManager.serviceClient()
+            .getLiveOutputs()
+            .create(resourceGroupName, accountName, liveEventName, liveOutputName, this.innerModel(), Context.NONE);
         return this;
     }
 
     public LiveOutput create(Context context) {
-        this.innerObject =
-            serviceManager
-                .serviceClient()
-                .getLiveOutputs()
-                .create(resourceGroupName, accountName, liveEventName, liveOutputName, this.innerModel(), context);
+        this.innerObject = serviceManager.serviceClient()
+            .getLiveOutputs()
+            .create(resourceGroupName, accountName, liveEventName, liveOutputName, this.innerModel(), context);
         return this;
     }
 
@@ -128,22 +128,18 @@ public final class LiveOutputImpl implements LiveOutput, LiveOutput.Definition {
     }
 
     public LiveOutput refresh() {
-        this.innerObject =
-            serviceManager
-                .serviceClient()
-                .getLiveOutputs()
-                .getWithResponse(resourceGroupName, accountName, liveEventName, liveOutputName, Context.NONE)
-                .getValue();
+        this.innerObject = serviceManager.serviceClient()
+            .getLiveOutputs()
+            .getWithResponse(resourceGroupName, accountName, liveEventName, liveOutputName, Context.NONE)
+            .getValue();
         return this;
     }
 
     public LiveOutput refresh(Context context) {
-        this.innerObject =
-            serviceManager
-                .serviceClient()
-                .getLiveOutputs()
-                .getWithResponse(resourceGroupName, accountName, liveEventName, liveOutputName, context)
-                .getValue();
+        this.innerObject = serviceManager.serviceClient()
+            .getLiveOutputs()
+            .getWithResponse(resourceGroupName, accountName, liveEventName, liveOutputName, context)
+            .getValue();
         return this;
     }
 
@@ -159,6 +155,11 @@ public final class LiveOutputImpl implements LiveOutput, LiveOutput.Definition {
 
     public LiveOutputImpl withArchiveWindowLength(Duration archiveWindowLength) {
         this.innerModel().withArchiveWindowLength(archiveWindowLength);
+        return this;
+    }
+
+    public LiveOutputImpl withRewindWindowLength(Duration rewindWindowLength) {
+        this.innerModel().withRewindWindowLength(rewindWindowLength);
         return this;
     }
 

@@ -5,65 +5,39 @@
 package com.azure.resourcemanager.automation.fluent.models;
 
 import com.azure.core.annotation.Fluent;
-import com.azure.core.annotation.JsonFlatten;
-import com.azure.core.util.logging.ClientLogger;
+import com.azure.json.JsonReader;
+import com.azure.json.JsonSerializable;
+import com.azure.json.JsonToken;
+import com.azure.json.JsonWriter;
 import com.azure.resourcemanager.automation.models.JobStreamType;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import java.io.IOException;
 import java.time.OffsetDateTime;
 import java.util.Map;
 
-/** Definition of the job stream. */
-@JsonFlatten
+/**
+ * Definition of the job stream.
+ */
 @Fluent
-public class JobStreamInner {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(JobStreamInner.class);
-
+public final class JobStreamInner implements JsonSerializable<JobStreamInner> {
     /*
      * Gets or sets the id of the resource.
      */
-    @JsonProperty(value = "id")
     private String id;
 
     /*
      * Gets or sets the id of the job stream.
      */
-    @JsonProperty(value = "properties.jobStreamId")
-    private String jobStreamId;
+    private JobStreamProperties innerProperties;
 
-    /*
-     * Gets or sets the creation time of the job.
+    /**
+     * Creates an instance of JobStreamInner class.
      */
-    @JsonProperty(value = "properties.time")
-    private OffsetDateTime time;
-
-    /*
-     * Gets or sets the stream type.
-     */
-    @JsonProperty(value = "properties.streamType")
-    private JobStreamType streamType;
-
-    /*
-     * Gets or sets the stream text.
-     */
-    @JsonProperty(value = "properties.streamText")
-    private String streamText;
-
-    /*
-     * Gets or sets the summary.
-     */
-    @JsonProperty(value = "properties.summary")
-    private String summary;
-
-    /*
-     * Gets or sets the values of the job stream.
-     */
-    @JsonProperty(value = "properties.value")
-    private Map<String, Object> value;
+    public JobStreamInner() {
+    }
 
     /**
      * Get the id property: Gets or sets the id of the resource.
-     *
+     * 
      * @return the id value.
      */
     public String id() {
@@ -72,7 +46,7 @@ public class JobStreamInner {
 
     /**
      * Set the id property: Gets or sets the id of the resource.
-     *
+     * 
      * @param id the id value to set.
      * @return the JobStreamInner object itself.
      */
@@ -82,130 +56,199 @@ public class JobStreamInner {
     }
 
     /**
+     * Get the innerProperties property: Gets or sets the id of the job stream.
+     * 
+     * @return the innerProperties value.
+     */
+    private JobStreamProperties innerProperties() {
+        return this.innerProperties;
+    }
+
+    /**
      * Get the jobStreamId property: Gets or sets the id of the job stream.
-     *
+     * 
      * @return the jobStreamId value.
      */
     public String jobStreamId() {
-        return this.jobStreamId;
+        return this.innerProperties() == null ? null : this.innerProperties().jobStreamId();
     }
 
     /**
      * Set the jobStreamId property: Gets or sets the id of the job stream.
-     *
+     * 
      * @param jobStreamId the jobStreamId value to set.
      * @return the JobStreamInner object itself.
      */
     public JobStreamInner withJobStreamId(String jobStreamId) {
-        this.jobStreamId = jobStreamId;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new JobStreamProperties();
+        }
+        this.innerProperties().withJobStreamId(jobStreamId);
         return this;
     }
 
     /**
      * Get the time property: Gets or sets the creation time of the job.
-     *
+     * 
      * @return the time value.
      */
     public OffsetDateTime time() {
-        return this.time;
+        return this.innerProperties() == null ? null : this.innerProperties().time();
     }
 
     /**
      * Set the time property: Gets or sets the creation time of the job.
-     *
+     * 
      * @param time the time value to set.
      * @return the JobStreamInner object itself.
      */
     public JobStreamInner withTime(OffsetDateTime time) {
-        this.time = time;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new JobStreamProperties();
+        }
+        this.innerProperties().withTime(time);
         return this;
     }
 
     /**
      * Get the streamType property: Gets or sets the stream type.
-     *
+     * 
      * @return the streamType value.
      */
     public JobStreamType streamType() {
-        return this.streamType;
+        return this.innerProperties() == null ? null : this.innerProperties().streamType();
     }
 
     /**
      * Set the streamType property: Gets or sets the stream type.
-     *
+     * 
      * @param streamType the streamType value to set.
      * @return the JobStreamInner object itself.
      */
     public JobStreamInner withStreamType(JobStreamType streamType) {
-        this.streamType = streamType;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new JobStreamProperties();
+        }
+        this.innerProperties().withStreamType(streamType);
         return this;
     }
 
     /**
      * Get the streamText property: Gets or sets the stream text.
-     *
+     * 
      * @return the streamText value.
      */
     public String streamText() {
-        return this.streamText;
+        return this.innerProperties() == null ? null : this.innerProperties().streamText();
     }
 
     /**
      * Set the streamText property: Gets or sets the stream text.
-     *
+     * 
      * @param streamText the streamText value to set.
      * @return the JobStreamInner object itself.
      */
     public JobStreamInner withStreamText(String streamText) {
-        this.streamText = streamText;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new JobStreamProperties();
+        }
+        this.innerProperties().withStreamText(streamText);
         return this;
     }
 
     /**
      * Get the summary property: Gets or sets the summary.
-     *
+     * 
      * @return the summary value.
      */
     public String summary() {
-        return this.summary;
+        return this.innerProperties() == null ? null : this.innerProperties().summary();
     }
 
     /**
      * Set the summary property: Gets or sets the summary.
-     *
+     * 
      * @param summary the summary value to set.
      * @return the JobStreamInner object itself.
      */
     public JobStreamInner withSummary(String summary) {
-        this.summary = summary;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new JobStreamProperties();
+        }
+        this.innerProperties().withSummary(summary);
         return this;
     }
 
     /**
      * Get the value property: Gets or sets the values of the job stream.
-     *
+     * 
      * @return the value value.
      */
     public Map<String, Object> value() {
-        return this.value;
+        return this.innerProperties() == null ? null : this.innerProperties().value();
     }
 
     /**
      * Set the value property: Gets or sets the values of the job stream.
-     *
+     * 
      * @param value the value value to set.
      * @return the JobStreamInner object itself.
      */
     public JobStreamInner withValue(Map<String, Object> value) {
-        this.value = value;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new JobStreamProperties();
+        }
+        this.innerProperties().withValue(value);
         return this;
     }
 
     /**
      * Validates the instance.
-     *
+     * 
      * @throws IllegalArgumentException thrown if the instance is not valid.
      */
     public void validate() {
+        if (innerProperties() != null) {
+            innerProperties().validate();
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public JsonWriter toJson(JsonWriter jsonWriter) throws IOException {
+        jsonWriter.writeStartObject();
+        jsonWriter.writeStringField("id", this.id);
+        jsonWriter.writeJsonField("properties", this.innerProperties);
+        return jsonWriter.writeEndObject();
+    }
+
+    /**
+     * Reads an instance of JobStreamInner from the JsonReader.
+     * 
+     * @param jsonReader The JsonReader being read.
+     * @return An instance of JobStreamInner if the JsonReader was pointing to an instance of it, or null if it was
+     * pointing to JSON null.
+     * @throws IOException If an error occurs while reading the JobStreamInner.
+     */
+    public static JobStreamInner fromJson(JsonReader jsonReader) throws IOException {
+        return jsonReader.readObject(reader -> {
+            JobStreamInner deserializedJobStreamInner = new JobStreamInner();
+            while (reader.nextToken() != JsonToken.END_OBJECT) {
+                String fieldName = reader.getFieldName();
+                reader.nextToken();
+
+                if ("id".equals(fieldName)) {
+                    deserializedJobStreamInner.id = reader.getString();
+                } else if ("properties".equals(fieldName)) {
+                    deserializedJobStreamInner.innerProperties = JobStreamProperties.fromJson(reader);
+                } else {
+                    reader.skipChildren();
+                }
+            }
+
+            return deserializedJobStreamInner;
+        });
     }
 }

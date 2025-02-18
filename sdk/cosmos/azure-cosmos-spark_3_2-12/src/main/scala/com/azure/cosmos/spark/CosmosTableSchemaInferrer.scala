@@ -2,10 +2,9 @@
 // Licensed under the MIT License.
 package com.azure.cosmos.spark
 
-import com.azure.cosmos.CosmosAsyncClient
-import com.azure.cosmos.implementation.ImplementationBridgeHelpers
-import com.azure.cosmos.models.{CosmosQueryRequestOptions, FeedRange}
-import com.azure.cosmos.spark.CosmosPartitionPlanner.logWarning
+import com.azure.cosmos.{CosmosAsyncContainer, SparkBridgeInternal}
+import com.azure.cosmos.implementation.{ImplementationBridgeHelpers}
+import com.azure.cosmos.models.{CosmosQueryRequestOptions, FeedRange, PartitionKeyDefinition}
 import com.azure.cosmos.spark.diagnostics.BasicLoggingTrait
 import com.azure.cosmos.util.CosmosPagedIterable
 import com.fasterxml.jackson.databind.JsonNode
@@ -15,7 +14,6 @@ import java.util.stream.Collectors
 
 // scalastyle:off underscore.import
 import com.fasterxml.jackson.databind.node._
-
 import org.apache.spark.sql.types._
 
 import scala.collection.JavaConverters._
@@ -26,16 +24,24 @@ private object CosmosTableSchemaInferrer
   extends BasicLoggingTrait {
 
   private[spark] val RawJsonBodyAttributeName = "_rawBody"
+  private[spark] val OriginRawJsonBodyAttributeName = "_origin_rawBody"
   private[spark] val TimestampAttributeName = "_ts"
+  private[spark] val OriginTimestampAttributeName = "_origin_ts"
   private[spark] val IdAttributeName = "id"
   private[spark] val ETagAttributeName = "_etag"
+  private[spark] val OriginETagAttributeName = "_origin_etag"
   private[spark] val SelfAttributeName = "_self"
   private[spark] val ResourceIdAttributeName = "_rid"
   private[spark] val AttachmentsAttributeName = "_attachments"
-  private[spark] val PreviousRawJsonBodyAttributeName = "_previousRawBody"
-  private[spark] val TtlExpiredAttributeName = "_ttlExpired"
-  private[spark] val OperationTypeAttributeName = "_operationType"
+  private[spark] val PreviousRawJsonBodyAttributeName = "previous"
+  private[spark] val OperationTypeAttributeName = "operationType"
   private[spark] val LsnAttributeName = "_lsn"
+  private[spark] val CurrentAttributeName = "current"
+  private[spark] val MetadataJsonBodyAttributeName = "metadata"
+  private[spark] val CrtsAttributeName = "crts"
+  private[spark] val MetadataLsnAttributeName = "lsn"
+  private[spark] val PreviousImageLsnAttributeName = "previousImageLSN"
+  private[spark] val TtlExpiredAttributeName = "_ttlExpired"
 
   private val systemProperties = List(
     ETagAttributeName,
@@ -86,25 +92,42 @@ private object CosmosTableSchemaInferrer
     }
   }
 
-  private[spark] def inferSchema(client: CosmosAsyncClient,
+  private[spark] def inferSchema(clientCacheItem: CosmosClientCacheItem,
+                                 throughputControlClientCacheItemOpt: Option[CosmosClientCacheItem],
                                  userConfig: Map[String, String],
                                  defaultSchema: StructType): StructType = {
 
     TransientErrorsRetryPolicy.executeWithRetry(() =>
-      inferSchemaImpl(client, userConfig, defaultSchema))
+      inferSchemaImpl(clientCacheItem, throughputControlClientCacheItemOpt, userConfig, defaultSchema))
   }
 
-  private[this] def inferSchemaImpl(client: CosmosAsyncClient,
-                                 userConfig: Map[String, String],
-                                 defaultSchema: StructType): StructType = {
+  //scalastyle:off method.length
+  private[this] def inferSchemaImpl(clientCacheItem: CosmosClientCacheItem,
+                                    throughputControlClientCacheItemOpt: Option[CosmosClientCacheItem],
+                                    userConfig: Map[String, String],
+                                    defaultSchema: StructType): StructType = {
     val cosmosInferenceConfig = CosmosSchemaInferenceConfig.parseCosmosInferenceConfig(userConfig)
     val cosmosReadConfig = CosmosReadConfig.parseCosmosReadConfig(userConfig)
+    var schema = Option.empty[StructType]
+    val cosmosContainerConfig = CosmosContainerConfig.parseCosmosContainerConfig(userConfig)
+    val sourceContainer =
+      ThroughputControlHelper.getContainer(
+        userConfig,
+        cosmosContainerConfig,
+        clientCacheItem,
+        throughputControlClientCacheItemOpt)
+
     if (cosmosInferenceConfig.inferSchemaEnabled) {
-      val cosmosContainerConfig = CosmosContainerConfig.parseCosmosContainerConfig(userConfig)
-      val sourceContainer = ThroughputControlHelper.getContainer(userConfig, cosmosContainerConfig, client)
-      SparkUtils.safeOpenConnectionInitCaches(sourceContainer, (msg, e) => logWarning(msg, e))
       val queryOptions = new CosmosQueryRequestOptions()
       queryOptions.setMaxBufferedItemCount(cosmosInferenceConfig.inferSchemaSamplingSize)
+      queryOptions.setDedicatedGatewayRequestOptions(cosmosReadConfig.dedicatedGatewayRequestOptions)
+      ThroughputControlHelper.populateThroughputControlGroupName(
+        ImplementationBridgeHelpers
+          .CosmosQueryRequestOptionsHelper
+          .getCosmosQueryRequestOptionsAccessor
+          .getImpl(queryOptions),
+        cosmosReadConfig.throughputControlConfig)
+
       val queryText = cosmosInferenceConfig.inferSchemaQuery match {
         case None =>
           ImplementationBridgeHelpers
@@ -124,18 +147,54 @@ private object CosmosTableSchemaInferrer
       val pagedFluxResponse =
         sourceContainer.queryItems(queryText, queryOptions, classOf[ObjectNode])
 
-      val feedResponseList = new CosmosPagedIterable[ObjectNode](pagedFluxResponse, cosmosReadConfig.maxItemCount)
+      val feedResponseList = new CosmosPagedIterable[ObjectNode](
+        pagedFluxResponse,
+        cosmosReadConfig.maxItemCount,
+        math.max(
+          1,
+          math.ceil(cosmosInferenceConfig.inferSchemaSamplingSize.toDouble/cosmosReadConfig.maxItemCount).toInt
+        )
+      )
         .stream()
         .limit(cosmosInferenceConfig.inferSchemaSamplingSize)
         .collect(Collectors.toList[ObjectNode]())
 
-      inferSchema(feedResponseList.asScala,
-        cosmosInferenceConfig.inferSchemaQuery.isDefined || cosmosInferenceConfig.includeSystemProperties,
-        cosmosInferenceConfig.inferSchemaQuery.isDefined || cosmosInferenceConfig.includeTimestamp,
-        cosmosInferenceConfig.allowNullForInferredProperties)
+        schema = Some(inferSchema(feedResponseList.asScala,
+            cosmosInferenceConfig.inferSchemaQuery.isDefined || cosmosInferenceConfig.includeSystemProperties,
+            cosmosInferenceConfig.inferSchemaQuery.isDefined || cosmosInferenceConfig.includeTimestamp,
+            cosmosInferenceConfig.allowNullForInferredProperties))
     } else {
-      defaultSchema
+      schema = Some(defaultSchema)
     }
+
+    if (cosmosReadConfig.readManyFilteringConfig.readManyFilteringEnabled) {
+      val effectiveReadManyFilteringProperty =
+        getEffectiveReadManyFilteringProperty(sourceContainer, cosmosReadConfig.readManyFilteringConfig)
+
+      // only add if the schema does not contain the readMany filtering property
+      if (!schema.get.fieldNames.contains(effectiveReadManyFilteringProperty)) {
+        schema = Some(schema.get.add(effectiveReadManyFilteringProperty, DataTypes.StringType, true))
+      }
+
+      schema.get
+    } else {
+      schema.get
+    }
+  }
+  //scalastyle:on method.length
+
+  private def getEffectiveReadManyFilteringProperty(
+                                                     cosmosContainer: CosmosAsyncContainer,
+                                                     readManyFilteringConfig: CosmosReadManyFilteringConfig): String = {
+    val partitionKeyDefinition =
+      TransientErrorsRetryPolicy.executeWithRetry[PartitionKeyDefinition](() => {
+        SparkBridgeInternal
+          .getContainerPropertiesFromCollectionCache(cosmosContainer).getPartitionKeyDefinition
+      })
+
+    CosmosReadManyFilteringConfig
+      .getEffectiveReadManyFilteringConfig(readManyFilteringConfig, partitionKeyDefinition)
+      .readManyFilterProperty
   }
 
   private def inferDataTypeFromObjectNode
@@ -193,7 +252,7 @@ private object CosmosTableSchemaInferrer
       case decimalNode: DecimalNode if decimalNode.isInt => IntegerType
       case arrayNode: ArrayNode => inferDataTypeFromArrayNode(arrayNode, allowNullForInferredProperties) match {
         case Some(valueType) => ArrayType(valueType)
-        case None => NullType
+        case None => ArrayType(NullType)
       }
       case objectNode: ObjectNode =>
         inferDataTypeFromObjectNode(

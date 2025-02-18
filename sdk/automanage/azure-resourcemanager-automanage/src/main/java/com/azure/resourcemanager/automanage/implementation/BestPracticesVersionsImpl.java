@@ -13,20 +13,29 @@ import com.azure.resourcemanager.automanage.fluent.BestPracticesVersionsClient;
 import com.azure.resourcemanager.automanage.fluent.models.BestPracticeInner;
 import com.azure.resourcemanager.automanage.models.BestPractice;
 import com.azure.resourcemanager.automanage.models.BestPracticesVersions;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 public final class BestPracticesVersionsImpl implements BestPracticesVersions {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(BestPracticesVersionsImpl.class);
+    private static final ClientLogger LOGGER = new ClientLogger(BestPracticesVersionsImpl.class);
 
     private final BestPracticesVersionsClient innerClient;
 
     private final com.azure.resourcemanager.automanage.AutomanageManager serviceManager;
 
-    public BestPracticesVersionsImpl(
-        BestPracticesVersionsClient innerClient,
+    public BestPracticesVersionsImpl(BestPracticesVersionsClient innerClient,
         com.azure.resourcemanager.automanage.AutomanageManager serviceManager) {
         this.innerClient = innerClient;
         this.serviceManager = serviceManager;
+    }
+
+    public Response<BestPractice> getWithResponse(String bestPracticeName, String versionName, Context context) {
+        Response<BestPracticeInner> inner
+            = this.serviceClient().getWithResponse(bestPracticeName, versionName, context);
+        if (inner != null) {
+            return new SimpleResponse<>(inner.getRequest(), inner.getStatusCode(), inner.getHeaders(),
+                new BestPracticeImpl(inner.getValue(), this.manager()));
+        } else {
+            return null;
+        }
     }
 
     public BestPractice get(String bestPracticeName, String versionName) {
@@ -38,28 +47,14 @@ public final class BestPracticesVersionsImpl implements BestPracticesVersions {
         }
     }
 
-    public Response<BestPractice> getWithResponse(String bestPracticeName, String versionName, Context context) {
-        Response<BestPracticeInner> inner =
-            this.serviceClient().getWithResponse(bestPracticeName, versionName, context);
-        if (inner != null) {
-            return new SimpleResponse<>(
-                inner.getRequest(),
-                inner.getStatusCode(),
-                inner.getHeaders(),
-                new BestPracticeImpl(inner.getValue(), this.manager()));
-        } else {
-            return null;
-        }
-    }
-
     public PagedIterable<BestPractice> listByTenant(String bestPracticeName) {
         PagedIterable<BestPracticeInner> inner = this.serviceClient().listByTenant(bestPracticeName);
-        return Utils.mapPage(inner, inner1 -> new BestPracticeImpl(inner1, this.manager()));
+        return ResourceManagerUtils.mapPage(inner, inner1 -> new BestPracticeImpl(inner1, this.manager()));
     }
 
     public PagedIterable<BestPractice> listByTenant(String bestPracticeName, Context context) {
         PagedIterable<BestPracticeInner> inner = this.serviceClient().listByTenant(bestPracticeName, context);
-        return Utils.mapPage(inner, inner1 -> new BestPracticeImpl(inner1, this.manager()));
+        return ResourceManagerUtils.mapPage(inner, inner1 -> new BestPracticeImpl(inner1, this.manager()));
     }
 
     private BestPracticesVersionsClient serviceClient() {

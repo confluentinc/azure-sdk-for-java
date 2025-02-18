@@ -5,103 +5,92 @@
 package com.azure.resourcemanager.loganalytics.models;
 
 import com.azure.core.annotation.Fluent;
-import com.azure.core.annotation.JsonFlatten;
-import com.azure.core.util.logging.ClientLogger;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.azure.json.JsonReader;
+import com.azure.json.JsonToken;
+import com.azure.json.JsonWriter;
+import com.azure.resourcemanager.loganalytics.fluent.models.WorkspaceProperties;
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
-/** The top level Workspace resource container. */
-@JsonFlatten
+/**
+ * The top level Workspace resource container.
+ */
 @Fluent
-public class WorkspacePatch extends AzureEntityResource {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(WorkspacePatch.class);
+public final class WorkspacePatch extends AzureEntityResource {
+    /*
+     * Workspace properties.
+     */
+    private WorkspaceProperties innerProperties;
+
+    /*
+     * The identity of the resource.
+     */
+    private Identity identity;
 
     /*
      * Resource tags. Optional.
      */
-    @JsonProperty(value = "tags")
     private Map<String, String> tags;
 
     /*
-     * The provisioning state of the workspace.
+     * Resource Etag.
      */
-    @JsonProperty(value = "properties.provisioningState")
-    private WorkspaceEntityStatus provisioningState;
+    private String etag;
 
     /*
-     * This is a read-only property. Represents the ID associated with the
-     * workspace.
+     * The type of the resource.
      */
-    @JsonProperty(value = "properties.customerId", access = JsonProperty.Access.WRITE_ONLY)
-    private String customerId;
+    private String type;
 
     /*
-     * The SKU of the workspace.
+     * The name of the resource.
      */
-    @JsonProperty(value = "properties.sku")
-    private WorkspaceSku sku;
+    private String name;
 
     /*
-     * The workspace data retention in days. Allowed values are per pricing
-     * plan. See pricing tiers documentation for details.
+     * Fully qualified resource Id for the resource.
      */
-    @JsonProperty(value = "properties.retentionInDays")
-    private Integer retentionInDays;
+    private String id;
 
-    /*
-     * The daily volume cap for ingestion.
+    /**
+     * Creates an instance of WorkspacePatch class.
      */
-    @JsonProperty(value = "properties.workspaceCapping")
-    private WorkspaceCapping workspaceCapping;
+    public WorkspacePatch() {
+    }
 
-    /*
-     * Workspace creation date.
+    /**
+     * Get the innerProperties property: Workspace properties.
+     * 
+     * @return the innerProperties value.
      */
-    @JsonProperty(value = "properties.createdDate", access = JsonProperty.Access.WRITE_ONLY)
-    private String createdDate;
+    private WorkspaceProperties innerProperties() {
+        return this.innerProperties;
+    }
 
-    /*
-     * Workspace modification date.
+    /**
+     * Get the identity property: The identity of the resource.
+     * 
+     * @return the identity value.
      */
-    @JsonProperty(value = "properties.modifiedDate", access = JsonProperty.Access.WRITE_ONLY)
-    private String modifiedDate;
+    public Identity identity() {
+        return this.identity;
+    }
 
-    /*
-     * The network access type for accessing Log Analytics ingestion.
+    /**
+     * Set the identity property: The identity of the resource.
+     * 
+     * @param identity the identity value to set.
+     * @return the WorkspacePatch object itself.
      */
-    @JsonProperty(value = "properties.publicNetworkAccessForIngestion")
-    private PublicNetworkAccessType publicNetworkAccessForIngestion;
-
-    /*
-     * The network access type for accessing Log Analytics query.
-     */
-    @JsonProperty(value = "properties.publicNetworkAccessForQuery")
-    private PublicNetworkAccessType publicNetworkAccessForQuery;
-
-    /*
-     * Indicates whether customer managed storage is mandatory for query
-     * management.
-     */
-    @JsonProperty(value = "properties.forceCmkForQuery")
-    private Boolean forceCmkForQuery;
-
-    /*
-     * List of linked private link scope resources.
-     */
-    @JsonProperty(value = "properties.privateLinkScopedResources", access = JsonProperty.Access.WRITE_ONLY)
-    private List<PrivateLinkScopedResource> privateLinkScopedResources;
-
-    /*
-     * Workspace features.
-     */
-    @JsonProperty(value = "properties.features")
-    private Map<String, Object> features;
+    public WorkspacePatch withIdentity(Identity identity) {
+        this.identity = identity;
+        return this;
+    }
 
     /**
      * Get the tags property: Resource tags. Optional.
-     *
+     * 
      * @return the tags value.
      */
     public Map<String, String> tags() {
@@ -110,7 +99,7 @@ public class WorkspacePatch extends AzureEntityResource {
 
     /**
      * Set the tags property: Resource tags. Optional.
-     *
+     * 
      * @param tags the tags value to set.
      * @return the WorkspacePatch object itself.
      */
@@ -120,219 +109,344 @@ public class WorkspacePatch extends AzureEntityResource {
     }
 
     /**
-     * Get the provisioningState property: The provisioning state of the workspace.
-     *
-     * @return the provisioningState value.
+     * Get the etag property: Resource Etag.
+     * 
+     * @return the etag value.
      */
-    public WorkspaceEntityStatus provisioningState() {
-        return this.provisioningState;
+    @Override
+    public String etag() {
+        return this.etag;
     }
 
     /**
-     * Set the provisioningState property: The provisioning state of the workspace.
-     *
-     * @param provisioningState the provisioningState value to set.
-     * @return the WorkspacePatch object itself.
+     * Get the type property: The type of the resource.
+     * 
+     * @return the type value.
      */
-    public WorkspacePatch withProvisioningState(WorkspaceEntityStatus provisioningState) {
-        this.provisioningState = provisioningState;
-        return this;
+    @Override
+    public String type() {
+        return this.type;
+    }
+
+    /**
+     * Get the name property: The name of the resource.
+     * 
+     * @return the name value.
+     */
+    @Override
+    public String name() {
+        return this.name;
+    }
+
+    /**
+     * Get the id property: Fully qualified resource Id for the resource.
+     * 
+     * @return the id value.
+     */
+    @Override
+    public String id() {
+        return this.id;
+    }
+
+    /**
+     * Get the provisioningState property: The provisioning state of the workspace.
+     * 
+     * @return the provisioningState value.
+     */
+    public WorkspaceEntityStatus provisioningState() {
+        return this.innerProperties() == null ? null : this.innerProperties().provisioningState();
     }
 
     /**
      * Get the customerId property: This is a read-only property. Represents the ID associated with the workspace.
-     *
+     * 
      * @return the customerId value.
      */
     public String customerId() {
-        return this.customerId;
+        return this.innerProperties() == null ? null : this.innerProperties().customerId();
     }
 
     /**
      * Get the sku property: The SKU of the workspace.
-     *
+     * 
      * @return the sku value.
      */
     public WorkspaceSku sku() {
-        return this.sku;
+        return this.innerProperties() == null ? null : this.innerProperties().sku();
     }
 
     /**
      * Set the sku property: The SKU of the workspace.
-     *
+     * 
      * @param sku the sku value to set.
      * @return the WorkspacePatch object itself.
      */
     public WorkspacePatch withSku(WorkspaceSku sku) {
-        this.sku = sku;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new WorkspaceProperties();
+        }
+        this.innerProperties().withSku(sku);
         return this;
     }
 
     /**
      * Get the retentionInDays property: The workspace data retention in days. Allowed values are per pricing plan. See
      * pricing tiers documentation for details.
-     *
+     * 
      * @return the retentionInDays value.
      */
     public Integer retentionInDays() {
-        return this.retentionInDays;
+        return this.innerProperties() == null ? null : this.innerProperties().retentionInDays();
     }
 
     /**
      * Set the retentionInDays property: The workspace data retention in days. Allowed values are per pricing plan. See
      * pricing tiers documentation for details.
-     *
+     * 
      * @param retentionInDays the retentionInDays value to set.
      * @return the WorkspacePatch object itself.
      */
     public WorkspacePatch withRetentionInDays(Integer retentionInDays) {
-        this.retentionInDays = retentionInDays;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new WorkspaceProperties();
+        }
+        this.innerProperties().withRetentionInDays(retentionInDays);
         return this;
     }
 
     /**
      * Get the workspaceCapping property: The daily volume cap for ingestion.
-     *
+     * 
      * @return the workspaceCapping value.
      */
     public WorkspaceCapping workspaceCapping() {
-        return this.workspaceCapping;
+        return this.innerProperties() == null ? null : this.innerProperties().workspaceCapping();
     }
 
     /**
      * Set the workspaceCapping property: The daily volume cap for ingestion.
-     *
+     * 
      * @param workspaceCapping the workspaceCapping value to set.
      * @return the WorkspacePatch object itself.
      */
     public WorkspacePatch withWorkspaceCapping(WorkspaceCapping workspaceCapping) {
-        this.workspaceCapping = workspaceCapping;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new WorkspaceProperties();
+        }
+        this.innerProperties().withWorkspaceCapping(workspaceCapping);
         return this;
     }
 
     /**
      * Get the createdDate property: Workspace creation date.
-     *
+     * 
      * @return the createdDate value.
      */
     public String createdDate() {
-        return this.createdDate;
+        return this.innerProperties() == null ? null : this.innerProperties().createdDate();
     }
 
     /**
      * Get the modifiedDate property: Workspace modification date.
-     *
+     * 
      * @return the modifiedDate value.
      */
     public String modifiedDate() {
-        return this.modifiedDate;
+        return this.innerProperties() == null ? null : this.innerProperties().modifiedDate();
     }
 
     /**
      * Get the publicNetworkAccessForIngestion property: The network access type for accessing Log Analytics ingestion.
-     *
+     * 
      * @return the publicNetworkAccessForIngestion value.
      */
     public PublicNetworkAccessType publicNetworkAccessForIngestion() {
-        return this.publicNetworkAccessForIngestion;
+        return this.innerProperties() == null ? null : this.innerProperties().publicNetworkAccessForIngestion();
     }
 
     /**
      * Set the publicNetworkAccessForIngestion property: The network access type for accessing Log Analytics ingestion.
-     *
+     * 
      * @param publicNetworkAccessForIngestion the publicNetworkAccessForIngestion value to set.
      * @return the WorkspacePatch object itself.
      */
     public WorkspacePatch withPublicNetworkAccessForIngestion(PublicNetworkAccessType publicNetworkAccessForIngestion) {
-        this.publicNetworkAccessForIngestion = publicNetworkAccessForIngestion;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new WorkspaceProperties();
+        }
+        this.innerProperties().withPublicNetworkAccessForIngestion(publicNetworkAccessForIngestion);
         return this;
     }
 
     /**
      * Get the publicNetworkAccessForQuery property: The network access type for accessing Log Analytics query.
-     *
+     * 
      * @return the publicNetworkAccessForQuery value.
      */
     public PublicNetworkAccessType publicNetworkAccessForQuery() {
-        return this.publicNetworkAccessForQuery;
+        return this.innerProperties() == null ? null : this.innerProperties().publicNetworkAccessForQuery();
     }
 
     /**
      * Set the publicNetworkAccessForQuery property: The network access type for accessing Log Analytics query.
-     *
+     * 
      * @param publicNetworkAccessForQuery the publicNetworkAccessForQuery value to set.
      * @return the WorkspacePatch object itself.
      */
     public WorkspacePatch withPublicNetworkAccessForQuery(PublicNetworkAccessType publicNetworkAccessForQuery) {
-        this.publicNetworkAccessForQuery = publicNetworkAccessForQuery;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new WorkspaceProperties();
+        }
+        this.innerProperties().withPublicNetworkAccessForQuery(publicNetworkAccessForQuery);
         return this;
     }
 
     /**
      * Get the forceCmkForQuery property: Indicates whether customer managed storage is mandatory for query management.
-     *
+     * 
      * @return the forceCmkForQuery value.
      */
     public Boolean forceCmkForQuery() {
-        return this.forceCmkForQuery;
+        return this.innerProperties() == null ? null : this.innerProperties().forceCmkForQuery();
     }
 
     /**
      * Set the forceCmkForQuery property: Indicates whether customer managed storage is mandatory for query management.
-     *
+     * 
      * @param forceCmkForQuery the forceCmkForQuery value to set.
      * @return the WorkspacePatch object itself.
      */
     public WorkspacePatch withForceCmkForQuery(Boolean forceCmkForQuery) {
-        this.forceCmkForQuery = forceCmkForQuery;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new WorkspaceProperties();
+        }
+        this.innerProperties().withForceCmkForQuery(forceCmkForQuery);
         return this;
     }
 
     /**
      * Get the privateLinkScopedResources property: List of linked private link scope resources.
-     *
+     * 
      * @return the privateLinkScopedResources value.
      */
     public List<PrivateLinkScopedResource> privateLinkScopedResources() {
-        return this.privateLinkScopedResources;
+        return this.innerProperties() == null ? null : this.innerProperties().privateLinkScopedResources();
     }
 
     /**
      * Get the features property: Workspace features.
-     *
+     * 
      * @return the features value.
      */
-    public Map<String, Object> features() {
-        return this.features;
+    public WorkspaceFeatures features() {
+        return this.innerProperties() == null ? null : this.innerProperties().features();
     }
 
     /**
      * Set the features property: Workspace features.
-     *
+     * 
      * @param features the features value to set.
      * @return the WorkspacePatch object itself.
      */
-    public WorkspacePatch withFeatures(Map<String, Object> features) {
-        this.features = features;
+    public WorkspacePatch withFeatures(WorkspaceFeatures features) {
+        if (this.innerProperties() == null) {
+            this.innerProperties = new WorkspaceProperties();
+        }
+        this.innerProperties().withFeatures(features);
+        return this;
+    }
+
+    /**
+     * Get the defaultDataCollectionRuleResourceId property: The resource ID of the default Data Collection Rule to use
+     * for this workspace. Expected format is -
+     * /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Insights/dataCollectionRules/{dcrName}.
+     * 
+     * @return the defaultDataCollectionRuleResourceId value.
+     */
+    public String defaultDataCollectionRuleResourceId() {
+        return this.innerProperties() == null ? null : this.innerProperties().defaultDataCollectionRuleResourceId();
+    }
+
+    /**
+     * Set the defaultDataCollectionRuleResourceId property: The resource ID of the default Data Collection Rule to use
+     * for this workspace. Expected format is -
+     * /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Insights/dataCollectionRules/{dcrName}.
+     * 
+     * @param defaultDataCollectionRuleResourceId the defaultDataCollectionRuleResourceId value to set.
+     * @return the WorkspacePatch object itself.
+     */
+    public WorkspacePatch withDefaultDataCollectionRuleResourceId(String defaultDataCollectionRuleResourceId) {
+        if (this.innerProperties() == null) {
+            this.innerProperties = new WorkspaceProperties();
+        }
+        this.innerProperties().withDefaultDataCollectionRuleResourceId(defaultDataCollectionRuleResourceId);
         return this;
     }
 
     /**
      * Validates the instance.
-     *
+     * 
      * @throws IllegalArgumentException thrown if the instance is not valid.
      */
     @Override
     public void validate() {
-        super.validate();
-        if (sku() != null) {
-            sku().validate();
+        if (innerProperties() != null) {
+            innerProperties().validate();
         }
-        if (workspaceCapping() != null) {
-            workspaceCapping().validate();
+        if (identity() != null) {
+            identity().validate();
         }
-        if (privateLinkScopedResources() != null) {
-            privateLinkScopedResources().forEach(e -> e.validate());
-        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public JsonWriter toJson(JsonWriter jsonWriter) throws IOException {
+        jsonWriter.writeStartObject();
+        jsonWriter.writeJsonField("properties", this.innerProperties);
+        jsonWriter.writeJsonField("identity", this.identity);
+        jsonWriter.writeMapField("tags", this.tags, (writer, element) -> writer.writeString(element));
+        return jsonWriter.writeEndObject();
+    }
+
+    /**
+     * Reads an instance of WorkspacePatch from the JsonReader.
+     * 
+     * @param jsonReader The JsonReader being read.
+     * @return An instance of WorkspacePatch if the JsonReader was pointing to an instance of it, or null if it was
+     * pointing to JSON null.
+     * @throws IllegalStateException If the deserialized JSON object was missing any required properties.
+     * @throws IOException If an error occurs while reading the WorkspacePatch.
+     */
+    public static WorkspacePatch fromJson(JsonReader jsonReader) throws IOException {
+        return jsonReader.readObject(reader -> {
+            WorkspacePatch deserializedWorkspacePatch = new WorkspacePatch();
+            while (reader.nextToken() != JsonToken.END_OBJECT) {
+                String fieldName = reader.getFieldName();
+                reader.nextToken();
+
+                if ("id".equals(fieldName)) {
+                    deserializedWorkspacePatch.id = reader.getString();
+                } else if ("name".equals(fieldName)) {
+                    deserializedWorkspacePatch.name = reader.getString();
+                } else if ("type".equals(fieldName)) {
+                    deserializedWorkspacePatch.type = reader.getString();
+                } else if ("etag".equals(fieldName)) {
+                    deserializedWorkspacePatch.etag = reader.getString();
+                } else if ("properties".equals(fieldName)) {
+                    deserializedWorkspacePatch.innerProperties = WorkspaceProperties.fromJson(reader);
+                } else if ("identity".equals(fieldName)) {
+                    deserializedWorkspacePatch.identity = Identity.fromJson(reader);
+                } else if ("tags".equals(fieldName)) {
+                    Map<String, String> tags = reader.readMap(reader1 -> reader1.getString());
+                    deserializedWorkspacePatch.tags = tags;
+                } else {
+                    reader.skipChildren();
+                }
+            }
+
+            return deserializedWorkspacePatch;
+        });
     }
 }

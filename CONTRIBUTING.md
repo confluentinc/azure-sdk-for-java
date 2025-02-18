@@ -9,6 +9,8 @@ Thank you for your interest in contributing to Azure SDK for Java.
 
 - To make code changes, or contribute something new, please follow the [GitHub Forks / Pull requests model](https://help.github.com/articles/fork-a-repo/): Fork the repo, make the change and propose it back by submitting a pull request.
 
+- After cloning the repo, copy the [pre-commit hooks file](https://github.com/Azure/azure-sdk-for-java/tree/main/eng/scripts/pre-commit) (located at `eng/scripts/pre-commit`) to your local `.git/hooks/` directory. This will run some validations before your changes are committed.
+
 - Refer to the [wiki](https://github.com/Azure/azure-sdk-for-java/wiki/Building#testing-for-spotbugs-and-checkstyle-issues) to learn about how Azure SDK for java generates CheckStyle, SpotBugs, Jacoco, and JavaDoc reports.
 
 - There are two Maven projects in the repo. Refer to the [wiki](https://github.com/Azure/azure-sdk-for-java/wiki/Building#pomclientxml-vs-pomdataxml) to learn about project structure for each.
@@ -50,14 +52,14 @@ Merging Pull Requests (for project contributors with write access)
   - add `MAVEN_HOME` to environment variables
 
 >**Note:** If you ran into "long path" issue on `Windows`, enable paths longer than 260 characters by: <br><br>
-1.- Run this as Administrator on a command prompt:<br> 
+1.- Run this as Administrator on a command prompt:<br>
 `REG ADD HKLM\SYSTEM\CurrentControlSet\Control\FileSystem /v LongPathsEnabled /t REG_DWORD /d 1`<br>*(might need to type `yes` to override key if it already exists)*<br><br>
 2.- Set up `git` by running:<br> `git config --system core.longpaths true`
 
 ### Building and Unit Testing
 
 Refer to the [build wiki](https://github.com/Azure/azure-sdk-for-java/wiki/Building) for learning how to build Java SDKs
-and the [unit testing wiki](https://github.com/Azure/azure-sdk-for-java/wiki/Unit-Testing) for guidelines on unit 
+and the [unit testing wiki](https://github.com/Azure/azure-sdk-for-java/wiki/Unit-Testing) for guidelines on unit
 testing.
 
 ### Live testing
@@ -93,7 +95,7 @@ When building locally you might run into a Checkstyle such as the following:
 
 ```
 Execution default of goal org.apache.maven.plugins:maven-checkstyle-plugin:3.1.0:check failed:
-Plugin org.apache.maven.plugins:maven-checkstyle-plugin:3.1.0 or one of its dependencies could not be resolved: 
+Plugin org.apache.maven.plugins:maven-checkstyle-plugin:3.1.0 or one of its dependencies could not be resolved:
 Could not find artifact com.azure:sdk-build-tools:jar:1.0.0 in ossrh (https://oss.sonatype.org/content/repositories/snapshots/)
 ```
 
@@ -115,6 +117,29 @@ The dependency-version should be set to the most recent released version and the
 
 Note: In the case of a new artifact both versions will be the same. In the case of a released artifact, the dependecny version should be the latest released version.
 
+### Supported GroupIds and publishing
+
+We no longer publish directly to Maven Central, any publishing is done through ESRP. Libraries published need to conform to one of the groupIds that we can publish to. Here is the list of accepted groupdIs:
+
+- "com.microsoft"
+- "com.azure.*"
+- "com.azure"
+- "com.microsoft.azure"
+- "com.microsoft.azure.cognitiveservices"
+- "com.microsoft.azure.functions"
+- "com.microsoft.azure.kusto"
+- "com.microsoft.azure.sdk.iot"
+- "com.microsoft.azure.sdk.iot.provisioning"
+- "com.microsoft.commondatamodel"
+- "com.windowsazure"
+- "com.microsoft.sqlserver"
+- "com.microsoft.spring"
+- "com.microsoft.servicefabric"
+- "com.microsoft.rest"
+- "io.clientcore"
+
+Note: This list will be replaced with a link to a page created by ESRP providing a UI where GroupIds can be cheked and new ones requested if needed.
+
 ### Libraries vs External Dependencies
 
 Libraries refer to things that are built and released as part of the Azure SDK. Libraries have a current version and a dependency version.
@@ -123,14 +148,17 @@ External Dependencies refer to dependencies for things that are not built and re
 
 ### Current version, Dependency version, Unreleased Dependency version and Released Beta Dependency version
 
-Current version - This is the version we should be using when defining a component in its POM file and also when dependent components are built within the same pipeline. The current version is the version currently in development.
-Dependency version - This is the version we should be using when a given library is a dependency outside of a particular area. This should be the latest released version of the package whenever possible.
-Unreleased Dependency version – Whenever possible, libraries should be using the latest released version for dependencies but there is the case where active development in one library is going to be needed by another library or libraries that are built in separate pipelines. These types of changes are specifically additive and not breaking. Once a library has GA’d, nothing short of breaking changes should ever force the dependency versions across the repo to an unreleased version. The reason for this is that it would prevent other libraries, that don’t need this change, from releasing. Unreleased dependcies of scope test will not prevent a library from being released.
-Released Beta Dependency version – This is for when a library, which has already GA'd, is being released as a Beta version and we need to keep the dependency version to the latest GA. This particular tag will be used to allow other libraries to depend on the released Beta version. Libraries with released Beta dependencies can only be released as Beta, themselves, as a library cannot GA with Beta dependencies. An exception to the previous rule would be if the Beta dependency has a scope of test as this will not prevent a library from being released as GA.
+**Current version** - This is the version we should be using when defining a component in its POM file and also when dependent components are built within the same pipeline. The current version is the version currently in development.
 
-An example of Current vs Dependency versions: `com.azure:azure-storage-blob-batch` has dependencies on `com.azure:azure-core`, `com.azure:azure-core-http-netty` and `com.azure:azure-storage-blob`. Because `com.azure:azure-core` and `com.azure:azure-core-http-netty` are both built outside of azure-storage pipeline we should be using the released or *Dependency* versions of these when they're dependencies of another library. Similarly, libraries built as part of the same pipeline, that have interdependencies, should be using the Current version. Since `com.azure:azure-storage-blob-batch` and `com.azure:azure-storage-blob` are both built part of the azure-batch pipeline when `com.azure:azure-storage-blob` is declared as a dependency of `com.azure:azure-storage-blob-batch` it should be the *Current* version.
+**Dependency version** - This is the version we should be using when a given library is a dependency outside of a particular area. This should be the latest released version of the package whenever possible.
 
-An example of an Unreleased Dependency version: Additive, not breaking, API changes have been made to `com.azure:azure-core`. `com.azure:azure-storage-blob` has a dependency on `com.azure:azure-core` and requires the additive API change that has not yet been released. An unreleased entry needs to be created in [version_client.txt](https://github.com/Azure/azure-sdk-for-java/blob/main/eng/versioning/version_client.txt), under the unreleased section, with the following format: `unreleased_<groupId>:<artifactId>;dependency-version`, in this example that would be `unreleased_com.azure:azure-core;1.2.0` (this should match the 'current' version of core). The dependency update tags in the pom files that required this dependency would now reference `{x-version-update;unreleased_com.azure:azure-core;dependency}`. Once the updated library has been released the unreleased dependency version should be removed and the POM file update tags should be referencing the released version.
+**Unreleased Dependency version** – Whenever possible, libraries should be using the latest released version for dependencies but there is the case where active development in one library is going to be needed by another library or libraries that are built in separate pipelines. These types of changes are specifically additive and not breaking. Once a library has GA’d, nothing short of breaking changes should ever force the dependency versions across the repo to an unreleased version. The reason for this is that it would prevent other libraries, that don’t need this change, from releasing. Unreleased dependcies of scope test will not prevent a library from being released.
+
+**Released Beta Dependency version** – This is for when a library, which has already GA'd, is being released as a Beta version and we need to keep the dependency version to the latest GA. This particular tag will be used to allow other libraries to depend on the released Beta version. Libraries with released Beta dependencies can only be released as Beta, themselves, as a library cannot GA with Beta dependencies. An exception to the previous rule would be if the Beta dependency has a scope of test as this will not prevent a library from being released as GA.
+
+**An example of Current vs Dependency versions:** `com.azure:azure-storage-blob-batch` has dependencies on `com.azure:azure-core`, `com.azure:azure-core-http-netty` and `com.azure:azure-storage-blob`. Because `com.azure:azure-core` and `com.azure:azure-core-http-netty` are both built outside of azure-storage pipeline we should be using the released or *Dependency* versions of these when they're dependencies of another library. Similarly, libraries built as part of the same pipeline, that have interdependencies, should be using the Current version. Since `com.azure:azure-storage-blob-batch` and `com.azure:azure-storage-blob` are both built part of the azure-batch pipeline when `com.azure:azure-storage-blob` is declared as a dependency of `com.azure:azure-storage-blob-batch` it should be the *Current* version.
+
+**An example of an Unreleased Dependency version:** Additive, not breaking, API changes have been made to `com.azure:azure-core`. `com.azure:azure-storage-blob` has a dependency on `com.azure:azure-core` and requires the additive API change that has not yet been released. An unreleased entry needs to be created in [version_client.txt](https://github.com/Azure/azure-sdk-for-java/blob/main/eng/versioning/version_client.txt), under the unreleased section, with the following format: `unreleased_<groupId>:<artifactId>;dependency-version`, in this example that would be `unreleased_com.azure:azure-core;1.2.0` (this should match the 'current' version of core). The dependency update tags in the pom files that required this dependency would now reference `{x-version-update;unreleased_com.azure:azure-core;dependency}`. Once the updated library has been released the unreleased dependency version should be removed and the POM file update tags should be referencing the released version.
 
 ### Tooling, version files and marker tags
 
@@ -190,7 +218,7 @@ After the unreleased version of `com.azure:azure-core` was released but before `
 
 For general packaging versioning policies see [Package Versioning](https://azure.github.io/azure-sdk/policies_releases.html#package-versioning) and see [Java](https://azure.github.io/azure-sdk/policies_releases.html#java) for specific rules used in this repo.
 
-While some Java projects use SNAPSHOT versions for nightly builds, we have opted not to use that convention because it has proven to be very unreliable in our scenarios. For example, if we use SNAPSHOT versions in our pom.xml files that usually ends up becoming viral throughout our entire repo and we want to more tightly control our versioning, especially our dependency versioning. On top of the viral nature, we have experienced a lot of network reliability issues when consuming SNAPSHOT versions from Maven central so we want to avoid this reliability issue in our build pipelines. 
+While some Java projects use SNAPSHOT versions for nightly builds, we have opted not to use that convention because it has proven to be very unreliable in our scenarios. For example, if we use SNAPSHOT versions in our pom.xml files that usually ends up becoming viral throughout our entire repo and we want to more tightly control our versioning, especially our dependency versioning. On top of the viral nature, we have experienced a lot of network reliability issues when consuming SNAPSHOT versions from Maven central so we want to avoid this reliability issue in our build pipelines.
 
 Given we don't use SNAPSHOT versions in our pom.xml files we generally have the version currently under development committed to the repo in the pom.xml file. This means if you are looking at our active development code for the version you will see a version that is not yet published to Maven central. If you want to try out our packages under development, you should look for our latest alpha build (see Dev Feed section below).
 
@@ -205,3 +233,23 @@ For developers working within the repo, refer to the instructions above for upda
 For developers wishing to use the daily packages for other purposes, refer to the [connect to feed instructions](https://dev.azure.com/azure-sdk/public/_packaging?_a=connect&feed=azure-sdk-for-java) in Azure Artifacts.
 
 Note: the daily package feed is considered volatile and taking dependencies on a daily package should be considered a temporary arrangement. We reserve the right to remove packages from this feed at any point in time.
+
+## Samples
+
+### Third-party dependencies
+
+Third party libraries should only be included in samples when necessary to demonstrate usage of an Azure SDK package; they should not be suggested or endorsed as alternatives to the Azure SDK.
+
+When code samples take dependencies, readers should be able to use the material without significant license burden or research on terms. This goal requires restricting dependencies to certain types of open source or commercial licenses.
+
+Samples may take the following categories of dependencies:
+
+- **Open-source** : Open source offerings that use an [Open Source Initiative (OSI) approved license](https://opensource.org/licenses). Any component whose license isn't OSI-approved is considered a commercial offering. Prefer OSS projects that are members of any of the [OSS foundations that Microsoft is part of](https://opensource.microsoft.com/ecosystem/). Prefer permissive licenses for libraries, like [MIT](https://opensource.org/licenses/MIT) and [Apache 2](https://opensource.org/licenses/Apache-2.0). Copy-left licenses like [GPL](https://opensource.org/licenses/gpl-license) are acceptable for tools, and OSs. [Kubernetes](https://github.com/kubernetes/kubernetes), [Linux](https://github.com/torvalds/linux), and [Newtonsoft.Json](https://github.com/JamesNK/Newtonsoft.Json) are examples of this license type. Links to open source components should be to where the source is hosted, including any applicable license, such as a GitHub repository (or similar).
+
+- **Commercial**: Commercial offerings that enable readers to learn from our content without unnecessary extra costs. Typically, the offering has some form of a community edition, or a free trial sufficient for its use in content. A commercial license may be a form of dual-license, or tiered license. Links to commercial components should be to the commercial site for the software, even if the source software is hosted publicly on GitHub (or similar).
+
+- **Dual licensed**: Commercial offerings that enable readers to choose either license based on their needs. For example, if the offering has an OSS and commercial license, readers can  choose between them. [MySql](https://github.com/mysql/mysql-server) is an example of this license type.
+
+- **Tiered licensed**: Offerings that enable readers to use the license tier that corresponds to their characteristics. For example, tiers may be available for students, hobbyists, or companies with defined revenue  thresholds. For offerings with tiered licenses, strive to limit our use in tutorials to the features available in the lowest tier. This policy enables the widest audience for the article. [Docker](https://www.docker.com/), [IdentityServer](https://duendesoftware.com/products/identityserver), [ImageSharp](https://sixlabors.com/products/imagesharp/), and [Visual Studio](https://visualstudio.com) are examples of this license type.
+
+In general, we prefer taking dependencies on licensed components in the order of the listed categories. In cases where the category may not be well known, we'll document the category so that readers understand the choice that they're making by using that dependency.

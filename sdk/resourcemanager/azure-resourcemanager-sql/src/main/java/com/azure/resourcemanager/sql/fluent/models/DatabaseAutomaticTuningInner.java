@@ -5,103 +5,192 @@
 package com.azure.resourcemanager.sql.fluent.models;
 
 import com.azure.core.annotation.Fluent;
-import com.azure.core.annotation.JsonFlatten;
 import com.azure.core.management.ProxyResource;
-import com.azure.core.util.logging.ClientLogger;
+import com.azure.json.JsonReader;
+import com.azure.json.JsonToken;
+import com.azure.json.JsonWriter;
 import com.azure.resourcemanager.sql.models.AutomaticTuningMode;
 import com.azure.resourcemanager.sql.models.AutomaticTuningOptions;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import java.io.IOException;
 import java.util.Map;
 
-/** Database-level Automatic Tuning. */
-@JsonFlatten
+/**
+ * Database-level Automatic Tuning.
+ */
 @Fluent
-public class DatabaseAutomaticTuningInner extends ProxyResource {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(DatabaseAutomaticTuningInner.class);
+public final class DatabaseAutomaticTuningInner extends ProxyResource {
+    /*
+     * Resource properties.
+     */
+    private DatabaseAutomaticTuningProperties innerProperties;
 
     /*
-     * Automatic tuning desired state.
+     * The type of the resource.
      */
-    @JsonProperty(value = "properties.desiredState")
-    private AutomaticTuningMode desiredState;
+    private String type;
 
     /*
-     * Automatic tuning actual state.
+     * The name of the resource.
      */
-    @JsonProperty(value = "properties.actualState", access = JsonProperty.Access.WRITE_ONLY)
-    private AutomaticTuningMode actualState;
+    private String name;
 
     /*
-     * Automatic tuning options definition.
+     * Fully qualified resource Id for the resource.
      */
-    @JsonProperty(value = "properties.options")
-    private Map<String, AutomaticTuningOptions> options;
+    private String id;
+
+    /**
+     * Creates an instance of DatabaseAutomaticTuningInner class.
+     */
+    public DatabaseAutomaticTuningInner() {
+    }
+
+    /**
+     * Get the innerProperties property: Resource properties.
+     * 
+     * @return the innerProperties value.
+     */
+    private DatabaseAutomaticTuningProperties innerProperties() {
+        return this.innerProperties;
+    }
+
+    /**
+     * Get the type property: The type of the resource.
+     * 
+     * @return the type value.
+     */
+    @Override
+    public String type() {
+        return this.type;
+    }
+
+    /**
+     * Get the name property: The name of the resource.
+     * 
+     * @return the name value.
+     */
+    @Override
+    public String name() {
+        return this.name;
+    }
+
+    /**
+     * Get the id property: Fully qualified resource Id for the resource.
+     * 
+     * @return the id value.
+     */
+    @Override
+    public String id() {
+        return this.id;
+    }
 
     /**
      * Get the desiredState property: Automatic tuning desired state.
-     *
+     * 
      * @return the desiredState value.
      */
     public AutomaticTuningMode desiredState() {
-        return this.desiredState;
+        return this.innerProperties() == null ? null : this.innerProperties().desiredState();
     }
 
     /**
      * Set the desiredState property: Automatic tuning desired state.
-     *
+     * 
      * @param desiredState the desiredState value to set.
      * @return the DatabaseAutomaticTuningInner object itself.
      */
     public DatabaseAutomaticTuningInner withDesiredState(AutomaticTuningMode desiredState) {
-        this.desiredState = desiredState;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new DatabaseAutomaticTuningProperties();
+        }
+        this.innerProperties().withDesiredState(desiredState);
         return this;
     }
 
     /**
      * Get the actualState property: Automatic tuning actual state.
-     *
+     * 
      * @return the actualState value.
      */
     public AutomaticTuningMode actualState() {
-        return this.actualState;
+        return this.innerProperties() == null ? null : this.innerProperties().actualState();
     }
 
     /**
      * Get the options property: Automatic tuning options definition.
-     *
+     * 
      * @return the options value.
      */
     public Map<String, AutomaticTuningOptions> options() {
-        return this.options;
+        return this.innerProperties() == null ? null : this.innerProperties().options();
     }
 
     /**
      * Set the options property: Automatic tuning options definition.
-     *
+     * 
      * @param options the options value to set.
      * @return the DatabaseAutomaticTuningInner object itself.
      */
     public DatabaseAutomaticTuningInner withOptions(Map<String, AutomaticTuningOptions> options) {
-        this.options = options;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new DatabaseAutomaticTuningProperties();
+        }
+        this.innerProperties().withOptions(options);
         return this;
     }
 
     /**
      * Validates the instance.
-     *
+     * 
      * @throws IllegalArgumentException thrown if the instance is not valid.
      */
     public void validate() {
-        if (options() != null) {
-            options()
-                .values()
-                .forEach(
-                    e -> {
-                        if (e != null) {
-                            e.validate();
-                        }
-                    });
+        if (innerProperties() != null) {
+            innerProperties().validate();
         }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public JsonWriter toJson(JsonWriter jsonWriter) throws IOException {
+        jsonWriter.writeStartObject();
+        jsonWriter.writeJsonField("properties", this.innerProperties);
+        return jsonWriter.writeEndObject();
+    }
+
+    /**
+     * Reads an instance of DatabaseAutomaticTuningInner from the JsonReader.
+     * 
+     * @param jsonReader The JsonReader being read.
+     * @return An instance of DatabaseAutomaticTuningInner if the JsonReader was pointing to an instance of it, or null
+     * if it was pointing to JSON null.
+     * @throws IllegalStateException If the deserialized JSON object was missing any required properties.
+     * @throws IOException If an error occurs while reading the DatabaseAutomaticTuningInner.
+     */
+    public static DatabaseAutomaticTuningInner fromJson(JsonReader jsonReader) throws IOException {
+        return jsonReader.readObject(reader -> {
+            DatabaseAutomaticTuningInner deserializedDatabaseAutomaticTuningInner = new DatabaseAutomaticTuningInner();
+            while (reader.nextToken() != JsonToken.END_OBJECT) {
+                String fieldName = reader.getFieldName();
+                reader.nextToken();
+
+                if ("id".equals(fieldName)) {
+                    deserializedDatabaseAutomaticTuningInner.id = reader.getString();
+                } else if ("name".equals(fieldName)) {
+                    deserializedDatabaseAutomaticTuningInner.name = reader.getString();
+                } else if ("type".equals(fieldName)) {
+                    deserializedDatabaseAutomaticTuningInner.type = reader.getString();
+                } else if ("properties".equals(fieldName)) {
+                    deserializedDatabaseAutomaticTuningInner.innerProperties
+                        = DatabaseAutomaticTuningProperties.fromJson(reader);
+                } else {
+                    reader.skipChildren();
+                }
+            }
+
+            return deserializedDatabaseAutomaticTuningInner;
+        });
     }
 }

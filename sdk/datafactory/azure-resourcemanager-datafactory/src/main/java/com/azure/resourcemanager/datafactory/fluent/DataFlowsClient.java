@@ -11,11 +11,32 @@ import com.azure.core.http.rest.Response;
 import com.azure.core.util.Context;
 import com.azure.resourcemanager.datafactory.fluent.models.DataFlowResourceInner;
 
-/** An instance of this class provides access to all the operations defined in DataFlowsClient. */
+/**
+ * An instance of this class provides access to all the operations defined in DataFlowsClient.
+ */
 public interface DataFlowsClient {
     /**
      * Creates or updates a data flow.
-     *
+     * 
+     * @param resourceGroupName The resource group name.
+     * @param factoryName The factory name.
+     * @param dataFlowName The data flow name.
+     * @param dataFlow Data flow resource definition.
+     * @param ifMatch ETag of the data flow entity. Should only be specified for update, for which it should match
+     * existing entity or can be * for unconditional update.
+     * @param context The context to associate with this operation.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return data flow resource type along with {@link Response}.
+     */
+    @ServiceMethod(returns = ReturnType.SINGLE)
+    Response<DataFlowResourceInner> createOrUpdateWithResponse(String resourceGroupName, String factoryName,
+        String dataFlowName, DataFlowResourceInner dataFlow, String ifMatch, Context context);
+
+    /**
+     * Creates or updates a data flow.
+     * 
      * @param resourceGroupName The resource group name.
      * @param factoryName The factory name.
      * @param dataFlowName The data flow name.
@@ -26,36 +47,30 @@ public interface DataFlowsClient {
      * @return data flow resource type.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    DataFlowResourceInner createOrUpdate(
-        String resourceGroupName, String factoryName, String dataFlowName, DataFlowResourceInner dataFlow);
+    DataFlowResourceInner createOrUpdate(String resourceGroupName, String factoryName, String dataFlowName,
+        DataFlowResourceInner dataFlow);
 
     /**
-     * Creates or updates a data flow.
-     *
+     * Gets a data flow.
+     * 
      * @param resourceGroupName The resource group name.
      * @param factoryName The factory name.
      * @param dataFlowName The data flow name.
-     * @param dataFlow Data flow resource definition.
-     * @param ifMatch ETag of the data flow entity. Should only be specified for update, for which it should match
-     *     existing entity or can be * for unconditional update.
+     * @param ifNoneMatch ETag of the data flow entity. Should only be specified for get. If the ETag matches the
+     * existing entity tag, or if * was provided, then no content will be returned.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return data flow resource type along with {@link Response}.
+     * @return a data flow along with {@link Response}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    Response<DataFlowResourceInner> createOrUpdateWithResponse(
-        String resourceGroupName,
-        String factoryName,
-        String dataFlowName,
-        DataFlowResourceInner dataFlow,
-        String ifMatch,
-        Context context);
+    Response<DataFlowResourceInner> getWithResponse(String resourceGroupName, String factoryName, String dataFlowName,
+        String ifNoneMatch, Context context);
 
     /**
      * Gets a data flow.
-     *
+     * 
      * @param resourceGroupName The resource group name.
      * @param factoryName The factory name.
      * @param dataFlowName The data flow name.
@@ -68,26 +83,24 @@ public interface DataFlowsClient {
     DataFlowResourceInner get(String resourceGroupName, String factoryName, String dataFlowName);
 
     /**
-     * Gets a data flow.
-     *
+     * Deletes a data flow.
+     * 
      * @param resourceGroupName The resource group name.
      * @param factoryName The factory name.
      * @param dataFlowName The data flow name.
-     * @param ifNoneMatch ETag of the data flow entity. Should only be specified for get. If the ETag matches the
-     *     existing entity tag, or if * was provided, then no content will be returned.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return a data flow along with {@link Response}.
+     * @return the {@link Response}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    Response<DataFlowResourceInner> getWithResponse(
-        String resourceGroupName, String factoryName, String dataFlowName, String ifNoneMatch, Context context);
+    Response<Void> deleteWithResponse(String resourceGroupName, String factoryName, String dataFlowName,
+        Context context);
 
     /**
      * Deletes a data flow.
-     *
+     * 
      * @param resourceGroupName The resource group name.
      * @param factoryName The factory name.
      * @param dataFlowName The data flow name.
@@ -99,44 +112,28 @@ public interface DataFlowsClient {
     void delete(String resourceGroupName, String factoryName, String dataFlowName);
 
     /**
-     * Deletes a data flow.
-     *
-     * @param resourceGroupName The resource group name.
-     * @param factoryName The factory name.
-     * @param dataFlowName The data flow name.
-     * @param context The context to associate with this operation.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the {@link Response}.
-     */
-    @ServiceMethod(returns = ReturnType.SINGLE)
-    Response<Void> deleteWithResponse(
-        String resourceGroupName, String factoryName, String dataFlowName, Context context);
-
-    /**
      * Lists data flows.
-     *
+     * 
      * @param resourceGroupName The resource group name.
      * @param factoryName The factory name.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return a list of data flow resources.
+     * @return a list of data flow resources as paginated response with {@link PagedIterable}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
     PagedIterable<DataFlowResourceInner> listByFactory(String resourceGroupName, String factoryName);
 
     /**
      * Lists data flows.
-     *
+     * 
      * @param resourceGroupName The resource group name.
      * @param factoryName The factory name.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return a list of data flow resources.
+     * @return a list of data flow resources as paginated response with {@link PagedIterable}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
     PagedIterable<DataFlowResourceInner> listByFactory(String resourceGroupName, String factoryName, Context context);

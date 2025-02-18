@@ -22,23 +22,28 @@ import com.azure.core.util.Context;
 import com.azure.core.util.FluxUtil;
 import reactor.core.publisher.Mono;
 
-/** An instance of this class provides access to all the operations defined in NotebookOperationResults. */
+/**
+ * An instance of this class provides access to all the operations defined in NotebookOperationResults.
+ */
 public final class NotebookOperationResultsImpl {
-    /** The proxy service used to perform REST calls. */
+    /**
+     * The proxy service used to perform REST calls.
+     */
     private final NotebookOperationResultsService service;
 
-    /** The service client containing this operation class. */
+    /**
+     * The service client containing this operation class.
+     */
     private final ArtifactsClientImpl client;
 
     /**
      * Initializes an instance of NotebookOperationResultsImpl.
-     *
+     * 
      * @param client the instance of the service client containing this operation class.
      */
     NotebookOperationResultsImpl(ArtifactsClientImpl client) {
-        this.service =
-                RestProxy.create(
-                        NotebookOperationResultsService.class, client.getHttpPipeline(), client.getSerializerAdapter());
+        this.service = RestProxy.create(NotebookOperationResultsService.class, client.getHttpPipeline(),
+            client.getSerializerAdapter());
         this.client = client;
     }
 
@@ -48,44 +53,37 @@ public final class NotebookOperationResultsImpl {
      */
     @Host("{endpoint}")
     @ServiceInterface(name = "ArtifactsClientNoteb")
-    private interface NotebookOperationResultsService {
+    public interface NotebookOperationResultsService {
         @Get("/notebookOperationResults/{operationId}")
-        @ExpectedResponses({200, 201, 202, 204})
+        @ExpectedResponses({ 200, 201, 202, 204 })
         @UnexpectedResponseExceptionType(ErrorContractException.class)
-        Mono<Response<Void>> get(
-                @HostParam("endpoint") String endpoint,
-                @QueryParam("api-version") String apiVersion,
-                @PathParam("operationId") String operationId,
-                @HeaderParam("Accept") String accept,
-                Context context);
+        Mono<Response<Void>> get(@HostParam("endpoint") String endpoint, @QueryParam("api-version") String apiVersion,
+            @PathParam("operationId") String operationId, @HeaderParam("Accept") String accept, Context context);
     }
 
     /**
      * Get notebook operation result.
-     *
+     * 
      * @param operationId Operation ID.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ErrorContractException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return notebook operation result.
+     * @return notebook operation result along with {@link Response} on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
     public Mono<Response<Void>> getWithResponseAsync(String operationId) {
-        final String apiVersion = "2020-12-01";
-        final String accept = "application/json";
-        return FluxUtil.withContext(
-                context -> service.get(this.client.getEndpoint(), apiVersion, operationId, accept, context));
+        return FluxUtil.withContext(context -> getWithResponseAsync(operationId, context));
     }
 
     /**
      * Get notebook operation result.
-     *
+     * 
      * @param operationId Operation ID.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ErrorContractException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return notebook operation result.
+     * @return notebook operation result along with {@link Response} on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
     public Mono<Response<Void>> getWithResponseAsync(String operationId, Context context) {
@@ -96,36 +94,51 @@ public final class NotebookOperationResultsImpl {
 
     /**
      * Get notebook operation result.
-     *
+     * 
      * @param operationId Operation ID.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ErrorContractException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return notebook operation result.
+     * @return notebook operation result on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
     public Mono<Void> getAsync(String operationId) {
-        return getWithResponseAsync(operationId).flatMap((Response<Void> res) -> Mono.empty());
+        return getWithResponseAsync(operationId).flatMap(ignored -> Mono.empty());
     }
 
     /**
      * Get notebook operation result.
-     *
+     * 
      * @param operationId Operation ID.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ErrorContractException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return notebook operation result.
+     * @return notebook operation result on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
     public Mono<Void> getAsync(String operationId, Context context) {
-        return getWithResponseAsync(operationId, context).flatMap((Response<Void> res) -> Mono.empty());
+        return getWithResponseAsync(operationId, context).flatMap(ignored -> Mono.empty());
     }
 
     /**
      * Get notebook operation result.
-     *
+     * 
+     * @param operationId Operation ID.
+     * @param context The context to associate with this operation.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws ErrorContractException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return notebook operation result along with {@link Response}.
+     */
+    @ServiceMethod(returns = ReturnType.SINGLE)
+    public Response<Void> getWithResponse(String operationId, Context context) {
+        return getWithResponseAsync(operationId, context).block();
+    }
+
+    /**
+     * Get notebook operation result.
+     * 
      * @param operationId Operation ID.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ErrorContractException thrown if the request is rejected by server.
@@ -133,21 +146,6 @@ public final class NotebookOperationResultsImpl {
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
     public void get(String operationId) {
-        getAsync(operationId).block();
-    }
-
-    /**
-     * Get notebook operation result.
-     *
-     * @param operationId Operation ID.
-     * @param context The context to associate with this operation.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws ErrorContractException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return notebook operation result.
-     */
-    @ServiceMethod(returns = ReturnType.SINGLE)
-    public Response<Void> getWithResponse(String operationId, Context context) {
-        return getWithResponseAsync(operationId, context).block();
+        getWithResponse(operationId, Context.NONE);
     }
 }

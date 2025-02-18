@@ -11,41 +11,63 @@ import com.azure.core.http.rest.Response;
 import com.azure.core.util.Context;
 import com.azure.resourcemanager.securityinsights.fluent.models.WatchlistInner;
 
-/** An instance of this class provides access to all the operations defined in WatchlistsClient. */
+/**
+ * An instance of this class provides access to all the operations defined in WatchlistsClient.
+ */
 public interface WatchlistsClient {
     /**
-     * Gets all watchlists, without watchlist items.
-     *
+     * Get all watchlists, without watchlist items.
+     * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
      * @param workspaceName The name of the workspace.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return all watchlists, without watchlist items.
+     * @return all watchlists, without watchlist items as paginated response with {@link PagedIterable}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
     PagedIterable<WatchlistInner> list(String resourceGroupName, String workspaceName);
 
     /**
-     * Gets all watchlists, without watchlist items.
-     *
+     * Get all watchlists, without watchlist items.
+     * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
      * @param workspaceName The name of the workspace.
+     * @param skipToken Skiptoken is only used if a previous operation returned a partial result. If a previous response
+     * contains a nextLink element, the value of the nextLink element will include a skiptoken parameter that specifies
+     * a starting point to use for subsequent calls. Optional.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return all watchlists, without watchlist items.
+     * @return all watchlists, without watchlist items as paginated response with {@link PagedIterable}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
-    PagedIterable<WatchlistInner> list(String resourceGroupName, String workspaceName, Context context);
+    PagedIterable<WatchlistInner> list(String resourceGroupName, String workspaceName, String skipToken,
+        Context context);
 
     /**
-     * Gets a watchlist, without its watchlist items.
-     *
+     * Get a watchlist, without its watchlist items.
+     * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
      * @param workspaceName The name of the workspace.
-     * @param watchlistAlias Watchlist Alias.
+     * @param watchlistAlias The watchlist alias.
+     * @param context The context to associate with this operation.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return a watchlist, without its watchlist items along with {@link Response}.
+     */
+    @ServiceMethod(returns = ReturnType.SINGLE)
+    Response<WatchlistInner> getWithResponse(String resourceGroupName, String workspaceName, String watchlistAlias,
+        Context context);
+
+    /**
+     * Get a watchlist, without its watchlist items.
+     * 
+     * @param resourceGroupName The name of the resource group. The name is case insensitive.
+     * @param workspaceName The name of the workspace.
+     * @param watchlistAlias The watchlist alias.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
@@ -55,27 +77,27 @@ public interface WatchlistsClient {
     WatchlistInner get(String resourceGroupName, String workspaceName, String watchlistAlias);
 
     /**
-     * Gets a watchlist, without its watchlist items.
-     *
+     * Delete a watchlist.
+     * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
      * @param workspaceName The name of the workspace.
-     * @param watchlistAlias Watchlist Alias.
+     * @param watchlistAlias The watchlist alias.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return a watchlist, without its watchlist items along with {@link Response}.
+     * @return the {@link Response}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    Response<WatchlistInner> getWithResponse(
-        String resourceGroupName, String workspaceName, String watchlistAlias, Context context);
+    Response<Void> deleteWithResponse(String resourceGroupName, String workspaceName, String watchlistAlias,
+        Context context);
 
     /**
      * Delete a watchlist.
-     *
+     * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
      * @param workspaceName The name of the workspace.
-     * @param watchlistAlias Watchlist Alias.
+     * @param watchlistAlias The watchlist alias.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
@@ -84,45 +106,12 @@ public interface WatchlistsClient {
     void delete(String resourceGroupName, String workspaceName, String watchlistAlias);
 
     /**
-     * Delete a watchlist.
-     *
+     * Create or update a Watchlist and its Watchlist Items (bulk creation, e.g. through text/csv content type). To
+     * create a Watchlist and its Items, we should call this endpoint with rawContent and contentType properties.
+     * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
      * @param workspaceName The name of the workspace.
-     * @param watchlistAlias Watchlist Alias.
-     * @param context The context to associate with this operation.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the {@link Response}.
-     */
-    @ServiceMethod(returns = ReturnType.SINGLE)
-    Response<Void> deleteWithResponse(
-        String resourceGroupName, String workspaceName, String watchlistAlias, Context context);
-
-    /**
-     * Creates or updates a watchlist and its watchlist items (bulk creation, e.g. through text/csv content type). To
-     * create a Watchlist and its items, we should call this endpoint with rawContent and contentType properties.
-     *
-     * @param resourceGroupName The name of the resource group. The name is case insensitive.
-     * @param workspaceName The name of the workspace.
-     * @param watchlistAlias Watchlist Alias.
-     * @param watchlist The watchlist.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return represents a Watchlist in Azure Security Insights.
-     */
-    @ServiceMethod(returns = ReturnType.SINGLE)
-    WatchlistInner createOrUpdate(
-        String resourceGroupName, String workspaceName, String watchlistAlias, WatchlistInner watchlist);
-
-    /**
-     * Creates or updates a watchlist and its watchlist items (bulk creation, e.g. through text/csv content type). To
-     * create a Watchlist and its items, we should call this endpoint with rawContent and contentType properties.
-     *
-     * @param resourceGroupName The name of the resource group. The name is case insensitive.
-     * @param workspaceName The name of the workspace.
-     * @param watchlistAlias Watchlist Alias.
+     * @param watchlistAlias The watchlist alias.
      * @param watchlist The watchlist.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
@@ -131,10 +120,23 @@ public interface WatchlistsClient {
      * @return represents a Watchlist in Azure Security Insights along with {@link Response}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    Response<WatchlistInner> createOrUpdateWithResponse(
-        String resourceGroupName,
-        String workspaceName,
-        String watchlistAlias,
-        WatchlistInner watchlist,
-        Context context);
+    Response<WatchlistInner> createOrUpdateWithResponse(String resourceGroupName, String workspaceName,
+        String watchlistAlias, WatchlistInner watchlist, Context context);
+
+    /**
+     * Create or update a Watchlist and its Watchlist Items (bulk creation, e.g. through text/csv content type). To
+     * create a Watchlist and its Items, we should call this endpoint with rawContent and contentType properties.
+     * 
+     * @param resourceGroupName The name of the resource group. The name is case insensitive.
+     * @param workspaceName The name of the workspace.
+     * @param watchlistAlias The watchlist alias.
+     * @param watchlist The watchlist.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return represents a Watchlist in Azure Security Insights.
+     */
+    @ServiceMethod(returns = ReturnType.SINGLE)
+    WatchlistInner createOrUpdate(String resourceGroupName, String workspaceName, String watchlistAlias,
+        WatchlistInner watchlist);
 }

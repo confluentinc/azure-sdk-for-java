@@ -5,10 +5,14 @@ package com.azure.cosmos.implementation;
 
 import com.azure.cosmos.ConnectionMode;
 import com.azure.cosmos.ConsistencyLevel;
+import com.azure.cosmos.CosmosContainerProactiveInitConfig;
 import com.azure.cosmos.CosmosDiagnostics;
-import com.azure.cosmos.implementation.directconnectivity.RntbdTransportClient;
+import com.azure.cosmos.CosmosEndToEndOperationLatencyPolicyConfig;
+import com.azure.cosmos.SessionRetryOptions;
+import com.azure.cosmos.implementation.apachecommons.lang.StringUtils;
+import com.azure.cosmos.implementation.circuitBreaker.PartitionLevelCircuitBreakerConfig;
+import com.azure.cosmos.implementation.clienttelemetry.ClientTelemetry;
 import com.azure.cosmos.implementation.guava27.Strings;
-import com.azure.cosmos.implementation.http.HttpClientConfig;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
@@ -19,49 +23,78 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-@JsonSerialize(using = DiagnosticsClientContext.ClientContextSerializer.class)
 public interface DiagnosticsClientContext {
 
     DiagnosticsClientConfig getConfig();
 
     CosmosDiagnostics createDiagnostics();
 
+    String getUserAgent();
 
-    static final class ClientContextSerializer extends StdSerializer<DiagnosticsClientContext> {
-        private final static Logger logger = LoggerFactory.getLogger(ClientContextSerializer.class);
-        public final static ClientContextSerializer INSTACE = new ClientContextSerializer();
+    CosmosDiagnostics getMostRecentlyCreatedDiagnostics();
+
+    final class DiagnosticsClientConfigSerializer extends StdSerializer<DiagnosticsClientConfig> {
+        private final static Logger logger = LoggerFactory.getLogger(DiagnosticsClientConfigSerializer.class);
+        public final static DiagnosticsClientConfigSerializer INSTANCE = new DiagnosticsClientConfigSerializer();
+
+        private static final Pattern SPACE_PATTERN = Pattern.compile(" ");
 
         private static final long serialVersionUID = 1;
 
-        protected ClientContextSerializer() {
+        protected DiagnosticsClientConfigSerializer() {
             this(null);
         }
 
-        protected ClientContextSerializer(Class<DiagnosticsClientContext> t) {
+        protected DiagnosticsClientConfigSerializer(Class<DiagnosticsClientConfig> t) {
             super(t);
         }
 
         @Override
-        public void serialize(DiagnosticsClientContext clientContext, JsonGenerator generator,
+        public void serialize(DiagnosticsClientConfig clientConfig, JsonGenerator generator,
                               SerializerProvider serializerProvider) throws IOException {
             generator.writeStartObject();
             try {
-                generator.writeNumberField("id", clientContext.getConfig().getClientId());
-                generator.writeStringField("connectionMode", clientContext.getConfig().getConnectionMode().toString());
-                generator.writeNumberField("numberOfClients", clientContext.getConfig().getActiveClientsCount());
+                generator.writeNumberField("id", clientConfig.getClientId());
+                generator.writeStringField("machineId", ClientTelemetry.getMachineId(clientConfig));
+                generator.writeStringField("connectionMode", clientConfig.getConnectionMode().toString());
+                generator.writeNumberField("numberOfClients", clientConfig.getActiveClientsCount());
+                generator.writeStringField("excrgns", clientConfig.excludedRegionsRelatedConfig());
+                generator.writeObjectFieldStart("clientEndpoints");
+                for (Map.Entry<String, Integer> entry: clientConfig.clientMap.entrySet()) {
+                    try {
+                        generator.writeNumberField(entry.getKey(), entry.getValue());
+                    } catch (Exception e) {
+                        logger.debug("unexpected failure", e);
+                    }
+                }
+                generator.writeEndObject();
                 generator.writeObjectFieldStart("connCfg");
                 try {
-                    generator.writeStringField("rntbd", clientContext.getConfig().rntbdConfig());
-                    generator.writeStringField("gw", clientContext.getConfig().gwConfig());
-                    generator.writeStringField("other", clientContext.getConfig().otherConnectionConfig());
+                    generator.writeStringField("rntbd", clientConfig.rntbdConfig());
+                    generator.writeStringField("gw", clientConfig.gwConfig());
+                    generator.writeStringField("other", clientConfig.otherConnectionConfig());
                 } catch (Exception e) {
                     logger.debug("unexpected failure", e);
                 }
                 generator.writeEndObject();
-                generator.writeStringField("consistencyCfg", clientContext.getConfig().consistencyRelatedConfig());
+                generator.writeStringField("consistencyCfg", clientConfig.consistencyRelatedConfig());
+                generator.writeStringField("proactiveInitCfg", clientConfig.proactivelyInitializedContainersAsString);
+                generator.writeStringField("e2ePolicyCfg", clientConfig.endToEndOperationLatencyPolicyConfigAsString);
+                generator.writeStringField("sessionRetryCfg", clientConfig.sessionRetryOptionsAsString);
+
+                if (!StringUtils.isEmpty(clientConfig.regionScopedSessionContainerOptionsAsString)) {
+                    generator.writeStringField("regionScopedSessionCfg", clientConfig.regionScopedSessionContainerOptionsAsString);
+                }
+
+                if (!StringUtils.isEmpty(clientConfig.partitionLevelCircuitBreakerConfigAsString)) {
+                    generator.writeStringField("partitionLevelCircuitBreakerCfg", clientConfig.partitionLevelCircuitBreakerConfigAsString);
+                }
+
             } catch (Exception e) {
                 logger.debug("unexpected failure", e);
             }
@@ -69,31 +102,51 @@ public interface DiagnosticsClientContext {
         }
     }
 
+    @JsonSerialize(using = DiagnosticsClientContext.DiagnosticsClientConfigSerializer.class)
     class DiagnosticsClientConfig {
 
         private AtomicInteger activeClientsCnt;
         private int clientId;
+        private Map<String, Integer> clientMap;
 
         private ConsistencyLevel consistencyLevel;
         private boolean connectionSharingAcrossClientsEnabled;
         private String consistencyRelatedConfigAsString;
         private String httpConfigAsString;
         private String otherCfgAsString;
-        private List<String> preferredRegions;
+        private String preferredRegionsAsString;
+        private String proactivelyInitializedContainersAsString;
+
+        private String endToEndOperationLatencyPolicyConfigAsString;
         private boolean endpointDiscoveryEnabled;
         private boolean multipleWriteRegionsEnabled;
-
-        private HttpClientConfig httpClientConfig;
-        private RntbdTransportClient.Options options;
         private String rntbdConfigAsString;
         private ConnectionMode connectionMode;
+        private String machineId;
+        private boolean replicaValidationEnabled = Configs.isReplicaAddressValidationEnabled();
+        private ConnectionPolicy connectionPolicy;
+        private String sessionRetryOptionsAsString;
+        private String regionScopedSessionContainerOptionsAsString;
+        private String partitionLevelCircuitBreakerConfigAsString;
 
-        public void withActiveClientCounter(AtomicInteger activeClientsCnt) {
-            this.activeClientsCnt = activeClientsCnt;
+        public DiagnosticsClientConfig withMachineId(String machineId) {
+            this.machineId = machineId;
+            return this;
         }
 
-        public void withClientId(int clientId) {
+        public DiagnosticsClientConfig withActiveClientCounter(AtomicInteger activeClientsCnt) {
+            this.activeClientsCnt = activeClientsCnt;
+            return this;
+        }
+
+        public DiagnosticsClientConfig withClientId(int clientId) {
             this.clientId = clientId;
+            return this;
+        }
+
+        public DiagnosticsClientConfig withClientMap(Map<String, Integer> clientMap) {
+            this.clientMap = clientMap;
+            return this;
         }
 
         public DiagnosticsClientConfig withEndpointDiscoveryEnabled(boolean endpointDiscoveryEnabled) {
@@ -107,7 +160,43 @@ public interface DiagnosticsClientContext {
         }
 
         public DiagnosticsClientConfig withPreferredRegions(List<String> preferredRegions) {
-            this.preferredRegions = preferredRegions;
+            if (preferredRegions == null || preferredRegions.isEmpty()) {
+                this.preferredRegionsAsString = "";
+            } else {
+                this.preferredRegionsAsString = preferredRegions
+                    .stream()
+                    .map(r -> DiagnosticsClientConfigSerializer.SPACE_PATTERN.matcher(r.toLowerCase(Locale.ROOT)).replaceAll(""))
+                    .collect(Collectors.joining(","));
+            }
+            return this;
+        }
+
+        public DiagnosticsClientConfig withConnectionPolicy(ConnectionPolicy connectionPolicy) {
+            this.connectionPolicy = connectionPolicy;
+            return this;
+        }
+
+        public DiagnosticsClientConfig withProactiveContainerInitConfig(
+            CosmosContainerProactiveInitConfig config) {
+
+            if (config == null) {
+                this.proactivelyInitializedContainersAsString = "";
+            } else {
+                this.proactivelyInitializedContainersAsString = config.toString();
+            }
+
+            return this;
+        }
+
+        public DiagnosticsClientConfig withEndToEndOperationLatencyPolicy(
+            CosmosEndToEndOperationLatencyPolicyConfig config) {
+
+            if (config == null) {
+                this.endToEndOperationLatencyPolicyConfigAsString = "";
+            } else {
+                this.endToEndOperationLatencyPolicyConfigAsString = config.toString();
+            }
+
             return this;
         }
 
@@ -121,18 +210,49 @@ public interface DiagnosticsClientContext {
             return this;
         }
 
-        public DiagnosticsClientConfig withRntbdOptions(RntbdTransportClient.Options options) {
-            this.options = options;
+        public DiagnosticsClientConfig withRntbdOptions(String rntbdConfigAsString) {
+            this.rntbdConfigAsString = rntbdConfigAsString;
             return this;
         }
 
-        public DiagnosticsClientConfig withGatewayHttpClientConfig(HttpClientConfig httpClientConfig) {
-            this.httpClientConfig = httpClientConfig;
+        public DiagnosticsClientConfig withGatewayHttpClientConfig(String httpConfigAsString) {
+            this.httpConfigAsString = httpConfigAsString;
             return this;
         }
 
         public DiagnosticsClientConfig withConnectionMode(ConnectionMode connectionMode) {
             this.connectionMode = connectionMode;
+            return this;
+        }
+
+        public DiagnosticsClientConfig withSessionRetryOptions(SessionRetryOptions sessionRetryOptions) {
+            if (sessionRetryOptions == null) {
+                this.sessionRetryOptionsAsString = "";
+            } else {
+                this.sessionRetryOptionsAsString = sessionRetryOptions.toString();
+            }
+
+            return this;
+        }
+
+        public DiagnosticsClientConfig withPartitionLevelCircuitBreakerConfig(PartitionLevelCircuitBreakerConfig partitionLevelCircuitBreakerConfig) {
+            if (partitionLevelCircuitBreakerConfig == null) {
+                this.partitionLevelCircuitBreakerConfigAsString = "";
+            } else {
+                this.partitionLevelCircuitBreakerConfigAsString = partitionLevelCircuitBreakerConfig.getConfigAsString();
+            }
+
+            return this;
+        }
+
+        public DiagnosticsClientConfig withRegionScopedSessionContainerOptions(RegionScopedSessionContainer regionScopedSessionContainer) {
+
+            if (regionScopedSessionContainer == null) {
+                this.regionScopedSessionContainerOptionsAsString = "";
+            } else {
+                this.regionScopedSessionContainerOptionsAsString = regionScopedSessionContainer.getRegionScopedSessionCapturingOptionsAsString();
+            }
+
             return this;
         }
 
@@ -149,26 +269,19 @@ public interface DiagnosticsClientContext {
         }
 
         public String rntbdConfig() {
-            if (this.rntbdConfigAsString == null) {
-                this.rntbdConfigAsString = this.rntbdConfigInternal(this.options);
-            }
-
             return this.rntbdConfigAsString;
         }
 
         public String gwConfig() {
-            if (this.httpConfigAsString == null) {
-                this.httpConfigAsString = this.gwConfigInternal();
-            }
-
             return this.httpConfigAsString;
         }
 
         public String otherConnectionConfig() {
             if (this.otherCfgAsString == null) {
-                this.otherCfgAsString = Strings.lenientFormat("(ed: %s, cs: %s)",
+                this.otherCfgAsString = Strings.lenientFormat("(ed: %s, cs: %s, rv: %s)",
                     this.endpointDiscoveryEnabled,
-                    this.connectionSharingAcrossClientsEnabled);
+                    this.connectionSharingAcrossClientsEnabled,
+                    this.replicaValidationEnabled);
             }
 
             return this.otherCfgAsString;
@@ -178,47 +291,24 @@ public interface DiagnosticsClientContext {
             return this.clientId;
         }
 
+        public String getMachineId() { return this.machineId; }
+
         public int getActiveClientsCount() {
             return this.activeClientsCnt != null ? this.activeClientsCnt.get() : -1;
-        }
-
-        private String gwConfigInternal() {
-            if (this.httpClientConfig == null) {
-                return null;
-            }
-            return Strings.lenientFormat("(cps:%s, nrto:%s, icto:%s, p:%s)",
-                this.httpClientConfig.getMaxPoolSize(),
-                this.httpClientConfig.getNetworkRequestTimeout(),
-                this.httpClientConfig.getMaxIdleConnectionTimeout(),
-                this.httpClientConfig.getProxy() != null);
-        }
-
-        private String rntbdConfigInternal(RntbdTransportClient.Options rntbdOptions) {
-            if (rntbdOptions == null) {
-                return null;
-            }
-            return Strings.lenientFormat("(cto:%s, nrto:%s, icto:%s, ieto:%s, mcpe:%s, mrpc:%s, cer:%s)",
-                rntbdOptions.connectTimeout(),
-                rntbdOptions.tcpNetworkRequestTimeout(),
-                rntbdOptions.idleChannelTimeout(),
-                rntbdOptions.idleEndpointTimeout(),
-                rntbdOptions.maxChannelsPerEndpoint(),
-                rntbdOptions.maxRequestsPerChannel(),
-                rntbdOptions.isConnectionEndpointRediscoveryEnabled());
-        }
-
-        private String preferredRegionsInternal() {
-            if (preferredRegions == null) {
-                return "";
-            }
-
-            return preferredRegions.stream().map(r -> r.toLowerCase(Locale.ROOT).replaceAll(" ", "")).collect(Collectors.joining(","));
         }
 
         private String consistencyRelatedConfigInternal() {
             return Strings.lenientFormat("(consistency: %s, mm: %s, prgns: [%s])", this.consistencyLevel,
                 this.multipleWriteRegionsEnabled,
-                preferredRegionsInternal());
+                preferredRegionsAsString);
+        }
+
+        private String excludedRegionsRelatedConfig() {
+            if (this.connectionPolicy == null) {
+                return "[]";
+            } else {
+                return this.connectionPolicy.getExcludedRegionsAsString();
+            }
         }
     }
 }

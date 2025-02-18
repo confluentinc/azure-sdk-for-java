@@ -5,39 +5,42 @@
 package com.azure.resourcemanager.authorization.fluent.models;
 
 import com.azure.core.annotation.Fluent;
-import com.azure.core.util.logging.ClientLogger;
-import com.fasterxml.jackson.annotation.JsonAnyGetter;
-import com.fasterxml.jackson.annotation.JsonAnySetter;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import java.util.HashMap;
+import com.azure.json.JsonReader;
+import com.azure.json.JsonToken;
+import com.azure.json.JsonWriter;
+import java.io.IOException;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
-/** workbookChartLegendFormat. */
+/**
+ * workbookChartLegendFormat.
+ */
 @Fluent
 public final class MicrosoftGraphWorkbookChartLegendFormat extends MicrosoftGraphEntity {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(MicrosoftGraphWorkbookChartLegendFormat.class);
-
     /*
      * workbookChartFill
      */
-    @JsonProperty(value = "fill")
     private MicrosoftGraphWorkbookChartFill fill;
 
     /*
      * workbookChartFont
      */
-    @JsonProperty(value = "font")
     private MicrosoftGraphWorkbookChartFont font;
 
     /*
      * workbookChartLegendFormat
      */
-    @JsonIgnore private Map<String, Object> additionalProperties;
+    private Map<String, Object> additionalProperties;
+
+    /**
+     * Creates an instance of MicrosoftGraphWorkbookChartLegendFormat class.
+     */
+    public MicrosoftGraphWorkbookChartLegendFormat() {
+    }
 
     /**
      * Get the fill property: workbookChartFill.
-     *
+     * 
      * @return the fill value.
      */
     public MicrosoftGraphWorkbookChartFill fill() {
@@ -46,7 +49,7 @@ public final class MicrosoftGraphWorkbookChartLegendFormat extends MicrosoftGrap
 
     /**
      * Set the fill property: workbookChartFill.
-     *
+     * 
      * @param fill the fill value to set.
      * @return the MicrosoftGraphWorkbookChartLegendFormat object itself.
      */
@@ -57,7 +60,7 @@ public final class MicrosoftGraphWorkbookChartLegendFormat extends MicrosoftGrap
 
     /**
      * Get the font property: workbookChartFont.
-     *
+     * 
      * @return the font value.
      */
     public MicrosoftGraphWorkbookChartFont font() {
@@ -66,7 +69,7 @@ public final class MicrosoftGraphWorkbookChartLegendFormat extends MicrosoftGrap
 
     /**
      * Set the font property: workbookChartFont.
-     *
+     * 
      * @param font the font value to set.
      * @return the MicrosoftGraphWorkbookChartLegendFormat object itself.
      */
@@ -77,17 +80,16 @@ public final class MicrosoftGraphWorkbookChartLegendFormat extends MicrosoftGrap
 
     /**
      * Get the additionalProperties property: workbookChartLegendFormat.
-     *
+     * 
      * @return the additionalProperties value.
      */
-    @JsonAnyGetter
     public Map<String, Object> additionalProperties() {
         return this.additionalProperties;
     }
 
     /**
      * Set the additionalProperties property: workbookChartLegendFormat.
-     *
+     * 
      * @param additionalProperties the additionalProperties value to set.
      * @return the MicrosoftGraphWorkbookChartLegendFormat object itself.
      */
@@ -96,15 +98,9 @@ public final class MicrosoftGraphWorkbookChartLegendFormat extends MicrosoftGrap
         return this;
     }
 
-    @JsonAnySetter
-    void withAdditionalProperties(String key, Object value) {
-        if (additionalProperties == null) {
-            additionalProperties = new HashMap<>();
-        }
-        additionalProperties.put(key, value);
-    }
-
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public MicrosoftGraphWorkbookChartLegendFormat withId(String id) {
         super.withId(id);
@@ -113,7 +109,7 @@ public final class MicrosoftGraphWorkbookChartLegendFormat extends MicrosoftGrap
 
     /**
      * Validates the instance.
-     *
+     * 
      * @throws IllegalArgumentException thrown if the instance is not valid.
      */
     @Override
@@ -125,5 +121,61 @@ public final class MicrosoftGraphWorkbookChartLegendFormat extends MicrosoftGrap
         if (font() != null) {
             font().validate();
         }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public JsonWriter toJson(JsonWriter jsonWriter) throws IOException {
+        jsonWriter.writeStartObject();
+        jsonWriter.writeStringField("id", id());
+        jsonWriter.writeJsonField("fill", this.fill);
+        jsonWriter.writeJsonField("font", this.font);
+        if (additionalProperties != null) {
+            for (Map.Entry<String, Object> additionalProperty : additionalProperties.entrySet()) {
+                jsonWriter.writeUntypedField(additionalProperty.getKey(), additionalProperty.getValue());
+            }
+        }
+        return jsonWriter.writeEndObject();
+    }
+
+    /**
+     * Reads an instance of MicrosoftGraphWorkbookChartLegendFormat from the JsonReader.
+     * 
+     * @param jsonReader The JsonReader being read.
+     * @return An instance of MicrosoftGraphWorkbookChartLegendFormat if the JsonReader was pointing to an instance of
+     * it, or null if it was pointing to JSON null.
+     * @throws IOException If an error occurs while reading the MicrosoftGraphWorkbookChartLegendFormat.
+     */
+    public static MicrosoftGraphWorkbookChartLegendFormat fromJson(JsonReader jsonReader) throws IOException {
+        return jsonReader.readObject(reader -> {
+            MicrosoftGraphWorkbookChartLegendFormat deserializedMicrosoftGraphWorkbookChartLegendFormat
+                = new MicrosoftGraphWorkbookChartLegendFormat();
+            Map<String, Object> additionalProperties = null;
+            while (reader.nextToken() != JsonToken.END_OBJECT) {
+                String fieldName = reader.getFieldName();
+                reader.nextToken();
+
+                if ("id".equals(fieldName)) {
+                    deserializedMicrosoftGraphWorkbookChartLegendFormat.withId(reader.getString());
+                } else if ("fill".equals(fieldName)) {
+                    deserializedMicrosoftGraphWorkbookChartLegendFormat.fill
+                        = MicrosoftGraphWorkbookChartFill.fromJson(reader);
+                } else if ("font".equals(fieldName)) {
+                    deserializedMicrosoftGraphWorkbookChartLegendFormat.font
+                        = MicrosoftGraphWorkbookChartFont.fromJson(reader);
+                } else {
+                    if (additionalProperties == null) {
+                        additionalProperties = new LinkedHashMap<>();
+                    }
+
+                    additionalProperties.put(fieldName, reader.readUntyped());
+                }
+            }
+            deserializedMicrosoftGraphWorkbookChartLegendFormat.additionalProperties = additionalProperties;
+
+            return deserializedMicrosoftGraphWorkbookChartLegendFormat;
+        });
     }
 }

@@ -11,29 +11,28 @@ import com.azure.resourcemanager.mysqlflexibleserver.fluent.ReplicasClient;
 import com.azure.resourcemanager.mysqlflexibleserver.fluent.models.ServerInner;
 import com.azure.resourcemanager.mysqlflexibleserver.models.Replicas;
 import com.azure.resourcemanager.mysqlflexibleserver.models.Server;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 public final class ReplicasImpl implements Replicas {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(ReplicasImpl.class);
+    private static final ClientLogger LOGGER = new ClientLogger(ReplicasImpl.class);
 
     private final ReplicasClient innerClient;
 
     private final com.azure.resourcemanager.mysqlflexibleserver.MySqlManager serviceManager;
 
-    public ReplicasImpl(
-        ReplicasClient innerClient, com.azure.resourcemanager.mysqlflexibleserver.MySqlManager serviceManager) {
+    public ReplicasImpl(ReplicasClient innerClient,
+        com.azure.resourcemanager.mysqlflexibleserver.MySqlManager serviceManager) {
         this.innerClient = innerClient;
         this.serviceManager = serviceManager;
     }
 
     public PagedIterable<Server> listByServer(String resourceGroupName, String serverName) {
         PagedIterable<ServerInner> inner = this.serviceClient().listByServer(resourceGroupName, serverName);
-        return Utils.mapPage(inner, inner1 -> new ServerImpl(inner1, this.manager()));
+        return ResourceManagerUtils.mapPage(inner, inner1 -> new ServerImpl(inner1, this.manager()));
     }
 
     public PagedIterable<Server> listByServer(String resourceGroupName, String serverName, Context context) {
         PagedIterable<ServerInner> inner = this.serviceClient().listByServer(resourceGroupName, serverName, context);
-        return Utils.mapPage(inner, inner1 -> new ServerImpl(inner1, this.manager()));
+        return ResourceManagerUtils.mapPage(inner, inner1 -> new ServerImpl(inner1, this.manager()));
     }
 
     private ReplicasClient serviceClient() {

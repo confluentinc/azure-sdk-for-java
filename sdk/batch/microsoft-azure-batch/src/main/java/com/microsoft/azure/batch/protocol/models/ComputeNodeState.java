@@ -51,8 +51,17 @@ public enum ComputeNodeState {
     /** The Compute Node is not currently running a Task, and scheduling of new Tasks to the Compute Node is disabled. */
     OFFLINE("offline"),
 
-    /** The low-priority Compute Node has been preempted. Tasks which were running on the Compute Node when it was preempted will be rescheduled when another Compute Node becomes available. */
-    PREEMPTED("preempted");
+    /** The Spot/Low-priority Compute Node has been preempted. Tasks which were running on the Compute Node when it was preempted will be rescheduled when another Compute Node becomes available. */
+    PREEMPTED("preempted"),
+
+    /** The Compute Node is undergoing an OS upgrade operation. */
+    UPGRADING_OS("upgradingos"),
+
+    /** The Compute Node is deallocated. */
+    DEALLOCATED("deallocated"),
+
+    /** The Compute Node is deallocating. */
+    DEALLOCATING("deallocating");
 
     /** The actual serialized value for a ComputeNodeState instance. */
     private String value;

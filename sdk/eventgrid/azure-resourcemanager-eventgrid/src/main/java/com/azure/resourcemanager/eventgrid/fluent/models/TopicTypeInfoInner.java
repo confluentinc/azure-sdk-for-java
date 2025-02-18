@@ -6,28 +6,50 @@ package com.azure.resourcemanager.eventgrid.fluent.models;
 
 import com.azure.core.annotation.Fluent;
 import com.azure.core.management.ProxyResource;
-import com.azure.core.util.logging.ClientLogger;
+import com.azure.json.JsonReader;
+import com.azure.json.JsonToken;
+import com.azure.json.JsonWriter;
 import com.azure.resourcemanager.eventgrid.models.ResourceRegionType;
-import com.azure.resourcemanager.eventgrid.models.TopicTypePropertiesSupportedScopesForSourceItem;
+import com.azure.resourcemanager.eventgrid.models.TopicTypeAdditionalEnforcedPermission;
 import com.azure.resourcemanager.eventgrid.models.TopicTypeProvisioningState;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.azure.resourcemanager.eventgrid.models.TopicTypeSourceScope;
+import java.io.IOException;
 import java.util.List;
 
-/** Properties of a topic type info. */
+/**
+ * Properties of a topic type info.
+ */
 @Fluent
 public final class TopicTypeInfoInner extends ProxyResource {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(TopicTypeInfoInner.class);
-
     /*
      * Properties of the topic type info
      */
-    @JsonProperty(value = "properties")
     private TopicTypeProperties innerProperties;
+
+    /*
+     * The type of the resource.
+     */
+    private String type;
+
+    /*
+     * The name of the resource.
+     */
+    private String name;
+
+    /*
+     * Fully qualified resource Id for the resource.
+     */
+    private String id;
+
+    /**
+     * Creates an instance of TopicTypeInfoInner class.
+     */
+    public TopicTypeInfoInner() {
+    }
 
     /**
      * Get the innerProperties property: Properties of the topic type info.
-     *
+     * 
      * @return the innerProperties value.
      */
     private TopicTypeProperties innerProperties() {
@@ -35,8 +57,38 @@ public final class TopicTypeInfoInner extends ProxyResource {
     }
 
     /**
+     * Get the type property: The type of the resource.
+     * 
+     * @return the type value.
+     */
+    @Override
+    public String type() {
+        return this.type;
+    }
+
+    /**
+     * Get the name property: The name of the resource.
+     * 
+     * @return the name value.
+     */
+    @Override
+    public String name() {
+        return this.name;
+    }
+
+    /**
+     * Get the id property: Fully qualified resource Id for the resource.
+     * 
+     * @return the id value.
+     */
+    @Override
+    public String id() {
+        return this.id;
+    }
+
+    /**
      * Get the provider property: Namespace of the provider of the topic type.
-     *
+     * 
      * @return the provider value.
      */
     public String provider() {
@@ -45,7 +97,7 @@ public final class TopicTypeInfoInner extends ProxyResource {
 
     /**
      * Set the provider property: Namespace of the provider of the topic type.
-     *
+     * 
      * @param provider the provider value to set.
      * @return the TopicTypeInfoInner object itself.
      */
@@ -59,7 +111,7 @@ public final class TopicTypeInfoInner extends ProxyResource {
 
     /**
      * Get the displayName property: Display Name for the topic type.
-     *
+     * 
      * @return the displayName value.
      */
     public String displayName() {
@@ -68,7 +120,7 @@ public final class TopicTypeInfoInner extends ProxyResource {
 
     /**
      * Set the displayName property: Display Name for the topic type.
-     *
+     * 
      * @param displayName the displayName value to set.
      * @return the TopicTypeInfoInner object itself.
      */
@@ -82,7 +134,7 @@ public final class TopicTypeInfoInner extends ProxyResource {
 
     /**
      * Get the description property: Description of the topic type.
-     *
+     * 
      * @return the description value.
      */
     public String description() {
@@ -91,7 +143,7 @@ public final class TopicTypeInfoInner extends ProxyResource {
 
     /**
      * Set the description property: Description of the topic type.
-     *
+     * 
      * @param description the description value to set.
      * @return the TopicTypeInfoInner object itself.
      */
@@ -105,7 +157,7 @@ public final class TopicTypeInfoInner extends ProxyResource {
 
     /**
      * Get the resourceRegionType property: Region type of the resource.
-     *
+     * 
      * @return the resourceRegionType value.
      */
     public ResourceRegionType resourceRegionType() {
@@ -114,7 +166,7 @@ public final class TopicTypeInfoInner extends ProxyResource {
 
     /**
      * Set the resourceRegionType property: Region type of the resource.
-     *
+     * 
      * @param resourceRegionType the resourceRegionType value to set.
      * @return the TopicTypeInfoInner object itself.
      */
@@ -128,7 +180,7 @@ public final class TopicTypeInfoInner extends ProxyResource {
 
     /**
      * Get the provisioningState property: Provisioning state of the topic type.
-     *
+     * 
      * @return the provisioningState value.
      */
     public TopicTypeProvisioningState provisioningState() {
@@ -137,7 +189,7 @@ public final class TopicTypeInfoInner extends ProxyResource {
 
     /**
      * Set the provisioningState property: Provisioning state of the topic type.
-     *
+     * 
      * @param provisioningState the provisioningState value to set.
      * @return the TopicTypeInfoInner object itself.
      */
@@ -151,7 +203,7 @@ public final class TopicTypeInfoInner extends ProxyResource {
 
     /**
      * Get the supportedLocations property: List of locations supported by this topic type.
-     *
+     * 
      * @return the supportedLocations value.
      */
     public List<String> supportedLocations() {
@@ -160,7 +212,7 @@ public final class TopicTypeInfoInner extends ProxyResource {
 
     /**
      * Set the supportedLocations property: List of locations supported by this topic type.
-     *
+     * 
      * @param supportedLocations the supportedLocations value to set.
      * @return the TopicTypeInfoInner object itself.
      */
@@ -174,7 +226,7 @@ public final class TopicTypeInfoInner extends ProxyResource {
 
     /**
      * Get the sourceResourceFormat property: Source resource format.
-     *
+     * 
      * @return the sourceResourceFormat value.
      */
     public String sourceResourceFormat() {
@@ -183,7 +235,7 @@ public final class TopicTypeInfoInner extends ProxyResource {
 
     /**
      * Set the sourceResourceFormat property: Source resource format.
-     *
+     * 
      * @param sourceResourceFormat the sourceResourceFormat value to set.
      * @return the TopicTypeInfoInner object itself.
      */
@@ -197,21 +249,20 @@ public final class TopicTypeInfoInner extends ProxyResource {
 
     /**
      * Get the supportedScopesForSource property: Supported source scopes.
-     *
+     * 
      * @return the supportedScopesForSource value.
      */
-    public List<TopicTypePropertiesSupportedScopesForSourceItem> supportedScopesForSource() {
+    public List<TopicTypeSourceScope> supportedScopesForSource() {
         return this.innerProperties() == null ? null : this.innerProperties().supportedScopesForSource();
     }
 
     /**
      * Set the supportedScopesForSource property: Supported source scopes.
-     *
+     * 
      * @param supportedScopesForSource the supportedScopesForSource value to set.
      * @return the TopicTypeInfoInner object itself.
      */
-    public TopicTypeInfoInner withSupportedScopesForSource(
-        List<TopicTypePropertiesSupportedScopesForSourceItem> supportedScopesForSource) {
+    public TopicTypeInfoInner withSupportedScopesForSource(List<TopicTypeSourceScope> supportedScopesForSource) {
         if (this.innerProperties() == null) {
             this.innerProperties = new TopicTypeProperties();
         }
@@ -220,13 +271,107 @@ public final class TopicTypeInfoInner extends ProxyResource {
     }
 
     /**
+     * Get the areRegionalAndGlobalSourcesSupported property: Flag to indicate that a topic type can support both
+     * regional or global system topics.
+     * 
+     * @return the areRegionalAndGlobalSourcesSupported value.
+     */
+    public Boolean areRegionalAndGlobalSourcesSupported() {
+        return this.innerProperties() == null ? null : this.innerProperties().areRegionalAndGlobalSourcesSupported();
+    }
+
+    /**
+     * Set the areRegionalAndGlobalSourcesSupported property: Flag to indicate that a topic type can support both
+     * regional or global system topics.
+     * 
+     * @param areRegionalAndGlobalSourcesSupported the areRegionalAndGlobalSourcesSupported value to set.
+     * @return the TopicTypeInfoInner object itself.
+     */
+    public TopicTypeInfoInner withAreRegionalAndGlobalSourcesSupported(Boolean areRegionalAndGlobalSourcesSupported) {
+        if (this.innerProperties() == null) {
+            this.innerProperties = new TopicTypeProperties();
+        }
+        this.innerProperties().withAreRegionalAndGlobalSourcesSupported(areRegionalAndGlobalSourcesSupported);
+        return this;
+    }
+
+    /**
+     * Get the additionalEnforcedPermissions property: Permissions which are enforced for creating and updating system
+     * topics of this this topic type.
+     * 
+     * @return the additionalEnforcedPermissions value.
+     */
+    public List<TopicTypeAdditionalEnforcedPermission> additionalEnforcedPermissions() {
+        return this.innerProperties() == null ? null : this.innerProperties().additionalEnforcedPermissions();
+    }
+
+    /**
+     * Set the additionalEnforcedPermissions property: Permissions which are enforced for creating and updating system
+     * topics of this this topic type.
+     * 
+     * @param additionalEnforcedPermissions the additionalEnforcedPermissions value to set.
+     * @return the TopicTypeInfoInner object itself.
+     */
+    public TopicTypeInfoInner
+        withAdditionalEnforcedPermissions(List<TopicTypeAdditionalEnforcedPermission> additionalEnforcedPermissions) {
+        if (this.innerProperties() == null) {
+            this.innerProperties = new TopicTypeProperties();
+        }
+        this.innerProperties().withAdditionalEnforcedPermissions(additionalEnforcedPermissions);
+        return this;
+    }
+
+    /**
      * Validates the instance.
-     *
+     * 
      * @throws IllegalArgumentException thrown if the instance is not valid.
      */
     public void validate() {
         if (innerProperties() != null) {
             innerProperties().validate();
         }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public JsonWriter toJson(JsonWriter jsonWriter) throws IOException {
+        jsonWriter.writeStartObject();
+        jsonWriter.writeJsonField("properties", this.innerProperties);
+        return jsonWriter.writeEndObject();
+    }
+
+    /**
+     * Reads an instance of TopicTypeInfoInner from the JsonReader.
+     * 
+     * @param jsonReader The JsonReader being read.
+     * @return An instance of TopicTypeInfoInner if the JsonReader was pointing to an instance of it, or null if it was
+     * pointing to JSON null.
+     * @throws IllegalStateException If the deserialized JSON object was missing any required properties.
+     * @throws IOException If an error occurs while reading the TopicTypeInfoInner.
+     */
+    public static TopicTypeInfoInner fromJson(JsonReader jsonReader) throws IOException {
+        return jsonReader.readObject(reader -> {
+            TopicTypeInfoInner deserializedTopicTypeInfoInner = new TopicTypeInfoInner();
+            while (reader.nextToken() != JsonToken.END_OBJECT) {
+                String fieldName = reader.getFieldName();
+                reader.nextToken();
+
+                if ("id".equals(fieldName)) {
+                    deserializedTopicTypeInfoInner.id = reader.getString();
+                } else if ("name".equals(fieldName)) {
+                    deserializedTopicTypeInfoInner.name = reader.getString();
+                } else if ("type".equals(fieldName)) {
+                    deserializedTopicTypeInfoInner.type = reader.getString();
+                } else if ("properties".equals(fieldName)) {
+                    deserializedTopicTypeInfoInner.innerProperties = TopicTypeProperties.fromJson(reader);
+                } else {
+                    reader.skipChildren();
+                }
+            }
+
+            return deserializedTopicTypeInfoInner;
+        });
     }
 }

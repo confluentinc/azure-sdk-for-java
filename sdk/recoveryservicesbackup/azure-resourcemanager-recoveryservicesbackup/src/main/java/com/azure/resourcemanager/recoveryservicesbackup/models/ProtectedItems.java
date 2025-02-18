@@ -7,29 +7,15 @@ package com.azure.resourcemanager.recoveryservicesbackup.models;
 import com.azure.core.http.rest.Response;
 import com.azure.core.util.Context;
 
-/** Resource collection API of ProtectedItems. */
+/**
+ * Resource collection API of ProtectedItems.
+ */
 public interface ProtectedItems {
     /**
      * Provides the details of the backed up item. This is an asynchronous operation. To know the status of the
-     * operation, call the GetItemOperationResult API.
-     *
-     * @param vaultName The name of the recovery services vault.
-     * @param resourceGroupName The name of the resource group where the recovery services vault is present.
-     * @param fabricName Fabric name associated with the backed up item.
-     * @param containerName Container name associated with the backed up item.
-     * @param protectedItemName Backed up item name whose details are to be fetched.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return base class for backup items.
-     */
-    ProtectedItemResource get(
-        String vaultName, String resourceGroupName, String fabricName, String containerName, String protectedItemName);
-
-    /**
-     * Provides the details of the backed up item. This is an asynchronous operation. To know the status of the
-     * operation, call the GetItemOperationResult API.
-     *
+     * operation,
+     * call the GetItemOperationResult API.
+     * 
      * @param vaultName The name of the recovery services vault.
      * @param resourceGroupName The name of the resource group where the recovery services vault is present.
      * @param fabricName Fabric name associated with the backed up item.
@@ -40,37 +26,34 @@ public interface ProtectedItems {
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return base class for backup items.
+     * @return base class for backup items along with {@link Response}.
      */
-    Response<ProtectedItemResource> getWithResponse(
-        String vaultName,
-        String resourceGroupName,
-        String fabricName,
-        String containerName,
-        String protectedItemName,
-        String filter,
-        Context context);
+    Response<ProtectedItemResource> getWithResponse(String vaultName, String resourceGroupName, String fabricName,
+        String containerName, String protectedItemName, String filter, Context context);
 
     /**
-     * Used to disable backup of an item within a container. This is an asynchronous operation. To know the status of
-     * the request, call the GetItemOperationResult API.
-     *
+     * Provides the details of the backed up item. This is an asynchronous operation. To know the status of the
+     * operation,
+     * call the GetItemOperationResult API.
+     * 
      * @param vaultName The name of the recovery services vault.
      * @param resourceGroupName The name of the resource group where the recovery services vault is present.
      * @param fabricName Fabric name associated with the backed up item.
      * @param containerName Container name associated with the backed up item.
-     * @param protectedItemName Backed up item to be deleted.
+     * @param protectedItemName Backed up item name whose details are to be fetched.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return base class for backup items.
      */
-    void delete(
-        String vaultName, String resourceGroupName, String fabricName, String containerName, String protectedItemName);
+    ProtectedItemResource get(String vaultName, String resourceGroupName, String fabricName, String containerName,
+        String protectedItemName);
 
     /**
      * Used to disable backup of an item within a container. This is an asynchronous operation. To know the status of
-     * the request, call the GetItemOperationResult API.
-     *
+     * the
+     * request, call the GetItemOperationResult API.
+     * 
      * @param vaultName The name of the recovery services vault.
      * @param resourceGroupName The name of the resource group where the recovery services vault is present.
      * @param fabricName Fabric name associated with the backed up item.
@@ -80,46 +63,61 @@ public interface ProtectedItems {
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the response.
+     * @return the {@link Response}.
      */
-    Response<Void> deleteWithResponse(
-        String vaultName,
-        String resourceGroupName,
-        String fabricName,
-        String containerName,
-        String protectedItemName,
-        Context context);
+    Response<Void> deleteWithResponse(String vaultName, String resourceGroupName, String fabricName,
+        String containerName, String protectedItemName, Context context);
+
+    /**
+     * Used to disable backup of an item within a container. This is an asynchronous operation. To know the status of
+     * the
+     * request, call the GetItemOperationResult API.
+     * 
+     * @param vaultName The name of the recovery services vault.
+     * @param resourceGroupName The name of the resource group where the recovery services vault is present.
+     * @param fabricName Fabric name associated with the backed up item.
+     * @param containerName Container name associated with the backed up item.
+     * @param protectedItemName Backed up item to be deleted.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     */
+    void delete(String vaultName, String resourceGroupName, String fabricName, String containerName,
+        String protectedItemName);
 
     /**
      * Provides the details of the backed up item. This is an asynchronous operation. To know the status of the
-     * operation, call the GetItemOperationResult API.
-     *
+     * operation,
+     * call the GetItemOperationResult API.
+     * 
      * @param id the resource ID.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return base class for backup items.
+     * @return base class for backup items along with {@link Response}.
      */
     ProtectedItemResource getById(String id);
 
     /**
      * Provides the details of the backed up item. This is an asynchronous operation. To know the status of the
-     * operation, call the GetItemOperationResult API.
-     *
+     * operation,
+     * call the GetItemOperationResult API.
+     * 
      * @param id the resource ID.
      * @param filter OData filter options.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return base class for backup items.
+     * @return base class for backup items along with {@link Response}.
      */
     Response<ProtectedItemResource> getByIdWithResponse(String id, String filter, Context context);
 
     /**
      * Used to disable backup of an item within a container. This is an asynchronous operation. To know the status of
-     * the request, call the GetItemOperationResult API.
-     *
+     * the
+     * request, call the GetItemOperationResult API.
+     * 
      * @param id the resource ID.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
@@ -129,20 +127,21 @@ public interface ProtectedItems {
 
     /**
      * Used to disable backup of an item within a container. This is an asynchronous operation. To know the status of
-     * the request, call the GetItemOperationResult API.
-     *
+     * the
+     * request, call the GetItemOperationResult API.
+     * 
      * @param id the resource ID.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the response.
+     * @return the {@link Response}.
      */
     Response<Void> deleteByIdWithResponse(String id, Context context);
 
     /**
      * Begins definition for a new ProtectedItemResource resource.
-     *
+     * 
      * @param name resource name.
      * @return the first stage of the new ProtectedItemResource definition.
      */

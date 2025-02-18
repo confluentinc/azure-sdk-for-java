@@ -3,6 +3,7 @@
 
 package com.azure.cosmos.encryption;
 
+import com.azure.core.cryptography.KeyEncryptionKeyResolver;
 import com.azure.cosmos.CosmosAsyncClient;
 import com.azure.cosmos.CosmosAsyncDatabase;
 import com.azure.cosmos.CosmosClientBuilder;
@@ -60,16 +61,16 @@ public class DotNetCompatibleTest extends TestSuiteBase {
         cosmosAsyncDatabase.createClientEncryptionKey(keyProperties1).block();
         cosmosAsyncDatabase.createClientEncryptionKey(keyProperties2).block();
 
-        TestEncryptionKeyStoreProvider encryptionKeyStoreProvider =
-            new TestEncryptionKeyStoreProvider();
-        cosmosEncryptionAsyncClient = CosmosEncryptionAsyncClient.createCosmosEncryptionAsyncClient(this.client,
-            encryptionKeyStoreProvider);
+        KeyEncryptionKeyResolver keyEncryptionKeyResolver =
+            new TestKeyEncryptionKeyResolver();
+        cosmosEncryptionAsyncClient = new CosmosEncryptionClientBuilder().cosmosAsyncClient(this.client).keyEncryptionKeyResolver(
+            keyEncryptionKeyResolver).keyEncryptionKeyResolverName("TEST_KEY_RESOLVER").buildAsyncClient();
 
         cosmosEncryptionAsyncDatabase =
             cosmosEncryptionAsyncClient.getCosmosEncryptionAsyncDatabase(cosmosAsyncDatabase.getId());
 
         ClientEncryptionPolicy clientEncryptionPolicy =
-            new ClientEncryptionPolicy(getPaths());
+            new ClientEncryptionPolicy(getPaths(2), 2);
         String containerId = UUID.randomUUID().toString();
         CosmosContainerProperties containerProperties = new CosmosContainerProperties(containerId, "/mypk");
         containerProperties.setClientEncryptionPolicy(clientEncryptionPolicy);
@@ -99,12 +100,13 @@ public class DotNetCompatibleTest extends TestSuiteBase {
         this.cosmosEncryptionAsyncContainer.getCosmosAsyncContainer().createItem(dotNetEncryptedPocoJsonNode,
             partitionKey, requestOptions).block();
 
+        JsonNode dotNetPOCOJsonNode = MAPPER.readTree(new File("src/test/resources/dotnetEncryption/POCO.json"));
+        partitionKey = new PartitionKey(dotNetPOCOJsonNode.get("mypk").asText());
         //reading above saved .net encrypted json via java encryption library
         EncryptionPojo unencryptedPojo =
-            this.cosmosEncryptionAsyncContainer.readItem(dotNetEncryptedPocoJsonNode.get("id").asText(), partitionKey
+            this.cosmosEncryptionAsyncContainer.readItem(dotNetPOCOJsonNode.get("id").asText(), partitionKey
                 , new CosmosItemRequestOptions(), EncryptionPojo.class).block().getItem();
 
-        JsonNode dotNetPOCOJsonNode = MAPPER.readTree(new File("src/test/resources/dotnetEncryption/POCO.json"));
         EncryptionPojo unencryptedPoco = MAPPER.treeToValue(dotNetPOCOJsonNode, EncryptionPojo.class);
 
         //validating java decrypted pojo similar to original .net unencrypted poco

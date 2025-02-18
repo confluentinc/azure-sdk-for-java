@@ -4,19 +4,20 @@
 
 package com.azure.resourcemanager.kusto.generated;
 
-import com.azure.core.util.Context;
-
-/** Samples for PrivateLinkResources List. */
+/**
+ * Samples for PrivateLinkResources List.
+ */
 public final class PrivateLinkResourcesListSamples {
     /*
-     * x-ms-original-file: specification/azure-kusto/resource-manager/Microsoft.Kusto/stable/2021-08-27/examples/KustoPrivateLinkResourcesList.json
+     * x-ms-original-file: specification/azure-kusto/resource-manager/Microsoft.Kusto/stable/2024-04-13/examples/
+     * KustoPrivateLinkResourcesList.json
      */
     /**
      * Sample code: Gets private endpoint connections.
-     *
+     * 
      * @param manager Entry point to KustoManager.
      */
     public static void getsPrivateEndpointConnections(com.azure.resourcemanager.kusto.KustoManager manager) {
-        manager.privateLinkResources().list("kustorptest", "kustoclusterrptest4", Context.NONE);
+        manager.privateLinkResources().list("kustorptest", "kustoCluster", com.azure.core.util.Context.NONE);
     }
 }

@@ -15,17 +15,15 @@ import com.azure.resourcemanager.imagebuilder.fluent.models.RunOutputInner;
 import com.azure.resourcemanager.imagebuilder.models.ImageTemplate;
 import com.azure.resourcemanager.imagebuilder.models.RunOutput;
 import com.azure.resourcemanager.imagebuilder.models.VirtualMachineImageTemplates;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 public final class VirtualMachineImageTemplatesImpl implements VirtualMachineImageTemplates {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(VirtualMachineImageTemplatesImpl.class);
+    private static final ClientLogger LOGGER = new ClientLogger(VirtualMachineImageTemplatesImpl.class);
 
     private final VirtualMachineImageTemplatesClient innerClient;
 
     private final com.azure.resourcemanager.imagebuilder.ImageBuilderManager serviceManager;
 
-    public VirtualMachineImageTemplatesImpl(
-        VirtualMachineImageTemplatesClient innerClient,
+    public VirtualMachineImageTemplatesImpl(VirtualMachineImageTemplatesClient innerClient,
         com.azure.resourcemanager.imagebuilder.ImageBuilderManager serviceManager) {
         this.innerClient = innerClient;
         this.serviceManager = serviceManager;
@@ -33,43 +31,40 @@ public final class VirtualMachineImageTemplatesImpl implements VirtualMachineIma
 
     public PagedIterable<ImageTemplate> list() {
         PagedIterable<ImageTemplateInner> inner = this.serviceClient().list();
-        return Utils.mapPage(inner, inner1 -> new ImageTemplateImpl(inner1, this.manager()));
+        return ResourceManagerUtils.mapPage(inner, inner1 -> new ImageTemplateImpl(inner1, this.manager()));
     }
 
     public PagedIterable<ImageTemplate> list(Context context) {
         PagedIterable<ImageTemplateInner> inner = this.serviceClient().list(context);
-        return Utils.mapPage(inner, inner1 -> new ImageTemplateImpl(inner1, this.manager()));
+        return ResourceManagerUtils.mapPage(inner, inner1 -> new ImageTemplateImpl(inner1, this.manager()));
     }
 
     public PagedIterable<ImageTemplate> listByResourceGroup(String resourceGroupName) {
         PagedIterable<ImageTemplateInner> inner = this.serviceClient().listByResourceGroup(resourceGroupName);
-        return Utils.mapPage(inner, inner1 -> new ImageTemplateImpl(inner1, this.manager()));
+        return ResourceManagerUtils.mapPage(inner, inner1 -> new ImageTemplateImpl(inner1, this.manager()));
     }
 
     public PagedIterable<ImageTemplate> listByResourceGroup(String resourceGroupName, Context context) {
         PagedIterable<ImageTemplateInner> inner = this.serviceClient().listByResourceGroup(resourceGroupName, context);
-        return Utils.mapPage(inner, inner1 -> new ImageTemplateImpl(inner1, this.manager()));
+        return ResourceManagerUtils.mapPage(inner, inner1 -> new ImageTemplateImpl(inner1, this.manager()));
+    }
+
+    public Response<ImageTemplate> getByResourceGroupWithResponse(String resourceGroupName, String imageTemplateName,
+        Context context) {
+        Response<ImageTemplateInner> inner
+            = this.serviceClient().getByResourceGroupWithResponse(resourceGroupName, imageTemplateName, context);
+        if (inner != null) {
+            return new SimpleResponse<>(inner.getRequest(), inner.getStatusCode(), inner.getHeaders(),
+                new ImageTemplateImpl(inner.getValue(), this.manager()));
+        } else {
+            return null;
+        }
     }
 
     public ImageTemplate getByResourceGroup(String resourceGroupName, String imageTemplateName) {
         ImageTemplateInner inner = this.serviceClient().getByResourceGroup(resourceGroupName, imageTemplateName);
         if (inner != null) {
             return new ImageTemplateImpl(inner, this.manager());
-        } else {
-            return null;
-        }
-    }
-
-    public Response<ImageTemplate> getByResourceGroupWithResponse(
-        String resourceGroupName, String imageTemplateName, Context context) {
-        Response<ImageTemplateInner> inner =
-            this.serviceClient().getByResourceGroupWithResponse(resourceGroupName, imageTemplateName, context);
-        if (inner != null) {
-            return new SimpleResponse<>(
-                inner.getRequest(),
-                inner.getStatusCode(),
-                inner.getHeaders(),
-                new ImageTemplateImpl(inner.getValue(), this.manager()));
         } else {
             return null;
         }
@@ -101,14 +96,26 @@ public final class VirtualMachineImageTemplatesImpl implements VirtualMachineIma
 
     public PagedIterable<RunOutput> listRunOutputs(String resourceGroupName, String imageTemplateName) {
         PagedIterable<RunOutputInner> inner = this.serviceClient().listRunOutputs(resourceGroupName, imageTemplateName);
-        return Utils.mapPage(inner, inner1 -> new RunOutputImpl(inner1, this.manager()));
+        return ResourceManagerUtils.mapPage(inner, inner1 -> new RunOutputImpl(inner1, this.manager()));
     }
 
-    public PagedIterable<RunOutput> listRunOutputs(
-        String resourceGroupName, String imageTemplateName, Context context) {
-        PagedIterable<RunOutputInner> inner =
-            this.serviceClient().listRunOutputs(resourceGroupName, imageTemplateName, context);
-        return Utils.mapPage(inner, inner1 -> new RunOutputImpl(inner1, this.manager()));
+    public PagedIterable<RunOutput> listRunOutputs(String resourceGroupName, String imageTemplateName,
+        Context context) {
+        PagedIterable<RunOutputInner> inner
+            = this.serviceClient().listRunOutputs(resourceGroupName, imageTemplateName, context);
+        return ResourceManagerUtils.mapPage(inner, inner1 -> new RunOutputImpl(inner1, this.manager()));
+    }
+
+    public Response<RunOutput> getRunOutputWithResponse(String resourceGroupName, String imageTemplateName,
+        String runOutputName, Context context) {
+        Response<RunOutputInner> inner = this.serviceClient()
+            .getRunOutputWithResponse(resourceGroupName, imageTemplateName, runOutputName, context);
+        if (inner != null) {
+            return new SimpleResponse<>(inner.getRequest(), inner.getStatusCode(), inner.getHeaders(),
+                new RunOutputImpl(inner.getValue(), this.manager()));
+        } else {
+            return null;
+        }
     }
 
     public RunOutput getRunOutput(String resourceGroupName, String imageTemplateName, String runOutputName) {
@@ -120,97 +127,58 @@ public final class VirtualMachineImageTemplatesImpl implements VirtualMachineIma
         }
     }
 
-    public Response<RunOutput> getRunOutputWithResponse(
-        String resourceGroupName, String imageTemplateName, String runOutputName, Context context) {
-        Response<RunOutputInner> inner =
-            this.serviceClient().getRunOutputWithResponse(resourceGroupName, imageTemplateName, runOutputName, context);
-        if (inner != null) {
-            return new SimpleResponse<>(
-                inner.getRequest(),
-                inner.getStatusCode(),
-                inner.getHeaders(),
-                new RunOutputImpl(inner.getValue(), this.manager()));
-        } else {
-            return null;
-        }
-    }
-
     public ImageTemplate getById(String id) {
-        String resourceGroupName = Utils.getValueFromIdByName(id, "resourceGroups");
+        String resourceGroupName = ResourceManagerUtils.getValueFromIdByName(id, "resourceGroups");
         if (resourceGroupName == null) {
-            throw logger
-                .logExceptionAsError(
-                    new IllegalArgumentException(
-                        String
-                            .format("The resource ID '%s' is not valid. Missing path segment 'resourceGroups'.", id)));
+            throw LOGGER.logExceptionAsError(new IllegalArgumentException(
+                String.format("The resource ID '%s' is not valid. Missing path segment 'resourceGroups'.", id)));
         }
-        String imageTemplateName = Utils.getValueFromIdByName(id, "imageTemplates");
+        String imageTemplateName = ResourceManagerUtils.getValueFromIdByName(id, "imageTemplates");
         if (imageTemplateName == null) {
-            throw logger
-                .logExceptionAsError(
-                    new IllegalArgumentException(
-                        String
-                            .format("The resource ID '%s' is not valid. Missing path segment 'imageTemplates'.", id)));
+            throw LOGGER.logExceptionAsError(new IllegalArgumentException(
+                String.format("The resource ID '%s' is not valid. Missing path segment 'imageTemplates'.", id)));
         }
         return this.getByResourceGroupWithResponse(resourceGroupName, imageTemplateName, Context.NONE).getValue();
     }
 
     public Response<ImageTemplate> getByIdWithResponse(String id, Context context) {
-        String resourceGroupName = Utils.getValueFromIdByName(id, "resourceGroups");
+        String resourceGroupName = ResourceManagerUtils.getValueFromIdByName(id, "resourceGroups");
         if (resourceGroupName == null) {
-            throw logger
-                .logExceptionAsError(
-                    new IllegalArgumentException(
-                        String
-                            .format("The resource ID '%s' is not valid. Missing path segment 'resourceGroups'.", id)));
+            throw LOGGER.logExceptionAsError(new IllegalArgumentException(
+                String.format("The resource ID '%s' is not valid. Missing path segment 'resourceGroups'.", id)));
         }
-        String imageTemplateName = Utils.getValueFromIdByName(id, "imageTemplates");
+        String imageTemplateName = ResourceManagerUtils.getValueFromIdByName(id, "imageTemplates");
         if (imageTemplateName == null) {
-            throw logger
-                .logExceptionAsError(
-                    new IllegalArgumentException(
-                        String
-                            .format("The resource ID '%s' is not valid. Missing path segment 'imageTemplates'.", id)));
+            throw LOGGER.logExceptionAsError(new IllegalArgumentException(
+                String.format("The resource ID '%s' is not valid. Missing path segment 'imageTemplates'.", id)));
         }
         return this.getByResourceGroupWithResponse(resourceGroupName, imageTemplateName, context);
     }
 
     public void deleteById(String id) {
-        String resourceGroupName = Utils.getValueFromIdByName(id, "resourceGroups");
+        String resourceGroupName = ResourceManagerUtils.getValueFromIdByName(id, "resourceGroups");
         if (resourceGroupName == null) {
-            throw logger
-                .logExceptionAsError(
-                    new IllegalArgumentException(
-                        String
-                            .format("The resource ID '%s' is not valid. Missing path segment 'resourceGroups'.", id)));
+            throw LOGGER.logExceptionAsError(new IllegalArgumentException(
+                String.format("The resource ID '%s' is not valid. Missing path segment 'resourceGroups'.", id)));
         }
-        String imageTemplateName = Utils.getValueFromIdByName(id, "imageTemplates");
+        String imageTemplateName = ResourceManagerUtils.getValueFromIdByName(id, "imageTemplates");
         if (imageTemplateName == null) {
-            throw logger
-                .logExceptionAsError(
-                    new IllegalArgumentException(
-                        String
-                            .format("The resource ID '%s' is not valid. Missing path segment 'imageTemplates'.", id)));
+            throw LOGGER.logExceptionAsError(new IllegalArgumentException(
+                String.format("The resource ID '%s' is not valid. Missing path segment 'imageTemplates'.", id)));
         }
         this.delete(resourceGroupName, imageTemplateName, Context.NONE);
     }
 
     public void deleteByIdWithResponse(String id, Context context) {
-        String resourceGroupName = Utils.getValueFromIdByName(id, "resourceGroups");
+        String resourceGroupName = ResourceManagerUtils.getValueFromIdByName(id, "resourceGroups");
         if (resourceGroupName == null) {
-            throw logger
-                .logExceptionAsError(
-                    new IllegalArgumentException(
-                        String
-                            .format("The resource ID '%s' is not valid. Missing path segment 'resourceGroups'.", id)));
+            throw LOGGER.logExceptionAsError(new IllegalArgumentException(
+                String.format("The resource ID '%s' is not valid. Missing path segment 'resourceGroups'.", id)));
         }
-        String imageTemplateName = Utils.getValueFromIdByName(id, "imageTemplates");
+        String imageTemplateName = ResourceManagerUtils.getValueFromIdByName(id, "imageTemplates");
         if (imageTemplateName == null) {
-            throw logger
-                .logExceptionAsError(
-                    new IllegalArgumentException(
-                        String
-                            .format("The resource ID '%s' is not valid. Missing path segment 'imageTemplates'.", id)));
+            throw LOGGER.logExceptionAsError(new IllegalArgumentException(
+                String.format("The resource ID '%s' is not valid. Missing path segment 'imageTemplates'.", id)));
         }
         this.delete(resourceGroupName, imageTemplateName, context);
     }

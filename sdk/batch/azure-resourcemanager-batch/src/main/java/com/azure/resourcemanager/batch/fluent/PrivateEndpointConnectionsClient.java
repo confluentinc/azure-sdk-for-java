@@ -13,24 +13,26 @@ import com.azure.core.util.Context;
 import com.azure.core.util.polling.SyncPoller;
 import com.azure.resourcemanager.batch.fluent.models.PrivateEndpointConnectionInner;
 
-/** An instance of this class provides access to all the operations defined in PrivateEndpointConnectionsClient. */
+/**
+ * An instance of this class provides access to all the operations defined in PrivateEndpointConnectionsClient.
+ */
 public interface PrivateEndpointConnectionsClient {
     /**
      * Lists all of the private endpoint connections in the specified account.
-     *
+     * 
      * @param resourceGroupName The name of the resource group that contains the Batch account.
      * @param accountName The name of the Batch account.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return values returned by the List operation.
+     * @return values returned by the List operation as paginated response with {@link PagedIterable}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
     PagedIterable<PrivateEndpointConnectionInner> listByBatchAccount(String resourceGroupName, String accountName);
 
     /**
      * Lists all of the private endpoint connections in the specified account.
-     *
+     * 
      * @param resourceGroupName The name of the resource group that contains the Batch account.
      * @param accountName The name of the Batch account.
      * @param maxresults The maximum number of items to return in the response.
@@ -38,151 +40,115 @@ public interface PrivateEndpointConnectionsClient {
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return values returned by the List operation.
+     * @return values returned by the List operation as paginated response with {@link PagedIterable}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
-    PagedIterable<PrivateEndpointConnectionInner> listByBatchAccount(
-        String resourceGroupName, String accountName, Integer maxresults, Context context);
+    PagedIterable<PrivateEndpointConnectionInner> listByBatchAccount(String resourceGroupName, String accountName,
+        Integer maxresults, Context context);
 
     /**
      * Gets information about the specified private endpoint connection.
-     *
+     * 
      * @param resourceGroupName The name of the resource group that contains the Batch account.
      * @param accountName The name of the Batch account.
      * @param privateEndpointConnectionName The private endpoint connection name. This must be unique within the
-     *     account.
+     * account.
+     * @param context The context to associate with this operation.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return information about the specified private endpoint connection along with {@link Response}.
+     */
+    @ServiceMethod(returns = ReturnType.SINGLE)
+    Response<PrivateEndpointConnectionInner> getWithResponse(String resourceGroupName, String accountName,
+        String privateEndpointConnectionName, Context context);
+
+    /**
+     * Gets information about the specified private endpoint connection.
+     * 
+     * @param resourceGroupName The name of the resource group that contains the Batch account.
+     * @param accountName The name of the Batch account.
+     * @param privateEndpointConnectionName The private endpoint connection name. This must be unique within the
+     * account.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
      * @return information about the specified private endpoint connection.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    PrivateEndpointConnectionInner get(
-        String resourceGroupName, String accountName, String privateEndpointConnectionName);
-
-    /**
-     * Gets information about the specified private endpoint connection.
-     *
-     * @param resourceGroupName The name of the resource group that contains the Batch account.
-     * @param accountName The name of the Batch account.
-     * @param privateEndpointConnectionName The private endpoint connection name. This must be unique within the
-     *     account.
-     * @param context The context to associate with this operation.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return information about the specified private endpoint connection.
-     */
-    @ServiceMethod(returns = ReturnType.SINGLE)
-    Response<PrivateEndpointConnectionInner> getWithResponse(
-        String resourceGroupName, String accountName, String privateEndpointConnectionName, Context context);
+    PrivateEndpointConnectionInner get(String resourceGroupName, String accountName,
+        String privateEndpointConnectionName);
 
     /**
      * Updates the properties of an existing private endpoint connection.
-     *
+     * 
      * @param resourceGroupName The name of the resource group that contains the Batch account.
      * @param accountName The name of the Batch account.
      * @param privateEndpointConnectionName The private endpoint connection name. This must be unique within the
-     *     account.
+     * account.
      * @param parameters PrivateEndpointConnection properties that should be updated. Properties that are supplied will
-     *     be updated, any property not supplied will be unchanged.
-     * @param ifMatch The state (ETag) version of the private endpoint connection to update. This value can be omitted
-     *     or set to "*" to apply the operation unconditionally.
+     * be updated, any property not supplied will be unchanged.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return contains information about a private link resource.
+     * @return the {@link SyncPoller} for polling of contains information about a private link resource.
      */
-    @ServiceMethod(returns = ReturnType.SINGLE)
+    @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
     SyncPoller<PollResult<PrivateEndpointConnectionInner>, PrivateEndpointConnectionInner> beginUpdate(
-        String resourceGroupName,
-        String accountName,
-        String privateEndpointConnectionName,
-        PrivateEndpointConnectionInner parameters,
-        String ifMatch);
-
-    /**
-     * Updates the properties of an existing private endpoint connection.
-     *
-     * @param resourceGroupName The name of the resource group that contains the Batch account.
-     * @param accountName The name of the Batch account.
-     * @param privateEndpointConnectionName The private endpoint connection name. This must be unique within the
-     *     account.
-     * @param parameters PrivateEndpointConnection properties that should be updated. Properties that are supplied will
-     *     be updated, any property not supplied will be unchanged.
-     * @param ifMatch The state (ETag) version of the private endpoint connection to update. This value can be omitted
-     *     or set to "*" to apply the operation unconditionally.
-     * @param context The context to associate with this operation.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return contains information about a private link resource.
-     */
-    @ServiceMethod(returns = ReturnType.SINGLE)
-    SyncPoller<PollResult<PrivateEndpointConnectionInner>, PrivateEndpointConnectionInner> beginUpdate(
-        String resourceGroupName,
-        String accountName,
-        String privateEndpointConnectionName,
-        PrivateEndpointConnectionInner parameters,
-        String ifMatch,
-        Context context);
-
-    /**
-     * Updates the properties of an existing private endpoint connection.
-     *
-     * @param resourceGroupName The name of the resource group that contains the Batch account.
-     * @param accountName The name of the Batch account.
-     * @param privateEndpointConnectionName The private endpoint connection name. This must be unique within the
-     *     account.
-     * @param parameters PrivateEndpointConnection properties that should be updated. Properties that are supplied will
-     *     be updated, any property not supplied will be unchanged.
-     * @param ifMatch The state (ETag) version of the private endpoint connection to update. This value can be omitted
-     *     or set to "*" to apply the operation unconditionally.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return contains information about a private link resource.
-     */
-    @ServiceMethod(returns = ReturnType.SINGLE)
-    PrivateEndpointConnectionInner update(
-        String resourceGroupName,
-        String accountName,
-        String privateEndpointConnectionName,
-        PrivateEndpointConnectionInner parameters,
-        String ifMatch);
-
-    /**
-     * Updates the properties of an existing private endpoint connection.
-     *
-     * @param resourceGroupName The name of the resource group that contains the Batch account.
-     * @param accountName The name of the Batch account.
-     * @param privateEndpointConnectionName The private endpoint connection name. This must be unique within the
-     *     account.
-     * @param parameters PrivateEndpointConnection properties that should be updated. Properties that are supplied will
-     *     be updated, any property not supplied will be unchanged.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return contains information about a private link resource.
-     */
-    @ServiceMethod(returns = ReturnType.SINGLE)
-    PrivateEndpointConnectionInner update(
-        String resourceGroupName,
-        String accountName,
-        String privateEndpointConnectionName,
+        String resourceGroupName, String accountName, String privateEndpointConnectionName,
         PrivateEndpointConnectionInner parameters);
 
     /**
      * Updates the properties of an existing private endpoint connection.
-     *
+     * 
      * @param resourceGroupName The name of the resource group that contains the Batch account.
      * @param accountName The name of the Batch account.
      * @param privateEndpointConnectionName The private endpoint connection name. This must be unique within the
-     *     account.
+     * account.
      * @param parameters PrivateEndpointConnection properties that should be updated. Properties that are supplied will
-     *     be updated, any property not supplied will be unchanged.
+     * be updated, any property not supplied will be unchanged.
      * @param ifMatch The state (ETag) version of the private endpoint connection to update. This value can be omitted
-     *     or set to "*" to apply the operation unconditionally.
+     * or set to "*" to apply the operation unconditionally.
+     * @param context The context to associate with this operation.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return the {@link SyncPoller} for polling of contains information about a private link resource.
+     */
+    @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
+    SyncPoller<PollResult<PrivateEndpointConnectionInner>, PrivateEndpointConnectionInner> beginUpdate(
+        String resourceGroupName, String accountName, String privateEndpointConnectionName,
+        PrivateEndpointConnectionInner parameters, String ifMatch, Context context);
+
+    /**
+     * Updates the properties of an existing private endpoint connection.
+     * 
+     * @param resourceGroupName The name of the resource group that contains the Batch account.
+     * @param accountName The name of the Batch account.
+     * @param privateEndpointConnectionName The private endpoint connection name. This must be unique within the
+     * account.
+     * @param parameters PrivateEndpointConnection properties that should be updated. Properties that are supplied will
+     * be updated, any property not supplied will be unchanged.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return contains information about a private link resource.
+     */
+    @ServiceMethod(returns = ReturnType.SINGLE)
+    PrivateEndpointConnectionInner update(String resourceGroupName, String accountName,
+        String privateEndpointConnectionName, PrivateEndpointConnectionInner parameters);
+
+    /**
+     * Updates the properties of an existing private endpoint connection.
+     * 
+     * @param resourceGroupName The name of the resource group that contains the Batch account.
+     * @param accountName The name of the Batch account.
+     * @param privateEndpointConnectionName The private endpoint connection name. This must be unique within the
+     * account.
+     * @param parameters PrivateEndpointConnection properties that should be updated. Properties that are supplied will
+     * be updated, any property not supplied will be unchanged.
+     * @param ifMatch The state (ETag) version of the private endpoint connection to update. This value can be omitted
+     * or set to "*" to apply the operation unconditionally.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
@@ -190,11 +156,69 @@ public interface PrivateEndpointConnectionsClient {
      * @return contains information about a private link resource.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    PrivateEndpointConnectionInner update(
-        String resourceGroupName,
-        String accountName,
-        String privateEndpointConnectionName,
-        PrivateEndpointConnectionInner parameters,
-        String ifMatch,
+    PrivateEndpointConnectionInner update(String resourceGroupName, String accountName,
+        String privateEndpointConnectionName, PrivateEndpointConnectionInner parameters, String ifMatch,
         Context context);
+
+    /**
+     * Deletes the specified private endpoint connection.
+     * 
+     * @param resourceGroupName The name of the resource group that contains the Batch account.
+     * @param accountName The name of the Batch account.
+     * @param privateEndpointConnectionName The private endpoint connection name. This must be unique within the
+     * account.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return the {@link SyncPoller} for polling of long-running operation.
+     */
+    @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
+    SyncPoller<PollResult<Void>, Void> beginDelete(String resourceGroupName, String accountName,
+        String privateEndpointConnectionName);
+
+    /**
+     * Deletes the specified private endpoint connection.
+     * 
+     * @param resourceGroupName The name of the resource group that contains the Batch account.
+     * @param accountName The name of the Batch account.
+     * @param privateEndpointConnectionName The private endpoint connection name. This must be unique within the
+     * account.
+     * @param context The context to associate with this operation.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return the {@link SyncPoller} for polling of long-running operation.
+     */
+    @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
+    SyncPoller<PollResult<Void>, Void> beginDelete(String resourceGroupName, String accountName,
+        String privateEndpointConnectionName, Context context);
+
+    /**
+     * Deletes the specified private endpoint connection.
+     * 
+     * @param resourceGroupName The name of the resource group that contains the Batch account.
+     * @param accountName The name of the Batch account.
+     * @param privateEndpointConnectionName The private endpoint connection name. This must be unique within the
+     * account.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     */
+    @ServiceMethod(returns = ReturnType.SINGLE)
+    void delete(String resourceGroupName, String accountName, String privateEndpointConnectionName);
+
+    /**
+     * Deletes the specified private endpoint connection.
+     * 
+     * @param resourceGroupName The name of the resource group that contains the Batch account.
+     * @param accountName The name of the Batch account.
+     * @param privateEndpointConnectionName The private endpoint connection name. This must be unique within the
+     * account.
+     * @param context The context to associate with this operation.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     */
+    @ServiceMethod(returns = ReturnType.SINGLE)
+    void delete(String resourceGroupName, String accountName, String privateEndpointConnectionName, Context context);
 }

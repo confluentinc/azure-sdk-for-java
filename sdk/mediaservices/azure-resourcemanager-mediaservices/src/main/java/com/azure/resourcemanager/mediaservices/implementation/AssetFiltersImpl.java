@@ -13,31 +13,42 @@ import com.azure.resourcemanager.mediaservices.fluent.AssetFiltersClient;
 import com.azure.resourcemanager.mediaservices.fluent.models.AssetFilterInner;
 import com.azure.resourcemanager.mediaservices.models.AssetFilter;
 import com.azure.resourcemanager.mediaservices.models.AssetFilters;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 public final class AssetFiltersImpl implements AssetFilters {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(AssetFiltersImpl.class);
+    private static final ClientLogger LOGGER = new ClientLogger(AssetFiltersImpl.class);
 
     private final AssetFiltersClient innerClient;
 
     private final com.azure.resourcemanager.mediaservices.MediaServicesManager serviceManager;
 
-    public AssetFiltersImpl(
-        AssetFiltersClient innerClient, com.azure.resourcemanager.mediaservices.MediaServicesManager serviceManager) {
+    public AssetFiltersImpl(AssetFiltersClient innerClient,
+        com.azure.resourcemanager.mediaservices.MediaServicesManager serviceManager) {
         this.innerClient = innerClient;
         this.serviceManager = serviceManager;
     }
 
     public PagedIterable<AssetFilter> list(String resourceGroupName, String accountName, String assetName) {
         PagedIterable<AssetFilterInner> inner = this.serviceClient().list(resourceGroupName, accountName, assetName);
-        return Utils.mapPage(inner, inner1 -> new AssetFilterImpl(inner1, this.manager()));
+        return ResourceManagerUtils.mapPage(inner, inner1 -> new AssetFilterImpl(inner1, this.manager()));
     }
 
-    public PagedIterable<AssetFilter> list(
-        String resourceGroupName, String accountName, String assetName, Context context) {
-        PagedIterable<AssetFilterInner> inner =
-            this.serviceClient().list(resourceGroupName, accountName, assetName, context);
-        return Utils.mapPage(inner, inner1 -> new AssetFilterImpl(inner1, this.manager()));
+    public PagedIterable<AssetFilter> list(String resourceGroupName, String accountName, String assetName,
+        Context context) {
+        PagedIterable<AssetFilterInner> inner
+            = this.serviceClient().list(resourceGroupName, accountName, assetName, context);
+        return ResourceManagerUtils.mapPage(inner, inner1 -> new AssetFilterImpl(inner1, this.manager()));
+    }
+
+    public Response<AssetFilter> getWithResponse(String resourceGroupName, String accountName, String assetName,
+        String filterName, Context context) {
+        Response<AssetFilterInner> inner
+            = this.serviceClient().getWithResponse(resourceGroupName, accountName, assetName, filterName, context);
+        if (inner != null) {
+            return new SimpleResponse<>(inner.getRequest(), inner.getStatusCode(), inner.getHeaders(),
+                new AssetFilterImpl(inner.getValue(), this.manager()));
+        } else {
+            return null;
+        }
     }
 
     public AssetFilter get(String resourceGroupName, String accountName, String assetName, String filterName) {
@@ -49,158 +60,107 @@ public final class AssetFiltersImpl implements AssetFilters {
         }
     }
 
-    public Response<AssetFilter> getWithResponse(
-        String resourceGroupName, String accountName, String assetName, String filterName, Context context) {
-        Response<AssetFilterInner> inner =
-            this.serviceClient().getWithResponse(resourceGroupName, accountName, assetName, filterName, context);
-        if (inner != null) {
-            return new SimpleResponse<>(
-                inner.getRequest(),
-                inner.getStatusCode(),
-                inner.getHeaders(),
-                new AssetFilterImpl(inner.getValue(), this.manager()));
-        } else {
-            return null;
-        }
+    public Response<Void> deleteWithResponse(String resourceGroupName, String accountName, String assetName,
+        String filterName, Context context) {
+        return this.serviceClient().deleteWithResponse(resourceGroupName, accountName, assetName, filterName, context);
     }
 
     public void delete(String resourceGroupName, String accountName, String assetName, String filterName) {
         this.serviceClient().delete(resourceGroupName, accountName, assetName, filterName);
     }
 
-    public Response<Void> deleteWithResponse(
-        String resourceGroupName, String accountName, String assetName, String filterName, Context context) {
-        return this.serviceClient().deleteWithResponse(resourceGroupName, accountName, assetName, filterName, context);
-    }
-
     public AssetFilter getById(String id) {
-        String resourceGroupName = Utils.getValueFromIdByName(id, "resourceGroups");
+        String resourceGroupName = ResourceManagerUtils.getValueFromIdByName(id, "resourceGroups");
         if (resourceGroupName == null) {
-            throw logger
-                .logExceptionAsError(
-                    new IllegalArgumentException(
-                        String
-                            .format("The resource ID '%s' is not valid. Missing path segment 'resourceGroups'.", id)));
+            throw LOGGER.logExceptionAsError(new IllegalArgumentException(
+                String.format("The resource ID '%s' is not valid. Missing path segment 'resourceGroups'.", id)));
         }
-        String accountName = Utils.getValueFromIdByName(id, "mediaServices");
+        String accountName = ResourceManagerUtils.getValueFromIdByName(id, "mediaServices");
         if (accountName == null) {
-            throw logger
-                .logExceptionAsError(
-                    new IllegalArgumentException(
-                        String.format("The resource ID '%s' is not valid. Missing path segment 'mediaServices'.", id)));
+            throw LOGGER.logExceptionAsError(new IllegalArgumentException(
+                String.format("The resource ID '%s' is not valid. Missing path segment 'mediaServices'.", id)));
         }
-        String assetName = Utils.getValueFromIdByName(id, "assets");
+        String assetName = ResourceManagerUtils.getValueFromIdByName(id, "assets");
         if (assetName == null) {
-            throw logger
-                .logExceptionAsError(
-                    new IllegalArgumentException(
-                        String.format("The resource ID '%s' is not valid. Missing path segment 'assets'.", id)));
+            throw LOGGER.logExceptionAsError(new IllegalArgumentException(
+                String.format("The resource ID '%s' is not valid. Missing path segment 'assets'.", id)));
         }
-        String filterName = Utils.getValueFromIdByName(id, "assetFilters");
+        String filterName = ResourceManagerUtils.getValueFromIdByName(id, "assetFilters");
         if (filterName == null) {
-            throw logger
-                .logExceptionAsError(
-                    new IllegalArgumentException(
-                        String.format("The resource ID '%s' is not valid. Missing path segment 'assetFilters'.", id)));
+            throw LOGGER.logExceptionAsError(new IllegalArgumentException(
+                String.format("The resource ID '%s' is not valid. Missing path segment 'assetFilters'.", id)));
         }
         return this.getWithResponse(resourceGroupName, accountName, assetName, filterName, Context.NONE).getValue();
     }
 
     public Response<AssetFilter> getByIdWithResponse(String id, Context context) {
-        String resourceGroupName = Utils.getValueFromIdByName(id, "resourceGroups");
+        String resourceGroupName = ResourceManagerUtils.getValueFromIdByName(id, "resourceGroups");
         if (resourceGroupName == null) {
-            throw logger
-                .logExceptionAsError(
-                    new IllegalArgumentException(
-                        String
-                            .format("The resource ID '%s' is not valid. Missing path segment 'resourceGroups'.", id)));
+            throw LOGGER.logExceptionAsError(new IllegalArgumentException(
+                String.format("The resource ID '%s' is not valid. Missing path segment 'resourceGroups'.", id)));
         }
-        String accountName = Utils.getValueFromIdByName(id, "mediaServices");
+        String accountName = ResourceManagerUtils.getValueFromIdByName(id, "mediaServices");
         if (accountName == null) {
-            throw logger
-                .logExceptionAsError(
-                    new IllegalArgumentException(
-                        String.format("The resource ID '%s' is not valid. Missing path segment 'mediaServices'.", id)));
+            throw LOGGER.logExceptionAsError(new IllegalArgumentException(
+                String.format("The resource ID '%s' is not valid. Missing path segment 'mediaServices'.", id)));
         }
-        String assetName = Utils.getValueFromIdByName(id, "assets");
+        String assetName = ResourceManagerUtils.getValueFromIdByName(id, "assets");
         if (assetName == null) {
-            throw logger
-                .logExceptionAsError(
-                    new IllegalArgumentException(
-                        String.format("The resource ID '%s' is not valid. Missing path segment 'assets'.", id)));
+            throw LOGGER.logExceptionAsError(new IllegalArgumentException(
+                String.format("The resource ID '%s' is not valid. Missing path segment 'assets'.", id)));
         }
-        String filterName = Utils.getValueFromIdByName(id, "assetFilters");
+        String filterName = ResourceManagerUtils.getValueFromIdByName(id, "assetFilters");
         if (filterName == null) {
-            throw logger
-                .logExceptionAsError(
-                    new IllegalArgumentException(
-                        String.format("The resource ID '%s' is not valid. Missing path segment 'assetFilters'.", id)));
+            throw LOGGER.logExceptionAsError(new IllegalArgumentException(
+                String.format("The resource ID '%s' is not valid. Missing path segment 'assetFilters'.", id)));
         }
         return this.getWithResponse(resourceGroupName, accountName, assetName, filterName, context);
     }
 
     public void deleteById(String id) {
-        String resourceGroupName = Utils.getValueFromIdByName(id, "resourceGroups");
+        String resourceGroupName = ResourceManagerUtils.getValueFromIdByName(id, "resourceGroups");
         if (resourceGroupName == null) {
-            throw logger
-                .logExceptionAsError(
-                    new IllegalArgumentException(
-                        String
-                            .format("The resource ID '%s' is not valid. Missing path segment 'resourceGroups'.", id)));
+            throw LOGGER.logExceptionAsError(new IllegalArgumentException(
+                String.format("The resource ID '%s' is not valid. Missing path segment 'resourceGroups'.", id)));
         }
-        String accountName = Utils.getValueFromIdByName(id, "mediaServices");
+        String accountName = ResourceManagerUtils.getValueFromIdByName(id, "mediaServices");
         if (accountName == null) {
-            throw logger
-                .logExceptionAsError(
-                    new IllegalArgumentException(
-                        String.format("The resource ID '%s' is not valid. Missing path segment 'mediaServices'.", id)));
+            throw LOGGER.logExceptionAsError(new IllegalArgumentException(
+                String.format("The resource ID '%s' is not valid. Missing path segment 'mediaServices'.", id)));
         }
-        String assetName = Utils.getValueFromIdByName(id, "assets");
+        String assetName = ResourceManagerUtils.getValueFromIdByName(id, "assets");
         if (assetName == null) {
-            throw logger
-                .logExceptionAsError(
-                    new IllegalArgumentException(
-                        String.format("The resource ID '%s' is not valid. Missing path segment 'assets'.", id)));
+            throw LOGGER.logExceptionAsError(new IllegalArgumentException(
+                String.format("The resource ID '%s' is not valid. Missing path segment 'assets'.", id)));
         }
-        String filterName = Utils.getValueFromIdByName(id, "assetFilters");
+        String filterName = ResourceManagerUtils.getValueFromIdByName(id, "assetFilters");
         if (filterName == null) {
-            throw logger
-                .logExceptionAsError(
-                    new IllegalArgumentException(
-                        String.format("The resource ID '%s' is not valid. Missing path segment 'assetFilters'.", id)));
+            throw LOGGER.logExceptionAsError(new IllegalArgumentException(
+                String.format("The resource ID '%s' is not valid. Missing path segment 'assetFilters'.", id)));
         }
-        this.deleteWithResponse(resourceGroupName, accountName, assetName, filterName, Context.NONE).getValue();
+        this.deleteWithResponse(resourceGroupName, accountName, assetName, filterName, Context.NONE);
     }
 
     public Response<Void> deleteByIdWithResponse(String id, Context context) {
-        String resourceGroupName = Utils.getValueFromIdByName(id, "resourceGroups");
+        String resourceGroupName = ResourceManagerUtils.getValueFromIdByName(id, "resourceGroups");
         if (resourceGroupName == null) {
-            throw logger
-                .logExceptionAsError(
-                    new IllegalArgumentException(
-                        String
-                            .format("The resource ID '%s' is not valid. Missing path segment 'resourceGroups'.", id)));
+            throw LOGGER.logExceptionAsError(new IllegalArgumentException(
+                String.format("The resource ID '%s' is not valid. Missing path segment 'resourceGroups'.", id)));
         }
-        String accountName = Utils.getValueFromIdByName(id, "mediaServices");
+        String accountName = ResourceManagerUtils.getValueFromIdByName(id, "mediaServices");
         if (accountName == null) {
-            throw logger
-                .logExceptionAsError(
-                    new IllegalArgumentException(
-                        String.format("The resource ID '%s' is not valid. Missing path segment 'mediaServices'.", id)));
+            throw LOGGER.logExceptionAsError(new IllegalArgumentException(
+                String.format("The resource ID '%s' is not valid. Missing path segment 'mediaServices'.", id)));
         }
-        String assetName = Utils.getValueFromIdByName(id, "assets");
+        String assetName = ResourceManagerUtils.getValueFromIdByName(id, "assets");
         if (assetName == null) {
-            throw logger
-                .logExceptionAsError(
-                    new IllegalArgumentException(
-                        String.format("The resource ID '%s' is not valid. Missing path segment 'assets'.", id)));
+            throw LOGGER.logExceptionAsError(new IllegalArgumentException(
+                String.format("The resource ID '%s' is not valid. Missing path segment 'assets'.", id)));
         }
-        String filterName = Utils.getValueFromIdByName(id, "assetFilters");
+        String filterName = ResourceManagerUtils.getValueFromIdByName(id, "assetFilters");
         if (filterName == null) {
-            throw logger
-                .logExceptionAsError(
-                    new IllegalArgumentException(
-                        String.format("The resource ID '%s' is not valid. Missing path segment 'assetFilters'.", id)));
+            throw LOGGER.logExceptionAsError(new IllegalArgumentException(
+                String.format("The resource ID '%s' is not valid. Missing path segment 'assetFilters'.", id)));
         }
         return this.deleteWithResponse(resourceGroupName, accountName, assetName, filterName, context);
     }

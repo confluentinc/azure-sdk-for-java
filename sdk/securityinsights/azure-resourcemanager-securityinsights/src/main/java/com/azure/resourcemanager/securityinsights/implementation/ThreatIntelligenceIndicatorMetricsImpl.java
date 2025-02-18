@@ -12,41 +12,36 @@ import com.azure.resourcemanager.securityinsights.fluent.ThreatIntelligenceIndic
 import com.azure.resourcemanager.securityinsights.fluent.models.ThreatIntelligenceMetricsListInner;
 import com.azure.resourcemanager.securityinsights.models.ThreatIntelligenceIndicatorMetrics;
 import com.azure.resourcemanager.securityinsights.models.ThreatIntelligenceMetricsList;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 public final class ThreatIntelligenceIndicatorMetricsImpl implements ThreatIntelligenceIndicatorMetrics {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(ThreatIntelligenceIndicatorMetricsImpl.class);
+    private static final ClientLogger LOGGER = new ClientLogger(ThreatIntelligenceIndicatorMetricsImpl.class);
 
     private final ThreatIntelligenceIndicatorMetricsClient innerClient;
 
     private final com.azure.resourcemanager.securityinsights.SecurityInsightsManager serviceManager;
 
-    public ThreatIntelligenceIndicatorMetricsImpl(
-        ThreatIntelligenceIndicatorMetricsClient innerClient,
+    public ThreatIntelligenceIndicatorMetricsImpl(ThreatIntelligenceIndicatorMetricsClient innerClient,
         com.azure.resourcemanager.securityinsights.SecurityInsightsManager serviceManager) {
         this.innerClient = innerClient;
         this.serviceManager = serviceManager;
+    }
+
+    public Response<ThreatIntelligenceMetricsList> listWithResponse(String resourceGroupName, String workspaceName,
+        Context context) {
+        Response<ThreatIntelligenceMetricsListInner> inner
+            = this.serviceClient().listWithResponse(resourceGroupName, workspaceName, context);
+        if (inner != null) {
+            return new SimpleResponse<>(inner.getRequest(), inner.getStatusCode(), inner.getHeaders(),
+                new ThreatIntelligenceMetricsListImpl(inner.getValue(), this.manager()));
+        } else {
+            return null;
+        }
     }
 
     public ThreatIntelligenceMetricsList list(String resourceGroupName, String workspaceName) {
         ThreatIntelligenceMetricsListInner inner = this.serviceClient().list(resourceGroupName, workspaceName);
         if (inner != null) {
             return new ThreatIntelligenceMetricsListImpl(inner, this.manager());
-        } else {
-            return null;
-        }
-    }
-
-    public Response<ThreatIntelligenceMetricsList> listWithResponse(
-        String resourceGroupName, String workspaceName, Context context) {
-        Response<ThreatIntelligenceMetricsListInner> inner =
-            this.serviceClient().listWithResponse(resourceGroupName, workspaceName, context);
-        if (inner != null) {
-            return new SimpleResponse<>(
-                inner.getRequest(),
-                inner.getStatusCode(),
-                inner.getHeaders(),
-                new ThreatIntelligenceMetricsListImpl(inner.getValue(), this.manager()));
         } else {
             return null;
         }

@@ -9,29 +9,27 @@ import com.azure.core.util.Context;
 import com.azure.core.util.logging.ClientLogger;
 import com.azure.resourcemanager.synapse.fluent.IntegrationRuntimeCredentialsClient;
 import com.azure.resourcemanager.synapse.models.IntegrationRuntimeCredentials;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 public final class IntegrationRuntimeCredentialsImpl implements IntegrationRuntimeCredentials {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(IntegrationRuntimeCredentialsImpl.class);
+    private static final ClientLogger LOGGER = new ClientLogger(IntegrationRuntimeCredentialsImpl.class);
 
     private final IntegrationRuntimeCredentialsClient innerClient;
 
     private final com.azure.resourcemanager.synapse.SynapseManager serviceManager;
 
-    public IntegrationRuntimeCredentialsImpl(
-        IntegrationRuntimeCredentialsClient innerClient,
+    public IntegrationRuntimeCredentialsImpl(IntegrationRuntimeCredentialsClient innerClient,
         com.azure.resourcemanager.synapse.SynapseManager serviceManager) {
         this.innerClient = innerClient;
         this.serviceManager = serviceManager;
     }
 
-    public void sync(String resourceGroupName, String workspaceName, String integrationRuntimeName) {
-        this.serviceClient().sync(resourceGroupName, workspaceName, integrationRuntimeName);
+    public Response<Void> syncWithResponse(String resourceGroupName, String workspaceName,
+        String integrationRuntimeName, Context context) {
+        return this.serviceClient().syncWithResponse(resourceGroupName, workspaceName, integrationRuntimeName, context);
     }
 
-    public Response<Void> syncWithResponse(
-        String resourceGroupName, String workspaceName, String integrationRuntimeName, Context context) {
-        return this.serviceClient().syncWithResponse(resourceGroupName, workspaceName, integrationRuntimeName, context);
+    public void sync(String resourceGroupName, String workspaceName, String integrationRuntimeName) {
+        this.serviceClient().sync(resourceGroupName, workspaceName, integrationRuntimeName);
     }
 
     private IntegrationRuntimeCredentialsClient serviceClient() {

@@ -13,19 +13,28 @@ import com.azure.resourcemanager.automanage.fluent.BestPracticesClient;
 import com.azure.resourcemanager.automanage.fluent.models.BestPracticeInner;
 import com.azure.resourcemanager.automanage.models.BestPractice;
 import com.azure.resourcemanager.automanage.models.BestPractices;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 public final class BestPracticesImpl implements BestPractices {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(BestPracticesImpl.class);
+    private static final ClientLogger LOGGER = new ClientLogger(BestPracticesImpl.class);
 
     private final BestPracticesClient innerClient;
 
     private final com.azure.resourcemanager.automanage.AutomanageManager serviceManager;
 
-    public BestPracticesImpl(
-        BestPracticesClient innerClient, com.azure.resourcemanager.automanage.AutomanageManager serviceManager) {
+    public BestPracticesImpl(BestPracticesClient innerClient,
+        com.azure.resourcemanager.automanage.AutomanageManager serviceManager) {
         this.innerClient = innerClient;
         this.serviceManager = serviceManager;
+    }
+
+    public Response<BestPractice> getWithResponse(String bestPracticeName, Context context) {
+        Response<BestPracticeInner> inner = this.serviceClient().getWithResponse(bestPracticeName, context);
+        if (inner != null) {
+            return new SimpleResponse<>(inner.getRequest(), inner.getStatusCode(), inner.getHeaders(),
+                new BestPracticeImpl(inner.getValue(), this.manager()));
+        } else {
+            return null;
+        }
     }
 
     public BestPractice get(String bestPracticeName) {
@@ -37,27 +46,14 @@ public final class BestPracticesImpl implements BestPractices {
         }
     }
 
-    public Response<BestPractice> getWithResponse(String bestPracticeName, Context context) {
-        Response<BestPracticeInner> inner = this.serviceClient().getWithResponse(bestPracticeName, context);
-        if (inner != null) {
-            return new SimpleResponse<>(
-                inner.getRequest(),
-                inner.getStatusCode(),
-                inner.getHeaders(),
-                new BestPracticeImpl(inner.getValue(), this.manager()));
-        } else {
-            return null;
-        }
-    }
-
     public PagedIterable<BestPractice> listByTenant() {
         PagedIterable<BestPracticeInner> inner = this.serviceClient().listByTenant();
-        return Utils.mapPage(inner, inner1 -> new BestPracticeImpl(inner1, this.manager()));
+        return ResourceManagerUtils.mapPage(inner, inner1 -> new BestPracticeImpl(inner1, this.manager()));
     }
 
     public PagedIterable<BestPractice> listByTenant(Context context) {
         PagedIterable<BestPracticeInner> inner = this.serviceClient().listByTenant(context);
-        return Utils.mapPage(inner, inner1 -> new BestPracticeImpl(inner1, this.manager()));
+        return ResourceManagerUtils.mapPage(inner, inner1 -> new BestPracticeImpl(inner1, this.manager()));
     }
 
     private BestPracticesClient serviceClient() {

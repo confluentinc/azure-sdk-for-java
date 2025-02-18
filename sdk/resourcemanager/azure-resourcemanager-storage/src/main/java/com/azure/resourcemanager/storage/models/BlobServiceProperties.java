@@ -17,29 +17,77 @@ import java.util.List;
 
 /** Type representing BlobServiceProperties. */
 @Fluent
-public interface BlobServiceProperties
-    extends HasInnerModel<BlobServicePropertiesInner>,
-        Indexable,
-        Refreshable<BlobServiceProperties>,
-        Updatable<BlobServiceProperties.Update>,
-        HasManager<StorageManager> {
-    /** @return the cors value. */
+public interface BlobServiceProperties extends HasInnerModel<BlobServicePropertiesInner>, Indexable,
+    Refreshable<BlobServiceProperties>, Updatable<BlobServiceProperties.Update>, HasManager<StorageManager> {
+    /**
+     * Gets cors rules.
+     *
+     * @return the cors value.
+     */
     CorsRules cors();
 
-    /** @return the defaultServiceVersion value. */
+    /**
+     * Gets the default service version.
+     *
+     * @return the defaultServiceVersion value.
+     */
     String defaultServiceVersion();
 
-    /** @return the deleteRetentionPolicy value. */
+    /**
+     * Gets blob soft delete policy.
+     *
+     * @return blob soft delete policy used to restore a blob, snapshot, or version that has been deleted.
+     */
     DeleteRetentionPolicy deleteRetentionPolicy();
 
-    /** @return the id value. */
+    /**
+     * Gets container soft delete policy.
+     *
+     * @return container soft delete policy used to restore a container that has been deleted.
+     */
+    DeleteRetentionPolicy containerDeleteRetentionPolicy();
+
+    /**
+     * Gets the resource ID.
+     *
+     * @return the id value.
+     */
     String id();
 
-    /** @return the name value. */
+    /**
+     * Gets the name.
+     *
+     * @return the name value.
+     */
     String name();
 
-    /** @return the type value. */
+    /**
+     * Gets the type.
+     *
+     * @return the type value.
+     */
     String type();
+
+    /**
+     * Checks whether blob versioning is enabled.
+     *
+     * @return whether blob versioning is enabled
+     */
+    Boolean isBlobVersioningEnabled();
+
+    /**
+     * Checks whether last access time tracking policy is enabled.
+     *
+     * @return whether last access time tracking policy is enabled
+     */
+    boolean isLastAccessTimeTrackingPolicyEnabled();
+
+    /**
+     * Gets the last access time tracking policy.
+     *
+     * @return the last access time tracking policy
+     */
+    LastAccessTimeTrackingPolicy lastAccessTimeTrackingPolicy();
 
     /** The entirety of the BlobServiceProperties definition. */
     interface Definition
@@ -104,6 +152,11 @@ public interface BlobServiceProperties
         interface WithDeleteRetentionPolicy {
             /**
              * Specifies deleteRetentionPolicy.
+             * <p>For optimal protection for your blob data, Microsoft recommends enabling all of the following
+             *    data protection features:</p>
+             *    <p>- containerDeleteRetentionPolicy (Container soft delete)</p>
+             *    <p>- Blob versioning</p>
+             *    <p>- deleteRetentionPolicy (Blob soft delete)</p>
              *
              * @param deleteRetentionPolicy The blob service properties for soft delete
              * @return the next definition stage
@@ -112,6 +165,11 @@ public interface BlobServiceProperties
 
             /**
              * Specifies that the delete retention policy is enabled for soft delete.
+             * <p>For optimal protection for your blob data, Microsoft recommends enabling all of the following
+             *    data protection features:</p>
+             *    <p>- containerDeleteRetentionPolicy (Container soft delete)</p>
+             *    <p>- Blob versioning</p>
+             *    <p>- deleteRetentionPolicy (Blob soft delete)</p>
              *
              * @param numDaysEnabled number of days after soft delete that the blob service properties will actually be
              *     deleted
@@ -121,29 +179,105 @@ public interface BlobServiceProperties
 
             /**
              * Specifies that the delete retention policy is disabled.
+             * <p>For optimal protection for your blob data, Microsoft recommends enabling all of the following
+             *    data protection features:</p>
+             *    <p>- containerDeleteRetentionPolicy (Container soft delete)</p>
+             *    <p>- Blob versioning</p>
+             *    <p>- deleteRetentionPolicy (Blob soft delete)</p>
              *
              * @return the next definition stage
              */
             WithCreate withDeleteRetentionPolicyDisabled();
         }
 
+        /** The stage of the blobserviceproperties definition allowing to specify containerDeleteRetentionPolicy. */
+        interface WithContainerDeleteRetentionPolicy {
+            /**
+             * Specifies containerDeleteRetentionPolicy.
+             * <p>For optimal protection for your blob data, Microsoft recommends enabling all of the following
+             *    data protection features:</p>
+             *    <p>- containerDeleteRetentionPolicy (Container soft delete)</p>
+             *    <p>- Blob versioning</p>
+             *    <p>- deleteRetentionPolicy (Blob soft delete)</p>
+             *
+             * @param deleteRetentionPolicy The blob service properties for container soft delete
+             * @return the next definition stage
+             */
+            WithCreate withContainerDeleteRetentionPolicy(DeleteRetentionPolicy deleteRetentionPolicy);
+
+            /**
+             * Specifies that the delete retention policy is enabled for container soft delete.
+             * <p>For optimal protection for your blob data, Microsoft recommends enabling all of the following
+             *    data protection features:</p>
+             *    <p>- containerDeleteRetentionPolicy (Container soft delete)</p>
+             *    <p>- Blob versioning</p>
+             *    <p>- deleteRetentionPolicy (Blob soft delete)</p>
+             *
+             * @param numDaysEnabled number of days after container soft delete that the blob service properties will
+             *     actually be deleted
+             * @return the next definition stage
+             */
+            WithCreate withContainerDeleteRetentionPolicyEnabled(int numDaysEnabled);
+        }
+
+        /** The stage of the blobserviceproperties definition allowing to enable/disable blob versioning. */
+        interface WithBlobVersioning {
+            /**
+             * Enables blob versioning.
+             * <p>When blob versioning is enabled, you can access earlier versions of a blob to recover your data
+             * if it is modified or deleted.</p>
+             * <p>For optimal protection for your blob data, Microsoft recommends enabling all of the following
+             *    data protection features:</p>
+             *    <p>- containerDeleteRetentionPolicy (Container soft delete)</p>
+             *    <p>- Blob versioning</p>
+             *    <p>- deleteRetentionPolicy (Blob soft delete)</p>
+             *
+             * @return the next definition stage
+             */
+            WithCreate withBlobVersioningEnabled();
+        }
+
+        /** The stage of the blobserviceproperties definition allowing to specify last access time tracking policy. */
+        interface WithLastAccessTimeTrackingPolicy {
+            /**
+             * Enables last access time tracking policy with default settings.
+             * Last access time tracking integrates with lifecycle management to allow the automatic tiering and deletion
+             * of data based on when individual blobs are last accessed.
+             * It can also be used without lifecycle management by any solution that needs to understand
+             * when individual blobs are last read and then take action.
+             *
+             * @return the next definition stage
+             */
+            WithCreate withLastAccessTimeTrackingPolicyEnabled();
+
+            /**
+             * Specify last access time tracking policy.
+             * Last access time tracking integrates with lifecycle management to allow the automatic tiering and deletion
+             * of data based on when individual blobs are last accessed.
+             * It can also be used without lifecycle management by any solution that needs to understand
+             * when individual blobs are last read and then take action.
+             *
+             * @param policy the last access time tracking policy
+             * @return the next definition stage
+             */
+            WithCreate withLastAccessTimeTrackingPolicy(LastAccessTimeTrackingPolicy policy);
+        }
+
         /**
          * The stage of the definition which contains all the minimum required inputs for the resource to be created
          * (via {@link WithCreate#create()}), but also allows for any other optional settings to be specified.
          */
-        interface WithCreate
-            extends Creatable<BlobServiceProperties>,
-                DefinitionStages.WithCors,
-                DefinitionStages.WithDefaultServiceVersion,
-                DefinitionStages.WithDeleteRetentionPolicy {
+        interface WithCreate extends Creatable<BlobServiceProperties>, DefinitionStages.WithCors,
+            DefinitionStages.WithDefaultServiceVersion, DefinitionStages.WithDeleteRetentionPolicy,
+            DefinitionStages.WithBlobVersioning, DefinitionStages.WithContainerDeleteRetentionPolicy,
+            DefinitionStages.WithLastAccessTimeTrackingPolicy {
         }
     }
+
     /** The template for a BlobServiceProperties update operation, containing all the settings that can be modified. */
-    interface Update
-        extends Appliable<BlobServiceProperties>,
-            UpdateStages.WithCors,
-            UpdateStages.WithDefaultServiceVersion,
-            UpdateStages.WithDeleteRetentionPolicy {
+    interface Update extends Appliable<BlobServiceProperties>, UpdateStages.WithCors,
+        UpdateStages.WithDefaultServiceVersion, UpdateStages.WithDeleteRetentionPolicy, UpdateStages.WithBlobVersioning,
+        UpdateStages.WithContainerDeleteRetentionPolicy, UpdateStages.WithLastAccessTimeTrackingPolicy {
     }
 
     /** Grouping of BlobServiceProperties update stages. */
@@ -186,6 +320,11 @@ public interface BlobServiceProperties
         interface WithDeleteRetentionPolicy {
             /**
              * Specifies deleteRetentionPolicy.
+             * <p>For optimal protection for your blob data, Microsoft recommends enabling all of the following
+             *    data protection features:</p>
+             *    <p>- containerDeleteRetentionPolicy (Container soft delete)</p>
+             *    <p>- Blob versioning</p>
+             *    <p>- deleteRetentionPolicy (Blob soft delete)</p>
              *
              * @param deleteRetentionPolicy The blob service properties for soft delete
              * @return the next update stage
@@ -194,6 +333,11 @@ public interface BlobServiceProperties
 
             /**
              * Specifies that the delete retention policy is enabled for soft delete.
+             * <p>For optimal protection for your blob data, Microsoft recommends enabling all of the following
+             *    data protection features:</p>
+             *    <p>- containerDeleteRetentionPolicy (Container soft delete)</p>
+             *    <p>- Blob versioning</p>
+             *    <p>- deleteRetentionPolicy (Blob soft delete)</p>
              *
              * @param numDaysEnabled number of days after soft delete that the blob service properties will actually be
              *     deleted
@@ -203,10 +347,125 @@ public interface BlobServiceProperties
 
             /**
              * Specifies that the delete retention policy is disabled.
+             * <p>For optimal protection for your blob data, Microsoft recommends enabling all of the following
+             *    data protection features:</p>
+             *    <p>- containerDeleteRetentionPolicy (Container soft delete)</p>
+             *    <p>- Blob versioning</p>
+             *    <p>- deleteRetentionPolicy (Blob soft delete)</p>
              *
              * @return the next update stage
              */
             Update withDeleteRetentionPolicyDisabled();
+        }
+
+        /** The stage of the blobserviceproperties update allowing to specify containerDeleteRetentionPolicy. */
+        interface WithContainerDeleteRetentionPolicy {
+            /**
+             * Specifies containerDeleteRetentionPolicy.
+             * <p>For optimal protection for your blob data, Microsoft recommends enabling all of the following
+             *    data protection features:</p>
+             *    <p>- containerDeleteRetentionPolicy (Container soft delete)</p>
+             *    <p>- Blob versioning</p>
+             *    <p>- deleteRetentionPolicy (Blob soft delete)</p>
+             *
+             * @param deleteRetentionPolicy The blob service properties for container soft delete
+             * @return the next update stage
+             */
+            Update withContainerDeleteRetentionPolicy(DeleteRetentionPolicy deleteRetentionPolicy);
+
+            /**
+             * Specifies that the delete retention policy is enabled for container soft delete.
+             * <p>For optimal protection for your blob data, Microsoft recommends enabling all of the following
+             *    data protection features:</p>
+             *    <p>- containerDeleteRetentionPolicy (Container soft delete)</p>
+             *    <p>- Blob versioning</p>
+             *    <p>- deleteRetentionPolicy (Blob soft delete)</p>
+             *
+             * @param numDaysEnabled number of days after container soft delete that the blob service properties will
+             *     actually be deleted
+             * @return the next update stage
+             */
+            Update withContainerDeleteRetentionPolicyEnabled(int numDaysEnabled);
+
+            /**
+             * Specifies that the container delete retention policy is disabled.
+             * <p>For optimal protection for your blob data, Microsoft recommends enabling all of the following
+             *    data protection features:</p>
+             *    <p>- containerDeleteRetentionPolicy (Container soft delete)</p>
+             *    <p>- Blob versioning</p>
+             *    <p>- deleteRetentionPolicy (Blob soft delete)</p>
+             *
+             * @return the next update stage
+             */
+            Update withContainerDeleteRetentionPolicyDisabled();
+        }
+
+        /** The stage of the blobserviceproperties update allowing to enable/disable blob versioning. */
+        interface WithBlobVersioning {
+            /**
+             * Enables blob versioning.
+             * <p>When blob versioning is enabled, you can access earlier versions of a blob to recover your data
+             * if it is modified or deleted.</p>
+             * <p>For optimal protection for your blob data, Microsoft recommends enabling all of the following
+             *    data protection features:</p>
+             *    <p>- containerDeleteRetentionPolicy (Container soft delete)</p>
+             *    <p>- Blob versioning</p>
+             *    <p>- deleteRetentionPolicy (Blob soft delete)</p>
+             *
+             * @return the next update stage
+             */
+            Update withBlobVersioningEnabled();
+
+            /**
+             * Disables blob versioning.
+             * <p>After versioning is disabled, the first time you modify the blob with current version will result in
+             * creating a new blob that has no version. All subsequent updates will go to this new blob and overwrite
+             * its data without saving the previous state. All existing versions stay unaffected.</p>
+             * <p>You can still list a blob's versions after versioning is disabled, or read or delete a specific
+             * version of the blob using the version ID.
+             * </p>
+             * <p>For optimal protection for your blob data, Microsoft recommends enabling all of the following
+             *    data protection features:</p>
+             *    <p>- containerDeleteRetentionPolicy (Container soft delete)</p>
+             *    <p>- Blob versioning</p>
+             *    <p>- deleteRetentionPolicy (Blob soft delete)</p>
+             *
+             * @return the next update stage
+             */
+            Update withBlobVersioningDisabled();
+        }
+
+        /** The stage of the blobserviceproperties update allowing to specify last access time tracking policy. */
+        interface WithLastAccessTimeTrackingPolicy {
+            /**
+             * Enables last access time tracking policy with default settings.
+             * Last access time tracking integrates with lifecycle management to allow the automatic tiering and deletion
+             * of data based on when individual blobs are last accessed.
+             * It can also be used without lifecycle management by any solution that needs to understand
+             * when individual blobs are last read and then take action.
+             *
+             * @return the next update stage
+             */
+            Update withLastAccessTimeTrackingPolicyEnabled();
+
+            /**
+             * Specify last access time tracking policy.
+             * Last access time tracking integrates with lifecycle management to allow the automatic tiering and deletion
+             * of data based on when individual blobs are last accessed.
+             * It can also be used without lifecycle management by any solution that needs to understand
+             * when individual blobs are last read and then take action.
+             *
+             * @param policy the last access time tracking policy
+             * @return the next update stage
+             */
+            Update withLastAccessTimeTrackingPolicy(LastAccessTimeTrackingPolicy policy);
+
+            /**
+             * Disables last access time tracking policy.
+             *
+             * @return the next update stage
+             */
+            Update withLastAccessTimeTrackingPolicyDisabled();
         }
     }
 }

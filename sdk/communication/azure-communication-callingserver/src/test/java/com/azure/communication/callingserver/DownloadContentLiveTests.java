@@ -6,6 +6,9 @@ package com.azure.communication.callingserver;
 import com.azure.communication.callingserver.models.CallingServerErrorException;
 import com.azure.core.http.HttpClient;
 import com.azure.core.http.rest.Response;
+import com.azure.core.test.annotation.LiveOnly;
+import com.azure.core.util.Context;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.condition.DisabledIfEnvironmentVariable;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -13,6 +16,7 @@ import org.mockito.Mockito;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.io.UncheckedIOException;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
@@ -22,9 +26,12 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.Mockito.doThrow;
 
-public class DownloadContentLiveTests extends CallingServerTestBase {
+// Package marked to be deprecated
+@LiveOnly()
+public class DownloadContentLiveTests extends CallAutomationLiveTestBase {
 
     @ParameterizedTest
     @MethodSource("com.azure.core.test.TestBase#getHttpClients")
@@ -32,32 +39,34 @@ public class DownloadContentLiveTests extends CallingServerTestBase {
         named = "SKIP_LIVE_TEST",
         matches = "(?i)(true)",
         disabledReason = "Requires human intervention")
+    @Disabled("Disabling test as calling sever is in the process of decommissioning")
     public void downloadMetadataWithConnectionStringClient(HttpClient httpClient) throws UnsupportedEncodingException {
-        CallingServerClientBuilder builder = getCallingServerClientUsingConnectionString(httpClient);
-        CallingServerClient conversationClient = setupClient(builder, "downloadMetadataWithConnectionStringClient");
-        downloadMetadata(conversationClient);
+        CallAutomationClientBuilder builder = getCallingServerClientUsingConnectionString(httpClient);
+        CallAutomationClient conversationClient = setupClient(builder, "downloadMetadataWithConnectionStringClient");
+        downloadMetadata(conversationClient.getCallRecording());
     }
+
     @ParameterizedTest
     @MethodSource("com.azure.core.test.TestBase#getHttpClients")
     @DisabledIfEnvironmentVariable(
         named = "SKIP_LIVE_TEST",
         matches = "(?i)(true)",
         disabledReason = "Requires human intervention")
+    @Disabled("Disabling test as calling sever is in the process of decommissioning")
     public void downloadMetadataWithTokenCredentialClient(HttpClient httpClient) throws UnsupportedEncodingException {
-        CallingServerClientBuilder builder = getCallingServerClientUsingTokenCredential(httpClient);
-        CallingServerClient conversationClient = setupClient(builder, "downloadMetadataWithTokenCredentialClient");
-        downloadMetadata(conversationClient);
+        CallAutomationClientBuilder builder = getCallingServerClientUsingTokenCredential(httpClient);
+        CallAutomationClient conversationClient = setupClient(builder, "downloadMetadataWithTokenCredentialClient");
+        downloadMetadata(conversationClient.getCallRecording());
     }
 
-    private void downloadMetadata(CallingServerClient conversationClient) throws UnsupportedEncodingException {
+    private void downloadMetadata(CallRecording callRecording) throws UnsupportedEncodingException {
         try {
             ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-            conversationClient.downloadTo(METADATA_URL, byteArrayOutputStream, null);
+            callRecording.downloadTo(METADATA_URL, byteArrayOutputStream);
             String metadata = byteArrayOutputStream.toString(StandardCharsets.UTF_8.name());
             assertThat(metadata.contains("0-eus-d2-3cca2175891f21c6c9a5975a12c0141c"), is(true));
         } catch (Exception e) {
-            System.out.println("Error: " + e.getMessage());
-            throw e;
+            fail("Unexpected exception received", e);
         }
     }
 
@@ -67,24 +76,21 @@ public class DownloadContentLiveTests extends CallingServerTestBase {
         named = "SKIP_LIVE_TEST",
         matches = "(?i)(true)",
         disabledReason = "Requires human intervention")
+    @Disabled("Disabling test as calling sever is in the process of decommissioning")
     public void downloadVideo(HttpClient httpClient) {
-        CallingServerClientBuilder builder = getCallingServerClientUsingConnectionString(httpClient);
-        CallingServerClient conversationClient = setupClient(builder, "downloadVideo");
+        CallAutomationClientBuilder builder = getCallingServerClientUsingConnectionString(httpClient);
+        CallAutomationClient conversationClient = setupClient(builder, "downloadVideo");
 
         try {
             ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-            Response<Void> response = conversationClient
-                .downloadToWithResponse(VIDEO_URL, byteArrayOutputStream, null, null);
+            Response<Void> response = conversationClient.getCallRecording()
+                .downloadToWithResponse(VIDEO_URL, byteArrayOutputStream, null, Context.NONE);
             assertThat(response, is(notNullValue()));
-            assertThat(
-                response.getHeaders().getValue("Content-Type"),
-                is(equalTo("application/octet-stream")));
-            assertThat(
-                Integer.parseInt(response.getHeaders().getValue("Content-Length")),
+            assertThat(response.getHeaders().getValue("Content-Type"), is(equalTo("application/octet-stream")));
+            assertThat(Integer.parseInt(response.getHeaders().getValue("Content-Length")),
                 is(equalTo(byteArrayOutputStream.size())));
         } catch (Exception e) {
-            System.out.println("Error: " + e.getMessage());
-            throw e;
+            fail("Unexpected exception received", e);
         }
     }
 
@@ -94,29 +100,26 @@ public class DownloadContentLiveTests extends CallingServerTestBase {
         named = "SKIP_LIVE_TEST",
         matches = "(?i)(true)",
         disabledReason = "Requires human intervention")
+    @Disabled("Disabling test as calling sever is in the process of decommissioning")
     public void downloadContent404(HttpClient httpClient) {
-        CallingServerClientBuilder builder = getCallingServerClientUsingConnectionString(httpClient);
-        CallingServerClient conversationClient = setupClient(builder, "downloadContent404");
+        CallAutomationClientBuilder builder = getCallingServerClientUsingConnectionString(httpClient);
+        CallAutomationClient conversationClient = setupClient(builder, "downloadContent404");
 
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         CallingServerErrorException ex = assertThrows(CallingServerErrorException.class,
-            () -> conversationClient
-                .downloadTo(CONTENT_URL_404, byteArrayOutputStream, null));
-        assertThat(ex.getResponse().getStatusCode(), is(equalTo(404)));
+            () -> conversationClient.getCallRecording().downloadTo(CONTENT_URL_404, byteArrayOutputStream));
     }
 
     @ParameterizedTest
     @MethodSource("com.azure.core.test.TestBase#getHttpClients")
+    @Disabled("Disabling test as calling sever is in the process of decommissioning")
     public void downloadContentWrongUrl(HttpClient httpClient) {
-        CallingServerClientBuilder builder = getCallingServerClientUsingConnectionString(httpClient);
-        CallingServerClient conversationClient = setupClient(builder, "downloadContentWrongUrl");
+        CallAutomationClientBuilder builder = getCallingServerClientUsingConnectionString(httpClient);
+        CallAutomationClient conversationClient = setupClient(builder, "downloadContentWrongUrl");
 
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-        IllegalArgumentException ex =
-            assertThrows(
-                IllegalArgumentException.class,
-                () -> conversationClient
-                    .downloadTo("wrongurl", byteArrayOutputStream, null));
+        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
+            () -> conversationClient.getCallRecording().downloadTo("wrongurl", byteArrayOutputStream));
         assertThat(ex, is(notNullValue()));
     }
 
@@ -126,23 +129,22 @@ public class DownloadContentLiveTests extends CallingServerTestBase {
         named = "SKIP_LIVE_TEST",
         matches = "(?i)(true)",
         disabledReason = "Requires human intervention")
+    @Disabled("Disabling test as calling sever is in the process of decommissioning")
     public void downloadContentStreamFailure(HttpClient httpClient) throws IOException {
-        CallingServerClientBuilder builder = getCallingServerClientUsingConnectionString(httpClient);
-        CallingServerClient conversationClient = setupClient(builder, "downloadContent404");
+        CallAutomationClientBuilder builder = getCallingServerClientUsingConnectionString(httpClient);
+        CallAutomationClient conversationClient = setupClient(builder, "downloadContent404");
 
-        ByteArrayOutputStream byteArrayOutputStream = Mockito.mock(ByteArrayOutputStream.class);
-        doThrow(IOException.class).when(byteArrayOutputStream).write(Mockito.any());
-        assertThrows(
-            UncheckedIOException.class,
-            () -> conversationClient
-                .downloadTo(METADATA_URL, byteArrayOutputStream, null));
+        OutputStream outputStream = Mockito.mock(OutputStream.class);
+        doThrow(IOException.class).when(outputStream).write(Mockito.any(), Mockito.anyInt(), Mockito.anyInt());
+        assertThrows(UncheckedIOException.class,
+            () -> conversationClient.getCallRecording().downloadTo(METADATA_URL, outputStream));
     }
 
-    private CallingServerClient setupClient(CallingServerClientBuilder builder, String testName) {
+    private CallAutomationClient setupClient(CallAutomationClientBuilder builder, String testName) {
         return addLoggingPolicy(builder, testName).buildClient();
     }
 
-    protected CallingServerClientBuilder addLoggingPolicy(CallingServerClientBuilder builder, String testName) {
+    protected CallAutomationClientBuilder addLoggingPolicy(CallAutomationClientBuilder builder, String testName) {
         return builder.addPolicy((context, next) -> logHeaders(testName, next));
     }
 }

@@ -4,24 +4,33 @@
 
 package com.azure.storage.blob.implementation.models;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonValue;
-
-/** Defines values for QueryFormatType. */
+/**
+ * The quick query format type.
+ */
 public enum QueryFormatType {
-    /** Enum value delimited. */
+    /**
+     * Enum value delimited.
+     */
     DELIMITED("delimited"),
 
-    /** Enum value json. */
+    /**
+     * Enum value json.
+     */
     JSON("json"),
 
-    /** Enum value arrow. */
+    /**
+     * Enum value arrow.
+     */
     ARROW("arrow"),
 
-    /** Enum value parquet. */
+    /**
+     * Enum value parquet.
+     */
     PARQUET("parquet");
 
-    /** The actual serialized value for a QueryFormatType instance. */
+    /**
+     * The actual serialized value for a QueryFormatType instance.
+     */
     private final String value;
 
     QueryFormatType(String value) {
@@ -30,12 +39,14 @@ public enum QueryFormatType {
 
     /**
      * Parses a serialized value to a QueryFormatType instance.
-     *
+     * 
      * @param value the serialized value to parse.
      * @return the parsed QueryFormatType object, or null if unable to parse.
      */
-    @JsonCreator
     public static QueryFormatType fromString(String value) {
+        if (value == null) {
+            return null;
+        }
         QueryFormatType[] items = QueryFormatType.values();
         for (QueryFormatType item : items) {
             if (item.toString().equalsIgnoreCase(value)) {
@@ -45,7 +56,9 @@ public enum QueryFormatType {
         return null;
     }
 
-    @JsonValue
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String toString() {
         return this.value;

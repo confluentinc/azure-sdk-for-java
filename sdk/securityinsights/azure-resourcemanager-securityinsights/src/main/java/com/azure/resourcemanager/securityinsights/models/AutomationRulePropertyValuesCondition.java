@@ -5,62 +5,154 @@
 package com.azure.resourcemanager.securityinsights.models;
 
 import com.azure.core.annotation.Fluent;
-import com.azure.core.util.logging.ClientLogger;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import com.fasterxml.jackson.annotation.JsonTypeName;
+import com.azure.json.JsonReader;
+import com.azure.json.JsonSerializable;
+import com.azure.json.JsonToken;
+import com.azure.json.JsonWriter;
+import java.io.IOException;
+import java.util.List;
 
-/** Describes an automation rule condition that evaluates a property's value. */
-@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "conditionType")
-@JsonTypeName("Property")
+/**
+ * The AutomationRulePropertyValuesCondition model.
+ */
 @Fluent
-public final class AutomationRulePropertyValuesCondition extends AutomationRuleCondition {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(AutomationRulePropertyValuesCondition.class);
+public final class AutomationRulePropertyValuesCondition
+    implements JsonSerializable<AutomationRulePropertyValuesCondition> {
+    /*
+     * The property to evaluate in an automation rule property condition.
+     */
+    private AutomationRulePropertyConditionSupportedProperty propertyName;
 
     /*
-     * The configuration of the automation rule condition
+     * The operator property.
      */
-    @JsonProperty(value = "conditionProperties", required = true)
-    private AutomationRulePropertyValuesConditionProperties conditionProperties;
+    private AutomationRulePropertyConditionSupportedOperator operator;
+
+    /*
+     * The propertyValues property.
+     */
+    private List<String> propertyValues;
 
     /**
-     * Get the conditionProperties property: The configuration of the automation rule condition.
-     *
-     * @return the conditionProperties value.
+     * Creates an instance of AutomationRulePropertyValuesCondition class.
      */
-    public AutomationRulePropertyValuesConditionProperties conditionProperties() {
-        return this.conditionProperties;
+    public AutomationRulePropertyValuesCondition() {
     }
 
     /**
-     * Set the conditionProperties property: The configuration of the automation rule condition.
-     *
-     * @param conditionProperties the conditionProperties value to set.
+     * Get the propertyName property: The property to evaluate in an automation rule property condition.
+     * 
+     * @return the propertyName value.
+     */
+    public AutomationRulePropertyConditionSupportedProperty propertyName() {
+        return this.propertyName;
+    }
+
+    /**
+     * Set the propertyName property: The property to evaluate in an automation rule property condition.
+     * 
+     * @param propertyName the propertyName value to set.
      * @return the AutomationRulePropertyValuesCondition object itself.
      */
-    public AutomationRulePropertyValuesCondition withConditionProperties(
-        AutomationRulePropertyValuesConditionProperties conditionProperties) {
-        this.conditionProperties = conditionProperties;
+    public AutomationRulePropertyValuesCondition
+        withPropertyName(AutomationRulePropertyConditionSupportedProperty propertyName) {
+        this.propertyName = propertyName;
+        return this;
+    }
+
+    /**
+     * Get the operator property: The operator property.
+     * 
+     * @return the operator value.
+     */
+    public AutomationRulePropertyConditionSupportedOperator operator() {
+        return this.operator;
+    }
+
+    /**
+     * Set the operator property: The operator property.
+     * 
+     * @param operator the operator value to set.
+     * @return the AutomationRulePropertyValuesCondition object itself.
+     */
+    public AutomationRulePropertyValuesCondition
+        withOperator(AutomationRulePropertyConditionSupportedOperator operator) {
+        this.operator = operator;
+        return this;
+    }
+
+    /**
+     * Get the propertyValues property: The propertyValues property.
+     * 
+     * @return the propertyValues value.
+     */
+    public List<String> propertyValues() {
+        return this.propertyValues;
+    }
+
+    /**
+     * Set the propertyValues property: The propertyValues property.
+     * 
+     * @param propertyValues the propertyValues value to set.
+     * @return the AutomationRulePropertyValuesCondition object itself.
+     */
+    public AutomationRulePropertyValuesCondition withPropertyValues(List<String> propertyValues) {
+        this.propertyValues = propertyValues;
         return this;
     }
 
     /**
      * Validates the instance.
-     *
+     * 
      * @throws IllegalArgumentException thrown if the instance is not valid.
      */
-    @Override
     public void validate() {
-        super.validate();
-        if (conditionProperties() == null) {
-            throw logger
-                .logExceptionAsError(
-                    new IllegalArgumentException(
-                        "Missing required property conditionProperties in model"
-                            + " AutomationRulePropertyValuesCondition"));
-        } else {
-            conditionProperties().validate();
-        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public JsonWriter toJson(JsonWriter jsonWriter) throws IOException {
+        jsonWriter.writeStartObject();
+        jsonWriter.writeStringField("propertyName", this.propertyName == null ? null : this.propertyName.toString());
+        jsonWriter.writeStringField("operator", this.operator == null ? null : this.operator.toString());
+        jsonWriter.writeArrayField("propertyValues", this.propertyValues,
+            (writer, element) -> writer.writeString(element));
+        return jsonWriter.writeEndObject();
+    }
+
+    /**
+     * Reads an instance of AutomationRulePropertyValuesCondition from the JsonReader.
+     * 
+     * @param jsonReader The JsonReader being read.
+     * @return An instance of AutomationRulePropertyValuesCondition if the JsonReader was pointing to an instance of it,
+     * or null if it was pointing to JSON null.
+     * @throws IOException If an error occurs while reading the AutomationRulePropertyValuesCondition.
+     */
+    public static AutomationRulePropertyValuesCondition fromJson(JsonReader jsonReader) throws IOException {
+        return jsonReader.readObject(reader -> {
+            AutomationRulePropertyValuesCondition deserializedAutomationRulePropertyValuesCondition
+                = new AutomationRulePropertyValuesCondition();
+            while (reader.nextToken() != JsonToken.END_OBJECT) {
+                String fieldName = reader.getFieldName();
+                reader.nextToken();
+
+                if ("propertyName".equals(fieldName)) {
+                    deserializedAutomationRulePropertyValuesCondition.propertyName
+                        = AutomationRulePropertyConditionSupportedProperty.fromString(reader.getString());
+                } else if ("operator".equals(fieldName)) {
+                    deserializedAutomationRulePropertyValuesCondition.operator
+                        = AutomationRulePropertyConditionSupportedOperator.fromString(reader.getString());
+                } else if ("propertyValues".equals(fieldName)) {
+                    List<String> propertyValues = reader.readArray(reader1 -> reader1.getString());
+                    deserializedAutomationRulePropertyValuesCondition.propertyValues = propertyValues;
+                } else {
+                    reader.skipChildren();
+                }
+            }
+
+            return deserializedAutomationRulePropertyValuesCondition;
+        });
     }
 }

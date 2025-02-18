@@ -5,29 +5,47 @@
 package com.azure.resourcemanager.trafficmanager.models;
 
 import com.azure.core.util.ExpandableStringEnum;
-import com.fasterxml.jackson.annotation.JsonCreator;
 import java.util.Collection;
 
-/** Defines values for TrafficViewEnrollmentStatus. */
+/**
+ * Indicates whether Traffic View is 'Enabled' or 'Disabled' for the Traffic Manager profile. Null, indicates
+ * 'Disabled'. Enabling this feature will increase the cost of the Traffic Manage profile.
+ */
 public final class TrafficViewEnrollmentStatus extends ExpandableStringEnum<TrafficViewEnrollmentStatus> {
-    /** Static value Enabled for TrafficViewEnrollmentStatus. */
+    /**
+     * Static value Enabled for TrafficViewEnrollmentStatus.
+     */
     public static final TrafficViewEnrollmentStatus ENABLED = fromString("Enabled");
 
-    /** Static value Disabled for TrafficViewEnrollmentStatus. */
+    /**
+     * Static value Disabled for TrafficViewEnrollmentStatus.
+     */
     public static final TrafficViewEnrollmentStatus DISABLED = fromString("Disabled");
 
     /**
+     * Creates a new instance of TrafficViewEnrollmentStatus value.
+     * 
+     * @deprecated Use the {@link #fromString(String)} factory method.
+     */
+    @Deprecated
+    public TrafficViewEnrollmentStatus() {
+    }
+
+    /**
      * Creates or finds a TrafficViewEnrollmentStatus from its string representation.
-     *
+     * 
      * @param name a name to look for.
      * @return the corresponding TrafficViewEnrollmentStatus.
      */
-    @JsonCreator
     public static TrafficViewEnrollmentStatus fromString(String name) {
         return fromString(name, TrafficViewEnrollmentStatus.class);
     }
 
-    /** @return known TrafficViewEnrollmentStatus values. */
+    /**
+     * Gets known TrafficViewEnrollmentStatus values.
+     * 
+     * @return known TrafficViewEnrollmentStatus values.
+     */
     public static Collection<TrafficViewEnrollmentStatus> values() {
         return values(TrafficViewEnrollmentStatus.class);
     }

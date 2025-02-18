@@ -6,10 +6,13 @@ package com.azure.resourcemanager.resources.fluent.models;
 
 import com.azure.core.annotation.Fluent;
 import com.azure.core.management.exception.ManagementError;
-import com.azure.core.util.logging.ClientLogger;
+import com.azure.json.JsonReader;
+import com.azure.json.JsonSerializable;
+import com.azure.json.JsonToken;
+import com.azure.json.JsonWriter;
+import com.azure.resourcemanager.resources.models.DeploymentDiagnosticsDefinition;
 import com.azure.resourcemanager.resources.models.WhatIfChange;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -17,30 +20,31 @@ import java.util.List;
  * results.
  */
 @Fluent
-public final class WhatIfOperationResultInner {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(WhatIfOperationResultInner.class);
-
+public final class WhatIfOperationResultInner implements JsonSerializable<WhatIfOperationResultInner> {
     /*
      * Status of the What-If operation.
      */
-    @JsonProperty(value = "status")
     private String status;
 
     /*
      * What-If operation properties.
      */
-    @JsonProperty(value = "properties")
     private WhatIfOperationProperties innerProperties;
 
     /*
-     * Error Response Error when What-If operation fails.
+     * Error when What-If operation fails.
      */
-    @JsonProperty(value = "error")
     private ManagementError error;
 
     /**
+     * Creates an instance of WhatIfOperationResultInner class.
+     */
+    public WhatIfOperationResultInner() {
+    }
+
+    /**
      * Get the status property: Status of the What-If operation.
-     *
+     * 
      * @return the status value.
      */
     public String status() {
@@ -49,7 +53,7 @@ public final class WhatIfOperationResultInner {
 
     /**
      * Set the status property: Status of the What-If operation.
-     *
+     * 
      * @param status the status value to set.
      * @return the WhatIfOperationResultInner object itself.
      */
@@ -60,7 +64,7 @@ public final class WhatIfOperationResultInner {
 
     /**
      * Get the innerProperties property: What-If operation properties.
-     *
+     * 
      * @return the innerProperties value.
      */
     private WhatIfOperationProperties innerProperties() {
@@ -68,8 +72,8 @@ public final class WhatIfOperationResultInner {
     }
 
     /**
-     * Get the error property: Error Response Error when What-If operation fails.
-     *
+     * Get the error property: Error when What-If operation fails.
+     * 
      * @return the error value.
      */
     public ManagementError error() {
@@ -77,8 +81,8 @@ public final class WhatIfOperationResultInner {
     }
 
     /**
-     * Set the error property: Error Response Error when What-If operation fails.
-     *
+     * Set the error property: Error when What-If operation fails.
+     * 
      * @param error the error value to set.
      * @return the WhatIfOperationResultInner object itself.
      */
@@ -89,7 +93,7 @@ public final class WhatIfOperationResultInner {
 
     /**
      * Get the changes property: List of resource changes predicted by What-If operation.
-     *
+     * 
      * @return the changes value.
      */
     public List<WhatIfChange> changes() {
@@ -98,7 +102,7 @@ public final class WhatIfOperationResultInner {
 
     /**
      * Set the changes property: List of resource changes predicted by What-If operation.
-     *
+     * 
      * @param changes the changes value to set.
      * @return the WhatIfOperationResultInner object itself.
      */
@@ -111,13 +115,87 @@ public final class WhatIfOperationResultInner {
     }
 
     /**
+     * Get the potentialChanges property: List of resource changes predicted by What-If operation.
+     * 
+     * @return the potentialChanges value.
+     */
+    public List<WhatIfChange> potentialChanges() {
+        return this.innerProperties() == null ? null : this.innerProperties().potentialChanges();
+    }
+
+    /**
+     * Set the potentialChanges property: List of resource changes predicted by What-If operation.
+     * 
+     * @param potentialChanges the potentialChanges value to set.
+     * @return the WhatIfOperationResultInner object itself.
+     */
+    public WhatIfOperationResultInner withPotentialChanges(List<WhatIfChange> potentialChanges) {
+        if (this.innerProperties() == null) {
+            this.innerProperties = new WhatIfOperationProperties();
+        }
+        this.innerProperties().withPotentialChanges(potentialChanges);
+        return this;
+    }
+
+    /**
+     * Get the diagnostics property: List of resource diagnostics detected by What-If operation.
+     * 
+     * @return the diagnostics value.
+     */
+    public List<DeploymentDiagnosticsDefinition> diagnostics() {
+        return this.innerProperties() == null ? null : this.innerProperties().diagnostics();
+    }
+
+    /**
      * Validates the instance.
-     *
+     * 
      * @throws IllegalArgumentException thrown if the instance is not valid.
      */
     public void validate() {
         if (innerProperties() != null) {
             innerProperties().validate();
         }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public JsonWriter toJson(JsonWriter jsonWriter) throws IOException {
+        jsonWriter.writeStartObject();
+        jsonWriter.writeStringField("status", this.status);
+        jsonWriter.writeJsonField("properties", this.innerProperties);
+        jsonWriter.writeJsonField("error", this.error);
+        return jsonWriter.writeEndObject();
+    }
+
+    /**
+     * Reads an instance of WhatIfOperationResultInner from the JsonReader.
+     * 
+     * @param jsonReader The JsonReader being read.
+     * @return An instance of WhatIfOperationResultInner if the JsonReader was pointing to an instance of it, or null if
+     * it was pointing to JSON null.
+     * @throws IOException If an error occurs while reading the WhatIfOperationResultInner.
+     */
+    public static WhatIfOperationResultInner fromJson(JsonReader jsonReader) throws IOException {
+        return jsonReader.readObject(reader -> {
+            WhatIfOperationResultInner deserializedWhatIfOperationResultInner = new WhatIfOperationResultInner();
+            while (reader.nextToken() != JsonToken.END_OBJECT) {
+                String fieldName = reader.getFieldName();
+                reader.nextToken();
+
+                if ("status".equals(fieldName)) {
+                    deserializedWhatIfOperationResultInner.status = reader.getString();
+                } else if ("properties".equals(fieldName)) {
+                    deserializedWhatIfOperationResultInner.innerProperties = WhatIfOperationProperties.fromJson(reader);
+                } else if ("error".equals(fieldName)) {
+                    deserializedWhatIfOperationResultInner.error = ManagementError.fromJson(reader);
+                } else {
+                    reader.skipChildren();
+                }
+            }
+
+            return deserializedWhatIfOperationResultInner;
+        });
     }
 }

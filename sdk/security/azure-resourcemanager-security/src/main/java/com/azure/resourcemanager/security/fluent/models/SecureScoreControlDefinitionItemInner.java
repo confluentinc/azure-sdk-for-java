@@ -5,109 +5,184 @@
 package com.azure.resourcemanager.security.fluent.models;
 
 import com.azure.core.annotation.Immutable;
-import com.azure.core.annotation.JsonFlatten;
 import com.azure.core.management.ProxyResource;
-import com.azure.core.util.logging.ClientLogger;
+import com.azure.json.JsonReader;
+import com.azure.json.JsonToken;
+import com.azure.json.JsonWriter;
 import com.azure.resourcemanager.security.models.AzureResourceLink;
 import com.azure.resourcemanager.security.models.SecureScoreControlDefinitionSource;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import java.io.IOException;
 import java.util.List;
 
-/** Information about the security control. */
-@JsonFlatten
+/**
+ * Information about the security control.
+ */
 @Immutable
-public class SecureScoreControlDefinitionItemInner extends ProxyResource {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(SecureScoreControlDefinitionItemInner.class);
+public final class SecureScoreControlDefinitionItemInner extends ProxyResource {
+    /*
+     * Security Control Definition Properties.
+     */
+    private SecureScoreControlDefinitionItemProperties innerProperties;
 
     /*
-     * User friendly display name of the control
+     * The type of the resource.
      */
-    @JsonProperty(value = "properties.displayName", access = JsonProperty.Access.WRITE_ONLY)
-    private String displayName;
+    private String type;
 
     /*
-     * User friendly description of the control
+     * The name of the resource.
      */
-    @JsonProperty(value = "properties.description", access = JsonProperty.Access.WRITE_ONLY)
-    private String description;
+    private String name;
 
     /*
-     * Maximum control score (0..10)
+     * Fully qualified resource Id for the resource.
      */
-    @JsonProperty(value = "properties.maxScore", access = JsonProperty.Access.WRITE_ONLY)
-    private Integer maxScore;
+    private String id;
 
-    /*
-     * Source object from which the control was created
+    /**
+     * Creates an instance of SecureScoreControlDefinitionItemInner class.
      */
-    @JsonProperty(value = "properties.source", access = JsonProperty.Access.WRITE_ONLY)
-    private SecureScoreControlDefinitionSource source;
+    public SecureScoreControlDefinitionItemInner() {
+    }
 
-    /*
-     * Array of assessments metadata IDs that are included in this security
-     * control
+    /**
+     * Get the innerProperties property: Security Control Definition Properties.
+     * 
+     * @return the innerProperties value.
      */
-    @JsonProperty(value = "properties.assessmentDefinitions", access = JsonProperty.Access.WRITE_ONLY)
-    private List<AzureResourceLink> assessmentDefinitions;
+    private SecureScoreControlDefinitionItemProperties innerProperties() {
+        return this.innerProperties;
+    }
+
+    /**
+     * Get the type property: The type of the resource.
+     * 
+     * @return the type value.
+     */
+    @Override
+    public String type() {
+        return this.type;
+    }
+
+    /**
+     * Get the name property: The name of the resource.
+     * 
+     * @return the name value.
+     */
+    @Override
+    public String name() {
+        return this.name;
+    }
+
+    /**
+     * Get the id property: Fully qualified resource Id for the resource.
+     * 
+     * @return the id value.
+     */
+    @Override
+    public String id() {
+        return this.id;
+    }
 
     /**
      * Get the displayName property: User friendly display name of the control.
-     *
+     * 
      * @return the displayName value.
      */
     public String displayName() {
-        return this.displayName;
+        return this.innerProperties() == null ? null : this.innerProperties().displayName();
     }
 
     /**
      * Get the description property: User friendly description of the control.
-     *
+     * 
      * @return the description value.
      */
     public String description() {
-        return this.description;
+        return this.innerProperties() == null ? null : this.innerProperties().description();
     }
 
     /**
      * Get the maxScore property: Maximum control score (0..10).
-     *
+     * 
      * @return the maxScore value.
      */
     public Integer maxScore() {
-        return this.maxScore;
+        return this.innerProperties() == null ? null : this.innerProperties().maxScore();
     }
 
     /**
      * Get the source property: Source object from which the control was created.
-     *
+     * 
      * @return the source value.
      */
     public SecureScoreControlDefinitionSource source() {
-        return this.source;
+        return this.innerProperties() == null ? null : this.innerProperties().source();
     }
 
     /**
      * Get the assessmentDefinitions property: Array of assessments metadata IDs that are included in this security
      * control.
-     *
+     * 
      * @return the assessmentDefinitions value.
      */
     public List<AzureResourceLink> assessmentDefinitions() {
-        return this.assessmentDefinitions;
+        return this.innerProperties() == null ? null : this.innerProperties().assessmentDefinitions();
     }
 
     /**
      * Validates the instance.
-     *
+     * 
      * @throws IllegalArgumentException thrown if the instance is not valid.
      */
     public void validate() {
-        if (source() != null) {
-            source().validate();
+        if (innerProperties() != null) {
+            innerProperties().validate();
         }
-        if (assessmentDefinitions() != null) {
-            assessmentDefinitions().forEach(e -> e.validate());
-        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public JsonWriter toJson(JsonWriter jsonWriter) throws IOException {
+        jsonWriter.writeStartObject();
+        jsonWriter.writeJsonField("properties", this.innerProperties);
+        return jsonWriter.writeEndObject();
+    }
+
+    /**
+     * Reads an instance of SecureScoreControlDefinitionItemInner from the JsonReader.
+     * 
+     * @param jsonReader The JsonReader being read.
+     * @return An instance of SecureScoreControlDefinitionItemInner if the JsonReader was pointing to an instance of it,
+     * or null if it was pointing to JSON null.
+     * @throws IllegalStateException If the deserialized JSON object was missing any required properties.
+     * @throws IOException If an error occurs while reading the SecureScoreControlDefinitionItemInner.
+     */
+    public static SecureScoreControlDefinitionItemInner fromJson(JsonReader jsonReader) throws IOException {
+        return jsonReader.readObject(reader -> {
+            SecureScoreControlDefinitionItemInner deserializedSecureScoreControlDefinitionItemInner
+                = new SecureScoreControlDefinitionItemInner();
+            while (reader.nextToken() != JsonToken.END_OBJECT) {
+                String fieldName = reader.getFieldName();
+                reader.nextToken();
+
+                if ("id".equals(fieldName)) {
+                    deserializedSecureScoreControlDefinitionItemInner.id = reader.getString();
+                } else if ("name".equals(fieldName)) {
+                    deserializedSecureScoreControlDefinitionItemInner.name = reader.getString();
+                } else if ("type".equals(fieldName)) {
+                    deserializedSecureScoreControlDefinitionItemInner.type = reader.getString();
+                } else if ("properties".equals(fieldName)) {
+                    deserializedSecureScoreControlDefinitionItemInner.innerProperties
+                        = SecureScoreControlDefinitionItemProperties.fromJson(reader);
+                } else {
+                    reader.skipChildren();
+                }
+            }
+
+            return deserializedSecureScoreControlDefinitionItemInner;
+        });
     }
 }

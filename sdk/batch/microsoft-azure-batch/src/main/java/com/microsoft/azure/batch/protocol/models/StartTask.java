@@ -39,7 +39,7 @@ public class StartTask {
      * "/bin/sh -c MyCommand" in Linux. If the command line refers to file
      * paths, it should use a relative path (relative to the Task working
      * directory), or use the Batch provided environment variable
-     * (https://docs.microsoft.com/en-us/azure/batch/batch-compute-node-environment-variables).
+     * (https://docs.microsoft.com/azure/batch/batch-compute-node-environment-variables).
      */
     @JsonProperty(value = "commandLine", required = true)
     private String commandLine;
@@ -93,7 +93,9 @@ public class StartTask {
      * example, if the maximum retry count is 3, Batch tries the Task up to 4
      * times (one initial try and 3 retries). If the maximum retry count is 0,
      * the Batch service does not retry the Task. If the maximum retry count is
-     * -1, the Batch service retries the Task without limit.
+     * -1, the Batch service retries the Task without limit, however this is
+     * not recommended for a start task or any task. The default value is 0 (no
+     * retries).
      */
     @JsonProperty(value = "maxTaskRetryCount")
     private Integer maxTaskRetryCount;
@@ -117,7 +119,7 @@ public class StartTask {
     private Boolean waitForSuccess;
 
     /**
-     * Get the command line does not run under a shell, and therefore cannot take advantage of shell features such as environment variable expansion. If you want to take advantage of such features, you should invoke the shell in the command line, for example using "cmd /c MyCommand" in Windows or "/bin/sh -c MyCommand" in Linux. If the command line refers to file paths, it should use a relative path (relative to the Task working directory), or use the Batch provided environment variable (https://docs.microsoft.com/en-us/azure/batch/batch-compute-node-environment-variables).
+     * Get the command line does not run under a shell, and therefore cannot take advantage of shell features such as environment variable expansion. If you want to take advantage of such features, you should invoke the shell in the command line, for example using "cmd /c MyCommand" in Windows or "/bin/sh -c MyCommand" in Linux. If the command line refers to file paths, it should use a relative path (relative to the Task working directory), or use the Batch provided environment variable (https://docs.microsoft.com/azure/batch/batch-compute-node-environment-variables).
      *
      * @return the commandLine value
      */
@@ -126,7 +128,7 @@ public class StartTask {
     }
 
     /**
-     * Set the command line does not run under a shell, and therefore cannot take advantage of shell features such as environment variable expansion. If you want to take advantage of such features, you should invoke the shell in the command line, for example using "cmd /c MyCommand" in Windows or "/bin/sh -c MyCommand" in Linux. If the command line refers to file paths, it should use a relative path (relative to the Task working directory), or use the Batch provided environment variable (https://docs.microsoft.com/en-us/azure/batch/batch-compute-node-environment-variables).
+     * Set the command line does not run under a shell, and therefore cannot take advantage of shell features such as environment variable expansion. If you want to take advantage of such features, you should invoke the shell in the command line, for example using "cmd /c MyCommand" in Windows or "/bin/sh -c MyCommand" in Linux. If the command line refers to file paths, it should use a relative path (relative to the Task working directory), or use the Batch provided environment variable (https://docs.microsoft.com/azure/batch/batch-compute-node-environment-variables).
      *
      * @param commandLine the commandLine value to set
      * @return the StartTask object itself.
@@ -217,7 +219,7 @@ public class StartTask {
     }
 
     /**
-     * Get the Batch service retries a Task if its exit code is nonzero. Note that this value specifically controls the number of retries. The Batch service will try the Task once, and may then retry up to this limit. For example, if the maximum retry count is 3, Batch tries the Task up to 4 times (one initial try and 3 retries). If the maximum retry count is 0, the Batch service does not retry the Task. If the maximum retry count is -1, the Batch service retries the Task without limit.
+     * Get the Batch service retries a Task if its exit code is nonzero. Note that this value specifically controls the number of retries. The Batch service will try the Task once, and may then retry up to this limit. For example, if the maximum retry count is 3, Batch tries the Task up to 4 times (one initial try and 3 retries). If the maximum retry count is 0, the Batch service does not retry the Task. If the maximum retry count is -1, the Batch service retries the Task without limit, however this is not recommended for a start task or any task. The default value is 0 (no retries).
      *
      * @return the maxTaskRetryCount value
      */
@@ -226,7 +228,7 @@ public class StartTask {
     }
 
     /**
-     * Set the Batch service retries a Task if its exit code is nonzero. Note that this value specifically controls the number of retries. The Batch service will try the Task once, and may then retry up to this limit. For example, if the maximum retry count is 3, Batch tries the Task up to 4 times (one initial try and 3 retries). If the maximum retry count is 0, the Batch service does not retry the Task. If the maximum retry count is -1, the Batch service retries the Task without limit.
+     * Set the Batch service retries a Task if its exit code is nonzero. Note that this value specifically controls the number of retries. The Batch service will try the Task once, and may then retry up to this limit. For example, if the maximum retry count is 3, Batch tries the Task up to 4 times (one initial try and 3 retries). If the maximum retry count is 0, the Batch service does not retry the Task. If the maximum retry count is -1, the Batch service retries the Task without limit, however this is not recommended for a start task or any task. The default value is 0 (no retries).
      *
      * @param maxTaskRetryCount the maxTaskRetryCount value to set
      * @return the StartTask object itself.

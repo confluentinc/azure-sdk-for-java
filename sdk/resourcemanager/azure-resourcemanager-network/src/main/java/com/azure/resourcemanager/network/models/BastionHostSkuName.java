@@ -5,29 +5,56 @@
 package com.azure.resourcemanager.network.models;
 
 import com.azure.core.util.ExpandableStringEnum;
-import com.fasterxml.jackson.annotation.JsonCreator;
 import java.util.Collection;
 
-/** Defines values for BastionHostSkuName. */
+/**
+ * The name of the sku of this Bastion Host.
+ */
 public final class BastionHostSkuName extends ExpandableStringEnum<BastionHostSkuName> {
-    /** Static value Basic for BastionHostSkuName. */
+    /**
+     * Static value Basic for BastionHostSkuName.
+     */
     public static final BastionHostSkuName BASIC = fromString("Basic");
 
-    /** Static value Standard for BastionHostSkuName. */
+    /**
+     * Static value Standard for BastionHostSkuName.
+     */
     public static final BastionHostSkuName STANDARD = fromString("Standard");
 
     /**
+     * Static value Developer for BastionHostSkuName.
+     */
+    public static final BastionHostSkuName DEVELOPER = fromString("Developer");
+
+    /**
+     * Static value Premium for BastionHostSkuName.
+     */
+    public static final BastionHostSkuName PREMIUM = fromString("Premium");
+
+    /**
+     * Creates a new instance of BastionHostSkuName value.
+     * 
+     * @deprecated Use the {@link #fromString(String)} factory method.
+     */
+    @Deprecated
+    public BastionHostSkuName() {
+    }
+
+    /**
      * Creates or finds a BastionHostSkuName from its string representation.
-     *
+     * 
      * @param name a name to look for.
      * @return the corresponding BastionHostSkuName.
      */
-    @JsonCreator
     public static BastionHostSkuName fromString(String name) {
         return fromString(name, BastionHostSkuName.class);
     }
 
-    /** @return known BastionHostSkuName values. */
+    /**
+     * Gets known BastionHostSkuName values.
+     * 
+     * @return known BastionHostSkuName values.
+     */
     public static Collection<BastionHostSkuName> values() {
         return values(BastionHostSkuName.class);
     }

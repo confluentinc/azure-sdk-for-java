@@ -5,29 +5,46 @@
 package com.azure.resourcemanager.resources.models;
 
 import com.azure.core.util.ExpandableStringEnum;
-import com.fasterxml.jackson.annotation.JsonCreator;
 import java.util.Collection;
 
-/** Defines values for ResourceNameStatus. */
+/**
+ * Is the resource name Allowed or Reserved.
+ */
 public final class ResourceNameStatus extends ExpandableStringEnum<ResourceNameStatus> {
-    /** Static value Allowed for ResourceNameStatus. */
+    /**
+     * Static value Allowed for ResourceNameStatus.
+     */
     public static final ResourceNameStatus ALLOWED = fromString("Allowed");
 
-    /** Static value Reserved for ResourceNameStatus. */
+    /**
+     * Static value Reserved for ResourceNameStatus.
+     */
     public static final ResourceNameStatus RESERVED = fromString("Reserved");
 
     /**
+     * Creates a new instance of ResourceNameStatus value.
+     * 
+     * @deprecated Use the {@link #fromString(String)} factory method.
+     */
+    @Deprecated
+    public ResourceNameStatus() {
+    }
+
+    /**
      * Creates or finds a ResourceNameStatus from its string representation.
-     *
+     * 
      * @param name a name to look for.
      * @return the corresponding ResourceNameStatus.
      */
-    @JsonCreator
     public static ResourceNameStatus fromString(String name) {
         return fromString(name, ResourceNameStatus.class);
     }
 
-    /** @return known ResourceNameStatus values. */
+    /**
+     * Gets known ResourceNameStatus values.
+     * 
+     * @return known ResourceNameStatus values.
+     */
     public static Collection<ResourceNameStatus> values() {
         return values(ResourceNameStatus.class);
     }

@@ -5,58 +5,57 @@
 package com.azure.resourcemanager.appconfiguration.models;
 
 import com.azure.core.annotation.Fluent;
-import com.azure.core.annotation.JsonFlatten;
-import com.azure.core.util.logging.ClientLogger;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.azure.json.JsonReader;
+import com.azure.json.JsonSerializable;
+import com.azure.json.JsonToken;
+import com.azure.json.JsonWriter;
+import com.azure.resourcemanager.appconfiguration.fluent.models.ConfigurationStorePropertiesUpdateParameters;
+import java.io.IOException;
 import java.util.Map;
 
-/** The parameters for updating a configuration store. */
-@JsonFlatten
+/**
+ * The parameters for updating a configuration store.
+ */
 @Fluent
-public class ConfigurationStoreUpdateParameters {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(ConfigurationStoreUpdateParameters.class);
+public final class ConfigurationStoreUpdateParameters implements JsonSerializable<ConfigurationStoreUpdateParameters> {
+    /*
+     * The properties for updating a configuration store.
+     */
+    private ConfigurationStorePropertiesUpdateParameters innerProperties;
 
     /*
      * The managed identity information for the configuration store.
      */
-    @JsonProperty(value = "identity")
     private ResourceIdentity identity;
 
     /*
      * The SKU of the configuration store.
      */
-    @JsonProperty(value = "sku")
     private Sku sku;
 
     /*
      * The ARM resource tags.
      */
-    @JsonProperty(value = "tags")
     private Map<String, String> tags;
 
-    /*
-     * The encryption settings of the configuration store.
+    /**
+     * Creates an instance of ConfigurationStoreUpdateParameters class.
      */
-    @JsonProperty(value = "properties.encryption")
-    private EncryptionProperties encryption;
+    public ConfigurationStoreUpdateParameters() {
+    }
 
-    /*
-     * Disables all authentication methods other than AAD authentication.
+    /**
+     * Get the innerProperties property: The properties for updating a configuration store.
+     * 
+     * @return the innerProperties value.
      */
-    @JsonProperty(value = "properties.disableLocalAuth")
-    private Boolean disableLocalAuth;
-
-    /*
-     * Control permission for data plane traffic coming from public networks
-     * while private endpoint is enabled.
-     */
-    @JsonProperty(value = "properties.publicNetworkAccess")
-    private PublicNetworkAccess publicNetworkAccess;
+    private ConfigurationStorePropertiesUpdateParameters innerProperties() {
+        return this.innerProperties;
+    }
 
     /**
      * Get the identity property: The managed identity information for the configuration store.
-     *
+     * 
      * @return the identity value.
      */
     public ResourceIdentity identity() {
@@ -65,7 +64,7 @@ public class ConfigurationStoreUpdateParameters {
 
     /**
      * Set the identity property: The managed identity information for the configuration store.
-     *
+     * 
      * @param identity the identity value to set.
      * @return the ConfigurationStoreUpdateParameters object itself.
      */
@@ -76,7 +75,7 @@ public class ConfigurationStoreUpdateParameters {
 
     /**
      * Get the sku property: The SKU of the configuration store.
-     *
+     * 
      * @return the sku value.
      */
     public Sku sku() {
@@ -85,7 +84,7 @@ public class ConfigurationStoreUpdateParameters {
 
     /**
      * Set the sku property: The SKU of the configuration store.
-     *
+     * 
      * @param sku the sku value to set.
      * @return the ConfigurationStoreUpdateParameters object itself.
      */
@@ -96,7 +95,7 @@ public class ConfigurationStoreUpdateParameters {
 
     /**
      * Get the tags property: The ARM resource tags.
-     *
+     * 
      * @return the tags value.
      */
     public Map<String, String> tags() {
@@ -105,7 +104,7 @@ public class ConfigurationStoreUpdateParameters {
 
     /**
      * Set the tags property: The ARM resource tags.
-     *
+     * 
      * @param tags the tags value to set.
      * @return the ConfigurationStoreUpdateParameters object itself.
      */
@@ -116,80 +115,187 @@ public class ConfigurationStoreUpdateParameters {
 
     /**
      * Get the encryption property: The encryption settings of the configuration store.
-     *
+     * 
      * @return the encryption value.
      */
     public EncryptionProperties encryption() {
-        return this.encryption;
+        return this.innerProperties() == null ? null : this.innerProperties().encryption();
     }
 
     /**
      * Set the encryption property: The encryption settings of the configuration store.
-     *
+     * 
      * @param encryption the encryption value to set.
      * @return the ConfigurationStoreUpdateParameters object itself.
      */
     public ConfigurationStoreUpdateParameters withEncryption(EncryptionProperties encryption) {
-        this.encryption = encryption;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new ConfigurationStorePropertiesUpdateParameters();
+        }
+        this.innerProperties().withEncryption(encryption);
         return this;
     }
 
     /**
      * Get the disableLocalAuth property: Disables all authentication methods other than AAD authentication.
-     *
+     * 
      * @return the disableLocalAuth value.
      */
     public Boolean disableLocalAuth() {
-        return this.disableLocalAuth;
+        return this.innerProperties() == null ? null : this.innerProperties().disableLocalAuth();
     }
 
     /**
      * Set the disableLocalAuth property: Disables all authentication methods other than AAD authentication.
-     *
+     * 
      * @param disableLocalAuth the disableLocalAuth value to set.
      * @return the ConfigurationStoreUpdateParameters object itself.
      */
     public ConfigurationStoreUpdateParameters withDisableLocalAuth(Boolean disableLocalAuth) {
-        this.disableLocalAuth = disableLocalAuth;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new ConfigurationStorePropertiesUpdateParameters();
+        }
+        this.innerProperties().withDisableLocalAuth(disableLocalAuth);
         return this;
     }
 
     /**
      * Get the publicNetworkAccess property: Control permission for data plane traffic coming from public networks while
      * private endpoint is enabled.
-     *
+     * 
      * @return the publicNetworkAccess value.
      */
     public PublicNetworkAccess publicNetworkAccess() {
-        return this.publicNetworkAccess;
+        return this.innerProperties() == null ? null : this.innerProperties().publicNetworkAccess();
     }
 
     /**
      * Set the publicNetworkAccess property: Control permission for data plane traffic coming from public networks while
      * private endpoint is enabled.
-     *
+     * 
      * @param publicNetworkAccess the publicNetworkAccess value to set.
      * @return the ConfigurationStoreUpdateParameters object itself.
      */
     public ConfigurationStoreUpdateParameters withPublicNetworkAccess(PublicNetworkAccess publicNetworkAccess) {
-        this.publicNetworkAccess = publicNetworkAccess;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new ConfigurationStorePropertiesUpdateParameters();
+        }
+        this.innerProperties().withPublicNetworkAccess(publicNetworkAccess);
+        return this;
+    }
+
+    /**
+     * Get the enablePurgeProtection property: Property specifying whether protection against purge is enabled for this
+     * configuration store.
+     * 
+     * @return the enablePurgeProtection value.
+     */
+    public Boolean enablePurgeProtection() {
+        return this.innerProperties() == null ? null : this.innerProperties().enablePurgeProtection();
+    }
+
+    /**
+     * Set the enablePurgeProtection property: Property specifying whether protection against purge is enabled for this
+     * configuration store.
+     * 
+     * @param enablePurgeProtection the enablePurgeProtection value to set.
+     * @return the ConfigurationStoreUpdateParameters object itself.
+     */
+    public ConfigurationStoreUpdateParameters withEnablePurgeProtection(Boolean enablePurgeProtection) {
+        if (this.innerProperties() == null) {
+            this.innerProperties = new ConfigurationStorePropertiesUpdateParameters();
+        }
+        this.innerProperties().withEnablePurgeProtection(enablePurgeProtection);
+        return this;
+    }
+
+    /**
+     * Get the dataPlaneProxy property: Property specifying the configuration of data plane proxy for Azure Resource
+     * Manager (ARM).
+     * 
+     * @return the dataPlaneProxy value.
+     */
+    public DataPlaneProxyProperties dataPlaneProxy() {
+        return this.innerProperties() == null ? null : this.innerProperties().dataPlaneProxy();
+    }
+
+    /**
+     * Set the dataPlaneProxy property: Property specifying the configuration of data plane proxy for Azure Resource
+     * Manager (ARM).
+     * 
+     * @param dataPlaneProxy the dataPlaneProxy value to set.
+     * @return the ConfigurationStoreUpdateParameters object itself.
+     */
+    public ConfigurationStoreUpdateParameters withDataPlaneProxy(DataPlaneProxyProperties dataPlaneProxy) {
+        if (this.innerProperties() == null) {
+            this.innerProperties = new ConfigurationStorePropertiesUpdateParameters();
+        }
+        this.innerProperties().withDataPlaneProxy(dataPlaneProxy);
         return this;
     }
 
     /**
      * Validates the instance.
-     *
+     * 
      * @throws IllegalArgumentException thrown if the instance is not valid.
      */
     public void validate() {
+        if (innerProperties() != null) {
+            innerProperties().validate();
+        }
         if (identity() != null) {
             identity().validate();
         }
         if (sku() != null) {
             sku().validate();
         }
-        if (encryption() != null) {
-            encryption().validate();
-        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public JsonWriter toJson(JsonWriter jsonWriter) throws IOException {
+        jsonWriter.writeStartObject();
+        jsonWriter.writeJsonField("properties", this.innerProperties);
+        jsonWriter.writeJsonField("identity", this.identity);
+        jsonWriter.writeJsonField("sku", this.sku);
+        jsonWriter.writeMapField("tags", this.tags, (writer, element) -> writer.writeString(element));
+        return jsonWriter.writeEndObject();
+    }
+
+    /**
+     * Reads an instance of ConfigurationStoreUpdateParameters from the JsonReader.
+     * 
+     * @param jsonReader The JsonReader being read.
+     * @return An instance of ConfigurationStoreUpdateParameters if the JsonReader was pointing to an instance of it, or
+     * null if it was pointing to JSON null.
+     * @throws IOException If an error occurs while reading the ConfigurationStoreUpdateParameters.
+     */
+    public static ConfigurationStoreUpdateParameters fromJson(JsonReader jsonReader) throws IOException {
+        return jsonReader.readObject(reader -> {
+            ConfigurationStoreUpdateParameters deserializedConfigurationStoreUpdateParameters
+                = new ConfigurationStoreUpdateParameters();
+            while (reader.nextToken() != JsonToken.END_OBJECT) {
+                String fieldName = reader.getFieldName();
+                reader.nextToken();
+
+                if ("properties".equals(fieldName)) {
+                    deserializedConfigurationStoreUpdateParameters.innerProperties
+                        = ConfigurationStorePropertiesUpdateParameters.fromJson(reader);
+                } else if ("identity".equals(fieldName)) {
+                    deserializedConfigurationStoreUpdateParameters.identity = ResourceIdentity.fromJson(reader);
+                } else if ("sku".equals(fieldName)) {
+                    deserializedConfigurationStoreUpdateParameters.sku = Sku.fromJson(reader);
+                } else if ("tags".equals(fieldName)) {
+                    Map<String, String> tags = reader.readMap(reader1 -> reader1.getString());
+                    deserializedConfigurationStoreUpdateParameters.tags = tags;
+                } else {
+                    reader.skipChildren();
+                }
+            }
+
+            return deserializedConfigurationStoreUpdateParameters;
+        });
     }
 }

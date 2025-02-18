@@ -4,12 +4,13 @@
 package com.azure.resourcemanager.keyvault;
 
 import com.azure.core.http.rest.PagedIterable;
+import com.azure.core.http.rest.Response;
+import com.azure.core.management.Region;
 import com.azure.core.test.annotation.DoNotRecord;
 import com.azure.resourcemanager.keyvault.models.Key;
 import com.azure.resourcemanager.keyvault.models.Vault;
-import com.azure.resourcemanager.test.utils.TestUtilities;
-import com.azure.core.management.Region;
 import com.azure.resourcemanager.resources.fluentcore.utils.ResourceManagerUtils;
+import com.azure.resourcemanager.test.utils.TestUtilities;
 import com.azure.security.keyvault.keys.cryptography.models.EncryptionAlgorithm;
 import com.azure.security.keyvault.keys.cryptography.models.KeyWrapAlgorithm;
 import com.azure.security.keyvault.keys.cryptography.models.SignatureAlgorithm;
@@ -17,38 +18,33 @@ import com.azure.security.keyvault.keys.models.JsonWebKey;
 import com.azure.security.keyvault.keys.models.KeyCurveName;
 import com.azure.security.keyvault.keys.models.KeyOperation;
 import com.azure.security.keyvault.keys.models.KeyType;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+
+import javax.crypto.Cipher;
+import javax.crypto.KeyGenerator;
+import javax.crypto.SecretKey;
+import javax.crypto.spec.SecretKeySpec;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.MessageDigest;
 import java.security.Signature;
 import java.time.Duration;
-import javax.crypto.Cipher;
-import javax.crypto.KeyGenerator;
-import javax.crypto.SecretKey;
-import javax.crypto.spec.SecretKeySpec;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
 
 public class KeyTests extends KeyVaultManagementTest {
 
     @Test
-    @DoNotRecord
+    @DoNotRecord(skipInPlayback = true)
     public void canCRUDKey() throws Exception {
-        if (skipInPlayback()) {
-            return;
-        }
-
         Vault vault = createVault();
         String keyName = generateRandomResourceName("key", 20);
 
         // Create
-        Key key =
-            vault
-                .keys()
-                .define(keyName)
-                .withKeyTypeToCreate(KeyType.RSA)
-                .withKeyOperations(KeyOperation.SIGN, KeyOperation.VERIFY)
-                .create();
+        Key key = vault.keys()
+            .define(keyName)
+            .withKeyTypeToCreate(KeyType.RSA)
+            .withKeyOperations(KeyOperation.SIGN, KeyOperation.VERIFY)
+            .create();
 
         Assertions.assertNotNull(key);
         Assertions.assertNotNull(key.id());
@@ -65,12 +61,10 @@ public class KeyTests extends KeyVaultManagementTest {
         Assertions.assertEquals(1, key.getJsonWebKey().getKeyOps().size());
 
         // New version
-        key =
-            key
-                .update()
-                .withKeyTypeToCreate(KeyType.RSA)
-                .withKeyOperations(KeyOperation.ENCRYPT, KeyOperation.DECRYPT, KeyOperation.SIGN)
-                .apply();
+        key = key.update()
+            .withKeyTypeToCreate(KeyType.RSA)
+            .withKeyOperations(KeyOperation.ENCRYPT, KeyOperation.DECRYPT, KeyOperation.SIGN)
+            .apply();
 
         Assertions.assertEquals(3, key.getJsonWebKey().getKeyOps().size());
 
@@ -79,8 +73,7 @@ public class KeyTests extends KeyVaultManagementTest {
         Assertions.assertEquals(2, TestUtilities.getSize(keys));
 
         // Create RSA key with size
-        key = vault
-            .keys()
+        key = vault.keys()
             .define(keyName)
             .withKeyTypeToCreate(KeyType.RSA)
             .withKeyOperations(KeyOperation.SIGN, KeyOperation.VERIFY)
@@ -92,8 +85,7 @@ public class KeyTests extends KeyVaultManagementTest {
         Assertions.assertEquals(KeyType.RSA, key.getJsonWebKey().getKeyType());
 
         // Create EC key with curve
-        key = vault
-            .keys()
+        key = vault.keys()
             .define(keyName)
             .withKeyTypeToCreate(KeyType.EC)
             .withKeyOperations(KeyOperation.SIGN, KeyOperation.VERIFY)
@@ -107,7 +99,7 @@ public class KeyTests extends KeyVaultManagementTest {
     }
 
     @Test
-    @DoNotRecord
+    @DoNotRecord(skipInPlayback = true)
     public void canImportKey() throws Exception {
         if (skipInPlayback()) {
             return;
@@ -116,19 +108,17 @@ public class KeyTests extends KeyVaultManagementTest {
         Vault vault = createVault();
         String keyName = generateRandomResourceName("key", 20);
 
-        Key key =
-            vault
-                .keys()
-                .define(keyName)
-                .withLocalKeyToImport(JsonWebKey.fromRsa(KeyPairGenerator.getInstance("RSA").generateKeyPair()))
-                .create();
+        Key key = vault.keys()
+            .define(keyName)
+            .withLocalKeyToImport(JsonWebKey.fromRsa(KeyPairGenerator.getInstance("RSA").generateKeyPair()))
+            .create();
 
         Assertions.assertNotNull(key);
         Assertions.assertNotNull(key.id());
     }
 
     @Test
-    @DoNotRecord
+    @DoNotRecord(skipInPlayback = true)
     public void canBackupAndRestore() throws Exception {
         if (skipInPlayback()) {
             return;
@@ -137,12 +127,10 @@ public class KeyTests extends KeyVaultManagementTest {
         Vault vault = createVault();
         String keyName = generateRandomResourceName("key", 20);
 
-        Key key =
-            vault
-                .keys()
-                .define(keyName)
-                .withLocalKeyToImport(JsonWebKey.fromRsa(KeyPairGenerator.getInstance("RSA").generateKeyPair()))
-                .create();
+        Key key = vault.keys()
+            .define(keyName)
+            .withLocalKeyToImport(JsonWebKey.fromRsa(KeyPairGenerator.getInstance("RSA").generateKeyPair()))
+            .create();
 
         Assertions.assertNotNull(key);
 
@@ -150,6 +138,12 @@ public class KeyTests extends KeyVaultManagementTest {
 
         vault.keys().deleteById(key.id());
         Assertions.assertEquals(0, TestUtilities.getSize(vault.keys().list()));
+
+        Response<Void> response = vault.keyClient().purgeDeletedKeyWithResponse(keyName).block();
+        Assertions.assertNotNull(response);
+        Assertions.assertEquals(2, response.getStatusCode() / 100);
+        // To ensure file is purged server-side.
+        ResourceManagerUtils.sleep(Duration.ofMinutes(1));
 
         vault.keys().restore(backup);
         PagedIterable<Key> keys = vault.keys().list();
@@ -159,7 +153,7 @@ public class KeyTests extends KeyVaultManagementTest {
     }
 
     @Test
-    @DoNotRecord
+    @DoNotRecord(skipInPlayback = true)
     public void canEncryptAndDecrypt() throws Exception {
         if (skipInPlayback()) {
             return;
@@ -194,7 +188,7 @@ public class KeyTests extends KeyVaultManagementTest {
     }
 
     @Test
-    @DoNotRecord
+    @DoNotRecord(skipInPlayback = true)
     public void canSignAndVerify() throws Exception {
         if (skipInPlayback()) {
             return;
@@ -226,7 +220,7 @@ public class KeyTests extends KeyVaultManagementTest {
     }
 
     @Test
-    @DoNotRecord
+    @DoNotRecord(skipInPlayback = true)
     public void canWrapAndUnwrap() throws Exception {
         if (skipInPlayback()) {
             return;
@@ -235,12 +229,10 @@ public class KeyTests extends KeyVaultManagementTest {
         Vault vault = createVault();
         String keyName = generateRandomResourceName("key", 20);
 
-        Key key =
-            vault
-                .keys()
-                .define(keyName)
-                .withLocalKeyToImport(JsonWebKey.fromRsa(KeyPairGenerator.getInstance("RSA").generateKeyPair()))
-                .create();
+        Key key = vault.keys()
+            .define(keyName)
+            .withLocalKeyToImport(JsonWebKey.fromRsa(KeyPairGenerator.getInstance("RSA").generateKeyPair()))
+            .create();
 
         SecretKey secretKey = KeyGenerator.getInstance("AES").generateKey();
 
@@ -255,17 +247,15 @@ public class KeyTests extends KeyVaultManagementTest {
     private Vault createVault() throws Exception {
         String vaultName = generateRandomResourceName("vault", 20);
 
-        Vault vault =
-            keyVaultManager
-                .vaults()
-                .define(vaultName)
-                .withRegion(Region.US_WEST)
-                .withNewResourceGroup(rgName)
-                .defineAccessPolicy()
-                .forServicePrincipal(clientIdFromFile())
-                .allowKeyAllPermissions()
-                .attach()
-                .create();
+        Vault vault = keyVaultManager.vaults()
+            .define(vaultName)
+            .withRegion(Region.US_WEST)
+            .withNewResourceGroup(rgName)
+            .defineAccessPolicy()
+            .forUser(azureCliSignedInUser().userPrincipalName())
+            .allowKeyAllPermissions()
+            .attach()
+            .create();
 
         Assertions.assertNotNull(vault);
 

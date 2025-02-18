@@ -6,40 +6,62 @@ package com.azure.resourcemanager.appservice.fluent.models;
 
 import com.azure.core.annotation.Fluent;
 import com.azure.core.management.Resource;
-import com.azure.core.util.logging.ClientLogger;
+import com.azure.json.JsonReader;
+import com.azure.json.JsonToken;
+import com.azure.json.JsonWriter;
 import com.azure.resourcemanager.appservice.models.Contact;
 import com.azure.resourcemanager.appservice.models.DnsType;
-import com.azure.resourcemanager.appservice.models.DomainPropertiesDomainNotRenewableReasonsItem;
 import com.azure.resourcemanager.appservice.models.DomainPurchaseConsent;
 import com.azure.resourcemanager.appservice.models.DomainStatus;
 import com.azure.resourcemanager.appservice.models.Hostname;
 import com.azure.resourcemanager.appservice.models.ProvisioningState;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.azure.resourcemanager.appservice.models.ResourceNotRenewableReason;
+import java.io.IOException;
 import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Map;
 
-/** Information about a domain. */
+/**
+ * Information about a domain.
+ */
 @Fluent
 public final class DomainInner extends Resource {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(DomainInner.class);
-
     /*
      * Domain resource specific properties
      */
-    @JsonProperty(value = "properties")
     private DomainProperties innerProperties;
 
     /*
-     * Kind of resource.
+     * Kind of resource. If the resource is an app, you can refer to
+     * https://github.com/Azure/app-service-linux-docs/blob/master/Things_You_Should_Know/kind_property.md#app-service-
+     * resource-kind-reference for details supported values for kind.
      */
-    @JsonProperty(value = "kind")
     private String kind;
+
+    /*
+     * The type of the resource.
+     */
+    private String type;
+
+    /*
+     * The name of the resource.
+     */
+    private String name;
+
+    /*
+     * Fully qualified resource Id for the resource.
+     */
+    private String id;
+
+    /**
+     * Creates an instance of DomainInner class.
+     */
+    public DomainInner() {
+    }
 
     /**
      * Get the innerProperties property: Domain resource specific properties.
-     *
+     * 
      * @return the innerProperties value.
      */
     private DomainProperties innerProperties() {
@@ -47,8 +69,10 @@ public final class DomainInner extends Resource {
     }
 
     /**
-     * Get the kind property: Kind of resource.
-     *
+     * Get the kind property: Kind of resource. If the resource is an app, you can refer to
+     * https://github.com/Azure/app-service-linux-docs/blob/master/Things_You_Should_Know/kind_property.md#app-service-resource-kind-reference
+     * for details supported values for kind.
+     * 
      * @return the kind value.
      */
     public String kind() {
@@ -56,8 +80,10 @@ public final class DomainInner extends Resource {
     }
 
     /**
-     * Set the kind property: Kind of resource.
-     *
+     * Set the kind property: Kind of resource. If the resource is an app, you can refer to
+     * https://github.com/Azure/app-service-linux-docs/blob/master/Things_You_Should_Know/kind_property.md#app-service-resource-kind-reference
+     * for details supported values for kind.
+     * 
      * @param kind the kind value to set.
      * @return the DomainInner object itself.
      */
@@ -66,14 +92,48 @@ public final class DomainInner extends Resource {
         return this;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * Get the type property: The type of the resource.
+     * 
+     * @return the type value.
+     */
+    @Override
+    public String type() {
+        return this.type;
+    }
+
+    /**
+     * Get the name property: The name of the resource.
+     * 
+     * @return the name value.
+     */
+    @Override
+    public String name() {
+        return this.name;
+    }
+
+    /**
+     * Get the id property: Fully qualified resource Id for the resource.
+     * 
+     * @return the id value.
+     */
+    @Override
+    public String id() {
+        return this.id;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public DomainInner withLocation(String location) {
         super.withLocation(location);
         return this;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public DomainInner withTags(Map<String, String> tags) {
         super.withTags(tags);
@@ -82,7 +142,7 @@ public final class DomainInner extends Resource {
 
     /**
      * Get the contactAdmin property: Administrative contact.
-     *
+     * 
      * @return the contactAdmin value.
      */
     public Contact contactAdmin() {
@@ -91,7 +151,7 @@ public final class DomainInner extends Resource {
 
     /**
      * Set the contactAdmin property: Administrative contact.
-     *
+     * 
      * @param contactAdmin the contactAdmin value to set.
      * @return the DomainInner object itself.
      */
@@ -105,7 +165,7 @@ public final class DomainInner extends Resource {
 
     /**
      * Get the contactBilling property: Billing contact.
-     *
+     * 
      * @return the contactBilling value.
      */
     public Contact contactBilling() {
@@ -114,7 +174,7 @@ public final class DomainInner extends Resource {
 
     /**
      * Set the contactBilling property: Billing contact.
-     *
+     * 
      * @param contactBilling the contactBilling value to set.
      * @return the DomainInner object itself.
      */
@@ -128,7 +188,7 @@ public final class DomainInner extends Resource {
 
     /**
      * Get the contactRegistrant property: Registrant contact.
-     *
+     * 
      * @return the contactRegistrant value.
      */
     public Contact contactRegistrant() {
@@ -137,7 +197,7 @@ public final class DomainInner extends Resource {
 
     /**
      * Set the contactRegistrant property: Registrant contact.
-     *
+     * 
      * @param contactRegistrant the contactRegistrant value to set.
      * @return the DomainInner object itself.
      */
@@ -151,7 +211,7 @@ public final class DomainInner extends Resource {
 
     /**
      * Get the contactTech property: Technical contact.
-     *
+     * 
      * @return the contactTech value.
      */
     public Contact contactTech() {
@@ -160,7 +220,7 @@ public final class DomainInner extends Resource {
 
     /**
      * Set the contactTech property: Technical contact.
-     *
+     * 
      * @param contactTech the contactTech value to set.
      * @return the DomainInner object itself.
      */
@@ -174,7 +234,7 @@ public final class DomainInner extends Resource {
 
     /**
      * Get the registrationStatus property: Domain registration status.
-     *
+     * 
      * @return the registrationStatus value.
      */
     public DomainStatus registrationStatus() {
@@ -183,7 +243,7 @@ public final class DomainInner extends Resource {
 
     /**
      * Get the provisioningState property: Domain provisioning state.
-     *
+     * 
      * @return the provisioningState value.
      */
     public ProvisioningState provisioningState() {
@@ -192,7 +252,7 @@ public final class DomainInner extends Resource {
 
     /**
      * Get the nameServers property: Name servers.
-     *
+     * 
      * @return the nameServers value.
      */
     public List<String> nameServers() {
@@ -202,7 +262,7 @@ public final class DomainInner extends Resource {
     /**
      * Get the privacy property: &lt;code&gt;true&lt;/code&gt; if domain privacy is enabled for this domain; otherwise,
      * &lt;code&gt;false&lt;/code&gt;.
-     *
+     * 
      * @return the privacy value.
      */
     public Boolean privacy() {
@@ -212,7 +272,7 @@ public final class DomainInner extends Resource {
     /**
      * Set the privacy property: &lt;code&gt;true&lt;/code&gt; if domain privacy is enabled for this domain; otherwise,
      * &lt;code&gt;false&lt;/code&gt;.
-     *
+     * 
      * @param privacy the privacy value to set.
      * @return the DomainInner object itself.
      */
@@ -226,7 +286,7 @@ public final class DomainInner extends Resource {
 
     /**
      * Get the createdTime property: Domain creation timestamp.
-     *
+     * 
      * @return the createdTime value.
      */
     public OffsetDateTime createdTime() {
@@ -235,7 +295,7 @@ public final class DomainInner extends Resource {
 
     /**
      * Get the expirationTime property: Domain expiration timestamp.
-     *
+     * 
      * @return the expirationTime value.
      */
     public OffsetDateTime expirationTime() {
@@ -244,7 +304,7 @@ public final class DomainInner extends Resource {
 
     /**
      * Get the lastRenewedTime property: Timestamp when the domain was renewed last time.
-     *
+     * 
      * @return the lastRenewedTime value.
      */
     public OffsetDateTime lastRenewedTime() {
@@ -254,7 +314,7 @@ public final class DomainInner extends Resource {
     /**
      * Get the autoRenew property: &lt;code&gt;true&lt;/code&gt; if the domain should be automatically renewed;
      * otherwise, &lt;code&gt;false&lt;/code&gt;.
-     *
+     * 
      * @return the autoRenew value.
      */
     public Boolean autoRenew() {
@@ -264,7 +324,7 @@ public final class DomainInner extends Resource {
     /**
      * Set the autoRenew property: &lt;code&gt;true&lt;/code&gt; if the domain should be automatically renewed;
      * otherwise, &lt;code&gt;false&lt;/code&gt;.
-     *
+     * 
      * @param autoRenew the autoRenew value to set.
      * @return the DomainInner object itself.
      */
@@ -279,8 +339,9 @@ public final class DomainInner extends Resource {
     /**
      * Get the readyForDnsRecordManagement property: &lt;code&gt;true&lt;/code&gt; if Azure can assign this domain to
      * App Service apps; otherwise, &lt;code&gt;false&lt;/code&gt;. This value will be &lt;code&gt;true&lt;/code&gt; if
-     * domain registration status is active and it is hosted on name servers Azure has programmatic access to.
-     *
+     * domain registration status is active and
+     * it is hosted on name servers Azure has programmatic access to.
+     * 
      * @return the readyForDnsRecordManagement value.
      */
     public Boolean readyForDnsRecordManagement() {
@@ -289,7 +350,7 @@ public final class DomainInner extends Resource {
 
     /**
      * Get the managedHostNames property: All hostnames derived from the domain and assigned to Azure resources.
-     *
+     * 
      * @return the managedHostNames value.
      */
     public List<Hostname> managedHostNames() {
@@ -298,7 +359,7 @@ public final class DomainInner extends Resource {
 
     /**
      * Get the consent property: Legal agreement consent.
-     *
+     * 
      * @return the consent value.
      */
     public DomainPurchaseConsent consent() {
@@ -307,7 +368,7 @@ public final class DomainInner extends Resource {
 
     /**
      * Set the consent property: Legal agreement consent.
-     *
+     * 
      * @param consent the consent value to set.
      * @return the DomainInner object itself.
      */
@@ -321,16 +382,16 @@ public final class DomainInner extends Resource {
 
     /**
      * Get the domainNotRenewableReasons property: Reasons why domain is not renewable.
-     *
+     * 
      * @return the domainNotRenewableReasons value.
      */
-    public List<DomainPropertiesDomainNotRenewableReasonsItem> domainNotRenewableReasons() {
+    public List<ResourceNotRenewableReason> domainNotRenewableReasons() {
         return this.innerProperties() == null ? null : this.innerProperties().domainNotRenewableReasons();
     }
 
     /**
      * Get the dnsType property: Current DNS type.
-     *
+     * 
      * @return the dnsType value.
      */
     public DnsType dnsType() {
@@ -339,7 +400,7 @@ public final class DomainInner extends Resource {
 
     /**
      * Set the dnsType property: Current DNS type.
-     *
+     * 
      * @param dnsType the dnsType value to set.
      * @return the DomainInner object itself.
      */
@@ -353,7 +414,7 @@ public final class DomainInner extends Resource {
 
     /**
      * Get the dnsZoneId property: Azure DNS Zone to use.
-     *
+     * 
      * @return the dnsZoneId value.
      */
     public String dnsZoneId() {
@@ -362,7 +423,7 @@ public final class DomainInner extends Resource {
 
     /**
      * Set the dnsZoneId property: Azure DNS Zone to use.
-     *
+     * 
      * @param dnsZoneId the dnsZoneId value to set.
      * @return the DomainInner object itself.
      */
@@ -376,7 +437,7 @@ public final class DomainInner extends Resource {
 
     /**
      * Get the targetDnsType property: Target DNS type (would be used for migration).
-     *
+     * 
      * @return the targetDnsType value.
      */
     public DnsType targetDnsType() {
@@ -385,7 +446,7 @@ public final class DomainInner extends Resource {
 
     /**
      * Set the targetDnsType property: Target DNS type (would be used for migration).
-     *
+     * 
      * @param targetDnsType the targetDnsType value to set.
      * @return the DomainInner object itself.
      */
@@ -399,7 +460,7 @@ public final class DomainInner extends Resource {
 
     /**
      * Get the authCode property: The authCode property.
-     *
+     * 
      * @return the authCode value.
      */
     public String authCode() {
@@ -408,7 +469,7 @@ public final class DomainInner extends Resource {
 
     /**
      * Set the authCode property: The authCode property.
-     *
+     * 
      * @param authCode the authCode value to set.
      * @return the DomainInner object itself.
      */
@@ -422,12 +483,65 @@ public final class DomainInner extends Resource {
 
     /**
      * Validates the instance.
-     *
+     * 
      * @throws IllegalArgumentException thrown if the instance is not valid.
      */
     public void validate() {
         if (innerProperties() != null) {
             innerProperties().validate();
         }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public JsonWriter toJson(JsonWriter jsonWriter) throws IOException {
+        jsonWriter.writeStartObject();
+        jsonWriter.writeStringField("location", location());
+        jsonWriter.writeMapField("tags", tags(), (writer, element) -> writer.writeString(element));
+        jsonWriter.writeJsonField("properties", this.innerProperties);
+        jsonWriter.writeStringField("kind", this.kind);
+        return jsonWriter.writeEndObject();
+    }
+
+    /**
+     * Reads an instance of DomainInner from the JsonReader.
+     * 
+     * @param jsonReader The JsonReader being read.
+     * @return An instance of DomainInner if the JsonReader was pointing to an instance of it, or null if it was
+     * pointing to JSON null.
+     * @throws IllegalStateException If the deserialized JSON object was missing any required properties.
+     * @throws IOException If an error occurs while reading the DomainInner.
+     */
+    public static DomainInner fromJson(JsonReader jsonReader) throws IOException {
+        return jsonReader.readObject(reader -> {
+            DomainInner deserializedDomainInner = new DomainInner();
+            while (reader.nextToken() != JsonToken.END_OBJECT) {
+                String fieldName = reader.getFieldName();
+                reader.nextToken();
+
+                if ("id".equals(fieldName)) {
+                    deserializedDomainInner.id = reader.getString();
+                } else if ("name".equals(fieldName)) {
+                    deserializedDomainInner.name = reader.getString();
+                } else if ("type".equals(fieldName)) {
+                    deserializedDomainInner.type = reader.getString();
+                } else if ("location".equals(fieldName)) {
+                    deserializedDomainInner.withLocation(reader.getString());
+                } else if ("tags".equals(fieldName)) {
+                    Map<String, String> tags = reader.readMap(reader1 -> reader1.getString());
+                    deserializedDomainInner.withTags(tags);
+                } else if ("properties".equals(fieldName)) {
+                    deserializedDomainInner.innerProperties = DomainProperties.fromJson(reader);
+                } else if ("kind".equals(fieldName)) {
+                    deserializedDomainInner.kind = reader.getString();
+                } else {
+                    reader.skipChildren();
+                }
+            }
+
+            return deserializedDomainInner;
+        });
     }
 }

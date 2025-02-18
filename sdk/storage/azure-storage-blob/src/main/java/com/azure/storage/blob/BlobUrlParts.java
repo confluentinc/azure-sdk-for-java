@@ -24,7 +24,7 @@ import java.util.Map;
  * #toUrl()}.
  */
 public final class BlobUrlParts {
-    private final ClientLogger logger = new ClientLogger(BlobUrlParts.class);
+    private static final ClientLogger LOGGER = new ClientLogger(BlobUrlParts.class);
 
     private String scheme;
     private String host;
@@ -104,8 +104,7 @@ public final class BlobUrlParts {
         try {
             this.isIpUrl = ModelHelper.determineAuthorityIsIpStyle(host);
         } catch (MalformedURLException e) {
-            throw logger.logExceptionAsError(new IllegalStateException("Authority is malformed. Host: "
-                + host));
+            throw LOGGER.logExceptionAsError(new IllegalStateException("Authority is malformed. Host: " + host, e));
         }
         return this;
     }
@@ -213,8 +212,8 @@ public final class BlobUrlParts {
     @Deprecated
     public BlobUrlParts setSasQueryParameters(BlobServiceSasQueryParameters blobServiceSasQueryParameters) {
         String encodedBlobSas = blobServiceSasQueryParameters.encode();
-        this.commonSasQueryParameters = new CommonSasQueryParameters(SasImplUtils.parseQueryString(encodedBlobSas),
-            true);
+        this.commonSasQueryParameters
+            = new CommonSasQueryParameters(SasImplUtils.parseQueryString(encodedBlobSas), true);
         return this;
     }
 
@@ -316,14 +315,13 @@ public final class BlobUrlParts {
 
         for (Map.Entry<String, String[]> entry : this.unparsedParameters.entrySet()) {
             // The commas are intentionally encoded.
-            url.setQueryParameter(entry.getKey(),
-                Utility.urlEncode(String.join(",", entry.getValue())));
+            url.setQueryParameter(entry.getKey(), Utility.urlEncode(String.join(",", entry.getValue())));
         }
 
         try {
             return url.toUrl();
         } catch (MalformedURLException ex) {
-            throw logger.logExceptionAsError(new IllegalStateException("The URL parts created a malformed URL.", ex));
+            throw LOGGER.logExceptionAsError(new IllegalStateException("The URL parts created a malformed URL.", ex));
         }
     }
 
@@ -346,7 +344,7 @@ public final class BlobUrlParts {
         try {
             return parse(new URL(url));
         } catch (MalformedURLException e) {
-            throw new IllegalArgumentException("Invalid URL format. URL: " + url);
+            throw new IllegalArgumentException("Invalid URL format. URL: " + url, e);
         }
     }
 
@@ -374,8 +372,8 @@ public final class BlobUrlParts {
                 parseNonIpUrl(url, parts);
             }
         } catch (MalformedURLException e) {
-            throw parts.logger.logExceptionAsError(new IllegalStateException("Authority is malformed. Host: "
-                + url.getAuthority()));
+            throw LOGGER.logExceptionAsError(
+                new IllegalStateException("Authority is malformed. Host: " + url.getAuthority(), e));
         }
 
         Map<String, String[]> queryParamsMap = SasImplUtils.parseQueryString(url.getQuery());
@@ -392,8 +390,7 @@ public final class BlobUrlParts {
 
         CommonSasQueryParameters commonSasQueryParameters = new CommonSasQueryParameters(queryParamsMap, true);
 
-        return parts.setCommonSasQueryParameters(commonSasQueryParameters)
-            .setUnparsedParameters(queryParamsMap);
+        return parts.setCommonSasQueryParameters(commonSasQueryParameters).setUnparsedParameters(queryParamsMap);
     }
 
     /*
@@ -401,23 +398,33 @@ public final class BlobUrlParts {
      */
     private static void parseIpUrl(URL url, BlobUrlParts parts) {
         parts.setHost(url.getAuthority());
+        parts.isIpUrl = true;
 
         String path = url.getPath();
+        int previousIndex = 0;
         if (!path.isEmpty() && path.charAt(0) == '/') {
-            path = path.substring(1);
+            previousIndex = 1;
         }
 
-        String[] pathPieces = ModelHelper.FORWARD_SLASH.split(path, 3);
-        parts.setAccountName(pathPieces[0]);
-
-        if (pathPieces.length >= 3) {
-            parts.setContainerName(pathPieces[1]);
-            parts.setBlobName(pathPieces[2]);
-        } else if (pathPieces.length == 2) {
-            parts.setContainerName(pathPieces[1]);
+        int index = path.indexOf('/', previousIndex);
+        if (index == -1) {
+            // The entire path is the account name.
+            parts.setAccountName(path.substring(previousIndex));
+            return;
         }
 
-        parts.isIpUrl = true;
+        parts.setAccountName(path.substring(previousIndex, index));
+        previousIndex = index + 1;
+
+        index = path.indexOf('/', previousIndex);
+        if (index == -1) {
+            // Container name was the last part of the path, substring the rest of the path and return.
+            parts.setContainerName(path.substring(previousIndex));
+            return;
+        }
+
+        parts.setContainerName(path.substring(previousIndex, index));
+        parts.setBlobName(path.substring(index + 1));
     }
 
     /*

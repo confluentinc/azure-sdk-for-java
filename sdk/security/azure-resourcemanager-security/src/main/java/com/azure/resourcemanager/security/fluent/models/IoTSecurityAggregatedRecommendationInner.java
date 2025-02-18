@@ -5,190 +5,62 @@
 package com.azure.resourcemanager.security.fluent.models;
 
 import com.azure.core.annotation.Fluent;
-import com.azure.core.annotation.JsonFlatten;
 import com.azure.core.management.ProxyResource;
-import com.azure.core.util.logging.ClientLogger;
+import com.azure.json.JsonReader;
+import com.azure.json.JsonToken;
+import com.azure.json.JsonWriter;
 import com.azure.resourcemanager.security.models.ReportedSeverity;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import java.io.IOException;
 import java.util.Map;
 
-/** IoT Security solution recommendation information. */
-@JsonFlatten
+/**
+ * IoT Security solution recommendation information.
+ */
 @Fluent
-public class IoTSecurityAggregatedRecommendationInner extends ProxyResource {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(IoTSecurityAggregatedRecommendationInner.class);
-
+public final class IoTSecurityAggregatedRecommendationInner extends ProxyResource {
     /*
-     * Name of the recommendation.
+     * Security Solution data
      */
-    @JsonProperty(value = "properties.recommendationName")
-    private String recommendationName;
-
-    /*
-     * Display name of the recommendation type.
-     */
-    @JsonProperty(value = "properties.recommendationDisplayName", access = JsonProperty.Access.WRITE_ONLY)
-    private String recommendationDisplayName;
-
-    /*
-     * Description of the suspected vulnerability and meaning.
-     */
-    @JsonProperty(value = "properties.description", access = JsonProperty.Access.WRITE_ONLY)
-    private String description;
-
-    /*
-     * Recommendation-type GUID.
-     */
-    @JsonProperty(value = "properties.recommendationTypeId", access = JsonProperty.Access.WRITE_ONLY)
-    private String recommendationTypeId;
-
-    /*
-     * Name of the organization that made the recommendation.
-     */
-    @JsonProperty(value = "properties.detectedBy", access = JsonProperty.Access.WRITE_ONLY)
-    private String detectedBy;
-
-    /*
-     * Recommended steps for remediation
-     */
-    @JsonProperty(value = "properties.remediationSteps", access = JsonProperty.Access.WRITE_ONLY)
-    private String remediationSteps;
-
-    /*
-     * Assessed recommendation severity.
-     */
-    @JsonProperty(value = "properties.reportedSeverity", access = JsonProperty.Access.WRITE_ONLY)
-    private ReportedSeverity reportedSeverity;
-
-    /*
-     * Number of healthy devices within the IoT Security solution.
-     */
-    @JsonProperty(value = "properties.healthyDevices", access = JsonProperty.Access.WRITE_ONLY)
-    private Long healthyDevices;
-
-    /*
-     * Number of unhealthy devices within the IoT Security solution.
-     */
-    @JsonProperty(value = "properties.unhealthyDeviceCount", access = JsonProperty.Access.WRITE_ONLY)
-    private Long unhealthyDeviceCount;
-
-    /*
-     * Log analytics query for getting the list of affected devices/alerts.
-     */
-    @JsonProperty(value = "properties.logAnalyticsQuery", access = JsonProperty.Access.WRITE_ONLY)
-    private String logAnalyticsQuery;
+    private IoTSecurityAggregatedRecommendationProperties innerProperties;
 
     /*
      * Resource tags
      */
-    @JsonProperty(value = "tags")
     private Map<String, String> tags;
 
-    /**
-     * Get the recommendationName property: Name of the recommendation.
-     *
-     * @return the recommendationName value.
+    /*
+     * The type of the resource.
      */
-    public String recommendationName() {
-        return this.recommendationName;
+    private String type;
+
+    /*
+     * The name of the resource.
+     */
+    private String name;
+
+    /*
+     * Fully qualified resource Id for the resource.
+     */
+    private String id;
+
+    /**
+     * Creates an instance of IoTSecurityAggregatedRecommendationInner class.
+     */
+    public IoTSecurityAggregatedRecommendationInner() {
     }
 
     /**
-     * Set the recommendationName property: Name of the recommendation.
-     *
-     * @param recommendationName the recommendationName value to set.
-     * @return the IoTSecurityAggregatedRecommendationInner object itself.
+     * Get the innerProperties property: Security Solution data.
+     * 
+     * @return the innerProperties value.
      */
-    public IoTSecurityAggregatedRecommendationInner withRecommendationName(String recommendationName) {
-        this.recommendationName = recommendationName;
-        return this;
-    }
-
-    /**
-     * Get the recommendationDisplayName property: Display name of the recommendation type.
-     *
-     * @return the recommendationDisplayName value.
-     */
-    public String recommendationDisplayName() {
-        return this.recommendationDisplayName;
-    }
-
-    /**
-     * Get the description property: Description of the suspected vulnerability and meaning.
-     *
-     * @return the description value.
-     */
-    public String description() {
-        return this.description;
-    }
-
-    /**
-     * Get the recommendationTypeId property: Recommendation-type GUID.
-     *
-     * @return the recommendationTypeId value.
-     */
-    public String recommendationTypeId() {
-        return this.recommendationTypeId;
-    }
-
-    /**
-     * Get the detectedBy property: Name of the organization that made the recommendation.
-     *
-     * @return the detectedBy value.
-     */
-    public String detectedBy() {
-        return this.detectedBy;
-    }
-
-    /**
-     * Get the remediationSteps property: Recommended steps for remediation.
-     *
-     * @return the remediationSteps value.
-     */
-    public String remediationSteps() {
-        return this.remediationSteps;
-    }
-
-    /**
-     * Get the reportedSeverity property: Assessed recommendation severity.
-     *
-     * @return the reportedSeverity value.
-     */
-    public ReportedSeverity reportedSeverity() {
-        return this.reportedSeverity;
-    }
-
-    /**
-     * Get the healthyDevices property: Number of healthy devices within the IoT Security solution.
-     *
-     * @return the healthyDevices value.
-     */
-    public Long healthyDevices() {
-        return this.healthyDevices;
-    }
-
-    /**
-     * Get the unhealthyDeviceCount property: Number of unhealthy devices within the IoT Security solution.
-     *
-     * @return the unhealthyDeviceCount value.
-     */
-    public Long unhealthyDeviceCount() {
-        return this.unhealthyDeviceCount;
-    }
-
-    /**
-     * Get the logAnalyticsQuery property: Log analytics query for getting the list of affected devices/alerts.
-     *
-     * @return the logAnalyticsQuery value.
-     */
-    public String logAnalyticsQuery() {
-        return this.logAnalyticsQuery;
+    private IoTSecurityAggregatedRecommendationProperties innerProperties() {
+        return this.innerProperties;
     }
 
     /**
      * Get the tags property: Resource tags.
-     *
+     * 
      * @return the tags value.
      */
     public Map<String, String> tags() {
@@ -197,7 +69,7 @@ public class IoTSecurityAggregatedRecommendationInner extends ProxyResource {
 
     /**
      * Set the tags property: Resource tags.
-     *
+     * 
      * @param tags the tags value to set.
      * @return the IoTSecurityAggregatedRecommendationInner object itself.
      */
@@ -207,10 +79,196 @@ public class IoTSecurityAggregatedRecommendationInner extends ProxyResource {
     }
 
     /**
+     * Get the type property: The type of the resource.
+     * 
+     * @return the type value.
+     */
+    @Override
+    public String type() {
+        return this.type;
+    }
+
+    /**
+     * Get the name property: The name of the resource.
+     * 
+     * @return the name value.
+     */
+    @Override
+    public String name() {
+        return this.name;
+    }
+
+    /**
+     * Get the id property: Fully qualified resource Id for the resource.
+     * 
+     * @return the id value.
+     */
+    @Override
+    public String id() {
+        return this.id;
+    }
+
+    /**
+     * Get the recommendationName property: Name of the recommendation.
+     * 
+     * @return the recommendationName value.
+     */
+    public String recommendationName() {
+        return this.innerProperties() == null ? null : this.innerProperties().recommendationName();
+    }
+
+    /**
+     * Set the recommendationName property: Name of the recommendation.
+     * 
+     * @param recommendationName the recommendationName value to set.
+     * @return the IoTSecurityAggregatedRecommendationInner object itself.
+     */
+    public IoTSecurityAggregatedRecommendationInner withRecommendationName(String recommendationName) {
+        if (this.innerProperties() == null) {
+            this.innerProperties = new IoTSecurityAggregatedRecommendationProperties();
+        }
+        this.innerProperties().withRecommendationName(recommendationName);
+        return this;
+    }
+
+    /**
+     * Get the recommendationDisplayName property: Display name of the recommendation type.
+     * 
+     * @return the recommendationDisplayName value.
+     */
+    public String recommendationDisplayName() {
+        return this.innerProperties() == null ? null : this.innerProperties().recommendationDisplayName();
+    }
+
+    /**
+     * Get the description property: Description of the suspected vulnerability and meaning.
+     * 
+     * @return the description value.
+     */
+    public String description() {
+        return this.innerProperties() == null ? null : this.innerProperties().description();
+    }
+
+    /**
+     * Get the recommendationTypeId property: Recommendation-type GUID.
+     * 
+     * @return the recommendationTypeId value.
+     */
+    public String recommendationTypeId() {
+        return this.innerProperties() == null ? null : this.innerProperties().recommendationTypeId();
+    }
+
+    /**
+     * Get the detectedBy property: Name of the organization that made the recommendation.
+     * 
+     * @return the detectedBy value.
+     */
+    public String detectedBy() {
+        return this.innerProperties() == null ? null : this.innerProperties().detectedBy();
+    }
+
+    /**
+     * Get the remediationSteps property: Recommended steps for remediation.
+     * 
+     * @return the remediationSteps value.
+     */
+    public String remediationSteps() {
+        return this.innerProperties() == null ? null : this.innerProperties().remediationSteps();
+    }
+
+    /**
+     * Get the reportedSeverity property: Assessed recommendation severity.
+     * 
+     * @return the reportedSeverity value.
+     */
+    public ReportedSeverity reportedSeverity() {
+        return this.innerProperties() == null ? null : this.innerProperties().reportedSeverity();
+    }
+
+    /**
+     * Get the healthyDevices property: Number of healthy devices within the IoT Security solution.
+     * 
+     * @return the healthyDevices value.
+     */
+    public Long healthyDevices() {
+        return this.innerProperties() == null ? null : this.innerProperties().healthyDevices();
+    }
+
+    /**
+     * Get the unhealthyDeviceCount property: Number of unhealthy devices within the IoT Security solution.
+     * 
+     * @return the unhealthyDeviceCount value.
+     */
+    public Long unhealthyDeviceCount() {
+        return this.innerProperties() == null ? null : this.innerProperties().unhealthyDeviceCount();
+    }
+
+    /**
+     * Get the logAnalyticsQuery property: Log analytics query for getting the list of affected devices/alerts.
+     * 
+     * @return the logAnalyticsQuery value.
+     */
+    public String logAnalyticsQuery() {
+        return this.innerProperties() == null ? null : this.innerProperties().logAnalyticsQuery();
+    }
+
+    /**
      * Validates the instance.
-     *
+     * 
      * @throws IllegalArgumentException thrown if the instance is not valid.
      */
     public void validate() {
+        if (innerProperties() != null) {
+            innerProperties().validate();
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public JsonWriter toJson(JsonWriter jsonWriter) throws IOException {
+        jsonWriter.writeStartObject();
+        jsonWriter.writeJsonField("properties", this.innerProperties);
+        jsonWriter.writeMapField("tags", this.tags, (writer, element) -> writer.writeString(element));
+        return jsonWriter.writeEndObject();
+    }
+
+    /**
+     * Reads an instance of IoTSecurityAggregatedRecommendationInner from the JsonReader.
+     * 
+     * @param jsonReader The JsonReader being read.
+     * @return An instance of IoTSecurityAggregatedRecommendationInner if the JsonReader was pointing to an instance of
+     * it, or null if it was pointing to JSON null.
+     * @throws IllegalStateException If the deserialized JSON object was missing any required properties.
+     * @throws IOException If an error occurs while reading the IoTSecurityAggregatedRecommendationInner.
+     */
+    public static IoTSecurityAggregatedRecommendationInner fromJson(JsonReader jsonReader) throws IOException {
+        return jsonReader.readObject(reader -> {
+            IoTSecurityAggregatedRecommendationInner deserializedIoTSecurityAggregatedRecommendationInner
+                = new IoTSecurityAggregatedRecommendationInner();
+            while (reader.nextToken() != JsonToken.END_OBJECT) {
+                String fieldName = reader.getFieldName();
+                reader.nextToken();
+
+                if ("id".equals(fieldName)) {
+                    deserializedIoTSecurityAggregatedRecommendationInner.id = reader.getString();
+                } else if ("name".equals(fieldName)) {
+                    deserializedIoTSecurityAggregatedRecommendationInner.name = reader.getString();
+                } else if ("type".equals(fieldName)) {
+                    deserializedIoTSecurityAggregatedRecommendationInner.type = reader.getString();
+                } else if ("properties".equals(fieldName)) {
+                    deserializedIoTSecurityAggregatedRecommendationInner.innerProperties
+                        = IoTSecurityAggregatedRecommendationProperties.fromJson(reader);
+                } else if ("tags".equals(fieldName)) {
+                    Map<String, String> tags = reader.readMap(reader1 -> reader1.getString());
+                    deserializedIoTSecurityAggregatedRecommendationInner.tags = tags;
+                } else {
+                    reader.skipChildren();
+                }
+            }
+
+            return deserializedIoTSecurityAggregatedRecommendationInner;
+        });
     }
 }

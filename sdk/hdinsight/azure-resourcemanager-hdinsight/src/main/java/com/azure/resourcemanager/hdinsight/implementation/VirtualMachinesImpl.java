@@ -14,54 +14,45 @@ import com.azure.resourcemanager.hdinsight.fluent.models.HostInfoInner;
 import com.azure.resourcemanager.hdinsight.models.AsyncOperationResult;
 import com.azure.resourcemanager.hdinsight.models.HostInfo;
 import com.azure.resourcemanager.hdinsight.models.VirtualMachines;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
 public final class VirtualMachinesImpl implements VirtualMachines {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(VirtualMachinesImpl.class);
+    private static final ClientLogger LOGGER = new ClientLogger(VirtualMachinesImpl.class);
 
     private final VirtualMachinesClient innerClient;
 
     private final com.azure.resourcemanager.hdinsight.HDInsightManager serviceManager;
 
-    public VirtualMachinesImpl(
-        VirtualMachinesClient innerClient, com.azure.resourcemanager.hdinsight.HDInsightManager serviceManager) {
+    public VirtualMachinesImpl(VirtualMachinesClient innerClient,
+        com.azure.resourcemanager.hdinsight.HDInsightManager serviceManager) {
         this.innerClient = innerClient;
         this.serviceManager = serviceManager;
     }
 
-    public List<HostInfo> listHosts(String resourceGroupName, String clusterName) {
-        List<HostInfoInner> inner = this.serviceClient().listHosts(resourceGroupName, clusterName);
+    public Response<List<HostInfo>> listHostsWithResponse(String resourceGroupName, String clusterName,
+        Context context) {
+        Response<List<HostInfoInner>> inner
+            = this.serviceClient().listHostsWithResponse(resourceGroupName, clusterName, context);
         if (inner != null) {
-            return Collections
-                .unmodifiableList(
-                    inner
-                        .stream()
-                        .map(inner1 -> new HostInfoImpl(inner1, this.manager()))
-                        .collect(Collectors.toList()));
-        } else {
-            return Collections.emptyList();
-        }
-    }
-
-    public Response<List<HostInfo>> listHostsWithResponse(
-        String resourceGroupName, String clusterName, Context context) {
-        Response<List<HostInfoInner>> inner =
-            this.serviceClient().listHostsWithResponse(resourceGroupName, clusterName, context);
-        if (inner != null) {
-            return new SimpleResponse<>(
-                inner.getRequest(),
-                inner.getStatusCode(),
-                inner.getHeaders(),
-                inner
-                    .getValue()
+            return new SimpleResponse<>(inner.getRequest(), inner.getStatusCode(), inner.getHeaders(),
+                inner.getValue()
                     .stream()
                     .map(inner1 -> new HostInfoImpl(inner1, this.manager()))
                     .collect(Collectors.toList()));
         } else {
             return null;
+        }
+    }
+
+    public List<HostInfo> listHosts(String resourceGroupName, String clusterName) {
+        List<HostInfoInner> inner = this.serviceClient().listHosts(resourceGroupName, clusterName);
+        if (inner != null) {
+            return Collections.unmodifiableList(
+                inner.stream().map(inner1 -> new HostInfoImpl(inner1, this.manager())).collect(Collectors.toList()));
+        } else {
+            return Collections.emptyList();
         }
     }
 
@@ -73,29 +64,24 @@ public final class VirtualMachinesImpl implements VirtualMachines {
         this.serviceClient().restartHosts(resourceGroupName, clusterName, hosts, context);
     }
 
-    public AsyncOperationResult getAsyncOperationStatus(
-        String resourceGroupName, String clusterName, String operationId) {
-        AsyncOperationResultInner inner =
-            this.serviceClient().getAsyncOperationStatus(resourceGroupName, clusterName, operationId);
+    public Response<AsyncOperationResult> getAsyncOperationStatusWithResponse(String resourceGroupName,
+        String clusterName, String operationId, Context context) {
+        Response<AsyncOperationResultInner> inner = this.serviceClient()
+            .getAsyncOperationStatusWithResponse(resourceGroupName, clusterName, operationId, context);
         if (inner != null) {
-            return new AsyncOperationResultImpl(inner, this.manager());
+            return new SimpleResponse<>(inner.getRequest(), inner.getStatusCode(), inner.getHeaders(),
+                new AsyncOperationResultImpl(inner.getValue(), this.manager()));
         } else {
             return null;
         }
     }
 
-    public Response<AsyncOperationResult> getAsyncOperationStatusWithResponse(
-        String resourceGroupName, String clusterName, String operationId, Context context) {
-        Response<AsyncOperationResultInner> inner =
-            this
-                .serviceClient()
-                .getAsyncOperationStatusWithResponse(resourceGroupName, clusterName, operationId, context);
+    public AsyncOperationResult getAsyncOperationStatus(String resourceGroupName, String clusterName,
+        String operationId) {
+        AsyncOperationResultInner inner
+            = this.serviceClient().getAsyncOperationStatus(resourceGroupName, clusterName, operationId);
         if (inner != null) {
-            return new SimpleResponse<>(
-                inner.getRequest(),
-                inner.getStatusCode(),
-                inner.getHeaders(),
-                new AsyncOperationResultImpl(inner.getValue(), this.manager()));
+            return new AsyncOperationResultImpl(inner, this.manager());
         } else {
             return null;
         }

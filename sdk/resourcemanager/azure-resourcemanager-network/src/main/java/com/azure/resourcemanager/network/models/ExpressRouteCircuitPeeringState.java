@@ -5,29 +5,46 @@
 package com.azure.resourcemanager.network.models;
 
 import com.azure.core.util.ExpandableStringEnum;
-import com.fasterxml.jackson.annotation.JsonCreator;
 import java.util.Collection;
 
-/** Defines values for ExpressRouteCircuitPeeringState. */
+/**
+ * The state of peering.
+ */
 public final class ExpressRouteCircuitPeeringState extends ExpandableStringEnum<ExpressRouteCircuitPeeringState> {
-    /** Static value Disabled for ExpressRouteCircuitPeeringState. */
+    /**
+     * Static value Disabled for ExpressRouteCircuitPeeringState.
+     */
     public static final ExpressRouteCircuitPeeringState DISABLED = fromString("Disabled");
 
-    /** Static value Enabled for ExpressRouteCircuitPeeringState. */
+    /**
+     * Static value Enabled for ExpressRouteCircuitPeeringState.
+     */
     public static final ExpressRouteCircuitPeeringState ENABLED = fromString("Enabled");
 
     /**
+     * Creates a new instance of ExpressRouteCircuitPeeringState value.
+     * 
+     * @deprecated Use the {@link #fromString(String)} factory method.
+     */
+    @Deprecated
+    public ExpressRouteCircuitPeeringState() {
+    }
+
+    /**
      * Creates or finds a ExpressRouteCircuitPeeringState from its string representation.
-     *
+     * 
      * @param name a name to look for.
      * @return the corresponding ExpressRouteCircuitPeeringState.
      */
-    @JsonCreator
     public static ExpressRouteCircuitPeeringState fromString(String name) {
         return fromString(name, ExpressRouteCircuitPeeringState.class);
     }
 
-    /** @return known ExpressRouteCircuitPeeringState values. */
+    /**
+     * Gets known ExpressRouteCircuitPeeringState values.
+     * 
+     * @return known ExpressRouteCircuitPeeringState values.
+     */
     public static Collection<ExpressRouteCircuitPeeringState> values() {
         return values(ExpressRouteCircuitPeeringState.class);
     }

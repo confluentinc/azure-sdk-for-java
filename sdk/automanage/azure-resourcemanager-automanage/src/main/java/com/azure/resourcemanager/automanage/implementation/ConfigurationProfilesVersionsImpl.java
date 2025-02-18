@@ -12,31 +12,37 @@ import com.azure.core.util.logging.ClientLogger;
 import com.azure.resourcemanager.automanage.fluent.ConfigurationProfilesVersionsClient;
 import com.azure.resourcemanager.automanage.fluent.models.ConfigurationProfileInner;
 import com.azure.resourcemanager.automanage.models.ConfigurationProfile;
-import com.azure.resourcemanager.automanage.models.ConfigurationProfileUpdate;
 import com.azure.resourcemanager.automanage.models.ConfigurationProfilesVersions;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 public final class ConfigurationProfilesVersionsImpl implements ConfigurationProfilesVersions {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(ConfigurationProfilesVersionsImpl.class);
+    private static final ClientLogger LOGGER = new ClientLogger(ConfigurationProfilesVersionsImpl.class);
 
     private final ConfigurationProfilesVersionsClient innerClient;
 
     private final com.azure.resourcemanager.automanage.AutomanageManager serviceManager;
 
-    public ConfigurationProfilesVersionsImpl(
-        ConfigurationProfilesVersionsClient innerClient,
+    public ConfigurationProfilesVersionsImpl(ConfigurationProfilesVersionsClient innerClient,
         com.azure.resourcemanager.automanage.AutomanageManager serviceManager) {
         this.innerClient = innerClient;
         this.serviceManager = serviceManager;
     }
 
-    public ConfigurationProfile createOrUpdate(
-        String configurationProfileName,
-        String versionName,
-        String resourceGroupName,
-        ConfigurationProfileInner parameters) {
-        ConfigurationProfileInner inner =
-            this.serviceClient().createOrUpdate(configurationProfileName, versionName, resourceGroupName, parameters);
+    public Response<ConfigurationProfile> createOrUpdateWithResponse(String configurationProfileName,
+        String versionName, String resourceGroupName, ConfigurationProfileInner parameters, Context context) {
+        Response<ConfigurationProfileInner> inner = this.serviceClient()
+            .createOrUpdateWithResponse(configurationProfileName, versionName, resourceGroupName, parameters, context);
+        if (inner != null) {
+            return new SimpleResponse<>(inner.getRequest(), inner.getStatusCode(), inner.getHeaders(),
+                new ConfigurationProfileImpl(inner.getValue(), this.manager()));
+        } else {
+            return null;
+        }
+    }
+
+    public ConfigurationProfile createOrUpdate(String configurationProfileName, String versionName,
+        String resourceGroupName, ConfigurationProfileInner parameters) {
+        ConfigurationProfileInner inner
+            = this.serviceClient().createOrUpdate(configurationProfileName, versionName, resourceGroupName, parameters);
         if (inner != null) {
             return new ConfigurationProfileImpl(inner, this.manager());
         } else {
@@ -44,22 +50,12 @@ public final class ConfigurationProfilesVersionsImpl implements ConfigurationPro
         }
     }
 
-    public Response<ConfigurationProfile> createOrUpdateWithResponse(
-        String configurationProfileName,
-        String versionName,
-        String resourceGroupName,
-        ConfigurationProfileInner parameters,
-        Context context) {
-        Response<ConfigurationProfileInner> inner =
-            this
-                .serviceClient()
-                .createOrUpdateWithResponse(
-                    configurationProfileName, versionName, resourceGroupName, parameters, context);
+    public Response<ConfigurationProfile> getWithResponse(String configurationProfileName, String versionName,
+        String resourceGroupName, Context context) {
+        Response<ConfigurationProfileInner> inner
+            = this.serviceClient().getWithResponse(configurationProfileName, versionName, resourceGroupName, context);
         if (inner != null) {
-            return new SimpleResponse<>(
-                inner.getRequest(),
-                inner.getStatusCode(),
-                inner.getHeaders(),
+            return new SimpleResponse<>(inner.getRequest(), inner.getStatusCode(), inner.getHeaders(),
                 new ConfigurationProfileImpl(inner.getValue(), this.manager()));
         } else {
             return null;
@@ -67,8 +63,8 @@ public final class ConfigurationProfilesVersionsImpl implements ConfigurationPro
     }
 
     public ConfigurationProfile get(String configurationProfileName, String versionName, String resourceGroupName) {
-        ConfigurationProfileInner inner =
-            this.serviceClient().get(configurationProfileName, versionName, resourceGroupName);
+        ConfigurationProfileInner inner
+            = this.serviceClient().get(configurationProfileName, versionName, resourceGroupName);
         if (inner != null) {
             return new ConfigurationProfileImpl(inner, this.manager());
         } else {
@@ -76,79 +72,28 @@ public final class ConfigurationProfilesVersionsImpl implements ConfigurationPro
         }
     }
 
-    public Response<ConfigurationProfile> getWithResponse(
-        String configurationProfileName, String versionName, String resourceGroupName, Context context) {
-        Response<ConfigurationProfileInner> inner =
-            this.serviceClient().getWithResponse(configurationProfileName, versionName, resourceGroupName, context);
-        if (inner != null) {
-            return new SimpleResponse<>(
-                inner.getRequest(),
-                inner.getStatusCode(),
-                inner.getHeaders(),
-                new ConfigurationProfileImpl(inner.getValue(), this.manager()));
-        } else {
-            return null;
-        }
+    public Response<Void> deleteWithResponse(String resourceGroupName, String configurationProfileName,
+        String versionName, Context context) {
+        return this.serviceClient()
+            .deleteWithResponse(resourceGroupName, configurationProfileName, versionName, context);
     }
 
     public void delete(String resourceGroupName, String configurationProfileName, String versionName) {
         this.serviceClient().delete(resourceGroupName, configurationProfileName, versionName);
     }
 
-    public Response<Void> deleteWithResponse(
-        String resourceGroupName, String configurationProfileName, String versionName, Context context) {
-        return this
-            .serviceClient()
-            .deleteWithResponse(resourceGroupName, configurationProfileName, versionName, context);
+    public PagedIterable<ConfigurationProfile> listChildResources(String configurationProfileName,
+        String resourceGroupName) {
+        PagedIterable<ConfigurationProfileInner> inner
+            = this.serviceClient().listChildResources(configurationProfileName, resourceGroupName);
+        return ResourceManagerUtils.mapPage(inner, inner1 -> new ConfigurationProfileImpl(inner1, this.manager()));
     }
 
-    public ConfigurationProfile update(
-        String configurationProfileName,
-        String versionName,
-        String resourceGroupName,
-        ConfigurationProfileUpdate parameters) {
-        ConfigurationProfileInner inner =
-            this.serviceClient().update(configurationProfileName, versionName, resourceGroupName, parameters);
-        if (inner != null) {
-            return new ConfigurationProfileImpl(inner, this.manager());
-        } else {
-            return null;
-        }
-    }
-
-    public Response<ConfigurationProfile> updateWithResponse(
-        String configurationProfileName,
-        String versionName,
-        String resourceGroupName,
-        ConfigurationProfileUpdate parameters,
-        Context context) {
-        Response<ConfigurationProfileInner> inner =
-            this
-                .serviceClient()
-                .updateWithResponse(configurationProfileName, versionName, resourceGroupName, parameters, context);
-        if (inner != null) {
-            return new SimpleResponse<>(
-                inner.getRequest(),
-                inner.getStatusCode(),
-                inner.getHeaders(),
-                new ConfigurationProfileImpl(inner.getValue(), this.manager()));
-        } else {
-            return null;
-        }
-    }
-
-    public PagedIterable<ConfigurationProfile> listChildResources(
-        String configurationProfileName, String resourceGroupName) {
-        PagedIterable<ConfigurationProfileInner> inner =
-            this.serviceClient().listChildResources(configurationProfileName, resourceGroupName);
-        return Utils.mapPage(inner, inner1 -> new ConfigurationProfileImpl(inner1, this.manager()));
-    }
-
-    public PagedIterable<ConfigurationProfile> listChildResources(
-        String configurationProfileName, String resourceGroupName, Context context) {
-        PagedIterable<ConfigurationProfileInner> inner =
-            this.serviceClient().listChildResources(configurationProfileName, resourceGroupName, context);
-        return Utils.mapPage(inner, inner1 -> new ConfigurationProfileImpl(inner1, this.manager()));
+    public PagedIterable<ConfigurationProfile> listChildResources(String configurationProfileName,
+        String resourceGroupName, Context context) {
+        PagedIterable<ConfigurationProfileInner> inner
+            = this.serviceClient().listChildResources(configurationProfileName, resourceGroupName, context);
+        return ResourceManagerUtils.mapPage(inner, inner1 -> new ConfigurationProfileImpl(inner1, this.manager()));
     }
 
     private ConfigurationProfilesVersionsClient serviceClient() {

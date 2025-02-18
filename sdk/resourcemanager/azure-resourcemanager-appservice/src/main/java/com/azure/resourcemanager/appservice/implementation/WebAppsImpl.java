@@ -8,15 +8,20 @@ import com.azure.core.http.rest.PagedIterable;
 import com.azure.core.util.CoreUtils;
 import com.azure.resourcemanager.appservice.AppServiceManager;
 import com.azure.resourcemanager.appservice.fluent.WebAppsClient;
+import com.azure.resourcemanager.appservice.fluent.models.ResourceNameAvailabilityInner;
 import com.azure.resourcemanager.appservice.fluent.models.SiteConfigResourceInner;
 import com.azure.resourcemanager.appservice.fluent.models.SiteInner;
 import com.azure.resourcemanager.appservice.fluent.models.SiteLogsConfigInner;
+import com.azure.resourcemanager.appservice.models.CheckNameResourceTypes;
+import com.azure.resourcemanager.appservice.models.ResourceNameAvailabilityRequest;
 import com.azure.resourcemanager.appservice.models.WebApp;
 import com.azure.resourcemanager.appservice.models.WebAppBasic;
 import com.azure.resourcemanager.appservice.models.WebApps;
 import com.azure.resourcemanager.resources.fluentcore.arm.collection.SupportsBatchDeletion;
 import com.azure.resourcemanager.resources.fluentcore.arm.collection.implementation.BatchDeletionImpl;
 import com.azure.resourcemanager.resources.fluentcore.arm.collection.implementation.GroupableResourcesImpl;
+import com.azure.resourcemanager.resources.fluentcore.arm.models.CheckNameAvailabilityReason;
+import com.azure.resourcemanager.resources.fluentcore.arm.models.CheckNameAvailabilityResult;
 import com.azure.resourcemanager.resources.fluentcore.utils.PagedConverter;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -28,8 +33,7 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 /** The implementation for WebApps. */
-public class WebAppsImpl
-    extends GroupableResourcesImpl<WebApp, WebAppImpl, SiteInner, WebAppsClient, AppServiceManager>
+public class WebAppsImpl extends GroupableResourcesImpl<WebApp, WebAppImpl, SiteInner, WebAppsClient, AppServiceManager>
     implements WebApps, SupportsBatchDeletion {
 
     public WebAppsImpl(final AppServiceManager manager) {
@@ -39,23 +43,17 @@ public class WebAppsImpl
     @Override
     public Mono<WebApp> getByResourceGroupAsync(final String resourceGroupName, final String name) {
         if (CoreUtils.isNullOrEmpty(resourceGroupName)) {
-            return Mono.error(
-                new IllegalArgumentException("Parameter 'resourceGroupName' is required and cannot be null."));
+            return Mono
+                .error(new IllegalArgumentException("Parameter 'resourceGroupName' is required and cannot be null."));
         }
         if (CoreUtils.isNullOrEmpty(name)) {
-            return Mono.error(
-                new IllegalArgumentException("Parameter 'name' is required and cannot be null."));
+            return Mono.error(new IllegalArgumentException("Parameter 'name' is required and cannot be null."));
         }
-        return this
-            .getInnerAsync(resourceGroupName, name)
-            .flatMap(
-                siteInner ->
-                    Mono
-                        .zip(
-                            this.inner().getConfigurationAsync(resourceGroupName, name),
-                            this.inner().getDiagnosticLogsConfigurationAsync(resourceGroupName, name),
-                            (SiteConfigResourceInner siteConfigResourceInner, SiteLogsConfigInner logsConfigInner) ->
-                                wrapModel(siteInner, siteConfigResourceInner, logsConfigInner)));
+        return this.getInnerAsync(resourceGroupName, name)
+            .flatMap(siteInner -> Mono.zip(this.inner().getConfigurationAsync(resourceGroupName, name),
+                this.inner().getDiagnosticLogsConfigurationAsync(resourceGroupName, name),
+                (SiteConfigResourceInner siteConfigResourceInner, SiteLogsConfigInner logsConfigInner) -> wrapModel(
+                    siteInner, siteConfigResourceInner, logsConfigInner)));
     }
 
     @Override
@@ -120,8 +118,8 @@ public class WebAppsImpl
     @Override
     public PagedFlux<WebAppBasic> listByResourceGroupAsync(String resourceGroupName) {
         if (CoreUtils.isNullOrEmpty(resourceGroupName)) {
-            return new PagedFlux<>(() -> Mono.error(
-                new IllegalArgumentException("Parameter 'resourceGroupName' is required and cannot be null.")));
+            return new PagedFlux<>(() -> Mono
+                .error(new IllegalArgumentException("Parameter 'resourceGroupName' is required and cannot be null.")));
         }
         return PagedConverter.flatMapPage(inner().listByResourceGroupAsync(resourceGroupName),
             inner -> isWebApp(inner) ? Mono.just(new WebAppBasicImpl(inner, this.manager())) : Mono.empty());
@@ -140,7 +138,9 @@ public class WebAppsImpl
 
     private static boolean isWebApp(SiteInner inner) {
         boolean ret = false;
-        if (inner.kind() == null) {
+        if (inner.kind() == null || inner.kind().isEmpty() || "linux".equals(inner.kind())) {
+            // a few known legacy kind for webapp
+            // see https://github.com/Azure/app-service-linux-docs/blob/master/Things_You_Should_Know/kind_property.md
             ret = true;
         } else {
             List<String> kinds = Arrays.asList(inner.kind().split(Pattern.quote(",")));
@@ -149,5 +149,56 @@ public class WebAppsImpl
             }
         }
         return ret;
+    }
+
+    @Override
+    public CheckNameAvailabilityResult checkNameAvailability(String name, CheckNameResourceTypes type) {
+        return checkNameAvailabilityAsync(name, type).block();
+    }
+
+    @Override
+    public Mono<CheckNameAvailabilityResult> checkNameAvailabilityAsync(String name, CheckNameResourceTypes type) {
+        return checkNameAvailabilityAsync(name, type, false);
+    }
+
+    @Override
+    public CheckNameAvailabilityResult checkNameAvailability(String name, CheckNameResourceTypes type, boolean isFqdn) {
+        return checkNameAvailabilityAsync(name, type, isFqdn).block();
+    }
+
+    @Override
+    public Mono<CheckNameAvailabilityResult> checkNameAvailabilityAsync(String name, CheckNameResourceTypes type,
+        boolean isFqdn) {
+        return manager().serviceClient()
+            .getResourceProviders()
+            .checkNameAvailabilityAsync(
+                new ResourceNameAvailabilityRequest().withName(name).withType(type).withIsFqdn(isFqdn))
+            .map(CheckNameAvailabilityResultImpl::new);
+    }
+
+    private static final class CheckNameAvailabilityResultImpl implements CheckNameAvailabilityResult {
+
+        private final ResourceNameAvailabilityInner innerModel;
+
+        private CheckNameAvailabilityResultImpl(ResourceNameAvailabilityInner innerModel) {
+            this.innerModel = innerModel;
+        }
+
+        @Override
+        public boolean nameAvailable() {
+            return innerModel.nameAvailable();
+        }
+
+        @Override
+        public CheckNameAvailabilityReason reason() {
+            return innerModel.reason() == null
+                ? null
+                : CheckNameAvailabilityReason.fromString(innerModel.reason().toString());
+        }
+
+        @Override
+        public String message() {
+            return innerModel.message();
+        }
     }
 }

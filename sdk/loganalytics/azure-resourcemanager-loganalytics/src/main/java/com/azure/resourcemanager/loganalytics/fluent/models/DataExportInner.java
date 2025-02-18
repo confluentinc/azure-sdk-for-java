@@ -5,228 +5,309 @@
 package com.azure.resourcemanager.loganalytics.fluent.models;
 
 import com.azure.core.annotation.Fluent;
-import com.azure.core.annotation.JsonFlatten;
 import com.azure.core.management.ProxyResource;
-import com.azure.core.util.logging.ClientLogger;
+import com.azure.json.JsonReader;
+import com.azure.json.JsonToken;
+import com.azure.json.JsonWriter;
 import com.azure.resourcemanager.loganalytics.models.Type;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import java.io.IOException;
 import java.util.List;
 
-/** The top level data export resource container. */
-@JsonFlatten
+/**
+ * The top level data export resource container.
+ */
 @Fluent
-public class DataExportInner extends ProxyResource {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(DataExportInner.class);
+public final class DataExportInner extends ProxyResource {
+    /*
+     * data export properties.
+     */
+    private DataExportProperties innerProperties;
 
     /*
-     * The data export rule ID.
+     * The type of the resource.
      */
-    @JsonProperty(value = "properties.dataExportId")
-    private String dataExportId;
+    private String type;
 
     /*
-     * An array of tables to export, for example: [“Heartbeat, SecurityEvent”].
+     * The name of the resource.
      */
-    @JsonProperty(value = "properties.tableNames")
-    private List<String> tableNames;
+    private String name;
 
     /*
-     * Active when enabled.
+     * Fully qualified resource Id for the resource.
      */
-    @JsonProperty(value = "properties.enable")
-    private Boolean enable;
+    private String id;
 
-    /*
-     * The latest data export rule modification time.
+    /**
+     * Creates an instance of DataExportInner class.
      */
-    @JsonProperty(value = "properties.createdDate")
-    private String createdDate;
+    public DataExportInner() {
+    }
 
-    /*
-     * Date and time when the export was last modified.
+    /**
+     * Get the innerProperties property: data export properties.
+     * 
+     * @return the innerProperties value.
      */
-    @JsonProperty(value = "properties.lastModifiedDate")
-    private String lastModifiedDate;
+    private DataExportProperties innerProperties() {
+        return this.innerProperties;
+    }
 
-    /*
-     * The destination resource ID. This can be copied from the Properties
-     * entry of the destination resource in Azure.
+    /**
+     * Get the type property: The type of the resource.
+     * 
+     * @return the type value.
      */
-    @JsonProperty(value = "properties.destination.resourceId")
-    private String resourceId;
+    @Override
+    public String type() {
+        return this.type;
+    }
 
-    /*
-     * The type of the destination resource
+    /**
+     * Get the name property: The name of the resource.
+     * 
+     * @return the name value.
      */
-    @JsonProperty(value = "properties.destination.type", access = JsonProperty.Access.WRITE_ONLY)
-    private Type typePropertiesDestinationType;
+    @Override
+    public String name() {
+        return this.name;
+    }
 
-    /*
-     * Optional. Allows to define an Event Hub name. Not applicable when
-     * destination is Storage Account.
+    /**
+     * Get the id property: Fully qualified resource Id for the resource.
+     * 
+     * @return the id value.
      */
-    @JsonProperty(value = "properties.destination.metaData.eventHubName")
-    private String eventHubName;
+    @Override
+    public String id() {
+        return this.id;
+    }
 
     /**
      * Get the dataExportId property: The data export rule ID.
-     *
+     * 
      * @return the dataExportId value.
      */
     public String dataExportId() {
-        return this.dataExportId;
+        return this.innerProperties() == null ? null : this.innerProperties().dataExportId();
     }
 
     /**
      * Set the dataExportId property: The data export rule ID.
-     *
+     * 
      * @param dataExportId the dataExportId value to set.
      * @return the DataExportInner object itself.
      */
     public DataExportInner withDataExportId(String dataExportId) {
-        this.dataExportId = dataExportId;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new DataExportProperties();
+        }
+        this.innerProperties().withDataExportId(dataExportId);
         return this;
     }
 
     /**
      * Get the tableNames property: An array of tables to export, for example: [“Heartbeat, SecurityEvent”].
-     *
+     * 
      * @return the tableNames value.
      */
     public List<String> tableNames() {
-        return this.tableNames;
+        return this.innerProperties() == null ? null : this.innerProperties().tableNames();
     }
 
     /**
      * Set the tableNames property: An array of tables to export, for example: [“Heartbeat, SecurityEvent”].
-     *
+     * 
      * @param tableNames the tableNames value to set.
      * @return the DataExportInner object itself.
      */
     public DataExportInner withTableNames(List<String> tableNames) {
-        this.tableNames = tableNames;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new DataExportProperties();
+        }
+        this.innerProperties().withTableNames(tableNames);
         return this;
     }
 
     /**
      * Get the enable property: Active when enabled.
-     *
+     * 
      * @return the enable value.
      */
     public Boolean enable() {
-        return this.enable;
+        return this.innerProperties() == null ? null : this.innerProperties().enable();
     }
 
     /**
      * Set the enable property: Active when enabled.
-     *
+     * 
      * @param enable the enable value to set.
      * @return the DataExportInner object itself.
      */
     public DataExportInner withEnable(Boolean enable) {
-        this.enable = enable;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new DataExportProperties();
+        }
+        this.innerProperties().withEnable(enable);
         return this;
     }
 
     /**
      * Get the createdDate property: The latest data export rule modification time.
-     *
+     * 
      * @return the createdDate value.
      */
     public String createdDate() {
-        return this.createdDate;
+        return this.innerProperties() == null ? null : this.innerProperties().createdDate();
     }
 
     /**
      * Set the createdDate property: The latest data export rule modification time.
-     *
+     * 
      * @param createdDate the createdDate value to set.
      * @return the DataExportInner object itself.
      */
     public DataExportInner withCreatedDate(String createdDate) {
-        this.createdDate = createdDate;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new DataExportProperties();
+        }
+        this.innerProperties().withCreatedDate(createdDate);
         return this;
     }
 
     /**
      * Get the lastModifiedDate property: Date and time when the export was last modified.
-     *
+     * 
      * @return the lastModifiedDate value.
      */
     public String lastModifiedDate() {
-        return this.lastModifiedDate;
+        return this.innerProperties() == null ? null : this.innerProperties().lastModifiedDate();
     }
 
     /**
      * Set the lastModifiedDate property: Date and time when the export was last modified.
-     *
+     * 
      * @param lastModifiedDate the lastModifiedDate value to set.
      * @return the DataExportInner object itself.
      */
     public DataExportInner withLastModifiedDate(String lastModifiedDate) {
-        this.lastModifiedDate = lastModifiedDate;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new DataExportProperties();
+        }
+        this.innerProperties().withLastModifiedDate(lastModifiedDate);
         return this;
     }
 
     /**
      * Get the resourceId property: The destination resource ID. This can be copied from the Properties entry of the
      * destination resource in Azure.
-     *
+     * 
      * @return the resourceId value.
      */
     public String resourceId() {
-        return this.resourceId;
+        return this.innerProperties() == null ? null : this.innerProperties().resourceId();
     }
 
     /**
      * Set the resourceId property: The destination resource ID. This can be copied from the Properties entry of the
      * destination resource in Azure.
-     *
+     * 
      * @param resourceId the resourceId value to set.
      * @return the DataExportInner object itself.
      */
     public DataExportInner withResourceId(String resourceId) {
-        this.resourceId = resourceId;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new DataExportProperties();
+        }
+        this.innerProperties().withResourceId(resourceId);
         return this;
     }
 
     /**
-     * Get the typePropertiesDestinationType property: The type of the destination resource.
-     *
-     * @return the typePropertiesDestinationType value.
+     * Get the type property: The type of the destination resource.
+     * 
+     * @return the type value.
      */
-    public Type typePropertiesDestinationType() {
-        return this.typePropertiesDestinationType;
+    public Type typePropertiesType() {
+        return this.innerProperties() == null ? null : this.innerProperties().type();
     }
 
     /**
      * Get the eventHubName property: Optional. Allows to define an Event Hub name. Not applicable when destination is
      * Storage Account.
-     *
+     * 
      * @return the eventHubName value.
      */
     public String eventHubName() {
-        return this.eventHubName;
+        return this.innerProperties() == null ? null : this.innerProperties().eventHubName();
     }
 
     /**
      * Set the eventHubName property: Optional. Allows to define an Event Hub name. Not applicable when destination is
      * Storage Account.
-     *
+     * 
      * @param eventHubName the eventHubName value to set.
      * @return the DataExportInner object itself.
      */
     public DataExportInner withEventHubName(String eventHubName) {
-        this.eventHubName = eventHubName;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new DataExportProperties();
+        }
+        this.innerProperties().withEventHubName(eventHubName);
         return this;
     }
 
     /**
      * Validates the instance.
-     *
+     * 
      * @throws IllegalArgumentException thrown if the instance is not valid.
      */
     public void validate() {
+        if (innerProperties() != null) {
+            innerProperties().validate();
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public JsonWriter toJson(JsonWriter jsonWriter) throws IOException {
+        jsonWriter.writeStartObject();
+        jsonWriter.writeJsonField("properties", this.innerProperties);
+        return jsonWriter.writeEndObject();
+    }
+
+    /**
+     * Reads an instance of DataExportInner from the JsonReader.
+     * 
+     * @param jsonReader The JsonReader being read.
+     * @return An instance of DataExportInner if the JsonReader was pointing to an instance of it, or null if it was
+     * pointing to JSON null.
+     * @throws IllegalStateException If the deserialized JSON object was missing any required properties.
+     * @throws IOException If an error occurs while reading the DataExportInner.
+     */
+    public static DataExportInner fromJson(JsonReader jsonReader) throws IOException {
+        return jsonReader.readObject(reader -> {
+            DataExportInner deserializedDataExportInner = new DataExportInner();
+            while (reader.nextToken() != JsonToken.END_OBJECT) {
+                String fieldName = reader.getFieldName();
+                reader.nextToken();
+
+                if ("id".equals(fieldName)) {
+                    deserializedDataExportInner.id = reader.getString();
+                } else if ("name".equals(fieldName)) {
+                    deserializedDataExportInner.name = reader.getString();
+                } else if ("type".equals(fieldName)) {
+                    deserializedDataExportInner.type = reader.getString();
+                } else if ("properties".equals(fieldName)) {
+                    deserializedDataExportInner.innerProperties = DataExportProperties.fromJson(reader);
+                } else {
+                    reader.skipChildren();
+                }
+            }
+
+            return deserializedDataExportInner;
+        });
     }
 }

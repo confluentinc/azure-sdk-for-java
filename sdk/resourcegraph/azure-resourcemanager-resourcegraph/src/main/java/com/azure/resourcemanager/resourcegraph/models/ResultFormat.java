@@ -4,18 +4,23 @@
 
 package com.azure.resourcemanager.resourcegraph.models;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonValue;
-
-/** Defines values for ResultFormat. */
+/**
+ * Defines in which format query result returned.
+ */
 public enum ResultFormat {
-    /** Enum value table. */
+    /**
+     * Enum value table.
+     */
     TABLE("table"),
 
-    /** Enum value objectArray. */
+    /**
+     * Enum value objectArray.
+     */
     OBJECT_ARRAY("objectArray");
 
-    /** The actual serialized value for a ResultFormat instance. */
+    /**
+     * The actual serialized value for a ResultFormat instance.
+     */
     private final String value;
 
     ResultFormat(String value) {
@@ -24,12 +29,14 @@ public enum ResultFormat {
 
     /**
      * Parses a serialized value to a ResultFormat instance.
-     *
+     * 
      * @param value the serialized value to parse.
      * @return the parsed ResultFormat object, or null if unable to parse.
      */
-    @JsonCreator
     public static ResultFormat fromString(String value) {
+        if (value == null) {
+            return null;
+        }
         ResultFormat[] items = ResultFormat.values();
         for (ResultFormat item : items) {
             if (item.toString().equalsIgnoreCase(value)) {
@@ -39,7 +46,9 @@ public enum ResultFormat {
         return null;
     }
 
-    @JsonValue
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String toString() {
         return this.value;

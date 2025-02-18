@@ -5,26 +5,33 @@
 package com.azure.resourcemanager.avs.models;
 
 import com.azure.core.annotation.Fluent;
-import com.azure.core.util.logging.ClientLogger;
+import com.azure.json.JsonReader;
+import com.azure.json.JsonSerializable;
+import com.azure.json.JsonToken;
+import com.azure.json.JsonWriter;
 import com.azure.resourcemanager.avs.fluent.models.PlacementPolicyUpdateProperties;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import java.io.IOException;
 import java.util.List;
 
-/** An update of a DRS placement policy resource. */
+/**
+ * An update of a DRS placement policy resource.
+ */
 @Fluent
-public final class PlacementPolicyUpdate {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(PlacementPolicyUpdate.class);
-
+public final class PlacementPolicyUpdate implements JsonSerializable<PlacementPolicyUpdate> {
     /*
      * The properties of a placement policy resource that may be updated
      */
-    @JsonProperty(value = "properties")
     private PlacementPolicyUpdateProperties innerProperties;
 
     /**
+     * Creates an instance of PlacementPolicyUpdate class.
+     */
+    public PlacementPolicyUpdate() {
+    }
+
+    /**
      * Get the innerProperties property: The properties of a placement policy resource that may be updated.
-     *
+     * 
      * @return the innerProperties value.
      */
     private PlacementPolicyUpdateProperties innerProperties() {
@@ -33,7 +40,7 @@ public final class PlacementPolicyUpdate {
 
     /**
      * Get the state property: Whether the placement policy is enabled or disabled.
-     *
+     * 
      * @return the state value.
      */
     public PlacementPolicyState state() {
@@ -42,7 +49,7 @@ public final class PlacementPolicyUpdate {
 
     /**
      * Set the state property: Whether the placement policy is enabled or disabled.
-     *
+     * 
      * @param state the state value to set.
      * @return the PlacementPolicyUpdate object itself.
      */
@@ -56,7 +63,7 @@ public final class PlacementPolicyUpdate {
 
     /**
      * Get the vmMembers property: Virtual machine members list.
-     *
+     * 
      * @return the vmMembers value.
      */
     public List<String> vmMembers() {
@@ -65,7 +72,7 @@ public final class PlacementPolicyUpdate {
 
     /**
      * Set the vmMembers property: Virtual machine members list.
-     *
+     * 
      * @param vmMembers the vmMembers value to set.
      * @return the PlacementPolicyUpdate object itself.
      */
@@ -79,7 +86,7 @@ public final class PlacementPolicyUpdate {
 
     /**
      * Get the hostMembers property: Host members list.
-     *
+     * 
      * @return the hostMembers value.
      */
     public List<String> hostMembers() {
@@ -88,7 +95,7 @@ public final class PlacementPolicyUpdate {
 
     /**
      * Set the hostMembers property: Host members list.
-     *
+     * 
      * @param hostMembers the hostMembers value to set.
      * @return the PlacementPolicyUpdate object itself.
      */
@@ -101,13 +108,96 @@ public final class PlacementPolicyUpdate {
     }
 
     /**
+     * Get the affinityStrength property: vm-host placement policy affinity strength (should/must).
+     * 
+     * @return the affinityStrength value.
+     */
+    public AffinityStrength affinityStrength() {
+        return this.innerProperties() == null ? null : this.innerProperties().affinityStrength();
+    }
+
+    /**
+     * Set the affinityStrength property: vm-host placement policy affinity strength (should/must).
+     * 
+     * @param affinityStrength the affinityStrength value to set.
+     * @return the PlacementPolicyUpdate object itself.
+     */
+    public PlacementPolicyUpdate withAffinityStrength(AffinityStrength affinityStrength) {
+        if (this.innerProperties() == null) {
+            this.innerProperties = new PlacementPolicyUpdateProperties();
+        }
+        this.innerProperties().withAffinityStrength(affinityStrength);
+        return this;
+    }
+
+    /**
+     * Get the azureHybridBenefitType property: placement policy azure hybrid benefit opt-in type.
+     * 
+     * @return the azureHybridBenefitType value.
+     */
+    public AzureHybridBenefitType azureHybridBenefitType() {
+        return this.innerProperties() == null ? null : this.innerProperties().azureHybridBenefitType();
+    }
+
+    /**
+     * Set the azureHybridBenefitType property: placement policy azure hybrid benefit opt-in type.
+     * 
+     * @param azureHybridBenefitType the azureHybridBenefitType value to set.
+     * @return the PlacementPolicyUpdate object itself.
+     */
+    public PlacementPolicyUpdate withAzureHybridBenefitType(AzureHybridBenefitType azureHybridBenefitType) {
+        if (this.innerProperties() == null) {
+            this.innerProperties = new PlacementPolicyUpdateProperties();
+        }
+        this.innerProperties().withAzureHybridBenefitType(azureHybridBenefitType);
+        return this;
+    }
+
+    /**
      * Validates the instance.
-     *
+     * 
      * @throws IllegalArgumentException thrown if the instance is not valid.
      */
     public void validate() {
         if (innerProperties() != null) {
             innerProperties().validate();
         }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public JsonWriter toJson(JsonWriter jsonWriter) throws IOException {
+        jsonWriter.writeStartObject();
+        jsonWriter.writeJsonField("properties", this.innerProperties);
+        return jsonWriter.writeEndObject();
+    }
+
+    /**
+     * Reads an instance of PlacementPolicyUpdate from the JsonReader.
+     * 
+     * @param jsonReader The JsonReader being read.
+     * @return An instance of PlacementPolicyUpdate if the JsonReader was pointing to an instance of it, or null if it
+     * was pointing to JSON null.
+     * @throws IOException If an error occurs while reading the PlacementPolicyUpdate.
+     */
+    public static PlacementPolicyUpdate fromJson(JsonReader jsonReader) throws IOException {
+        return jsonReader.readObject(reader -> {
+            PlacementPolicyUpdate deserializedPlacementPolicyUpdate = new PlacementPolicyUpdate();
+            while (reader.nextToken() != JsonToken.END_OBJECT) {
+                String fieldName = reader.getFieldName();
+                reader.nextToken();
+
+                if ("properties".equals(fieldName)) {
+                    deserializedPlacementPolicyUpdate.innerProperties
+                        = PlacementPolicyUpdateProperties.fromJson(reader);
+                } else {
+                    reader.skipChildren();
+                }
+            }
+
+            return deserializedPlacementPolicyUpdate;
+        });
     }
 }

@@ -5,29 +5,47 @@
 package com.azure.resourcemanager.cognitiveservices.models;
 
 import com.azure.core.util.ExpandableStringEnum;
-import com.fasterxml.jackson.annotation.JsonCreator;
 import java.util.Collection;
 
-/** Defines values for NetworkRuleAction. */
+/**
+ * The default action when no rule from ipRules and from virtualNetworkRules match. This is only used after the bypass
+ * property has been evaluated.
+ */
 public final class NetworkRuleAction extends ExpandableStringEnum<NetworkRuleAction> {
-    /** Static value Allow for NetworkRuleAction. */
+    /**
+     * Static value Allow for NetworkRuleAction.
+     */
     public static final NetworkRuleAction ALLOW = fromString("Allow");
 
-    /** Static value Deny for NetworkRuleAction. */
+    /**
+     * Static value Deny for NetworkRuleAction.
+     */
     public static final NetworkRuleAction DENY = fromString("Deny");
 
     /**
+     * Creates a new instance of NetworkRuleAction value.
+     * 
+     * @deprecated Use the {@link #fromString(String)} factory method.
+     */
+    @Deprecated
+    public NetworkRuleAction() {
+    }
+
+    /**
      * Creates or finds a NetworkRuleAction from its string representation.
-     *
+     * 
      * @param name a name to look for.
      * @return the corresponding NetworkRuleAction.
      */
-    @JsonCreator
     public static NetworkRuleAction fromString(String name) {
         return fromString(name, NetworkRuleAction.class);
     }
 
-    /** @return known NetworkRuleAction values. */
+    /**
+     * Gets known NetworkRuleAction values.
+     * 
+     * @return known NetworkRuleAction values.
+     */
     public static Collection<NetworkRuleAction> values() {
         return values(NetworkRuleAction.class);
     }

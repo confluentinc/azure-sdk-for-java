@@ -12,20 +12,30 @@ import com.azure.resourcemanager.recoveryservicesbackup.fluent.BackupResourceSto
 import com.azure.resourcemanager.recoveryservicesbackup.fluent.models.BackupResourceConfigResourceInner;
 import com.azure.resourcemanager.recoveryservicesbackup.models.BackupResourceConfigResource;
 import com.azure.resourcemanager.recoveryservicesbackup.models.BackupResourceStorageConfigsNonCrrs;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 public final class BackupResourceStorageConfigsNonCrrsImpl implements BackupResourceStorageConfigsNonCrrs {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(BackupResourceStorageConfigsNonCrrsImpl.class);
+    private static final ClientLogger LOGGER = new ClientLogger(BackupResourceStorageConfigsNonCrrsImpl.class);
 
     private final BackupResourceStorageConfigsNonCrrsClient innerClient;
 
     private final com.azure.resourcemanager.recoveryservicesbackup.RecoveryServicesBackupManager serviceManager;
 
-    public BackupResourceStorageConfigsNonCrrsImpl(
-        BackupResourceStorageConfigsNonCrrsClient innerClient,
+    public BackupResourceStorageConfigsNonCrrsImpl(BackupResourceStorageConfigsNonCrrsClient innerClient,
         com.azure.resourcemanager.recoveryservicesbackup.RecoveryServicesBackupManager serviceManager) {
         this.innerClient = innerClient;
         this.serviceManager = serviceManager;
+    }
+
+    public Response<BackupResourceConfigResource> getWithResponse(String vaultName, String resourceGroupName,
+        Context context) {
+        Response<BackupResourceConfigResourceInner> inner
+            = this.serviceClient().getWithResponse(vaultName, resourceGroupName, context);
+        if (inner != null) {
+            return new SimpleResponse<>(inner.getRequest(), inner.getStatusCode(), inner.getHeaders(),
+                new BackupResourceConfigResourceImpl(inner.getValue(), this.manager()));
+        } else {
+            return null;
+        }
     }
 
     public BackupResourceConfigResource get(String vaultName, String resourceGroupName) {
@@ -37,23 +47,20 @@ public final class BackupResourceStorageConfigsNonCrrsImpl implements BackupReso
         }
     }
 
-    public Response<BackupResourceConfigResource> getWithResponse(
-        String vaultName, String resourceGroupName, Context context) {
-        Response<BackupResourceConfigResourceInner> inner =
-            this.serviceClient().getWithResponse(vaultName, resourceGroupName, context);
+    public Response<BackupResourceConfigResource> updateWithResponse(String vaultName, String resourceGroupName,
+        BackupResourceConfigResourceInner parameters, Context context) {
+        Response<BackupResourceConfigResourceInner> inner
+            = this.serviceClient().updateWithResponse(vaultName, resourceGroupName, parameters, context);
         if (inner != null) {
-            return new SimpleResponse<>(
-                inner.getRequest(),
-                inner.getStatusCode(),
-                inner.getHeaders(),
+            return new SimpleResponse<>(inner.getRequest(), inner.getStatusCode(), inner.getHeaders(),
                 new BackupResourceConfigResourceImpl(inner.getValue(), this.manager()));
         } else {
             return null;
         }
     }
 
-    public BackupResourceConfigResource update(
-        String vaultName, String resourceGroupName, BackupResourceConfigResourceInner parameters) {
+    public BackupResourceConfigResource update(String vaultName, String resourceGroupName,
+        BackupResourceConfigResourceInner parameters) {
         BackupResourceConfigResourceInner inner = this.serviceClient().update(vaultName, resourceGroupName, parameters);
         if (inner != null) {
             return new BackupResourceConfigResourceImpl(inner, this.manager());
@@ -62,28 +69,13 @@ public final class BackupResourceStorageConfigsNonCrrsImpl implements BackupReso
         }
     }
 
-    public Response<BackupResourceConfigResource> updateWithResponse(
-        String vaultName, String resourceGroupName, BackupResourceConfigResourceInner parameters, Context context) {
-        Response<BackupResourceConfigResourceInner> inner =
-            this.serviceClient().updateWithResponse(vaultName, resourceGroupName, parameters, context);
-        if (inner != null) {
-            return new SimpleResponse<>(
-                inner.getRequest(),
-                inner.getStatusCode(),
-                inner.getHeaders(),
-                new BackupResourceConfigResourceImpl(inner.getValue(), this.manager()));
-        } else {
-            return null;
-        }
+    public Response<Void> patchWithResponse(String vaultName, String resourceGroupName,
+        BackupResourceConfigResourceInner parameters, Context context) {
+        return this.serviceClient().patchWithResponse(vaultName, resourceGroupName, parameters, context);
     }
 
     public void patch(String vaultName, String resourceGroupName, BackupResourceConfigResourceInner parameters) {
         this.serviceClient().patch(vaultName, resourceGroupName, parameters);
-    }
-
-    public Response<Void> patchWithResponse(
-        String vaultName, String resourceGroupName, BackupResourceConfigResourceInner parameters, Context context) {
-        return this.serviceClient().patchWithResponse(vaultName, resourceGroupName, parameters, context);
     }
 
     private BackupResourceStorageConfigsNonCrrsClient serviceClient() {

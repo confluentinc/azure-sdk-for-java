@@ -5,30 +5,47 @@
 package com.azure.resourcemanager.network.models;
 
 import com.azure.core.util.ExpandableStringEnum;
-import com.fasterxml.jackson.annotation.JsonCreator;
 import java.util.Collection;
 
-/** Defines values for VirtualNetworkPrivateLinkServiceNetworkPolicies. */
+/**
+ * Enable or Disable apply network policies on private link service in the subnet.
+ */
 public final class VirtualNetworkPrivateLinkServiceNetworkPolicies
     extends ExpandableStringEnum<VirtualNetworkPrivateLinkServiceNetworkPolicies> {
-    /** Static value Enabled for VirtualNetworkPrivateLinkServiceNetworkPolicies. */
+    /**
+     * Static value Enabled for VirtualNetworkPrivateLinkServiceNetworkPolicies.
+     */
     public static final VirtualNetworkPrivateLinkServiceNetworkPolicies ENABLED = fromString("Enabled");
 
-    /** Static value Disabled for VirtualNetworkPrivateLinkServiceNetworkPolicies. */
+    /**
+     * Static value Disabled for VirtualNetworkPrivateLinkServiceNetworkPolicies.
+     */
     public static final VirtualNetworkPrivateLinkServiceNetworkPolicies DISABLED = fromString("Disabled");
 
     /**
+     * Creates a new instance of VirtualNetworkPrivateLinkServiceNetworkPolicies value.
+     * 
+     * @deprecated Use the {@link #fromString(String)} factory method.
+     */
+    @Deprecated
+    public VirtualNetworkPrivateLinkServiceNetworkPolicies() {
+    }
+
+    /**
      * Creates or finds a VirtualNetworkPrivateLinkServiceNetworkPolicies from its string representation.
-     *
+     * 
      * @param name a name to look for.
      * @return the corresponding VirtualNetworkPrivateLinkServiceNetworkPolicies.
      */
-    @JsonCreator
     public static VirtualNetworkPrivateLinkServiceNetworkPolicies fromString(String name) {
         return fromString(name, VirtualNetworkPrivateLinkServiceNetworkPolicies.class);
     }
 
-    /** @return known VirtualNetworkPrivateLinkServiceNetworkPolicies values. */
+    /**
+     * Gets known VirtualNetworkPrivateLinkServiceNetworkPolicies values.
+     * 
+     * @return known VirtualNetworkPrivateLinkServiceNetworkPolicies values.
+     */
     public static Collection<VirtualNetworkPrivateLinkServiceNetworkPolicies> values() {
         return values(VirtualNetworkPrivateLinkServiceNetworkPolicies.class);
     }

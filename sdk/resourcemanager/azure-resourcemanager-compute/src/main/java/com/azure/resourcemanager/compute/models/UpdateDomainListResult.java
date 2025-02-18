@@ -6,31 +6,39 @@ package com.azure.resourcemanager.compute.models;
 
 import com.azure.core.annotation.Fluent;
 import com.azure.core.util.logging.ClientLogger;
+import com.azure.json.JsonReader;
+import com.azure.json.JsonSerializable;
+import com.azure.json.JsonToken;
+import com.azure.json.JsonWriter;
 import com.azure.resourcemanager.compute.fluent.models.UpdateDomainInner;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import java.io.IOException;
 import java.util.List;
 
-/** The UpdateDomainListResult model. */
+/**
+ * The list operation result.
+ */
 @Fluent
-public final class UpdateDomainListResult {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(UpdateDomainListResult.class);
-
+public final class UpdateDomainListResult implements JsonSerializable<UpdateDomainListResult> {
     /*
-     * The value property.
+     * The list of resources.
      */
-    @JsonProperty(value = "value", required = true)
     private List<UpdateDomainInner> value;
 
     /*
-     * The nextLink property.
+     * The URI to fetch the next page of resources. Use this to get the next page of resources. Do this till nextLink is
+     * null to fetch all the resources.
      */
-    @JsonProperty(value = "nextLink")
     private String nextLink;
 
     /**
-     * Get the value property: The value property.
-     *
+     * Creates an instance of UpdateDomainListResult class.
+     */
+    public UpdateDomainListResult() {
+    }
+
+    /**
+     * Get the value property: The list of resources.
+     * 
      * @return the value value.
      */
     public List<UpdateDomainInner> value() {
@@ -38,8 +46,8 @@ public final class UpdateDomainListResult {
     }
 
     /**
-     * Set the value property: The value property.
-     *
+     * Set the value property: The list of resources.
+     * 
      * @param value the value value to set.
      * @return the UpdateDomainListResult object itself.
      */
@@ -49,8 +57,9 @@ public final class UpdateDomainListResult {
     }
 
     /**
-     * Get the nextLink property: The nextLink property.
-     *
+     * Get the nextLink property: The URI to fetch the next page of resources. Use this to get the next page of
+     * resources. Do this till nextLink is null to fetch all the resources.
+     * 
      * @return the nextLink value.
      */
     public String nextLink() {
@@ -58,8 +67,9 @@ public final class UpdateDomainListResult {
     }
 
     /**
-     * Set the nextLink property: The nextLink property.
-     *
+     * Set the nextLink property: The URI to fetch the next page of resources. Use this to get the next page of
+     * resources. Do this till nextLink is null to fetch all the resources.
+     * 
      * @param nextLink the nextLink value to set.
      * @return the UpdateDomainListResult object itself.
      */
@@ -70,16 +80,58 @@ public final class UpdateDomainListResult {
 
     /**
      * Validates the instance.
-     *
+     * 
      * @throws IllegalArgumentException thrown if the instance is not valid.
      */
     public void validate() {
         if (value() == null) {
-            throw logger
-                .logExceptionAsError(
-                    new IllegalArgumentException("Missing required property value in model UpdateDomainListResult"));
+            throw LOGGER.atError()
+                .log(new IllegalArgumentException("Missing required property value in model UpdateDomainListResult"));
         } else {
             value().forEach(e -> e.validate());
         }
+    }
+
+    private static final ClientLogger LOGGER = new ClientLogger(UpdateDomainListResult.class);
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public JsonWriter toJson(JsonWriter jsonWriter) throws IOException {
+        jsonWriter.writeStartObject();
+        jsonWriter.writeArrayField("value", this.value, (writer, element) -> writer.writeJson(element));
+        jsonWriter.writeStringField("nextLink", this.nextLink);
+        return jsonWriter.writeEndObject();
+    }
+
+    /**
+     * Reads an instance of UpdateDomainListResult from the JsonReader.
+     * 
+     * @param jsonReader The JsonReader being read.
+     * @return An instance of UpdateDomainListResult if the JsonReader was pointing to an instance of it, or null if it
+     * was pointing to JSON null.
+     * @throws IllegalStateException If the deserialized JSON object was missing any required properties.
+     * @throws IOException If an error occurs while reading the UpdateDomainListResult.
+     */
+    public static UpdateDomainListResult fromJson(JsonReader jsonReader) throws IOException {
+        return jsonReader.readObject(reader -> {
+            UpdateDomainListResult deserializedUpdateDomainListResult = new UpdateDomainListResult();
+            while (reader.nextToken() != JsonToken.END_OBJECT) {
+                String fieldName = reader.getFieldName();
+                reader.nextToken();
+
+                if ("value".equals(fieldName)) {
+                    List<UpdateDomainInner> value = reader.readArray(reader1 -> UpdateDomainInner.fromJson(reader1));
+                    deserializedUpdateDomainListResult.value = value;
+                } else if ("nextLink".equals(fieldName)) {
+                    deserializedUpdateDomainListResult.nextLink = reader.getString();
+                } else {
+                    reader.skipChildren();
+                }
+            }
+
+            return deserializedUpdateDomainListResult;
+        });
     }
 }

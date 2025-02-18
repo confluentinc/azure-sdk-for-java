@@ -5,57 +5,58 @@
 package com.azure.resourcemanager.automation.models;
 
 import com.azure.core.annotation.Fluent;
-import com.azure.core.annotation.JsonFlatten;
 import com.azure.core.util.logging.ClientLogger;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.azure.json.JsonReader;
+import com.azure.json.JsonSerializable;
+import com.azure.json.JsonToken;
+import com.azure.json.JsonWriter;
+import com.azure.resourcemanager.automation.fluent.models.DscCompilationJobCreateProperties;
+import java.io.IOException;
 import java.util.Map;
 
-/** The parameters supplied to the create compilation job operation. */
-@JsonFlatten
+/**
+ * The parameters supplied to the create compilation job operation.
+ */
 @Fluent
-public class DscCompilationJobCreateParameters {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(DscCompilationJobCreateParameters.class);
+public final class DscCompilationJobCreateParameters implements JsonSerializable<DscCompilationJobCreateParameters> {
+    /*
+     * Gets or sets the list of compilation job properties.
+     */
+    private DscCompilationJobCreateProperties innerProperties = new DscCompilationJobCreateProperties();
 
     /*
      * Gets or sets name of the resource.
      */
-    @JsonProperty(value = "name")
     private String name;
 
     /*
      * Gets or sets the location of the resource.
      */
-    @JsonProperty(value = "location")
     private String location;
 
     /*
      * Gets or sets the tags attached to the resource.
      */
-    @JsonProperty(value = "tags")
     private Map<String, String> tags;
 
-    /*
-     * Gets or sets the configuration.
+    /**
+     * Creates an instance of DscCompilationJobCreateParameters class.
      */
-    @JsonProperty(value = "properties.configuration", required = true)
-    private DscConfigurationAssociationProperty configuration;
+    public DscCompilationJobCreateParameters() {
+    }
 
-    /*
-     * Gets or sets the parameters of the job.
+    /**
+     * Get the innerProperties property: Gets or sets the list of compilation job properties.
+     * 
+     * @return the innerProperties value.
      */
-    @JsonProperty(value = "properties.parameters")
-    private Map<String, String> parameters;
-
-    /*
-     * If a new build version of NodeConfiguration is required.
-     */
-    @JsonProperty(value = "properties.incrementNodeConfigurationBuild")
-    private Boolean incrementNodeConfigurationBuild;
+    private DscCompilationJobCreateProperties innerProperties() {
+        return this.innerProperties;
+    }
 
     /**
      * Get the name property: Gets or sets name of the resource.
-     *
+     * 
      * @return the name value.
      */
     public String name() {
@@ -64,7 +65,7 @@ public class DscCompilationJobCreateParameters {
 
     /**
      * Set the name property: Gets or sets name of the resource.
-     *
+     * 
      * @param name the name value to set.
      * @return the DscCompilationJobCreateParameters object itself.
      */
@@ -75,7 +76,7 @@ public class DscCompilationJobCreateParameters {
 
     /**
      * Get the location property: Gets or sets the location of the resource.
-     *
+     * 
      * @return the location value.
      */
     public String location() {
@@ -84,7 +85,7 @@ public class DscCompilationJobCreateParameters {
 
     /**
      * Set the location property: Gets or sets the location of the resource.
-     *
+     * 
      * @param location the location value to set.
      * @return the DscCompilationJobCreateParameters object itself.
      */
@@ -95,7 +96,7 @@ public class DscCompilationJobCreateParameters {
 
     /**
      * Get the tags property: Gets or sets the tags attached to the resource.
-     *
+     * 
      * @return the tags value.
      */
     public Map<String, String> tags() {
@@ -104,7 +105,7 @@ public class DscCompilationJobCreateParameters {
 
     /**
      * Set the tags property: Gets or sets the tags attached to the resource.
-     *
+     * 
      * @param tags the tags value to set.
      * @return the DscCompilationJobCreateParameters object itself.
      */
@@ -115,78 +116,137 @@ public class DscCompilationJobCreateParameters {
 
     /**
      * Get the configuration property: Gets or sets the configuration.
-     *
+     * 
      * @return the configuration value.
      */
     public DscConfigurationAssociationProperty configuration() {
-        return this.configuration;
+        return this.innerProperties() == null ? null : this.innerProperties().configuration();
     }
 
     /**
      * Set the configuration property: Gets or sets the configuration.
-     *
+     * 
      * @param configuration the configuration value to set.
      * @return the DscCompilationJobCreateParameters object itself.
      */
     public DscCompilationJobCreateParameters withConfiguration(DscConfigurationAssociationProperty configuration) {
-        this.configuration = configuration;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new DscCompilationJobCreateProperties();
+        }
+        this.innerProperties().withConfiguration(configuration);
         return this;
     }
 
     /**
      * Get the parameters property: Gets or sets the parameters of the job.
-     *
+     * 
      * @return the parameters value.
      */
     public Map<String, String> parameters() {
-        return this.parameters;
+        return this.innerProperties() == null ? null : this.innerProperties().parameters();
     }
 
     /**
      * Set the parameters property: Gets or sets the parameters of the job.
-     *
+     * 
      * @param parameters the parameters value to set.
      * @return the DscCompilationJobCreateParameters object itself.
      */
     public DscCompilationJobCreateParameters withParameters(Map<String, String> parameters) {
-        this.parameters = parameters;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new DscCompilationJobCreateProperties();
+        }
+        this.innerProperties().withParameters(parameters);
         return this;
     }
 
     /**
      * Get the incrementNodeConfigurationBuild property: If a new build version of NodeConfiguration is required.
-     *
+     * 
      * @return the incrementNodeConfigurationBuild value.
      */
     public Boolean incrementNodeConfigurationBuild() {
-        return this.incrementNodeConfigurationBuild;
+        return this.innerProperties() == null ? null : this.innerProperties().incrementNodeConfigurationBuild();
     }
 
     /**
      * Set the incrementNodeConfigurationBuild property: If a new build version of NodeConfiguration is required.
-     *
+     * 
      * @param incrementNodeConfigurationBuild the incrementNodeConfigurationBuild value to set.
      * @return the DscCompilationJobCreateParameters object itself.
      */
-    public DscCompilationJobCreateParameters withIncrementNodeConfigurationBuild(
-        Boolean incrementNodeConfigurationBuild) {
-        this.incrementNodeConfigurationBuild = incrementNodeConfigurationBuild;
+    public DscCompilationJobCreateParameters
+        withIncrementNodeConfigurationBuild(Boolean incrementNodeConfigurationBuild) {
+        if (this.innerProperties() == null) {
+            this.innerProperties = new DscCompilationJobCreateProperties();
+        }
+        this.innerProperties().withIncrementNodeConfigurationBuild(incrementNodeConfigurationBuild);
         return this;
     }
 
     /**
      * Validates the instance.
-     *
+     * 
      * @throws IllegalArgumentException thrown if the instance is not valid.
      */
     public void validate() {
-        if (configuration() == null) {
-            throw logger
-                .logExceptionAsError(
-                    new IllegalArgumentException(
-                        "Missing required property configuration in model DscCompilationJobCreateParameters"));
+        if (innerProperties() == null) {
+            throw LOGGER.atError()
+                .log(new IllegalArgumentException(
+                    "Missing required property innerProperties in model DscCompilationJobCreateParameters"));
         } else {
-            configuration().validate();
+            innerProperties().validate();
         }
+    }
+
+    private static final ClientLogger LOGGER = new ClientLogger(DscCompilationJobCreateParameters.class);
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public JsonWriter toJson(JsonWriter jsonWriter) throws IOException {
+        jsonWriter.writeStartObject();
+        jsonWriter.writeJsonField("properties", this.innerProperties);
+        jsonWriter.writeStringField("name", this.name);
+        jsonWriter.writeStringField("location", this.location);
+        jsonWriter.writeMapField("tags", this.tags, (writer, element) -> writer.writeString(element));
+        return jsonWriter.writeEndObject();
+    }
+
+    /**
+     * Reads an instance of DscCompilationJobCreateParameters from the JsonReader.
+     * 
+     * @param jsonReader The JsonReader being read.
+     * @return An instance of DscCompilationJobCreateParameters if the JsonReader was pointing to an instance of it, or
+     * null if it was pointing to JSON null.
+     * @throws IllegalStateException If the deserialized JSON object was missing any required properties.
+     * @throws IOException If an error occurs while reading the DscCompilationJobCreateParameters.
+     */
+    public static DscCompilationJobCreateParameters fromJson(JsonReader jsonReader) throws IOException {
+        return jsonReader.readObject(reader -> {
+            DscCompilationJobCreateParameters deserializedDscCompilationJobCreateParameters
+                = new DscCompilationJobCreateParameters();
+            while (reader.nextToken() != JsonToken.END_OBJECT) {
+                String fieldName = reader.getFieldName();
+                reader.nextToken();
+
+                if ("properties".equals(fieldName)) {
+                    deserializedDscCompilationJobCreateParameters.innerProperties
+                        = DscCompilationJobCreateProperties.fromJson(reader);
+                } else if ("name".equals(fieldName)) {
+                    deserializedDscCompilationJobCreateParameters.name = reader.getString();
+                } else if ("location".equals(fieldName)) {
+                    deserializedDscCompilationJobCreateParameters.location = reader.getString();
+                } else if ("tags".equals(fieldName)) {
+                    Map<String, String> tags = reader.readMap(reader1 -> reader1.getString());
+                    deserializedDscCompilationJobCreateParameters.tags = tags;
+                } else {
+                    reader.skipChildren();
+                }
+            }
+
+            return deserializedDscCompilationJobCreateParameters;
+        });
     }
 }

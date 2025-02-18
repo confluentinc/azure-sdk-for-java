@@ -6,22 +6,22 @@ package com.azure.ai.textanalytics.models;
 import com.azure.core.annotation.Immutable;
 
 /**
- * The {@link AnalyzeSentimentResult} model.
+ * The {@code AnalyzeSentimentResult} model.
  */
 @Immutable
 public final class AnalyzeSentimentResult extends TextAnalyticsResult {
     private final DocumentSentiment documentSentiment;
 
     /**
-     * Creates a {@link AnalyzeSentimentResult} model that describes analyzed sentiment result.
+     * Creates a {@code AnalyzeSentimentResult} model that describes analyzed sentiment result.
      *
      * @param id Unique, non-empty document identifier.
      * @param textDocumentStatistics The text document statistics.
      * @param error The document error.
      * @param documentSentiment The document sentiment.
      */
-    public AnalyzeSentimentResult(String id, TextDocumentStatistics textDocumentStatistics,
-                                  TextAnalyticsError error, DocumentSentiment documentSentiment) {
+    public AnalyzeSentimentResult(String id, TextDocumentStatistics textDocumentStatistics, TextAnalyticsError error,
+        DocumentSentiment documentSentiment) {
         super(id, textDocumentStatistics, error);
         this.documentSentiment = documentSentiment;
     }

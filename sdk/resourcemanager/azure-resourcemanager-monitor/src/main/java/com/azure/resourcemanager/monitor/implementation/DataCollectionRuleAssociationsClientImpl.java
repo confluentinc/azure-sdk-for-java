@@ -28,36 +28,35 @@ import com.azure.core.http.rest.RestProxy;
 import com.azure.core.management.exception.ManagementException;
 import com.azure.core.util.Context;
 import com.azure.core.util.FluxUtil;
-import com.azure.core.util.logging.ClientLogger;
 import com.azure.resourcemanager.monitor.fluent.DataCollectionRuleAssociationsClient;
 import com.azure.resourcemanager.monitor.fluent.models.DataCollectionRuleAssociationProxyOnlyResourceInner;
 import com.azure.resourcemanager.monitor.models.DataCollectionRuleAssociationProxyOnlyResourceListResult;
 import com.azure.resourcemanager.resources.fluentcore.collection.InnerSupportsDelete;
 import reactor.core.publisher.Mono;
 
-/** An instance of this class provides access to all the operations defined in DataCollectionRuleAssociationsClient. */
+/**
+ * An instance of this class provides access to all the operations defined in DataCollectionRuleAssociationsClient.
+ */
 public final class DataCollectionRuleAssociationsClientImpl
     implements InnerSupportsDelete<Void>, DataCollectionRuleAssociationsClient {
-    private final ClientLogger logger = new ClientLogger(DataCollectionRuleAssociationsClientImpl.class);
-
-    /** The proxy service used to perform REST calls. */
+    /**
+     * The proxy service used to perform REST calls.
+     */
     private final DataCollectionRuleAssociationsService service;
 
-    /** The service client containing this operation class. */
+    /**
+     * The service client containing this operation class.
+     */
     private final MonitorClientImpl client;
 
     /**
      * Initializes an instance of DataCollectionRuleAssociationsClientImpl.
-     *
+     * 
      * @param client the instance of the service client containing this operation class.
      */
     DataCollectionRuleAssociationsClientImpl(MonitorClientImpl client) {
-        this.service =
-            RestProxy
-                .create(
-                    DataCollectionRuleAssociationsService.class,
-                    client.getHttpPipeline(),
-                    client.getSerializerAdapter());
+        this.service = RestProxy.create(DataCollectionRuleAssociationsService.class, client.getHttpPipeline(),
+            client.getSerializerAdapter());
         this.client = client;
     }
 
@@ -67,208 +66,186 @@ public final class DataCollectionRuleAssociationsClientImpl
      */
     @Host("{$host}")
     @ServiceInterface(name = "MonitorClientDataCol")
-    private interface DataCollectionRuleAssociationsService {
-        @Headers({"Content-Type: application/json"})
+    public interface DataCollectionRuleAssociationsService {
+        @Headers({ "Content-Type: application/json" })
         @Get("/{resourceUri}/providers/Microsoft.Insights/dataCollectionRuleAssociations")
-        @ExpectedResponses({200})
+        @ExpectedResponses({ 200 })
         @UnexpectedResponseExceptionType(ManagementException.class)
         Mono<Response<DataCollectionRuleAssociationProxyOnlyResourceListResult>> listByResource(
-            @HostParam("$host") String endpoint,
-            @PathParam(value = "resourceUri", encoded = true) String resourceUri,
-            @QueryParam("api-version") String apiVersion,
-            @HeaderParam("Accept") String accept,
-            Context context);
+            @HostParam("$host") String endpoint, @PathParam(value = "resourceUri", encoded = true) String resourceUri,
+            @QueryParam("api-version") String apiVersion, @HeaderParam("Accept") String accept, Context context);
 
-        @Headers({"Content-Type: application/json"})
-        @Get(
-            "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Insights"
-                + "/dataCollectionRules/{dataCollectionRuleName}/associations")
-        @ExpectedResponses({200})
+        @Headers({ "Content-Type: application/json" })
+        @Get("/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Insights/dataCollectionRules/{dataCollectionRuleName}/associations")
+        @ExpectedResponses({ 200 })
         @UnexpectedResponseExceptionType(ManagementException.class)
         Mono<Response<DataCollectionRuleAssociationProxyOnlyResourceListResult>> listByRule(
-            @HostParam("$host") String endpoint,
-            @PathParam("subscriptionId") String subscriptionId,
+            @HostParam("$host") String endpoint, @PathParam("subscriptionId") String subscriptionId,
             @PathParam("resourceGroupName") String resourceGroupName,
             @PathParam("dataCollectionRuleName") String dataCollectionRuleName,
-            @QueryParam("api-version") String apiVersion,
-            @HeaderParam("Accept") String accept,
-            Context context);
+            @QueryParam("api-version") String apiVersion, @HeaderParam("Accept") String accept, Context context);
 
-        @Headers({"Content-Type: application/json"})
+        @Headers({ "Content-Type: application/json" })
+        @Get("/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Insights/dataCollectionEndpoints/{dataCollectionEndpointName}/associations")
+        @ExpectedResponses({ 200 })
+        @UnexpectedResponseExceptionType(ManagementException.class)
+        Mono<Response<DataCollectionRuleAssociationProxyOnlyResourceListResult>> listByDataCollectionEndpoint(
+            @HostParam("$host") String endpoint, @PathParam("subscriptionId") String subscriptionId,
+            @PathParam("resourceGroupName") String resourceGroupName,
+            @PathParam("dataCollectionEndpointName") String dataCollectionEndpointName,
+            @QueryParam("api-version") String apiVersion, @HeaderParam("Accept") String accept, Context context);
+
+        @Headers({ "Content-Type: application/json" })
         @Get("/{resourceUri}/providers/Microsoft.Insights/dataCollectionRuleAssociations/{associationName}")
-        @ExpectedResponses({200})
+        @ExpectedResponses({ 200 })
         @UnexpectedResponseExceptionType(ManagementException.class)
-        Mono<Response<DataCollectionRuleAssociationProxyOnlyResourceInner>> get(
-            @HostParam("$host") String endpoint,
+        Mono<Response<DataCollectionRuleAssociationProxyOnlyResourceInner>> get(@HostParam("$host") String endpoint,
             @PathParam(value = "resourceUri", encoded = true) String resourceUri,
-            @PathParam("associationName") String associationName,
-            @QueryParam("api-version") String apiVersion,
-            @HeaderParam("Accept") String accept,
-            Context context);
+            @PathParam("associationName") String associationName, @QueryParam("api-version") String apiVersion,
+            @HeaderParam("Accept") String accept, Context context);
 
-        @Headers({"Content-Type: application/json"})
+        @Headers({ "Content-Type: application/json" })
         @Put("/{resourceUri}/providers/Microsoft.Insights/dataCollectionRuleAssociations/{associationName}")
-        @ExpectedResponses({200, 201})
+        @ExpectedResponses({ 200, 201 })
         @UnexpectedResponseExceptionType(ManagementException.class)
-        Mono<Response<DataCollectionRuleAssociationProxyOnlyResourceInner>> create(
-            @HostParam("$host") String endpoint,
+        Mono<Response<DataCollectionRuleAssociationProxyOnlyResourceInner>> create(@HostParam("$host") String endpoint,
             @PathParam(value = "resourceUri", encoded = true) String resourceUri,
-            @PathParam("associationName") String associationName,
-            @QueryParam("api-version") String apiVersion,
+            @PathParam("associationName") String associationName, @QueryParam("api-version") String apiVersion,
             @BodyParam("application/json") DataCollectionRuleAssociationProxyOnlyResourceInner body,
-            @HeaderParam("Accept") String accept,
-            Context context);
+            @HeaderParam("Accept") String accept, Context context);
 
-        @Headers({"Content-Type: application/json"})
+        @Headers({ "Content-Type: application/json" })
         @Delete("/{resourceUri}/providers/Microsoft.Insights/dataCollectionRuleAssociations/{associationName}")
-        @ExpectedResponses({200, 204})
+        @ExpectedResponses({ 200, 204 })
         @UnexpectedResponseExceptionType(ManagementException.class)
-        Mono<Response<Void>> delete(
-            @HostParam("$host") String endpoint,
+        Mono<Response<Void>> delete(@HostParam("$host") String endpoint,
             @PathParam(value = "resourceUri", encoded = true) String resourceUri,
-            @PathParam("associationName") String associationName,
-            @QueryParam("api-version") String apiVersion,
-            @HeaderParam("Accept") String accept,
-            Context context);
+            @PathParam("associationName") String associationName, @QueryParam("api-version") String apiVersion,
+            @HeaderParam("Accept") String accept, Context context);
 
-        @Headers({"Content-Type: application/json"})
+        @Headers({ "Content-Type: application/json" })
         @Get("{nextLink}")
-        @ExpectedResponses({200})
+        @ExpectedResponses({ 200 })
         @UnexpectedResponseExceptionType(ManagementException.class)
         Mono<Response<DataCollectionRuleAssociationProxyOnlyResourceListResult>> listByResourceNext(
-            @PathParam(value = "nextLink", encoded = true) String nextLink,
-            @HostParam("$host") String endpoint,
-            @HeaderParam("Accept") String accept,
-            Context context);
+            @PathParam(value = "nextLink", encoded = true) String nextLink, @HostParam("$host") String endpoint,
+            @HeaderParam("Accept") String accept, Context context);
 
-        @Headers({"Content-Type: application/json"})
+        @Headers({ "Content-Type: application/json" })
         @Get("{nextLink}")
-        @ExpectedResponses({200})
+        @ExpectedResponses({ 200 })
         @UnexpectedResponseExceptionType(ManagementException.class)
         Mono<Response<DataCollectionRuleAssociationProxyOnlyResourceListResult>> listByRuleNext(
-            @PathParam(value = "nextLink", encoded = true) String nextLink,
-            @HostParam("$host") String endpoint,
-            @HeaderParam("Accept") String accept,
-            Context context);
+            @PathParam(value = "nextLink", encoded = true) String nextLink, @HostParam("$host") String endpoint,
+            @HeaderParam("Accept") String accept, Context context);
+
+        @Headers({ "Content-Type: application/json" })
+        @Get("{nextLink}")
+        @ExpectedResponses({ 200 })
+        @UnexpectedResponseExceptionType(ManagementException.class)
+        Mono<Response<DataCollectionRuleAssociationProxyOnlyResourceListResult>> listByDataCollectionEndpointNext(
+            @PathParam(value = "nextLink", encoded = true) String nextLink, @HostParam("$host") String endpoint,
+            @HeaderParam("Accept") String accept, Context context);
     }
 
     /**
      * Lists associations for the specified resource.
-     *
+     * 
      * @param resourceUri The identifier of the resource.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return a pageable list of resources.
+     * @return a pageable list of resources along with {@link PagedResponse} on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    private Mono<PagedResponse<DataCollectionRuleAssociationProxyOnlyResourceInner>> listByResourceSinglePageAsync(
-        String resourceUri) {
+    private Mono<PagedResponse<DataCollectionRuleAssociationProxyOnlyResourceInner>>
+        listByResourceSinglePageAsync(String resourceUri) {
         if (this.client.getEndpoint() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getEndpoint() is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
         }
         if (resourceUri == null) {
             return Mono.error(new IllegalArgumentException("Parameter resourceUri is required and cannot be null."));
         }
-        final String apiVersion = "2021-04-01";
+        final String apiVersion = "2021-09-01-preview";
         final String accept = "application/json";
         return FluxUtil
             .withContext(
                 context -> service.listByResource(this.client.getEndpoint(), resourceUri, apiVersion, accept, context))
             .<PagedResponse<DataCollectionRuleAssociationProxyOnlyResourceInner>>map(
-                res ->
-                    new PagedResponseBase<>(
-                        res.getRequest(),
-                        res.getStatusCode(),
-                        res.getHeaders(),
-                        res.getValue().value(),
-                        res.getValue().nextLink(),
-                        null))
+                res -> new PagedResponseBase<>(res.getRequest(), res.getStatusCode(), res.getHeaders(),
+                    res.getValue().value(), res.getValue().nextLink(), null))
             .contextWrite(context -> context.putAll(FluxUtil.toReactorContext(this.client.getContext()).readOnly()));
     }
 
     /**
      * Lists associations for the specified resource.
-     *
+     * 
      * @param resourceUri The identifier of the resource.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return a pageable list of resources.
+     * @return a pageable list of resources along with {@link PagedResponse} on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    private Mono<PagedResponse<DataCollectionRuleAssociationProxyOnlyResourceInner>> listByResourceSinglePageAsync(
-        String resourceUri, Context context) {
+    private Mono<PagedResponse<DataCollectionRuleAssociationProxyOnlyResourceInner>>
+        listByResourceSinglePageAsync(String resourceUri, Context context) {
         if (this.client.getEndpoint() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getEndpoint() is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
         }
         if (resourceUri == null) {
             return Mono.error(new IllegalArgumentException("Parameter resourceUri is required and cannot be null."));
         }
-        final String apiVersion = "2021-04-01";
+        final String apiVersion = "2021-09-01-preview";
         final String accept = "application/json";
         context = this.client.mergeContext(context);
-        return service
-            .listByResource(this.client.getEndpoint(), resourceUri, apiVersion, accept, context)
-            .map(
-                res ->
-                    new PagedResponseBase<>(
-                        res.getRequest(),
-                        res.getStatusCode(),
-                        res.getHeaders(),
-                        res.getValue().value(),
-                        res.getValue().nextLink(),
-                        null));
+        return service.listByResource(this.client.getEndpoint(), resourceUri, apiVersion, accept, context)
+            .map(res -> new PagedResponseBase<>(res.getRequest(), res.getStatusCode(), res.getHeaders(),
+                res.getValue().value(), res.getValue().nextLink(), null));
     }
 
     /**
      * Lists associations for the specified resource.
-     *
+     * 
      * @param resourceUri The identifier of the resource.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return a pageable list of resources.
+     * @return a pageable list of resources as paginated response with {@link PagedFlux}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
     public PagedFlux<DataCollectionRuleAssociationProxyOnlyResourceInner> listByResourceAsync(String resourceUri) {
-        return new PagedFlux<>(
-            () -> listByResourceSinglePageAsync(resourceUri), nextLink -> listByResourceNextSinglePageAsync(nextLink));
+        return new PagedFlux<>(() -> listByResourceSinglePageAsync(resourceUri),
+            nextLink -> listByResourceNextSinglePageAsync(nextLink));
     }
 
     /**
      * Lists associations for the specified resource.
-     *
+     * 
      * @param resourceUri The identifier of the resource.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return a pageable list of resources.
+     * @return a pageable list of resources as paginated response with {@link PagedFlux}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
-    private PagedFlux<DataCollectionRuleAssociationProxyOnlyResourceInner> listByResourceAsync(
-        String resourceUri, Context context) {
-        return new PagedFlux<>(
-            () -> listByResourceSinglePageAsync(resourceUri, context),
+    private PagedFlux<DataCollectionRuleAssociationProxyOnlyResourceInner> listByResourceAsync(String resourceUri,
+        Context context) {
+        return new PagedFlux<>(() -> listByResourceSinglePageAsync(resourceUri, context),
             nextLink -> listByResourceNextSinglePageAsync(nextLink, context));
     }
 
     /**
      * Lists associations for the specified resource.
-     *
+     * 
      * @param resourceUri The identifier of the resource.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return a pageable list of resources.
+     * @return a pageable list of resources as paginated response with {@link PagedIterable}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
     public PagedIterable<DataCollectionRuleAssociationProxyOnlyResourceInner> listByResource(String resourceUri) {
@@ -277,226 +254,338 @@ public final class DataCollectionRuleAssociationsClientImpl
 
     /**
      * Lists associations for the specified resource.
-     *
+     * 
      * @param resourceUri The identifier of the resource.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return a pageable list of resources.
+     * @return a pageable list of resources as paginated response with {@link PagedIterable}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
-    public PagedIterable<DataCollectionRuleAssociationProxyOnlyResourceInner> listByResource(
-        String resourceUri, Context context) {
+    public PagedIterable<DataCollectionRuleAssociationProxyOnlyResourceInner> listByResource(String resourceUri,
+        Context context) {
         return new PagedIterable<>(listByResourceAsync(resourceUri, context));
     }
 
     /**
      * Lists associations for the specified data collection rule.
-     *
+     * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
      * @param dataCollectionRuleName The name of the data collection rule. The name is case insensitive.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return a pageable list of resources.
+     * @return a pageable list of resources along with {@link PagedResponse} on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    private Mono<PagedResponse<DataCollectionRuleAssociationProxyOnlyResourceInner>> listByRuleSinglePageAsync(
-        String resourceGroupName, String dataCollectionRuleName) {
+    private Mono<PagedResponse<DataCollectionRuleAssociationProxyOnlyResourceInner>>
+        listByRuleSinglePageAsync(String resourceGroupName, String dataCollectionRuleName) {
         if (this.client.getEndpoint() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getEndpoint() is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
         }
         if (this.client.getSubscriptionId() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getSubscriptionId() is required and cannot be null."));
+            return Mono.error(new IllegalArgumentException(
+                "Parameter this.client.getSubscriptionId() is required and cannot be null."));
         }
         if (resourceGroupName == null) {
             return Mono
                 .error(new IllegalArgumentException("Parameter resourceGroupName is required and cannot be null."));
         }
         if (dataCollectionRuleName == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException("Parameter dataCollectionRuleName is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter dataCollectionRuleName is required and cannot be null."));
         }
-        final String apiVersion = "2021-04-01";
+        final String apiVersion = "2021-09-01-preview";
         final String accept = "application/json";
         return FluxUtil
-            .withContext(
-                context ->
-                    service
-                        .listByRule(
-                            this.client.getEndpoint(),
-                            this.client.getSubscriptionId(),
-                            resourceGroupName,
-                            dataCollectionRuleName,
-                            apiVersion,
-                            accept,
-                            context))
+            .withContext(context -> service.listByRule(this.client.getEndpoint(), this.client.getSubscriptionId(),
+                resourceGroupName, dataCollectionRuleName, apiVersion, accept, context))
             .<PagedResponse<DataCollectionRuleAssociationProxyOnlyResourceInner>>map(
-                res ->
-                    new PagedResponseBase<>(
-                        res.getRequest(),
-                        res.getStatusCode(),
-                        res.getHeaders(),
-                        res.getValue().value(),
-                        res.getValue().nextLink(),
-                        null))
+                res -> new PagedResponseBase<>(res.getRequest(), res.getStatusCode(), res.getHeaders(),
+                    res.getValue().value(), res.getValue().nextLink(), null))
             .contextWrite(context -> context.putAll(FluxUtil.toReactorContext(this.client.getContext()).readOnly()));
     }
 
     /**
      * Lists associations for the specified data collection rule.
-     *
+     * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
      * @param dataCollectionRuleName The name of the data collection rule. The name is case insensitive.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return a pageable list of resources.
+     * @return a pageable list of resources along with {@link PagedResponse} on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    private Mono<PagedResponse<DataCollectionRuleAssociationProxyOnlyResourceInner>> listByRuleSinglePageAsync(
-        String resourceGroupName, String dataCollectionRuleName, Context context) {
+    private Mono<PagedResponse<DataCollectionRuleAssociationProxyOnlyResourceInner>>
+        listByRuleSinglePageAsync(String resourceGroupName, String dataCollectionRuleName, Context context) {
         if (this.client.getEndpoint() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getEndpoint() is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
         }
         if (this.client.getSubscriptionId() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getSubscriptionId() is required and cannot be null."));
+            return Mono.error(new IllegalArgumentException(
+                "Parameter this.client.getSubscriptionId() is required and cannot be null."));
         }
         if (resourceGroupName == null) {
             return Mono
                 .error(new IllegalArgumentException("Parameter resourceGroupName is required and cannot be null."));
         }
         if (dataCollectionRuleName == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException("Parameter dataCollectionRuleName is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter dataCollectionRuleName is required and cannot be null."));
         }
-        final String apiVersion = "2021-04-01";
+        final String apiVersion = "2021-09-01-preview";
         final String accept = "application/json";
         context = this.client.mergeContext(context);
         return service
-            .listByRule(
-                this.client.getEndpoint(),
-                this.client.getSubscriptionId(),
-                resourceGroupName,
-                dataCollectionRuleName,
-                apiVersion,
-                accept,
-                context)
-            .map(
-                res ->
-                    new PagedResponseBase<>(
-                        res.getRequest(),
-                        res.getStatusCode(),
-                        res.getHeaders(),
-                        res.getValue().value(),
-                        res.getValue().nextLink(),
-                        null));
+            .listByRule(this.client.getEndpoint(), this.client.getSubscriptionId(), resourceGroupName,
+                dataCollectionRuleName, apiVersion, accept, context)
+            .map(res -> new PagedResponseBase<>(res.getRequest(), res.getStatusCode(), res.getHeaders(),
+                res.getValue().value(), res.getValue().nextLink(), null));
     }
 
     /**
      * Lists associations for the specified data collection rule.
-     *
+     * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
      * @param dataCollectionRuleName The name of the data collection rule. The name is case insensitive.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return a pageable list of resources.
+     * @return a pageable list of resources as paginated response with {@link PagedFlux}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
-    public PagedFlux<DataCollectionRuleAssociationProxyOnlyResourceInner> listByRuleAsync(
-        String resourceGroupName, String dataCollectionRuleName) {
-        return new PagedFlux<>(
-            () -> listByRuleSinglePageAsync(resourceGroupName, dataCollectionRuleName),
+    public PagedFlux<DataCollectionRuleAssociationProxyOnlyResourceInner> listByRuleAsync(String resourceGroupName,
+        String dataCollectionRuleName) {
+        return new PagedFlux<>(() -> listByRuleSinglePageAsync(resourceGroupName, dataCollectionRuleName),
             nextLink -> listByRuleNextSinglePageAsync(nextLink));
     }
 
     /**
      * Lists associations for the specified data collection rule.
-     *
+     * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
      * @param dataCollectionRuleName The name of the data collection rule. The name is case insensitive.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return a pageable list of resources.
+     * @return a pageable list of resources as paginated response with {@link PagedFlux}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
-    private PagedFlux<DataCollectionRuleAssociationProxyOnlyResourceInner> listByRuleAsync(
-        String resourceGroupName, String dataCollectionRuleName, Context context) {
-        return new PagedFlux<>(
-            () -> listByRuleSinglePageAsync(resourceGroupName, dataCollectionRuleName, context),
+    private PagedFlux<DataCollectionRuleAssociationProxyOnlyResourceInner> listByRuleAsync(String resourceGroupName,
+        String dataCollectionRuleName, Context context) {
+        return new PagedFlux<>(() -> listByRuleSinglePageAsync(resourceGroupName, dataCollectionRuleName, context),
             nextLink -> listByRuleNextSinglePageAsync(nextLink, context));
     }
 
     /**
      * Lists associations for the specified data collection rule.
-     *
+     * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
      * @param dataCollectionRuleName The name of the data collection rule. The name is case insensitive.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return a pageable list of resources.
+     * @return a pageable list of resources as paginated response with {@link PagedIterable}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
-    public PagedIterable<DataCollectionRuleAssociationProxyOnlyResourceInner> listByRule(
-        String resourceGroupName, String dataCollectionRuleName) {
+    public PagedIterable<DataCollectionRuleAssociationProxyOnlyResourceInner> listByRule(String resourceGroupName,
+        String dataCollectionRuleName) {
         return new PagedIterable<>(listByRuleAsync(resourceGroupName, dataCollectionRuleName));
     }
 
     /**
      * Lists associations for the specified data collection rule.
-     *
+     * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
      * @param dataCollectionRuleName The name of the data collection rule. The name is case insensitive.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return a pageable list of resources.
+     * @return a pageable list of resources as paginated response with {@link PagedIterable}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
-    public PagedIterable<DataCollectionRuleAssociationProxyOnlyResourceInner> listByRule(
-        String resourceGroupName, String dataCollectionRuleName, Context context) {
+    public PagedIterable<DataCollectionRuleAssociationProxyOnlyResourceInner> listByRule(String resourceGroupName,
+        String dataCollectionRuleName, Context context) {
         return new PagedIterable<>(listByRuleAsync(resourceGroupName, dataCollectionRuleName, context));
     }
 
     /**
+     * Lists associations for the specified data collection endpoint.
+     * 
+     * @param resourceGroupName The name of the resource group. The name is case insensitive.
+     * @param dataCollectionEndpointName The name of the data collection endpoint. The name is case insensitive.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return a pageable list of resources along with {@link PagedResponse} on successful completion of {@link Mono}.
+     */
+    @ServiceMethod(returns = ReturnType.SINGLE)
+    private Mono<PagedResponse<DataCollectionRuleAssociationProxyOnlyResourceInner>>
+        listByDataCollectionEndpointSinglePageAsync(String resourceGroupName, String dataCollectionEndpointName) {
+        if (this.client.getEndpoint() == null) {
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
+        }
+        if (this.client.getSubscriptionId() == null) {
+            return Mono.error(new IllegalArgumentException(
+                "Parameter this.client.getSubscriptionId() is required and cannot be null."));
+        }
+        if (resourceGroupName == null) {
+            return Mono
+                .error(new IllegalArgumentException("Parameter resourceGroupName is required and cannot be null."));
+        }
+        if (dataCollectionEndpointName == null) {
+            return Mono.error(
+                new IllegalArgumentException("Parameter dataCollectionEndpointName is required and cannot be null."));
+        }
+        final String apiVersion = "2021-09-01-preview";
+        final String accept = "application/json";
+        return FluxUtil
+            .withContext(context -> service.listByDataCollectionEndpoint(this.client.getEndpoint(),
+                this.client.getSubscriptionId(), resourceGroupName, dataCollectionEndpointName, apiVersion, accept,
+                context))
+            .<PagedResponse<DataCollectionRuleAssociationProxyOnlyResourceInner>>map(
+                res -> new PagedResponseBase<>(res.getRequest(), res.getStatusCode(), res.getHeaders(),
+                    res.getValue().value(), res.getValue().nextLink(), null))
+            .contextWrite(context -> context.putAll(FluxUtil.toReactorContext(this.client.getContext()).readOnly()));
+    }
+
+    /**
+     * Lists associations for the specified data collection endpoint.
+     * 
+     * @param resourceGroupName The name of the resource group. The name is case insensitive.
+     * @param dataCollectionEndpointName The name of the data collection endpoint. The name is case insensitive.
+     * @param context The context to associate with this operation.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return a pageable list of resources along with {@link PagedResponse} on successful completion of {@link Mono}.
+     */
+    @ServiceMethod(returns = ReturnType.SINGLE)
+    private Mono<PagedResponse<DataCollectionRuleAssociationProxyOnlyResourceInner>>
+        listByDataCollectionEndpointSinglePageAsync(String resourceGroupName, String dataCollectionEndpointName,
+            Context context) {
+        if (this.client.getEndpoint() == null) {
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
+        }
+        if (this.client.getSubscriptionId() == null) {
+            return Mono.error(new IllegalArgumentException(
+                "Parameter this.client.getSubscriptionId() is required and cannot be null."));
+        }
+        if (resourceGroupName == null) {
+            return Mono
+                .error(new IllegalArgumentException("Parameter resourceGroupName is required and cannot be null."));
+        }
+        if (dataCollectionEndpointName == null) {
+            return Mono.error(
+                new IllegalArgumentException("Parameter dataCollectionEndpointName is required and cannot be null."));
+        }
+        final String apiVersion = "2021-09-01-preview";
+        final String accept = "application/json";
+        context = this.client.mergeContext(context);
+        return service
+            .listByDataCollectionEndpoint(this.client.getEndpoint(), this.client.getSubscriptionId(), resourceGroupName,
+                dataCollectionEndpointName, apiVersion, accept, context)
+            .map(res -> new PagedResponseBase<>(res.getRequest(), res.getStatusCode(), res.getHeaders(),
+                res.getValue().value(), res.getValue().nextLink(), null));
+    }
+
+    /**
+     * Lists associations for the specified data collection endpoint.
+     * 
+     * @param resourceGroupName The name of the resource group. The name is case insensitive.
+     * @param dataCollectionEndpointName The name of the data collection endpoint. The name is case insensitive.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return a pageable list of resources as paginated response with {@link PagedFlux}.
+     */
+    @ServiceMethod(returns = ReturnType.COLLECTION)
+    public PagedFlux<DataCollectionRuleAssociationProxyOnlyResourceInner>
+        listByDataCollectionEndpointAsync(String resourceGroupName, String dataCollectionEndpointName) {
+        return new PagedFlux<>(
+            () -> listByDataCollectionEndpointSinglePageAsync(resourceGroupName, dataCollectionEndpointName),
+            nextLink -> listByDataCollectionEndpointNextSinglePageAsync(nextLink));
+    }
+
+    /**
+     * Lists associations for the specified data collection endpoint.
+     * 
+     * @param resourceGroupName The name of the resource group. The name is case insensitive.
+     * @param dataCollectionEndpointName The name of the data collection endpoint. The name is case insensitive.
+     * @param context The context to associate with this operation.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return a pageable list of resources as paginated response with {@link PagedFlux}.
+     */
+    @ServiceMethod(returns = ReturnType.COLLECTION)
+    private PagedFlux<DataCollectionRuleAssociationProxyOnlyResourceInner> listByDataCollectionEndpointAsync(
+        String resourceGroupName, String dataCollectionEndpointName, Context context) {
+        return new PagedFlux<>(
+            () -> listByDataCollectionEndpointSinglePageAsync(resourceGroupName, dataCollectionEndpointName, context),
+            nextLink -> listByDataCollectionEndpointNextSinglePageAsync(nextLink, context));
+    }
+
+    /**
+     * Lists associations for the specified data collection endpoint.
+     * 
+     * @param resourceGroupName The name of the resource group. The name is case insensitive.
+     * @param dataCollectionEndpointName The name of the data collection endpoint. The name is case insensitive.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return a pageable list of resources as paginated response with {@link PagedIterable}.
+     */
+    @ServiceMethod(returns = ReturnType.COLLECTION)
+    public PagedIterable<DataCollectionRuleAssociationProxyOnlyResourceInner>
+        listByDataCollectionEndpoint(String resourceGroupName, String dataCollectionEndpointName) {
+        return new PagedIterable<>(listByDataCollectionEndpointAsync(resourceGroupName, dataCollectionEndpointName));
+    }
+
+    /**
+     * Lists associations for the specified data collection endpoint.
+     * 
+     * @param resourceGroupName The name of the resource group. The name is case insensitive.
+     * @param dataCollectionEndpointName The name of the data collection endpoint. The name is case insensitive.
+     * @param context The context to associate with this operation.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return a pageable list of resources as paginated response with {@link PagedIterable}.
+     */
+    @ServiceMethod(returns = ReturnType.COLLECTION)
+    public PagedIterable<DataCollectionRuleAssociationProxyOnlyResourceInner>
+        listByDataCollectionEndpoint(String resourceGroupName, String dataCollectionEndpointName, Context context) {
+        return new PagedIterable<>(
+            listByDataCollectionEndpointAsync(resourceGroupName, dataCollectionEndpointName, context));
+    }
+
+    /**
      * Returns the specified association.
-     *
+     * 
      * @param resourceUri The identifier of the resource.
      * @param associationName The name of the association. The name is case insensitive.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return definition of generic ARM proxy resource.
+     * @return definition of generic ARM proxy resource along with {@link Response} on successful completion of
+     * {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    public Mono<Response<DataCollectionRuleAssociationProxyOnlyResourceInner>> getWithResponseAsync(
-        String resourceUri, String associationName) {
+    public Mono<Response<DataCollectionRuleAssociationProxyOnlyResourceInner>> getWithResponseAsync(String resourceUri,
+        String associationName) {
         if (this.client.getEndpoint() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getEndpoint() is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
         }
         if (resourceUri == null) {
             return Mono.error(new IllegalArgumentException("Parameter resourceUri is required and cannot be null."));
@@ -505,34 +594,32 @@ public final class DataCollectionRuleAssociationsClientImpl
             return Mono
                 .error(new IllegalArgumentException("Parameter associationName is required and cannot be null."));
         }
-        final String apiVersion = "2021-04-01";
+        final String apiVersion = "2021-09-01-preview";
         final String accept = "application/json";
         return FluxUtil
-            .withContext(
-                context ->
-                    service.get(this.client.getEndpoint(), resourceUri, associationName, apiVersion, accept, context))
+            .withContext(context -> service.get(this.client.getEndpoint(), resourceUri, associationName, apiVersion,
+                accept, context))
             .contextWrite(context -> context.putAll(FluxUtil.toReactorContext(this.client.getContext()).readOnly()));
     }
 
     /**
      * Returns the specified association.
-     *
+     * 
      * @param resourceUri The identifier of the resource.
      * @param associationName The name of the association. The name is case insensitive.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return definition of generic ARM proxy resource.
+     * @return definition of generic ARM proxy resource along with {@link Response} on successful completion of
+     * {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    private Mono<Response<DataCollectionRuleAssociationProxyOnlyResourceInner>> getWithResponseAsync(
-        String resourceUri, String associationName, Context context) {
+    private Mono<Response<DataCollectionRuleAssociationProxyOnlyResourceInner>> getWithResponseAsync(String resourceUri,
+        String associationName, Context context) {
         if (this.client.getEndpoint() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getEndpoint() is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
         }
         if (resourceUri == null) {
             return Mono.error(new IllegalArgumentException("Parameter resourceUri is required and cannot be null."));
@@ -541,7 +628,7 @@ public final class DataCollectionRuleAssociationsClientImpl
             return Mono
                 .error(new IllegalArgumentException("Parameter associationName is required and cannot be null."));
         }
-        final String apiVersion = "2021-04-01";
+        final String apiVersion = "2021-09-01-preview";
         final String accept = "application/json";
         context = this.client.mergeContext(context);
         return service.get(this.client.getEndpoint(), resourceUri, associationName, apiVersion, accept, context);
@@ -549,31 +636,40 @@ public final class DataCollectionRuleAssociationsClientImpl
 
     /**
      * Returns the specified association.
-     *
+     * 
      * @param resourceUri The identifier of the resource.
      * @param associationName The name of the association. The name is case insensitive.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return definition of generic ARM proxy resource.
+     * @return definition of generic ARM proxy resource on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    public Mono<DataCollectionRuleAssociationProxyOnlyResourceInner> getAsync(
-        String resourceUri, String associationName) {
-        return getWithResponseAsync(resourceUri, associationName)
-            .flatMap(
-                (Response<DataCollectionRuleAssociationProxyOnlyResourceInner> res) -> {
-                    if (res.getValue() != null) {
-                        return Mono.just(res.getValue());
-                    } else {
-                        return Mono.empty();
-                    }
-                });
+    public Mono<DataCollectionRuleAssociationProxyOnlyResourceInner> getAsync(String resourceUri,
+        String associationName) {
+        return getWithResponseAsync(resourceUri, associationName).flatMap(res -> Mono.justOrEmpty(res.getValue()));
     }
 
     /**
      * Returns the specified association.
-     *
+     * 
+     * @param resourceUri The identifier of the resource.
+     * @param associationName The name of the association. The name is case insensitive.
+     * @param context The context to associate with this operation.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return definition of generic ARM proxy resource along with {@link Response}.
+     */
+    @ServiceMethod(returns = ReturnType.SINGLE)
+    public Response<DataCollectionRuleAssociationProxyOnlyResourceInner> getWithResponse(String resourceUri,
+        String associationName, Context context) {
+        return getWithResponseAsync(resourceUri, associationName, context).block();
+    }
+
+    /**
+     * Returns the specified association.
+     * 
      * @param resourceUri The identifier of the resource.
      * @param associationName The name of the association. The name is case insensitive.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
@@ -583,45 +679,27 @@ public final class DataCollectionRuleAssociationsClientImpl
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
     public DataCollectionRuleAssociationProxyOnlyResourceInner get(String resourceUri, String associationName) {
-        return getAsync(resourceUri, associationName).block();
-    }
-
-    /**
-     * Returns the specified association.
-     *
-     * @param resourceUri The identifier of the resource.
-     * @param associationName The name of the association. The name is case insensitive.
-     * @param context The context to associate with this operation.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return definition of generic ARM proxy resource.
-     */
-    @ServiceMethod(returns = ReturnType.SINGLE)
-    public Response<DataCollectionRuleAssociationProxyOnlyResourceInner> getWithResponse(
-        String resourceUri, String associationName, Context context) {
-        return getWithResponseAsync(resourceUri, associationName, context).block();
+        return getWithResponse(resourceUri, associationName, Context.NONE).getValue();
     }
 
     /**
      * Creates or updates an association.
-     *
+     * 
      * @param resourceUri The identifier of the resource.
      * @param associationName The name of the association. The name is case insensitive.
      * @param body The payload.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return definition of generic ARM proxy resource.
+     * @return definition of generic ARM proxy resource along with {@link Response} on successful completion of
+     * {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
     public Mono<Response<DataCollectionRuleAssociationProxyOnlyResourceInner>> createWithResponseAsync(
         String resourceUri, String associationName, DataCollectionRuleAssociationProxyOnlyResourceInner body) {
         if (this.client.getEndpoint() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getEndpoint() is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
         }
         if (resourceUri == null) {
             return Mono.error(new IllegalArgumentException("Parameter resourceUri is required and cannot be null."));
@@ -633,20 +711,17 @@ public final class DataCollectionRuleAssociationsClientImpl
         if (body != null) {
             body.validate();
         }
-        final String apiVersion = "2021-04-01";
+        final String apiVersion = "2021-09-01-preview";
         final String accept = "application/json";
         return FluxUtil
-            .withContext(
-                context ->
-                    service
-                        .create(
-                            this.client.getEndpoint(), resourceUri, associationName, apiVersion, body, accept, context))
+            .withContext(context -> service.create(this.client.getEndpoint(), resourceUri, associationName, apiVersion,
+                body, accept, context))
             .contextWrite(context -> context.putAll(FluxUtil.toReactorContext(this.client.getContext()).readOnly()));
     }
 
     /**
      * Creates or updates an association.
-     *
+     * 
      * @param resourceUri The identifier of the resource.
      * @param associationName The name of the association. The name is case insensitive.
      * @param body The payload.
@@ -654,19 +729,16 @@ public final class DataCollectionRuleAssociationsClientImpl
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return definition of generic ARM proxy resource.
+     * @return definition of generic ARM proxy resource along with {@link Response} on successful completion of
+     * {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
     private Mono<Response<DataCollectionRuleAssociationProxyOnlyResourceInner>> createWithResponseAsync(
-        String resourceUri,
-        String associationName,
-        DataCollectionRuleAssociationProxyOnlyResourceInner body,
+        String resourceUri, String associationName, DataCollectionRuleAssociationProxyOnlyResourceInner body,
         Context context) {
         if (this.client.getEndpoint() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getEndpoint() is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
         }
         if (resourceUri == null) {
             return Mono.error(new IllegalArgumentException("Parameter resourceUri is required and cannot be null."));
@@ -678,66 +750,52 @@ public final class DataCollectionRuleAssociationsClientImpl
         if (body != null) {
             body.validate();
         }
-        final String apiVersion = "2021-04-01";
+        final String apiVersion = "2021-09-01-preview";
         final String accept = "application/json";
         context = this.client.mergeContext(context);
-        return service
-            .create(this.client.getEndpoint(), resourceUri, associationName, apiVersion, body, accept, context);
+        return service.create(this.client.getEndpoint(), resourceUri, associationName, apiVersion, body, accept,
+            context);
     }
 
     /**
      * Creates or updates an association.
-     *
+     * 
+     * @param resourceUri The identifier of the resource.
+     * @param associationName The name of the association. The name is case insensitive.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return definition of generic ARM proxy resource on successful completion of {@link Mono}.
+     */
+    @ServiceMethod(returns = ReturnType.SINGLE)
+    public Mono<DataCollectionRuleAssociationProxyOnlyResourceInner> createAsync(String resourceUri,
+        String associationName) {
+        final DataCollectionRuleAssociationProxyOnlyResourceInner body = null;
+        return createWithResponseAsync(resourceUri, associationName, body)
+            .flatMap(res -> Mono.justOrEmpty(res.getValue()));
+    }
+
+    /**
+     * Creates or updates an association.
+     * 
      * @param resourceUri The identifier of the resource.
      * @param associationName The name of the association. The name is case insensitive.
      * @param body The payload.
+     * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return definition of generic ARM proxy resource.
+     * @return definition of generic ARM proxy resource along with {@link Response}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    public Mono<DataCollectionRuleAssociationProxyOnlyResourceInner> createAsync(
-        String resourceUri, String associationName, DataCollectionRuleAssociationProxyOnlyResourceInner body) {
-        return createWithResponseAsync(resourceUri, associationName, body)
-            .flatMap(
-                (Response<DataCollectionRuleAssociationProxyOnlyResourceInner> res) -> {
-                    if (res.getValue() != null) {
-                        return Mono.just(res.getValue());
-                    } else {
-                        return Mono.empty();
-                    }
-                });
+    public Response<DataCollectionRuleAssociationProxyOnlyResourceInner> createWithResponse(String resourceUri,
+        String associationName, DataCollectionRuleAssociationProxyOnlyResourceInner body, Context context) {
+        return createWithResponseAsync(resourceUri, associationName, body, context).block();
     }
 
     /**
      * Creates or updates an association.
-     *
-     * @param resourceUri The identifier of the resource.
-     * @param associationName The name of the association. The name is case insensitive.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return definition of generic ARM proxy resource.
-     */
-    @ServiceMethod(returns = ReturnType.SINGLE)
-    public Mono<DataCollectionRuleAssociationProxyOnlyResourceInner> createAsync(
-        String resourceUri, String associationName) {
-        final DataCollectionRuleAssociationProxyOnlyResourceInner body = null;
-        return createWithResponseAsync(resourceUri, associationName, body)
-            .flatMap(
-                (Response<DataCollectionRuleAssociationProxyOnlyResourceInner> res) -> {
-                    if (res.getValue() != null) {
-                        return Mono.just(res.getValue());
-                    } else {
-                        return Mono.empty();
-                    }
-                });
-    }
-
-    /**
-     * Creates or updates an association.
-     *
+     * 
      * @param resourceUri The identifier of the resource.
      * @param associationName The name of the association. The name is case insensitive.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
@@ -748,47 +806,24 @@ public final class DataCollectionRuleAssociationsClientImpl
     @ServiceMethod(returns = ReturnType.SINGLE)
     public DataCollectionRuleAssociationProxyOnlyResourceInner create(String resourceUri, String associationName) {
         final DataCollectionRuleAssociationProxyOnlyResourceInner body = null;
-        return createAsync(resourceUri, associationName, body).block();
-    }
-
-    /**
-     * Creates or updates an association.
-     *
-     * @param resourceUri The identifier of the resource.
-     * @param associationName The name of the association. The name is case insensitive.
-     * @param body The payload.
-     * @param context The context to associate with this operation.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return definition of generic ARM proxy resource.
-     */
-    @ServiceMethod(returns = ReturnType.SINGLE)
-    public Response<DataCollectionRuleAssociationProxyOnlyResourceInner> createWithResponse(
-        String resourceUri,
-        String associationName,
-        DataCollectionRuleAssociationProxyOnlyResourceInner body,
-        Context context) {
-        return createWithResponseAsync(resourceUri, associationName, body, context).block();
+        return createWithResponse(resourceUri, associationName, body, Context.NONE).getValue();
     }
 
     /**
      * Deletes an association.
-     *
+     * 
      * @param resourceUri The identifier of the resource.
      * @param associationName The name of the association. The name is case insensitive.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the completion.
+     * @return the {@link Response} on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
     public Mono<Response<Void>> deleteWithResponseAsync(String resourceUri, String associationName) {
         if (this.client.getEndpoint() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getEndpoint() is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
         }
         if (resourceUri == null) {
             return Mono.error(new IllegalArgumentException("Parameter resourceUri is required and cannot be null."));
@@ -797,34 +832,30 @@ public final class DataCollectionRuleAssociationsClientImpl
             return Mono
                 .error(new IllegalArgumentException("Parameter associationName is required and cannot be null."));
         }
-        final String apiVersion = "2021-04-01";
+        final String apiVersion = "2021-09-01-preview";
         final String accept = "application/json";
         return FluxUtil
-            .withContext(
-                context ->
-                    service
-                        .delete(this.client.getEndpoint(), resourceUri, associationName, apiVersion, accept, context))
+            .withContext(context -> service.delete(this.client.getEndpoint(), resourceUri, associationName, apiVersion,
+                accept, context))
             .contextWrite(context -> context.putAll(FluxUtil.toReactorContext(this.client.getContext()).readOnly()));
     }
 
     /**
      * Deletes an association.
-     *
+     * 
      * @param resourceUri The identifier of the resource.
      * @param associationName The name of the association. The name is case insensitive.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the completion.
+     * @return the {@link Response} on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
     private Mono<Response<Void>> deleteWithResponseAsync(String resourceUri, String associationName, Context context) {
         if (this.client.getEndpoint() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getEndpoint() is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
         }
         if (resourceUri == null) {
             return Mono.error(new IllegalArgumentException("Parameter resourceUri is required and cannot be null."));
@@ -833,7 +864,7 @@ public final class DataCollectionRuleAssociationsClientImpl
             return Mono
                 .error(new IllegalArgumentException("Parameter associationName is required and cannot be null."));
         }
-        final String apiVersion = "2021-04-01";
+        final String apiVersion = "2021-09-01-preview";
         final String accept = "application/json";
         context = this.client.mergeContext(context);
         return service.delete(this.client.getEndpoint(), resourceUri, associationName, apiVersion, accept, context);
@@ -841,22 +872,38 @@ public final class DataCollectionRuleAssociationsClientImpl
 
     /**
      * Deletes an association.
-     *
+     * 
      * @param resourceUri The identifier of the resource.
      * @param associationName The name of the association. The name is case insensitive.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the completion.
+     * @return A {@link Mono} that completes when a successful response is received.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
     public Mono<Void> deleteAsync(String resourceUri, String associationName) {
-        return deleteWithResponseAsync(resourceUri, associationName).flatMap((Response<Void> res) -> Mono.empty());
+        return deleteWithResponseAsync(resourceUri, associationName).flatMap(ignored -> Mono.empty());
     }
 
     /**
      * Deletes an association.
-     *
+     * 
+     * @param resourceUri The identifier of the resource.
+     * @param associationName The name of the association. The name is case insensitive.
+     * @param context The context to associate with this operation.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return the {@link Response}.
+     */
+    @ServiceMethod(returns = ReturnType.SINGLE)
+    public Response<Void> deleteWithResponse(String resourceUri, String associationName, Context context) {
+        return deleteWithResponseAsync(resourceUri, associationName, context).block();
+    }
+
+    /**
+     * Deletes an association.
+     * 
      * @param resourceUri The identifier of the resource.
      * @param associationName The name of the association. The name is case insensitive.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
@@ -865,168 +912,171 @@ public final class DataCollectionRuleAssociationsClientImpl
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
     public void delete(String resourceUri, String associationName) {
-        deleteAsync(resourceUri, associationName).block();
-    }
-
-    /**
-     * Deletes an association.
-     *
-     * @param resourceUri The identifier of the resource.
-     * @param associationName The name of the association. The name is case insensitive.
-     * @param context The context to associate with this operation.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the response.
-     */
-    @ServiceMethod(returns = ReturnType.SINGLE)
-    public Response<Void> deleteWithResponse(String resourceUri, String associationName, Context context) {
-        return deleteWithResponseAsync(resourceUri, associationName, context).block();
+        deleteWithResponse(resourceUri, associationName, Context.NONE);
     }
 
     /**
      * Get the next page of items.
-     *
-     * @param nextLink The nextLink parameter.
+     * 
+     * @param nextLink The URL to get the next list of items.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return a pageable list of resources.
+     * @return a pageable list of resources along with {@link PagedResponse} on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    private Mono<PagedResponse<DataCollectionRuleAssociationProxyOnlyResourceInner>> listByResourceNextSinglePageAsync(
-        String nextLink) {
+    private Mono<PagedResponse<DataCollectionRuleAssociationProxyOnlyResourceInner>>
+        listByResourceNextSinglePageAsync(String nextLink) {
         if (nextLink == null) {
             return Mono.error(new IllegalArgumentException("Parameter nextLink is required and cannot be null."));
         }
         if (this.client.getEndpoint() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getEndpoint() is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
         }
         final String accept = "application/json";
         return FluxUtil
             .withContext(context -> service.listByResourceNext(nextLink, this.client.getEndpoint(), accept, context))
             .<PagedResponse<DataCollectionRuleAssociationProxyOnlyResourceInner>>map(
-                res ->
-                    new PagedResponseBase<>(
-                        res.getRequest(),
-                        res.getStatusCode(),
-                        res.getHeaders(),
-                        res.getValue().value(),
-                        res.getValue().nextLink(),
-                        null))
+                res -> new PagedResponseBase<>(res.getRequest(), res.getStatusCode(), res.getHeaders(),
+                    res.getValue().value(), res.getValue().nextLink(), null))
             .contextWrite(context -> context.putAll(FluxUtil.toReactorContext(this.client.getContext()).readOnly()));
     }
 
     /**
      * Get the next page of items.
-     *
-     * @param nextLink The nextLink parameter.
+     * 
+     * @param nextLink The URL to get the next list of items.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return a pageable list of resources.
+     * @return a pageable list of resources along with {@link PagedResponse} on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    private Mono<PagedResponse<DataCollectionRuleAssociationProxyOnlyResourceInner>> listByResourceNextSinglePageAsync(
-        String nextLink, Context context) {
+    private Mono<PagedResponse<DataCollectionRuleAssociationProxyOnlyResourceInner>>
+        listByResourceNextSinglePageAsync(String nextLink, Context context) {
         if (nextLink == null) {
             return Mono.error(new IllegalArgumentException("Parameter nextLink is required and cannot be null."));
         }
         if (this.client.getEndpoint() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getEndpoint() is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
         }
         final String accept = "application/json";
         context = this.client.mergeContext(context);
-        return service
-            .listByResourceNext(nextLink, this.client.getEndpoint(), accept, context)
-            .map(
-                res ->
-                    new PagedResponseBase<>(
-                        res.getRequest(),
-                        res.getStatusCode(),
-                        res.getHeaders(),
-                        res.getValue().value(),
-                        res.getValue().nextLink(),
-                        null));
+        return service.listByResourceNext(nextLink, this.client.getEndpoint(), accept, context)
+            .map(res -> new PagedResponseBase<>(res.getRequest(), res.getStatusCode(), res.getHeaders(),
+                res.getValue().value(), res.getValue().nextLink(), null));
     }
 
     /**
      * Get the next page of items.
-     *
-     * @param nextLink The nextLink parameter.
+     * 
+     * @param nextLink The URL to get the next list of items.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return a pageable list of resources.
+     * @return a pageable list of resources along with {@link PagedResponse} on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    private Mono<PagedResponse<DataCollectionRuleAssociationProxyOnlyResourceInner>> listByRuleNextSinglePageAsync(
-        String nextLink) {
+    private Mono<PagedResponse<DataCollectionRuleAssociationProxyOnlyResourceInner>>
+        listByRuleNextSinglePageAsync(String nextLink) {
         if (nextLink == null) {
             return Mono.error(new IllegalArgumentException("Parameter nextLink is required and cannot be null."));
         }
         if (this.client.getEndpoint() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getEndpoint() is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
         }
         final String accept = "application/json";
         return FluxUtil
             .withContext(context -> service.listByRuleNext(nextLink, this.client.getEndpoint(), accept, context))
             .<PagedResponse<DataCollectionRuleAssociationProxyOnlyResourceInner>>map(
-                res ->
-                    new PagedResponseBase<>(
-                        res.getRequest(),
-                        res.getStatusCode(),
-                        res.getHeaders(),
-                        res.getValue().value(),
-                        res.getValue().nextLink(),
-                        null))
+                res -> new PagedResponseBase<>(res.getRequest(), res.getStatusCode(), res.getHeaders(),
+                    res.getValue().value(), res.getValue().nextLink(), null))
             .contextWrite(context -> context.putAll(FluxUtil.toReactorContext(this.client.getContext()).readOnly()));
     }
 
     /**
      * Get the next page of items.
-     *
-     * @param nextLink The nextLink parameter.
+     * 
+     * @param nextLink The URL to get the next list of items.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return a pageable list of resources.
+     * @return a pageable list of resources along with {@link PagedResponse} on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    private Mono<PagedResponse<DataCollectionRuleAssociationProxyOnlyResourceInner>> listByRuleNextSinglePageAsync(
-        String nextLink, Context context) {
+    private Mono<PagedResponse<DataCollectionRuleAssociationProxyOnlyResourceInner>>
+        listByRuleNextSinglePageAsync(String nextLink, Context context) {
         if (nextLink == null) {
             return Mono.error(new IllegalArgumentException("Parameter nextLink is required and cannot be null."));
         }
         if (this.client.getEndpoint() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getEndpoint() is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
         }
         final String accept = "application/json";
         context = this.client.mergeContext(context);
-        return service
-            .listByRuleNext(nextLink, this.client.getEndpoint(), accept, context)
-            .map(
-                res ->
-                    new PagedResponseBase<>(
-                        res.getRequest(),
-                        res.getStatusCode(),
-                        res.getHeaders(),
-                        res.getValue().value(),
-                        res.getValue().nextLink(),
-                        null));
+        return service.listByRuleNext(nextLink, this.client.getEndpoint(), accept, context)
+            .map(res -> new PagedResponseBase<>(res.getRequest(), res.getStatusCode(), res.getHeaders(),
+                res.getValue().value(), res.getValue().nextLink(), null));
+    }
+
+    /**
+     * Get the next page of items.
+     * 
+     * @param nextLink The URL to get the next list of items.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return a pageable list of resources along with {@link PagedResponse} on successful completion of {@link Mono}.
+     */
+    @ServiceMethod(returns = ReturnType.SINGLE)
+    private Mono<PagedResponse<DataCollectionRuleAssociationProxyOnlyResourceInner>>
+        listByDataCollectionEndpointNextSinglePageAsync(String nextLink) {
+        if (nextLink == null) {
+            return Mono.error(new IllegalArgumentException("Parameter nextLink is required and cannot be null."));
+        }
+        if (this.client.getEndpoint() == null) {
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
+        }
+        final String accept = "application/json";
+        return FluxUtil.withContext(
+            context -> service.listByDataCollectionEndpointNext(nextLink, this.client.getEndpoint(), accept, context))
+            .<PagedResponse<DataCollectionRuleAssociationProxyOnlyResourceInner>>map(
+                res -> new PagedResponseBase<>(res.getRequest(), res.getStatusCode(), res.getHeaders(),
+                    res.getValue().value(), res.getValue().nextLink(), null))
+            .contextWrite(context -> context.putAll(FluxUtil.toReactorContext(this.client.getContext()).readOnly()));
+    }
+
+    /**
+     * Get the next page of items.
+     * 
+     * @param nextLink The URL to get the next list of items.
+     * @param context The context to associate with this operation.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return a pageable list of resources along with {@link PagedResponse} on successful completion of {@link Mono}.
+     */
+    @ServiceMethod(returns = ReturnType.SINGLE)
+    private Mono<PagedResponse<DataCollectionRuleAssociationProxyOnlyResourceInner>>
+        listByDataCollectionEndpointNextSinglePageAsync(String nextLink, Context context) {
+        if (nextLink == null) {
+            return Mono.error(new IllegalArgumentException("Parameter nextLink is required and cannot be null."));
+        }
+        if (this.client.getEndpoint() == null) {
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
+        }
+        final String accept = "application/json";
+        context = this.client.mergeContext(context);
+        return service.listByDataCollectionEndpointNext(nextLink, this.client.getEndpoint(), accept, context)
+            .map(res -> new PagedResponseBase<>(res.getRequest(), res.getStatusCode(), res.getHeaders(),
+                res.getValue().value(), res.getValue().nextLink(), null));
     }
 }

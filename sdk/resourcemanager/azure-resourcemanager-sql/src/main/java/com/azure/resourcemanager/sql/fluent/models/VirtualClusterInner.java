@@ -5,83 +5,228 @@
 package com.azure.resourcemanager.sql.fluent.models;
 
 import com.azure.core.annotation.Fluent;
-import com.azure.core.annotation.JsonFlatten;
 import com.azure.core.management.Resource;
-import com.azure.core.util.logging.ClientLogger;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.azure.json.JsonReader;
+import com.azure.json.JsonToken;
+import com.azure.json.JsonWriter;
+import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
-/** An Azure SQL virtual cluster. */
-@JsonFlatten
+/**
+ * An Azure SQL virtual cluster.
+ */
 @Fluent
-public class VirtualClusterInner extends Resource {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(VirtualClusterInner.class);
+public final class VirtualClusterInner extends Resource {
+    /*
+     * Resource properties.
+     */
+    private VirtualClusterProperties innerProperties;
 
     /*
-     * Subnet resource ID for the virtual cluster.
+     * The type of the resource.
      */
-    @JsonProperty(value = "properties.subnetId", access = JsonProperty.Access.WRITE_ONLY)
-    private String subnetId;
+    private String type;
 
     /*
-     * If the service has different generations of hardware, for the same SKU,
-     * then that can be captured here.
+     * The name of the resource.
      */
-    @JsonProperty(value = "properties.family")
-    private String family;
+    private String name;
 
     /*
-     * List of resources in this virtual cluster.
+     * Fully qualified resource Id for the resource.
      */
-    @JsonProperty(value = "properties.childResources", access = JsonProperty.Access.WRITE_ONLY)
-    private List<String> childResources;
+    private String id;
+
+    /**
+     * Creates an instance of VirtualClusterInner class.
+     */
+    public VirtualClusterInner() {
+    }
+
+    /**
+     * Get the innerProperties property: Resource properties.
+     * 
+     * @return the innerProperties value.
+     */
+    private VirtualClusterProperties innerProperties() {
+        return this.innerProperties;
+    }
+
+    /**
+     * Get the type property: The type of the resource.
+     * 
+     * @return the type value.
+     */
+    @Override
+    public String type() {
+        return this.type;
+    }
+
+    /**
+     * Get the name property: The name of the resource.
+     * 
+     * @return the name value.
+     */
+    @Override
+    public String name() {
+        return this.name;
+    }
+
+    /**
+     * Get the id property: Fully qualified resource Id for the resource.
+     * 
+     * @return the id value.
+     */
+    @Override
+    public String id() {
+        return this.id;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public VirtualClusterInner withLocation(String location) {
+        super.withLocation(location);
+        return this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public VirtualClusterInner withTags(Map<String, String> tags) {
+        super.withTags(tags);
+        return this;
+    }
 
     /**
      * Get the subnetId property: Subnet resource ID for the virtual cluster.
-     *
+     * 
      * @return the subnetId value.
      */
     public String subnetId() {
-        return this.subnetId;
+        return this.innerProperties() == null ? null : this.innerProperties().subnetId();
     }
 
     /**
      * Get the family property: If the service has different generations of hardware, for the same SKU, then that can be
      * captured here.
-     *
+     * 
      * @return the family value.
      */
     public String family() {
-        return this.family;
+        return this.innerProperties() == null ? null : this.innerProperties().family();
     }
 
     /**
      * Set the family property: If the service has different generations of hardware, for the same SKU, then that can be
      * captured here.
-     *
+     * 
      * @param family the family value to set.
      * @return the VirtualClusterInner object itself.
      */
     public VirtualClusterInner withFamily(String family) {
-        this.family = family;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new VirtualClusterProperties();
+        }
+        this.innerProperties().withFamily(family);
         return this;
     }
 
     /**
      * Get the childResources property: List of resources in this virtual cluster.
-     *
+     * 
      * @return the childResources value.
      */
     public List<String> childResources() {
-        return this.childResources;
+        return this.innerProperties() == null ? null : this.innerProperties().childResources();
+    }
+
+    /**
+     * Get the maintenanceConfigurationId property: Specifies maintenance configuration id to apply to this virtual
+     * cluster.
+     * 
+     * @return the maintenanceConfigurationId value.
+     */
+    public String maintenanceConfigurationId() {
+        return this.innerProperties() == null ? null : this.innerProperties().maintenanceConfigurationId();
+    }
+
+    /**
+     * Set the maintenanceConfigurationId property: Specifies maintenance configuration id to apply to this virtual
+     * cluster.
+     * 
+     * @param maintenanceConfigurationId the maintenanceConfigurationId value to set.
+     * @return the VirtualClusterInner object itself.
+     */
+    public VirtualClusterInner withMaintenanceConfigurationId(String maintenanceConfigurationId) {
+        if (this.innerProperties() == null) {
+            this.innerProperties = new VirtualClusterProperties();
+        }
+        this.innerProperties().withMaintenanceConfigurationId(maintenanceConfigurationId);
+        return this;
     }
 
     /**
      * Validates the instance.
-     *
+     * 
      * @throws IllegalArgumentException thrown if the instance is not valid.
      */
     public void validate() {
+        if (innerProperties() != null) {
+            innerProperties().validate();
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public JsonWriter toJson(JsonWriter jsonWriter) throws IOException {
+        jsonWriter.writeStartObject();
+        jsonWriter.writeStringField("location", location());
+        jsonWriter.writeMapField("tags", tags(), (writer, element) -> writer.writeString(element));
+        jsonWriter.writeJsonField("properties", this.innerProperties);
+        return jsonWriter.writeEndObject();
+    }
+
+    /**
+     * Reads an instance of VirtualClusterInner from the JsonReader.
+     * 
+     * @param jsonReader The JsonReader being read.
+     * @return An instance of VirtualClusterInner if the JsonReader was pointing to an instance of it, or null if it was
+     * pointing to JSON null.
+     * @throws IllegalStateException If the deserialized JSON object was missing any required properties.
+     * @throws IOException If an error occurs while reading the VirtualClusterInner.
+     */
+    public static VirtualClusterInner fromJson(JsonReader jsonReader) throws IOException {
+        return jsonReader.readObject(reader -> {
+            VirtualClusterInner deserializedVirtualClusterInner = new VirtualClusterInner();
+            while (reader.nextToken() != JsonToken.END_OBJECT) {
+                String fieldName = reader.getFieldName();
+                reader.nextToken();
+
+                if ("id".equals(fieldName)) {
+                    deserializedVirtualClusterInner.id = reader.getString();
+                } else if ("name".equals(fieldName)) {
+                    deserializedVirtualClusterInner.name = reader.getString();
+                } else if ("type".equals(fieldName)) {
+                    deserializedVirtualClusterInner.type = reader.getString();
+                } else if ("location".equals(fieldName)) {
+                    deserializedVirtualClusterInner.withLocation(reader.getString());
+                } else if ("tags".equals(fieldName)) {
+                    Map<String, String> tags = reader.readMap(reader1 -> reader1.getString());
+                    deserializedVirtualClusterInner.withTags(tags);
+                } else if ("properties".equals(fieldName)) {
+                    deserializedVirtualClusterInner.innerProperties = VirtualClusterProperties.fromJson(reader);
+                } else {
+                    reader.skipChildren();
+                }
+            }
+
+            return deserializedVirtualClusterInner;
+        });
     }
 }

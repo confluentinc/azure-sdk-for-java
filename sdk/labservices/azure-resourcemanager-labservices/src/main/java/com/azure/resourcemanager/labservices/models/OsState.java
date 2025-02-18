@@ -4,18 +4,23 @@
 
 package com.azure.resourcemanager.labservices.models;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonValue;
-
-/** Defines values for OsState. */
+/**
+ * The operating system state.
+ */
 public enum OsState {
-    /** Enum value Generalized. */
+    /**
+     * Enum value Generalized.
+     */
     GENERALIZED("Generalized"),
 
-    /** Enum value Specialized. */
+    /**
+     * Enum value Specialized.
+     */
     SPECIALIZED("Specialized");
 
-    /** The actual serialized value for a OsState instance. */
+    /**
+     * The actual serialized value for a OsState instance.
+     */
     private final String value;
 
     OsState(String value) {
@@ -24,12 +29,14 @@ public enum OsState {
 
     /**
      * Parses a serialized value to a OsState instance.
-     *
+     * 
      * @param value the serialized value to parse.
      * @return the parsed OsState object, or null if unable to parse.
      */
-    @JsonCreator
     public static OsState fromString(String value) {
+        if (value == null) {
+            return null;
+        }
         OsState[] items = OsState.values();
         for (OsState item : items) {
             if (item.toString().equalsIgnoreCase(value)) {
@@ -39,7 +46,9 @@ public enum OsState {
         return null;
     }
 
-    @JsonValue
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String toString() {
         return this.value;

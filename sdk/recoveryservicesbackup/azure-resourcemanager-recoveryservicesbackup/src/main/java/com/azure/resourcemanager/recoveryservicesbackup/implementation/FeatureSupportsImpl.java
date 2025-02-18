@@ -13,41 +13,36 @@ import com.azure.resourcemanager.recoveryservicesbackup.fluent.models.AzureVMRes
 import com.azure.resourcemanager.recoveryservicesbackup.models.AzureVMResourceFeatureSupportResponse;
 import com.azure.resourcemanager.recoveryservicesbackup.models.FeatureSupportRequest;
 import com.azure.resourcemanager.recoveryservicesbackup.models.FeatureSupports;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 public final class FeatureSupportsImpl implements FeatureSupports {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(FeatureSupportsImpl.class);
+    private static final ClientLogger LOGGER = new ClientLogger(FeatureSupportsImpl.class);
 
     private final FeatureSupportsClient innerClient;
 
     private final com.azure.resourcemanager.recoveryservicesbackup.RecoveryServicesBackupManager serviceManager;
 
-    public FeatureSupportsImpl(
-        FeatureSupportsClient innerClient,
+    public FeatureSupportsImpl(FeatureSupportsClient innerClient,
         com.azure.resourcemanager.recoveryservicesbackup.RecoveryServicesBackupManager serviceManager) {
         this.innerClient = innerClient;
         this.serviceManager = serviceManager;
+    }
+
+    public Response<AzureVMResourceFeatureSupportResponse> validateWithResponse(String azureRegion,
+        FeatureSupportRequest parameters, Context context) {
+        Response<AzureVMResourceFeatureSupportResponseInner> inner
+            = this.serviceClient().validateWithResponse(azureRegion, parameters, context);
+        if (inner != null) {
+            return new SimpleResponse<>(inner.getRequest(), inner.getStatusCode(), inner.getHeaders(),
+                new AzureVMResourceFeatureSupportResponseImpl(inner.getValue(), this.manager()));
+        } else {
+            return null;
+        }
     }
 
     public AzureVMResourceFeatureSupportResponse validate(String azureRegion, FeatureSupportRequest parameters) {
         AzureVMResourceFeatureSupportResponseInner inner = this.serviceClient().validate(azureRegion, parameters);
         if (inner != null) {
             return new AzureVMResourceFeatureSupportResponseImpl(inner, this.manager());
-        } else {
-            return null;
-        }
-    }
-
-    public Response<AzureVMResourceFeatureSupportResponse> validateWithResponse(
-        String azureRegion, FeatureSupportRequest parameters, Context context) {
-        Response<AzureVMResourceFeatureSupportResponseInner> inner =
-            this.serviceClient().validateWithResponse(azureRegion, parameters, context);
-        if (inner != null) {
-            return new SimpleResponse<>(
-                inner.getRequest(),
-                inner.getStatusCode(),
-                inner.getHeaders(),
-                new AzureVMResourceFeatureSupportResponseImpl(inner.getValue(), this.manager()));
         } else {
             return null;
         }

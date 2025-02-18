@@ -5,44 +5,44 @@
 package com.azure.communication.callingserver.implementation.models;
 
 import com.azure.core.annotation.Fluent;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.azure.json.JsonReader;
+import com.azure.json.JsonSerializable;
+import com.azure.json.JsonToken;
+import com.azure.json.JsonWriter;
+
+import java.io.IOException;
 import java.util.List;
 
-/** The Communication Services error. */
+/** The CommunicationError model. */
 @Fluent
-public final class CommunicationError {
+public final class CommunicationError implements JsonSerializable<CommunicationError> {
     /*
-     * The error code.
+     * The code property.
      */
-    @JsonProperty(value = "code", required = true)
     private String code;
 
     /*
-     * The error message.
+     * The message property.
      */
-    @JsonProperty(value = "message", required = true)
     private String message;
 
     /*
-     * The error target.
+     * The target property.
      */
-    @JsonProperty(value = "target", access = JsonProperty.Access.WRITE_ONLY)
     private String target;
 
     /*
-     * Further details about specific errors that led to this error.
+     * The details property.
      */
-    @JsonProperty(value = "details", access = JsonProperty.Access.WRITE_ONLY)
     private List<CommunicationError> details;
 
     /*
-     * The inner error if any.
+     * The innererror property.
      */
-    @JsonProperty(value = "innererror", access = JsonProperty.Access.WRITE_ONLY)
-    private CommunicationError innerError;
+    private CommunicationError innererror;
 
     /**
-     * Get the code property: The error code.
+     * Get the code property: The code property.
      *
      * @return the code value.
      */
@@ -51,7 +51,7 @@ public final class CommunicationError {
     }
 
     /**
-     * Set the code property: The error code.
+     * Set the code property: The code property.
      *
      * @param code the code value to set.
      * @return the CommunicationError object itself.
@@ -62,7 +62,7 @@ public final class CommunicationError {
     }
 
     /**
-     * Get the message property: The error message.
+     * Get the message property: The message property.
      *
      * @return the message value.
      */
@@ -71,7 +71,7 @@ public final class CommunicationError {
     }
 
     /**
-     * Set the message property: The error message.
+     * Set the message property: The message property.
      *
      * @param message the message value to set.
      * @return the CommunicationError object itself.
@@ -82,7 +82,7 @@ public final class CommunicationError {
     }
 
     /**
-     * Get the target property: The error target.
+     * Get the target property: The target property.
      *
      * @return the target value.
      */
@@ -91,7 +91,18 @@ public final class CommunicationError {
     }
 
     /**
-     * Get the details property: Further details about specific errors that led to this error.
+     * Set the target property: The target property.
+     *
+     * @param target the target value to set.
+     * @return the CommunicationError object itself.
+     */
+    public CommunicationError setTarget(String target) {
+        this.target = target;
+        return this;
+    }
+
+    /**
+     * Get the details property: The details property.
      *
      * @return the details value.
      */
@@ -100,11 +111,79 @@ public final class CommunicationError {
     }
 
     /**
-     * Get the innerError property: The inner error if any.
+     * Set the details property: The details property.
      *
-     * @return the innerError value.
+     * @param details the details value to set.
+     * @return the CommunicationError object itself.
      */
-    public CommunicationError getInnerError() {
-        return this.innerError;
+    public CommunicationError setDetails(List<CommunicationError> details) {
+        this.details = details;
+        return this;
+    }
+
+    /**
+     * Get the innererror property: The innererror property.
+     *
+     * @return the innererror value.
+     */
+    public CommunicationError getInnererror() {
+        return this.innererror;
+    }
+
+    /**
+     * Set the innererror property: The innererror property.
+     *
+     * @param innererror the innererror value to set.
+     * @return the CommunicationError object itself.
+     */
+    public CommunicationError setInnererror(CommunicationError innererror) {
+        this.innererror = innererror;
+        return this;
+    }
+
+    @Override
+    public JsonWriter toJson(JsonWriter jsonWriter) throws IOException {
+        return jsonWriter.writeStartObject()
+            .writeStringField("code", code)
+            .writeStringField("message", message)
+            .writeStringField("target", target)
+            .writeArrayField("details", details, JsonWriter::writeJson)
+            .writeJsonField("innererror", innererror)
+            .writeEndObject();
+    }
+
+    /**
+     * Reads an instance of {@link CommunicationError} from the {@link JsonReader}.
+     *
+     * @param jsonReader The {@link JsonReader} to read.
+     * @return An instance of {@link CommunicationError}, or null if the {@link JsonReader} was pointing to
+     * {@link JsonToken#NULL}.
+     * @throws IOException If an error occurs while reading the {@link JsonReader}.
+     */
+    public static CommunicationError fromJson(JsonReader jsonReader) throws IOException {
+        return jsonReader.readObject(reader -> {
+            CommunicationError error = new CommunicationError();
+
+            while (reader.nextToken() != JsonToken.END_OBJECT) {
+                String fieldName = reader.getFieldName();
+                reader.nextToken();
+
+                if ("code".equals(fieldName)) {
+                    error.code = reader.getString();
+                } else if ("message".equals(fieldName)) {
+                    error.message = reader.getString();
+                } else if ("target".equals(fieldName)) {
+                    error.target = reader.getString();
+                } else if ("details".equals(fieldName)) {
+                    error.details = reader.readArray(CommunicationError::fromJson);
+                } else if ("innererror".equals(fieldName)) {
+                    error.innererror = CommunicationError.fromJson(reader);
+                } else {
+                    reader.skipChildren();
+                }
+            }
+
+            return error;
+        });
     }
 }

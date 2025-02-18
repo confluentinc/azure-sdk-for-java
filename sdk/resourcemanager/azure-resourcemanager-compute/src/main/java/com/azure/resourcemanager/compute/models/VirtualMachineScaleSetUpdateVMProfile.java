@@ -5,80 +5,88 @@
 package com.azure.resourcemanager.compute.models;
 
 import com.azure.core.annotation.Fluent;
-import com.azure.core.util.logging.ClientLogger;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.azure.json.JsonReader;
+import com.azure.json.JsonSerializable;
+import com.azure.json.JsonToken;
+import com.azure.json.JsonWriter;
+import java.io.IOException;
 
-/** Describes a virtual machine scale set virtual machine profile. */
+/**
+ * Describes a virtual machine scale set virtual machine profile.
+ */
 @Fluent
-public final class VirtualMachineScaleSetUpdateVMProfile {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(VirtualMachineScaleSetUpdateVMProfile.class);
-
+public final class VirtualMachineScaleSetUpdateVMProfile
+    implements JsonSerializable<VirtualMachineScaleSetUpdateVMProfile> {
     /*
      * The virtual machine scale set OS profile.
      */
-    @JsonProperty(value = "osProfile")
     private VirtualMachineScaleSetUpdateOSProfile osProfile;
 
     /*
      * The virtual machine scale set storage profile.
      */
-    @JsonProperty(value = "storageProfile")
     private VirtualMachineScaleSetUpdateStorageProfile storageProfile;
 
     /*
      * The virtual machine scale set network profile.
      */
-    @JsonProperty(value = "networkProfile")
     private VirtualMachineScaleSetUpdateNetworkProfile networkProfile;
+
+    /*
+     * The virtual machine scale set security posture reference.
+     */
+    private SecurityPostureReferenceUpdate securityPostureReference;
 
     /*
      * The virtual machine scale set Security profile
      */
-    @JsonProperty(value = "securityProfile")
     private SecurityProfile securityProfile;
 
     /*
      * The virtual machine scale set diagnostics profile.
      */
-    @JsonProperty(value = "diagnosticsProfile")
     private DiagnosticsProfile diagnosticsProfile;
 
     /*
      * The virtual machine scale set extension profile.
      */
-    @JsonProperty(value = "extensionProfile")
     private VirtualMachineScaleSetExtensionProfile extensionProfile;
 
     /*
      * The license type, which is for bring your own license scenario.
      */
-    @JsonProperty(value = "licenseType")
     private String licenseType;
 
     /*
-     * Specifies the billing related details of a Azure Spot VMSS.
-     * <br><br>Minimum api-version: 2019-03-01.
+     * Specifies the billing related details of a Azure Spot VMSS. Minimum api-version: 2019-03-01.
      */
-    @JsonProperty(value = "billingProfile")
     private BillingProfile billingProfile;
 
     /*
      * Specifies Scheduled Event related configurations.
      */
-    @JsonProperty(value = "scheduledEventsProfile")
     private ScheduledEventsProfile scheduledEventsProfile;
 
     /*
-     * UserData for the VM, which must be base-64 encoded. Customer should not
-     * pass any secrets in here. <br><br>Minimum api-version: 2021-03-01
+     * UserData for the VM, which must be base-64 encoded. Customer should not pass any secrets in here. <br><br>Minimum
+     * api-version: 2021-03-01
      */
-    @JsonProperty(value = "userData")
     private String userData;
+
+    /*
+     * Specifies the hardware profile related details of a scale set. Minimum api-version: 2021-11-01.
+     */
+    private VirtualMachineScaleSetHardwareProfile hardwareProfile;
+
+    /**
+     * Creates an instance of VirtualMachineScaleSetUpdateVMProfile class.
+     */
+    public VirtualMachineScaleSetUpdateVMProfile() {
+    }
 
     /**
      * Get the osProfile property: The virtual machine scale set OS profile.
-     *
+     * 
      * @return the osProfile value.
      */
     public VirtualMachineScaleSetUpdateOSProfile osProfile() {
@@ -87,7 +95,7 @@ public final class VirtualMachineScaleSetUpdateVMProfile {
 
     /**
      * Set the osProfile property: The virtual machine scale set OS profile.
-     *
+     * 
      * @param osProfile the osProfile value to set.
      * @return the VirtualMachineScaleSetUpdateVMProfile object itself.
      */
@@ -98,7 +106,7 @@ public final class VirtualMachineScaleSetUpdateVMProfile {
 
     /**
      * Get the storageProfile property: The virtual machine scale set storage profile.
-     *
+     * 
      * @return the storageProfile value.
      */
     public VirtualMachineScaleSetUpdateStorageProfile storageProfile() {
@@ -107,19 +115,19 @@ public final class VirtualMachineScaleSetUpdateVMProfile {
 
     /**
      * Set the storageProfile property: The virtual machine scale set storage profile.
-     *
+     * 
      * @param storageProfile the storageProfile value to set.
      * @return the VirtualMachineScaleSetUpdateVMProfile object itself.
      */
-    public VirtualMachineScaleSetUpdateVMProfile withStorageProfile(
-        VirtualMachineScaleSetUpdateStorageProfile storageProfile) {
+    public VirtualMachineScaleSetUpdateVMProfile
+        withStorageProfile(VirtualMachineScaleSetUpdateStorageProfile storageProfile) {
         this.storageProfile = storageProfile;
         return this;
     }
 
     /**
      * Get the networkProfile property: The virtual machine scale set network profile.
-     *
+     * 
      * @return the networkProfile value.
      */
     public VirtualMachineScaleSetUpdateNetworkProfile networkProfile() {
@@ -128,19 +136,40 @@ public final class VirtualMachineScaleSetUpdateVMProfile {
 
     /**
      * Set the networkProfile property: The virtual machine scale set network profile.
-     *
+     * 
      * @param networkProfile the networkProfile value to set.
      * @return the VirtualMachineScaleSetUpdateVMProfile object itself.
      */
-    public VirtualMachineScaleSetUpdateVMProfile withNetworkProfile(
-        VirtualMachineScaleSetUpdateNetworkProfile networkProfile) {
+    public VirtualMachineScaleSetUpdateVMProfile
+        withNetworkProfile(VirtualMachineScaleSetUpdateNetworkProfile networkProfile) {
         this.networkProfile = networkProfile;
         return this;
     }
 
     /**
+     * Get the securityPostureReference property: The virtual machine scale set security posture reference.
+     * 
+     * @return the securityPostureReference value.
+     */
+    public SecurityPostureReferenceUpdate securityPostureReference() {
+        return this.securityPostureReference;
+    }
+
+    /**
+     * Set the securityPostureReference property: The virtual machine scale set security posture reference.
+     * 
+     * @param securityPostureReference the securityPostureReference value to set.
+     * @return the VirtualMachineScaleSetUpdateVMProfile object itself.
+     */
+    public VirtualMachineScaleSetUpdateVMProfile
+        withSecurityPostureReference(SecurityPostureReferenceUpdate securityPostureReference) {
+        this.securityPostureReference = securityPostureReference;
+        return this;
+    }
+
+    /**
      * Get the securityProfile property: The virtual machine scale set Security profile.
-     *
+     * 
      * @return the securityProfile value.
      */
     public SecurityProfile securityProfile() {
@@ -149,7 +178,7 @@ public final class VirtualMachineScaleSetUpdateVMProfile {
 
     /**
      * Set the securityProfile property: The virtual machine scale set Security profile.
-     *
+     * 
      * @param securityProfile the securityProfile value to set.
      * @return the VirtualMachineScaleSetUpdateVMProfile object itself.
      */
@@ -160,7 +189,7 @@ public final class VirtualMachineScaleSetUpdateVMProfile {
 
     /**
      * Get the diagnosticsProfile property: The virtual machine scale set diagnostics profile.
-     *
+     * 
      * @return the diagnosticsProfile value.
      */
     public DiagnosticsProfile diagnosticsProfile() {
@@ -169,7 +198,7 @@ public final class VirtualMachineScaleSetUpdateVMProfile {
 
     /**
      * Set the diagnosticsProfile property: The virtual machine scale set diagnostics profile.
-     *
+     * 
      * @param diagnosticsProfile the diagnosticsProfile value to set.
      * @return the VirtualMachineScaleSetUpdateVMProfile object itself.
      */
@@ -180,7 +209,7 @@ public final class VirtualMachineScaleSetUpdateVMProfile {
 
     /**
      * Get the extensionProfile property: The virtual machine scale set extension profile.
-     *
+     * 
      * @return the extensionProfile value.
      */
     public VirtualMachineScaleSetExtensionProfile extensionProfile() {
@@ -189,19 +218,19 @@ public final class VirtualMachineScaleSetUpdateVMProfile {
 
     /**
      * Set the extensionProfile property: The virtual machine scale set extension profile.
-     *
+     * 
      * @param extensionProfile the extensionProfile value to set.
      * @return the VirtualMachineScaleSetUpdateVMProfile object itself.
      */
-    public VirtualMachineScaleSetUpdateVMProfile withExtensionProfile(
-        VirtualMachineScaleSetExtensionProfile extensionProfile) {
+    public VirtualMachineScaleSetUpdateVMProfile
+        withExtensionProfile(VirtualMachineScaleSetExtensionProfile extensionProfile) {
         this.extensionProfile = extensionProfile;
         return this;
     }
 
     /**
      * Get the licenseType property: The license type, which is for bring your own license scenario.
-     *
+     * 
      * @return the licenseType value.
      */
     public String licenseType() {
@@ -210,7 +239,7 @@ public final class VirtualMachineScaleSetUpdateVMProfile {
 
     /**
      * Set the licenseType property: The license type, which is for bring your own license scenario.
-     *
+     * 
      * @param licenseType the licenseType value to set.
      * @return the VirtualMachineScaleSetUpdateVMProfile object itself.
      */
@@ -220,9 +249,9 @@ public final class VirtualMachineScaleSetUpdateVMProfile {
     }
 
     /**
-     * Get the billingProfile property: Specifies the billing related details of a Azure Spot VMSS.
-     * &lt;br&gt;&lt;br&gt;Minimum api-version: 2019-03-01.
-     *
+     * Get the billingProfile property: Specifies the billing related details of a Azure Spot VMSS. Minimum api-version:
+     * 2019-03-01.
+     * 
      * @return the billingProfile value.
      */
     public BillingProfile billingProfile() {
@@ -230,9 +259,9 @@ public final class VirtualMachineScaleSetUpdateVMProfile {
     }
 
     /**
-     * Set the billingProfile property: Specifies the billing related details of a Azure Spot VMSS.
-     * &lt;br&gt;&lt;br&gt;Minimum api-version: 2019-03-01.
-     *
+     * Set the billingProfile property: Specifies the billing related details of a Azure Spot VMSS. Minimum api-version:
+     * 2019-03-01.
+     * 
      * @param billingProfile the billingProfile value to set.
      * @return the VirtualMachineScaleSetUpdateVMProfile object itself.
      */
@@ -243,7 +272,7 @@ public final class VirtualMachineScaleSetUpdateVMProfile {
 
     /**
      * Get the scheduledEventsProfile property: Specifies Scheduled Event related configurations.
-     *
+     * 
      * @return the scheduledEventsProfile value.
      */
     public ScheduledEventsProfile scheduledEventsProfile() {
@@ -252,12 +281,12 @@ public final class VirtualMachineScaleSetUpdateVMProfile {
 
     /**
      * Set the scheduledEventsProfile property: Specifies Scheduled Event related configurations.
-     *
+     * 
      * @param scheduledEventsProfile the scheduledEventsProfile value to set.
      * @return the VirtualMachineScaleSetUpdateVMProfile object itself.
      */
-    public VirtualMachineScaleSetUpdateVMProfile withScheduledEventsProfile(
-        ScheduledEventsProfile scheduledEventsProfile) {
+    public VirtualMachineScaleSetUpdateVMProfile
+        withScheduledEventsProfile(ScheduledEventsProfile scheduledEventsProfile) {
         this.scheduledEventsProfile = scheduledEventsProfile;
         return this;
     }
@@ -265,7 +294,7 @@ public final class VirtualMachineScaleSetUpdateVMProfile {
     /**
      * Get the userData property: UserData for the VM, which must be base-64 encoded. Customer should not pass any
      * secrets in here. &lt;br&gt;&lt;br&gt;Minimum api-version: 2021-03-01.
-     *
+     * 
      * @return the userData value.
      */
     public String userData() {
@@ -275,7 +304,7 @@ public final class VirtualMachineScaleSetUpdateVMProfile {
     /**
      * Set the userData property: UserData for the VM, which must be base-64 encoded. Customer should not pass any
      * secrets in here. &lt;br&gt;&lt;br&gt;Minimum api-version: 2021-03-01.
-     *
+     * 
      * @param userData the userData value to set.
      * @return the VirtualMachineScaleSetUpdateVMProfile object itself.
      */
@@ -285,8 +314,31 @@ public final class VirtualMachineScaleSetUpdateVMProfile {
     }
 
     /**
+     * Get the hardwareProfile property: Specifies the hardware profile related details of a scale set. Minimum
+     * api-version: 2021-11-01.
+     * 
+     * @return the hardwareProfile value.
+     */
+    public VirtualMachineScaleSetHardwareProfile hardwareProfile() {
+        return this.hardwareProfile;
+    }
+
+    /**
+     * Set the hardwareProfile property: Specifies the hardware profile related details of a scale set. Minimum
+     * api-version: 2021-11-01.
+     * 
+     * @param hardwareProfile the hardwareProfile value to set.
+     * @return the VirtualMachineScaleSetUpdateVMProfile object itself.
+     */
+    public VirtualMachineScaleSetUpdateVMProfile
+        withHardwareProfile(VirtualMachineScaleSetHardwareProfile hardwareProfile) {
+        this.hardwareProfile = hardwareProfile;
+        return this;
+    }
+
+    /**
      * Validates the instance.
-     *
+     * 
      * @throws IllegalArgumentException thrown if the instance is not valid.
      */
     public void validate() {
@@ -298,6 +350,9 @@ public final class VirtualMachineScaleSetUpdateVMProfile {
         }
         if (networkProfile() != null) {
             networkProfile().validate();
+        }
+        if (securityPostureReference() != null) {
+            securityPostureReference().validate();
         }
         if (securityProfile() != null) {
             securityProfile().validate();
@@ -314,5 +369,87 @@ public final class VirtualMachineScaleSetUpdateVMProfile {
         if (scheduledEventsProfile() != null) {
             scheduledEventsProfile().validate();
         }
+        if (hardwareProfile() != null) {
+            hardwareProfile().validate();
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public JsonWriter toJson(JsonWriter jsonWriter) throws IOException {
+        jsonWriter.writeStartObject();
+        jsonWriter.writeJsonField("osProfile", this.osProfile);
+        jsonWriter.writeJsonField("storageProfile", this.storageProfile);
+        jsonWriter.writeJsonField("networkProfile", this.networkProfile);
+        jsonWriter.writeJsonField("securityPostureReference", this.securityPostureReference);
+        jsonWriter.writeJsonField("securityProfile", this.securityProfile);
+        jsonWriter.writeJsonField("diagnosticsProfile", this.diagnosticsProfile);
+        jsonWriter.writeJsonField("extensionProfile", this.extensionProfile);
+        jsonWriter.writeStringField("licenseType", this.licenseType);
+        jsonWriter.writeJsonField("billingProfile", this.billingProfile);
+        jsonWriter.writeJsonField("scheduledEventsProfile", this.scheduledEventsProfile);
+        jsonWriter.writeStringField("userData", this.userData);
+        jsonWriter.writeJsonField("hardwareProfile", this.hardwareProfile);
+        return jsonWriter.writeEndObject();
+    }
+
+    /**
+     * Reads an instance of VirtualMachineScaleSetUpdateVMProfile from the JsonReader.
+     * 
+     * @param jsonReader The JsonReader being read.
+     * @return An instance of VirtualMachineScaleSetUpdateVMProfile if the JsonReader was pointing to an instance of it,
+     * or null if it was pointing to JSON null.
+     * @throws IOException If an error occurs while reading the VirtualMachineScaleSetUpdateVMProfile.
+     */
+    public static VirtualMachineScaleSetUpdateVMProfile fromJson(JsonReader jsonReader) throws IOException {
+        return jsonReader.readObject(reader -> {
+            VirtualMachineScaleSetUpdateVMProfile deserializedVirtualMachineScaleSetUpdateVMProfile
+                = new VirtualMachineScaleSetUpdateVMProfile();
+            while (reader.nextToken() != JsonToken.END_OBJECT) {
+                String fieldName = reader.getFieldName();
+                reader.nextToken();
+
+                if ("osProfile".equals(fieldName)) {
+                    deserializedVirtualMachineScaleSetUpdateVMProfile.osProfile
+                        = VirtualMachineScaleSetUpdateOSProfile.fromJson(reader);
+                } else if ("storageProfile".equals(fieldName)) {
+                    deserializedVirtualMachineScaleSetUpdateVMProfile.storageProfile
+                        = VirtualMachineScaleSetUpdateStorageProfile.fromJson(reader);
+                } else if ("networkProfile".equals(fieldName)) {
+                    deserializedVirtualMachineScaleSetUpdateVMProfile.networkProfile
+                        = VirtualMachineScaleSetUpdateNetworkProfile.fromJson(reader);
+                } else if ("securityPostureReference".equals(fieldName)) {
+                    deserializedVirtualMachineScaleSetUpdateVMProfile.securityPostureReference
+                        = SecurityPostureReferenceUpdate.fromJson(reader);
+                } else if ("securityProfile".equals(fieldName)) {
+                    deserializedVirtualMachineScaleSetUpdateVMProfile.securityProfile
+                        = SecurityProfile.fromJson(reader);
+                } else if ("diagnosticsProfile".equals(fieldName)) {
+                    deserializedVirtualMachineScaleSetUpdateVMProfile.diagnosticsProfile
+                        = DiagnosticsProfile.fromJson(reader);
+                } else if ("extensionProfile".equals(fieldName)) {
+                    deserializedVirtualMachineScaleSetUpdateVMProfile.extensionProfile
+                        = VirtualMachineScaleSetExtensionProfile.fromJson(reader);
+                } else if ("licenseType".equals(fieldName)) {
+                    deserializedVirtualMachineScaleSetUpdateVMProfile.licenseType = reader.getString();
+                } else if ("billingProfile".equals(fieldName)) {
+                    deserializedVirtualMachineScaleSetUpdateVMProfile.billingProfile = BillingProfile.fromJson(reader);
+                } else if ("scheduledEventsProfile".equals(fieldName)) {
+                    deserializedVirtualMachineScaleSetUpdateVMProfile.scheduledEventsProfile
+                        = ScheduledEventsProfile.fromJson(reader);
+                } else if ("userData".equals(fieldName)) {
+                    deserializedVirtualMachineScaleSetUpdateVMProfile.userData = reader.getString();
+                } else if ("hardwareProfile".equals(fieldName)) {
+                    deserializedVirtualMachineScaleSetUpdateVMProfile.hardwareProfile
+                        = VirtualMachineScaleSetHardwareProfile.fromJson(reader);
+                } else {
+                    reader.skipChildren();
+                }
+            }
+
+            return deserializedVirtualMachineScaleSetUpdateVMProfile;
+        });
     }
 }

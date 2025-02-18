@@ -4,24 +4,26 @@
 
 package com.azure.resourcemanager.containerservice.generated;
 
-import com.azure.core.util.Context;
-
-/** Samples for ManagedClusters ListClusterUserCredentials. */
+/**
+ * Samples for ManagedClusters ListClusterUserCredentials.
+ */
 public final class ManagedClustersListClusterUserCredentialsSamples {
     /*
-     * x-ms-original-file: specification/containerservice/resource-manager/Microsoft.ContainerService/stable/2021-10-01/examples/ManagedClustersListClusterCredentialResult.json
+     * x-ms-original-file:
+     * specification/containerservice/resource-manager/Microsoft.ContainerService/aks/stable/2024-10-01/examples/
+     * ManagedClustersListClusterUserCredentials.json
      */
     /**
      * Sample code: Get Managed Cluster.
-     *
+     * 
      * @param azure The entry point for accessing resource management APIs in Azure.
      */
     public static void getManagedCluster(com.azure.resourcemanager.AzureResourceManager azure) {
-        azure
-            .kubernetesClusters()
+        azure.kubernetesClusters()
             .manager()
             .serviceClient()
             .getManagedClusters()
-            .listClusterUserCredentialsWithResponse("rg1", "clustername1", null, Context.NONE);
+            .listClusterUserCredentialsWithResponse("rg1", "clustername1", null, null,
+                com.azure.core.util.Context.NONE);
     }
 }

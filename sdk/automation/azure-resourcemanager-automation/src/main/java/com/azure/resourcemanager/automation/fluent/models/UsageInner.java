@@ -5,55 +5,57 @@
 package com.azure.resourcemanager.automation.fluent.models;
 
 import com.azure.core.annotation.Fluent;
-import com.azure.core.util.logging.ClientLogger;
+import com.azure.json.JsonReader;
+import com.azure.json.JsonSerializable;
+import com.azure.json.JsonToken;
+import com.azure.json.JsonWriter;
 import com.azure.resourcemanager.automation.models.UsageCounterName;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import java.io.IOException;
 
-/** Definition of Usage. */
+/**
+ * Definition of Usage.
+ */
 @Fluent
-public final class UsageInner {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(UsageInner.class);
-
+public final class UsageInner implements JsonSerializable<UsageInner> {
     /*
      * Gets or sets the id of the resource.
      */
-    @JsonProperty(value = "id")
     private String id;
 
     /*
      * Gets or sets the usage counter name.
      */
-    @JsonProperty(value = "name")
     private UsageCounterName name;
 
     /*
      * Gets or sets the usage unit name.
      */
-    @JsonProperty(value = "unit")
     private String unit;
 
     /*
      * Gets or sets the current usage value.
      */
-    @JsonProperty(value = "currentValue")
     private Double currentValue;
 
     /*
      * Gets or sets max limit. -1 for unlimited
      */
-    @JsonProperty(value = "limit")
     private Long limit;
 
     /*
      * Gets or sets the throttle status.
      */
-    @JsonProperty(value = "throttleStatus")
     private String throttleStatus;
 
     /**
+     * Creates an instance of UsageInner class.
+     */
+    public UsageInner() {
+    }
+
+    /**
      * Get the id property: Gets or sets the id of the resource.
-     *
+     * 
      * @return the id value.
      */
     public String id() {
@@ -62,7 +64,7 @@ public final class UsageInner {
 
     /**
      * Set the id property: Gets or sets the id of the resource.
-     *
+     * 
      * @param id the id value to set.
      * @return the UsageInner object itself.
      */
@@ -73,7 +75,7 @@ public final class UsageInner {
 
     /**
      * Get the name property: Gets or sets the usage counter name.
-     *
+     * 
      * @return the name value.
      */
     public UsageCounterName name() {
@@ -82,7 +84,7 @@ public final class UsageInner {
 
     /**
      * Set the name property: Gets or sets the usage counter name.
-     *
+     * 
      * @param name the name value to set.
      * @return the UsageInner object itself.
      */
@@ -93,7 +95,7 @@ public final class UsageInner {
 
     /**
      * Get the unit property: Gets or sets the usage unit name.
-     *
+     * 
      * @return the unit value.
      */
     public String unit() {
@@ -102,7 +104,7 @@ public final class UsageInner {
 
     /**
      * Set the unit property: Gets or sets the usage unit name.
-     *
+     * 
      * @param unit the unit value to set.
      * @return the UsageInner object itself.
      */
@@ -113,7 +115,7 @@ public final class UsageInner {
 
     /**
      * Get the currentValue property: Gets or sets the current usage value.
-     *
+     * 
      * @return the currentValue value.
      */
     public Double currentValue() {
@@ -122,7 +124,7 @@ public final class UsageInner {
 
     /**
      * Set the currentValue property: Gets or sets the current usage value.
-     *
+     * 
      * @param currentValue the currentValue value to set.
      * @return the UsageInner object itself.
      */
@@ -133,7 +135,7 @@ public final class UsageInner {
 
     /**
      * Get the limit property: Gets or sets max limit. -1 for unlimited.
-     *
+     * 
      * @return the limit value.
      */
     public Long limit() {
@@ -142,7 +144,7 @@ public final class UsageInner {
 
     /**
      * Set the limit property: Gets or sets max limit. -1 for unlimited.
-     *
+     * 
      * @param limit the limit value to set.
      * @return the UsageInner object itself.
      */
@@ -153,7 +155,7 @@ public final class UsageInner {
 
     /**
      * Get the throttleStatus property: Gets or sets the throttle status.
-     *
+     * 
      * @return the throttleStatus value.
      */
     public String throttleStatus() {
@@ -162,7 +164,7 @@ public final class UsageInner {
 
     /**
      * Set the throttleStatus property: Gets or sets the throttle status.
-     *
+     * 
      * @param throttleStatus the throttleStatus value to set.
      * @return the UsageInner object itself.
      */
@@ -173,12 +175,63 @@ public final class UsageInner {
 
     /**
      * Validates the instance.
-     *
+     * 
      * @throws IllegalArgumentException thrown if the instance is not valid.
      */
     public void validate() {
         if (name() != null) {
             name().validate();
         }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public JsonWriter toJson(JsonWriter jsonWriter) throws IOException {
+        jsonWriter.writeStartObject();
+        jsonWriter.writeStringField("id", this.id);
+        jsonWriter.writeJsonField("name", this.name);
+        jsonWriter.writeStringField("unit", this.unit);
+        jsonWriter.writeNumberField("currentValue", this.currentValue);
+        jsonWriter.writeNumberField("limit", this.limit);
+        jsonWriter.writeStringField("throttleStatus", this.throttleStatus);
+        return jsonWriter.writeEndObject();
+    }
+
+    /**
+     * Reads an instance of UsageInner from the JsonReader.
+     * 
+     * @param jsonReader The JsonReader being read.
+     * @return An instance of UsageInner if the JsonReader was pointing to an instance of it, or null if it was pointing
+     * to JSON null.
+     * @throws IOException If an error occurs while reading the UsageInner.
+     */
+    public static UsageInner fromJson(JsonReader jsonReader) throws IOException {
+        return jsonReader.readObject(reader -> {
+            UsageInner deserializedUsageInner = new UsageInner();
+            while (reader.nextToken() != JsonToken.END_OBJECT) {
+                String fieldName = reader.getFieldName();
+                reader.nextToken();
+
+                if ("id".equals(fieldName)) {
+                    deserializedUsageInner.id = reader.getString();
+                } else if ("name".equals(fieldName)) {
+                    deserializedUsageInner.name = UsageCounterName.fromJson(reader);
+                } else if ("unit".equals(fieldName)) {
+                    deserializedUsageInner.unit = reader.getString();
+                } else if ("currentValue".equals(fieldName)) {
+                    deserializedUsageInner.currentValue = reader.getNullable(JsonReader::getDouble);
+                } else if ("limit".equals(fieldName)) {
+                    deserializedUsageInner.limit = reader.getNullable(JsonReader::getLong);
+                } else if ("throttleStatus".equals(fieldName)) {
+                    deserializedUsageInner.throttleStatus = reader.getString();
+                } else {
+                    reader.skipChildren();
+                }
+            }
+
+            return deserializedUsageInner;
+        });
     }
 }

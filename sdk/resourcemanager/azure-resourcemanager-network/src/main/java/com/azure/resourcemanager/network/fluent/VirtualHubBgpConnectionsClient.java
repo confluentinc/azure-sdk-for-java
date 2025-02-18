@@ -14,45 +14,65 @@ import com.azure.core.util.Context;
 import com.azure.core.util.polling.PollerFlux;
 import com.azure.core.util.polling.SyncPoller;
 import com.azure.resourcemanager.network.fluent.models.BgpConnectionInner;
-import com.azure.resourcemanager.network.fluent.models.PeerRouteListInner;
+import com.azure.resourcemanager.network.models.PeerRoute;
 import java.nio.ByteBuffer;
+import java.util.List;
+import java.util.Map;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-/** An instance of this class provides access to all the operations defined in VirtualHubBgpConnectionsClient. */
+/**
+ * An instance of this class provides access to all the operations defined in VirtualHubBgpConnectionsClient.
+ */
 public interface VirtualHubBgpConnectionsClient {
     /**
      * Retrieves the details of a Virtual Hub Bgp Connection.
-     *
+     * 
      * @param resourceGroupName The resource group name of the VirtualHub.
      * @param virtualHubName The name of the VirtualHub.
      * @param connectionName The name of the connection.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return virtual Appliance Site resource.
+     * @return virtual Appliance Site resource along with {@link Response} on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    Mono<Response<BgpConnectionInner>> getWithResponseAsync(
-        String resourceGroupName, String virtualHubName, String connectionName);
+    Mono<Response<BgpConnectionInner>> getWithResponseAsync(String resourceGroupName, String virtualHubName,
+        String connectionName);
 
     /**
      * Retrieves the details of a Virtual Hub Bgp Connection.
-     *
+     * 
      * @param resourceGroupName The resource group name of the VirtualHub.
      * @param virtualHubName The name of the VirtualHub.
      * @param connectionName The name of the connection.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return virtual Appliance Site resource.
+     * @return virtual Appliance Site resource on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
     Mono<BgpConnectionInner> getAsync(String resourceGroupName, String virtualHubName, String connectionName);
 
     /**
      * Retrieves the details of a Virtual Hub Bgp Connection.
-     *
+     * 
+     * @param resourceGroupName The resource group name of the VirtualHub.
+     * @param virtualHubName The name of the VirtualHub.
+     * @param connectionName The name of the connection.
+     * @param context The context to associate with this operation.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return virtual Appliance Site resource along with {@link Response}.
+     */
+    @ServiceMethod(returns = ReturnType.SINGLE)
+    Response<BgpConnectionInner> getWithResponse(String resourceGroupName, String virtualHubName, String connectionName,
+        Context context);
+
+    /**
+     * Retrieves the details of a Virtual Hub Bgp Connection.
+     * 
      * @param resourceGroupName The resource group name of the VirtualHub.
      * @param virtualHubName The name of the VirtualHub.
      * @param connectionName The name of the connection.
@@ -65,24 +85,24 @@ public interface VirtualHubBgpConnectionsClient {
     BgpConnectionInner get(String resourceGroupName, String virtualHubName, String connectionName);
 
     /**
-     * Retrieves the details of a Virtual Hub Bgp Connection.
-     *
+     * Creates a VirtualHubBgpConnection resource if it doesn't exist else updates the existing VirtualHubBgpConnection.
+     * 
      * @param resourceGroupName The resource group name of the VirtualHub.
      * @param virtualHubName The name of the VirtualHub.
      * @param connectionName The name of the connection.
-     * @param context The context to associate with this operation.
+     * @param parameters Parameters of Bgp connection.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return virtual Appliance Site resource.
+     * @return virtual Appliance Site resource along with {@link Response} on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    Response<BgpConnectionInner> getWithResponse(
-        String resourceGroupName, String virtualHubName, String connectionName, Context context);
+    Mono<Response<Flux<ByteBuffer>>> createOrUpdateWithResponseAsync(String resourceGroupName, String virtualHubName,
+        String connectionName, BgpConnectionInner parameters);
 
     /**
      * Creates a VirtualHubBgpConnection resource if it doesn't exist else updates the existing VirtualHubBgpConnection.
-     *
+     * 
      * @param resourceGroupName The resource group name of the VirtualHub.
      * @param virtualHubName The name of the VirtualHub.
      * @param connectionName The name of the connection.
@@ -90,31 +110,15 @@ public interface VirtualHubBgpConnectionsClient {
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return virtual Appliance Site resource.
-     */
-    @ServiceMethod(returns = ReturnType.SINGLE)
-    Mono<Response<Flux<ByteBuffer>>> createOrUpdateWithResponseAsync(
-        String resourceGroupName, String virtualHubName, String connectionName, BgpConnectionInner parameters);
-
-    /**
-     * Creates a VirtualHubBgpConnection resource if it doesn't exist else updates the existing VirtualHubBgpConnection.
-     *
-     * @param resourceGroupName The resource group name of the VirtualHub.
-     * @param virtualHubName The name of the VirtualHub.
-     * @param connectionName The name of the connection.
-     * @param parameters Parameters of Bgp connection.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return virtual Appliance Site resource.
+     * @return the {@link PollerFlux} for polling of virtual Appliance Site resource.
      */
     @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
-    PollerFlux<PollResult<BgpConnectionInner>, BgpConnectionInner> beginCreateOrUpdateAsync(
-        String resourceGroupName, String virtualHubName, String connectionName, BgpConnectionInner parameters);
+    PollerFlux<PollResult<BgpConnectionInner>, BgpConnectionInner> beginCreateOrUpdateAsync(String resourceGroupName,
+        String virtualHubName, String connectionName, BgpConnectionInner parameters);
 
     /**
      * Creates a VirtualHubBgpConnection resource if it doesn't exist else updates the existing VirtualHubBgpConnection.
-     *
+     * 
      * @param resourceGroupName The resource group name of the VirtualHub.
      * @param virtualHubName The name of the VirtualHub.
      * @param connectionName The name of the connection.
@@ -122,15 +126,15 @@ public interface VirtualHubBgpConnectionsClient {
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return virtual Appliance Site resource.
+     * @return the {@link SyncPoller} for polling of virtual Appliance Site resource.
      */
     @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
-    SyncPoller<PollResult<BgpConnectionInner>, BgpConnectionInner> beginCreateOrUpdate(
-        String resourceGroupName, String virtualHubName, String connectionName, BgpConnectionInner parameters);
+    SyncPoller<PollResult<BgpConnectionInner>, BgpConnectionInner> beginCreateOrUpdate(String resourceGroupName,
+        String virtualHubName, String connectionName, BgpConnectionInner parameters);
 
     /**
      * Creates a VirtualHubBgpConnection resource if it doesn't exist else updates the existing VirtualHubBgpConnection.
-     *
+     * 
      * @param resourceGroupName The resource group name of the VirtualHub.
      * @param virtualHubName The name of the VirtualHub.
      * @param connectionName The name of the connection.
@@ -139,19 +143,31 @@ public interface VirtualHubBgpConnectionsClient {
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return virtual Appliance Site resource.
+     * @return the {@link SyncPoller} for polling of virtual Appliance Site resource.
      */
     @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
-    SyncPoller<PollResult<BgpConnectionInner>, BgpConnectionInner> beginCreateOrUpdate(
-        String resourceGroupName,
-        String virtualHubName,
-        String connectionName,
-        BgpConnectionInner parameters,
-        Context context);
+    SyncPoller<PollResult<BgpConnectionInner>, BgpConnectionInner> beginCreateOrUpdate(String resourceGroupName,
+        String virtualHubName, String connectionName, BgpConnectionInner parameters, Context context);
 
     /**
      * Creates a VirtualHubBgpConnection resource if it doesn't exist else updates the existing VirtualHubBgpConnection.
-     *
+     * 
+     * @param resourceGroupName The resource group name of the VirtualHub.
+     * @param virtualHubName The name of the VirtualHub.
+     * @param connectionName The name of the connection.
+     * @param parameters Parameters of Bgp connection.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return virtual Appliance Site resource on successful completion of {@link Mono}.
+     */
+    @ServiceMethod(returns = ReturnType.SINGLE)
+    Mono<BgpConnectionInner> createOrUpdateAsync(String resourceGroupName, String virtualHubName, String connectionName,
+        BgpConnectionInner parameters);
+
+    /**
+     * Creates a VirtualHubBgpConnection resource if it doesn't exist else updates the existing VirtualHubBgpConnection.
+     * 
      * @param resourceGroupName The resource group name of the VirtualHub.
      * @param virtualHubName The name of the VirtualHub.
      * @param connectionName The name of the connection.
@@ -162,28 +178,12 @@ public interface VirtualHubBgpConnectionsClient {
      * @return virtual Appliance Site resource.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    Mono<BgpConnectionInner> createOrUpdateAsync(
-        String resourceGroupName, String virtualHubName, String connectionName, BgpConnectionInner parameters);
+    BgpConnectionInner createOrUpdate(String resourceGroupName, String virtualHubName, String connectionName,
+        BgpConnectionInner parameters);
 
     /**
      * Creates a VirtualHubBgpConnection resource if it doesn't exist else updates the existing VirtualHubBgpConnection.
-     *
-     * @param resourceGroupName The resource group name of the VirtualHub.
-     * @param virtualHubName The name of the VirtualHub.
-     * @param connectionName The name of the connection.
-     * @param parameters Parameters of Bgp connection.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return virtual Appliance Site resource.
-     */
-    @ServiceMethod(returns = ReturnType.SINGLE)
-    BgpConnectionInner createOrUpdate(
-        String resourceGroupName, String virtualHubName, String connectionName, BgpConnectionInner parameters);
-
-    /**
-     * Creates a VirtualHubBgpConnection resource if it doesn't exist else updates the existing VirtualHubBgpConnection.
-     *
+     * 
      * @param resourceGroupName The resource group name of the VirtualHub.
      * @param virtualHubName The name of the VirtualHub.
      * @param connectionName The name of the connection.
@@ -195,61 +195,57 @@ public interface VirtualHubBgpConnectionsClient {
      * @return virtual Appliance Site resource.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    BgpConnectionInner createOrUpdate(
-        String resourceGroupName,
-        String virtualHubName,
-        String connectionName,
-        BgpConnectionInner parameters,
-        Context context);
+    BgpConnectionInner createOrUpdate(String resourceGroupName, String virtualHubName, String connectionName,
+        BgpConnectionInner parameters, Context context);
 
     /**
      * Deletes a VirtualHubBgpConnection.
-     *
+     * 
      * @param resourceGroupName The resource group name of the VirtualHubBgpConnection.
      * @param virtualHubName The name of the VirtualHub.
      * @param connectionName The name of the connection.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the completion.
+     * @return the {@link Response} on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    Mono<Response<Flux<ByteBuffer>>> deleteWithResponseAsync(
-        String resourceGroupName, String virtualHubName, String connectionName);
+    Mono<Response<Flux<ByteBuffer>>> deleteWithResponseAsync(String resourceGroupName, String virtualHubName,
+        String connectionName);
 
     /**
      * Deletes a VirtualHubBgpConnection.
-     *
+     * 
      * @param resourceGroupName The resource group name of the VirtualHubBgpConnection.
      * @param virtualHubName The name of the VirtualHub.
      * @param connectionName The name of the connection.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the completion.
+     * @return the {@link PollerFlux} for polling of long-running operation.
      */
     @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
-    PollerFlux<PollResult<Void>, Void> beginDeleteAsync(
-        String resourceGroupName, String virtualHubName, String connectionName);
+    PollerFlux<PollResult<Void>, Void> beginDeleteAsync(String resourceGroupName, String virtualHubName,
+        String connectionName);
 
     /**
      * Deletes a VirtualHubBgpConnection.
-     *
+     * 
      * @param resourceGroupName The resource group name of the VirtualHubBgpConnection.
      * @param virtualHubName The name of the VirtualHub.
      * @param connectionName The name of the connection.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the completion.
+     * @return the {@link SyncPoller} for polling of long-running operation.
      */
     @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
-    SyncPoller<PollResult<Void>, Void> beginDelete(
-        String resourceGroupName, String virtualHubName, String connectionName);
+    SyncPoller<PollResult<Void>, Void> beginDelete(String resourceGroupName, String virtualHubName,
+        String connectionName);
 
     /**
      * Deletes a VirtualHubBgpConnection.
-     *
+     * 
      * @param resourceGroupName The resource group name of the VirtualHubBgpConnection.
      * @param virtualHubName The name of the VirtualHub.
      * @param connectionName The name of the connection.
@@ -257,29 +253,29 @@ public interface VirtualHubBgpConnectionsClient {
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the completion.
+     * @return the {@link SyncPoller} for polling of long-running operation.
      */
     @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
-    SyncPoller<PollResult<Void>, Void> beginDelete(
-        String resourceGroupName, String virtualHubName, String connectionName, Context context);
+    SyncPoller<PollResult<Void>, Void> beginDelete(String resourceGroupName, String virtualHubName,
+        String connectionName, Context context);
 
     /**
      * Deletes a VirtualHubBgpConnection.
-     *
+     * 
      * @param resourceGroupName The resource group name of the VirtualHubBgpConnection.
      * @param virtualHubName The name of the VirtualHub.
      * @param connectionName The name of the connection.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the completion.
+     * @return A {@link Mono} that completes when a successful response is received.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
     Mono<Void> deleteAsync(String resourceGroupName, String virtualHubName, String connectionName);
 
     /**
      * Deletes a VirtualHubBgpConnection.
-     *
+     * 
      * @param resourceGroupName The resource group name of the VirtualHubBgpConnection.
      * @param virtualHubName The name of the VirtualHub.
      * @param connectionName The name of the connection.
@@ -292,7 +288,7 @@ public interface VirtualHubBgpConnectionsClient {
 
     /**
      * Deletes a VirtualHubBgpConnection.
-     *
+     * 
      * @param resourceGroupName The resource group name of the VirtualHubBgpConnection.
      * @param virtualHubName The name of the VirtualHub.
      * @param connectionName The name of the connection.
@@ -306,92 +302,93 @@ public interface VirtualHubBgpConnectionsClient {
 
     /**
      * Retrieves the details of all VirtualHubBgpConnections.
-     *
+     * 
      * @param resourceGroupName The resource group name of the VirtualHub.
      * @param virtualHubName The name of the VirtualHub.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return virtualHubBgpConnections list.
+     * @return virtualHubBgpConnections list as paginated response with {@link PagedFlux}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
     PagedFlux<BgpConnectionInner> listAsync(String resourceGroupName, String virtualHubName);
 
     /**
      * Retrieves the details of all VirtualHubBgpConnections.
-     *
+     * 
      * @param resourceGroupName The resource group name of the VirtualHub.
      * @param virtualHubName The name of the VirtualHub.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return virtualHubBgpConnections list.
+     * @return virtualHubBgpConnections list as paginated response with {@link PagedIterable}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
     PagedIterable<BgpConnectionInner> list(String resourceGroupName, String virtualHubName);
 
     /**
      * Retrieves the details of all VirtualHubBgpConnections.
-     *
+     * 
      * @param resourceGroupName The resource group name of the VirtualHub.
      * @param virtualHubName The name of the VirtualHub.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return virtualHubBgpConnections list.
+     * @return virtualHubBgpConnections list as paginated response with {@link PagedIterable}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
     PagedIterable<BgpConnectionInner> list(String resourceGroupName, String virtualHubName, Context context);
 
     /**
      * Retrieves a list of routes the virtual hub bgp connection has learned.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param hubName The name of the virtual hub.
      * @param connectionName The name of the virtual hub bgp connection.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return list of virtual router peer routes.
+     * @return map from virtual router instance to list of peer routes along with {@link Response} on successful
+     * completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    Mono<Response<Flux<ByteBuffer>>> listLearnedRoutesWithResponseAsync(
-        String resourceGroupName, String hubName, String connectionName);
+    Mono<Response<Flux<ByteBuffer>>> listLearnedRoutesWithResponseAsync(String resourceGroupName, String hubName,
+        String connectionName);
 
     /**
      * Retrieves a list of routes the virtual hub bgp connection has learned.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param hubName The name of the virtual hub.
      * @param connectionName The name of the virtual hub bgp connection.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return list of virtual router peer routes.
+     * @return the {@link PollerFlux} for polling of map from virtual router instance to list of peer routes.
      */
     @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
-    PollerFlux<PollResult<PeerRouteListInner>, PeerRouteListInner> beginListLearnedRoutesAsync(
-        String resourceGroupName, String hubName, String connectionName);
+    PollerFlux<PollResult<Map<String, List<PeerRoute>>>, Map<String, List<PeerRoute>>>
+        beginListLearnedRoutesAsync(String resourceGroupName, String hubName, String connectionName);
 
     /**
      * Retrieves a list of routes the virtual hub bgp connection has learned.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param hubName The name of the virtual hub.
      * @param connectionName The name of the virtual hub bgp connection.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return list of virtual router peer routes.
+     * @return the {@link SyncPoller} for polling of map from virtual router instance to list of peer routes.
      */
     @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
-    SyncPoller<PollResult<PeerRouteListInner>, PeerRouteListInner> beginListLearnedRoutes(
-        String resourceGroupName, String hubName, String connectionName);
+    SyncPoller<PollResult<Map<String, List<PeerRoute>>>, Map<String, List<PeerRoute>>>
+        beginListLearnedRoutes(String resourceGroupName, String hubName, String connectionName);
 
     /**
      * Retrieves a list of routes the virtual hub bgp connection has learned.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param hubName The name of the virtual hub.
      * @param connectionName The name of the virtual hub bgp connection.
@@ -399,43 +396,44 @@ public interface VirtualHubBgpConnectionsClient {
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return list of virtual router peer routes.
+     * @return the {@link SyncPoller} for polling of map from virtual router instance to list of peer routes.
      */
     @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
-    SyncPoller<PollResult<PeerRouteListInner>, PeerRouteListInner> beginListLearnedRoutes(
-        String resourceGroupName, String hubName, String connectionName, Context context);
+    SyncPoller<PollResult<Map<String, List<PeerRoute>>>, Map<String, List<PeerRoute>>>
+        beginListLearnedRoutes(String resourceGroupName, String hubName, String connectionName, Context context);
 
     /**
      * Retrieves a list of routes the virtual hub bgp connection has learned.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param hubName The name of the virtual hub.
      * @param connectionName The name of the virtual hub bgp connection.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return list of virtual router peer routes.
+     * @return map from virtual router instance to list of peer routes on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    Mono<PeerRouteListInner> listLearnedRoutesAsync(String resourceGroupName, String hubName, String connectionName);
+    Mono<Map<String, List<PeerRoute>>> listLearnedRoutesAsync(String resourceGroupName, String hubName,
+        String connectionName);
 
     /**
      * Retrieves a list of routes the virtual hub bgp connection has learned.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param hubName The name of the virtual hub.
      * @param connectionName The name of the virtual hub bgp connection.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return list of virtual router peer routes.
+     * @return map from virtual router instance to list of peer routes.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    PeerRouteListInner listLearnedRoutes(String resourceGroupName, String hubName, String connectionName);
+    Map<String, List<PeerRoute>> listLearnedRoutes(String resourceGroupName, String hubName, String connectionName);
 
     /**
      * Retrieves a list of routes the virtual hub bgp connection has learned.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param hubName The name of the virtual hub.
      * @param connectionName The name of the virtual hub bgp connection.
@@ -443,60 +441,61 @@ public interface VirtualHubBgpConnectionsClient {
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return list of virtual router peer routes.
+     * @return map from virtual router instance to list of peer routes.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    PeerRouteListInner listLearnedRoutes(
-        String resourceGroupName, String hubName, String connectionName, Context context);
+    Map<String, List<PeerRoute>> listLearnedRoutes(String resourceGroupName, String hubName, String connectionName,
+        Context context);
 
     /**
      * Retrieves a list of routes the virtual hub bgp connection is advertising to the specified peer.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param hubName The name of the virtual hub.
      * @param connectionName The name of the virtual hub bgp connection.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return list of virtual router peer routes.
+     * @return map from virtual router instance to list of peer routes along with {@link Response} on successful
+     * completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    Mono<Response<Flux<ByteBuffer>>> listAdvertisedRoutesWithResponseAsync(
-        String resourceGroupName, String hubName, String connectionName);
+    Mono<Response<Flux<ByteBuffer>>> listAdvertisedRoutesWithResponseAsync(String resourceGroupName, String hubName,
+        String connectionName);
 
     /**
      * Retrieves a list of routes the virtual hub bgp connection is advertising to the specified peer.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param hubName The name of the virtual hub.
      * @param connectionName The name of the virtual hub bgp connection.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return list of virtual router peer routes.
+     * @return the {@link PollerFlux} for polling of map from virtual router instance to list of peer routes.
      */
     @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
-    PollerFlux<PollResult<PeerRouteListInner>, PeerRouteListInner> beginListAdvertisedRoutesAsync(
-        String resourceGroupName, String hubName, String connectionName);
+    PollerFlux<PollResult<Map<String, List<PeerRoute>>>, Map<String, List<PeerRoute>>>
+        beginListAdvertisedRoutesAsync(String resourceGroupName, String hubName, String connectionName);
 
     /**
      * Retrieves a list of routes the virtual hub bgp connection is advertising to the specified peer.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param hubName The name of the virtual hub.
      * @param connectionName The name of the virtual hub bgp connection.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return list of virtual router peer routes.
+     * @return the {@link SyncPoller} for polling of map from virtual router instance to list of peer routes.
      */
     @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
-    SyncPoller<PollResult<PeerRouteListInner>, PeerRouteListInner> beginListAdvertisedRoutes(
-        String resourceGroupName, String hubName, String connectionName);
+    SyncPoller<PollResult<Map<String, List<PeerRoute>>>, Map<String, List<PeerRoute>>>
+        beginListAdvertisedRoutes(String resourceGroupName, String hubName, String connectionName);
 
     /**
      * Retrieves a list of routes the virtual hub bgp connection is advertising to the specified peer.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param hubName The name of the virtual hub.
      * @param connectionName The name of the virtual hub bgp connection.
@@ -504,43 +503,44 @@ public interface VirtualHubBgpConnectionsClient {
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return list of virtual router peer routes.
+     * @return the {@link SyncPoller} for polling of map from virtual router instance to list of peer routes.
      */
     @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
-    SyncPoller<PollResult<PeerRouteListInner>, PeerRouteListInner> beginListAdvertisedRoutes(
-        String resourceGroupName, String hubName, String connectionName, Context context);
+    SyncPoller<PollResult<Map<String, List<PeerRoute>>>, Map<String, List<PeerRoute>>>
+        beginListAdvertisedRoutes(String resourceGroupName, String hubName, String connectionName, Context context);
 
     /**
      * Retrieves a list of routes the virtual hub bgp connection is advertising to the specified peer.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param hubName The name of the virtual hub.
      * @param connectionName The name of the virtual hub bgp connection.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return list of virtual router peer routes.
+     * @return map from virtual router instance to list of peer routes on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    Mono<PeerRouteListInner> listAdvertisedRoutesAsync(String resourceGroupName, String hubName, String connectionName);
+    Mono<Map<String, List<PeerRoute>>> listAdvertisedRoutesAsync(String resourceGroupName, String hubName,
+        String connectionName);
 
     /**
      * Retrieves a list of routes the virtual hub bgp connection is advertising to the specified peer.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param hubName The name of the virtual hub.
      * @param connectionName The name of the virtual hub bgp connection.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return list of virtual router peer routes.
+     * @return map from virtual router instance to list of peer routes.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    PeerRouteListInner listAdvertisedRoutes(String resourceGroupName, String hubName, String connectionName);
+    Map<String, List<PeerRoute>> listAdvertisedRoutes(String resourceGroupName, String hubName, String connectionName);
 
     /**
      * Retrieves a list of routes the virtual hub bgp connection is advertising to the specified peer.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param hubName The name of the virtual hub.
      * @param connectionName The name of the virtual hub bgp connection.
@@ -548,9 +548,9 @@ public interface VirtualHubBgpConnectionsClient {
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return list of virtual router peer routes.
+     * @return map from virtual router instance to list of peer routes.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    PeerRouteListInner listAdvertisedRoutes(
-        String resourceGroupName, String hubName, String connectionName, Context context);
+    Map<String, List<PeerRoute>> listAdvertisedRoutes(String resourceGroupName, String hubName, String connectionName,
+        Context context);
 }

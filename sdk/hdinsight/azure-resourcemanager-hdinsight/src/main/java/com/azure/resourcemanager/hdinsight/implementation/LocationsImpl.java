@@ -24,19 +24,28 @@ import com.azure.resourcemanager.hdinsight.models.Locations;
 import com.azure.resourcemanager.hdinsight.models.NameAvailabilityCheckRequestParameters;
 import com.azure.resourcemanager.hdinsight.models.NameAvailabilityCheckResult;
 import com.azure.resourcemanager.hdinsight.models.UsagesListResult;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 public final class LocationsImpl implements Locations {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(LocationsImpl.class);
+    private static final ClientLogger LOGGER = new ClientLogger(LocationsImpl.class);
 
     private final LocationsClient innerClient;
 
     private final com.azure.resourcemanager.hdinsight.HDInsightManager serviceManager;
 
-    public LocationsImpl(
-        LocationsClient innerClient, com.azure.resourcemanager.hdinsight.HDInsightManager serviceManager) {
+    public LocationsImpl(LocationsClient innerClient,
+        com.azure.resourcemanager.hdinsight.HDInsightManager serviceManager) {
         this.innerClient = innerClient;
         this.serviceManager = serviceManager;
+    }
+
+    public Response<CapabilitiesResult> getCapabilitiesWithResponse(String location, Context context) {
+        Response<CapabilitiesResultInner> inner = this.serviceClient().getCapabilitiesWithResponse(location, context);
+        if (inner != null) {
+            return new SimpleResponse<>(inner.getRequest(), inner.getStatusCode(), inner.getHeaders(),
+                new CapabilitiesResultImpl(inner.getValue(), this.manager()));
+        } else {
+            return null;
+        }
     }
 
     public CapabilitiesResult getCapabilities(String location) {
@@ -48,14 +57,11 @@ public final class LocationsImpl implements Locations {
         }
     }
 
-    public Response<CapabilitiesResult> getCapabilitiesWithResponse(String location, Context context) {
-        Response<CapabilitiesResultInner> inner = this.serviceClient().getCapabilitiesWithResponse(location, context);
+    public Response<UsagesListResult> listUsagesWithResponse(String location, Context context) {
+        Response<UsagesListResultInner> inner = this.serviceClient().listUsagesWithResponse(location, context);
         if (inner != null) {
-            return new SimpleResponse<>(
-                inner.getRequest(),
-                inner.getStatusCode(),
-                inner.getHeaders(),
-                new CapabilitiesResultImpl(inner.getValue(), this.manager()));
+            return new SimpleResponse<>(inner.getRequest(), inner.getStatusCode(), inner.getHeaders(),
+                new UsagesListResultImpl(inner.getValue(), this.manager()));
         } else {
             return null;
         }
@@ -70,14 +76,12 @@ public final class LocationsImpl implements Locations {
         }
     }
 
-    public Response<UsagesListResult> listUsagesWithResponse(String location, Context context) {
-        Response<UsagesListResultInner> inner = this.serviceClient().listUsagesWithResponse(location, context);
+    public Response<BillingResponseListResult> listBillingSpecsWithResponse(String location, Context context) {
+        Response<BillingResponseListResultInner> inner
+            = this.serviceClient().listBillingSpecsWithResponse(location, context);
         if (inner != null) {
-            return new SimpleResponse<>(
-                inner.getRequest(),
-                inner.getStatusCode(),
-                inner.getHeaders(),
-                new UsagesListResultImpl(inner.getValue(), this.manager()));
+            return new SimpleResponse<>(inner.getRequest(), inner.getStatusCode(), inner.getHeaders(),
+                new BillingResponseListResultImpl(inner.getValue(), this.manager()));
         } else {
             return null;
         }
@@ -92,15 +96,13 @@ public final class LocationsImpl implements Locations {
         }
     }
 
-    public Response<BillingResponseListResult> listBillingSpecsWithResponse(String location, Context context) {
-        Response<BillingResponseListResultInner> inner =
-            this.serviceClient().listBillingSpecsWithResponse(location, context);
+    public Response<AsyncOperationResult> getAzureAsyncOperationStatusWithResponse(String location, String operationId,
+        Context context) {
+        Response<AsyncOperationResultInner> inner
+            = this.serviceClient().getAzureAsyncOperationStatusWithResponse(location, operationId, context);
         if (inner != null) {
-            return new SimpleResponse<>(
-                inner.getRequest(),
-                inner.getStatusCode(),
-                inner.getHeaders(),
-                new BillingResponseListResultImpl(inner.getValue(), this.manager()));
+            return new SimpleResponse<>(inner.getRequest(), inner.getStatusCode(), inner.getHeaders(),
+                new AsyncOperationResultImpl(inner.getValue(), this.manager()));
         } else {
             return null;
         }
@@ -115,23 +117,20 @@ public final class LocationsImpl implements Locations {
         }
     }
 
-    public Response<AsyncOperationResult> getAzureAsyncOperationStatusWithResponse(
-        String location, String operationId, Context context) {
-        Response<AsyncOperationResultInner> inner =
-            this.serviceClient().getAzureAsyncOperationStatusWithResponse(location, operationId, context);
+    public Response<NameAvailabilityCheckResult> checkNameAvailabilityWithResponse(String location,
+        NameAvailabilityCheckRequestParameters parameters, Context context) {
+        Response<NameAvailabilityCheckResultInner> inner
+            = this.serviceClient().checkNameAvailabilityWithResponse(location, parameters, context);
         if (inner != null) {
-            return new SimpleResponse<>(
-                inner.getRequest(),
-                inner.getStatusCode(),
-                inner.getHeaders(),
-                new AsyncOperationResultImpl(inner.getValue(), this.manager()));
+            return new SimpleResponse<>(inner.getRequest(), inner.getStatusCode(), inner.getHeaders(),
+                new NameAvailabilityCheckResultImpl(inner.getValue(), this.manager()));
         } else {
             return null;
         }
     }
 
-    public NameAvailabilityCheckResult checkNameAvailability(
-        String location, NameAvailabilityCheckRequestParameters parameters) {
+    public NameAvailabilityCheckResult checkNameAvailability(String location,
+        NameAvailabilityCheckRequestParameters parameters) {
         NameAvailabilityCheckResultInner inner = this.serviceClient().checkNameAvailability(location, parameters);
         if (inner != null) {
             return new NameAvailabilityCheckResultImpl(inner, this.manager());
@@ -140,42 +139,24 @@ public final class LocationsImpl implements Locations {
         }
     }
 
-    public Response<NameAvailabilityCheckResult> checkNameAvailabilityWithResponse(
-        String location, NameAvailabilityCheckRequestParameters parameters, Context context) {
-        Response<NameAvailabilityCheckResultInner> inner =
-            this.serviceClient().checkNameAvailabilityWithResponse(location, parameters, context);
+    public Response<ClusterCreateValidationResult> validateClusterCreateRequestWithResponse(String location,
+        ClusterCreateRequestValidationParameters parameters, Context context) {
+        Response<ClusterCreateValidationResultInner> inner
+            = this.serviceClient().validateClusterCreateRequestWithResponse(location, parameters, context);
         if (inner != null) {
-            return new SimpleResponse<>(
-                inner.getRequest(),
-                inner.getStatusCode(),
-                inner.getHeaders(),
-                new NameAvailabilityCheckResultImpl(inner.getValue(), this.manager()));
+            return new SimpleResponse<>(inner.getRequest(), inner.getStatusCode(), inner.getHeaders(),
+                new ClusterCreateValidationResultImpl(inner.getValue(), this.manager()));
         } else {
             return null;
         }
     }
 
-    public ClusterCreateValidationResult validateClusterCreateRequest(
-        String location, ClusterCreateRequestValidationParameters parameters) {
-        ClusterCreateValidationResultInner inner =
-            this.serviceClient().validateClusterCreateRequest(location, parameters);
+    public ClusterCreateValidationResult validateClusterCreateRequest(String location,
+        ClusterCreateRequestValidationParameters parameters) {
+        ClusterCreateValidationResultInner inner
+            = this.serviceClient().validateClusterCreateRequest(location, parameters);
         if (inner != null) {
             return new ClusterCreateValidationResultImpl(inner, this.manager());
-        } else {
-            return null;
-        }
-    }
-
-    public Response<ClusterCreateValidationResult> validateClusterCreateRequestWithResponse(
-        String location, ClusterCreateRequestValidationParameters parameters, Context context) {
-        Response<ClusterCreateValidationResultInner> inner =
-            this.serviceClient().validateClusterCreateRequestWithResponse(location, parameters, context);
-        if (inner != null) {
-            return new SimpleResponse<>(
-                inner.getRequest(),
-                inner.getStatusCode(),
-                inner.getHeaders(),
-                new ClusterCreateValidationResultImpl(inner.getValue(), this.manager()));
         } else {
             return null;
         }

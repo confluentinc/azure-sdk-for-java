@@ -5,76 +5,72 @@
 package com.azure.resourcemanager.mediaservices.models;
 
 import com.azure.core.annotation.Fluent;
-import com.azure.core.annotation.JsonFlatten;
+import com.azure.core.util.CoreUtils;
 import com.azure.core.util.logging.ClientLogger;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonSubTypes;
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import com.fasterxml.jackson.annotation.JsonTypeName;
+import com.azure.json.JsonReader;
+import com.azure.json.JsonToken;
+import com.azure.json.JsonWriter;
+import java.io.IOException;
 import java.time.Duration;
 
-/** Describes the basic properties for generating thumbnails from the input video. */
-@JsonTypeInfo(
-    use = JsonTypeInfo.Id.NAME,
-    include = JsonTypeInfo.As.PROPERTY,
-    property = "@odata\\.type",
-    defaultImpl = Image.class)
-@JsonTypeName("#Microsoft.Media.Image")
-@JsonSubTypes({
-    @JsonSubTypes.Type(name = "#Microsoft.Media.JpgImage", value = JpgImage.class),
-    @JsonSubTypes.Type(name = "#Microsoft.Media.PngImage", value = PngImage.class)
-})
-@JsonFlatten
+/**
+ * Describes the basic properties for generating thumbnails from the input video.
+ */
 @Fluent
 public class Image extends Video {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(Image.class);
+    /*
+     * The discriminator for derived types.
+     */
+    private String odataType = "#Microsoft.Media.Image";
 
     /*
-     * The position in the input video from where to start generating
-     * thumbnails. The value can be in ISO 8601 format (For example, PT05S to
-     * start at 5 seconds), or a frame count (For example, 10 to start at the
-     * 10th frame), or a relative value to stream duration (For example, 10% to
-     * start at 10% of stream duration). Also supports a macro {Best}, which
-     * tells the encoder to select the best thumbnail from the first few
-     * seconds of the video and will only produce one thumbnail, no matter what
-     * other settings are for Step and Range. The default value is macro
+     * The position in the input video from where to start generating thumbnails. The value can be in ISO 8601 format
+     * (For example, PT05S to start at 5 seconds), or a frame count (For example, 10 to start at the 10th frame), or a
+     * relative value to stream duration (For example, 10% to start at 10% of stream duration). Also supports a macro
+     * {Best}, which tells the encoder to select the best thumbnail from the first few seconds of the video and will
+     * only produce one thumbnail, no matter what other settings are for Step and Range. The default value is macro
      * {Best}.
      */
-    @JsonProperty(value = "start", required = true)
     private String start;
 
     /*
-     * The intervals at which thumbnails are generated. The value can be in ISO
-     * 8601 format (For example, PT05S for one image every 5 seconds), or a
-     * frame count (For example, 30 for one image every 30 frames), or a
-     * relative value to stream duration (For example, 10% for one image every
-     * 10% of stream duration). Note: Step value will affect the first
-     * generated thumbnail, which may not be exactly the one specified at
-     * transform preset start time. This is due to the encoder, which tries to
-     * select the best thumbnail between start time and Step position from
-     * start time as the first output. As the default value is 10%, it means if
-     * stream has long duration, the first generated thumbnail might be far
-     * away from the one specified at start time. Try to select reasonable
-     * value for Step if the first thumbnail is expected close to start time,
-     * or set Range value at 1 if only one thumbnail is needed at start time.
+     * The intervals at which thumbnails are generated. The value can be in ISO 8601 format (For example, PT05S for one
+     * image every 5 seconds), or a frame count (For example, 30 for one image every 30 frames), or a relative value to
+     * stream duration (For example, 10% for one image every 10% of stream duration). Note: Step value will affect the
+     * first generated thumbnail, which may not be exactly the one specified at transform preset start time. This is due
+     * to the encoder, which tries to select the best thumbnail between start time and Step position from start time as
+     * the first output. As the default value is 10%, it means if stream has long duration, the first generated
+     * thumbnail might be far away from the one specified at start time. Try to select reasonable value for Step if the
+     * first thumbnail is expected close to start time, or set Range value at 1 if only one thumbnail is needed at start
+     * time.
      */
-    @JsonProperty(value = "step")
     private String step;
 
     /*
-     * The position relative to transform preset start time in the input video
-     * at which to stop generating thumbnails. The value can be in ISO 8601
-     * format (For example, PT5M30S to stop at 5 minutes and 30 seconds from
-     * start time), or a frame count (For example, 300 to stop at the 300th
-     * frame from the frame at start time. If this value is 1, it means only
-     * producing one thumbnail at start time), or a relative value to the
-     * stream duration (For example, 50% to stop at half of stream duration
-     * from start time). The default value is 100%, which means to stop at the
+     * The position relative to transform preset start time in the input video at which to stop generating thumbnails.
+     * The value can be in ISO 8601 format (For example, PT5M30S to stop at 5 minutes and 30 seconds from start time),
+     * or a frame count (For example, 300 to stop at the 300th frame from the frame at start time. If this value is 1,
+     * it means only producing one thumbnail at start time), or a relative value to the stream duration (For example,
+     * 50% to stop at half of stream duration from start time). The default value is 100%, which means to stop at the
      * end of the stream.
      */
-    @JsonProperty(value = "range")
     private String range;
+
+    /**
+     * Creates an instance of Image class.
+     */
+    public Image() {
+    }
+
+    /**
+     * Get the odataType property: The discriminator for derived types.
+     * 
+     * @return the odataType value.
+     */
+    @Override
+    public String odataType() {
+        return this.odataType;
+    }
 
     /**
      * Get the start property: The position in the input video from where to start generating thumbnails. The value can
@@ -83,7 +79,7 @@ public class Image extends Video {
      * Also supports a macro {Best}, which tells the encoder to select the best thumbnail from the first few seconds of
      * the video and will only produce one thumbnail, no matter what other settings are for Step and Range. The default
      * value is macro {Best}.
-     *
+     * 
      * @return the start value.
      */
     public String start() {
@@ -97,7 +93,7 @@ public class Image extends Video {
      * Also supports a macro {Best}, which tells the encoder to select the best thumbnail from the first few seconds of
      * the video and will only produce one thumbnail, no matter what other settings are for Step and Range. The default
      * value is macro {Best}.
-     *
+     * 
      * @param start the start value to set.
      * @return the Image object itself.
      */
@@ -116,7 +112,7 @@ public class Image extends Video {
      * the first generated thumbnail might be far away from the one specified at start time. Try to select reasonable
      * value for Step if the first thumbnail is expected close to start time, or set Range value at 1 if only one
      * thumbnail is needed at start time.
-     *
+     * 
      * @return the step value.
      */
     public String step() {
@@ -133,7 +129,7 @@ public class Image extends Video {
      * the first generated thumbnail might be far away from the one specified at start time. Try to select reasonable
      * value for Step if the first thumbnail is expected close to start time, or set Range value at 1 if only one
      * thumbnail is needed at start time.
-     *
+     * 
      * @param step the step value to set.
      * @return the Image object itself.
      */
@@ -149,7 +145,7 @@ public class Image extends Video {
      * time. If this value is 1, it means only producing one thumbnail at start time), or a relative value to the stream
      * duration (For example, 50% to stop at half of stream duration from start time). The default value is 100%, which
      * means to stop at the end of the stream.
-     *
+     * 
      * @return the range value.
      */
     public String range() {
@@ -163,7 +159,7 @@ public class Image extends Video {
      * time. If this value is 1, it means only producing one thumbnail at start time), or a relative value to the stream
      * duration (For example, 50% to stop at half of stream duration from start time). The default value is 100%, which
      * means to stop at the end of the stream.
-     *
+     * 
      * @param range the range value to set.
      * @return the Image object itself.
      */
@@ -172,28 +168,36 @@ public class Image extends Video {
         return this;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Image withKeyFrameInterval(Duration keyFrameInterval) {
         super.withKeyFrameInterval(keyFrameInterval);
         return this;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Image withStretchMode(StretchMode stretchMode) {
         super.withStretchMode(stretchMode);
         return this;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Image withSyncMode(VideoSyncMode syncMode) {
         super.withSyncMode(syncMode);
         return this;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Image withLabel(String label) {
         super.withLabel(label);
@@ -202,15 +206,101 @@ public class Image extends Video {
 
     /**
      * Validates the instance.
-     *
+     * 
      * @throws IllegalArgumentException thrown if the instance is not valid.
      */
     @Override
     public void validate() {
-        super.validate();
         if (start() == null) {
-            throw logger
-                .logExceptionAsError(new IllegalArgumentException("Missing required property start in model Image"));
+            throw LOGGER.atError().log(new IllegalArgumentException("Missing required property start in model Image"));
         }
+    }
+
+    private static final ClientLogger LOGGER = new ClientLogger(Image.class);
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public JsonWriter toJson(JsonWriter jsonWriter) throws IOException {
+        jsonWriter.writeStartObject();
+        jsonWriter.writeStringField("label", label());
+        jsonWriter.writeStringField("keyFrameInterval", CoreUtils.durationToStringWithDays(keyFrameInterval()));
+        jsonWriter.writeStringField("stretchMode", stretchMode() == null ? null : stretchMode().toString());
+        jsonWriter.writeStringField("syncMode", syncMode() == null ? null : syncMode().toString());
+        jsonWriter.writeStringField("start", this.start);
+        jsonWriter.writeStringField("@odata.type", this.odataType);
+        jsonWriter.writeStringField("step", this.step);
+        jsonWriter.writeStringField("range", this.range);
+        return jsonWriter.writeEndObject();
+    }
+
+    /**
+     * Reads an instance of Image from the JsonReader.
+     * 
+     * @param jsonReader The JsonReader being read.
+     * @return An instance of Image if the JsonReader was pointing to an instance of it, or null if it was pointing to
+     * JSON null.
+     * @throws IllegalStateException If the deserialized JSON object was missing any required properties.
+     * @throws IOException If an error occurs while reading the Image.
+     */
+    public static Image fromJson(JsonReader jsonReader) throws IOException {
+        return jsonReader.readObject(reader -> {
+            String discriminatorValue = null;
+            try (JsonReader readerToUse = reader.bufferObject()) {
+                readerToUse.nextToken(); // Prepare for reading
+                while (readerToUse.nextToken() != JsonToken.END_OBJECT) {
+                    String fieldName = readerToUse.getFieldName();
+                    readerToUse.nextToken();
+                    if ("@odata.type".equals(fieldName)) {
+                        discriminatorValue = readerToUse.getString();
+                        break;
+                    } else {
+                        readerToUse.skipChildren();
+                    }
+                }
+                // Use the discriminator value to determine which subtype should be deserialized.
+                if ("#Microsoft.Media.JpgImage".equals(discriminatorValue)) {
+                    return JpgImage.fromJson(readerToUse.reset());
+                } else if ("#Microsoft.Media.PngImage".equals(discriminatorValue)) {
+                    return PngImage.fromJson(readerToUse.reset());
+                } else {
+                    return fromJsonKnownDiscriminator(readerToUse.reset());
+                }
+            }
+        });
+    }
+
+    static Image fromJsonKnownDiscriminator(JsonReader jsonReader) throws IOException {
+        return jsonReader.readObject(reader -> {
+            Image deserializedImage = new Image();
+            while (reader.nextToken() != JsonToken.END_OBJECT) {
+                String fieldName = reader.getFieldName();
+                reader.nextToken();
+
+                if ("label".equals(fieldName)) {
+                    deserializedImage.withLabel(reader.getString());
+                } else if ("keyFrameInterval".equals(fieldName)) {
+                    deserializedImage.withKeyFrameInterval(
+                        reader.getNullable(nonNullReader -> Duration.parse(nonNullReader.getString())));
+                } else if ("stretchMode".equals(fieldName)) {
+                    deserializedImage.withStretchMode(StretchMode.fromString(reader.getString()));
+                } else if ("syncMode".equals(fieldName)) {
+                    deserializedImage.withSyncMode(VideoSyncMode.fromString(reader.getString()));
+                } else if ("start".equals(fieldName)) {
+                    deserializedImage.start = reader.getString();
+                } else if ("@odata.type".equals(fieldName)) {
+                    deserializedImage.odataType = reader.getString();
+                } else if ("step".equals(fieldName)) {
+                    deserializedImage.step = reader.getString();
+                } else if ("range".equals(fieldName)) {
+                    deserializedImage.range = reader.getString();
+                } else {
+                    reader.skipChildren();
+                }
+            }
+
+            return deserializedImage;
+        });
     }
 }

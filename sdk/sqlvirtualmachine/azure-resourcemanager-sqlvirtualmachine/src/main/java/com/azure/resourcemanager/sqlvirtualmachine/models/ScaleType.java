@@ -5,26 +5,41 @@
 package com.azure.resourcemanager.sqlvirtualmachine.models;
 
 import com.azure.core.util.ExpandableStringEnum;
-import com.fasterxml.jackson.annotation.JsonCreator;
 import java.util.Collection;
 
-/** Defines values for ScaleType. */
+/**
+ * Scale type.
+ */
 public final class ScaleType extends ExpandableStringEnum<ScaleType> {
-    /** Static value HA for ScaleType. */
+    /**
+     * Static value HA for ScaleType.
+     */
     public static final ScaleType HA = fromString("HA");
 
     /**
+     * Creates a new instance of ScaleType value.
+     * 
+     * @deprecated Use the {@link #fromString(String)} factory method.
+     */
+    @Deprecated
+    public ScaleType() {
+    }
+
+    /**
      * Creates or finds a ScaleType from its string representation.
-     *
+     * 
      * @param name a name to look for.
      * @return the corresponding ScaleType.
      */
-    @JsonCreator
     public static ScaleType fromString(String name) {
         return fromString(name, ScaleType.class);
     }
 
-    /** @return known ScaleType values. */
+    /**
+     * Gets known ScaleType values.
+     * 
+     * @return known ScaleType values.
+     */
     public static Collection<ScaleType> values() {
         return values(ScaleType.class);
     }

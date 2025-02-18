@@ -5,32 +5,51 @@
 package com.azure.resourcemanager.policyinsights.models;
 
 import com.azure.core.util.ExpandableStringEnum;
-import com.fasterxml.jackson.annotation.JsonCreator;
 import java.util.Collection;
 
-/** Defines values for FieldRestrictionResult. */
+/**
+ * The type of restriction that is imposed on the field.
+ */
 public final class FieldRestrictionResult extends ExpandableStringEnum<FieldRestrictionResult> {
-    /** Static value Required for FieldRestrictionResult. */
+    /**
+     * Static value Required for FieldRestrictionResult.
+     */
     public static final FieldRestrictionResult REQUIRED = fromString("Required");
 
-    /** Static value Removed for FieldRestrictionResult. */
+    /**
+     * Static value Removed for FieldRestrictionResult.
+     */
     public static final FieldRestrictionResult REMOVED = fromString("Removed");
 
-    /** Static value Deny for FieldRestrictionResult. */
+    /**
+     * Static value Deny for FieldRestrictionResult.
+     */
     public static final FieldRestrictionResult DENY = fromString("Deny");
 
     /**
+     * Creates a new instance of FieldRestrictionResult value.
+     * 
+     * @deprecated Use the {@link #fromString(String)} factory method.
+     */
+    @Deprecated
+    public FieldRestrictionResult() {
+    }
+
+    /**
      * Creates or finds a FieldRestrictionResult from its string representation.
-     *
+     * 
      * @param name a name to look for.
      * @return the corresponding FieldRestrictionResult.
      */
-    @JsonCreator
     public static FieldRestrictionResult fromString(String name) {
         return fromString(name, FieldRestrictionResult.class);
     }
 
-    /** @return known FieldRestrictionResult values. */
+    /**
+     * Gets known FieldRestrictionResult values.
+     * 
+     * @return known FieldRestrictionResult values.
+     */
     public static Collection<FieldRestrictionResult> values() {
         return values(FieldRestrictionResult.class);
     }

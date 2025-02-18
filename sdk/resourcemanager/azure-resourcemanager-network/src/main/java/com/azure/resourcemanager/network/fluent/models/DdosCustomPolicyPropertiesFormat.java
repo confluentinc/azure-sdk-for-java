@@ -4,52 +4,41 @@
 
 package com.azure.resourcemanager.network.fluent.models;
 
-import com.azure.core.annotation.Fluent;
-import com.azure.core.management.SubResource;
-import com.azure.core.util.logging.ClientLogger;
-import com.azure.resourcemanager.network.models.ProtocolCustomSettingsFormat;
+import com.azure.core.annotation.Immutable;
+import com.azure.json.JsonReader;
+import com.azure.json.JsonSerializable;
+import com.azure.json.JsonToken;
+import com.azure.json.JsonWriter;
 import com.azure.resourcemanager.network.models.ProvisioningState;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import java.util.List;
+import java.io.IOException;
 
-/** DDoS custom policy properties. */
-@Fluent
-public final class DdosCustomPolicyPropertiesFormat {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(DdosCustomPolicyPropertiesFormat.class);
-
+/**
+ * DDoS custom policy properties.
+ */
+@Immutable
+public final class DdosCustomPolicyPropertiesFormat implements JsonSerializable<DdosCustomPolicyPropertiesFormat> {
     /*
-     * The resource GUID property of the DDoS custom policy resource. It
-     * uniquely identifies the resource, even if the user changes its name or
-     * migrate the resource across subscriptions or resource groups.
+     * The resource GUID property of the DDoS custom policy resource. It uniquely identifies the resource, even if the
+     * user changes its name or migrate the resource across subscriptions or resource groups.
      */
-    @JsonProperty(value = "resourceGuid", access = JsonProperty.Access.WRITE_ONLY)
     private String resourceGuid;
 
     /*
      * The provisioning state of the DDoS custom policy resource.
      */
-    @JsonProperty(value = "provisioningState", access = JsonProperty.Access.WRITE_ONLY)
     private ProvisioningState provisioningState;
 
-    /*
-     * The list of public IPs associated with the DDoS custom policy resource.
-     * This list is read-only.
+    /**
+     * Creates an instance of DdosCustomPolicyPropertiesFormat class.
      */
-    @JsonProperty(value = "publicIPAddresses", access = JsonProperty.Access.WRITE_ONLY)
-    private List<SubResource> publicIpAddresses;
-
-    /*
-     * The protocol-specific DDoS policy customization parameters.
-     */
-    @JsonProperty(value = "protocolCustomSettings")
-    private List<ProtocolCustomSettingsFormat> protocolCustomSettings;
+    public DdosCustomPolicyPropertiesFormat() {
+    }
 
     /**
      * Get the resourceGuid property: The resource GUID property of the DDoS custom policy resource. It uniquely
      * identifies the resource, even if the user changes its name or migrate the resource across subscriptions or
      * resource groups.
-     *
+     * 
      * @return the resourceGuid value.
      */
     public String resourceGuid() {
@@ -58,7 +47,7 @@ public final class DdosCustomPolicyPropertiesFormat {
 
     /**
      * Get the provisioningState property: The provisioning state of the DDoS custom policy resource.
-     *
+     * 
      * @return the provisioningState value.
      */
     public ProvisioningState provisioningState() {
@@ -66,44 +55,49 @@ public final class DdosCustomPolicyPropertiesFormat {
     }
 
     /**
-     * Get the publicIpAddresses property: The list of public IPs associated with the DDoS custom policy resource. This
-     * list is read-only.
-     *
-     * @return the publicIpAddresses value.
-     */
-    public List<SubResource> publicIpAddresses() {
-        return this.publicIpAddresses;
-    }
-
-    /**
-     * Get the protocolCustomSettings property: The protocol-specific DDoS policy customization parameters.
-     *
-     * @return the protocolCustomSettings value.
-     */
-    public List<ProtocolCustomSettingsFormat> protocolCustomSettings() {
-        return this.protocolCustomSettings;
-    }
-
-    /**
-     * Set the protocolCustomSettings property: The protocol-specific DDoS policy customization parameters.
-     *
-     * @param protocolCustomSettings the protocolCustomSettings value to set.
-     * @return the DdosCustomPolicyPropertiesFormat object itself.
-     */
-    public DdosCustomPolicyPropertiesFormat withProtocolCustomSettings(
-        List<ProtocolCustomSettingsFormat> protocolCustomSettings) {
-        this.protocolCustomSettings = protocolCustomSettings;
-        return this;
-    }
-
-    /**
      * Validates the instance.
-     *
+     * 
      * @throws IllegalArgumentException thrown if the instance is not valid.
      */
     public void validate() {
-        if (protocolCustomSettings() != null) {
-            protocolCustomSettings().forEach(e -> e.validate());
-        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public JsonWriter toJson(JsonWriter jsonWriter) throws IOException {
+        jsonWriter.writeStartObject();
+        return jsonWriter.writeEndObject();
+    }
+
+    /**
+     * Reads an instance of DdosCustomPolicyPropertiesFormat from the JsonReader.
+     * 
+     * @param jsonReader The JsonReader being read.
+     * @return An instance of DdosCustomPolicyPropertiesFormat if the JsonReader was pointing to an instance of it, or
+     * null if it was pointing to JSON null.
+     * @throws IOException If an error occurs while reading the DdosCustomPolicyPropertiesFormat.
+     */
+    public static DdosCustomPolicyPropertiesFormat fromJson(JsonReader jsonReader) throws IOException {
+        return jsonReader.readObject(reader -> {
+            DdosCustomPolicyPropertiesFormat deserializedDdosCustomPolicyPropertiesFormat
+                = new DdosCustomPolicyPropertiesFormat();
+            while (reader.nextToken() != JsonToken.END_OBJECT) {
+                String fieldName = reader.getFieldName();
+                reader.nextToken();
+
+                if ("resourceGuid".equals(fieldName)) {
+                    deserializedDdosCustomPolicyPropertiesFormat.resourceGuid = reader.getString();
+                } else if ("provisioningState".equals(fieldName)) {
+                    deserializedDdosCustomPolicyPropertiesFormat.provisioningState
+                        = ProvisioningState.fromString(reader.getString());
+                } else {
+                    reader.skipChildren();
+                }
+            }
+
+            return deserializedDdosCustomPolicyPropertiesFormat;
+        });
     }
 }

@@ -5,28 +5,37 @@
 package com.azure.monitor.opentelemetry.exporter.implementation.models;
 
 import com.azure.core.annotation.Fluent;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.azure.json.JsonReader;
+import com.azure.json.JsonSerializable;
+import com.azure.json.JsonToken;
+import com.azure.json.JsonWriter;
+import java.io.IOException;
 
-/** Data struct to contain only C section with custom fields. */
+/**
+ * Data struct to contain only C section with custom fields.
+ */
 @Fluent
-public final class MonitorBase {
+public final class MonitorBase implements JsonSerializable<MonitorBase> {
     /*
-     * Name of item (B section) if any. If telemetry data is derived straight
-     * from this, this should be null.
+     * Name of item (B section) if any. If telemetry data is derived straight from this, this should be null.
      */
-    @JsonProperty(value = "baseType")
     private String baseType;
 
     /*
      * The data payload for the telemetry request
      */
-    @JsonProperty(value = "baseData")
     private MonitorDomain baseData;
+
+    /**
+     * Creates an instance of MonitorBase class.
+     */
+    public MonitorBase() {
+    }
 
     /**
      * Get the baseType property: Name of item (B section) if any. If telemetry data is derived straight from this, this
      * should be null.
-     *
+     * 
      * @return the baseType value.
      */
     public String getBaseType() {
@@ -36,7 +45,7 @@ public final class MonitorBase {
     /**
      * Set the baseType property: Name of item (B section) if any. If telemetry data is derived straight from this, this
      * should be null.
-     *
+     * 
      * @param baseType the baseType value to set.
      * @return the MonitorBase object itself.
      */
@@ -47,7 +56,7 @@ public final class MonitorBase {
 
     /**
      * Get the baseData property: The data payload for the telemetry request.
-     *
+     * 
      * @return the baseData value.
      */
     public MonitorDomain getBaseData() {
@@ -56,12 +65,51 @@ public final class MonitorBase {
 
     /**
      * Set the baseData property: The data payload for the telemetry request.
-     *
+     * 
      * @param baseData the baseData value to set.
      * @return the MonitorBase object itself.
      */
     public MonitorBase setBaseData(MonitorDomain baseData) {
         this.baseData = baseData;
         return this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public JsonWriter toJson(JsonWriter jsonWriter) throws IOException {
+        jsonWriter.writeStartObject();
+        jsonWriter.writeStringField("baseType", this.baseType);
+        jsonWriter.writeJsonField("baseData", this.baseData);
+        return jsonWriter.writeEndObject();
+    }
+
+    /**
+     * Reads an instance of MonitorBase from the JsonReader.
+     * 
+     * @param jsonReader The JsonReader being read.
+     * @return An instance of MonitorBase if the JsonReader was pointing to an instance of it, or null if it was
+     * pointing to JSON null.
+     * @throws IOException If an error occurs while reading the MonitorBase.
+     */
+    public static MonitorBase fromJson(JsonReader jsonReader) throws IOException {
+        return jsonReader.readObject(reader -> {
+            MonitorBase deserializedMonitorBase = new MonitorBase();
+            while (reader.nextToken() != JsonToken.END_OBJECT) {
+                String fieldName = reader.getFieldName();
+                reader.nextToken();
+
+                if ("baseType".equals(fieldName)) {
+                    deserializedMonitorBase.baseType = reader.getString();
+                } else if ("baseData".equals(fieldName)) {
+                    deserializedMonitorBase.baseData = MonitorDomain.fromJson(reader);
+                } else {
+                    reader.skipChildren();
+                }
+            }
+
+            return deserializedMonitorBase;
+        });
     }
 }

@@ -14,62 +14,62 @@ import com.azure.resourcemanager.security.fluent.models.AllowedConnectionsResour
 import com.azure.resourcemanager.security.models.AllowedConnections;
 import com.azure.resourcemanager.security.models.AllowedConnectionsResource;
 import com.azure.resourcemanager.security.models.ConnectionType;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 public final class AllowedConnectionsImpl implements AllowedConnections {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(AllowedConnectionsImpl.class);
+    private static final ClientLogger LOGGER = new ClientLogger(AllowedConnectionsImpl.class);
 
     private final AllowedConnectionsClient innerClient;
 
     private final com.azure.resourcemanager.security.SecurityManager serviceManager;
 
-    public AllowedConnectionsImpl(
-        AllowedConnectionsClient innerClient, com.azure.resourcemanager.security.SecurityManager serviceManager) {
+    public AllowedConnectionsImpl(AllowedConnectionsClient innerClient,
+        com.azure.resourcemanager.security.SecurityManager serviceManager) {
         this.innerClient = innerClient;
         this.serviceManager = serviceManager;
     }
 
     public PagedIterable<AllowedConnectionsResource> list() {
         PagedIterable<AllowedConnectionsResourceInner> inner = this.serviceClient().list();
-        return Utils.mapPage(inner, inner1 -> new AllowedConnectionsResourceImpl(inner1, this.manager()));
+        return ResourceManagerUtils.mapPage(inner,
+            inner1 -> new AllowedConnectionsResourceImpl(inner1, this.manager()));
     }
 
     public PagedIterable<AllowedConnectionsResource> list(Context context) {
         PagedIterable<AllowedConnectionsResourceInner> inner = this.serviceClient().list(context);
-        return Utils.mapPage(inner, inner1 -> new AllowedConnectionsResourceImpl(inner1, this.manager()));
+        return ResourceManagerUtils.mapPage(inner,
+            inner1 -> new AllowedConnectionsResourceImpl(inner1, this.manager()));
     }
 
     public PagedIterable<AllowedConnectionsResource> listByHomeRegion(String ascLocation) {
         PagedIterable<AllowedConnectionsResourceInner> inner = this.serviceClient().listByHomeRegion(ascLocation);
-        return Utils.mapPage(inner, inner1 -> new AllowedConnectionsResourceImpl(inner1, this.manager()));
+        return ResourceManagerUtils.mapPage(inner,
+            inner1 -> new AllowedConnectionsResourceImpl(inner1, this.manager()));
     }
 
     public PagedIterable<AllowedConnectionsResource> listByHomeRegion(String ascLocation, Context context) {
-        PagedIterable<AllowedConnectionsResourceInner> inner =
-            this.serviceClient().listByHomeRegion(ascLocation, context);
-        return Utils.mapPage(inner, inner1 -> new AllowedConnectionsResourceImpl(inner1, this.manager()));
+        PagedIterable<AllowedConnectionsResourceInner> inner
+            = this.serviceClient().listByHomeRegion(ascLocation, context);
+        return ResourceManagerUtils.mapPage(inner,
+            inner1 -> new AllowedConnectionsResourceImpl(inner1, this.manager()));
     }
 
-    public AllowedConnectionsResource get(String resourceGroupName, String ascLocation, ConnectionType connectionType) {
-        AllowedConnectionsResourceInner inner =
-            this.serviceClient().get(resourceGroupName, ascLocation, connectionType);
+    public Response<AllowedConnectionsResource> getWithResponse(String resourceGroupName, String ascLocation,
+        ConnectionType connectionType, Context context) {
+        Response<AllowedConnectionsResourceInner> inner
+            = this.serviceClient().getWithResponse(resourceGroupName, ascLocation, connectionType, context);
         if (inner != null) {
-            return new AllowedConnectionsResourceImpl(inner, this.manager());
+            return new SimpleResponse<>(inner.getRequest(), inner.getStatusCode(), inner.getHeaders(),
+                new AllowedConnectionsResourceImpl(inner.getValue(), this.manager()));
         } else {
             return null;
         }
     }
 
-    public Response<AllowedConnectionsResource> getWithResponse(
-        String resourceGroupName, String ascLocation, ConnectionType connectionType, Context context) {
-        Response<AllowedConnectionsResourceInner> inner =
-            this.serviceClient().getWithResponse(resourceGroupName, ascLocation, connectionType, context);
+    public AllowedConnectionsResource get(String resourceGroupName, String ascLocation, ConnectionType connectionType) {
+        AllowedConnectionsResourceInner inner
+            = this.serviceClient().get(resourceGroupName, ascLocation, connectionType);
         if (inner != null) {
-            return new SimpleResponse<>(
-                inner.getRequest(),
-                inner.getStatusCode(),
-                inner.getHeaders(),
-                new AllowedConnectionsResourceImpl(inner.getValue(), this.manager()));
+            return new AllowedConnectionsResourceImpl(inner, this.manager());
         } else {
             return null;
         }

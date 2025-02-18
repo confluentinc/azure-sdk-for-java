@@ -5,32 +5,46 @@
 package com.azure.resourcemanager.automation.models;
 
 import com.azure.core.annotation.Fluent;
-import com.azure.core.annotation.JsonFlatten;
-import com.azure.core.util.logging.ClientLogger;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.azure.json.JsonReader;
+import com.azure.json.JsonSerializable;
+import com.azure.json.JsonToken;
+import com.azure.json.JsonWriter;
+import com.azure.resourcemanager.automation.fluent.models.WatcherUpdateProperties;
+import java.io.IOException;
 
-/** The WatcherUpdateParameters model. */
-@JsonFlatten
+/**
+ * The WatcherUpdateParameters model.
+ */
 @Fluent
-public class WatcherUpdateParameters {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(WatcherUpdateParameters.class);
+public final class WatcherUpdateParameters implements JsonSerializable<WatcherUpdateParameters> {
+    /*
+     * Gets or sets the watcher update properties.
+     */
+    private WatcherUpdateProperties innerProperties;
 
     /*
      * Gets or sets the name of the resource.
      */
-    @JsonProperty(value = "name")
     private String name;
 
-    /*
-     * Gets or sets the frequency at which the watcher is invoked.
+    /**
+     * Creates an instance of WatcherUpdateParameters class.
      */
-    @JsonProperty(value = "properties.executionFrequencyInSeconds")
-    private Long executionFrequencyInSeconds;
+    public WatcherUpdateParameters() {
+    }
+
+    /**
+     * Get the innerProperties property: Gets or sets the watcher update properties.
+     * 
+     * @return the innerProperties value.
+     */
+    private WatcherUpdateProperties innerProperties() {
+        return this.innerProperties;
+    }
 
     /**
      * Get the name property: Gets or sets the name of the resource.
-     *
+     * 
      * @return the name value.
      */
     public String name() {
@@ -39,7 +53,7 @@ public class WatcherUpdateParameters {
 
     /**
      * Set the name property: Gets or sets the name of the resource.
-     *
+     * 
      * @param name the name value to set.
      * @return the WatcherUpdateParameters object itself.
      */
@@ -50,29 +64,74 @@ public class WatcherUpdateParameters {
 
     /**
      * Get the executionFrequencyInSeconds property: Gets or sets the frequency at which the watcher is invoked.
-     *
+     * 
      * @return the executionFrequencyInSeconds value.
      */
     public Long executionFrequencyInSeconds() {
-        return this.executionFrequencyInSeconds;
+        return this.innerProperties() == null ? null : this.innerProperties().executionFrequencyInSeconds();
     }
 
     /**
      * Set the executionFrequencyInSeconds property: Gets or sets the frequency at which the watcher is invoked.
-     *
+     * 
      * @param executionFrequencyInSeconds the executionFrequencyInSeconds value to set.
      * @return the WatcherUpdateParameters object itself.
      */
     public WatcherUpdateParameters withExecutionFrequencyInSeconds(Long executionFrequencyInSeconds) {
-        this.executionFrequencyInSeconds = executionFrequencyInSeconds;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new WatcherUpdateProperties();
+        }
+        this.innerProperties().withExecutionFrequencyInSeconds(executionFrequencyInSeconds);
         return this;
     }
 
     /**
      * Validates the instance.
-     *
+     * 
      * @throws IllegalArgumentException thrown if the instance is not valid.
      */
     public void validate() {
+        if (innerProperties() != null) {
+            innerProperties().validate();
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public JsonWriter toJson(JsonWriter jsonWriter) throws IOException {
+        jsonWriter.writeStartObject();
+        jsonWriter.writeJsonField("properties", this.innerProperties);
+        jsonWriter.writeStringField("name", this.name);
+        return jsonWriter.writeEndObject();
+    }
+
+    /**
+     * Reads an instance of WatcherUpdateParameters from the JsonReader.
+     * 
+     * @param jsonReader The JsonReader being read.
+     * @return An instance of WatcherUpdateParameters if the JsonReader was pointing to an instance of it, or null if it
+     * was pointing to JSON null.
+     * @throws IOException If an error occurs while reading the WatcherUpdateParameters.
+     */
+    public static WatcherUpdateParameters fromJson(JsonReader jsonReader) throws IOException {
+        return jsonReader.readObject(reader -> {
+            WatcherUpdateParameters deserializedWatcherUpdateParameters = new WatcherUpdateParameters();
+            while (reader.nextToken() != JsonToken.END_OBJECT) {
+                String fieldName = reader.getFieldName();
+                reader.nextToken();
+
+                if ("properties".equals(fieldName)) {
+                    deserializedWatcherUpdateParameters.innerProperties = WatcherUpdateProperties.fromJson(reader);
+                } else if ("name".equals(fieldName)) {
+                    deserializedWatcherUpdateParameters.name = reader.getString();
+                } else {
+                    reader.skipChildren();
+                }
+            }
+
+            return deserializedWatcherUpdateParameters;
+        });
     }
 }

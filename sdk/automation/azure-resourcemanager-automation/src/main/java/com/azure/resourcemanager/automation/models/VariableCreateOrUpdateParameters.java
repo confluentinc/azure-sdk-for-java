@@ -5,44 +5,38 @@
 package com.azure.resourcemanager.automation.models;
 
 import com.azure.core.annotation.Fluent;
-import com.azure.core.annotation.JsonFlatten;
 import com.azure.core.util.logging.ClientLogger;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.azure.json.JsonReader;
+import com.azure.json.JsonSerializable;
+import com.azure.json.JsonToken;
+import com.azure.json.JsonWriter;
+import com.azure.resourcemanager.automation.fluent.models.VariableCreateOrUpdateProperties;
+import java.io.IOException;
 
-/** The parameters supplied to the create or update variable operation. */
-@JsonFlatten
+/**
+ * The parameters supplied to the create or update variable operation.
+ */
 @Fluent
-public class VariableCreateOrUpdateParameters {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(VariableCreateOrUpdateParameters.class);
-
+public final class VariableCreateOrUpdateParameters implements JsonSerializable<VariableCreateOrUpdateParameters> {
     /*
      * Gets or sets the name of the variable.
      */
-    @JsonProperty(value = "name", required = true)
     private String name;
 
     /*
-     * Gets or sets the value of the variable.
+     * Gets or sets the properties of the variable.
      */
-    @JsonProperty(value = "properties.value")
-    private String value;
+    private VariableCreateOrUpdateProperties innerProperties = new VariableCreateOrUpdateProperties();
 
-    /*
-     * Gets or sets the description of the variable.
+    /**
+     * Creates an instance of VariableCreateOrUpdateParameters class.
      */
-    @JsonProperty(value = "properties.description")
-    private String description;
-
-    /*
-     * Gets or sets the encrypted flag of the variable.
-     */
-    @JsonProperty(value = "properties.isEncrypted")
-    private Boolean isEncrypted;
+    public VariableCreateOrUpdateParameters() {
+    }
 
     /**
      * Get the name property: Gets or sets the name of the variable.
-     *
+     * 
      * @return the name value.
      */
     public String name() {
@@ -51,7 +45,7 @@ public class VariableCreateOrUpdateParameters {
 
     /**
      * Set the name property: Gets or sets the name of the variable.
-     *
+     * 
      * @param name the name value to set.
      * @return the VariableCreateOrUpdateParameters object itself.
      */
@@ -61,76 +55,144 @@ public class VariableCreateOrUpdateParameters {
     }
 
     /**
+     * Get the innerProperties property: Gets or sets the properties of the variable.
+     * 
+     * @return the innerProperties value.
+     */
+    private VariableCreateOrUpdateProperties innerProperties() {
+        return this.innerProperties;
+    }
+
+    /**
      * Get the value property: Gets or sets the value of the variable.
-     *
+     * 
      * @return the value value.
      */
     public String value() {
-        return this.value;
+        return this.innerProperties() == null ? null : this.innerProperties().value();
     }
 
     /**
      * Set the value property: Gets or sets the value of the variable.
-     *
+     * 
      * @param value the value value to set.
      * @return the VariableCreateOrUpdateParameters object itself.
      */
     public VariableCreateOrUpdateParameters withValue(String value) {
-        this.value = value;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new VariableCreateOrUpdateProperties();
+        }
+        this.innerProperties().withValue(value);
         return this;
     }
 
     /**
      * Get the description property: Gets or sets the description of the variable.
-     *
+     * 
      * @return the description value.
      */
     public String description() {
-        return this.description;
+        return this.innerProperties() == null ? null : this.innerProperties().description();
     }
 
     /**
      * Set the description property: Gets or sets the description of the variable.
-     *
+     * 
      * @param description the description value to set.
      * @return the VariableCreateOrUpdateParameters object itself.
      */
     public VariableCreateOrUpdateParameters withDescription(String description) {
-        this.description = description;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new VariableCreateOrUpdateProperties();
+        }
+        this.innerProperties().withDescription(description);
         return this;
     }
 
     /**
      * Get the isEncrypted property: Gets or sets the encrypted flag of the variable.
-     *
+     * 
      * @return the isEncrypted value.
      */
     public Boolean isEncrypted() {
-        return this.isEncrypted;
+        return this.innerProperties() == null ? null : this.innerProperties().isEncrypted();
     }
 
     /**
      * Set the isEncrypted property: Gets or sets the encrypted flag of the variable.
-     *
+     * 
      * @param isEncrypted the isEncrypted value to set.
      * @return the VariableCreateOrUpdateParameters object itself.
      */
     public VariableCreateOrUpdateParameters withIsEncrypted(Boolean isEncrypted) {
-        this.isEncrypted = isEncrypted;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new VariableCreateOrUpdateProperties();
+        }
+        this.innerProperties().withIsEncrypted(isEncrypted);
         return this;
     }
 
     /**
      * Validates the instance.
-     *
+     * 
      * @throws IllegalArgumentException thrown if the instance is not valid.
      */
     public void validate() {
         if (name() == null) {
-            throw logger
-                .logExceptionAsError(
-                    new IllegalArgumentException(
-                        "Missing required property name in model VariableCreateOrUpdateParameters"));
+            throw LOGGER.atError()
+                .log(new IllegalArgumentException(
+                    "Missing required property name in model VariableCreateOrUpdateParameters"));
         }
+        if (innerProperties() == null) {
+            throw LOGGER.atError()
+                .log(new IllegalArgumentException(
+                    "Missing required property innerProperties in model VariableCreateOrUpdateParameters"));
+        } else {
+            innerProperties().validate();
+        }
+    }
+
+    private static final ClientLogger LOGGER = new ClientLogger(VariableCreateOrUpdateParameters.class);
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public JsonWriter toJson(JsonWriter jsonWriter) throws IOException {
+        jsonWriter.writeStartObject();
+        jsonWriter.writeStringField("name", this.name);
+        jsonWriter.writeJsonField("properties", this.innerProperties);
+        return jsonWriter.writeEndObject();
+    }
+
+    /**
+     * Reads an instance of VariableCreateOrUpdateParameters from the JsonReader.
+     * 
+     * @param jsonReader The JsonReader being read.
+     * @return An instance of VariableCreateOrUpdateParameters if the JsonReader was pointing to an instance of it, or
+     * null if it was pointing to JSON null.
+     * @throws IllegalStateException If the deserialized JSON object was missing any required properties.
+     * @throws IOException If an error occurs while reading the VariableCreateOrUpdateParameters.
+     */
+    public static VariableCreateOrUpdateParameters fromJson(JsonReader jsonReader) throws IOException {
+        return jsonReader.readObject(reader -> {
+            VariableCreateOrUpdateParameters deserializedVariableCreateOrUpdateParameters
+                = new VariableCreateOrUpdateParameters();
+            while (reader.nextToken() != JsonToken.END_OBJECT) {
+                String fieldName = reader.getFieldName();
+                reader.nextToken();
+
+                if ("name".equals(fieldName)) {
+                    deserializedVariableCreateOrUpdateParameters.name = reader.getString();
+                } else if ("properties".equals(fieldName)) {
+                    deserializedVariableCreateOrUpdateParameters.innerProperties
+                        = VariableCreateOrUpdateProperties.fromJson(reader);
+                } else {
+                    reader.skipChildren();
+                }
+            }
+
+            return deserializedVariableCreateOrUpdateParameters;
+        });
     }
 }

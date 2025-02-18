@@ -14,6 +14,7 @@ import com.azure.core.annotation.Host;
 import com.azure.core.annotation.HostParam;
 import com.azure.core.annotation.Patch;
 import com.azure.core.annotation.PathParam;
+import com.azure.core.annotation.Put;
 import com.azure.core.annotation.QueryParam;
 import com.azure.core.annotation.ReturnType;
 import com.azure.core.annotation.ServiceInterface;
@@ -28,33 +29,34 @@ import com.azure.core.http.rest.RestProxy;
 import com.azure.core.management.exception.ManagementException;
 import com.azure.core.util.Context;
 import com.azure.core.util.FluxUtil;
-import com.azure.core.util.logging.ClientLogger;
 import com.azure.resourcemanager.automation.fluent.HybridRunbookWorkerGroupsClient;
 import com.azure.resourcemanager.automation.fluent.models.HybridRunbookWorkerGroupInner;
-import com.azure.resourcemanager.automation.models.HybridRunbookWorkerGroupUpdateParameters;
+import com.azure.resourcemanager.automation.models.HybridRunbookWorkerGroupCreateOrUpdateParameters;
 import com.azure.resourcemanager.automation.models.HybridRunbookWorkerGroupsListResult;
 import reactor.core.publisher.Mono;
 
-/** An instance of this class provides access to all the operations defined in HybridRunbookWorkerGroupsClient. */
+/**
+ * An instance of this class provides access to all the operations defined in HybridRunbookWorkerGroupsClient.
+ */
 public final class HybridRunbookWorkerGroupsClientImpl implements HybridRunbookWorkerGroupsClient {
-    private final ClientLogger logger = new ClientLogger(HybridRunbookWorkerGroupsClientImpl.class);
-
-    /** The proxy service used to perform REST calls. */
+    /**
+     * The proxy service used to perform REST calls.
+     */
     private final HybridRunbookWorkerGroupsService service;
 
-    /** The service client containing this operation class. */
+    /**
+     * The service client containing this operation class.
+     */
     private final AutomationClientImpl client;
 
     /**
      * Initializes an instance of HybridRunbookWorkerGroupsClientImpl.
-     *
+     * 
      * @param client the instance of the service client containing this operation class.
      */
     HybridRunbookWorkerGroupsClientImpl(AutomationClientImpl client) {
-        this.service =
-            RestProxy
-                .create(
-                    HybridRunbookWorkerGroupsService.class, client.getHttpPipeline(), client.getSerializerAdapter());
+        this.service = RestProxy.create(HybridRunbookWorkerGroupsService.class, client.getHttpPipeline(),
+            client.getSerializerAdapter());
         this.client = client;
     }
 
@@ -64,105 +66,89 @@ public final class HybridRunbookWorkerGroupsClientImpl implements HybridRunbookW
      */
     @Host("{$host}")
     @ServiceInterface(name = "AutomationClientHybr")
-    private interface HybridRunbookWorkerGroupsService {
-        @Headers({"Content-Type: application/json"})
-        @Delete(
-            "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Automation"
-                + "/automationAccounts/{automationAccountName}/hybridRunbookWorkerGroups"
-                + "/{hybridRunbookWorkerGroupName}")
-        @ExpectedResponses({200})
+    public interface HybridRunbookWorkerGroupsService {
+        @Headers({ "Content-Type: application/json" })
+        @Delete("/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Automation/automationAccounts/{automationAccountName}/hybridRunbookWorkerGroups/{hybridRunbookWorkerGroupName}")
+        @ExpectedResponses({ 200 })
         @UnexpectedResponseExceptionType(ManagementException.class)
-        Mono<Response<Void>> delete(
-            @HostParam("$host") String endpoint,
+        Mono<Response<Void>> delete(@HostParam("$host") String endpoint,
             @PathParam("resourceGroupName") String resourceGroupName,
             @PathParam("automationAccountName") String automationAccountName,
             @PathParam("hybridRunbookWorkerGroupName") String hybridRunbookWorkerGroupName,
-            @PathParam("subscriptionId") String subscriptionId,
-            @QueryParam("api-version") String apiVersion,
-            @HeaderParam("Accept") String accept,
-            Context context);
+            @PathParam("subscriptionId") String subscriptionId, @QueryParam("api-version") String apiVersion,
+            @HeaderParam("Accept") String accept, Context context);
 
-        @Headers({"Content-Type: application/json"})
-        @Get(
-            "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Automation"
-                + "/automationAccounts/{automationAccountName}/hybridRunbookWorkerGroups"
-                + "/{hybridRunbookWorkerGroupName}")
-        @ExpectedResponses({200})
+        @Headers({ "Content-Type: application/json" })
+        @Get("/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Automation/automationAccounts/{automationAccountName}/hybridRunbookWorkerGroups/{hybridRunbookWorkerGroupName}")
+        @ExpectedResponses({ 200 })
         @UnexpectedResponseExceptionType(ManagementException.class)
-        Mono<Response<HybridRunbookWorkerGroupInner>> get(
-            @HostParam("$host") String endpoint,
+        Mono<Response<HybridRunbookWorkerGroupInner>> get(@HostParam("$host") String endpoint,
             @PathParam("resourceGroupName") String resourceGroupName,
             @PathParam("automationAccountName") String automationAccountName,
             @PathParam("hybridRunbookWorkerGroupName") String hybridRunbookWorkerGroupName,
-            @PathParam("subscriptionId") String subscriptionId,
-            @QueryParam("api-version") String apiVersion,
-            @HeaderParam("Accept") String accept,
-            Context context);
+            @PathParam("subscriptionId") String subscriptionId, @QueryParam("api-version") String apiVersion,
+            @HeaderParam("Accept") String accept, Context context);
 
-        @Headers({"Content-Type: application/json"})
-        @Patch(
-            "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Automation"
-                + "/automationAccounts/{automationAccountName}/hybridRunbookWorkerGroups"
-                + "/{hybridRunbookWorkerGroupName}")
-        @ExpectedResponses({200})
+        @Headers({ "Content-Type: application/json" })
+        @Put("/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Automation/automationAccounts/{automationAccountName}/hybridRunbookWorkerGroups/{hybridRunbookWorkerGroupName}")
+        @ExpectedResponses({ 200 })
         @UnexpectedResponseExceptionType(ManagementException.class)
-        Mono<Response<HybridRunbookWorkerGroupInner>> update(
-            @HostParam("$host") String endpoint,
+        Mono<Response<HybridRunbookWorkerGroupInner>> create(@HostParam("$host") String endpoint,
             @PathParam("resourceGroupName") String resourceGroupName,
             @PathParam("automationAccountName") String automationAccountName,
             @PathParam("hybridRunbookWorkerGroupName") String hybridRunbookWorkerGroupName,
-            @PathParam("subscriptionId") String subscriptionId,
-            @QueryParam("api-version") String apiVersion,
-            @BodyParam("application/json") HybridRunbookWorkerGroupUpdateParameters parameters,
-            @HeaderParam("Accept") String accept,
-            Context context);
+            @PathParam("subscriptionId") String subscriptionId, @QueryParam("api-version") String apiVersion,
+            @BodyParam("application/json") HybridRunbookWorkerGroupCreateOrUpdateParameters hybridRunbookWorkerGroupCreationParameters,
+            @HeaderParam("Accept") String accept, Context context);
 
-        @Headers({"Content-Type: application/json"})
-        @Get(
-            "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Automation"
-                + "/automationAccounts/{automationAccountName}/hybridRunbookWorkerGroups")
-        @ExpectedResponses({200})
+        @Headers({ "Content-Type: application/json" })
+        @Patch("/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Automation/automationAccounts/{automationAccountName}/hybridRunbookWorkerGroups/{hybridRunbookWorkerGroupName}")
+        @ExpectedResponses({ 200 })
         @UnexpectedResponseExceptionType(ManagementException.class)
-        Mono<Response<HybridRunbookWorkerGroupsListResult>> listByAutomationAccount(
-            @HostParam("$host") String endpoint,
+        Mono<Response<HybridRunbookWorkerGroupInner>> update(@HostParam("$host") String endpoint,
             @PathParam("resourceGroupName") String resourceGroupName,
             @PathParam("automationAccountName") String automationAccountName,
-            @QueryParam("$filter") String filter,
-            @PathParam("subscriptionId") String subscriptionId,
-            @QueryParam("api-version") String apiVersion,
-            @HeaderParam("Accept") String accept,
-            Context context);
+            @PathParam("hybridRunbookWorkerGroupName") String hybridRunbookWorkerGroupName,
+            @PathParam("subscriptionId") String subscriptionId, @QueryParam("api-version") String apiVersion,
+            @BodyParam("application/json") HybridRunbookWorkerGroupCreateOrUpdateParameters hybridRunbookWorkerGroupUpdationParameters,
+            @HeaderParam("Accept") String accept, Context context);
 
-        @Headers({"Content-Type: application/json"})
+        @Headers({ "Content-Type: application/json" })
+        @Get("/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Automation/automationAccounts/{automationAccountName}/hybridRunbookWorkerGroups")
+        @ExpectedResponses({ 200 })
+        @UnexpectedResponseExceptionType(ManagementException.class)
+        Mono<Response<HybridRunbookWorkerGroupsListResult>> listByAutomationAccount(@HostParam("$host") String endpoint,
+            @PathParam("resourceGroupName") String resourceGroupName,
+            @PathParam("automationAccountName") String automationAccountName, @QueryParam("$filter") String filter,
+            @PathParam("subscriptionId") String subscriptionId, @QueryParam("api-version") String apiVersion,
+            @HeaderParam("Accept") String accept, Context context);
+
+        @Headers({ "Content-Type: application/json" })
         @Get("{nextLink}")
-        @ExpectedResponses({200})
+        @ExpectedResponses({ 200 })
         @UnexpectedResponseExceptionType(ManagementException.class)
         Mono<Response<HybridRunbookWorkerGroupsListResult>> listByAutomationAccountNext(
-            @PathParam(value = "nextLink", encoded = true) String nextLink,
-            @HostParam("$host") String endpoint,
-            @HeaderParam("Accept") String accept,
-            Context context);
+            @PathParam(value = "nextLink", encoded = true) String nextLink, @HostParam("$host") String endpoint,
+            @HeaderParam("Accept") String accept, Context context);
     }
 
     /**
      * Delete a hybrid runbook worker group.
-     *
+     * 
      * @param resourceGroupName Name of an Azure Resource group.
      * @param automationAccountName The name of the automation account.
      * @param hybridRunbookWorkerGroupName The hybrid runbook worker group name.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the completion.
+     * @return the {@link Response} on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    private Mono<Response<Void>> deleteWithResponseAsync(
-        String resourceGroupName, String automationAccountName, String hybridRunbookWorkerGroupName) {
+    private Mono<Response<Void>> deleteWithResponseAsync(String resourceGroupName, String automationAccountName,
+        String hybridRunbookWorkerGroupName) {
         if (this.client.getEndpoint() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getEndpoint() is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
         }
         if (resourceGroupName == null) {
             return Mono
@@ -173,38 +159,24 @@ public final class HybridRunbookWorkerGroupsClientImpl implements HybridRunbookW
                 .error(new IllegalArgumentException("Parameter automationAccountName is required and cannot be null."));
         }
         if (hybridRunbookWorkerGroupName == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter hybridRunbookWorkerGroupName is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter hybridRunbookWorkerGroupName is required and cannot be null."));
         }
         if (this.client.getSubscriptionId() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getSubscriptionId() is required and cannot be null."));
+            return Mono.error(new IllegalArgumentException(
+                "Parameter this.client.getSubscriptionId() is required and cannot be null."));
         }
-        final String apiVersion = "2019-06-01";
+        final String apiVersion = "2022-02-22";
         final String accept = "application/json";
         return FluxUtil
-            .withContext(
-                context ->
-                    service
-                        .delete(
-                            this.client.getEndpoint(),
-                            resourceGroupName,
-                            automationAccountName,
-                            hybridRunbookWorkerGroupName,
-                            this.client.getSubscriptionId(),
-                            apiVersion,
-                            accept,
-                            context))
+            .withContext(context -> service.delete(this.client.getEndpoint(), resourceGroupName, automationAccountName,
+                hybridRunbookWorkerGroupName, this.client.getSubscriptionId(), apiVersion, accept, context))
             .contextWrite(context -> context.putAll(FluxUtil.toReactorContext(this.client.getContext()).readOnly()));
     }
 
     /**
      * Delete a hybrid runbook worker group.
-     *
+     * 
      * @param resourceGroupName Name of an Azure Resource group.
      * @param automationAccountName The name of the automation account.
      * @param hybridRunbookWorkerGroupName The hybrid runbook worker group name.
@@ -212,16 +184,14 @@ public final class HybridRunbookWorkerGroupsClientImpl implements HybridRunbookW
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the completion.
+     * @return the {@link Response} on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    private Mono<Response<Void>> deleteWithResponseAsync(
-        String resourceGroupName, String automationAccountName, String hybridRunbookWorkerGroupName, Context context) {
+    private Mono<Response<Void>> deleteWithResponseAsync(String resourceGroupName, String automationAccountName,
+        String hybridRunbookWorkerGroupName, Context context) {
         if (this.client.getEndpoint() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getEndpoint() is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
         }
         if (resourceGroupName == null) {
             return Mono
@@ -232,53 +202,60 @@ public final class HybridRunbookWorkerGroupsClientImpl implements HybridRunbookW
                 .error(new IllegalArgumentException("Parameter automationAccountName is required and cannot be null."));
         }
         if (hybridRunbookWorkerGroupName == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter hybridRunbookWorkerGroupName is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter hybridRunbookWorkerGroupName is required and cannot be null."));
         }
         if (this.client.getSubscriptionId() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getSubscriptionId() is required and cannot be null."));
+            return Mono.error(new IllegalArgumentException(
+                "Parameter this.client.getSubscriptionId() is required and cannot be null."));
         }
-        final String apiVersion = "2019-06-01";
+        final String apiVersion = "2022-02-22";
         final String accept = "application/json";
         context = this.client.mergeContext(context);
-        return service
-            .delete(
-                this.client.getEndpoint(),
-                resourceGroupName,
-                automationAccountName,
-                hybridRunbookWorkerGroupName,
-                this.client.getSubscriptionId(),
-                apiVersion,
-                accept,
-                context);
+        return service.delete(this.client.getEndpoint(), resourceGroupName, automationAccountName,
+            hybridRunbookWorkerGroupName, this.client.getSubscriptionId(), apiVersion, accept, context);
     }
 
     /**
      * Delete a hybrid runbook worker group.
-     *
+     * 
      * @param resourceGroupName Name of an Azure Resource group.
      * @param automationAccountName The name of the automation account.
      * @param hybridRunbookWorkerGroupName The hybrid runbook worker group name.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the completion.
+     * @return A {@link Mono} that completes when a successful response is received.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    private Mono<Void> deleteAsync(
-        String resourceGroupName, String automationAccountName, String hybridRunbookWorkerGroupName) {
+    private Mono<Void> deleteAsync(String resourceGroupName, String automationAccountName,
+        String hybridRunbookWorkerGroupName) {
         return deleteWithResponseAsync(resourceGroupName, automationAccountName, hybridRunbookWorkerGroupName)
-            .flatMap((Response<Void> res) -> Mono.empty());
+            .flatMap(ignored -> Mono.empty());
     }
 
     /**
      * Delete a hybrid runbook worker group.
-     *
+     * 
+     * @param resourceGroupName Name of an Azure Resource group.
+     * @param automationAccountName The name of the automation account.
+     * @param hybridRunbookWorkerGroupName The hybrid runbook worker group name.
+     * @param context The context to associate with this operation.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return the {@link Response}.
+     */
+    @ServiceMethod(returns = ReturnType.SINGLE)
+    public Response<Void> deleteWithResponse(String resourceGroupName, String automationAccountName,
+        String hybridRunbookWorkerGroupName, Context context) {
+        return deleteWithResponseAsync(resourceGroupName, automationAccountName, hybridRunbookWorkerGroupName, context)
+            .block();
+    }
+
+    /**
+     * Delete a hybrid runbook worker group.
+     * 
      * @param resourceGroupName Name of an Azure Resource group.
      * @param automationAccountName The name of the automation account.
      * @param hybridRunbookWorkerGroupName The hybrid runbook worker group name.
@@ -288,47 +265,27 @@ public final class HybridRunbookWorkerGroupsClientImpl implements HybridRunbookW
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
     public void delete(String resourceGroupName, String automationAccountName, String hybridRunbookWorkerGroupName) {
-        deleteAsync(resourceGroupName, automationAccountName, hybridRunbookWorkerGroupName).block();
-    }
-
-    /**
-     * Delete a hybrid runbook worker group.
-     *
-     * @param resourceGroupName Name of an Azure Resource group.
-     * @param automationAccountName The name of the automation account.
-     * @param hybridRunbookWorkerGroupName The hybrid runbook worker group name.
-     * @param context The context to associate with this operation.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the response.
-     */
-    @ServiceMethod(returns = ReturnType.SINGLE)
-    public Response<Void> deleteWithResponse(
-        String resourceGroupName, String automationAccountName, String hybridRunbookWorkerGroupName, Context context) {
-        return deleteWithResponseAsync(resourceGroupName, automationAccountName, hybridRunbookWorkerGroupName, context)
-            .block();
+        deleteWithResponse(resourceGroupName, automationAccountName, hybridRunbookWorkerGroupName, Context.NONE);
     }
 
     /**
      * Retrieve a hybrid runbook worker group.
-     *
+     * 
      * @param resourceGroupName Name of an Azure Resource group.
      * @param automationAccountName The name of the automation account.
      * @param hybridRunbookWorkerGroupName The hybrid runbook worker group name.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return definition of hybrid runbook worker group.
+     * @return definition of hybrid runbook worker group along with {@link Response} on successful completion of
+     * {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    private Mono<Response<HybridRunbookWorkerGroupInner>> getWithResponseAsync(
-        String resourceGroupName, String automationAccountName, String hybridRunbookWorkerGroupName) {
+    private Mono<Response<HybridRunbookWorkerGroupInner>> getWithResponseAsync(String resourceGroupName,
+        String automationAccountName, String hybridRunbookWorkerGroupName) {
         if (this.client.getEndpoint() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getEndpoint() is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
         }
         if (resourceGroupName == null) {
             return Mono
@@ -339,38 +296,24 @@ public final class HybridRunbookWorkerGroupsClientImpl implements HybridRunbookW
                 .error(new IllegalArgumentException("Parameter automationAccountName is required and cannot be null."));
         }
         if (hybridRunbookWorkerGroupName == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter hybridRunbookWorkerGroupName is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter hybridRunbookWorkerGroupName is required and cannot be null."));
         }
         if (this.client.getSubscriptionId() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getSubscriptionId() is required and cannot be null."));
+            return Mono.error(new IllegalArgumentException(
+                "Parameter this.client.getSubscriptionId() is required and cannot be null."));
         }
-        final String apiVersion = "2019-06-01";
+        final String apiVersion = "2022-02-22";
         final String accept = "application/json";
         return FluxUtil
-            .withContext(
-                context ->
-                    service
-                        .get(
-                            this.client.getEndpoint(),
-                            resourceGroupName,
-                            automationAccountName,
-                            hybridRunbookWorkerGroupName,
-                            this.client.getSubscriptionId(),
-                            apiVersion,
-                            accept,
-                            context))
+            .withContext(context -> service.get(this.client.getEndpoint(), resourceGroupName, automationAccountName,
+                hybridRunbookWorkerGroupName, this.client.getSubscriptionId(), apiVersion, accept, context))
             .contextWrite(context -> context.putAll(FluxUtil.toReactorContext(this.client.getContext()).readOnly()));
     }
 
     /**
      * Retrieve a hybrid runbook worker group.
-     *
+     * 
      * @param resourceGroupName Name of an Azure Resource group.
      * @param automationAccountName The name of the automation account.
      * @param hybridRunbookWorkerGroupName The hybrid runbook worker group name.
@@ -378,16 +321,15 @@ public final class HybridRunbookWorkerGroupsClientImpl implements HybridRunbookW
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return definition of hybrid runbook worker group.
+     * @return definition of hybrid runbook worker group along with {@link Response} on successful completion of
+     * {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    private Mono<Response<HybridRunbookWorkerGroupInner>> getWithResponseAsync(
-        String resourceGroupName, String automationAccountName, String hybridRunbookWorkerGroupName, Context context) {
+    private Mono<Response<HybridRunbookWorkerGroupInner>> getWithResponseAsync(String resourceGroupName,
+        String automationAccountName, String hybridRunbookWorkerGroupName, Context context) {
         if (this.client.getEndpoint() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getEndpoint() is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
         }
         if (resourceGroupName == null) {
             return Mono
@@ -398,77 +340,41 @@ public final class HybridRunbookWorkerGroupsClientImpl implements HybridRunbookW
                 .error(new IllegalArgumentException("Parameter automationAccountName is required and cannot be null."));
         }
         if (hybridRunbookWorkerGroupName == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter hybridRunbookWorkerGroupName is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter hybridRunbookWorkerGroupName is required and cannot be null."));
         }
         if (this.client.getSubscriptionId() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getSubscriptionId() is required and cannot be null."));
+            return Mono.error(new IllegalArgumentException(
+                "Parameter this.client.getSubscriptionId() is required and cannot be null."));
         }
-        final String apiVersion = "2019-06-01";
+        final String apiVersion = "2022-02-22";
         final String accept = "application/json";
         context = this.client.mergeContext(context);
-        return service
-            .get(
-                this.client.getEndpoint(),
-                resourceGroupName,
-                automationAccountName,
-                hybridRunbookWorkerGroupName,
-                this.client.getSubscriptionId(),
-                apiVersion,
-                accept,
-                context);
+        return service.get(this.client.getEndpoint(), resourceGroupName, automationAccountName,
+            hybridRunbookWorkerGroupName, this.client.getSubscriptionId(), apiVersion, accept, context);
     }
 
     /**
      * Retrieve a hybrid runbook worker group.
-     *
+     * 
      * @param resourceGroupName Name of an Azure Resource group.
      * @param automationAccountName The name of the automation account.
      * @param hybridRunbookWorkerGroupName The hybrid runbook worker group name.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return definition of hybrid runbook worker group.
+     * @return definition of hybrid runbook worker group on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    private Mono<HybridRunbookWorkerGroupInner> getAsync(
-        String resourceGroupName, String automationAccountName, String hybridRunbookWorkerGroupName) {
+    private Mono<HybridRunbookWorkerGroupInner> getAsync(String resourceGroupName, String automationAccountName,
+        String hybridRunbookWorkerGroupName) {
         return getWithResponseAsync(resourceGroupName, automationAccountName, hybridRunbookWorkerGroupName)
-            .flatMap(
-                (Response<HybridRunbookWorkerGroupInner> res) -> {
-                    if (res.getValue() != null) {
-                        return Mono.just(res.getValue());
-                    } else {
-                        return Mono.empty();
-                    }
-                });
+            .flatMap(res -> Mono.justOrEmpty(res.getValue()));
     }
 
     /**
      * Retrieve a hybrid runbook worker group.
-     *
-     * @param resourceGroupName Name of an Azure Resource group.
-     * @param automationAccountName The name of the automation account.
-     * @param hybridRunbookWorkerGroupName The hybrid runbook worker group name.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return definition of hybrid runbook worker group.
-     */
-    @ServiceMethod(returns = ReturnType.SINGLE)
-    public HybridRunbookWorkerGroupInner get(
-        String resourceGroupName, String automationAccountName, String hybridRunbookWorkerGroupName) {
-        return getAsync(resourceGroupName, automationAccountName, hybridRunbookWorkerGroupName).block();
-    }
-
-    /**
-     * Retrieve a hybrid runbook worker group.
-     *
+     * 
      * @param resourceGroupName Name of an Azure Resource group.
      * @param automationAccountName The name of the automation account.
      * @param hybridRunbookWorkerGroupName The hybrid runbook worker group name.
@@ -476,38 +382,54 @@ public final class HybridRunbookWorkerGroupsClientImpl implements HybridRunbookW
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return definition of hybrid runbook worker group.
+     * @return definition of hybrid runbook worker group along with {@link Response}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    public Response<HybridRunbookWorkerGroupInner> getWithResponse(
-        String resourceGroupName, String automationAccountName, String hybridRunbookWorkerGroupName, Context context) {
+    public Response<HybridRunbookWorkerGroupInner> getWithResponse(String resourceGroupName,
+        String automationAccountName, String hybridRunbookWorkerGroupName, Context context) {
         return getWithResponseAsync(resourceGroupName, automationAccountName, hybridRunbookWorkerGroupName, context)
             .block();
     }
 
     /**
-     * Update a hybrid runbook worker group.
-     *
+     * Retrieve a hybrid runbook worker group.
+     * 
      * @param resourceGroupName Name of an Azure Resource group.
      * @param automationAccountName The name of the automation account.
      * @param hybridRunbookWorkerGroupName The hybrid runbook worker group name.
-     * @param parameters The hybrid runbook worker group.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
      * @return definition of hybrid runbook worker group.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    private Mono<Response<HybridRunbookWorkerGroupInner>> updateWithResponseAsync(
-        String resourceGroupName,
-        String automationAccountName,
-        String hybridRunbookWorkerGroupName,
-        HybridRunbookWorkerGroupUpdateParameters parameters) {
+    public HybridRunbookWorkerGroupInner get(String resourceGroupName, String automationAccountName,
+        String hybridRunbookWorkerGroupName) {
+        return getWithResponse(resourceGroupName, automationAccountName, hybridRunbookWorkerGroupName, Context.NONE)
+            .getValue();
+    }
+
+    /**
+     * Create a hybrid runbook worker group.
+     * 
+     * @param resourceGroupName Name of an Azure Resource group.
+     * @param automationAccountName The name of the automation account.
+     * @param hybridRunbookWorkerGroupName The hybrid runbook worker group name.
+     * @param hybridRunbookWorkerGroupCreationParameters The create or update parameters for hybrid runbook worker
+     * group.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return definition of hybrid runbook worker group along with {@link Response} on successful completion of
+     * {@link Mono}.
+     */
+    @ServiceMethod(returns = ReturnType.SINGLE)
+    private Mono<Response<HybridRunbookWorkerGroupInner>> createWithResponseAsync(String resourceGroupName,
+        String automationAccountName, String hybridRunbookWorkerGroupName,
+        HybridRunbookWorkerGroupCreateOrUpdateParameters hybridRunbookWorkerGroupCreationParameters) {
         if (this.client.getEndpoint() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getEndpoint() is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
         }
         if (resourceGroupName == null) {
             return Mono
@@ -518,66 +440,50 @@ public final class HybridRunbookWorkerGroupsClientImpl implements HybridRunbookW
                 .error(new IllegalArgumentException("Parameter automationAccountName is required and cannot be null."));
         }
         if (hybridRunbookWorkerGroupName == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter hybridRunbookWorkerGroupName is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter hybridRunbookWorkerGroupName is required and cannot be null."));
         }
         if (this.client.getSubscriptionId() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getSubscriptionId() is required and cannot be null."));
+            return Mono.error(new IllegalArgumentException(
+                "Parameter this.client.getSubscriptionId() is required and cannot be null."));
         }
-        if (parameters == null) {
-            return Mono.error(new IllegalArgumentException("Parameter parameters is required and cannot be null."));
+        if (hybridRunbookWorkerGroupCreationParameters == null) {
+            return Mono.error(new IllegalArgumentException(
+                "Parameter hybridRunbookWorkerGroupCreationParameters is required and cannot be null."));
         } else {
-            parameters.validate();
+            hybridRunbookWorkerGroupCreationParameters.validate();
         }
-        final String apiVersion = "2019-06-01";
+        final String apiVersion = "2022-02-22";
         final String accept = "application/json";
         return FluxUtil
-            .withContext(
-                context ->
-                    service
-                        .update(
-                            this.client.getEndpoint(),
-                            resourceGroupName,
-                            automationAccountName,
-                            hybridRunbookWorkerGroupName,
-                            this.client.getSubscriptionId(),
-                            apiVersion,
-                            parameters,
-                            accept,
-                            context))
+            .withContext(context -> service.create(this.client.getEndpoint(), resourceGroupName, automationAccountName,
+                hybridRunbookWorkerGroupName, this.client.getSubscriptionId(), apiVersion,
+                hybridRunbookWorkerGroupCreationParameters, accept, context))
             .contextWrite(context -> context.putAll(FluxUtil.toReactorContext(this.client.getContext()).readOnly()));
     }
 
     /**
-     * Update a hybrid runbook worker group.
-     *
+     * Create a hybrid runbook worker group.
+     * 
      * @param resourceGroupName Name of an Azure Resource group.
      * @param automationAccountName The name of the automation account.
      * @param hybridRunbookWorkerGroupName The hybrid runbook worker group name.
-     * @param parameters The hybrid runbook worker group.
+     * @param hybridRunbookWorkerGroupCreationParameters The create or update parameters for hybrid runbook worker
+     * group.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return definition of hybrid runbook worker group.
+     * @return definition of hybrid runbook worker group along with {@link Response} on successful completion of
+     * {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    private Mono<Response<HybridRunbookWorkerGroupInner>> updateWithResponseAsync(
-        String resourceGroupName,
-        String automationAccountName,
-        String hybridRunbookWorkerGroupName,
-        HybridRunbookWorkerGroupUpdateParameters parameters,
-        Context context) {
+    private Mono<Response<HybridRunbookWorkerGroupInner>> createWithResponseAsync(String resourceGroupName,
+        String automationAccountName, String hybridRunbookWorkerGroupName,
+        HybridRunbookWorkerGroupCreateOrUpdateParameters hybridRunbookWorkerGroupCreationParameters, Context context) {
         if (this.client.getEndpoint() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getEndpoint() is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
         }
         if (resourceGroupName == null) {
             return Mono
@@ -588,133 +494,274 @@ public final class HybridRunbookWorkerGroupsClientImpl implements HybridRunbookW
                 .error(new IllegalArgumentException("Parameter automationAccountName is required and cannot be null."));
         }
         if (hybridRunbookWorkerGroupName == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter hybridRunbookWorkerGroupName is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter hybridRunbookWorkerGroupName is required and cannot be null."));
         }
         if (this.client.getSubscriptionId() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getSubscriptionId() is required and cannot be null."));
+            return Mono.error(new IllegalArgumentException(
+                "Parameter this.client.getSubscriptionId() is required and cannot be null."));
         }
-        if (parameters == null) {
-            return Mono.error(new IllegalArgumentException("Parameter parameters is required and cannot be null."));
+        if (hybridRunbookWorkerGroupCreationParameters == null) {
+            return Mono.error(new IllegalArgumentException(
+                "Parameter hybridRunbookWorkerGroupCreationParameters is required and cannot be null."));
         } else {
-            parameters.validate();
+            hybridRunbookWorkerGroupCreationParameters.validate();
         }
-        final String apiVersion = "2019-06-01";
+        final String apiVersion = "2022-02-22";
         final String accept = "application/json";
         context = this.client.mergeContext(context);
-        return service
-            .update(
-                this.client.getEndpoint(),
-                resourceGroupName,
-                automationAccountName,
-                hybridRunbookWorkerGroupName,
-                this.client.getSubscriptionId(),
-                apiVersion,
-                parameters,
-                accept,
-                context);
+        return service.create(this.client.getEndpoint(), resourceGroupName, automationAccountName,
+            hybridRunbookWorkerGroupName, this.client.getSubscriptionId(), apiVersion,
+            hybridRunbookWorkerGroupCreationParameters, accept, context);
     }
 
     /**
-     * Update a hybrid runbook worker group.
-     *
+     * Create a hybrid runbook worker group.
+     * 
      * @param resourceGroupName Name of an Azure Resource group.
      * @param automationAccountName The name of the automation account.
      * @param hybridRunbookWorkerGroupName The hybrid runbook worker group name.
-     * @param parameters The hybrid runbook worker group.
+     * @param hybridRunbookWorkerGroupCreationParameters The create or update parameters for hybrid runbook worker
+     * group.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return definition of hybrid runbook worker group.
+     * @return definition of hybrid runbook worker group on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    private Mono<HybridRunbookWorkerGroupInner> updateAsync(
-        String resourceGroupName,
-        String automationAccountName,
+    private Mono<HybridRunbookWorkerGroupInner> createAsync(String resourceGroupName, String automationAccountName,
         String hybridRunbookWorkerGroupName,
-        HybridRunbookWorkerGroupUpdateParameters parameters) {
-        return updateWithResponseAsync(
-                resourceGroupName, automationAccountName, hybridRunbookWorkerGroupName, parameters)
-            .flatMap(
-                (Response<HybridRunbookWorkerGroupInner> res) -> {
-                    if (res.getValue() != null) {
-                        return Mono.just(res.getValue());
-                    } else {
-                        return Mono.empty();
-                    }
-                });
+        HybridRunbookWorkerGroupCreateOrUpdateParameters hybridRunbookWorkerGroupCreationParameters) {
+        return createWithResponseAsync(resourceGroupName, automationAccountName, hybridRunbookWorkerGroupName,
+            hybridRunbookWorkerGroupCreationParameters).flatMap(res -> Mono.justOrEmpty(res.getValue()));
     }
 
     /**
-     * Update a hybrid runbook worker group.
-     *
+     * Create a hybrid runbook worker group.
+     * 
      * @param resourceGroupName Name of an Azure Resource group.
      * @param automationAccountName The name of the automation account.
      * @param hybridRunbookWorkerGroupName The hybrid runbook worker group name.
-     * @param parameters The hybrid runbook worker group.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return definition of hybrid runbook worker group.
-     */
-    @ServiceMethod(returns = ReturnType.SINGLE)
-    public HybridRunbookWorkerGroupInner update(
-        String resourceGroupName,
-        String automationAccountName,
-        String hybridRunbookWorkerGroupName,
-        HybridRunbookWorkerGroupUpdateParameters parameters) {
-        return updateAsync(resourceGroupName, automationAccountName, hybridRunbookWorkerGroupName, parameters).block();
-    }
-
-    /**
-     * Update a hybrid runbook worker group.
-     *
-     * @param resourceGroupName Name of an Azure Resource group.
-     * @param automationAccountName The name of the automation account.
-     * @param hybridRunbookWorkerGroupName The hybrid runbook worker group name.
-     * @param parameters The hybrid runbook worker group.
+     * @param hybridRunbookWorkerGroupCreationParameters The create or update parameters for hybrid runbook worker
+     * group.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return definition of hybrid runbook worker group along with {@link Response}.
+     */
+    @ServiceMethod(returns = ReturnType.SINGLE)
+    public Response<HybridRunbookWorkerGroupInner> createWithResponse(String resourceGroupName,
+        String automationAccountName, String hybridRunbookWorkerGroupName,
+        HybridRunbookWorkerGroupCreateOrUpdateParameters hybridRunbookWorkerGroupCreationParameters, Context context) {
+        return createWithResponseAsync(resourceGroupName, automationAccountName, hybridRunbookWorkerGroupName,
+            hybridRunbookWorkerGroupCreationParameters, context).block();
+    }
+
+    /**
+     * Create a hybrid runbook worker group.
+     * 
+     * @param resourceGroupName Name of an Azure Resource group.
+     * @param automationAccountName The name of the automation account.
+     * @param hybridRunbookWorkerGroupName The hybrid runbook worker group name.
+     * @param hybridRunbookWorkerGroupCreationParameters The create or update parameters for hybrid runbook worker
+     * group.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
      * @return definition of hybrid runbook worker group.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    public Response<HybridRunbookWorkerGroupInner> updateWithResponse(
-        String resourceGroupName,
-        String automationAccountName,
+    public HybridRunbookWorkerGroupInner create(String resourceGroupName, String automationAccountName,
         String hybridRunbookWorkerGroupName,
-        HybridRunbookWorkerGroupUpdateParameters parameters,
-        Context context) {
-        return updateWithResponseAsync(
-                resourceGroupName, automationAccountName, hybridRunbookWorkerGroupName, parameters, context)
-            .block();
+        HybridRunbookWorkerGroupCreateOrUpdateParameters hybridRunbookWorkerGroupCreationParameters) {
+        return createWithResponse(resourceGroupName, automationAccountName, hybridRunbookWorkerGroupName,
+            hybridRunbookWorkerGroupCreationParameters, Context.NONE).getValue();
+    }
+
+    /**
+     * Update a hybrid runbook worker group.
+     * 
+     * @param resourceGroupName Name of an Azure Resource group.
+     * @param automationAccountName The name of the automation account.
+     * @param hybridRunbookWorkerGroupName The hybrid runbook worker group name.
+     * @param hybridRunbookWorkerGroupUpdationParameters The hybrid runbook worker group.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return definition of hybrid runbook worker group along with {@link Response} on successful completion of
+     * {@link Mono}.
+     */
+    @ServiceMethod(returns = ReturnType.SINGLE)
+    private Mono<Response<HybridRunbookWorkerGroupInner>> updateWithResponseAsync(String resourceGroupName,
+        String automationAccountName, String hybridRunbookWorkerGroupName,
+        HybridRunbookWorkerGroupCreateOrUpdateParameters hybridRunbookWorkerGroupUpdationParameters) {
+        if (this.client.getEndpoint() == null) {
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
+        }
+        if (resourceGroupName == null) {
+            return Mono
+                .error(new IllegalArgumentException("Parameter resourceGroupName is required and cannot be null."));
+        }
+        if (automationAccountName == null) {
+            return Mono
+                .error(new IllegalArgumentException("Parameter automationAccountName is required and cannot be null."));
+        }
+        if (hybridRunbookWorkerGroupName == null) {
+            return Mono.error(
+                new IllegalArgumentException("Parameter hybridRunbookWorkerGroupName is required and cannot be null."));
+        }
+        if (this.client.getSubscriptionId() == null) {
+            return Mono.error(new IllegalArgumentException(
+                "Parameter this.client.getSubscriptionId() is required and cannot be null."));
+        }
+        if (hybridRunbookWorkerGroupUpdationParameters == null) {
+            return Mono.error(new IllegalArgumentException(
+                "Parameter hybridRunbookWorkerGroupUpdationParameters is required and cannot be null."));
+        } else {
+            hybridRunbookWorkerGroupUpdationParameters.validate();
+        }
+        final String apiVersion = "2022-02-22";
+        final String accept = "application/json";
+        return FluxUtil
+            .withContext(context -> service.update(this.client.getEndpoint(), resourceGroupName, automationAccountName,
+                hybridRunbookWorkerGroupName, this.client.getSubscriptionId(), apiVersion,
+                hybridRunbookWorkerGroupUpdationParameters, accept, context))
+            .contextWrite(context -> context.putAll(FluxUtil.toReactorContext(this.client.getContext()).readOnly()));
+    }
+
+    /**
+     * Update a hybrid runbook worker group.
+     * 
+     * @param resourceGroupName Name of an Azure Resource group.
+     * @param automationAccountName The name of the automation account.
+     * @param hybridRunbookWorkerGroupName The hybrid runbook worker group name.
+     * @param hybridRunbookWorkerGroupUpdationParameters The hybrid runbook worker group.
+     * @param context The context to associate with this operation.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return definition of hybrid runbook worker group along with {@link Response} on successful completion of
+     * {@link Mono}.
+     */
+    @ServiceMethod(returns = ReturnType.SINGLE)
+    private Mono<Response<HybridRunbookWorkerGroupInner>> updateWithResponseAsync(String resourceGroupName,
+        String automationAccountName, String hybridRunbookWorkerGroupName,
+        HybridRunbookWorkerGroupCreateOrUpdateParameters hybridRunbookWorkerGroupUpdationParameters, Context context) {
+        if (this.client.getEndpoint() == null) {
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
+        }
+        if (resourceGroupName == null) {
+            return Mono
+                .error(new IllegalArgumentException("Parameter resourceGroupName is required and cannot be null."));
+        }
+        if (automationAccountName == null) {
+            return Mono
+                .error(new IllegalArgumentException("Parameter automationAccountName is required and cannot be null."));
+        }
+        if (hybridRunbookWorkerGroupName == null) {
+            return Mono.error(
+                new IllegalArgumentException("Parameter hybridRunbookWorkerGroupName is required and cannot be null."));
+        }
+        if (this.client.getSubscriptionId() == null) {
+            return Mono.error(new IllegalArgumentException(
+                "Parameter this.client.getSubscriptionId() is required and cannot be null."));
+        }
+        if (hybridRunbookWorkerGroupUpdationParameters == null) {
+            return Mono.error(new IllegalArgumentException(
+                "Parameter hybridRunbookWorkerGroupUpdationParameters is required and cannot be null."));
+        } else {
+            hybridRunbookWorkerGroupUpdationParameters.validate();
+        }
+        final String apiVersion = "2022-02-22";
+        final String accept = "application/json";
+        context = this.client.mergeContext(context);
+        return service.update(this.client.getEndpoint(), resourceGroupName, automationAccountName,
+            hybridRunbookWorkerGroupName, this.client.getSubscriptionId(), apiVersion,
+            hybridRunbookWorkerGroupUpdationParameters, accept, context);
+    }
+
+    /**
+     * Update a hybrid runbook worker group.
+     * 
+     * @param resourceGroupName Name of an Azure Resource group.
+     * @param automationAccountName The name of the automation account.
+     * @param hybridRunbookWorkerGroupName The hybrid runbook worker group name.
+     * @param hybridRunbookWorkerGroupUpdationParameters The hybrid runbook worker group.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return definition of hybrid runbook worker group on successful completion of {@link Mono}.
+     */
+    @ServiceMethod(returns = ReturnType.SINGLE)
+    private Mono<HybridRunbookWorkerGroupInner> updateAsync(String resourceGroupName, String automationAccountName,
+        String hybridRunbookWorkerGroupName,
+        HybridRunbookWorkerGroupCreateOrUpdateParameters hybridRunbookWorkerGroupUpdationParameters) {
+        return updateWithResponseAsync(resourceGroupName, automationAccountName, hybridRunbookWorkerGroupName,
+            hybridRunbookWorkerGroupUpdationParameters).flatMap(res -> Mono.justOrEmpty(res.getValue()));
+    }
+
+    /**
+     * Update a hybrid runbook worker group.
+     * 
+     * @param resourceGroupName Name of an Azure Resource group.
+     * @param automationAccountName The name of the automation account.
+     * @param hybridRunbookWorkerGroupName The hybrid runbook worker group name.
+     * @param hybridRunbookWorkerGroupUpdationParameters The hybrid runbook worker group.
+     * @param context The context to associate with this operation.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return definition of hybrid runbook worker group along with {@link Response}.
+     */
+    @ServiceMethod(returns = ReturnType.SINGLE)
+    public Response<HybridRunbookWorkerGroupInner> updateWithResponse(String resourceGroupName,
+        String automationAccountName, String hybridRunbookWorkerGroupName,
+        HybridRunbookWorkerGroupCreateOrUpdateParameters hybridRunbookWorkerGroupUpdationParameters, Context context) {
+        return updateWithResponseAsync(resourceGroupName, automationAccountName, hybridRunbookWorkerGroupName,
+            hybridRunbookWorkerGroupUpdationParameters, context).block();
+    }
+
+    /**
+     * Update a hybrid runbook worker group.
+     * 
+     * @param resourceGroupName Name of an Azure Resource group.
+     * @param automationAccountName The name of the automation account.
+     * @param hybridRunbookWorkerGroupName The hybrid runbook worker group name.
+     * @param hybridRunbookWorkerGroupUpdationParameters The hybrid runbook worker group.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return definition of hybrid runbook worker group.
+     */
+    @ServiceMethod(returns = ReturnType.SINGLE)
+    public HybridRunbookWorkerGroupInner update(String resourceGroupName, String automationAccountName,
+        String hybridRunbookWorkerGroupName,
+        HybridRunbookWorkerGroupCreateOrUpdateParameters hybridRunbookWorkerGroupUpdationParameters) {
+        return updateWithResponse(resourceGroupName, automationAccountName, hybridRunbookWorkerGroupName,
+            hybridRunbookWorkerGroupUpdationParameters, Context.NONE).getValue();
     }
 
     /**
      * Retrieve a list of hybrid runbook worker groups.
-     *
+     * 
      * @param resourceGroupName Name of an Azure Resource group.
      * @param automationAccountName The name of the automation account.
      * @param filter The filter to apply on the operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the response model for the list hybrid runbook worker groups.
+     * @return the response model for the list hybrid runbook worker groups along with {@link PagedResponse} on
+     * successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    private Mono<PagedResponse<HybridRunbookWorkerGroupInner>> listByAutomationAccountSinglePageAsync(
-        String resourceGroupName, String automationAccountName, String filter) {
+    private Mono<PagedResponse<HybridRunbookWorkerGroupInner>>
+        listByAutomationAccountSinglePageAsync(String resourceGroupName, String automationAccountName, String filter) {
         if (this.client.getEndpoint() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getEndpoint() is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
         }
         if (resourceGroupName == null) {
             return Mono
@@ -725,41 +772,22 @@ public final class HybridRunbookWorkerGroupsClientImpl implements HybridRunbookW
                 .error(new IllegalArgumentException("Parameter automationAccountName is required and cannot be null."));
         }
         if (this.client.getSubscriptionId() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getSubscriptionId() is required and cannot be null."));
+            return Mono.error(new IllegalArgumentException(
+                "Parameter this.client.getSubscriptionId() is required and cannot be null."));
         }
-        final String apiVersion = "2019-06-01";
+        final String apiVersion = "2022-02-22";
         final String accept = "application/json";
         return FluxUtil
-            .withContext(
-                context ->
-                    service
-                        .listByAutomationAccount(
-                            this.client.getEndpoint(),
-                            resourceGroupName,
-                            automationAccountName,
-                            filter,
-                            this.client.getSubscriptionId(),
-                            apiVersion,
-                            accept,
-                            context))
-            .<PagedResponse<HybridRunbookWorkerGroupInner>>map(
-                res ->
-                    new PagedResponseBase<>(
-                        res.getRequest(),
-                        res.getStatusCode(),
-                        res.getHeaders(),
-                        res.getValue().value(),
-                        res.getValue().nextLink(),
-                        null))
+            .withContext(context -> service.listByAutomationAccount(this.client.getEndpoint(), resourceGroupName,
+                automationAccountName, filter, this.client.getSubscriptionId(), apiVersion, accept, context))
+            .<PagedResponse<HybridRunbookWorkerGroupInner>>map(res -> new PagedResponseBase<>(res.getRequest(),
+                res.getStatusCode(), res.getHeaders(), res.getValue().value(), res.getValue().nextLink(), null))
             .contextWrite(context -> context.putAll(FluxUtil.toReactorContext(this.client.getContext()).readOnly()));
     }
 
     /**
      * Retrieve a list of hybrid runbook worker groups.
-     *
+     * 
      * @param resourceGroupName Name of an Azure Resource group.
      * @param automationAccountName The name of the automation account.
      * @param filter The filter to apply on the operation.
@@ -767,16 +795,15 @@ public final class HybridRunbookWorkerGroupsClientImpl implements HybridRunbookW
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the response model for the list hybrid runbook worker groups.
+     * @return the response model for the list hybrid runbook worker groups along with {@link PagedResponse} on
+     * successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
     private Mono<PagedResponse<HybridRunbookWorkerGroupInner>> listByAutomationAccountSinglePageAsync(
         String resourceGroupName, String automationAccountName, String filter, Context context) {
         if (this.client.getEndpoint() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getEndpoint() is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
         }
         if (resourceGroupName == null) {
             return Mono
@@ -787,49 +814,34 @@ public final class HybridRunbookWorkerGroupsClientImpl implements HybridRunbookW
                 .error(new IllegalArgumentException("Parameter automationAccountName is required and cannot be null."));
         }
         if (this.client.getSubscriptionId() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getSubscriptionId() is required and cannot be null."));
+            return Mono.error(new IllegalArgumentException(
+                "Parameter this.client.getSubscriptionId() is required and cannot be null."));
         }
-        final String apiVersion = "2019-06-01";
+        final String apiVersion = "2022-02-22";
         final String accept = "application/json";
         context = this.client.mergeContext(context);
         return service
-            .listByAutomationAccount(
-                this.client.getEndpoint(),
-                resourceGroupName,
-                automationAccountName,
-                filter,
-                this.client.getSubscriptionId(),
-                apiVersion,
-                accept,
-                context)
-            .map(
-                res ->
-                    new PagedResponseBase<>(
-                        res.getRequest(),
-                        res.getStatusCode(),
-                        res.getHeaders(),
-                        res.getValue().value(),
-                        res.getValue().nextLink(),
-                        null));
+            .listByAutomationAccount(this.client.getEndpoint(), resourceGroupName, automationAccountName, filter,
+                this.client.getSubscriptionId(), apiVersion, accept, context)
+            .map(res -> new PagedResponseBase<>(res.getRequest(), res.getStatusCode(), res.getHeaders(),
+                res.getValue().value(), res.getValue().nextLink(), null));
     }
 
     /**
      * Retrieve a list of hybrid runbook worker groups.
-     *
+     * 
      * @param resourceGroupName Name of an Azure Resource group.
      * @param automationAccountName The name of the automation account.
      * @param filter The filter to apply on the operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the response model for the list hybrid runbook worker groups.
+     * @return the response model for the list hybrid runbook worker groups as paginated response with
+     * {@link PagedFlux}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
-    private PagedFlux<HybridRunbookWorkerGroupInner> listByAutomationAccountAsync(
-        String resourceGroupName, String automationAccountName, String filter) {
+    private PagedFlux<HybridRunbookWorkerGroupInner> listByAutomationAccountAsync(String resourceGroupName,
+        String automationAccountName, String filter) {
         return new PagedFlux<>(
             () -> listByAutomationAccountSinglePageAsync(resourceGroupName, automationAccountName, filter),
             nextLink -> listByAutomationAccountNextSinglePageAsync(nextLink));
@@ -837,17 +849,18 @@ public final class HybridRunbookWorkerGroupsClientImpl implements HybridRunbookW
 
     /**
      * Retrieve a list of hybrid runbook worker groups.
-     *
+     * 
      * @param resourceGroupName Name of an Azure Resource group.
      * @param automationAccountName The name of the automation account.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the response model for the list hybrid runbook worker groups.
+     * @return the response model for the list hybrid runbook worker groups as paginated response with
+     * {@link PagedFlux}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
-    private PagedFlux<HybridRunbookWorkerGroupInner> listByAutomationAccountAsync(
-        String resourceGroupName, String automationAccountName) {
+    private PagedFlux<HybridRunbookWorkerGroupInner> listByAutomationAccountAsync(String resourceGroupName,
+        String automationAccountName) {
         final String filter = null;
         return new PagedFlux<>(
             () -> listByAutomationAccountSinglePageAsync(resourceGroupName, automationAccountName, filter),
@@ -856,7 +869,7 @@ public final class HybridRunbookWorkerGroupsClientImpl implements HybridRunbookW
 
     /**
      * Retrieve a list of hybrid runbook worker groups.
-     *
+     * 
      * @param resourceGroupName Name of an Azure Resource group.
      * @param automationAccountName The name of the automation account.
      * @param filter The filter to apply on the operation.
@@ -864,11 +877,12 @@ public final class HybridRunbookWorkerGroupsClientImpl implements HybridRunbookW
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the response model for the list hybrid runbook worker groups.
+     * @return the response model for the list hybrid runbook worker groups as paginated response with
+     * {@link PagedFlux}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
-    private PagedFlux<HybridRunbookWorkerGroupInner> listByAutomationAccountAsync(
-        String resourceGroupName, String automationAccountName, String filter, Context context) {
+    private PagedFlux<HybridRunbookWorkerGroupInner> listByAutomationAccountAsync(String resourceGroupName,
+        String automationAccountName, String filter, Context context) {
         return new PagedFlux<>(
             () -> listByAutomationAccountSinglePageAsync(resourceGroupName, automationAccountName, filter, context),
             nextLink -> listByAutomationAccountNextSinglePageAsync(nextLink, context));
@@ -876,24 +890,25 @@ public final class HybridRunbookWorkerGroupsClientImpl implements HybridRunbookW
 
     /**
      * Retrieve a list of hybrid runbook worker groups.
-     *
+     * 
      * @param resourceGroupName Name of an Azure Resource group.
      * @param automationAccountName The name of the automation account.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the response model for the list hybrid runbook worker groups.
+     * @return the response model for the list hybrid runbook worker groups as paginated response with
+     * {@link PagedIterable}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
-    public PagedIterable<HybridRunbookWorkerGroupInner> listByAutomationAccount(
-        String resourceGroupName, String automationAccountName) {
+    public PagedIterable<HybridRunbookWorkerGroupInner> listByAutomationAccount(String resourceGroupName,
+        String automationAccountName) {
         final String filter = null;
         return new PagedIterable<>(listByAutomationAccountAsync(resourceGroupName, automationAccountName, filter));
     }
 
     /**
      * Retrieve a list of hybrid runbook worker groups.
-     *
+     * 
      * @param resourceGroupName Name of an Azure Resource group.
      * @param automationAccountName The name of the automation account.
      * @param filter The filter to apply on the operation.
@@ -901,86 +916,70 @@ public final class HybridRunbookWorkerGroupsClientImpl implements HybridRunbookW
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the response model for the list hybrid runbook worker groups.
+     * @return the response model for the list hybrid runbook worker groups as paginated response with
+     * {@link PagedIterable}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
-    public PagedIterable<HybridRunbookWorkerGroupInner> listByAutomationAccount(
-        String resourceGroupName, String automationAccountName, String filter, Context context) {
+    public PagedIterable<HybridRunbookWorkerGroupInner> listByAutomationAccount(String resourceGroupName,
+        String automationAccountName, String filter, Context context) {
         return new PagedIterable<>(
             listByAutomationAccountAsync(resourceGroupName, automationAccountName, filter, context));
     }
 
     /**
      * Get the next page of items.
-     *
-     * @param nextLink The nextLink parameter.
+     * 
+     * @param nextLink The URL to get the next list of items.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the response model for the list hybrid runbook worker groups.
+     * @return the response model for the list hybrid runbook worker groups along with {@link PagedResponse} on
+     * successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    private Mono<PagedResponse<HybridRunbookWorkerGroupInner>> listByAutomationAccountNextSinglePageAsync(
-        String nextLink) {
+    private Mono<PagedResponse<HybridRunbookWorkerGroupInner>>
+        listByAutomationAccountNextSinglePageAsync(String nextLink) {
         if (nextLink == null) {
             return Mono.error(new IllegalArgumentException("Parameter nextLink is required and cannot be null."));
         }
         if (this.client.getEndpoint() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getEndpoint() is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
         }
         final String accept = "application/json";
         return FluxUtil
             .withContext(
                 context -> service.listByAutomationAccountNext(nextLink, this.client.getEndpoint(), accept, context))
-            .<PagedResponse<HybridRunbookWorkerGroupInner>>map(
-                res ->
-                    new PagedResponseBase<>(
-                        res.getRequest(),
-                        res.getStatusCode(),
-                        res.getHeaders(),
-                        res.getValue().value(),
-                        res.getValue().nextLink(),
-                        null))
+            .<PagedResponse<HybridRunbookWorkerGroupInner>>map(res -> new PagedResponseBase<>(res.getRequest(),
+                res.getStatusCode(), res.getHeaders(), res.getValue().value(), res.getValue().nextLink(), null))
             .contextWrite(context -> context.putAll(FluxUtil.toReactorContext(this.client.getContext()).readOnly()));
     }
 
     /**
      * Get the next page of items.
-     *
-     * @param nextLink The nextLink parameter.
+     * 
+     * @param nextLink The URL to get the next list of items.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the response model for the list hybrid runbook worker groups.
+     * @return the response model for the list hybrid runbook worker groups along with {@link PagedResponse} on
+     * successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    private Mono<PagedResponse<HybridRunbookWorkerGroupInner>> listByAutomationAccountNextSinglePageAsync(
-        String nextLink, Context context) {
+    private Mono<PagedResponse<HybridRunbookWorkerGroupInner>>
+        listByAutomationAccountNextSinglePageAsync(String nextLink, Context context) {
         if (nextLink == null) {
             return Mono.error(new IllegalArgumentException("Parameter nextLink is required and cannot be null."));
         }
         if (this.client.getEndpoint() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getEndpoint() is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
         }
         final String accept = "application/json";
         context = this.client.mergeContext(context);
-        return service
-            .listByAutomationAccountNext(nextLink, this.client.getEndpoint(), accept, context)
-            .map(
-                res ->
-                    new PagedResponseBase<>(
-                        res.getRequest(),
-                        res.getStatusCode(),
-                        res.getHeaders(),
-                        res.getValue().value(),
-                        res.getValue().nextLink(),
-                        null));
+        return service.listByAutomationAccountNext(nextLink, this.client.getEndpoint(), accept, context)
+            .map(res -> new PagedResponseBase<>(res.getRequest(), res.getStatusCode(), res.getHeaders(),
+                res.getValue().value(), res.getValue().nextLink(), null));
     }
 }

@@ -1,44 +1,64 @@
 trigger: none
 
-stages:
-    - template: spring-test-template.yml
-
-    - template: spring-test-template.yml
-      parameters:
-        TestName: LiveTestInAzureChina
-        Clouds: China
-        TestResourceDirectories:
-          - spring/azure-spring-boot-test-aad
-        Artifacts:
-          - name: azure-spring-boot-test-aad
-            groupId: com.azure.spring
-            safeName: azurespringboottestaad
-          - name: azure-spring-boot-test-aad-b2c
-            groupId: com.azure.spring
-            safeName: azurespringboottestaadb2c
-        EnvVars:
-          AAD_TENANT_ID_1: $(java-spring-aad-tenant-id-1-cn)
-          AAD_USER_NAME_1: $(java-spring-aad-user-name-1-cn)
-          AAD_USER_PASSWORD_1: $(java-spring-aad-user-password-1-cn)
-          AAD_TENANT_ID_2: $(java-spring-aad-tenant-id-2-cn)
-          AAD_USER_NAME_2: $(java-spring-aad-user-name-2-cn)
-          AAD_USER_PASSWORD_2: $(java-spring-aad-user-password-2-cn)
-          AAD_MULTI_TENANT_CLIENT_ID: $(java-spring-aad-multi-tenant-client-id-cn)
-          AAD_MULTI_TENANT_CLIENT_SECRET: $(java-spring-aad-multi-tenant-client-secret-cn)
-          AAD_SINGLE_TENANT_CLIENT_ID: $(java-spring-aad-single-tenant-id-cn)
-          AAD_SINGLE_TENANT_CLIENT_SECRET: $(java-spring-aad-single-tenant-secret-cn)
-          AAD_SINGLE_TENANT_CLIENT_ID_WITH_ROLE: $(java-spring-aad-single-tenant-id-with-role-cn)
-          AAD_SINGLE_TENANT_CLIENT_SECRET_WITH_ROLE: $(java-spring-aad-single-tenant-secret-with-role-cn)
-          AAD_USER_NAME_ON_DEMAND: "user$(System.JobId)-$(Build.BuildId)@cnaadittest1.partner.onmschina.cn"
-          AAD_USER_PASSWORD_ON_DEMAND: $(java-spring-aad-user-password-1-cn)
-          AAD_SERVICE_PRICIPAL_CLIENT_ID: $(java-spring-aad-service-principal-client-id-cn)
-          AAD_SERVICE_PRICIPAL_CLIENT_SECRET: $(java-spring-aad-service-principal-client-secret-cn)
-          AAD_B2C_USER_EMAIL: "moary@126.com"
-          AAD_B2C_BASE_URI: "https://moaryb2c.b2clogin.cn/moaryb2c.partner.onmschina.cn"
-          AAD_B2C_REPLY_URL: "http://localhost:8080/login/oauth2/code/"
-          AAD_B2C_SIGN_UP_OR_SIGN_IN: "B2C_1_signupsignin1"
-          AAD_B2C_PROFILE_EDIT: "B2C_1_profileediting1"
-          AAD_B2C_USER_PASSWORD: $(java-spring-aad-b2c-user-password-cn)
-          AAD_B2C_CLIENT_ID: $(java-spring-aad-b2c-client-id-cn)
-          AAD_B2C_CLIENT_SECRET: $(java-spring-aad-b2c-client-secret-cn)
-          AZURE_CLOUD_TYPE: "China"
+extends:
+  template: /eng/pipelines/templates/stages/1es-redirect.yml
+  parameters:
+    stages:
+      - template: /sdk/spring/pipeline/tests-supported-spring-versions-filter-template.yml
+        parameters:
+          TestName: IT_AppConfig
+          TestClassPatterns: com.azure.spring.cloud.integration.tests.appconfiguration.*IT
+          TestResourceDirectories:
+            - spring/spring-cloud-azure-integration-tests/test-resources/appconfiguration
+      - template: /sdk/spring/pipeline/tests-supported-spring-versions-filter-template.yml
+        parameters:
+          TestName: IT_Cosmos
+          TestClassPatterns: com.azure.spring.cloud.integration.tests.cosmos.*IT,com.azure.spring.cloud.integration.tests.cosmos.*.*IT
+          TestResourceDirectories:
+            - spring/spring-cloud-azure-integration-tests/test-resources/cosmos
+      - template: /sdk/spring/pipeline/tests-supported-spring-versions-filter-template.yml
+        parameters:
+          TestName: IT_ServiceBus
+          TestClassPatterns: com.azure.spring.cloud.integration.tests.servicebus.*IT,com.azure.spring.cloud.integration.tests.servicebus.*.*IT
+          TestResourceDirectories:
+            - spring/spring-cloud-azure-integration-tests/test-resources/servicebus
+      - template: /sdk/spring/pipeline/tests-supported-spring-versions-filter-template.yml
+        parameters:
+          TestName: IT_EventHubs_Storage
+          TestClassPatterns: com.azure.spring.cloud.integration.tests.eventhubs.*IT,com.azure.spring.cloud.integration.tests.eventhubs.*.*IT,com.azure.spring.cloud.integration.tests.storage.*.*IT
+          TestResourceDirectories:
+            - spring/spring-cloud-azure-integration-tests/test-resources/eventhubs
+            - spring/spring-cloud-azure-integration-tests/test-resources/storage
+      - template: /sdk/spring/pipeline/tests-supported-spring-versions-filter-template.yml
+        parameters:
+          TestName: IT_KeyVault
+          TestClassPatterns: com.azure.spring.cloud.integration.tests.keyvault.*.*IT
+          TestResourceDirectories:
+            - spring/spring-cloud-azure-integration-tests/test-resources/keyvault
+      - template: /sdk/spring/pipeline/tests-supported-spring-versions-template.yml
+        parameters:
+          TestName: AppConfig_IT
+          TestResourceDirectories:
+            - spring/spring-cloud-azure-integration-test-appconfiguration-config
+          Artifacts:
+            - name: spring-cloud-azure-integration-test-appconfiguration-config
+              groupId: com.azure.spring
+              safeName: springcloudazureintegrationtestappconfigurationconfig
+      - template: /sdk/spring/pipeline/tests-supported-spring-versions-template.yml
+        parameters:
+          MatrixConfigs:
+            - Name: Cosmos_IT
+              Path: sdk/spring/pipeline/cosmos-integration-matrix-compatible.json
+              Selection: all
+              GenerateVMJobs: true
+              NonSparseParameters:
+                - SPRING_CLOUD_AZURE_TEST_SUPPORTED_SPRING_BOOT_VERSION
+          TestResourceDirectories:
+            - spring/spring-cloud-azure-integration-tests/test-resources/cosmos-spring
+          Artifacts:
+            - name: azure-spring-data-cosmos
+              groupId: com.azure
+              safeName: azurespringdatacosmos
+          TimeoutInMinutes: 90
+          TestName: Spring_Data_Cosmos_Integration
+          TestOptions: '$(ProfileFlag)'

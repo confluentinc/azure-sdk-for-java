@@ -15,29 +15,38 @@ import com.azure.resourcemanager.eventgrid.fluent.models.TopicTypeInfoInner;
 import com.azure.resourcemanager.eventgrid.models.EventType;
 import com.azure.resourcemanager.eventgrid.models.TopicTypeInfo;
 import com.azure.resourcemanager.eventgrid.models.TopicTypes;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 public final class TopicTypesImpl implements TopicTypes {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(TopicTypesImpl.class);
+    private static final ClientLogger LOGGER = new ClientLogger(TopicTypesImpl.class);
 
     private final TopicTypesClient innerClient;
 
     private final com.azure.resourcemanager.eventgrid.EventGridManager serviceManager;
 
-    public TopicTypesImpl(
-        TopicTypesClient innerClient, com.azure.resourcemanager.eventgrid.EventGridManager serviceManager) {
+    public TopicTypesImpl(TopicTypesClient innerClient,
+        com.azure.resourcemanager.eventgrid.EventGridManager serviceManager) {
         this.innerClient = innerClient;
         this.serviceManager = serviceManager;
     }
 
     public PagedIterable<TopicTypeInfo> list() {
         PagedIterable<TopicTypeInfoInner> inner = this.serviceClient().list();
-        return Utils.mapPage(inner, inner1 -> new TopicTypeInfoImpl(inner1, this.manager()));
+        return ResourceManagerUtils.mapPage(inner, inner1 -> new TopicTypeInfoImpl(inner1, this.manager()));
     }
 
     public PagedIterable<TopicTypeInfo> list(Context context) {
         PagedIterable<TopicTypeInfoInner> inner = this.serviceClient().list(context);
-        return Utils.mapPage(inner, inner1 -> new TopicTypeInfoImpl(inner1, this.manager()));
+        return ResourceManagerUtils.mapPage(inner, inner1 -> new TopicTypeInfoImpl(inner1, this.manager()));
+    }
+
+    public Response<TopicTypeInfo> getWithResponse(String topicTypeName, Context context) {
+        Response<TopicTypeInfoInner> inner = this.serviceClient().getWithResponse(topicTypeName, context);
+        if (inner != null) {
+            return new SimpleResponse<>(inner.getRequest(), inner.getStatusCode(), inner.getHeaders(),
+                new TopicTypeInfoImpl(inner.getValue(), this.manager()));
+        } else {
+            return null;
+        }
     }
 
     public TopicTypeInfo get(String topicTypeName) {
@@ -49,27 +58,14 @@ public final class TopicTypesImpl implements TopicTypes {
         }
     }
 
-    public Response<TopicTypeInfo> getWithResponse(String topicTypeName, Context context) {
-        Response<TopicTypeInfoInner> inner = this.serviceClient().getWithResponse(topicTypeName, context);
-        if (inner != null) {
-            return new SimpleResponse<>(
-                inner.getRequest(),
-                inner.getStatusCode(),
-                inner.getHeaders(),
-                new TopicTypeInfoImpl(inner.getValue(), this.manager()));
-        } else {
-            return null;
-        }
-    }
-
     public PagedIterable<EventType> listEventTypes(String topicTypeName) {
         PagedIterable<EventTypeInner> inner = this.serviceClient().listEventTypes(topicTypeName);
-        return Utils.mapPage(inner, inner1 -> new EventTypeImpl(inner1, this.manager()));
+        return ResourceManagerUtils.mapPage(inner, inner1 -> new EventTypeImpl(inner1, this.manager()));
     }
 
     public PagedIterable<EventType> listEventTypes(String topicTypeName, Context context) {
         PagedIterable<EventTypeInner> inner = this.serviceClient().listEventTypes(topicTypeName, context);
-        return Utils.mapPage(inner, inner1 -> new EventTypeImpl(inner1, this.manager()));
+        return ResourceManagerUtils.mapPage(inner, inner1 -> new EventTypeImpl(inner1, this.manager()));
     }
 
     private TopicTypesClient serviceClient() {

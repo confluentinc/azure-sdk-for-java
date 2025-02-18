@@ -3,8 +3,8 @@
 
 package com.azure.cosmos.implementation;
 
-import com.azure.cosmos.BridgeInternal;
 import com.azure.cosmos.models.EncryptionKeyWrapMetadata;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import java.util.Arrays;
 
@@ -26,10 +26,10 @@ public final class ClientEncryptionKey extends Resource {
     /**
      * Initialize a ClientEncryptionKey object from json string.
      *
-     * @param jsonString the json string that represents the database clientEncryptionKey.
+     * @param jsonNode the json node that represents the database clientEncryptionKey.
      */
-    public ClientEncryptionKey(String jsonString) {
-        super(jsonString);
+    public ClientEncryptionKey(ObjectNode jsonNode) {
+        super(jsonNode);
     }
 
     public String getEncryptionAlgorithm() {
@@ -43,8 +43,10 @@ public final class ClientEncryptionKey extends Resource {
 
     public void setEncryptionAlgorithm(String encryptionAlgorithm) {
         this.encryptionAlgorithm = encryptionAlgorithm;
-        BridgeInternal.setProperty(this, Constants.Properties.ENCRYPTION_ALGORITHM,
-            encryptionAlgorithm);
+        this.set(
+            Constants.Properties.ENCRYPTION_ALGORITHM,
+            encryptionAlgorithm
+        );
     }
 
     public byte[] getWrappedDataEncryptionKey() {
@@ -59,8 +61,10 @@ public final class ClientEncryptionKey extends Resource {
 
     public void setWrappedDataEncryptionKey(byte[] wrappedDataEncryptionKey) {
         this.wrappedDataEncryptionKey = wrappedDataEncryptionKey;
-        BridgeInternal.setProperty(this, Constants.Properties.WRAPPED_DATA_ENCRYPTION_KEY,
-            this.wrappedDataEncryptionKey);
+        this.set(
+            Constants.Properties.WRAPPED_DATA_ENCRYPTION_KEY,
+            this.wrappedDataEncryptionKey
+        );
     }
 
     public EncryptionKeyWrapMetadata getEncryptionKeyWrapMetadata() {
@@ -75,8 +79,10 @@ public final class ClientEncryptionKey extends Resource {
 
     public void setEncryptionKeyWrapMetadata(EncryptionKeyWrapMetadata encryptionKeyWrapMetadata) {
         this.encryptionKeyWrapMetadata = encryptionKeyWrapMetadata;
-        BridgeInternal.setProperty(this, Constants.Properties.KEY_WRAP_METADATA,
-            this.encryptionKeyWrapMetadata);
+        this.set(
+            Constants.Properties.KEY_WRAP_METADATA,
+            this.encryptionKeyWrapMetadata
+        );
     }
 
     @Override

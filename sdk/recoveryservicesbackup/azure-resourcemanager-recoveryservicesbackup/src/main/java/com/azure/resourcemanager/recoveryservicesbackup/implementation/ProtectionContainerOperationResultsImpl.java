@@ -12,50 +12,38 @@ import com.azure.resourcemanager.recoveryservicesbackup.fluent.ProtectionContain
 import com.azure.resourcemanager.recoveryservicesbackup.fluent.models.ProtectionContainerResourceInner;
 import com.azure.resourcemanager.recoveryservicesbackup.models.ProtectionContainerOperationResults;
 import com.azure.resourcemanager.recoveryservicesbackup.models.ProtectionContainerResource;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 public final class ProtectionContainerOperationResultsImpl implements ProtectionContainerOperationResults {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(ProtectionContainerOperationResultsImpl.class);
+    private static final ClientLogger LOGGER = new ClientLogger(ProtectionContainerOperationResultsImpl.class);
 
     private final ProtectionContainerOperationResultsClient innerClient;
 
     private final com.azure.resourcemanager.recoveryservicesbackup.RecoveryServicesBackupManager serviceManager;
 
-    public ProtectionContainerOperationResultsImpl(
-        ProtectionContainerOperationResultsClient innerClient,
+    public ProtectionContainerOperationResultsImpl(ProtectionContainerOperationResultsClient innerClient,
         com.azure.resourcemanager.recoveryservicesbackup.RecoveryServicesBackupManager serviceManager) {
         this.innerClient = innerClient;
         this.serviceManager = serviceManager;
     }
 
-    public ProtectionContainerResource get(
-        String vaultName, String resourceGroupName, String fabricName, String containerName, String operationId) {
-        ProtectionContainerResourceInner inner =
-            this.serviceClient().get(vaultName, resourceGroupName, fabricName, containerName, operationId);
+    public Response<ProtectionContainerResource> getWithResponse(String vaultName, String resourceGroupName,
+        String fabricName, String containerName, String operationId, Context context) {
+        Response<ProtectionContainerResourceInner> inner = this.serviceClient()
+            .getWithResponse(vaultName, resourceGroupName, fabricName, containerName, operationId, context);
         if (inner != null) {
-            return new ProtectionContainerResourceImpl(inner, this.manager());
+            return new SimpleResponse<>(inner.getRequest(), inner.getStatusCode(), inner.getHeaders(),
+                new ProtectionContainerResourceImpl(inner.getValue(), this.manager()));
         } else {
             return null;
         }
     }
 
-    public Response<ProtectionContainerResource> getWithResponse(
-        String vaultName,
-        String resourceGroupName,
-        String fabricName,
-        String containerName,
-        String operationId,
-        Context context) {
-        Response<ProtectionContainerResourceInner> inner =
-            this
-                .serviceClient()
-                .getWithResponse(vaultName, resourceGroupName, fabricName, containerName, operationId, context);
+    public ProtectionContainerResource get(String vaultName, String resourceGroupName, String fabricName,
+        String containerName, String operationId) {
+        ProtectionContainerResourceInner inner
+            = this.serviceClient().get(vaultName, resourceGroupName, fabricName, containerName, operationId);
         if (inner != null) {
-            return new SimpleResponse<>(
-                inner.getRequest(),
-                inner.getStatusCode(),
-                inner.getHeaders(),
-                new ProtectionContainerResourceImpl(inner.getValue(), this.manager()));
+            return new ProtectionContainerResourceImpl(inner, this.manager());
         } else {
             return null;
         }

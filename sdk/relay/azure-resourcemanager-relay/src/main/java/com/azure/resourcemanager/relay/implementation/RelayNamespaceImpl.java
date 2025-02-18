@@ -6,7 +6,6 @@ package com.azure.resourcemanager.relay.implementation;
 
 import com.azure.core.management.Region;
 import com.azure.core.util.Context;
-import com.azure.resourcemanager.relay.RelayManager;
 import com.azure.resourcemanager.relay.fluent.models.RelayNamespaceInner;
 import com.azure.resourcemanager.relay.models.ProvisioningStateEnum;
 import com.azure.resourcemanager.relay.models.RelayNamespace;
@@ -19,7 +18,7 @@ import java.util.Map;
 public final class RelayNamespaceImpl implements RelayNamespace, RelayNamespace.Definition, RelayNamespace.Update {
     private RelayNamespaceInner innerObject;
 
-    private final RelayManager serviceManager;
+    private final com.azure.resourcemanager.relay.RelayManager serviceManager;
 
     public String id() {
         return this.innerModel().id();
@@ -78,11 +77,15 @@ public final class RelayNamespaceImpl implements RelayNamespace, RelayNamespace.
         return this.location();
     }
 
+    public String resourceGroupName() {
+        return resourceGroupName;
+    }
+
     public RelayNamespaceInner innerModel() {
         return this.innerObject;
     }
 
-    private RelayManager manager() {
+    private com.azure.resourcemanager.relay.RelayManager manager() {
         return this.serviceManager;
     }
 
@@ -98,24 +101,20 @@ public final class RelayNamespaceImpl implements RelayNamespace, RelayNamespace.
     }
 
     public RelayNamespace create() {
-        this.innerObject =
-            serviceManager
-                .serviceClient()
-                .getNamespaces()
-                .createOrUpdate(resourceGroupName, namespaceName, this.innerModel(), Context.NONE);
+        this.innerObject = serviceManager.serviceClient()
+            .getNamespaces()
+            .createOrUpdate(resourceGroupName, namespaceName, this.innerModel(), Context.NONE);
         return this;
     }
 
     public RelayNamespace create(Context context) {
-        this.innerObject =
-            serviceManager
-                .serviceClient()
-                .getNamespaces()
-                .createOrUpdate(resourceGroupName, namespaceName, this.innerModel(), context);
+        this.innerObject = serviceManager.serviceClient()
+            .getNamespaces()
+            .createOrUpdate(resourceGroupName, namespaceName, this.innerModel(), context);
         return this;
     }
 
-    RelayNamespaceImpl(String name, RelayManager serviceManager) {
+    RelayNamespaceImpl(String name, com.azure.resourcemanager.relay.RelayManager serviceManager) {
         this.innerObject = new RelayNamespaceInner();
         this.serviceManager = serviceManager;
         this.namespaceName = name;
@@ -127,49 +126,41 @@ public final class RelayNamespaceImpl implements RelayNamespace, RelayNamespace.
     }
 
     public RelayNamespace apply() {
-        this.innerObject =
-            serviceManager
-                .serviceClient()
-                .getNamespaces()
-                .updateWithResponse(resourceGroupName, namespaceName, updateParameters, Context.NONE)
-                .getValue();
+        this.innerObject = serviceManager.serviceClient()
+            .getNamespaces()
+            .updateWithResponse(resourceGroupName, namespaceName, updateParameters, Context.NONE)
+            .getValue();
         return this;
     }
 
     public RelayNamespace apply(Context context) {
-        this.innerObject =
-            serviceManager
-                .serviceClient()
-                .getNamespaces()
-                .updateWithResponse(resourceGroupName, namespaceName, updateParameters, context)
-                .getValue();
+        this.innerObject = serviceManager.serviceClient()
+            .getNamespaces()
+            .updateWithResponse(resourceGroupName, namespaceName, updateParameters, context)
+            .getValue();
         return this;
     }
 
-    RelayNamespaceImpl(RelayNamespaceInner innerObject, RelayManager serviceManager) {
+    RelayNamespaceImpl(RelayNamespaceInner innerObject, com.azure.resourcemanager.relay.RelayManager serviceManager) {
         this.innerObject = innerObject;
         this.serviceManager = serviceManager;
-        this.resourceGroupName = Utils.getValueFromIdByName(innerObject.id(), "resourceGroups");
-        this.namespaceName = Utils.getValueFromIdByName(innerObject.id(), "namespaces");
+        this.resourceGroupName = ResourceManagerUtils.getValueFromIdByName(innerObject.id(), "resourceGroups");
+        this.namespaceName = ResourceManagerUtils.getValueFromIdByName(innerObject.id(), "namespaces");
     }
 
     public RelayNamespace refresh() {
-        this.innerObject =
-            serviceManager
-                .serviceClient()
-                .getNamespaces()
-                .getByResourceGroupWithResponse(resourceGroupName, namespaceName, Context.NONE)
-                .getValue();
+        this.innerObject = serviceManager.serviceClient()
+            .getNamespaces()
+            .getByResourceGroupWithResponse(resourceGroupName, namespaceName, Context.NONE)
+            .getValue();
         return this;
     }
 
     public RelayNamespace refresh(Context context) {
-        this.innerObject =
-            serviceManager
-                .serviceClient()
-                .getNamespaces()
-                .getByResourceGroupWithResponse(resourceGroupName, namespaceName, context)
-                .getValue();
+        this.innerObject = serviceManager.serviceClient()
+            .getNamespaces()
+            .getByResourceGroupWithResponse(resourceGroupName, namespaceName, context)
+            .getValue();
         return this;
     }
 

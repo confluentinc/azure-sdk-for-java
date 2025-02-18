@@ -4,6 +4,7 @@
 
 package com.azure.resourcemanager.avs.implementation;
 
+import com.azure.core.management.SystemData;
 import com.azure.core.util.Context;
 import com.azure.resourcemanager.avs.fluent.models.ExpressRouteAuthorizationInner;
 import com.azure.resourcemanager.avs.models.ExpressRouteAuthorization;
@@ -27,6 +28,10 @@ public final class ExpressRouteAuthorizationImpl
         return this.innerModel().type();
     }
 
+    public SystemData systemData() {
+        return this.innerModel().systemData();
+    }
+
     public ExpressRouteAuthorizationProvisioningState provisioningState() {
         return this.innerModel().provisioningState();
     }
@@ -41,6 +46,10 @@ public final class ExpressRouteAuthorizationImpl
 
     public String expressRouteId() {
         return this.innerModel().expressRouteId();
+    }
+
+    public String resourceGroupName() {
+        return resourceGroupName;
     }
 
     public ExpressRouteAuthorizationInner innerModel() {
@@ -64,21 +73,16 @@ public final class ExpressRouteAuthorizationImpl
     }
 
     public ExpressRouteAuthorization create() {
-        this.innerObject =
-            serviceManager
-                .serviceClient()
-                .getAuthorizations()
-                .createOrUpdate(
-                    resourceGroupName, privateCloudName, authorizationName, this.innerModel(), Context.NONE);
+        this.innerObject = serviceManager.serviceClient()
+            .getAuthorizations()
+            .createOrUpdate(resourceGroupName, privateCloudName, authorizationName, this.innerModel(), Context.NONE);
         return this;
     }
 
     public ExpressRouteAuthorization create(Context context) {
-        this.innerObject =
-            serviceManager
-                .serviceClient()
-                .getAuthorizations()
-                .createOrUpdate(resourceGroupName, privateCloudName, authorizationName, this.innerModel(), context);
+        this.innerObject = serviceManager.serviceClient()
+            .getAuthorizations()
+            .createOrUpdate(resourceGroupName, privateCloudName, authorizationName, this.innerModel(), context);
         return this;
     }
 
@@ -93,50 +97,46 @@ public final class ExpressRouteAuthorizationImpl
     }
 
     public ExpressRouteAuthorization apply() {
-        this.innerObject =
-            serviceManager
-                .serviceClient()
-                .getAuthorizations()
-                .createOrUpdate(
-                    resourceGroupName, privateCloudName, authorizationName, this.innerModel(), Context.NONE);
+        this.innerObject = serviceManager.serviceClient()
+            .getAuthorizations()
+            .createOrUpdate(resourceGroupName, privateCloudName, authorizationName, this.innerModel(), Context.NONE);
         return this;
     }
 
     public ExpressRouteAuthorization apply(Context context) {
-        this.innerObject =
-            serviceManager
-                .serviceClient()
-                .getAuthorizations()
-                .createOrUpdate(resourceGroupName, privateCloudName, authorizationName, this.innerModel(), context);
+        this.innerObject = serviceManager.serviceClient()
+            .getAuthorizations()
+            .createOrUpdate(resourceGroupName, privateCloudName, authorizationName, this.innerModel(), context);
         return this;
     }
 
-    ExpressRouteAuthorizationImpl(
-        ExpressRouteAuthorizationInner innerObject, com.azure.resourcemanager.avs.AvsManager serviceManager) {
+    ExpressRouteAuthorizationImpl(ExpressRouteAuthorizationInner innerObject,
+        com.azure.resourcemanager.avs.AvsManager serviceManager) {
         this.innerObject = innerObject;
         this.serviceManager = serviceManager;
-        this.resourceGroupName = Utils.getValueFromIdByName(innerObject.id(), "resourceGroups");
-        this.privateCloudName = Utils.getValueFromIdByName(innerObject.id(), "privateClouds");
-        this.authorizationName = Utils.getValueFromIdByName(innerObject.id(), "authorizations");
+        this.resourceGroupName = ResourceManagerUtils.getValueFromIdByName(innerObject.id(), "resourceGroups");
+        this.privateCloudName = ResourceManagerUtils.getValueFromIdByName(innerObject.id(), "privateClouds");
+        this.authorizationName = ResourceManagerUtils.getValueFromIdByName(innerObject.id(), "authorizations");
     }
 
     public ExpressRouteAuthorization refresh() {
-        this.innerObject =
-            serviceManager
-                .serviceClient()
-                .getAuthorizations()
-                .getWithResponse(resourceGroupName, privateCloudName, authorizationName, Context.NONE)
-                .getValue();
+        this.innerObject = serviceManager.serviceClient()
+            .getAuthorizations()
+            .getWithResponse(resourceGroupName, privateCloudName, authorizationName, Context.NONE)
+            .getValue();
         return this;
     }
 
     public ExpressRouteAuthorization refresh(Context context) {
-        this.innerObject =
-            serviceManager
-                .serviceClient()
-                .getAuthorizations()
-                .getWithResponse(resourceGroupName, privateCloudName, authorizationName, context)
-                .getValue();
+        this.innerObject = serviceManager.serviceClient()
+            .getAuthorizations()
+            .getWithResponse(resourceGroupName, privateCloudName, authorizationName, context)
+            .getValue();
+        return this;
+    }
+
+    public ExpressRouteAuthorizationImpl withExpressRouteId(String expressRouteId) {
+        this.innerModel().withExpressRouteId(expressRouteId);
         return this;
     }
 }

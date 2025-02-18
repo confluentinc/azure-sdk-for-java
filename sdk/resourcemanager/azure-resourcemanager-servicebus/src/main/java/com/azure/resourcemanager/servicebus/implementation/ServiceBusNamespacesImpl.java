@@ -7,6 +7,7 @@ import com.azure.resourcemanager.resources.fluentcore.arm.collection.implementat
 import com.azure.resourcemanager.servicebus.ServiceBusManager;
 import com.azure.resourcemanager.servicebus.fluent.NamespacesClient;
 import com.azure.resourcemanager.servicebus.fluent.models.SBNamespaceInner;
+import com.azure.resourcemanager.servicebus.models.CheckNameAvailability;
 import com.azure.resourcemanager.servicebus.models.CheckNameAvailabilityResult;
 import com.azure.resourcemanager.servicebus.models.ServiceBusNamespace;
 import com.azure.resourcemanager.servicebus.models.ServiceBusNamespaces;
@@ -15,12 +16,8 @@ import reactor.core.publisher.Mono;
 /**
  * Implementation for ServiceBusNamespaces.
  */
-public final class ServiceBusNamespacesImpl extends TopLevelModifiableResourcesImpl<
-    ServiceBusNamespace,
-    ServiceBusNamespaceImpl,
-    SBNamespaceInner,
-    NamespacesClient,
-    ServiceBusManager>
+public final class ServiceBusNamespacesImpl extends
+    TopLevelModifiableResourcesImpl<ServiceBusNamespace, ServiceBusNamespaceImpl, SBNamespaceInner, NamespacesClient, ServiceBusManager>
     implements ServiceBusNamespaces {
 
     public ServiceBusNamespacesImpl(NamespacesClient innerCollection, ServiceBusManager manager) {
@@ -39,21 +36,18 @@ public final class ServiceBusNamespacesImpl extends TopLevelModifiableResourcesI
 
     @Override
     public Mono<CheckNameAvailabilityResult> checkNameAvailabilityAsync(String name) {
-        return this.inner().checkNameAvailabilityAsync(name)
+        return this.inner()
+            .checkNameAvailabilityAsync(new CheckNameAvailability().withName(name))
             .map(inner -> new CheckNameAvailabilityResultImpl(inner));
     }
 
     @Override
     protected ServiceBusNamespaceImpl wrapModel(String name) {
-        return new ServiceBusNamespaceImpl(name,
-                new SBNamespaceInner(),
-                this.manager());
+        return new ServiceBusNamespaceImpl(name, new SBNamespaceInner(), this.manager());
     }
 
     @Override
     protected ServiceBusNamespaceImpl wrapModel(SBNamespaceInner inner) {
-        return new ServiceBusNamespaceImpl(inner.name(),
-                inner,
-                this.manager());
+        return new ServiceBusNamespaceImpl(inner.name(), inner, this.manager());
     }
 }

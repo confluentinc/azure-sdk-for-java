@@ -14,19 +14,30 @@ import com.azure.resourcemanager.hdinsight.fluent.models.PrivateLinkResourceList
 import com.azure.resourcemanager.hdinsight.models.PrivateLinkResource;
 import com.azure.resourcemanager.hdinsight.models.PrivateLinkResourceListResult;
 import com.azure.resourcemanager.hdinsight.models.PrivateLinkResources;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 public final class PrivateLinkResourcesImpl implements PrivateLinkResources {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(PrivateLinkResourcesImpl.class);
+    private static final ClientLogger LOGGER = new ClientLogger(PrivateLinkResourcesImpl.class);
 
     private final PrivateLinkResourcesClient innerClient;
 
     private final com.azure.resourcemanager.hdinsight.HDInsightManager serviceManager;
 
-    public PrivateLinkResourcesImpl(
-        PrivateLinkResourcesClient innerClient, com.azure.resourcemanager.hdinsight.HDInsightManager serviceManager) {
+    public PrivateLinkResourcesImpl(PrivateLinkResourcesClient innerClient,
+        com.azure.resourcemanager.hdinsight.HDInsightManager serviceManager) {
         this.innerClient = innerClient;
         this.serviceManager = serviceManager;
+    }
+
+    public Response<PrivateLinkResourceListResult> listByClusterWithResponse(String resourceGroupName,
+        String clusterName, Context context) {
+        Response<PrivateLinkResourceListResultInner> inner
+            = this.serviceClient().listByClusterWithResponse(resourceGroupName, clusterName, context);
+        if (inner != null) {
+            return new SimpleResponse<>(inner.getRequest(), inner.getStatusCode(), inner.getHeaders(),
+                new PrivateLinkResourceListResultImpl(inner.getValue(), this.manager()));
+        } else {
+            return null;
+        }
     }
 
     public PrivateLinkResourceListResult listByCluster(String resourceGroupName, String clusterName) {
@@ -38,41 +49,23 @@ public final class PrivateLinkResourcesImpl implements PrivateLinkResources {
         }
     }
 
-    public Response<PrivateLinkResourceListResult> listByClusterWithResponse(
-        String resourceGroupName, String clusterName, Context context) {
-        Response<PrivateLinkResourceListResultInner> inner =
-            this.serviceClient().listByClusterWithResponse(resourceGroupName, clusterName, context);
+    public Response<PrivateLinkResource> getWithResponse(String resourceGroupName, String clusterName,
+        String privateLinkResourceName, Context context) {
+        Response<PrivateLinkResourceInner> inner
+            = this.serviceClient().getWithResponse(resourceGroupName, clusterName, privateLinkResourceName, context);
         if (inner != null) {
-            return new SimpleResponse<>(
-                inner.getRequest(),
-                inner.getStatusCode(),
-                inner.getHeaders(),
-                new PrivateLinkResourceListResultImpl(inner.getValue(), this.manager()));
+            return new SimpleResponse<>(inner.getRequest(), inner.getStatusCode(), inner.getHeaders(),
+                new PrivateLinkResourceImpl(inner.getValue(), this.manager()));
         } else {
             return null;
         }
     }
 
     public PrivateLinkResource get(String resourceGroupName, String clusterName, String privateLinkResourceName) {
-        PrivateLinkResourceInner inner =
-            this.serviceClient().get(resourceGroupName, clusterName, privateLinkResourceName);
+        PrivateLinkResourceInner inner
+            = this.serviceClient().get(resourceGroupName, clusterName, privateLinkResourceName);
         if (inner != null) {
             return new PrivateLinkResourceImpl(inner, this.manager());
-        } else {
-            return null;
-        }
-    }
-
-    public Response<PrivateLinkResource> getWithResponse(
-        String resourceGroupName, String clusterName, String privateLinkResourceName, Context context) {
-        Response<PrivateLinkResourceInner> inner =
-            this.serviceClient().getWithResponse(resourceGroupName, clusterName, privateLinkResourceName, context);
-        if (inner != null) {
-            return new SimpleResponse<>(
-                inner.getRequest(),
-                inner.getStatusCode(),
-                inner.getHeaders(),
-                new PrivateLinkResourceImpl(inner.getValue(), this.manager()));
         } else {
             return null;
         }

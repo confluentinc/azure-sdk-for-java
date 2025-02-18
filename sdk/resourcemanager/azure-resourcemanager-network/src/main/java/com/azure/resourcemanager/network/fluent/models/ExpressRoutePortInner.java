@@ -7,47 +7,63 @@ package com.azure.resourcemanager.network.fluent.models;
 import com.azure.core.annotation.Fluent;
 import com.azure.core.management.Resource;
 import com.azure.core.management.SubResource;
-import com.azure.core.util.logging.ClientLogger;
+import com.azure.json.JsonReader;
+import com.azure.json.JsonToken;
+import com.azure.json.JsonWriter;
+import com.azure.resourcemanager.network.models.ExpressRoutePortsBillingType;
 import com.azure.resourcemanager.network.models.ExpressRoutePortsEncapsulation;
 import com.azure.resourcemanager.network.models.ManagedServiceIdentity;
 import com.azure.resourcemanager.network.models.ProvisioningState;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
-/** ExpressRoute Port ExpressRoutePort resource definition. */
+/**
+ * ExpressRoute Port
+ * 
+ * ExpressRoutePort resource definition.
+ */
 @Fluent
 public final class ExpressRoutePortInner extends Resource {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(ExpressRoutePortInner.class);
-
     /*
-     * ExpressRoutePort Properties ExpressRoutePort properties.
+     * ExpressRoutePort properties.
      */
-    @JsonProperty(value = "properties")
     private ExpressRoutePortPropertiesFormat innerProperties;
 
     /*
      * A unique read-only string that changes whenever the resource is updated.
      */
-    @JsonProperty(value = "etag", access = JsonProperty.Access.WRITE_ONLY)
     private String etag;
 
     /*
      * The identity of ExpressRoutePort, if configured.
      */
-    @JsonProperty(value = "identity")
     private ManagedServiceIdentity identity;
 
     /*
      * Resource ID.
      */
-    @JsonProperty(value = "id")
     private String id;
 
+    /*
+     * The type of the resource.
+     */
+    private String type;
+
+    /*
+     * The name of the resource.
+     */
+    private String name;
+
     /**
-     * Get the innerProperties property: ExpressRoutePort Properties ExpressRoutePort properties.
-     *
+     * Creates an instance of ExpressRoutePortInner class.
+     */
+    public ExpressRoutePortInner() {
+    }
+
+    /**
+     * Get the innerProperties property: ExpressRoutePort properties.
+     * 
      * @return the innerProperties value.
      */
     private ExpressRoutePortPropertiesFormat innerProperties() {
@@ -56,7 +72,7 @@ public final class ExpressRoutePortInner extends Resource {
 
     /**
      * Get the etag property: A unique read-only string that changes whenever the resource is updated.
-     *
+     * 
      * @return the etag value.
      */
     public String etag() {
@@ -65,7 +81,7 @@ public final class ExpressRoutePortInner extends Resource {
 
     /**
      * Get the identity property: The identity of ExpressRoutePort, if configured.
-     *
+     * 
      * @return the identity value.
      */
     public ManagedServiceIdentity identity() {
@@ -74,7 +90,7 @@ public final class ExpressRoutePortInner extends Resource {
 
     /**
      * Set the identity property: The identity of ExpressRoutePort, if configured.
-     *
+     * 
      * @param identity the identity value to set.
      * @return the ExpressRoutePortInner object itself.
      */
@@ -85,7 +101,7 @@ public final class ExpressRoutePortInner extends Resource {
 
     /**
      * Get the id property: Resource ID.
-     *
+     * 
      * @return the id value.
      */
     public String id() {
@@ -94,7 +110,7 @@ public final class ExpressRoutePortInner extends Resource {
 
     /**
      * Set the id property: Resource ID.
-     *
+     * 
      * @param id the id value to set.
      * @return the ExpressRoutePortInner object itself.
      */
@@ -103,14 +119,38 @@ public final class ExpressRoutePortInner extends Resource {
         return this;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * Get the type property: The type of the resource.
+     * 
+     * @return the type value.
+     */
+    @Override
+    public String type() {
+        return this.type;
+    }
+
+    /**
+     * Get the name property: The name of the resource.
+     * 
+     * @return the name value.
+     */
+    @Override
+    public String name() {
+        return this.name;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public ExpressRoutePortInner withLocation(String location) {
         super.withLocation(location);
         return this;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public ExpressRoutePortInner withTags(Map<String, String> tags) {
         super.withTags(tags);
@@ -120,7 +160,7 @@ public final class ExpressRoutePortInner extends Resource {
     /**
      * Get the peeringLocation property: The name of the peering location that the ExpressRoutePort is mapped to
      * physically.
-     *
+     * 
      * @return the peeringLocation value.
      */
     public String peeringLocation() {
@@ -130,7 +170,7 @@ public final class ExpressRoutePortInner extends Resource {
     /**
      * Set the peeringLocation property: The name of the peering location that the ExpressRoutePort is mapped to
      * physically.
-     *
+     * 
      * @param peeringLocation the peeringLocation value to set.
      * @return the ExpressRoutePortInner object itself.
      */
@@ -144,7 +184,7 @@ public final class ExpressRoutePortInner extends Resource {
 
     /**
      * Get the bandwidthInGbps property: Bandwidth of procured ports in Gbps.
-     *
+     * 
      * @return the bandwidthInGbps value.
      */
     public Integer bandwidthInGbps() {
@@ -153,7 +193,7 @@ public final class ExpressRoutePortInner extends Resource {
 
     /**
      * Set the bandwidthInGbps property: Bandwidth of procured ports in Gbps.
-     *
+     * 
      * @param bandwidthInGbps the bandwidthInGbps value to set.
      * @return the ExpressRoutePortInner object itself.
      */
@@ -167,7 +207,7 @@ public final class ExpressRoutePortInner extends Resource {
 
     /**
      * Get the provisionedBandwidthInGbps property: Aggregate Gbps of associated circuit bandwidths.
-     *
+     * 
      * @return the provisionedBandwidthInGbps value.
      */
     public Float provisionedBandwidthInGbps() {
@@ -176,7 +216,7 @@ public final class ExpressRoutePortInner extends Resource {
 
     /**
      * Get the mtu property: Maximum transmission unit of the physical port pair(s).
-     *
+     * 
      * @return the mtu value.
      */
     public String mtu() {
@@ -185,7 +225,7 @@ public final class ExpressRoutePortInner extends Resource {
 
     /**
      * Get the encapsulation property: Encapsulation method on physical ports.
-     *
+     * 
      * @return the encapsulation value.
      */
     public ExpressRoutePortsEncapsulation encapsulation() {
@@ -194,7 +234,7 @@ public final class ExpressRoutePortInner extends Resource {
 
     /**
      * Set the encapsulation property: Encapsulation method on physical ports.
-     *
+     * 
      * @param encapsulation the encapsulation value to set.
      * @return the ExpressRoutePortInner object itself.
      */
@@ -208,7 +248,7 @@ public final class ExpressRoutePortInner extends Resource {
 
     /**
      * Get the etherType property: Ether type of the physical port.
-     *
+     * 
      * @return the etherType value.
      */
     public String etherType() {
@@ -217,7 +257,7 @@ public final class ExpressRoutePortInner extends Resource {
 
     /**
      * Get the allocationDate property: Date of the physical port allocation to be used in Letter of Authorization.
-     *
+     * 
      * @return the allocationDate value.
      */
     public String allocationDate() {
@@ -225,9 +265,8 @@ public final class ExpressRoutePortInner extends Resource {
     }
 
     /**
-     * Get the links property: ExpressRouteLink Sub-Resources The set of physical links of the ExpressRoutePort
-     * resource.
-     *
+     * Get the links property: The set of physical links of the ExpressRoutePort resource.
+     * 
      * @return the links value.
      */
     public List<ExpressRouteLinkInner> links() {
@@ -235,9 +274,8 @@ public final class ExpressRoutePortInner extends Resource {
     }
 
     /**
-     * Set the links property: ExpressRouteLink Sub-Resources The set of physical links of the ExpressRoutePort
-     * resource.
-     *
+     * Set the links property: The set of physical links of the ExpressRoutePort resource.
+     * 
      * @param links the links value to set.
      * @return the ExpressRoutePortInner object itself.
      */
@@ -252,7 +290,7 @@ public final class ExpressRoutePortInner extends Resource {
     /**
      * Get the circuits property: Reference the ExpressRoute circuit(s) that are provisioned on this ExpressRoutePort
      * resource.
-     *
+     * 
      * @return the circuits value.
      */
     public List<SubResource> circuits() {
@@ -261,7 +299,7 @@ public final class ExpressRoutePortInner extends Resource {
 
     /**
      * Get the provisioningState property: The provisioning state of the express route port resource.
-     *
+     * 
      * @return the provisioningState value.
      */
     public ProvisioningState provisioningState() {
@@ -270,7 +308,7 @@ public final class ExpressRoutePortInner extends Resource {
 
     /**
      * Get the resourceGuid property: The resource GUID property of the express route port resource.
-     *
+     * 
      * @return the resourceGuid value.
      */
     public String resourceGuid() {
@@ -278,8 +316,31 @@ public final class ExpressRoutePortInner extends Resource {
     }
 
     /**
+     * Get the billingType property: The billing type of the ExpressRoutePort resource.
+     * 
+     * @return the billingType value.
+     */
+    public ExpressRoutePortsBillingType billingType() {
+        return this.innerProperties() == null ? null : this.innerProperties().billingType();
+    }
+
+    /**
+     * Set the billingType property: The billing type of the ExpressRoutePort resource.
+     * 
+     * @param billingType the billingType value to set.
+     * @return the ExpressRoutePortInner object itself.
+     */
+    public ExpressRoutePortInner withBillingType(ExpressRoutePortsBillingType billingType) {
+        if (this.innerProperties() == null) {
+            this.innerProperties = new ExpressRoutePortPropertiesFormat();
+        }
+        this.innerProperties().withBillingType(billingType);
+        return this;
+    }
+
+    /**
      * Validates the instance.
-     *
+     * 
      * @throws IllegalArgumentException thrown if the instance is not valid.
      */
     public void validate() {
@@ -289,5 +350,62 @@ public final class ExpressRoutePortInner extends Resource {
         if (identity() != null) {
             identity().validate();
         }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public JsonWriter toJson(JsonWriter jsonWriter) throws IOException {
+        jsonWriter.writeStartObject();
+        jsonWriter.writeStringField("location", location());
+        jsonWriter.writeMapField("tags", tags(), (writer, element) -> writer.writeString(element));
+        jsonWriter.writeJsonField("properties", this.innerProperties);
+        jsonWriter.writeJsonField("identity", this.identity);
+        jsonWriter.writeStringField("id", this.id);
+        return jsonWriter.writeEndObject();
+    }
+
+    /**
+     * Reads an instance of ExpressRoutePortInner from the JsonReader.
+     * 
+     * @param jsonReader The JsonReader being read.
+     * @return An instance of ExpressRoutePortInner if the JsonReader was pointing to an instance of it, or null if it
+     * was pointing to JSON null.
+     * @throws IllegalStateException If the deserialized JSON object was missing any required properties.
+     * @throws IOException If an error occurs while reading the ExpressRoutePortInner.
+     */
+    public static ExpressRoutePortInner fromJson(JsonReader jsonReader) throws IOException {
+        return jsonReader.readObject(reader -> {
+            ExpressRoutePortInner deserializedExpressRoutePortInner = new ExpressRoutePortInner();
+            while (reader.nextToken() != JsonToken.END_OBJECT) {
+                String fieldName = reader.getFieldName();
+                reader.nextToken();
+
+                if ("name".equals(fieldName)) {
+                    deserializedExpressRoutePortInner.name = reader.getString();
+                } else if ("type".equals(fieldName)) {
+                    deserializedExpressRoutePortInner.type = reader.getString();
+                } else if ("location".equals(fieldName)) {
+                    deserializedExpressRoutePortInner.withLocation(reader.getString());
+                } else if ("tags".equals(fieldName)) {
+                    Map<String, String> tags = reader.readMap(reader1 -> reader1.getString());
+                    deserializedExpressRoutePortInner.withTags(tags);
+                } else if ("properties".equals(fieldName)) {
+                    deserializedExpressRoutePortInner.innerProperties
+                        = ExpressRoutePortPropertiesFormat.fromJson(reader);
+                } else if ("etag".equals(fieldName)) {
+                    deserializedExpressRoutePortInner.etag = reader.getString();
+                } else if ("identity".equals(fieldName)) {
+                    deserializedExpressRoutePortInner.identity = ManagedServiceIdentity.fromJson(reader);
+                } else if ("id".equals(fieldName)) {
+                    deserializedExpressRoutePortInner.id = reader.getString();
+                } else {
+                    reader.skipChildren();
+                }
+            }
+
+            return deserializedExpressRoutePortInner;
+        });
     }
 }

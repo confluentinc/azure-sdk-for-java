@@ -5,32 +5,51 @@
 package com.azure.resourcemanager.recoveryservicesbackup.models;
 
 import com.azure.core.util.ExpandableStringEnum;
-import com.fasterxml.jackson.annotation.JsonCreator;
 import java.util.Collection;
 
-/** Defines values for DataMoveLevel. */
+/**
+ * DataMove Level.
+ */
 public final class DataMoveLevel extends ExpandableStringEnum<DataMoveLevel> {
-    /** Static value Invalid for DataMoveLevel. */
+    /**
+     * Static value Invalid for DataMoveLevel.
+     */
     public static final DataMoveLevel INVALID = fromString("Invalid");
 
-    /** Static value Vault for DataMoveLevel. */
+    /**
+     * Static value Vault for DataMoveLevel.
+     */
     public static final DataMoveLevel VAULT = fromString("Vault");
 
-    /** Static value Container for DataMoveLevel. */
+    /**
+     * Static value Container for DataMoveLevel.
+     */
     public static final DataMoveLevel CONTAINER = fromString("Container");
 
     /**
+     * Creates a new instance of DataMoveLevel value.
+     * 
+     * @deprecated Use the {@link #fromString(String)} factory method.
+     */
+    @Deprecated
+    public DataMoveLevel() {
+    }
+
+    /**
      * Creates or finds a DataMoveLevel from its string representation.
-     *
+     * 
      * @param name a name to look for.
      * @return the corresponding DataMoveLevel.
      */
-    @JsonCreator
     public static DataMoveLevel fromString(String name) {
         return fromString(name, DataMoveLevel.class);
     }
 
-    /** @return known DataMoveLevel values. */
+    /**
+     * Gets known DataMoveLevel values.
+     * 
+     * @return known DataMoveLevel values.
+     */
     public static Collection<DataMoveLevel> values() {
         return values(DataMoveLevel.class);
     }

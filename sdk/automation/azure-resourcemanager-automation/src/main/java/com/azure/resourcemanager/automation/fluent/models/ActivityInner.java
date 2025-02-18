@@ -5,72 +5,45 @@
 package com.azure.resourcemanager.automation.fluent.models;
 
 import com.azure.core.annotation.Fluent;
-import com.azure.core.annotation.JsonFlatten;
-import com.azure.core.util.logging.ClientLogger;
+import com.azure.json.JsonReader;
+import com.azure.json.JsonSerializable;
+import com.azure.json.JsonToken;
+import com.azure.json.JsonWriter;
 import com.azure.resourcemanager.automation.models.ActivityOutputType;
 import com.azure.resourcemanager.automation.models.ActivityParameterSet;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import java.io.IOException;
 import java.time.OffsetDateTime;
 import java.util.List;
 
-/** Definition of the activity. */
-@JsonFlatten
+/**
+ * Definition of the activity.
+ */
 @Fluent
-public class ActivityInner {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(ActivityInner.class);
-
+public final class ActivityInner implements JsonSerializable<ActivityInner> {
     /*
      * Gets or sets the id of the resource.
      */
-    @JsonProperty(value = "id")
     private String id;
 
     /*
      * Gets the name of the activity.
      */
-    @JsonProperty(value = "name", access = JsonProperty.Access.WRITE_ONLY)
     private String name;
 
     /*
-     * Gets or sets the user name of the activity.
+     * Gets or sets the properties of the activity.
      */
-    @JsonProperty(value = "properties.definition")
-    private String definition;
+    private ActivityProperties innerProperties;
 
-    /*
-     * Gets or sets the parameter sets of the activity.
+    /**
+     * Creates an instance of ActivityInner class.
      */
-    @JsonProperty(value = "properties.parameterSets")
-    private List<ActivityParameterSet> parameterSets;
-
-    /*
-     * Gets or sets the output types of the activity.
-     */
-    @JsonProperty(value = "properties.outputTypes")
-    private List<ActivityOutputType> outputTypes;
-
-    /*
-     * Gets or sets the creation time.
-     */
-    @JsonProperty(value = "properties.creationTime")
-    private OffsetDateTime creationTime;
-
-    /*
-     * Gets or sets the last modified time.
-     */
-    @JsonProperty(value = "properties.lastModifiedTime")
-    private OffsetDateTime lastModifiedTime;
-
-    /*
-     * Gets or sets the description.
-     */
-    @JsonProperty(value = "properties.description")
-    private String description;
+    public ActivityInner() {
+    }
 
     /**
      * Get the id property: Gets or sets the id of the resource.
-     *
+     * 
      * @return the id value.
      */
     public String id() {
@@ -79,7 +52,7 @@ public class ActivityInner {
 
     /**
      * Set the id property: Gets or sets the id of the resource.
-     *
+     * 
      * @param id the id value to set.
      * @return the ActivityInner object itself.
      */
@@ -90,7 +63,7 @@ public class ActivityInner {
 
     /**
      * Get the name property: Gets the name of the activity.
-     *
+     * 
      * @return the name value.
      */
     public String name() {
@@ -98,136 +71,201 @@ public class ActivityInner {
     }
 
     /**
+     * Get the innerProperties property: Gets or sets the properties of the activity.
+     * 
+     * @return the innerProperties value.
+     */
+    private ActivityProperties innerProperties() {
+        return this.innerProperties;
+    }
+
+    /**
      * Get the definition property: Gets or sets the user name of the activity.
-     *
+     * 
      * @return the definition value.
      */
     public String definition() {
-        return this.definition;
+        return this.innerProperties() == null ? null : this.innerProperties().definition();
     }
 
     /**
      * Set the definition property: Gets or sets the user name of the activity.
-     *
+     * 
      * @param definition the definition value to set.
      * @return the ActivityInner object itself.
      */
     public ActivityInner withDefinition(String definition) {
-        this.definition = definition;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new ActivityProperties();
+        }
+        this.innerProperties().withDefinition(definition);
         return this;
     }
 
     /**
      * Get the parameterSets property: Gets or sets the parameter sets of the activity.
-     *
+     * 
      * @return the parameterSets value.
      */
     public List<ActivityParameterSet> parameterSets() {
-        return this.parameterSets;
+        return this.innerProperties() == null ? null : this.innerProperties().parameterSets();
     }
 
     /**
      * Set the parameterSets property: Gets or sets the parameter sets of the activity.
-     *
+     * 
      * @param parameterSets the parameterSets value to set.
      * @return the ActivityInner object itself.
      */
     public ActivityInner withParameterSets(List<ActivityParameterSet> parameterSets) {
-        this.parameterSets = parameterSets;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new ActivityProperties();
+        }
+        this.innerProperties().withParameterSets(parameterSets);
         return this;
     }
 
     /**
      * Get the outputTypes property: Gets or sets the output types of the activity.
-     *
+     * 
      * @return the outputTypes value.
      */
     public List<ActivityOutputType> outputTypes() {
-        return this.outputTypes;
+        return this.innerProperties() == null ? null : this.innerProperties().outputTypes();
     }
 
     /**
      * Set the outputTypes property: Gets or sets the output types of the activity.
-     *
+     * 
      * @param outputTypes the outputTypes value to set.
      * @return the ActivityInner object itself.
      */
     public ActivityInner withOutputTypes(List<ActivityOutputType> outputTypes) {
-        this.outputTypes = outputTypes;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new ActivityProperties();
+        }
+        this.innerProperties().withOutputTypes(outputTypes);
         return this;
     }
 
     /**
      * Get the creationTime property: Gets or sets the creation time.
-     *
+     * 
      * @return the creationTime value.
      */
     public OffsetDateTime creationTime() {
-        return this.creationTime;
+        return this.innerProperties() == null ? null : this.innerProperties().creationTime();
     }
 
     /**
      * Set the creationTime property: Gets or sets the creation time.
-     *
+     * 
      * @param creationTime the creationTime value to set.
      * @return the ActivityInner object itself.
      */
     public ActivityInner withCreationTime(OffsetDateTime creationTime) {
-        this.creationTime = creationTime;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new ActivityProperties();
+        }
+        this.innerProperties().withCreationTime(creationTime);
         return this;
     }
 
     /**
      * Get the lastModifiedTime property: Gets or sets the last modified time.
-     *
+     * 
      * @return the lastModifiedTime value.
      */
     public OffsetDateTime lastModifiedTime() {
-        return this.lastModifiedTime;
+        return this.innerProperties() == null ? null : this.innerProperties().lastModifiedTime();
     }
 
     /**
      * Set the lastModifiedTime property: Gets or sets the last modified time.
-     *
+     * 
      * @param lastModifiedTime the lastModifiedTime value to set.
      * @return the ActivityInner object itself.
      */
     public ActivityInner withLastModifiedTime(OffsetDateTime lastModifiedTime) {
-        this.lastModifiedTime = lastModifiedTime;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new ActivityProperties();
+        }
+        this.innerProperties().withLastModifiedTime(lastModifiedTime);
         return this;
     }
 
     /**
      * Get the description property: Gets or sets the description.
-     *
+     * 
      * @return the description value.
      */
     public String description() {
-        return this.description;
+        return this.innerProperties() == null ? null : this.innerProperties().description();
     }
 
     /**
      * Set the description property: Gets or sets the description.
-     *
+     * 
      * @param description the description value to set.
      * @return the ActivityInner object itself.
      */
     public ActivityInner withDescription(String description) {
-        this.description = description;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new ActivityProperties();
+        }
+        this.innerProperties().withDescription(description);
         return this;
     }
 
     /**
      * Validates the instance.
-     *
+     * 
      * @throws IllegalArgumentException thrown if the instance is not valid.
      */
     public void validate() {
-        if (parameterSets() != null) {
-            parameterSets().forEach(e -> e.validate());
+        if (innerProperties() != null) {
+            innerProperties().validate();
         }
-        if (outputTypes() != null) {
-            outputTypes().forEach(e -> e.validate());
-        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public JsonWriter toJson(JsonWriter jsonWriter) throws IOException {
+        jsonWriter.writeStartObject();
+        jsonWriter.writeStringField("id", this.id);
+        jsonWriter.writeJsonField("properties", this.innerProperties);
+        return jsonWriter.writeEndObject();
+    }
+
+    /**
+     * Reads an instance of ActivityInner from the JsonReader.
+     * 
+     * @param jsonReader The JsonReader being read.
+     * @return An instance of ActivityInner if the JsonReader was pointing to an instance of it, or null if it was
+     * pointing to JSON null.
+     * @throws IOException If an error occurs while reading the ActivityInner.
+     */
+    public static ActivityInner fromJson(JsonReader jsonReader) throws IOException {
+        return jsonReader.readObject(reader -> {
+            ActivityInner deserializedActivityInner = new ActivityInner();
+            while (reader.nextToken() != JsonToken.END_OBJECT) {
+                String fieldName = reader.getFieldName();
+                reader.nextToken();
+
+                if ("id".equals(fieldName)) {
+                    deserializedActivityInner.id = reader.getString();
+                } else if ("name".equals(fieldName)) {
+                    deserializedActivityInner.name = reader.getString();
+                } else if ("properties".equals(fieldName)) {
+                    deserializedActivityInner.innerProperties = ActivityProperties.fromJson(reader);
+                } else {
+                    reader.skipChildren();
+                }
+            }
+
+            return deserializedActivityInner;
+        });
     }
 }

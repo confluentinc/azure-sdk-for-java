@@ -6,89 +6,96 @@ package com.azure.resourcemanager.compute.models;
 
 import com.azure.core.annotation.Fluent;
 import com.azure.core.util.logging.ClientLogger;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.azure.json.JsonReader;
+import com.azure.json.JsonSerializable;
+import com.azure.json.JsonToken;
+import com.azure.json.JsonWriter;
+import java.io.IOException;
 
-/** Data used when creating a disk. */
+/**
+ * Data used when creating a disk.
+ */
 @Fluent
-public final class CreationData {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(CreationData.class);
-
+public final class CreationData implements JsonSerializable<CreationData> {
     /*
      * This enumerates the possible sources of a disk's creation.
      */
-    @JsonProperty(value = "createOption", required = true)
     private DiskCreateOption createOption;
 
     /*
-     * Required if createOption is Import. The Azure Resource Manager
-     * identifier of the storage account containing the blob to import as a
-     * disk.
+     * Required if createOption is Import. The Azure Resource Manager identifier of the storage account containing the
+     * blob to import as a disk.
      */
-    @JsonProperty(value = "storageAccountId")
     private String storageAccountId;
 
     /*
-     * Disk source information.
+     * Disk source information for PIR or user images.
      */
-    @JsonProperty(value = "imageReference")
     private ImageDiskReference imageReference;
 
     /*
-     * Required if creating from a Gallery Image. The id of the
-     * ImageDiskReference will be the ARM id of the shared galley image version
-     * from which to create a disk.
+     * Required if creating from a Gallery Image. The id/sharedGalleryImageId/communityGalleryImageId of the
+     * ImageDiskReference will be the ARM id of the shared galley image version from which to create a disk.
      */
-    @JsonProperty(value = "galleryImageReference")
     private ImageDiskReference galleryImageReference;
 
     /*
-     * If createOption is Import, this is the URI of a blob to be imported into
-     * a managed disk.
+     * If createOption is Import, this is the URI of a blob to be imported into a managed disk.
      */
-    @JsonProperty(value = "sourceUri")
     private String sourceUri;
 
     /*
-     * If createOption is Copy, this is the ARM id of the source snapshot or
-     * disk.
+     * If createOption is Copy, this is the ARM id of the source snapshot or disk.
      */
-    @JsonProperty(value = "sourceResourceId")
     private String sourceResourceId;
 
     /*
-     * If this field is set, this is the unique id identifying the source of
-     * this resource.
+     * If this field is set, this is the unique id identifying the source of this resource.
      */
-    @JsonProperty(value = "sourceUniqueId", access = JsonProperty.Access.WRITE_ONLY)
     private String sourceUniqueId;
 
     /*
-     * If createOption is Upload, this is the size of the contents of the
-     * upload including the VHD footer. This value should be between 20972032
-     * (20 MiB + 512 bytes for the VHD footer) and 35183298347520 bytes (32 TiB
-     * + 512 bytes for the VHD footer).
+     * If createOption is Upload, this is the size of the contents of the upload including the VHD footer. This value
+     * should be between 20972032 (20 MiB + 512 bytes for the VHD footer) and 35183298347520 bytes (32 TiB + 512 bytes
+     * for the VHD footer).
      */
-    @JsonProperty(value = "uploadSizeBytes")
     private Long uploadSizeBytes;
 
     /*
-     * Logical sector size in bytes for Ultra disks. Supported values are 512
-     * ad 4096. 4096 is the default.
+     * Logical sector size in bytes for Ultra disks. Supported values are 512 ad 4096. 4096 is the default.
      */
-    @JsonProperty(value = "logicalSectorSize")
     private Integer logicalSectorSize;
 
     /*
-     * If createOption is ImportSecure, this is the URI of a blob to be
-     * imported into VM guest state.
+     * If createOption is ImportSecure, this is the URI of a blob to be imported into VM guest state.
      */
-    @JsonProperty(value = "securityDataUri")
     private String securityDataUri;
+
+    /*
+     * Set this flag to true to get a boost on the performance target of the disk deployed, see here on the respective
+     * performance target. This flag can only be set on disk creation time and cannot be disabled after enabled.
+     */
+    private Boolean performancePlus;
+
+    /*
+     * Required if createOption is CopyFromSanSnapshot. This is the ARM id of the source elastic san volume snapshot.
+     */
+    private String elasticSanResourceId;
+
+    /*
+     * If this field is set on a snapshot and createOption is CopyStart, the snapshot will be copied at a quicker speed.
+     */
+    private ProvisionedBandwidthCopyOption provisionedBandwidthCopySpeed;
+
+    /**
+     * Creates an instance of CreationData class.
+     */
+    public CreationData() {
+    }
 
     /**
      * Get the createOption property: This enumerates the possible sources of a disk's creation.
-     *
+     * 
      * @return the createOption value.
      */
     public DiskCreateOption createOption() {
@@ -97,7 +104,7 @@ public final class CreationData {
 
     /**
      * Set the createOption property: This enumerates the possible sources of a disk's creation.
-     *
+     * 
      * @param createOption the createOption value to set.
      * @return the CreationData object itself.
      */
@@ -109,7 +116,7 @@ public final class CreationData {
     /**
      * Get the storageAccountId property: Required if createOption is Import. The Azure Resource Manager identifier of
      * the storage account containing the blob to import as a disk.
-     *
+     * 
      * @return the storageAccountId value.
      */
     public String storageAccountId() {
@@ -119,7 +126,7 @@ public final class CreationData {
     /**
      * Set the storageAccountId property: Required if createOption is Import. The Azure Resource Manager identifier of
      * the storage account containing the blob to import as a disk.
-     *
+     * 
      * @param storageAccountId the storageAccountId value to set.
      * @return the CreationData object itself.
      */
@@ -129,8 +136,8 @@ public final class CreationData {
     }
 
     /**
-     * Get the imageReference property: Disk source information.
-     *
+     * Get the imageReference property: Disk source information for PIR or user images.
+     * 
      * @return the imageReference value.
      */
     public ImageDiskReference imageReference() {
@@ -138,8 +145,8 @@ public final class CreationData {
     }
 
     /**
-     * Set the imageReference property: Disk source information.
-     *
+     * Set the imageReference property: Disk source information for PIR or user images.
+     * 
      * @param imageReference the imageReference value to set.
      * @return the CreationData object itself.
      */
@@ -149,9 +156,10 @@ public final class CreationData {
     }
 
     /**
-     * Get the galleryImageReference property: Required if creating from a Gallery Image. The id of the
-     * ImageDiskReference will be the ARM id of the shared galley image version from which to create a disk.
-     *
+     * Get the galleryImageReference property: Required if creating from a Gallery Image. The
+     * id/sharedGalleryImageId/communityGalleryImageId of the ImageDiskReference will be the ARM id of the shared galley
+     * image version from which to create a disk.
+     * 
      * @return the galleryImageReference value.
      */
     public ImageDiskReference galleryImageReference() {
@@ -159,9 +167,10 @@ public final class CreationData {
     }
 
     /**
-     * Set the galleryImageReference property: Required if creating from a Gallery Image. The id of the
-     * ImageDiskReference will be the ARM id of the shared galley image version from which to create a disk.
-     *
+     * Set the galleryImageReference property: Required if creating from a Gallery Image. The
+     * id/sharedGalleryImageId/communityGalleryImageId of the ImageDiskReference will be the ARM id of the shared galley
+     * image version from which to create a disk.
+     * 
      * @param galleryImageReference the galleryImageReference value to set.
      * @return the CreationData object itself.
      */
@@ -173,7 +182,7 @@ public final class CreationData {
     /**
      * Get the sourceUri property: If createOption is Import, this is the URI of a blob to be imported into a managed
      * disk.
-     *
+     * 
      * @return the sourceUri value.
      */
     public String sourceUri() {
@@ -183,7 +192,7 @@ public final class CreationData {
     /**
      * Set the sourceUri property: If createOption is Import, this is the URI of a blob to be imported into a managed
      * disk.
-     *
+     * 
      * @param sourceUri the sourceUri value to set.
      * @return the CreationData object itself.
      */
@@ -194,7 +203,7 @@ public final class CreationData {
 
     /**
      * Get the sourceResourceId property: If createOption is Copy, this is the ARM id of the source snapshot or disk.
-     *
+     * 
      * @return the sourceResourceId value.
      */
     public String sourceResourceId() {
@@ -203,7 +212,7 @@ public final class CreationData {
 
     /**
      * Set the sourceResourceId property: If createOption is Copy, this is the ARM id of the source snapshot or disk.
-     *
+     * 
      * @param sourceResourceId the sourceResourceId value to set.
      * @return the CreationData object itself.
      */
@@ -215,7 +224,7 @@ public final class CreationData {
     /**
      * Get the sourceUniqueId property: If this field is set, this is the unique id identifying the source of this
      * resource.
-     *
+     * 
      * @return the sourceUniqueId value.
      */
     public String sourceUniqueId() {
@@ -226,7 +235,7 @@ public final class CreationData {
      * Get the uploadSizeBytes property: If createOption is Upload, this is the size of the contents of the upload
      * including the VHD footer. This value should be between 20972032 (20 MiB + 512 bytes for the VHD footer) and
      * 35183298347520 bytes (32 TiB + 512 bytes for the VHD footer).
-     *
+     * 
      * @return the uploadSizeBytes value.
      */
     public Long uploadSizeBytes() {
@@ -237,7 +246,7 @@ public final class CreationData {
      * Set the uploadSizeBytes property: If createOption is Upload, this is the size of the contents of the upload
      * including the VHD footer. This value should be between 20972032 (20 MiB + 512 bytes for the VHD footer) and
      * 35183298347520 bytes (32 TiB + 512 bytes for the VHD footer).
-     *
+     * 
      * @param uploadSizeBytes the uploadSizeBytes value to set.
      * @return the CreationData object itself.
      */
@@ -249,7 +258,7 @@ public final class CreationData {
     /**
      * Get the logicalSectorSize property: Logical sector size in bytes for Ultra disks. Supported values are 512 ad
      * 4096. 4096 is the default.
-     *
+     * 
      * @return the logicalSectorSize value.
      */
     public Integer logicalSectorSize() {
@@ -259,7 +268,7 @@ public final class CreationData {
     /**
      * Set the logicalSectorSize property: Logical sector size in bytes for Ultra disks. Supported values are 512 ad
      * 4096. 4096 is the default.
-     *
+     * 
      * @param logicalSectorSize the logicalSectorSize value to set.
      * @return the CreationData object itself.
      */
@@ -271,7 +280,7 @@ public final class CreationData {
     /**
      * Get the securityDataUri property: If createOption is ImportSecure, this is the URI of a blob to be imported into
      * VM guest state.
-     *
+     * 
      * @return the securityDataUri value.
      */
     public String securityDataUri() {
@@ -281,7 +290,7 @@ public final class CreationData {
     /**
      * Set the securityDataUri property: If createOption is ImportSecure, this is the URI of a blob to be imported into
      * VM guest state.
-     *
+     * 
      * @param securityDataUri the securityDataUri value to set.
      * @return the CreationData object itself.
      */
@@ -291,15 +300,83 @@ public final class CreationData {
     }
 
     /**
+     * Get the performancePlus property: Set this flag to true to get a boost on the performance target of the disk
+     * deployed, see here on the respective performance target. This flag can only be set on disk creation time and
+     * cannot be disabled after enabled.
+     * 
+     * @return the performancePlus value.
+     */
+    public Boolean performancePlus() {
+        return this.performancePlus;
+    }
+
+    /**
+     * Set the performancePlus property: Set this flag to true to get a boost on the performance target of the disk
+     * deployed, see here on the respective performance target. This flag can only be set on disk creation time and
+     * cannot be disabled after enabled.
+     * 
+     * @param performancePlus the performancePlus value to set.
+     * @return the CreationData object itself.
+     */
+    public CreationData withPerformancePlus(Boolean performancePlus) {
+        this.performancePlus = performancePlus;
+        return this;
+    }
+
+    /**
+     * Get the elasticSanResourceId property: Required if createOption is CopyFromSanSnapshot. This is the ARM id of the
+     * source elastic san volume snapshot.
+     * 
+     * @return the elasticSanResourceId value.
+     */
+    public String elasticSanResourceId() {
+        return this.elasticSanResourceId;
+    }
+
+    /**
+     * Set the elasticSanResourceId property: Required if createOption is CopyFromSanSnapshot. This is the ARM id of the
+     * source elastic san volume snapshot.
+     * 
+     * @param elasticSanResourceId the elasticSanResourceId value to set.
+     * @return the CreationData object itself.
+     */
+    public CreationData withElasticSanResourceId(String elasticSanResourceId) {
+        this.elasticSanResourceId = elasticSanResourceId;
+        return this;
+    }
+
+    /**
+     * Get the provisionedBandwidthCopySpeed property: If this field is set on a snapshot and createOption is CopyStart,
+     * the snapshot will be copied at a quicker speed.
+     * 
+     * @return the provisionedBandwidthCopySpeed value.
+     */
+    public ProvisionedBandwidthCopyOption provisionedBandwidthCopySpeed() {
+        return this.provisionedBandwidthCopySpeed;
+    }
+
+    /**
+     * Set the provisionedBandwidthCopySpeed property: If this field is set on a snapshot and createOption is CopyStart,
+     * the snapshot will be copied at a quicker speed.
+     * 
+     * @param provisionedBandwidthCopySpeed the provisionedBandwidthCopySpeed value to set.
+     * @return the CreationData object itself.
+     */
+    public CreationData
+        withProvisionedBandwidthCopySpeed(ProvisionedBandwidthCopyOption provisionedBandwidthCopySpeed) {
+        this.provisionedBandwidthCopySpeed = provisionedBandwidthCopySpeed;
+        return this;
+    }
+
+    /**
      * Validates the instance.
-     *
+     * 
      * @throws IllegalArgumentException thrown if the instance is not valid.
      */
     public void validate() {
         if (createOption() == null) {
-            throw logger
-                .logExceptionAsError(
-                    new IllegalArgumentException("Missing required property createOption in model CreationData"));
+            throw LOGGER.atError()
+                .log(new IllegalArgumentException("Missing required property createOption in model CreationData"));
         }
         if (imageReference() != null) {
             imageReference().validate();
@@ -307,5 +384,81 @@ public final class CreationData {
         if (galleryImageReference() != null) {
             galleryImageReference().validate();
         }
+    }
+
+    private static final ClientLogger LOGGER = new ClientLogger(CreationData.class);
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public JsonWriter toJson(JsonWriter jsonWriter) throws IOException {
+        jsonWriter.writeStartObject();
+        jsonWriter.writeStringField("createOption", this.createOption == null ? null : this.createOption.toString());
+        jsonWriter.writeStringField("storageAccountId", this.storageAccountId);
+        jsonWriter.writeJsonField("imageReference", this.imageReference);
+        jsonWriter.writeJsonField("galleryImageReference", this.galleryImageReference);
+        jsonWriter.writeStringField("sourceUri", this.sourceUri);
+        jsonWriter.writeStringField("sourceResourceId", this.sourceResourceId);
+        jsonWriter.writeNumberField("uploadSizeBytes", this.uploadSizeBytes);
+        jsonWriter.writeNumberField("logicalSectorSize", this.logicalSectorSize);
+        jsonWriter.writeStringField("securityDataUri", this.securityDataUri);
+        jsonWriter.writeBooleanField("performancePlus", this.performancePlus);
+        jsonWriter.writeStringField("elasticSanResourceId", this.elasticSanResourceId);
+        jsonWriter.writeStringField("provisionedBandwidthCopySpeed",
+            this.provisionedBandwidthCopySpeed == null ? null : this.provisionedBandwidthCopySpeed.toString());
+        return jsonWriter.writeEndObject();
+    }
+
+    /**
+     * Reads an instance of CreationData from the JsonReader.
+     * 
+     * @param jsonReader The JsonReader being read.
+     * @return An instance of CreationData if the JsonReader was pointing to an instance of it, or null if it was
+     * pointing to JSON null.
+     * @throws IllegalStateException If the deserialized JSON object was missing any required properties.
+     * @throws IOException If an error occurs while reading the CreationData.
+     */
+    public static CreationData fromJson(JsonReader jsonReader) throws IOException {
+        return jsonReader.readObject(reader -> {
+            CreationData deserializedCreationData = new CreationData();
+            while (reader.nextToken() != JsonToken.END_OBJECT) {
+                String fieldName = reader.getFieldName();
+                reader.nextToken();
+
+                if ("createOption".equals(fieldName)) {
+                    deserializedCreationData.createOption = DiskCreateOption.fromString(reader.getString());
+                } else if ("storageAccountId".equals(fieldName)) {
+                    deserializedCreationData.storageAccountId = reader.getString();
+                } else if ("imageReference".equals(fieldName)) {
+                    deserializedCreationData.imageReference = ImageDiskReference.fromJson(reader);
+                } else if ("galleryImageReference".equals(fieldName)) {
+                    deserializedCreationData.galleryImageReference = ImageDiskReference.fromJson(reader);
+                } else if ("sourceUri".equals(fieldName)) {
+                    deserializedCreationData.sourceUri = reader.getString();
+                } else if ("sourceResourceId".equals(fieldName)) {
+                    deserializedCreationData.sourceResourceId = reader.getString();
+                } else if ("sourceUniqueId".equals(fieldName)) {
+                    deserializedCreationData.sourceUniqueId = reader.getString();
+                } else if ("uploadSizeBytes".equals(fieldName)) {
+                    deserializedCreationData.uploadSizeBytes = reader.getNullable(JsonReader::getLong);
+                } else if ("logicalSectorSize".equals(fieldName)) {
+                    deserializedCreationData.logicalSectorSize = reader.getNullable(JsonReader::getInt);
+                } else if ("securityDataUri".equals(fieldName)) {
+                    deserializedCreationData.securityDataUri = reader.getString();
+                } else if ("performancePlus".equals(fieldName)) {
+                    deserializedCreationData.performancePlus = reader.getNullable(JsonReader::getBoolean);
+                } else if ("elasticSanResourceId".equals(fieldName)) {
+                    deserializedCreationData.elasticSanResourceId = reader.getString();
+                } else if ("provisionedBandwidthCopySpeed".equals(fieldName)) {
+                    deserializedCreationData.provisionedBandwidthCopySpeed
+                        = ProvisionedBandwidthCopyOption.fromString(reader.getString());
+                } else {
+                    reader.skipChildren();
+                }
+            }
+
+            return deserializedCreationData;
+        });
     }
 }

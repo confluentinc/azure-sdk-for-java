@@ -5,154 +5,249 @@
 package com.azure.resourcemanager.automation.fluent.models;
 
 import com.azure.core.annotation.Fluent;
-import com.azure.core.annotation.JsonFlatten;
 import com.azure.core.management.ProxyResource;
-import com.azure.core.util.logging.ClientLogger;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.azure.json.JsonReader;
+import com.azure.json.JsonToken;
+import com.azure.json.JsonWriter;
+import java.io.IOException;
 import java.time.OffsetDateTime;
 
-/** Definition of the variable. */
-@JsonFlatten
+/**
+ * Definition of the variable.
+ */
 @Fluent
-public class VariableInner extends ProxyResource {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(VariableInner.class);
+public final class VariableInner extends ProxyResource {
+    /*
+     * Gets or sets the properties of the variable.
+     */
+    private VariableProperties innerProperties;
 
     /*
-     * Gets or sets the value of the variable.
+     * The type of the resource.
      */
-    @JsonProperty(value = "properties.value")
-    private String value;
+    private String type;
 
     /*
-     * Gets or sets the encrypted flag of the variable.
+     * The name of the resource.
      */
-    @JsonProperty(value = "properties.isEncrypted")
-    private Boolean isEncrypted;
+    private String name;
 
     /*
-     * Gets or sets the creation time.
+     * Fully qualified resource Id for the resource.
      */
-    @JsonProperty(value = "properties.creationTime")
-    private OffsetDateTime creationTime;
+    private String id;
 
-    /*
-     * Gets or sets the last modified time.
+    /**
+     * Creates an instance of VariableInner class.
      */
-    @JsonProperty(value = "properties.lastModifiedTime")
-    private OffsetDateTime lastModifiedTime;
+    public VariableInner() {
+    }
 
-    /*
-     * Gets or sets the description.
+    /**
+     * Get the innerProperties property: Gets or sets the properties of the variable.
+     * 
+     * @return the innerProperties value.
      */
-    @JsonProperty(value = "properties.description")
-    private String description;
+    private VariableProperties innerProperties() {
+        return this.innerProperties;
+    }
+
+    /**
+     * Get the type property: The type of the resource.
+     * 
+     * @return the type value.
+     */
+    @Override
+    public String type() {
+        return this.type;
+    }
+
+    /**
+     * Get the name property: The name of the resource.
+     * 
+     * @return the name value.
+     */
+    @Override
+    public String name() {
+        return this.name;
+    }
+
+    /**
+     * Get the id property: Fully qualified resource Id for the resource.
+     * 
+     * @return the id value.
+     */
+    @Override
+    public String id() {
+        return this.id;
+    }
 
     /**
      * Get the value property: Gets or sets the value of the variable.
-     *
+     * 
      * @return the value value.
      */
     public String value() {
-        return this.value;
+        return this.innerProperties() == null ? null : this.innerProperties().value();
     }
 
     /**
      * Set the value property: Gets or sets the value of the variable.
-     *
+     * 
      * @param value the value value to set.
      * @return the VariableInner object itself.
      */
     public VariableInner withValue(String value) {
-        this.value = value;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new VariableProperties();
+        }
+        this.innerProperties().withValue(value);
         return this;
     }
 
     /**
      * Get the isEncrypted property: Gets or sets the encrypted flag of the variable.
-     *
+     * 
      * @return the isEncrypted value.
      */
     public Boolean isEncrypted() {
-        return this.isEncrypted;
+        return this.innerProperties() == null ? null : this.innerProperties().isEncrypted();
     }
 
     /**
      * Set the isEncrypted property: Gets or sets the encrypted flag of the variable.
-     *
+     * 
      * @param isEncrypted the isEncrypted value to set.
      * @return the VariableInner object itself.
      */
     public VariableInner withIsEncrypted(Boolean isEncrypted) {
-        this.isEncrypted = isEncrypted;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new VariableProperties();
+        }
+        this.innerProperties().withIsEncrypted(isEncrypted);
         return this;
     }
 
     /**
      * Get the creationTime property: Gets or sets the creation time.
-     *
+     * 
      * @return the creationTime value.
      */
     public OffsetDateTime creationTime() {
-        return this.creationTime;
+        return this.innerProperties() == null ? null : this.innerProperties().creationTime();
     }
 
     /**
      * Set the creationTime property: Gets or sets the creation time.
-     *
+     * 
      * @param creationTime the creationTime value to set.
      * @return the VariableInner object itself.
      */
     public VariableInner withCreationTime(OffsetDateTime creationTime) {
-        this.creationTime = creationTime;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new VariableProperties();
+        }
+        this.innerProperties().withCreationTime(creationTime);
         return this;
     }
 
     /**
      * Get the lastModifiedTime property: Gets or sets the last modified time.
-     *
+     * 
      * @return the lastModifiedTime value.
      */
     public OffsetDateTime lastModifiedTime() {
-        return this.lastModifiedTime;
+        return this.innerProperties() == null ? null : this.innerProperties().lastModifiedTime();
     }
 
     /**
      * Set the lastModifiedTime property: Gets or sets the last modified time.
-     *
+     * 
      * @param lastModifiedTime the lastModifiedTime value to set.
      * @return the VariableInner object itself.
      */
     public VariableInner withLastModifiedTime(OffsetDateTime lastModifiedTime) {
-        this.lastModifiedTime = lastModifiedTime;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new VariableProperties();
+        }
+        this.innerProperties().withLastModifiedTime(lastModifiedTime);
         return this;
     }
 
     /**
      * Get the description property: Gets or sets the description.
-     *
+     * 
      * @return the description value.
      */
     public String description() {
-        return this.description;
+        return this.innerProperties() == null ? null : this.innerProperties().description();
     }
 
     /**
      * Set the description property: Gets or sets the description.
-     *
+     * 
      * @param description the description value to set.
      * @return the VariableInner object itself.
      */
     public VariableInner withDescription(String description) {
-        this.description = description;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new VariableProperties();
+        }
+        this.innerProperties().withDescription(description);
         return this;
     }
 
     /**
      * Validates the instance.
-     *
+     * 
      * @throws IllegalArgumentException thrown if the instance is not valid.
      */
     public void validate() {
+        if (innerProperties() != null) {
+            innerProperties().validate();
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public JsonWriter toJson(JsonWriter jsonWriter) throws IOException {
+        jsonWriter.writeStartObject();
+        jsonWriter.writeJsonField("properties", this.innerProperties);
+        return jsonWriter.writeEndObject();
+    }
+
+    /**
+     * Reads an instance of VariableInner from the JsonReader.
+     * 
+     * @param jsonReader The JsonReader being read.
+     * @return An instance of VariableInner if the JsonReader was pointing to an instance of it, or null if it was
+     * pointing to JSON null.
+     * @throws IllegalStateException If the deserialized JSON object was missing any required properties.
+     * @throws IOException If an error occurs while reading the VariableInner.
+     */
+    public static VariableInner fromJson(JsonReader jsonReader) throws IOException {
+        return jsonReader.readObject(reader -> {
+            VariableInner deserializedVariableInner = new VariableInner();
+            while (reader.nextToken() != JsonToken.END_OBJECT) {
+                String fieldName = reader.getFieldName();
+                reader.nextToken();
+
+                if ("id".equals(fieldName)) {
+                    deserializedVariableInner.id = reader.getString();
+                } else if ("name".equals(fieldName)) {
+                    deserializedVariableInner.name = reader.getString();
+                } else if ("type".equals(fieldName)) {
+                    deserializedVariableInner.type = reader.getString();
+                } else if ("properties".equals(fieldName)) {
+                    deserializedVariableInner.innerProperties = VariableProperties.fromJson(reader);
+                } else {
+                    reader.skipChildren();
+                }
+            }
+
+            return deserializedVariableInner;
+        });
     }
 }

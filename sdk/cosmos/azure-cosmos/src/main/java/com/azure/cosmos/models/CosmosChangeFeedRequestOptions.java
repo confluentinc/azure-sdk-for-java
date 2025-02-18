@@ -3,78 +3,56 @@
 
 package com.azure.cosmos.models;
 
+import com.azure.cosmos.CosmosDiagnosticsThresholds;
+import com.azure.cosmos.CosmosItemSerializer;
+import com.azure.cosmos.implementation.CosmosChangeFeedRequestOptionsImpl;
 import com.azure.cosmos.implementation.CosmosPagedFluxOptions;
+import com.azure.cosmos.implementation.HttpConstants;
 import com.azure.cosmos.implementation.ImplementationBridgeHelpers;
-import com.azure.cosmos.implementation.changefeed.implementation.ChangeFeedMode;
-import com.azure.cosmos.implementation.changefeed.implementation.ChangeFeedStartFromInternal;
-import com.azure.cosmos.implementation.changefeed.implementation.ChangeFeedState;
+import com.azure.cosmos.implementation.apachecommons.lang.StringUtils;
+import com.azure.cosmos.implementation.changefeed.common.ChangeFeedMode;
+import com.azure.cosmos.implementation.changefeed.common.ChangeFeedStartFromInternal;
+import com.azure.cosmos.implementation.changefeed.common.ChangeFeedState;
+import com.azure.cosmos.implementation.changefeed.common.ChangeFeedStateV1;
 import com.azure.cosmos.implementation.feedranges.FeedRangeContinuation;
+import com.azure.cosmos.implementation.feedranges.FeedRangeEpkImpl;
 import com.azure.cosmos.implementation.feedranges.FeedRangeInternal;
 import com.azure.cosmos.implementation.query.CompositeContinuationToken;
+import com.azure.cosmos.implementation.routing.Range;
+import com.azure.cosmos.implementation.spark.OperationContextAndListenerTuple;
 import com.azure.cosmos.util.Beta;
 
 import java.time.Instant;
-import java.util.HashMap;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
-import static com.azure.cosmos.implementation.guava25.base.Preconditions.checkArgument;
 import static com.azure.cosmos.implementation.guava25.base.Preconditions.checkNotNull;
 
 /**
  * Encapsulates options that can be specified for an operation within a change feed request.
  */
-@Beta(value = Beta.SinceVersion.V4_12_0, warningText =
-    Beta.PREVIEW_SUBJECT_TO_CHANGE_WARNING)
 public final class CosmosChangeFeedRequestOptions {
-    private static final int DEFAULT_MAX_ITEM_COUNT = 100;
-    private static final int DEFAULT_MAX_PREFETCH_PAGE_COUNT = 1;
-    private final ChangeFeedState continuationState;
-    private final FeedRangeInternal feedRangeInternal;
-    private final Map<String, Object> properties;
-    private int maxItemCount;
-    private int maxPrefetchPageCount;
-    private ChangeFeedMode mode;
-    private ChangeFeedStartFromInternal startFromInternal;
-    private boolean isSplitHandlingDisabled;
-    private boolean quotaInfoEnabled;
-    private String throughputControlGroupName;
-    private Map<String, String> customOptions;
+   private final CosmosChangeFeedRequestOptionsImpl actualRequestOptions;
+   private static final Set<String> EMPTY_KEYWORD_IDENTIFIERS = Collections.unmodifiableSet(new HashSet<>());
+
+    CosmosChangeFeedRequestOptions(CosmosChangeFeedRequestOptions topBeCloned) {
+       this.actualRequestOptions  = new CosmosChangeFeedRequestOptionsImpl(topBeCloned.actualRequestOptions);
+    }
 
     private CosmosChangeFeedRequestOptions(
         FeedRangeInternal feedRange,
         ChangeFeedStartFromInternal startFromInternal,
         ChangeFeedMode mode,
         ChangeFeedState continuationState) {
-        super();
-
-        if (feedRange == null) {
-            throw new NullPointerException("feedRange");
-        }
-
-        if (startFromInternal == null) {
-            throw new NullPointerException("startFromInternal");
-        }
-
-        this.maxItemCount = DEFAULT_MAX_ITEM_COUNT;
-        this.maxPrefetchPageCount = DEFAULT_MAX_PREFETCH_PAGE_COUNT;
-        this.feedRangeInternal = feedRange;
-        this.startFromInternal = startFromInternal;
-        this.continuationState = continuationState;
-
-        if (mode != ChangeFeedMode.INCREMENTAL && mode != ChangeFeedMode.FULL_FIDELITY) {
-            throw new IllegalArgumentException(
-                String.format(
-                    "Argument 'mode' has unsupported change feed mode %s",
-                    mode.toString()));
-        }
-
-        this.mode = mode;
-        this.properties = new HashMap<>();
-        this.isSplitHandlingDisabled = false;
+       this.actualRequestOptions = new CosmosChangeFeedRequestOptionsImpl(feedRange, startFromInternal, mode, continuationState);
     }
 
     ChangeFeedState getContinuation() {
-        return this.continuationState;
+        return this.actualRequestOptions.getContinuation();
     }
 
     /**
@@ -82,10 +60,8 @@ public final class CosmosChangeFeedRequestOptions {
      *
      * @return the feed range.
      */
-    @Beta(value = Beta.SinceVersion.V4_12_0, warningText =
-        Beta.PREVIEW_SUBJECT_TO_CHANGE_WARNING)
     public FeedRange getFeedRange() {
-        return this.feedRangeInternal;
+        return this.actualRequestOptions.getFeedRange();
     }
 
     /**
@@ -94,10 +70,8 @@ public final class CosmosChangeFeedRequestOptions {
      *
      * @return the max number of items.
      */
-    @Beta(value = Beta.SinceVersion.V4_12_0, warningText =
-        Beta.PREVIEW_SUBJECT_TO_CHANGE_WARNING)
     public int getMaxItemCount() {
-        return this.maxItemCount;
+        return this.actualRequestOptions.getMaxItemCount();
     }
 
     /**
@@ -107,10 +81,8 @@ public final class CosmosChangeFeedRequestOptions {
      * @param maxItemCount the max number of items.
      * @return the FeedOptionsBase.
      */
-    @Beta(value = Beta.SinceVersion.V4_12_0, warningText =
-        Beta.PREVIEW_SUBJECT_TO_CHANGE_WARNING)
     public CosmosChangeFeedRequestOptions setMaxItemCount(int maxItemCount) {
-        this.maxItemCount = maxItemCount;
+        this.actualRequestOptions.setMaxItemCount(maxItemCount);
         return this;
     }
 
@@ -126,10 +98,8 @@ public final class CosmosChangeFeedRequestOptions {
      *
      * @return the modified change feed request options.
      */
-    @Beta(value = Beta.SinceVersion.V4_12_0, warningText =
-        Beta.PREVIEW_SUBJECT_TO_CHANGE_WARNING)
     public int getMaxPrefetchPageCount() {
-        return this.maxPrefetchPageCount;
+        return this.actualRequestOptions.getMaxPrefetchPageCount();
     }
 
     /**
@@ -146,13 +116,8 @@ public final class CosmosChangeFeedRequestOptions {
      *                             asynchronously in the background
      * @return the modified change feed request options.
      */
-    @Beta(value = Beta.SinceVersion.V4_12_0, warningText =
-        Beta.PREVIEW_SUBJECT_TO_CHANGE_WARNING)
     public CosmosChangeFeedRequestOptions setMaxPrefetchPageCount(int maxPrefetchPageCount) {
-        checkArgument(
-            maxPrefetchPageCount > 0,
-            "Argument 'maxPrefetchCount' must be larger than 0.");
-        this.maxPrefetchPageCount = maxPrefetchPageCount;
+       this.actualRequestOptions.setMaxPrefetchPageCount(maxPrefetchPageCount);
 
         return this;
     }
@@ -163,10 +128,8 @@ public final class CosmosChangeFeedRequestOptions {
      *
      * @return true if quotaInfoEnabled is enabled
      */
-    @Beta(value = Beta.SinceVersion.V4_12_0, warningText =
-        Beta.PREVIEW_SUBJECT_TO_CHANGE_WARNING)
     public boolean isQuotaInfoEnabled() {
-        return quotaInfoEnabled;
+        return this.actualRequestOptions.isQuotaInfoEnabled();
     }
 
     /**
@@ -175,23 +138,94 @@ public final class CosmosChangeFeedRequestOptions {
      *
      * @param quotaInfoEnabled a boolean value indicating whether quotaInfoEnabled is enabled or not
      */
-    @Beta(value = Beta.SinceVersion.V4_12_0, warningText =
-        Beta.PREVIEW_SUBJECT_TO_CHANGE_WARNING)
     public void setQuotaInfoEnabled(boolean quotaInfoEnabled) {
-        this.quotaInfoEnabled = quotaInfoEnabled;
+        this.actualRequestOptions.setQuotaInfoEnabled(quotaInfoEnabled);
+    }
+
+    /**
+     * Allows overriding the diagnostic thresholds for a specific operation.
+     * @param operationSpecificThresholds the diagnostic threshold override for this operation
+     * @return the CosmosQueryRequestOptions.
+     */
+    public CosmosChangeFeedRequestOptions setDiagnosticsThresholds(
+        CosmosDiagnosticsThresholds operationSpecificThresholds) {
+
+        this.actualRequestOptions.setDiagnosticsThresholds(operationSpecificThresholds);
+        return this;
+    }
+
+    /**
+     * Gets the diagnostic thresholds used as an override for a specific operation. If no operation specific
+     * diagnostic threshold has been specified, this method will return null, although at runtime the default
+     * thresholds specified at the client-level will be used.
+     * @return the diagnostic thresholds used as an override for a specific operation.
+     */
+    public CosmosDiagnosticsThresholds getDiagnosticsThresholds() {
+        return this.actualRequestOptions.getDiagnosticsThresholds();
+    }
+
+    /**
+     * Gets the custom item serializer defined for this instance of request options
+     * @return the custom item serializer
+     */
+    public CosmosItemSerializer getCustomItemSerializer() {
+        return this.actualRequestOptions.getCustomItemSerializer();
+    }
+
+    /**
+     * Allows specifying a custom item serializer to be used for this operation. If the serializer
+     * on the request options is null, the serializer on CosmosClientBuilder is used. If both serializers
+     * are null (the default), an internal Jackson ObjectMapper is ued for serialization/deserialization.
+     * @param customItemSerializer the custom item serializer for this operation
+     * @return  the CosmosChangeFeedRequestOptions.
+     */
+    public CosmosChangeFeedRequestOptions setCustomItemSerializer(CosmosItemSerializer customItemSerializer) {
+        this.actualRequestOptions.setCustomItemSerializer(customItemSerializer);
+        return this;
+    }
+
+    /***
+     * Whether the query should be completed when all available changes when the query starts have been fetched.
+     *
+     * @param completeAfterAllCurrentChangesRetrieved flag to indicate whether to complete the query when all changes up to current moment have been fetched.
+     * @return the CosmosChangeFeedRequestOptions.
+     */
+    public CosmosChangeFeedRequestOptions setCompleteAfterAllCurrentChangesRetrieved(
+        boolean completeAfterAllCurrentChangesRetrieved) {
+        this.actualRequestOptions.setCompleteAfterAllCurrentChangesRetrieved(completeAfterAllCurrentChangesRetrieved);
+        return this;
+    }
+
+    /***
+     * Whether the query should be completed when all available changes when the query starts have been fetched.
+     *
+     * @return true if complete the query when all changes up to the current moment have been fetched.
+     */
+    public boolean isCompleteAfterAllCurrentChangesRetrieved() {
+        return this.actualRequestOptions.isCompleteAfterAllCurrentChangesRetrieved();
+    }
+
+    // This will override setCompleteAfterAllCurrentChangesRetrieved if both used together
+    CosmosChangeFeedRequestOptions setEndLSN(Long endLsn) {
+        this.actualRequestOptions.setEndLSN(endLsn);
+        return this;
+    }
+
+    Long getEndLSN() {
+        return this.actualRequestOptions.getEndLSN();
     }
 
     boolean isSplitHandlingDisabled() {
-        return this.isSplitHandlingDisabled;
+        return this.actualRequestOptions.isSplitHandlingDisabled();
     }
 
     CosmosChangeFeedRequestOptions disableSplitHandling() {
-        this.isSplitHandlingDisabled = true;
+        this.actualRequestOptions.disableSplitHandling();
         return this;
     }
 
     ChangeFeedMode getMode() {
-        return this.mode;
+        return this.actualRequestOptions.getMode();
     }
 
     /**
@@ -200,11 +234,11 @@ public final class CosmosChangeFeedRequestOptions {
      * @return Map of request options properties
      */
     Map<String, Object> getProperties() {
-        return properties;
+        return this.actualRequestOptions.getProperties();
     }
 
     ChangeFeedStartFromInternal getStartFromSettings() {
-        return this.startFromInternal;
+        return this.actualRequestOptions.getStartFromSettings();
     }
 
     /**
@@ -215,8 +249,6 @@ public final class CosmosChangeFeedRequestOptions {
      *                  logical partition or subset of a container)
      * @return a new {@link CosmosChangeFeedRequestOptions} instance
      */
-    @Beta(value = Beta.SinceVersion.V4_12_0, warningText =
-        Beta.PREVIEW_SUBJECT_TO_CHANGE_WARNING)
     public static CosmosChangeFeedRequestOptions createForProcessingFromBeginning(FeedRange feedRange) {
         checkNotNull(feedRange, "Argument 'feedRange' must not be null.");
 
@@ -235,14 +267,53 @@ public final class CosmosChangeFeedRequestOptions {
      *                     FeedResponse
      * @return a new {@link CosmosChangeFeedRequestOptions} instance
      */
-    @Beta(value = Beta.SinceVersion.V4_12_0, warningText =
-        Beta.PREVIEW_SUBJECT_TO_CHANGE_WARNING)
     public static CosmosChangeFeedRequestOptions createForProcessingFromContinuation(
         String continuation) {
 
         final ChangeFeedState changeFeedState = ChangeFeedState.fromString(continuation);
 
         return createForProcessingFromContinuation(changeFeedState);
+    }
+
+    /***
+     * Creates a new {@link CosmosChangeFeedRequestOptions} instance to start processing
+     * change feed items based on a previous continuation.
+     * ONLY used by Kafka connector.
+     *
+     * @param continuation The continuation that was retrieved from a previously retrieved FeedResponse
+     * @param targetRange the new target range
+     * @param continuationLsn the new continuation lsn
+     * @return a new {@link CosmosChangeFeedRequestOptions} instance
+     */
+    static CosmosChangeFeedRequestOptions createForProcessingFromContinuation(
+        String continuation, FeedRange targetRange, String continuationLsn) {
+        if (targetRange instanceof FeedRangeEpkImpl) {
+            Range<String> normalizedRange =
+                FeedRangeInternal.normalizeRange(((FeedRangeEpkImpl) targetRange).getRange());
+
+            final ChangeFeedState changeFeedState = ChangeFeedState.fromString(continuation);
+
+            if (StringUtils.isEmpty(continuationLsn)) {
+                continuationLsn = changeFeedState.getContinuation().getCurrentContinuationToken().getToken();
+            }
+
+            ChangeFeedState targetChangeFeedState =
+                new ChangeFeedStateV1(
+                    changeFeedState.getContainerRid(),
+                    (FeedRangeEpkImpl) targetRange,
+                    changeFeedState.getMode(),
+                    changeFeedState.getStartFromSettings(),
+                    FeedRangeContinuation.create(
+                        changeFeedState.getContainerRid(),
+                        (FeedRangeEpkImpl) targetRange,
+                        Arrays.asList(new CompositeContinuationToken(continuationLsn, normalizedRange))
+                    )
+                );
+
+            return createForProcessingFromContinuation(targetChangeFeedState);
+        }
+
+        throw new IllegalStateException("createForProcessingFromContinuation does not support feedRange type " + targetRange.getClass());
     }
 
     static CosmosChangeFeedRequestOptions createForProcessingFromContinuation(
@@ -278,26 +349,6 @@ public final class CosmosChangeFeedRequestOptions {
             changeFeedState);
     }
 
-    static CosmosChangeFeedRequestOptions createForProcessingFromEtagAndFeedRange(
-        String etag,
-        FeedRange feedRange) {
-
-        if (etag != null) {
-            return new CosmosChangeFeedRequestOptions(
-                FeedRangeInternal.convert(feedRange),
-                ChangeFeedStartFromInternal.createFromETagAndFeedRange(etag,
-                    FeedRangeInternal.convert(feedRange)),
-                ChangeFeedMode.INCREMENTAL,
-                null);
-        }
-
-        return new CosmosChangeFeedRequestOptions(
-            FeedRangeInternal.convert(feedRange),
-            ChangeFeedStartFromInternal.createFromBeginning(),
-            ChangeFeedMode.INCREMENTAL,
-            null);
-    }
-
     /**
      * Creates a new {@link CosmosChangeFeedRequestOptions} instance to start processing
      * change feed items from the current time - so only events for all future changes will be
@@ -307,8 +358,6 @@ public final class CosmosChangeFeedRequestOptions {
      *                  logical partition or subset of a container)
      * @return a new {@link CosmosChangeFeedRequestOptions} instance
      */
-    @Beta(value = Beta.SinceVersion.V4_12_0, warningText =
-        Beta.PREVIEW_SUBJECT_TO_CHANGE_WARNING)
     public static CosmosChangeFeedRequestOptions createForProcessingFromNow(FeedRange feedRange) {
         if (feedRange == null) {
             throw new NullPointerException("feedRange");
@@ -330,8 +379,6 @@ public final class CosmosChangeFeedRequestOptions {
      *                    logical partition or subset of a container)
      * @return a new {@link CosmosChangeFeedRequestOptions} instance
      */
-    @Beta(value = Beta.SinceVersion.V4_12_0, warningText =
-        Beta.PREVIEW_SUBJECT_TO_CHANGE_WARNING)
     public static CosmosChangeFeedRequestOptions createForProcessingFromPointInTime(
         Instant pointInTime,
         FeedRange feedRange) {
@@ -352,9 +399,7 @@ public final class CosmosChangeFeedRequestOptions {
     }
 
     void setRequestContinuation(String etag) {
-        this.startFromInternal = ChangeFeedStartFromInternal.createFromETagAndFeedRange(
-            etag,
-            this.feedRangeInternal);
+        this.actualRequestOptions.setRequestContinuation(etag);
     }
 
     CosmosChangeFeedRequestOptions withCosmosPagedFluxOptions(
@@ -383,41 +428,64 @@ public final class CosmosChangeFeedRequestOptions {
 
     /**
      * Changes the change feed mode so that the change feed will contain events for creations,
-     * deletes as well as all intermediary snapshots for updates. Enabling full fidelity change feed
-     * mode requires configuring a retention duration in the change feed policy of the
+     * deletes as well as all intermediary snapshots for updates. Enabling AllVersionsAndDeletes
+     * change feed mode requires configuring a retention duration in the change feed policy of the
      * container. {@link ChangeFeedPolicy}
      * <p>
      * Intermediary snapshots of changes as well as deleted documents would be
-     * available for processing for 8 minutes before they vanish.
-     * When enabling full fidelity mode you will only be able to process change feed events
+     * available for processing for retention window before they vanish.
+     * When enabling AllVersionsAndDeletes mode you will only be able to process change feed events
      * within the retention window configured in the change feed policy of the container.
      * If you attempt to process a change feed after more than the retention window
      * an error (Status Code 400) will be returned because the events for intermediary
      * updates and deletes have vanished.
-     * It would still be possible to process changes using Incremental mode even when
-     * configuring a full fidelity change feed policy with retention window on the container
-     * and when using Incremental mode it doesn't matter whether your are out of the retention
+     * It would still be possible to process changes using LatestVersion mode even when
+     * configuring a AllVersionsAndDeletes change feed policy with retention window on the container
+     * and when using LatestVersion mode it doesn't matter whether your are out of the retention
      * window or not - but no events for deletes or intermediary updates would be included.
      * When events are not getting processed within the retention window it is also possible
-     * to continue processing future events in full fidelity mode by querying the change feed
+     * to continue processing future events in AllVersionsAndDeletes mode by querying the change feed
      * with a new CosmosChangeFeedRequestOptions instance.
      * </p>
      *
-     * @return a {@link CosmosChangeFeedRequestOptions} instance with full fidelity mode enabled
+     * @return a {@link CosmosChangeFeedRequestOptions} instance with AllVersionsAndDeletes mode enabled
+     * @deprecated use {@link CosmosChangeFeedRequestOptions#allVersionsAndDeletes()} instead.
      */
     @Beta(value = Beta.SinceVersion.V4_12_0, warningText =
         Beta.PREVIEW_SUBJECT_TO_CHANGE_WARNING)
+    @Deprecated //since = "V4_37_0", forRemoval = true
     public CosmosChangeFeedRequestOptions fullFidelity() {
+        this.actualRequestOptions.fullFidelity();
+        return this;
+    }
 
-        if (!this.startFromInternal.supportsFullFidelityRetention()) {
-            throw new IllegalStateException(
-                "Full fidelity retention is not supported for the chosen change feed start from " +
-                    "option. Use CosmosChangeFeedRequestOptions.createForProcessingFromNow or " +
-                    "CosmosChangeFeedRequestOptions.createFromContinuation instead."
-            );
-        }
-
-        this.mode = ChangeFeedMode.FULL_FIDELITY;
+    /**
+     * Changes the change feed mode so that the change feed will contain events for creations,
+     * deletes as well as all intermediary snapshots for updates. Enabling AllVersionsAndDeletes
+     * change feed mode requires configuring a retention duration in the change feed policy of the
+     * container. {@link ChangeFeedPolicy}
+     * <p>
+     * Intermediary snapshots of changes as well as deleted documents would be
+     * available for processing for 8 minutes before they vanish.
+     * When enabling AllVersionsAndDeletes mode you will only be able to process change feed events
+     * within the retention window configured in the change feed policy of the container.
+     * If you attempt to process a change feed after more than the retention window
+     * an error (Status Code 400) will be returned because the events for intermediary
+     * updates and deletes have vanished.
+     * It would still be possible to process changes using LatestVersion mode even when
+     * configuring a AllVersionsAndDeletes change feed policy with retention window on the container
+     * and when using LatestVersion mode it doesn't matter whether your are out of the retention
+     * window or not - but no events for deletes or intermediary updates would be included.
+     * When events are not getting processed within the retention window it is also possible
+     * to continue processing future events in AllVersionsAndDeletes mode by querying the change feed
+     * with a new CosmosChangeFeedRequestOptions instance.
+     * </p>
+     *
+     * @return a {@link CosmosChangeFeedRequestOptions} instance with AllVersionsAndDeletes mode enabled
+     */
+    @Beta(value = Beta.SinceVersion.V4_37_0, warningText = Beta.PREVIEW_SUBJECT_TO_CHANGE_WARNING)
+    public CosmosChangeFeedRequestOptions allVersionsAndDeletes() {
+        this.actualRequestOptions.allVersionsAndDeletes();
         return this;
     }
 
@@ -426,9 +494,8 @@ public final class CosmosChangeFeedRequestOptions {
      *
      * @return The throughput control group name.
      */
-    @Beta(value = Beta.SinceVersion.V4_13_0, warningText = Beta.PREVIEW_SUBJECT_TO_CHANGE_WARNING)
     public String getThroughputControlGroupName() {
-        return this.throughputControlGroupName;
+        return this.actualRequestOptions.getThroughputControlGroupName();
     }
 
     /**
@@ -437,10 +504,31 @@ public final class CosmosChangeFeedRequestOptions {
      * @param throughputControlGroupName The throughput control group name.
      * @return A {@link CosmosChangeFeedRequestOptions}.
      */
-    @Beta(value = Beta.SinceVersion.V4_13_0, warningText = Beta.PREVIEW_SUBJECT_TO_CHANGE_WARNING)
     public CosmosChangeFeedRequestOptions setThroughputControlGroupName(String throughputControlGroupName) {
-        this.throughputControlGroupName = throughputControlGroupName;
+        this.actualRequestOptions.setThroughputControlGroupName(throughputControlGroupName);
         return this;
+    }
+
+    /**
+     * List of regions to exclude for the request/retries. Example "East US" or "East US, West US"
+     * These regions will be excluded from the preferred regions list
+     *
+     * @param excludeRegions list of regions
+     * @return the {@link CosmosChangeFeedRequestOptions}
+     */
+    public CosmosChangeFeedRequestOptions setExcludedRegions(List<String> excludeRegions) {
+        this.actualRequestOptions.setExcludedRegions(excludeRegions);
+        return this;
+    }
+
+    /**
+     * Gets the list of regions to be excluded for the request/retries. These regions are excluded
+     * from the preferred region list.
+     *
+     * @return a list of excluded regions
+     * */
+    public List<String> getExcludedRegions() {
+        return this.actualRequestOptions.getExcludedRegions();
     }
 
     /**
@@ -452,10 +540,7 @@ public final class CosmosChangeFeedRequestOptions {
      * @return the CosmosChangeFeedRequestOptions.
      */
     CosmosChangeFeedRequestOptions setHeader(String name, String value) {
-        if (this.customOptions == null) {
-            this.customOptions = new HashMap<>();
-        }
-        this.customOptions.put(name, value);
+        this.actualRequestOptions.setHeader(name, value);
         return this;
     }
 
@@ -465,14 +550,71 @@ public final class CosmosChangeFeedRequestOptions {
      * @return Map of custom request options
      */
     Map<String, String> getHeaders() {
-        return this.customOptions;
+        return this.actualRequestOptions.getHeaders();
+    }
+
+    /**
+     * Sets the custom ids.
+     *
+     * @param keywordIdentifiers the custom ids.
+     * @return the current request options.
+     */
+    public CosmosChangeFeedRequestOptions setKeywordIdentifiers(Set<String> keywordIdentifiers) {
+        if (keywordIdentifiers != null) {
+            this.actualRequestOptions.setKeywordIdentifiers(Collections.unmodifiableSet(keywordIdentifiers));
+        } else {
+            this.actualRequestOptions.setKeywordIdentifiers(EMPTY_KEYWORD_IDENTIFIERS);
+        }
+        return this;
+    }
+
+    /**
+     * Gets the custom ids.
+     *
+     * @return the custom ids.
+     */
+    public Set<String> getKeywordIdentifiers() {
+        return this.actualRequestOptions.getKeywordIdentifiers();
+    }
+
+    void setOperationContextAndListenerTuple(OperationContextAndListenerTuple operationContextAndListenerTuple) {
+        this.actualRequestOptions.setOperationContextAndListenerTuple(operationContextAndListenerTuple);
+    }
+
+    OperationContextAndListenerTuple getOperationContextAndListenerTuple() {
+        return this.actualRequestOptions.getOperationContextAndListenerTuple();
+    }
+
+    private void addCustomOptionsForFullFidelityMode() {
+        this.setHeader(
+            HttpConstants.HttpHeaders.CHANGE_FEED_WIRE_FORMAT_VERSION,
+            HttpConstants.ChangeFeedWireFormatVersions.SEPARATE_METADATA_WITH_CRTS);
+    }
+
+    CosmosChangeFeedRequestOptionsImpl getImpl() {
+        return this.actualRequestOptions;
+    }
+
+    String getCollectionRid() {
+        return this.actualRequestOptions.getCollectionRid();
+    }
+
+    void setCollectionRid(String collectionRid) {
+        this.actualRequestOptions.setCollectionRid(collectionRid);
+    }
+
+    PartitionKeyDefinition getPartitionKeyDefinition() {
+        return this.actualRequestOptions.getPartitionKeyDefinition();
+    }
+
+    void setPartitionKeyDefinition(PartitionKeyDefinition partitionKeyDefinition) {
+        this.actualRequestOptions.setPartitionKeyDefinition(partitionKeyDefinition);
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////
     // the following helper/accessor only helps to access this class outside of this package.//
     ///////////////////////////////////////////////////////////////////////////////////////////
-
-    static {
+    static void initialize() {
         ImplementationBridgeHelpers.CosmosChangeFeedRequestOptionsHelper.setCosmosChangeFeedRequestOptionsAccessor(
             new ImplementationBridgeHelpers.CosmosChangeFeedRequestOptionsHelper.CosmosChangeFeedRequestOptionsAccessor() {
 
@@ -485,6 +627,81 @@ public final class CosmosChangeFeedRequestOptions {
                 public Map<String, String> getHeader(CosmosChangeFeedRequestOptions changeFeedRequestOptions) {
                     return changeFeedRequestOptions.getHeaders();
                 }
+
+                @Override
+                public CosmosChangeFeedRequestOptionsImpl getImpl(CosmosChangeFeedRequestOptions changeFeedRequestOptions) {
+                    return changeFeedRequestOptions.getImpl();
+                }
+
+                @Override
+                public CosmosChangeFeedRequestOptions setEndLSN(CosmosChangeFeedRequestOptions changeFeedRequestOptions, Long endLsn) {
+                    return changeFeedRequestOptions.setEndLSN(endLsn);
+                }
+
+                @Override
+                public Long getEndLSN(CosmosChangeFeedRequestOptions changeFeedRequestOptions) {
+                    return changeFeedRequestOptions.getEndLSN();
+                }
+
+                @Override
+                public void setOperationContext
+                    (
+                        CosmosChangeFeedRequestOptions changeFeedRequestOptions,
+                        OperationContextAndListenerTuple operationContextAndListenerTuple
+                    ) {
+
+                    changeFeedRequestOptions.setOperationContextAndListenerTuple(operationContextAndListenerTuple);
+                }
+
+                @Override
+                public OperationContextAndListenerTuple getOperationContext
+                    (
+                        CosmosChangeFeedRequestOptions changeFeedRequestOptions
+                    ) {
+
+                    return changeFeedRequestOptions.getOperationContextAndListenerTuple();
+                }
+
+                @Override
+                public CosmosDiagnosticsThresholds getDiagnosticsThresholds(CosmosChangeFeedRequestOptions options) {
+                    return options.getDiagnosticsThresholds();
+                }
+
+                @Override
+                public CosmosChangeFeedRequestOptions createForProcessingFromContinuation(
+                    String continuation,
+                    FeedRange targetRange,
+                    String continuationLsn) {
+
+                    return CosmosChangeFeedRequestOptions.createForProcessingFromContinuation(continuation, targetRange, continuationLsn);
+                }
+
+                @Override
+                public CosmosChangeFeedRequestOptions clone(CosmosChangeFeedRequestOptions toBeCloned) {
+                    return new CosmosChangeFeedRequestOptions(toBeCloned);
+                }
+
+                @Override
+                public String getCollectionRid(CosmosChangeFeedRequestOptions changeFeedRequestOptions) {
+                    return changeFeedRequestOptions.getCollectionRid();
+                }
+
+                @Override
+                public void setCollectionRid(CosmosChangeFeedRequestOptions changeFeedRequestOptions, String collectionRid) {
+                    changeFeedRequestOptions.setCollectionRid(collectionRid);
+                }
+
+                @Override
+                public PartitionKeyDefinition getPartitionKeyDefinition(CosmosChangeFeedRequestOptions changeFeedRequestOptions) {
+                    return changeFeedRequestOptions.getPartitionKeyDefinition();
+                }
+
+                @Override
+                public void setPartitionKeyDefinition(CosmosChangeFeedRequestOptions changeFeedRequestOptions, PartitionKeyDefinition partitionKeyDefinition) {
+                    changeFeedRequestOptions.setPartitionKeyDefinition(partitionKeyDefinition);
+                }
             });
     }
+
+    static { initialize(); }
 }

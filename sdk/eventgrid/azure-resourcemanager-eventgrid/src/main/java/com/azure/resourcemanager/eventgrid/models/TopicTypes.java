@@ -8,42 +8,39 @@ import com.azure.core.http.rest.PagedIterable;
 import com.azure.core.http.rest.Response;
 import com.azure.core.util.Context;
 
-/** Resource collection API of TopicTypes. */
+/**
+ * Resource collection API of TopicTypes.
+ */
 public interface TopicTypes {
     /**
+     * List topic types.
+     * 
      * List all registered topic types.
-     *
+     * 
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return result of the List Topic Types operation.
+     * @return result of the List Topic Types operation as paginated response with {@link PagedIterable}.
      */
     PagedIterable<TopicTypeInfo> list();
 
     /**
+     * List topic types.
+     * 
      * List all registered topic types.
-     *
+     * 
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return result of the List Topic Types operation.
+     * @return result of the List Topic Types operation as paginated response with {@link PagedIterable}.
      */
     PagedIterable<TopicTypeInfo> list(Context context);
 
     /**
+     * Get a topic type.
+     * 
      * Get information about a topic type.
-     *
-     * @param topicTypeName Name of the topic type.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return information about a topic type.
-     */
-    TopicTypeInfo get(String topicTypeName);
-
-    /**
-     * Get information about a topic type.
-     *
+     * 
      * @param topicTypeName Name of the topic type.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
@@ -54,25 +51,42 @@ public interface TopicTypes {
     Response<TopicTypeInfo> getWithResponse(String topicTypeName, Context context);
 
     /**
-     * List event types for a topic type.
-     *
+     * Get a topic type.
+     * 
+     * Get information about a topic type.
+     * 
      * @param topicTypeName Name of the topic type.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return result of the List Event Types operation.
+     * @return information about a topic type.
+     */
+    TopicTypeInfo get(String topicTypeName);
+
+    /**
+     * List event types.
+     * 
+     * List event types for a topic type.
+     * 
+     * @param topicTypeName Name of the topic type.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return result of the List Event Types operation as paginated response with {@link PagedIterable}.
      */
     PagedIterable<EventType> listEventTypes(String topicTypeName);
 
     /**
+     * List event types.
+     * 
      * List event types for a topic type.
-     *
+     * 
      * @param topicTypeName Name of the topic type.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return result of the List Event Types operation.
+     * @return result of the List Event Types operation as paginated response with {@link PagedIterable}.
      */
     PagedIterable<EventType> listEventTypes(String topicTypeName, Context context);
 }

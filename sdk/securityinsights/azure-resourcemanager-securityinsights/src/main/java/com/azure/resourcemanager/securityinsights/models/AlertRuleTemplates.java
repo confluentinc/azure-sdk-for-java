@@ -8,49 +8,38 @@ import com.azure.core.http.rest.PagedIterable;
 import com.azure.core.http.rest.Response;
 import com.azure.core.util.Context;
 
-/** Resource collection API of AlertRuleTemplates. */
+/**
+ * Resource collection API of AlertRuleTemplates.
+ */
 public interface AlertRuleTemplates {
     /**
      * Gets all alert rule templates.
-     *
+     * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
      * @param workspaceName The name of the workspace.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return all alert rule templates.
+     * @return all alert rule templates as paginated response with {@link PagedIterable}.
      */
     PagedIterable<AlertRuleTemplate> list(String resourceGroupName, String workspaceName);
 
     /**
      * Gets all alert rule templates.
-     *
+     * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
      * @param workspaceName The name of the workspace.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return all alert rule templates.
+     * @return all alert rule templates as paginated response with {@link PagedIterable}.
      */
     PagedIterable<AlertRuleTemplate> list(String resourceGroupName, String workspaceName, Context context);
 
     /**
      * Gets the alert rule template.
-     *
-     * @param resourceGroupName The name of the resource group. The name is case insensitive.
-     * @param workspaceName The name of the workspace.
-     * @param alertRuleTemplateId Alert rule template ID.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the alert rule template.
-     */
-    AlertRuleTemplate get(String resourceGroupName, String workspaceName, String alertRuleTemplateId);
-
-    /**
-     * Gets the alert rule template.
-     *
+     * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
      * @param workspaceName The name of the workspace.
      * @param alertRuleTemplateId Alert rule template ID.
@@ -60,6 +49,19 @@ public interface AlertRuleTemplates {
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
      * @return the alert rule template along with {@link Response}.
      */
-    Response<AlertRuleTemplate> getWithResponse(
-        String resourceGroupName, String workspaceName, String alertRuleTemplateId, Context context);
+    Response<AlertRuleTemplate> getWithResponse(String resourceGroupName, String workspaceName,
+        String alertRuleTemplateId, Context context);
+
+    /**
+     * Gets the alert rule template.
+     * 
+     * @param resourceGroupName The name of the resource group. The name is case insensitive.
+     * @param workspaceName The name of the workspace.
+     * @param alertRuleTemplateId Alert rule template ID.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return the alert rule template.
+     */
+    AlertRuleTemplate get(String resourceGroupName, String workspaceName, String alertRuleTemplateId);
 }

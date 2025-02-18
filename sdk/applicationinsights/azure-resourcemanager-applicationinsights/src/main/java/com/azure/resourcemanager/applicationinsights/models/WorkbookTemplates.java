@@ -8,34 +8,52 @@ import com.azure.core.http.rest.PagedIterable;
 import com.azure.core.http.rest.Response;
 import com.azure.core.util.Context;
 
-/** Resource collection API of WorkbookTemplates. */
+/**
+ * Resource collection API of WorkbookTemplates.
+ */
 public interface WorkbookTemplates {
     /**
      * Get all Workbook templates defined within a specified resource group.
-     *
+     * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return all Workbook templates defined within a specified resource group.
+     * @return all Workbook templates defined within a specified resource group as paginated response with
+     * {@link PagedIterable}.
      */
     PagedIterable<WorkbookTemplate> listByResourceGroup(String resourceGroupName);
 
     /**
      * Get all Workbook templates defined within a specified resource group.
-     *
+     * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return all Workbook templates defined within a specified resource group.
+     * @return all Workbook templates defined within a specified resource group as paginated response with
+     * {@link PagedIterable}.
      */
     PagedIterable<WorkbookTemplate> listByResourceGroup(String resourceGroupName, Context context);
 
     /**
      * Get a single workbook template by its resourceName.
-     *
+     * 
+     * @param resourceGroupName The name of the resource group. The name is case insensitive.
+     * @param resourceName The name of the Application Insights component resource.
+     * @param context The context to associate with this operation.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return a single workbook template by its resourceName along with {@link Response}.
+     */
+    Response<WorkbookTemplate> getByResourceGroupWithResponse(String resourceGroupName, String resourceName,
+        Context context);
+
+    /**
+     * Get a single workbook template by its resourceName.
+     * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
      * @param resourceName The name of the Application Insights component resource.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
@@ -46,22 +64,21 @@ public interface WorkbookTemplates {
     WorkbookTemplate getByResourceGroup(String resourceGroupName, String resourceName);
 
     /**
-     * Get a single workbook template by its resourceName.
-     *
+     * Delete a workbook template.
+     * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
      * @param resourceName The name of the Application Insights component resource.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return a single workbook template by its resourceName.
+     * @return the {@link Response}.
      */
-    Response<WorkbookTemplate> getByResourceGroupWithResponse(
-        String resourceGroupName, String resourceName, Context context);
+    Response<Void> deleteByResourceGroupWithResponse(String resourceGroupName, String resourceName, Context context);
 
     /**
      * Delete a workbook template.
-     *
+     * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
      * @param resourceName The name of the Application Insights component resource.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
@@ -71,44 +88,31 @@ public interface WorkbookTemplates {
     void deleteByResourceGroup(String resourceGroupName, String resourceName);
 
     /**
-     * Delete a workbook template.
-     *
-     * @param resourceGroupName The name of the resource group. The name is case insensitive.
-     * @param resourceName The name of the Application Insights component resource.
-     * @param context The context to associate with this operation.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the response.
-     */
-    Response<Void> deleteWithResponse(String resourceGroupName, String resourceName, Context context);
-
-    /**
      * Get a single workbook template by its resourceName.
-     *
+     * 
      * @param id the resource ID.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return a single workbook template by its resourceName.
+     * @return a single workbook template by its resourceName along with {@link Response}.
      */
     WorkbookTemplate getById(String id);
 
     /**
      * Get a single workbook template by its resourceName.
-     *
+     * 
      * @param id the resource ID.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return a single workbook template by its resourceName.
+     * @return a single workbook template by its resourceName along with {@link Response}.
      */
     Response<WorkbookTemplate> getByIdWithResponse(String id, Context context);
 
     /**
      * Delete a workbook template.
-     *
+     * 
      * @param id the resource ID.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
@@ -118,19 +122,19 @@ public interface WorkbookTemplates {
 
     /**
      * Delete a workbook template.
-     *
+     * 
      * @param id the resource ID.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the response.
+     * @return the {@link Response}.
      */
     Response<Void> deleteByIdWithResponse(String id, Context context);
 
     /**
      * Begins definition for a new WorkbookTemplate resource.
-     *
+     * 
      * @param name resource name.
      * @return the first stage of the new WorkbookTemplate definition.
      */

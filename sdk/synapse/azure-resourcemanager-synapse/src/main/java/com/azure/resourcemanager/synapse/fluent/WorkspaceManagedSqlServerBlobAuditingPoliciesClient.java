@@ -13,7 +13,6 @@ import com.azure.core.util.Context;
 import com.azure.core.util.polling.SyncPoller;
 import com.azure.resourcemanager.synapse.fluent.models.ServerBlobAuditingPolicyInner;
 import com.azure.resourcemanager.synapse.models.BlobAuditingPolicyName;
-import reactor.core.publisher.Mono;
 
 /**
  * An instance of this class provides access to all the operations defined in
@@ -21,23 +20,10 @@ import reactor.core.publisher.Mono;
  */
 public interface WorkspaceManagedSqlServerBlobAuditingPoliciesClient {
     /**
+     * Get server's blob auditing policy.
+     * 
      * Get a workspace managed sql server's blob auditing policy.
-     *
-     * @param resourceGroupName The name of the resource group. The name is case insensitive.
-     * @param workspaceName The name of the workspace.
-     * @param blobAuditingPolicyName The name of the blob auditing policy.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return a workspace managed sql server's blob auditing policy.
-     */
-    @ServiceMethod(returns = ReturnType.SINGLE)
-    ServerBlobAuditingPolicyInner get(
-        String resourceGroupName, String workspaceName, BlobAuditingPolicyName blobAuditingPolicyName);
-
-    /**
-     * Get a workspace managed sql server's blob auditing policy.
-     *
+     * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
      * @param workspaceName The name of the workspace.
      * @param blobAuditingPolicyName The name of the blob auditing policy.
@@ -48,12 +34,31 @@ public interface WorkspaceManagedSqlServerBlobAuditingPoliciesClient {
      * @return a workspace managed sql server's blob auditing policy along with {@link Response}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    Response<ServerBlobAuditingPolicyInner> getWithResponse(
-        String resourceGroupName, String workspaceName, BlobAuditingPolicyName blobAuditingPolicyName, Context context);
+    Response<ServerBlobAuditingPolicyInner> getWithResponse(String resourceGroupName, String workspaceName,
+        BlobAuditingPolicyName blobAuditingPolicyName, Context context);
 
     /**
+     * Get server's blob auditing policy.
+     * 
+     * Get a workspace managed sql server's blob auditing policy.
+     * 
+     * @param resourceGroupName The name of the resource group. The name is case insensitive.
+     * @param workspaceName The name of the workspace.
+     * @param blobAuditingPolicyName The name of the blob auditing policy.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return a workspace managed sql server's blob auditing policy.
+     */
+    @ServiceMethod(returns = ReturnType.SINGLE)
+    ServerBlobAuditingPolicyInner get(String resourceGroupName, String workspaceName,
+        BlobAuditingPolicyName blobAuditingPolicyName);
+
+    /**
+     * Create or Update server's blob auditing policy.
+     * 
      * Create or Update a workspace managed sql server's blob auditing policy.
-     *
+     * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
      * @param workspaceName The name of the workspace.
      * @param blobAuditingPolicyName The name of the blob auditing policy.
@@ -61,18 +66,18 @@ public interface WorkspaceManagedSqlServerBlobAuditingPoliciesClient {
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return a server blob auditing policy along with {@link Response} on successful completion of {@link Mono}.
+     * @return the {@link SyncPoller} for polling of a server blob auditing policy.
      */
     @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
     SyncPoller<PollResult<ServerBlobAuditingPolicyInner>, ServerBlobAuditingPolicyInner> beginCreateOrUpdate(
-        String resourceGroupName,
-        String workspaceName,
-        BlobAuditingPolicyName blobAuditingPolicyName,
+        String resourceGroupName, String workspaceName, BlobAuditingPolicyName blobAuditingPolicyName,
         ServerBlobAuditingPolicyInner parameters);
 
     /**
+     * Create or Update server's blob auditing policy.
+     * 
      * Create or Update a workspace managed sql server's blob auditing policy.
-     *
+     * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
      * @param workspaceName The name of the workspace.
      * @param blobAuditingPolicyName The name of the blob auditing policy.
@@ -81,19 +86,18 @@ public interface WorkspaceManagedSqlServerBlobAuditingPoliciesClient {
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return a server blob auditing policy along with {@link Response} on successful completion of {@link Mono}.
+     * @return the {@link SyncPoller} for polling of a server blob auditing policy.
      */
     @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
     SyncPoller<PollResult<ServerBlobAuditingPolicyInner>, ServerBlobAuditingPolicyInner> beginCreateOrUpdate(
-        String resourceGroupName,
-        String workspaceName,
-        BlobAuditingPolicyName blobAuditingPolicyName,
-        ServerBlobAuditingPolicyInner parameters,
-        Context context);
+        String resourceGroupName, String workspaceName, BlobAuditingPolicyName blobAuditingPolicyName,
+        ServerBlobAuditingPolicyInner parameters, Context context);
 
     /**
+     * Create or Update server's blob auditing policy.
+     * 
      * Create or Update a workspace managed sql server's blob auditing policy.
-     *
+     * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
      * @param workspaceName The name of the workspace.
      * @param blobAuditingPolicyName The name of the blob auditing policy.
@@ -104,15 +108,14 @@ public interface WorkspaceManagedSqlServerBlobAuditingPoliciesClient {
      * @return a server blob auditing policy.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    ServerBlobAuditingPolicyInner createOrUpdate(
-        String resourceGroupName,
-        String workspaceName,
-        BlobAuditingPolicyName blobAuditingPolicyName,
-        ServerBlobAuditingPolicyInner parameters);
+    ServerBlobAuditingPolicyInner createOrUpdate(String resourceGroupName, String workspaceName,
+        BlobAuditingPolicyName blobAuditingPolicyName, ServerBlobAuditingPolicyInner parameters);
 
     /**
+     * Create or Update server's blob auditing policy.
+     * 
      * Create or Update a workspace managed sql server's blob auditing policy.
-     *
+     * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
      * @param workspaceName The name of the workspace.
      * @param blobAuditingPolicyName The name of the blob auditing policy.
@@ -124,38 +127,38 @@ public interface WorkspaceManagedSqlServerBlobAuditingPoliciesClient {
      * @return a server blob auditing policy.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    ServerBlobAuditingPolicyInner createOrUpdate(
-        String resourceGroupName,
-        String workspaceName,
-        BlobAuditingPolicyName blobAuditingPolicyName,
-        ServerBlobAuditingPolicyInner parameters,
-        Context context);
+    ServerBlobAuditingPolicyInner createOrUpdate(String resourceGroupName, String workspaceName,
+        BlobAuditingPolicyName blobAuditingPolicyName, ServerBlobAuditingPolicyInner parameters, Context context);
 
     /**
+     * List workspace server's blob auditing policies.
+     * 
      * List workspace managed sql server's blob auditing policies.
-     *
+     * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
      * @param workspaceName The name of the workspace.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return a list of server auditing settings.
+     * @return a list of server auditing settings as paginated response with {@link PagedIterable}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
     PagedIterable<ServerBlobAuditingPolicyInner> listByWorkspace(String resourceGroupName, String workspaceName);
 
     /**
+     * List workspace server's blob auditing policies.
+     * 
      * List workspace managed sql server's blob auditing policies.
-     *
+     * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
      * @param workspaceName The name of the workspace.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return a list of server auditing settings.
+     * @return a list of server auditing settings as paginated response with {@link PagedIterable}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
-    PagedIterable<ServerBlobAuditingPolicyInner> listByWorkspace(
-        String resourceGroupName, String workspaceName, Context context);
+    PagedIterable<ServerBlobAuditingPolicyInner> listByWorkspace(String resourceGroupName, String workspaceName,
+        Context context);
 }

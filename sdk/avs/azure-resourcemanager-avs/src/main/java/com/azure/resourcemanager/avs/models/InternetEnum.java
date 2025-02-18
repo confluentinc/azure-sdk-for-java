@@ -5,29 +5,46 @@
 package com.azure.resourcemanager.avs.models;
 
 import com.azure.core.util.ExpandableStringEnum;
-import com.fasterxml.jackson.annotation.JsonCreator;
 import java.util.Collection;
 
-/** Defines values for InternetEnum. */
+/**
+ * Whether internet is enabled or disabled.
+ */
 public final class InternetEnum extends ExpandableStringEnum<InternetEnum> {
-    /** Static value Enabled for InternetEnum. */
+    /**
+     * Static value Enabled for InternetEnum.
+     */
     public static final InternetEnum ENABLED = fromString("Enabled");
 
-    /** Static value Disabled for InternetEnum. */
+    /**
+     * Static value Disabled for InternetEnum.
+     */
     public static final InternetEnum DISABLED = fromString("Disabled");
 
     /**
+     * Creates a new instance of InternetEnum value.
+     * 
+     * @deprecated Use the {@link #fromString(String)} factory method.
+     */
+    @Deprecated
+    public InternetEnum() {
+    }
+
+    /**
      * Creates or finds a InternetEnum from its string representation.
-     *
+     * 
      * @param name a name to look for.
      * @return the corresponding InternetEnum.
      */
-    @JsonCreator
     public static InternetEnum fromString(String name) {
         return fromString(name, InternetEnum.class);
     }
 
-    /** @return known InternetEnum values. */
+    /**
+     * Gets known InternetEnum values.
+     * 
+     * @return known InternetEnum values.
+     */
     public static Collection<InternetEnum> values() {
         return values(InternetEnum.class);
     }

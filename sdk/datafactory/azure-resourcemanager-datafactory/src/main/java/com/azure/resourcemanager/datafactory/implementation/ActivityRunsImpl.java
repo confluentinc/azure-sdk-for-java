@@ -13,48 +13,38 @@ import com.azure.resourcemanager.datafactory.fluent.models.ActivityRunsQueryResp
 import com.azure.resourcemanager.datafactory.models.ActivityRuns;
 import com.azure.resourcemanager.datafactory.models.ActivityRunsQueryResponse;
 import com.azure.resourcemanager.datafactory.models.RunFilterParameters;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 public final class ActivityRunsImpl implements ActivityRuns {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(ActivityRunsImpl.class);
+    private static final ClientLogger LOGGER = new ClientLogger(ActivityRunsImpl.class);
 
     private final ActivityRunsClient innerClient;
 
     private final com.azure.resourcemanager.datafactory.DataFactoryManager serviceManager;
 
-    public ActivityRunsImpl(
-        ActivityRunsClient innerClient, com.azure.resourcemanager.datafactory.DataFactoryManager serviceManager) {
+    public ActivityRunsImpl(ActivityRunsClient innerClient,
+        com.azure.resourcemanager.datafactory.DataFactoryManager serviceManager) {
         this.innerClient = innerClient;
         this.serviceManager = serviceManager;
     }
 
-    public ActivityRunsQueryResponse queryByPipelineRun(
-        String resourceGroupName, String factoryName, String runId, RunFilterParameters filterParameters) {
-        ActivityRunsQueryResponseInner inner =
-            this.serviceClient().queryByPipelineRun(resourceGroupName, factoryName, runId, filterParameters);
+    public Response<ActivityRunsQueryResponse> queryByPipelineRunWithResponse(String resourceGroupName,
+        String factoryName, String runId, RunFilterParameters filterParameters, Context context) {
+        Response<ActivityRunsQueryResponseInner> inner = this.serviceClient()
+            .queryByPipelineRunWithResponse(resourceGroupName, factoryName, runId, filterParameters, context);
         if (inner != null) {
-            return new ActivityRunsQueryResponseImpl(inner, this.manager());
+            return new SimpleResponse<>(inner.getRequest(), inner.getStatusCode(), inner.getHeaders(),
+                new ActivityRunsQueryResponseImpl(inner.getValue(), this.manager()));
         } else {
             return null;
         }
     }
 
-    public Response<ActivityRunsQueryResponse> queryByPipelineRunWithResponse(
-        String resourceGroupName,
-        String factoryName,
-        String runId,
-        RunFilterParameters filterParameters,
-        Context context) {
-        Response<ActivityRunsQueryResponseInner> inner =
-            this
-                .serviceClient()
-                .queryByPipelineRunWithResponse(resourceGroupName, factoryName, runId, filterParameters, context);
+    public ActivityRunsQueryResponse queryByPipelineRun(String resourceGroupName, String factoryName, String runId,
+        RunFilterParameters filterParameters) {
+        ActivityRunsQueryResponseInner inner
+            = this.serviceClient().queryByPipelineRun(resourceGroupName, factoryName, runId, filterParameters);
         if (inner != null) {
-            return new SimpleResponse<>(
-                inner.getRequest(),
-                inner.getStatusCode(),
-                inner.getHeaders(),
-                new ActivityRunsQueryResponseImpl(inner.getValue(), this.manager()));
+            return new ActivityRunsQueryResponseImpl(inner, this.manager());
         } else {
             return null;
         }

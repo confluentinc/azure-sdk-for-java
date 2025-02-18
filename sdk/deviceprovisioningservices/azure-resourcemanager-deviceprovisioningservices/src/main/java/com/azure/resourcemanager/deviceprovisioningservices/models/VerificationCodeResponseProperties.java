@@ -6,67 +6,66 @@ package com.azure.resourcemanager.deviceprovisioningservices.models;
 
 import com.azure.core.annotation.Fluent;
 import com.azure.core.util.CoreUtils;
-import com.azure.core.util.logging.ClientLogger;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.azure.json.JsonReader;
+import com.azure.json.JsonSerializable;
+import com.azure.json.JsonToken;
+import com.azure.json.JsonWriter;
+import java.io.IOException;
 
-/** The VerificationCodeResponseProperties model. */
+/**
+ * The VerificationCodeResponseProperties model.
+ */
 @Fluent
-public final class VerificationCodeResponseProperties {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(VerificationCodeResponseProperties.class);
-
+public final class VerificationCodeResponseProperties implements JsonSerializable<VerificationCodeResponseProperties> {
     /*
      * Verification code.
      */
-    @JsonProperty(value = "verificationCode")
     private String verificationCode;
 
     /*
      * Certificate subject.
      */
-    @JsonProperty(value = "subject")
     private String subject;
 
     /*
      * Code expiry.
      */
-    @JsonProperty(value = "expiry")
     private String expiry;
 
     /*
      * Certificate thumbprint.
      */
-    @JsonProperty(value = "thumbprint")
     private String thumbprint;
 
     /*
      * Indicate if the certificate is verified by owner of private key.
      */
-    @JsonProperty(value = "isVerified")
     private Boolean isVerified;
 
     /*
-     * base-64 representation of X509 certificate .cer file or just .pem file
-     * content.
+     * base-64 representation of X509 certificate .cer file or just .pem file content.
      */
-    @JsonProperty(value = "certificate")
     private byte[] certificate;
 
     /*
      * Certificate created time.
      */
-    @JsonProperty(value = "created")
     private String created;
 
     /*
      * Certificate updated time.
      */
-    @JsonProperty(value = "updated")
     private String updated;
 
     /**
+     * Creates an instance of VerificationCodeResponseProperties class.
+     */
+    public VerificationCodeResponseProperties() {
+    }
+
+    /**
      * Get the verificationCode property: Verification code.
-     *
+     * 
      * @return the verificationCode value.
      */
     public String verificationCode() {
@@ -75,7 +74,7 @@ public final class VerificationCodeResponseProperties {
 
     /**
      * Set the verificationCode property: Verification code.
-     *
+     * 
      * @param verificationCode the verificationCode value to set.
      * @return the VerificationCodeResponseProperties object itself.
      */
@@ -86,7 +85,7 @@ public final class VerificationCodeResponseProperties {
 
     /**
      * Get the subject property: Certificate subject.
-     *
+     * 
      * @return the subject value.
      */
     public String subject() {
@@ -95,7 +94,7 @@ public final class VerificationCodeResponseProperties {
 
     /**
      * Set the subject property: Certificate subject.
-     *
+     * 
      * @param subject the subject value to set.
      * @return the VerificationCodeResponseProperties object itself.
      */
@@ -106,7 +105,7 @@ public final class VerificationCodeResponseProperties {
 
     /**
      * Get the expiry property: Code expiry.
-     *
+     * 
      * @return the expiry value.
      */
     public String expiry() {
@@ -115,7 +114,7 @@ public final class VerificationCodeResponseProperties {
 
     /**
      * Set the expiry property: Code expiry.
-     *
+     * 
      * @param expiry the expiry value to set.
      * @return the VerificationCodeResponseProperties object itself.
      */
@@ -126,7 +125,7 @@ public final class VerificationCodeResponseProperties {
 
     /**
      * Get the thumbprint property: Certificate thumbprint.
-     *
+     * 
      * @return the thumbprint value.
      */
     public String thumbprint() {
@@ -135,7 +134,7 @@ public final class VerificationCodeResponseProperties {
 
     /**
      * Set the thumbprint property: Certificate thumbprint.
-     *
+     * 
      * @param thumbprint the thumbprint value to set.
      * @return the VerificationCodeResponseProperties object itself.
      */
@@ -146,7 +145,7 @@ public final class VerificationCodeResponseProperties {
 
     /**
      * Get the isVerified property: Indicate if the certificate is verified by owner of private key.
-     *
+     * 
      * @return the isVerified value.
      */
     public Boolean isVerified() {
@@ -155,7 +154,7 @@ public final class VerificationCodeResponseProperties {
 
     /**
      * Set the isVerified property: Indicate if the certificate is verified by owner of private key.
-     *
+     * 
      * @param isVerified the isVerified value to set.
      * @return the VerificationCodeResponseProperties object itself.
      */
@@ -166,7 +165,7 @@ public final class VerificationCodeResponseProperties {
 
     /**
      * Get the certificate property: base-64 representation of X509 certificate .cer file or just .pem file content.
-     *
+     * 
      * @return the certificate value.
      */
     public byte[] certificate() {
@@ -175,7 +174,7 @@ public final class VerificationCodeResponseProperties {
 
     /**
      * Set the certificate property: base-64 representation of X509 certificate .cer file or just .pem file content.
-     *
+     * 
      * @param certificate the certificate value to set.
      * @return the VerificationCodeResponseProperties object itself.
      */
@@ -186,7 +185,7 @@ public final class VerificationCodeResponseProperties {
 
     /**
      * Get the created property: Certificate created time.
-     *
+     * 
      * @return the created value.
      */
     public String created() {
@@ -195,7 +194,7 @@ public final class VerificationCodeResponseProperties {
 
     /**
      * Set the created property: Certificate created time.
-     *
+     * 
      * @param created the created value to set.
      * @return the VerificationCodeResponseProperties object itself.
      */
@@ -206,7 +205,7 @@ public final class VerificationCodeResponseProperties {
 
     /**
      * Get the updated property: Certificate updated time.
-     *
+     * 
      * @return the updated value.
      */
     public String updated() {
@@ -215,7 +214,7 @@ public final class VerificationCodeResponseProperties {
 
     /**
      * Set the updated property: Certificate updated time.
-     *
+     * 
      * @param updated the updated value to set.
      * @return the VerificationCodeResponseProperties object itself.
      */
@@ -226,9 +225,68 @@ public final class VerificationCodeResponseProperties {
 
     /**
      * Validates the instance.
-     *
+     * 
      * @throws IllegalArgumentException thrown if the instance is not valid.
      */
     public void validate() {
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public JsonWriter toJson(JsonWriter jsonWriter) throws IOException {
+        jsonWriter.writeStartObject();
+        jsonWriter.writeStringField("verificationCode", this.verificationCode);
+        jsonWriter.writeStringField("subject", this.subject);
+        jsonWriter.writeStringField("expiry", this.expiry);
+        jsonWriter.writeStringField("thumbprint", this.thumbprint);
+        jsonWriter.writeBooleanField("isVerified", this.isVerified);
+        jsonWriter.writeBinaryField("certificate", this.certificate);
+        jsonWriter.writeStringField("created", this.created);
+        jsonWriter.writeStringField("updated", this.updated);
+        return jsonWriter.writeEndObject();
+    }
+
+    /**
+     * Reads an instance of VerificationCodeResponseProperties from the JsonReader.
+     * 
+     * @param jsonReader The JsonReader being read.
+     * @return An instance of VerificationCodeResponseProperties if the JsonReader was pointing to an instance of it, or
+     * null if it was pointing to JSON null.
+     * @throws IOException If an error occurs while reading the VerificationCodeResponseProperties.
+     */
+    public static VerificationCodeResponseProperties fromJson(JsonReader jsonReader) throws IOException {
+        return jsonReader.readObject(reader -> {
+            VerificationCodeResponseProperties deserializedVerificationCodeResponseProperties
+                = new VerificationCodeResponseProperties();
+            while (reader.nextToken() != JsonToken.END_OBJECT) {
+                String fieldName = reader.getFieldName();
+                reader.nextToken();
+
+                if ("verificationCode".equals(fieldName)) {
+                    deserializedVerificationCodeResponseProperties.verificationCode = reader.getString();
+                } else if ("subject".equals(fieldName)) {
+                    deserializedVerificationCodeResponseProperties.subject = reader.getString();
+                } else if ("expiry".equals(fieldName)) {
+                    deserializedVerificationCodeResponseProperties.expiry = reader.getString();
+                } else if ("thumbprint".equals(fieldName)) {
+                    deserializedVerificationCodeResponseProperties.thumbprint = reader.getString();
+                } else if ("isVerified".equals(fieldName)) {
+                    deserializedVerificationCodeResponseProperties.isVerified
+                        = reader.getNullable(JsonReader::getBoolean);
+                } else if ("certificate".equals(fieldName)) {
+                    deserializedVerificationCodeResponseProperties.certificate = reader.getBinary();
+                } else if ("created".equals(fieldName)) {
+                    deserializedVerificationCodeResponseProperties.created = reader.getString();
+                } else if ("updated".equals(fieldName)) {
+                    deserializedVerificationCodeResponseProperties.updated = reader.getString();
+                } else {
+                    reader.skipChildren();
+                }
+            }
+
+            return deserializedVerificationCodeResponseProperties;
+        });
     }
 }

@@ -15,6 +15,7 @@ import com.azure.cosmos.implementation.guava25.collect.ImmutableList;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.Iterator;
+import java.util.Optional;
 
 import static com.azure.cosmos.implementation.guava25.base.Preconditions.checkNotNull;
 
@@ -151,23 +152,33 @@ public final class RequestTimeline implements Iterable<RequestTimeline.Event> {
         return RntbdObjectMapper.toString(this);
     }
 
-    @JsonPropertyOrder({ "name", "startTimeUTC", "durationInMicroSec" })
+    @JsonIgnore
+    public Instant getRequestStartTimeUTC() {
+        Event firstEvent = this.events.stream().findFirst().orElse(null);
+        return firstEvent != null ? firstEvent.getStartTime() : null;
+    }
+
+    public Optional<Event> getEvent(EventName eventName) {
+        return this.events.stream().filter(event -> event.name == eventName).findFirst();
+    }
+
+    @JsonPropertyOrder({ "name", "startTimeUTC", "durationInMilliSecs" })
     public static final class Event {
 
         @JsonIgnore
         private final Duration duration;
 
         @JsonProperty
-        private final long durationInMicroSec;
+        private final double durationInMilliSecs;
 
         @JsonProperty("eventName")
-        private final String name;
+        private final EventName name;
 
         @JsonSerialize(using = ToStringSerializer.class)
         @JsonProperty("startTimeUTC")
         private final Instant startTime;
 
-        public Event(final String name, final Instant from, final Instant to) {
+        public Event(final EventName name, final Instant from, final Instant to) {
 
             checkNotNull(name, "expected non-null name");
 
@@ -183,9 +194,9 @@ public final class RequestTimeline implements Iterable<RequestTimeline.Event> {
             }
 
             if (duration != null) {
-                this.durationInMicroSec = duration.toNanos()/1000L;
+                this.durationInMilliSecs = (double)(duration.toNanos()) / (1000d * 1000d);
             } else {
-                this.durationInMicroSec = 0;
+                this.durationInMilliSecs = 0.0D;
             }
         }
 
@@ -194,11 +205,40 @@ public final class RequestTimeline implements Iterable<RequestTimeline.Event> {
         }
 
         public String getName() {
-            return name;
+            return name.getEventName();
         }
 
         public Instant getStartTime() {
             return startTime;
+        }
+    }
+
+    public enum EventName {
+        CREATED("created"),
+        QUEUED("queued"),
+        CHANNEL_ACQUISITION_STARTED("channelAcquisitionStarted"),
+        PIPELINED("pipelined"),
+        TRANSIT_TIME("transitTime"),
+        DECODE_TIME("decodeTime"),
+        RECEIVED("received"),
+        COMPLETED("completed"),
+        CONNECTION_CREATED("connectionCreated"),
+        CONNECTION_ACQUIRED("connectionAcquired"),
+        CONNECTION_CONFIGURED("connectionConfigured"),
+        REQUEST_SENT("requestSent");
+
+        private final String eventName;
+        EventName(String eventName) {
+            this.eventName = eventName;
+        }
+
+        public String getEventName() {
+            return eventName;
+        }
+
+        @Override
+        public String toString() {
+            return this.eventName;
         }
     }
 }

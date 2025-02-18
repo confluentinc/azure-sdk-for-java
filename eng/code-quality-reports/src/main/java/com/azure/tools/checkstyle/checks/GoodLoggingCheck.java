@@ -10,12 +10,9 @@ import com.puppycrawl.tools.checkstyle.api.TokenTypes;
 import com.puppycrawl.tools.checkstyle.utils.TokenUtil;
 
 import java.util.ArrayDeque;
-import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.Objects;
 import java.util.Queue;
-import java.util.Set;
 
 /**
  * Good Logging Practice:
@@ -29,20 +26,16 @@ import java.util.Set;
  * </ol>
  */
 public class GoodLoggingCheck extends AbstractCheck {
-    private static final String CLIENT_LOGGER_PATH = "com.azure.core.util.logging.ClientLogger";
-    private static final String CLIENT_LOGGER = "ClientLogger";
-    private static final String LOGGER = "logger";
     private static final int[] REQUIRED_TOKENS = new int[]{
         TokenTypes.IMPORT,
         TokenTypes.INTERFACE_DEF,
+        TokenTypes.ENUM_DEF,
         TokenTypes.CLASS_DEF,
         TokenTypes.LITERAL_NEW,
         TokenTypes.VARIABLE_DEF,
-        TokenTypes.METHOD_CALL,
-        TokenTypes.METHOD_DEF
+        TokenTypes.METHOD_CALL
     };
 
-    static final String STATIC_LOGGER_ERROR = "Use a static ClientLogger instance in a static method.";
     static final String LOGGER_NAME_ERROR = "ClientLogger instance naming: use \"%s\" instead of \"%s\" for consistency.";
     static final String NOT_CLIENT_LOGGER_ERROR = "Do not use %s class. Use \"%s\" as a logging mechanism instead of \"%s\".";
     static final String LOGGER_NAME_MISMATCH_ERROR = "Not newing a ClientLogger with matching class name. Use \"%s.class\" "
@@ -53,9 +46,57 @@ public class GoodLoggingCheck extends AbstractCheck {
     // A LIFO queue stores the class names, pop top element if exist the class name AST node
     private final Queue<String> classNameDeque = Collections.asLifoQueue(new ArrayDeque<>());
     // Collection of Invalid logging packages
-    private static final Set<String> INVALID_LOGS = Collections.unmodifiableSet(new HashSet<>(Arrays.asList(
+    private static final String[] INVALID_LOGS = new String[] {
         "org.slf4j", "org.apache.logging.log4j", "java.util.logging"
-    )));
+    };
+
+    private String fullyQualifiedLoggerName = "com.azure.core.util.logging.ClientLogger";
+    private String simpleClassName = "ClientLogger";
+    private String loggerName = "logger";
+
+    /**
+     * Sets the fully qualified logger name.
+     * <p>
+     * If not set this will default to {@code com.azure.core.util.logging.ClientLogger}.
+     *
+     * @param fullyQualifiedLoggerName the fully qualified logger name.
+     * @throws IllegalArgumentException if the fully qualified logger name is null or empty.
+     */
+    public final void setFullyQualifiedLoggerName(String fullyQualifiedLoggerName) {
+        if (fullyQualifiedLoggerName == null || fullyQualifiedLoggerName.isEmpty()) {
+            throw new IllegalArgumentException("fullyQualifiedLoggerName cannot be null or empty.");
+        }
+
+        this.fullyQualifiedLoggerName = fullyQualifiedLoggerName;
+    }
+
+    /**
+     * Sets the simple class name for the logger.
+     * <p>
+     * If not set this will default to {@code ClientLogger}.
+     *
+     * @param simpleClassName the simple class name for the logger.
+     * @throws IllegalArgumentException if the simple class name is null or empty.
+     */
+    public final void setSimpleClassName(String simpleClassName) {
+        if (simpleClassName == null || simpleClassName.isEmpty()) {
+            throw new IllegalArgumentException("simpleClassName cannot be null or empty.");
+        }
+
+        this.simpleClassName = simpleClassName;
+    }
+
+    /**
+     * Sets the case-insensitive name of the logger instance.
+     * <p>
+     * If not set this will default to {@code logger}.
+     *
+     * @param loggerName the case-insensitive name of the logger instance.
+     * @throws IllegalArgumentException if the logger name is null or empty.
+     */
+    public final void setLoggerName(String loggerName) {
+        this.loggerName = loggerName;
+    }
 
     @Override
     public int[] getDefaultTokens() {
@@ -79,7 +120,9 @@ public class GoodLoggingCheck extends AbstractCheck {
 
     @Override
     public void leaveToken(DetailAST ast) {
-        if (ast.getType() == TokenTypes.CLASS_DEF) {
+        if (ast.getType() == TokenTypes.CLASS_DEF
+            || ast.getType() == TokenTypes.INTERFACE_DEF
+            || ast.getType() == TokenTypes.ENUM_DEF) {
             classNameDeque.poll();
         }
     }
@@ -89,16 +132,17 @@ public class GoodLoggingCheck extends AbstractCheck {
         switch (ast.getType()) {
             case TokenTypes.IMPORT:
                 final String importClassPath = FullIdent.createFullIdentBelow(ast).getText();
-                hasClientLoggerImported = hasClientLoggerImported || importClassPath.equals(CLIENT_LOGGER_PATH);
+                hasClientLoggerImported = hasClientLoggerImported || importClassPath.equals(fullyQualifiedLoggerName);
 
-                INVALID_LOGS.forEach(item -> {
-                    if (importClassPath.startsWith(item)) {
-                        log(ast, String.format(NOT_CLIENT_LOGGER_ERROR, "external logger", CLIENT_LOGGER_PATH, item));
+                for (String invalidLog : INVALID_LOGS) {
+                    if (importClassPath.startsWith(invalidLog)) {
+                        log(ast, String.format(NOT_CLIENT_LOGGER_ERROR, "external logger", fullyQualifiedLoggerName, invalidLog));
                     }
-                });
+                }
                 break;
             case TokenTypes.CLASS_DEF:
             case TokenTypes.INTERFACE_DEF:
+            case TokenTypes.ENUM_DEF:
                 classNameDeque.offer(ast.findFirstToken(TokenTypes.IDENT).getText());
                 break;
             case TokenTypes.LITERAL_NEW:
@@ -114,11 +158,8 @@ public class GoodLoggingCheck extends AbstractCheck {
                 }
                 final String methodCallName = FullIdent.createFullIdentBelow(dotToken).getText();
                 if (methodCallName.startsWith("System.out") || methodCallName.startsWith("System.err")) {
-                    log(ast, String.format(NOT_CLIENT_LOGGER_ERROR, "Java System", CLIENT_LOGGER_PATH, methodCallName));
+                    log(ast, String.format(NOT_CLIENT_LOGGER_ERROR, "Java System", fullyQualifiedLoggerName, methodCallName));
                 }
-                break;
-            case TokenTypes.METHOD_DEF:
-                checkForInvalidStaticLoggerUsage(ast);
                 break;
             default:
                 // Checkstyle complains if there's no default block in switch
@@ -138,7 +179,7 @@ public class GoodLoggingCheck extends AbstractCheck {
             return false;
         }
         return TokenUtil.findFirstTokenByPredicate(typeAST, node ->
-            node.getType() == TokenTypes.IDENT && node.getText().equals(CLIENT_LOGGER)
+            node.getType() == TokenTypes.IDENT && node.getText().equals(simpleClassName)
         ).isPresent();
     }
 
@@ -150,7 +191,7 @@ public class GoodLoggingCheck extends AbstractCheck {
     private void checkLoggerInstantiation(DetailAST literalNewToken) {
         final DetailAST identToken = literalNewToken.findFirstToken(TokenTypes.IDENT);
         // Not ClientLogger instance
-        if (identToken == null || !identToken.getText().equals(CLIENT_LOGGER)) {
+        if (identToken == null || !identToken.getText().equals(simpleClassName)) {
             return;
         }
         // LITERAL_NEW node always has ELIST node below
@@ -181,37 +222,8 @@ public class GoodLoggingCheck extends AbstractCheck {
         }
         // Check if the Logger instance named as 'logger/LOGGER'.
         final DetailAST identAST = varToken.findFirstToken(TokenTypes.IDENT);
-        if (identAST != null && !identAST.getText().equalsIgnoreCase(LOGGER)) {
-            log(varToken, String.format(LOGGER_NAME_ERROR, LOGGER, identAST.getText()));
+        if (identAST != null && !identAST.getText().equalsIgnoreCase(loggerName)) {
+            log(varToken, String.format(LOGGER_NAME_ERROR, loggerName, identAST.getText()));
         }
     }
-
-    /**
-     * Report error if a static ClientLogger instance used in a non-static method.
-     *
-     * @param methodDefToken METHOD_DEF AST node
-     */
-    private void checkForInvalidStaticLoggerUsage(DetailAST methodDefToken) {
-
-        // if not a static method
-        if (!(TokenUtil.findFirstTokenByPredicate(methodDefToken,
-            node -> node.branchContains(TokenTypes.LITERAL_STATIC)).isPresent())) {
-
-            // error if static `LOGGER` present, LOGGER.*
-            if (methodDefToken.findFirstToken(TokenTypes.SLIST) != null) {
-                TokenUtil.forEachChild(methodDefToken.findFirstToken(TokenTypes.SLIST), TokenTypes.EXPR, exprToken -> {
-                    if (exprToken != null) {
-                        DetailAST methodCallToken = exprToken.findFirstToken(TokenTypes.METHOD_CALL);
-                        if (methodCallToken != null && methodCallToken.findFirstToken(TokenTypes.DOT) != null) {
-                            if (methodCallToken.findFirstToken(TokenTypes.DOT)
-                                .findFirstToken(TokenTypes.IDENT).getText().equals(LOGGER.toUpperCase())) {
-                                log(methodDefToken, STATIC_LOGGER_ERROR);
-                            }
-                        }
-                    }
-                });
-            }
-        }
-    }
-
 }

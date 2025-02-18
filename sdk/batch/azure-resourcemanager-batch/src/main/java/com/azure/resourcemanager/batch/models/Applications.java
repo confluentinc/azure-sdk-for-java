@@ -8,11 +8,28 @@ import com.azure.core.http.rest.PagedIterable;
 import com.azure.core.http.rest.Response;
 import com.azure.core.util.Context;
 
-/** Resource collection API of Applications. */
+/**
+ * Resource collection API of Applications.
+ */
 public interface Applications {
     /**
      * Deletes an application.
-     *
+     * 
+     * @param resourceGroupName The name of the resource group that contains the Batch account.
+     * @param accountName The name of the Batch account.
+     * @param applicationName The name of the application. This must be unique within the account.
+     * @param context The context to associate with this operation.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return the {@link Response}.
+     */
+    Response<Void> deleteWithResponse(String resourceGroupName, String accountName, String applicationName,
+        Context context);
+
+    /**
+     * Deletes an application.
+     * 
      * @param resourceGroupName The name of the resource group that contains the Batch account.
      * @param accountName The name of the Batch account.
      * @param applicationName The name of the application. This must be unique within the account.
@@ -23,8 +40,8 @@ public interface Applications {
     void delete(String resourceGroupName, String accountName, String applicationName);
 
     /**
-     * Deletes an application.
-     *
+     * Gets information about the specified application.
+     * 
      * @param resourceGroupName The name of the resource group that contains the Batch account.
      * @param accountName The name of the Batch account.
      * @param applicationName The name of the application. This must be unique within the account.
@@ -32,14 +49,14 @@ public interface Applications {
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the response.
+     * @return information about the specified application along with {@link Response}.
      */
-    Response<Void> deleteWithResponse(
-        String resourceGroupName, String accountName, String applicationName, Context context);
+    Response<Application> getWithResponse(String resourceGroupName, String accountName, String applicationName,
+        Context context);
 
     /**
      * Gets information about the specified application.
-     *
+     * 
      * @param resourceGroupName The name of the resource group that contains the Batch account.
      * @param accountName The name of the Batch account.
      * @param applicationName The name of the application. This must be unique within the account.
@@ -51,35 +68,20 @@ public interface Applications {
     Application get(String resourceGroupName, String accountName, String applicationName);
 
     /**
-     * Gets information about the specified application.
-     *
-     * @param resourceGroupName The name of the resource group that contains the Batch account.
-     * @param accountName The name of the Batch account.
-     * @param applicationName The name of the application. This must be unique within the account.
-     * @param context The context to associate with this operation.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return information about the specified application.
-     */
-    Response<Application> getWithResponse(
-        String resourceGroupName, String accountName, String applicationName, Context context);
-
-    /**
      * Lists all of the applications in the specified account.
-     *
+     * 
      * @param resourceGroupName The name of the resource group that contains the Batch account.
      * @param accountName The name of the Batch account.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the result of performing list applications.
+     * @return the result of performing list applications as paginated response with {@link PagedIterable}.
      */
     PagedIterable<Application> list(String resourceGroupName, String accountName);
 
     /**
      * Lists all of the applications in the specified account.
-     *
+     * 
      * @param resourceGroupName The name of the resource group that contains the Batch account.
      * @param accountName The name of the Batch account.
      * @param maxresults The maximum number of items to return in the response.
@@ -87,36 +89,36 @@ public interface Applications {
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the result of performing list applications.
+     * @return the result of performing list applications as paginated response with {@link PagedIterable}.
      */
     PagedIterable<Application> list(String resourceGroupName, String accountName, Integer maxresults, Context context);
 
     /**
      * Gets information about the specified application.
-     *
+     * 
      * @param id the resource ID.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return information about the specified application.
+     * @return information about the specified application along with {@link Response}.
      */
     Application getById(String id);
 
     /**
      * Gets information about the specified application.
-     *
+     * 
      * @param id the resource ID.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return information about the specified application.
+     * @return information about the specified application along with {@link Response}.
      */
     Response<Application> getByIdWithResponse(String id, Context context);
 
     /**
      * Deletes an application.
-     *
+     * 
      * @param id the resource ID.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
@@ -126,19 +128,19 @@ public interface Applications {
 
     /**
      * Deletes an application.
-     *
+     * 
      * @param id the resource ID.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the response.
+     * @return the {@link Response}.
      */
     Response<Void> deleteByIdWithResponse(String id, Context context);
 
     /**
      * Begins definition for a new Application resource.
-     *
+     * 
      * @param name resource name.
      * @return the first stage of the new Application definition.
      */

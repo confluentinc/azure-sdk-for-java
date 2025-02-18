@@ -4,15 +4,18 @@
 
 package com.azure.resourcemanager.storage.models;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonValue;
-
-/** Defines values for Action. */
+/**
+ * The action of virtual network rule.
+ */
 public enum Action {
-    /** Enum value Allow. */
+    /**
+     * Enum value Allow.
+     */
     ALLOW("Allow");
 
-    /** The actual serialized value for a Action instance. */
+    /**
+     * The actual serialized value for a Action instance.
+     */
     private final String value;
 
     Action(String value) {
@@ -21,12 +24,14 @@ public enum Action {
 
     /**
      * Parses a serialized value to a Action instance.
-     *
+     * 
      * @param value the serialized value to parse.
      * @return the parsed Action object, or null if unable to parse.
      */
-    @JsonCreator
     public static Action fromString(String value) {
+        if (value == null) {
+            return null;
+        }
         Action[] items = Action.values();
         for (Action item : items) {
             if (item.toString().equalsIgnoreCase(value)) {
@@ -36,7 +41,9 @@ public enum Action {
         return null;
     }
 
-    @JsonValue
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String toString() {
         return this.value;

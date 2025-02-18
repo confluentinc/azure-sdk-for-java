@@ -11,39 +11,60 @@ import com.azure.core.http.rest.Response;
 import com.azure.core.util.Context;
 import com.azure.resourcemanager.datafactory.fluent.models.LinkedServiceResourceInner;
 
-/** An instance of this class provides access to all the operations defined in LinkedServicesClient. */
+/**
+ * An instance of this class provides access to all the operations defined in LinkedServicesClient.
+ */
 public interface LinkedServicesClient {
     /**
      * Lists linked services.
-     *
+     * 
      * @param resourceGroupName The resource group name.
      * @param factoryName The factory name.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return a list of linked service resources.
+     * @return a list of linked service resources as paginated response with {@link PagedIterable}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
     PagedIterable<LinkedServiceResourceInner> listByFactory(String resourceGroupName, String factoryName);
 
     /**
      * Lists linked services.
-     *
+     * 
      * @param resourceGroupName The resource group name.
      * @param factoryName The factory name.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return a list of linked service resources.
+     * @return a list of linked service resources as paginated response with {@link PagedIterable}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
-    PagedIterable<LinkedServiceResourceInner> listByFactory(
-        String resourceGroupName, String factoryName, Context context);
+    PagedIterable<LinkedServiceResourceInner> listByFactory(String resourceGroupName, String factoryName,
+        Context context);
 
     /**
      * Creates or updates a linked service.
-     *
+     * 
+     * @param resourceGroupName The resource group name.
+     * @param factoryName The factory name.
+     * @param linkedServiceName The linked service name.
+     * @param linkedService Linked service resource definition.
+     * @param ifMatch ETag of the linkedService entity. Should only be specified for update, for which it should match
+     * existing entity or can be * for unconditional update.
+     * @param context The context to associate with this operation.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return linked service resource type along with {@link Response}.
+     */
+    @ServiceMethod(returns = ReturnType.SINGLE)
+    Response<LinkedServiceResourceInner> createOrUpdateWithResponse(String resourceGroupName, String factoryName,
+        String linkedServiceName, LinkedServiceResourceInner linkedService, String ifMatch, Context context);
+
+    /**
+     * Creates or updates a linked service.
+     * 
      * @param resourceGroupName The resource group name.
      * @param factoryName The factory name.
      * @param linkedServiceName The linked service name.
@@ -54,39 +75,30 @@ public interface LinkedServicesClient {
      * @return linked service resource type.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    LinkedServiceResourceInner createOrUpdate(
-        String resourceGroupName,
-        String factoryName,
-        String linkedServiceName,
+    LinkedServiceResourceInner createOrUpdate(String resourceGroupName, String factoryName, String linkedServiceName,
         LinkedServiceResourceInner linkedService);
 
     /**
-     * Creates or updates a linked service.
-     *
+     * Gets a linked service.
+     * 
      * @param resourceGroupName The resource group name.
      * @param factoryName The factory name.
      * @param linkedServiceName The linked service name.
-     * @param linkedService Linked service resource definition.
-     * @param ifMatch ETag of the linkedService entity. Should only be specified for update, for which it should match
-     *     existing entity or can be * for unconditional update.
+     * @param ifNoneMatch ETag of the linked service entity. Should only be specified for get. If the ETag matches the
+     * existing entity tag, or if * was provided, then no content will be returned.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return linked service resource type along with {@link Response}.
+     * @return a linked service along with {@link Response}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    Response<LinkedServiceResourceInner> createOrUpdateWithResponse(
-        String resourceGroupName,
-        String factoryName,
-        String linkedServiceName,
-        LinkedServiceResourceInner linkedService,
-        String ifMatch,
-        Context context);
+    Response<LinkedServiceResourceInner> getWithResponse(String resourceGroupName, String factoryName,
+        String linkedServiceName, String ifNoneMatch, Context context);
 
     /**
      * Gets a linked service.
-     *
+     * 
      * @param resourceGroupName The resource group name.
      * @param factoryName The factory name.
      * @param linkedServiceName The linked service name.
@@ -99,39 +111,8 @@ public interface LinkedServicesClient {
     LinkedServiceResourceInner get(String resourceGroupName, String factoryName, String linkedServiceName);
 
     /**
-     * Gets a linked service.
-     *
-     * @param resourceGroupName The resource group name.
-     * @param factoryName The factory name.
-     * @param linkedServiceName The linked service name.
-     * @param ifNoneMatch ETag of the linked service entity. Should only be specified for get. If the ETag matches the
-     *     existing entity tag, or if * was provided, then no content will be returned.
-     * @param context The context to associate with this operation.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return a linked service along with {@link Response}.
-     */
-    @ServiceMethod(returns = ReturnType.SINGLE)
-    Response<LinkedServiceResourceInner> getWithResponse(
-        String resourceGroupName, String factoryName, String linkedServiceName, String ifNoneMatch, Context context);
-
-    /**
      * Deletes a linked service.
-     *
-     * @param resourceGroupName The resource group name.
-     * @param factoryName The factory name.
-     * @param linkedServiceName The linked service name.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     */
-    @ServiceMethod(returns = ReturnType.SINGLE)
-    void delete(String resourceGroupName, String factoryName, String linkedServiceName);
-
-    /**
-     * Deletes a linked service.
-     *
+     * 
      * @param resourceGroupName The resource group name.
      * @param factoryName The factory name.
      * @param linkedServiceName The linked service name.
@@ -142,6 +123,19 @@ public interface LinkedServicesClient {
      * @return the {@link Response}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    Response<Void> deleteWithResponse(
-        String resourceGroupName, String factoryName, String linkedServiceName, Context context);
+    Response<Void> deleteWithResponse(String resourceGroupName, String factoryName, String linkedServiceName,
+        Context context);
+
+    /**
+     * Deletes a linked service.
+     * 
+     * @param resourceGroupName The resource group name.
+     * @param factoryName The factory name.
+     * @param linkedServiceName The linked service name.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     */
+    @ServiceMethod(returns = ReturnType.SINGLE)
+    void delete(String resourceGroupName, String factoryName, String linkedServiceName);
 }

@@ -8,44 +8,67 @@ import com.azure.core.http.rest.PagedIterable;
 import com.azure.core.http.rest.Response;
 import com.azure.core.util.Context;
 
-/** Resource collection API of Schedules. */
+/**
+ * Resource collection API of Schedules.
+ */
 public interface Schedules {
     /**
+     * Get all schedules for a lab.
+     * 
      * Returns a list of all schedules for a lab.
-     *
+     * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
-     * @param labName The name of the lab that uniquely identifies it within containing lab account. Used in resource
-     *     URIs.
+     * @param labName The name of the lab that uniquely identifies it within containing lab plan. Used in resource URIs.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return paged list of schedules.
+     * @return paged list of schedules as paginated response with {@link PagedIterable}.
      */
     PagedIterable<Schedule> listByLab(String resourceGroupName, String labName);
 
     /**
+     * Get all schedules for a lab.
+     * 
      * Returns a list of all schedules for a lab.
-     *
+     * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
-     * @param labName The name of the lab that uniquely identifies it within containing lab account. Used in resource
-     *     URIs.
+     * @param labName The name of the lab that uniquely identifies it within containing lab plan. Used in resource URIs.
      * @param filter The filter to apply to the operation.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return paged list of schedules.
+     * @return paged list of schedules as paginated response with {@link PagedIterable}.
      */
     PagedIterable<Schedule> listByLab(String resourceGroupName, String labName, String filter, Context context);
 
     /**
+     * Get a lab Schedule.
+     * 
      * Returns the properties of a lab Schedule.
-     *
+     * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
-     * @param labName The name of the lab that uniquely identifies it within containing lab account. Used in resource
-     *     URIs.
+     * @param labName The name of the lab that uniquely identifies it within containing lab plan. Used in resource URIs.
      * @param scheduleName The name of the schedule that uniquely identifies it within containing lab. Used in resource
-     *     URIs.
+     * URIs.
+     * @param context The context to associate with this operation.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return schedule for automatically turning virtual machines in a lab on and off at specified times along with
+     * {@link Response}.
+     */
+    Response<Schedule> getWithResponse(String resourceGroupName, String labName, String scheduleName, Context context);
+
+    /**
+     * Get a lab Schedule.
+     * 
+     * Returns the properties of a lab Schedule.
+     * 
+     * @param resourceGroupName The name of the resource group. The name is case insensitive.
+     * @param labName The name of the lab that uniquely identifies it within containing lab plan. Used in resource URIs.
+     * @param scheduleName The name of the schedule that uniquely identifies it within containing lab. Used in resource
+     * URIs.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
@@ -54,30 +77,14 @@ public interface Schedules {
     Schedule get(String resourceGroupName, String labName, String scheduleName);
 
     /**
-     * Returns the properties of a lab Schedule.
-     *
-     * @param resourceGroupName The name of the resource group. The name is case insensitive.
-     * @param labName The name of the lab that uniquely identifies it within containing lab account. Used in resource
-     *     URIs.
-     * @param scheduleName The name of the schedule that uniquely identifies it within containing lab. Used in resource
-     *     URIs.
-     * @param context The context to associate with this operation.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return schedule for automatically turning virtual machines in a lab on and off at specified times along with
-     *     {@link Response}.
-     */
-    Response<Schedule> getWithResponse(String resourceGroupName, String labName, String scheduleName, Context context);
-
-    /**
+     * Deletes a schedule resource.
+     * 
      * Operation to delete a schedule resource.
-     *
+     * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
-     * @param labName The name of the lab that uniquely identifies it within containing lab account. Used in resource
-     *     URIs.
+     * @param labName The name of the lab that uniquely identifies it within containing lab plan. Used in resource URIs.
      * @param scheduleName The name of the schedule that uniquely identifies it within containing lab. Used in resource
-     *     URIs.
+     * URIs.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
@@ -85,13 +92,14 @@ public interface Schedules {
     void delete(String resourceGroupName, String labName, String scheduleName);
 
     /**
+     * Deletes a schedule resource.
+     * 
      * Operation to delete a schedule resource.
-     *
+     * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
-     * @param labName The name of the lab that uniquely identifies it within containing lab account. Used in resource
-     *     URIs.
+     * @param labName The name of the lab that uniquely identifies it within containing lab plan. Used in resource URIs.
      * @param scheduleName The name of the schedule that uniquely identifies it within containing lab. Used in resource
-     *     URIs.
+     * URIs.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
@@ -100,33 +108,39 @@ public interface Schedules {
     void delete(String resourceGroupName, String labName, String scheduleName, Context context);
 
     /**
+     * Get a lab Schedule.
+     * 
      * Returns the properties of a lab Schedule.
-     *
+     * 
      * @param id the resource ID.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
      * @return schedule for automatically turning virtual machines in a lab on and off at specified times along with
-     *     {@link Response}.
+     * {@link Response}.
      */
     Schedule getById(String id);
 
     /**
+     * Get a lab Schedule.
+     * 
      * Returns the properties of a lab Schedule.
-     *
+     * 
      * @param id the resource ID.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
      * @return schedule for automatically turning virtual machines in a lab on and off at specified times along with
-     *     {@link Response}.
+     * {@link Response}.
      */
     Response<Schedule> getByIdWithResponse(String id, Context context);
 
     /**
+     * Deletes a schedule resource.
+     * 
      * Operation to delete a schedule resource.
-     *
+     * 
      * @param id the resource ID.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
@@ -135,8 +149,10 @@ public interface Schedules {
     void deleteById(String id);
 
     /**
+     * Deletes a schedule resource.
+     * 
      * Operation to delete a schedule resource.
-     *
+     * 
      * @param id the resource ID.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
@@ -147,7 +163,7 @@ public interface Schedules {
 
     /**
      * Begins definition for a new Schedule resource.
-     *
+     * 
      * @param name resource name.
      * @return the first stage of the new Schedule definition.
      */

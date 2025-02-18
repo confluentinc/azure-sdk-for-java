@@ -5,32 +5,51 @@
 package com.azure.resourcemanager.securityinsights.models;
 
 import com.azure.core.util.ExpandableStringEnum;
-import com.fasterxml.jackson.annotation.JsonCreator;
 import java.util.Collection;
 
-/** Defines values for IncidentStatus. */
+/**
+ * The status of the incident.
+ */
 public final class IncidentStatus extends ExpandableStringEnum<IncidentStatus> {
-    /** Static value New for IncidentStatus. */
+    /**
+     * Static value New for IncidentStatus.
+     */
     public static final IncidentStatus NEW = fromString("New");
 
-    /** Static value Active for IncidentStatus. */
+    /**
+     * Static value Active for IncidentStatus.
+     */
     public static final IncidentStatus ACTIVE = fromString("Active");
 
-    /** Static value Closed for IncidentStatus. */
+    /**
+     * Static value Closed for IncidentStatus.
+     */
     public static final IncidentStatus CLOSED = fromString("Closed");
 
     /**
+     * Creates a new instance of IncidentStatus value.
+     * 
+     * @deprecated Use the {@link #fromString(String)} factory method.
+     */
+    @Deprecated
+    public IncidentStatus() {
+    }
+
+    /**
      * Creates or finds a IncidentStatus from its string representation.
-     *
+     * 
      * @param name a name to look for.
      * @return the corresponding IncidentStatus.
      */
-    @JsonCreator
     public static IncidentStatus fromString(String name) {
         return fromString(name, IncidentStatus.class);
     }
 
-    /** @return known IncidentStatus values. */
+    /**
+     * Gets known IncidentStatus values.
+     * 
+     * @return known IncidentStatus values.
+     */
     public static Collection<IncidentStatus> values() {
         return values(IncidentStatus.class);
     }

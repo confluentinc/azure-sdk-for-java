@@ -45,6 +45,10 @@ public final class IntegrationRuntimeResourceImpl
         return this.innerModel().etag();
     }
 
+    public String resourceGroupName() {
+        return resourceGroupName;
+    }
+
     public IntegrationRuntimeResourceInner innerModel() {
         return this.innerObject;
     }
@@ -70,34 +74,25 @@ public final class IntegrationRuntimeResourceImpl
     }
 
     public IntegrationRuntimeResource create() {
-        this.innerObject =
-            serviceManager
-                .serviceClient()
-                .getIntegrationRuntimes()
-                .createOrUpdateWithResponse(
-                    resourceGroupName,
-                    factoryName,
-                    integrationRuntimeName,
-                    this.innerModel(),
-                    createIfMatch,
-                    Context.NONE)
-                .getValue();
+        this.innerObject = serviceManager.serviceClient()
+            .getIntegrationRuntimes()
+            .createOrUpdateWithResponse(resourceGroupName, factoryName, integrationRuntimeName, this.innerModel(),
+                createIfMatch, Context.NONE)
+            .getValue();
         return this;
     }
 
     public IntegrationRuntimeResource create(Context context) {
-        this.innerObject =
-            serviceManager
-                .serviceClient()
-                .getIntegrationRuntimes()
-                .createOrUpdateWithResponse(
-                    resourceGroupName, factoryName, integrationRuntimeName, this.innerModel(), createIfMatch, context)
-                .getValue();
+        this.innerObject = serviceManager.serviceClient()
+            .getIntegrationRuntimes()
+            .createOrUpdateWithResponse(resourceGroupName, factoryName, integrationRuntimeName, this.innerModel(),
+                createIfMatch, context)
+            .getValue();
         return this;
     }
 
-    IntegrationRuntimeResourceImpl(
-        String name, com.azure.resourcemanager.datafactory.DataFactoryManager serviceManager) {
+    IntegrationRuntimeResourceImpl(String name,
+        com.azure.resourcemanager.datafactory.DataFactoryManager serviceManager) {
         this.innerObject = new IntegrationRuntimeResourceInner();
         this.serviceManager = serviceManager;
         this.integrationRuntimeName = name;
@@ -110,114 +105,91 @@ public final class IntegrationRuntimeResourceImpl
     }
 
     public IntegrationRuntimeResource apply() {
-        this.innerObject =
-            serviceManager
-                .serviceClient()
-                .getIntegrationRuntimes()
-                .updateWithResponse(
-                    resourceGroupName,
-                    factoryName,
-                    integrationRuntimeName,
-                    updateUpdateIntegrationRuntimeRequest,
-                    Context.NONE)
-                .getValue();
+        this.innerObject = serviceManager.serviceClient()
+            .getIntegrationRuntimes()
+            .updateWithResponse(resourceGroupName, factoryName, integrationRuntimeName,
+                updateUpdateIntegrationRuntimeRequest, Context.NONE)
+            .getValue();
         return this;
     }
 
     public IntegrationRuntimeResource apply(Context context) {
-        this.innerObject =
-            serviceManager
-                .serviceClient()
-                .getIntegrationRuntimes()
-                .updateWithResponse(
-                    resourceGroupName,
-                    factoryName,
-                    integrationRuntimeName,
-                    updateUpdateIntegrationRuntimeRequest,
-                    context)
-                .getValue();
+        this.innerObject = serviceManager.serviceClient()
+            .getIntegrationRuntimes()
+            .updateWithResponse(resourceGroupName, factoryName, integrationRuntimeName,
+                updateUpdateIntegrationRuntimeRequest, context)
+            .getValue();
         return this;
     }
 
-    IntegrationRuntimeResourceImpl(
-        IntegrationRuntimeResourceInner innerObject,
+    IntegrationRuntimeResourceImpl(IntegrationRuntimeResourceInner innerObject,
         com.azure.resourcemanager.datafactory.DataFactoryManager serviceManager) {
         this.innerObject = innerObject;
         this.serviceManager = serviceManager;
-        this.resourceGroupName = Utils.getValueFromIdByName(innerObject.id(), "resourceGroups");
-        this.factoryName = Utils.getValueFromIdByName(innerObject.id(), "factories");
-        this.integrationRuntimeName = Utils.getValueFromIdByName(innerObject.id(), "integrationRuntimes");
+        this.resourceGroupName = ResourceManagerUtils.getValueFromIdByName(innerObject.id(), "resourceGroups");
+        this.factoryName = ResourceManagerUtils.getValueFromIdByName(innerObject.id(), "factories");
+        this.integrationRuntimeName
+            = ResourceManagerUtils.getValueFromIdByName(innerObject.id(), "integrationRuntimes");
     }
 
     public IntegrationRuntimeResource refresh() {
         String localIfNoneMatch = null;
-        this.innerObject =
-            serviceManager
-                .serviceClient()
-                .getIntegrationRuntimes()
-                .getWithResponse(resourceGroupName, factoryName, integrationRuntimeName, localIfNoneMatch, Context.NONE)
-                .getValue();
+        this.innerObject = serviceManager.serviceClient()
+            .getIntegrationRuntimes()
+            .getWithResponse(resourceGroupName, factoryName, integrationRuntimeName, localIfNoneMatch, Context.NONE)
+            .getValue();
         return this;
     }
 
     public IntegrationRuntimeResource refresh(Context context) {
         String localIfNoneMatch = null;
-        this.innerObject =
-            serviceManager
-                .serviceClient()
-                .getIntegrationRuntimes()
-                .getWithResponse(resourceGroupName, factoryName, integrationRuntimeName, localIfNoneMatch, context)
-                .getValue();
+        this.innerObject = serviceManager.serviceClient()
+            .getIntegrationRuntimes()
+            .getWithResponse(resourceGroupName, factoryName, integrationRuntimeName, localIfNoneMatch, context)
+            .getValue();
         return this;
+    }
+
+    public Response<IntegrationRuntimeStatusResponse> getStatusWithResponse(Context context) {
+        return serviceManager.integrationRuntimes()
+            .getStatusWithResponse(resourceGroupName, factoryName, integrationRuntimeName, context);
     }
 
     public IntegrationRuntimeStatusResponse getStatus() {
         return serviceManager.integrationRuntimes().getStatus(resourceGroupName, factoryName, integrationRuntimeName);
     }
 
-    public Response<IntegrationRuntimeStatusResponse> getStatusWithResponse(Context context) {
-        return serviceManager
-            .integrationRuntimes()
-            .getStatusWithResponse(resourceGroupName, factoryName, integrationRuntimeName, context);
-    }
-
-    public IntegrationRuntimeConnectionInfo getConnectionInfo() {
-        return serviceManager
-            .integrationRuntimes()
-            .getConnectionInfo(resourceGroupName, factoryName, integrationRuntimeName);
-    }
-
     public Response<IntegrationRuntimeConnectionInfo> getConnectionInfoWithResponse(Context context) {
-        return serviceManager
-            .integrationRuntimes()
+        return serviceManager.integrationRuntimes()
             .getConnectionInfoWithResponse(resourceGroupName, factoryName, integrationRuntimeName, context);
     }
 
-    public IntegrationRuntimeAuthKeys regenerateAuthKey(
-        IntegrationRuntimeRegenerateKeyParameters regenerateKeyParameters) {
-        return serviceManager
-            .integrationRuntimes()
-            .regenerateAuthKey(resourceGroupName, factoryName, integrationRuntimeName, regenerateKeyParameters);
+    public IntegrationRuntimeConnectionInfo getConnectionInfo() {
+        return serviceManager.integrationRuntimes()
+            .getConnectionInfo(resourceGroupName, factoryName, integrationRuntimeName);
     }
 
     public Response<IntegrationRuntimeAuthKeys> regenerateAuthKeyWithResponse(
         IntegrationRuntimeRegenerateKeyParameters regenerateKeyParameters, Context context) {
-        return serviceManager
-            .integrationRuntimes()
-            .regenerateAuthKeyWithResponse(
-                resourceGroupName, factoryName, integrationRuntimeName, regenerateKeyParameters, context);
+        return serviceManager.integrationRuntimes()
+            .regenerateAuthKeyWithResponse(resourceGroupName, factoryName, integrationRuntimeName,
+                regenerateKeyParameters, context);
     }
 
-    public IntegrationRuntimeAuthKeys listAuthKeys() {
-        return serviceManager
-            .integrationRuntimes()
-            .listAuthKeys(resourceGroupName, factoryName, integrationRuntimeName);
+    public IntegrationRuntimeAuthKeys
+        regenerateAuthKey(IntegrationRuntimeRegenerateKeyParameters regenerateKeyParameters) {
+        return serviceManager.integrationRuntimes()
+            .regenerateAuthKey(resourceGroupName, factoryName, integrationRuntimeName, regenerateKeyParameters);
     }
 
     public Response<IntegrationRuntimeAuthKeys> listAuthKeysWithResponse(Context context) {
-        return serviceManager
-            .integrationRuntimes()
+        return serviceManager.integrationRuntimes()
             .listAuthKeysWithResponse(resourceGroupName, factoryName, integrationRuntimeName, context);
+    }
+
+    public IntegrationRuntimeAuthKeys listAuthKeys() {
+        return serviceManager.integrationRuntimes()
+            .listAuthKeys(resourceGroupName, factoryName, integrationRuntimeName);
     }
 
     public IntegrationRuntimeStatusResponse start() {
@@ -225,8 +197,7 @@ public final class IntegrationRuntimeResourceImpl
     }
 
     public IntegrationRuntimeStatusResponse start(Context context) {
-        return serviceManager
-            .integrationRuntimes()
+        return serviceManager.integrationRuntimes()
             .start(resourceGroupName, factoryName, integrationRuntimeName, context);
     }
 
@@ -238,66 +209,58 @@ public final class IntegrationRuntimeResourceImpl
         serviceManager.integrationRuntimes().stop(resourceGroupName, factoryName, integrationRuntimeName, context);
     }
 
+    public Response<Void> syncCredentialsWithResponse(Context context) {
+        return serviceManager.integrationRuntimes()
+            .syncCredentialsWithResponse(resourceGroupName, factoryName, integrationRuntimeName, context);
+    }
+
     public void syncCredentials() {
         serviceManager.integrationRuntimes().syncCredentials(resourceGroupName, factoryName, integrationRuntimeName);
     }
 
-    public Response<Void> syncCredentialsWithResponse(Context context) {
-        return serviceManager
-            .integrationRuntimes()
-            .syncCredentialsWithResponse(resourceGroupName, factoryName, integrationRuntimeName, context);
+    public Response<IntegrationRuntimeMonitoringData> getMonitoringDataWithResponse(Context context) {
+        return serviceManager.integrationRuntimes()
+            .getMonitoringDataWithResponse(resourceGroupName, factoryName, integrationRuntimeName, context);
     }
 
     public IntegrationRuntimeMonitoringData getMonitoringData() {
-        return serviceManager
-            .integrationRuntimes()
+        return serviceManager.integrationRuntimes()
             .getMonitoringData(resourceGroupName, factoryName, integrationRuntimeName);
     }
 
-    public Response<IntegrationRuntimeMonitoringData> getMonitoringDataWithResponse(Context context) {
-        return serviceManager
-            .integrationRuntimes()
-            .getMonitoringDataWithResponse(resourceGroupName, factoryName, integrationRuntimeName, context);
+    public Response<Void> upgradeWithResponse(Context context) {
+        return serviceManager.integrationRuntimes()
+            .upgradeWithResponse(resourceGroupName, factoryName, integrationRuntimeName, context);
     }
 
     public void upgrade() {
         serviceManager.integrationRuntimes().upgrade(resourceGroupName, factoryName, integrationRuntimeName);
     }
 
-    public Response<Void> upgradeWithResponse(Context context) {
-        return serviceManager
-            .integrationRuntimes()
-            .upgradeWithResponse(resourceGroupName, factoryName, integrationRuntimeName, context);
+    public Response<Void> removeLinksWithResponse(LinkedIntegrationRuntimeRequest linkedIntegrationRuntimeRequest,
+        Context context) {
+        return serviceManager.integrationRuntimes()
+            .removeLinksWithResponse(resourceGroupName, factoryName, integrationRuntimeName,
+                linkedIntegrationRuntimeRequest, context);
     }
 
     public void removeLinks(LinkedIntegrationRuntimeRequest linkedIntegrationRuntimeRequest) {
-        serviceManager
-            .integrationRuntimes()
+        serviceManager.integrationRuntimes()
             .removeLinks(resourceGroupName, factoryName, integrationRuntimeName, linkedIntegrationRuntimeRequest);
-    }
-
-    public Response<Void> removeLinksWithResponse(
-        LinkedIntegrationRuntimeRequest linkedIntegrationRuntimeRequest, Context context) {
-        return serviceManager
-            .integrationRuntimes()
-            .removeLinksWithResponse(
-                resourceGroupName, factoryName, integrationRuntimeName, linkedIntegrationRuntimeRequest, context);
-    }
-
-    public IntegrationRuntimeStatusResponse createLinkedIntegrationRuntime(
-        CreateLinkedIntegrationRuntimeRequest createLinkedIntegrationRuntimeRequest) {
-        return serviceManager
-            .integrationRuntimes()
-            .createLinkedIntegrationRuntime(
-                resourceGroupName, factoryName, integrationRuntimeName, createLinkedIntegrationRuntimeRequest);
     }
 
     public Response<IntegrationRuntimeStatusResponse> createLinkedIntegrationRuntimeWithResponse(
         CreateLinkedIntegrationRuntimeRequest createLinkedIntegrationRuntimeRequest, Context context) {
-        return serviceManager
-            .integrationRuntimes()
-            .createLinkedIntegrationRuntimeWithResponse(
-                resourceGroupName, factoryName, integrationRuntimeName, createLinkedIntegrationRuntimeRequest, context);
+        return serviceManager.integrationRuntimes()
+            .createLinkedIntegrationRuntimeWithResponse(resourceGroupName, factoryName, integrationRuntimeName,
+                createLinkedIntegrationRuntimeRequest, context);
+    }
+
+    public IntegrationRuntimeStatusResponse
+        createLinkedIntegrationRuntime(CreateLinkedIntegrationRuntimeRequest createLinkedIntegrationRuntimeRequest) {
+        return serviceManager.integrationRuntimes()
+            .createLinkedIntegrationRuntime(resourceGroupName, factoryName, integrationRuntimeName,
+                createLinkedIntegrationRuntimeRequest);
     }
 
     public IntegrationRuntimeResourceImpl withProperties(IntegrationRuntime properties) {

@@ -10,26 +10,28 @@ import com.azure.core.http.rest.PagedIterable;
 import com.azure.core.util.Context;
 import com.azure.resourcemanager.recoveryservicesbackup.fluent.models.ProtectableContainerResourceInner;
 
-/** An instance of this class provides access to all the operations defined in ProtectableContainersClient. */
+/**
+ * An instance of this class provides access to all the operations defined in ProtectableContainersClient.
+ */
 public interface ProtectableContainersClient {
     /**
      * Lists the containers that can be registered to Recovery Services Vault.
-     *
+     * 
      * @param vaultName The name of the recovery services vault.
      * @param resourceGroupName The name of the resource group where the recovery services vault is present.
      * @param fabricName The fabricName parameter.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return list of ProtectableContainer resources.
+     * @return list of ProtectableContainer resources as paginated response with {@link PagedIterable}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
-    PagedIterable<ProtectableContainerResourceInner> list(
-        String vaultName, String resourceGroupName, String fabricName);
+    PagedIterable<ProtectableContainerResourceInner> list(String vaultName, String resourceGroupName,
+        String fabricName);
 
     /**
      * Lists the containers that can be registered to Recovery Services Vault.
-     *
+     * 
      * @param vaultName The name of the recovery services vault.
      * @param resourceGroupName The name of the resource group where the recovery services vault is present.
      * @param fabricName The fabricName parameter.
@@ -38,9 +40,9 @@ public interface ProtectableContainersClient {
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return list of ProtectableContainer resources.
+     * @return list of ProtectableContainer resources as paginated response with {@link PagedIterable}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
-    PagedIterable<ProtectableContainerResourceInner> list(
-        String vaultName, String resourceGroupName, String fabricName, String filter, Context context);
+    PagedIterable<ProtectableContainerResourceInner> list(String vaultName, String resourceGroupName, String fabricName,
+        String filter, Context context);
 }

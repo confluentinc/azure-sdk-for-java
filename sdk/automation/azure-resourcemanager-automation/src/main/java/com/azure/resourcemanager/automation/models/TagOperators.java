@@ -4,18 +4,23 @@
 
 package com.azure.resourcemanager.automation.models;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonValue;
-
-/** Defines values for TagOperators. */
+/**
+ * Filter VMs by Any or All specified tags.
+ */
 public enum TagOperators {
-    /** Enum value All. */
+    /**
+     * Enum value All.
+     */
     ALL("All"),
 
-    /** Enum value Any. */
+    /**
+     * Enum value Any.
+     */
     ANY("Any");
 
-    /** The actual serialized value for a TagOperators instance. */
+    /**
+     * The actual serialized value for a TagOperators instance.
+     */
     private final String value;
 
     TagOperators(String value) {
@@ -24,12 +29,14 @@ public enum TagOperators {
 
     /**
      * Parses a serialized value to a TagOperators instance.
-     *
+     * 
      * @param value the serialized value to parse.
      * @return the parsed TagOperators object, or null if unable to parse.
      */
-    @JsonCreator
     public static TagOperators fromString(String value) {
+        if (value == null) {
+            return null;
+        }
         TagOperators[] items = TagOperators.values();
         for (TagOperators item : items) {
             if (item.toString().equalsIgnoreCase(value)) {
@@ -39,7 +46,9 @@ public enum TagOperators {
         return null;
     }
 
-    @JsonValue
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String toString() {
         return this.value;

@@ -5,52 +5,51 @@
 package com.azure.resourcemanager.containerservice.models;
 
 import com.azure.core.annotation.Fluent;
-import com.azure.core.util.logging.ClientLogger;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.azure.json.JsonReader;
+import com.azure.json.JsonSerializable;
+import com.azure.json.JsonToken;
+import com.azure.json.JsonWriter;
+import java.io.IOException;
 
 /**
- * OS configurations of Linux agent nodes. See [AKS custom node
- * configuration](https://docs.microsoft.com/azure/aks/custom-node-configuration) for more details.
+ * OS configurations of Linux agent nodes.
+ * 
+ * See [AKS custom node configuration](https://docs.microsoft.com/azure/aks/custom-node-configuration) for more details.
  */
 @Fluent
-public final class LinuxOSConfig {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(LinuxOSConfig.class);
-
+public final class LinuxOSConfig implements JsonSerializable<LinuxOSConfig> {
     /*
      * Sysctl settings for Linux agent nodes.
      */
-    @JsonProperty(value = "sysctls")
     private SysctlConfig sysctls;
 
     /*
-     * Whether transparent hugepages are enabled. Valid values are 'always',
-     * 'madvise', and 'never'. The default is 'always'. For more information
-     * see [Transparent
+     * Valid values are 'always', 'madvise', and 'never'. The default is 'always'. For more information see [Transparent
      * Hugepages](https://www.kernel.org/doc/html/latest/admin-guide/mm/transhuge.html#admin-guide-transhuge).
      */
-    @JsonProperty(value = "transparentHugePageEnabled")
     private String transparentHugePageEnabled;
 
     /*
-     * Whether the kernel should make aggressive use of memory compaction to
-     * make more hugepages available. Valid values are 'always', 'defer',
-     * 'defer+madvise', 'madvise' and 'never'. The default is 'madvise'. For
-     * more information see [Transparent
+     * Valid values are 'always', 'defer', 'defer+madvise', 'madvise' and 'never'. The default is 'madvise'. For more
+     * information see [Transparent
      * Hugepages](https://www.kernel.org/doc/html/latest/admin-guide/mm/transhuge.html#admin-guide-transhuge).
      */
-    @JsonProperty(value = "transparentHugePageDefrag")
     private String transparentHugePageDefrag;
 
     /*
      * The size in MB of a swap file that will be created on each node.
      */
-    @JsonProperty(value = "swapFileSizeMB")
     private Integer swapFileSizeMB;
 
     /**
+     * Creates an instance of LinuxOSConfig class.
+     */
+    public LinuxOSConfig() {
+    }
+
+    /**
      * Get the sysctls property: Sysctl settings for Linux agent nodes.
-     *
+     * 
      * @return the sysctls value.
      */
     public SysctlConfig sysctls() {
@@ -59,7 +58,7 @@ public final class LinuxOSConfig {
 
     /**
      * Set the sysctls property: Sysctl settings for Linux agent nodes.
-     *
+     * 
      * @param sysctls the sysctls value to set.
      * @return the LinuxOSConfig object itself.
      */
@@ -69,10 +68,10 @@ public final class LinuxOSConfig {
     }
 
     /**
-     * Get the transparentHugePageEnabled property: Whether transparent hugepages are enabled. Valid values are
-     * 'always', 'madvise', and 'never'. The default is 'always'. For more information see [Transparent
+     * Get the transparentHugePageEnabled property: Valid values are 'always', 'madvise', and 'never'. The default is
+     * 'always'. For more information see [Transparent
      * Hugepages](https://www.kernel.org/doc/html/latest/admin-guide/mm/transhuge.html#admin-guide-transhuge).
-     *
+     * 
      * @return the transparentHugePageEnabled value.
      */
     public String transparentHugePageEnabled() {
@@ -80,10 +79,10 @@ public final class LinuxOSConfig {
     }
 
     /**
-     * Set the transparentHugePageEnabled property: Whether transparent hugepages are enabled. Valid values are
-     * 'always', 'madvise', and 'never'. The default is 'always'. For more information see [Transparent
+     * Set the transparentHugePageEnabled property: Valid values are 'always', 'madvise', and 'never'. The default is
+     * 'always'. For more information see [Transparent
      * Hugepages](https://www.kernel.org/doc/html/latest/admin-guide/mm/transhuge.html#admin-guide-transhuge).
-     *
+     * 
      * @param transparentHugePageEnabled the transparentHugePageEnabled value to set.
      * @return the LinuxOSConfig object itself.
      */
@@ -93,11 +92,10 @@ public final class LinuxOSConfig {
     }
 
     /**
-     * Get the transparentHugePageDefrag property: Whether the kernel should make aggressive use of memory compaction to
-     * make more hugepages available. Valid values are 'always', 'defer', 'defer+madvise', 'madvise' and 'never'. The
-     * default is 'madvise'. For more information see [Transparent
+     * Get the transparentHugePageDefrag property: Valid values are 'always', 'defer', 'defer+madvise', 'madvise' and
+     * 'never'. The default is 'madvise'. For more information see [Transparent
      * Hugepages](https://www.kernel.org/doc/html/latest/admin-guide/mm/transhuge.html#admin-guide-transhuge).
-     *
+     * 
      * @return the transparentHugePageDefrag value.
      */
     public String transparentHugePageDefrag() {
@@ -105,11 +103,10 @@ public final class LinuxOSConfig {
     }
 
     /**
-     * Set the transparentHugePageDefrag property: Whether the kernel should make aggressive use of memory compaction to
-     * make more hugepages available. Valid values are 'always', 'defer', 'defer+madvise', 'madvise' and 'never'. The
-     * default is 'madvise'. For more information see [Transparent
+     * Set the transparentHugePageDefrag property: Valid values are 'always', 'defer', 'defer+madvise', 'madvise' and
+     * 'never'. The default is 'madvise'. For more information see [Transparent
      * Hugepages](https://www.kernel.org/doc/html/latest/admin-guide/mm/transhuge.html#admin-guide-transhuge).
-     *
+     * 
      * @param transparentHugePageDefrag the transparentHugePageDefrag value to set.
      * @return the LinuxOSConfig object itself.
      */
@@ -120,7 +117,7 @@ public final class LinuxOSConfig {
 
     /**
      * Get the swapFileSizeMB property: The size in MB of a swap file that will be created on each node.
-     *
+     * 
      * @return the swapFileSizeMB value.
      */
     public Integer swapFileSizeMB() {
@@ -129,7 +126,7 @@ public final class LinuxOSConfig {
 
     /**
      * Set the swapFileSizeMB property: The size in MB of a swap file that will be created on each node.
-     *
+     * 
      * @param swapFileSizeMB the swapFileSizeMB value to set.
      * @return the LinuxOSConfig object itself.
      */
@@ -140,12 +137,57 @@ public final class LinuxOSConfig {
 
     /**
      * Validates the instance.
-     *
+     * 
      * @throws IllegalArgumentException thrown if the instance is not valid.
      */
     public void validate() {
         if (sysctls() != null) {
             sysctls().validate();
         }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public JsonWriter toJson(JsonWriter jsonWriter) throws IOException {
+        jsonWriter.writeStartObject();
+        jsonWriter.writeJsonField("sysctls", this.sysctls);
+        jsonWriter.writeStringField("transparentHugePageEnabled", this.transparentHugePageEnabled);
+        jsonWriter.writeStringField("transparentHugePageDefrag", this.transparentHugePageDefrag);
+        jsonWriter.writeNumberField("swapFileSizeMB", this.swapFileSizeMB);
+        return jsonWriter.writeEndObject();
+    }
+
+    /**
+     * Reads an instance of LinuxOSConfig from the JsonReader.
+     * 
+     * @param jsonReader The JsonReader being read.
+     * @return An instance of LinuxOSConfig if the JsonReader was pointing to an instance of it, or null if it was
+     * pointing to JSON null.
+     * @throws IOException If an error occurs while reading the LinuxOSConfig.
+     */
+    public static LinuxOSConfig fromJson(JsonReader jsonReader) throws IOException {
+        return jsonReader.readObject(reader -> {
+            LinuxOSConfig deserializedLinuxOSConfig = new LinuxOSConfig();
+            while (reader.nextToken() != JsonToken.END_OBJECT) {
+                String fieldName = reader.getFieldName();
+                reader.nextToken();
+
+                if ("sysctls".equals(fieldName)) {
+                    deserializedLinuxOSConfig.sysctls = SysctlConfig.fromJson(reader);
+                } else if ("transparentHugePageEnabled".equals(fieldName)) {
+                    deserializedLinuxOSConfig.transparentHugePageEnabled = reader.getString();
+                } else if ("transparentHugePageDefrag".equals(fieldName)) {
+                    deserializedLinuxOSConfig.transparentHugePageDefrag = reader.getString();
+                } else if ("swapFileSizeMB".equals(fieldName)) {
+                    deserializedLinuxOSConfig.swapFileSizeMB = reader.getNullable(JsonReader::getInt);
+                } else {
+                    reader.skipChildren();
+                }
+            }
+
+            return deserializedLinuxOSConfig;
+        });
     }
 }

@@ -5,144 +5,184 @@
 package com.azure.resourcemanager.automation.models;
 
 import com.azure.core.annotation.Fluent;
-import com.azure.core.annotation.JsonFlatten;
 import com.azure.core.util.logging.ClientLogger;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.azure.json.JsonReader;
+import com.azure.json.JsonSerializable;
+import com.azure.json.JsonToken;
+import com.azure.json.JsonWriter;
+import com.azure.resourcemanager.automation.fluent.models.JobScheduleCreateProperties;
+import java.io.IOException;
 import java.util.Map;
 
-/** The parameters supplied to the create job schedule operation. */
-@JsonFlatten
+/**
+ * The parameters supplied to the create job schedule operation.
+ */
 @Fluent
-public class JobScheduleCreateParameters {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(JobScheduleCreateParameters.class);
-
+public final class JobScheduleCreateParameters implements JsonSerializable<JobScheduleCreateParameters> {
     /*
-     * Gets or sets the schedule.
+     * Gets or sets the list of job schedule properties.
      */
-    @JsonProperty(value = "properties.schedule", required = true)
-    private ScheduleAssociationProperty schedule;
+    private JobScheduleCreateProperties innerProperties = new JobScheduleCreateProperties();
 
-    /*
-     * Gets or sets the runbook.
+    /**
+     * Creates an instance of JobScheduleCreateParameters class.
      */
-    @JsonProperty(value = "properties.runbook", required = true)
-    private RunbookAssociationProperty runbook;
+    public JobScheduleCreateParameters() {
+    }
 
-    /*
-     * Gets or sets the hybrid worker group that the scheduled job should run
-     * on.
+    /**
+     * Get the innerProperties property: Gets or sets the list of job schedule properties.
+     * 
+     * @return the innerProperties value.
      */
-    @JsonProperty(value = "properties.runOn")
-    private String runOn;
-
-    /*
-     * Gets or sets a list of job properties.
-     */
-    @JsonProperty(value = "properties.parameters")
-    private Map<String, String> parameters;
+    private JobScheduleCreateProperties innerProperties() {
+        return this.innerProperties;
+    }
 
     /**
      * Get the schedule property: Gets or sets the schedule.
-     *
+     * 
      * @return the schedule value.
      */
     public ScheduleAssociationProperty schedule() {
-        return this.schedule;
+        return this.innerProperties() == null ? null : this.innerProperties().schedule();
     }
 
     /**
      * Set the schedule property: Gets or sets the schedule.
-     *
+     * 
      * @param schedule the schedule value to set.
      * @return the JobScheduleCreateParameters object itself.
      */
     public JobScheduleCreateParameters withSchedule(ScheduleAssociationProperty schedule) {
-        this.schedule = schedule;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new JobScheduleCreateProperties();
+        }
+        this.innerProperties().withSchedule(schedule);
         return this;
     }
 
     /**
      * Get the runbook property: Gets or sets the runbook.
-     *
+     * 
      * @return the runbook value.
      */
     public RunbookAssociationProperty runbook() {
-        return this.runbook;
+        return this.innerProperties() == null ? null : this.innerProperties().runbook();
     }
 
     /**
      * Set the runbook property: Gets or sets the runbook.
-     *
+     * 
      * @param runbook the runbook value to set.
      * @return the JobScheduleCreateParameters object itself.
      */
     public JobScheduleCreateParameters withRunbook(RunbookAssociationProperty runbook) {
-        this.runbook = runbook;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new JobScheduleCreateProperties();
+        }
+        this.innerProperties().withRunbook(runbook);
         return this;
     }
 
     /**
      * Get the runOn property: Gets or sets the hybrid worker group that the scheduled job should run on.
-     *
+     * 
      * @return the runOn value.
      */
     public String runOn() {
-        return this.runOn;
+        return this.innerProperties() == null ? null : this.innerProperties().runOn();
     }
 
     /**
      * Set the runOn property: Gets or sets the hybrid worker group that the scheduled job should run on.
-     *
+     * 
      * @param runOn the runOn value to set.
      * @return the JobScheduleCreateParameters object itself.
      */
     public JobScheduleCreateParameters withRunOn(String runOn) {
-        this.runOn = runOn;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new JobScheduleCreateProperties();
+        }
+        this.innerProperties().withRunOn(runOn);
         return this;
     }
 
     /**
      * Get the parameters property: Gets or sets a list of job properties.
-     *
+     * 
      * @return the parameters value.
      */
     public Map<String, String> parameters() {
-        return this.parameters;
+        return this.innerProperties() == null ? null : this.innerProperties().parameters();
     }
 
     /**
      * Set the parameters property: Gets or sets a list of job properties.
-     *
+     * 
      * @param parameters the parameters value to set.
      * @return the JobScheduleCreateParameters object itself.
      */
     public JobScheduleCreateParameters withParameters(Map<String, String> parameters) {
-        this.parameters = parameters;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new JobScheduleCreateProperties();
+        }
+        this.innerProperties().withParameters(parameters);
         return this;
     }
 
     /**
      * Validates the instance.
-     *
+     * 
      * @throws IllegalArgumentException thrown if the instance is not valid.
      */
     public void validate() {
-        if (schedule() == null) {
-            throw logger
-                .logExceptionAsError(
-                    new IllegalArgumentException(
-                        "Missing required property schedule in model JobScheduleCreateParameters"));
+        if (innerProperties() == null) {
+            throw LOGGER.atError()
+                .log(new IllegalArgumentException(
+                    "Missing required property innerProperties in model JobScheduleCreateParameters"));
         } else {
-            schedule().validate();
+            innerProperties().validate();
         }
-        if (runbook() == null) {
-            throw logger
-                .logExceptionAsError(
-                    new IllegalArgumentException(
-                        "Missing required property runbook in model JobScheduleCreateParameters"));
-        } else {
-            runbook().validate();
-        }
+    }
+
+    private static final ClientLogger LOGGER = new ClientLogger(JobScheduleCreateParameters.class);
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public JsonWriter toJson(JsonWriter jsonWriter) throws IOException {
+        jsonWriter.writeStartObject();
+        jsonWriter.writeJsonField("properties", this.innerProperties);
+        return jsonWriter.writeEndObject();
+    }
+
+    /**
+     * Reads an instance of JobScheduleCreateParameters from the JsonReader.
+     * 
+     * @param jsonReader The JsonReader being read.
+     * @return An instance of JobScheduleCreateParameters if the JsonReader was pointing to an instance of it, or null
+     * if it was pointing to JSON null.
+     * @throws IllegalStateException If the deserialized JSON object was missing any required properties.
+     * @throws IOException If an error occurs while reading the JobScheduleCreateParameters.
+     */
+    public static JobScheduleCreateParameters fromJson(JsonReader jsonReader) throws IOException {
+        return jsonReader.readObject(reader -> {
+            JobScheduleCreateParameters deserializedJobScheduleCreateParameters = new JobScheduleCreateParameters();
+            while (reader.nextToken() != JsonToken.END_OBJECT) {
+                String fieldName = reader.getFieldName();
+                reader.nextToken();
+
+                if ("properties".equals(fieldName)) {
+                    deserializedJobScheduleCreateParameters.innerProperties
+                        = JobScheduleCreateProperties.fromJson(reader);
+                } else {
+                    reader.skipChildren();
+                }
+            }
+
+            return deserializedJobScheduleCreateParameters;
+        });
     }
 }

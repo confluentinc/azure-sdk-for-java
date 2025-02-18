@@ -25,30 +25,33 @@ import com.azure.core.http.rest.RestProxy;
 import com.azure.core.management.exception.ManagementException;
 import com.azure.core.util.Context;
 import com.azure.core.util.FluxUtil;
-import com.azure.core.util.logging.ClientLogger;
 import com.azure.resourcemanager.recoveryservicesbackup.fluent.BackupEnginesClient;
 import com.azure.resourcemanager.recoveryservicesbackup.fluent.models.BackupEngineBaseResourceInner;
 import com.azure.resourcemanager.recoveryservicesbackup.models.BackupEngineBaseResourceList;
 import reactor.core.publisher.Mono;
 
-/** An instance of this class provides access to all the operations defined in BackupEnginesClient. */
+/**
+ * An instance of this class provides access to all the operations defined in BackupEnginesClient.
+ */
 public final class BackupEnginesClientImpl implements BackupEnginesClient {
-    private final ClientLogger logger = new ClientLogger(BackupEnginesClientImpl.class);
-
-    /** The proxy service used to perform REST calls. */
+    /**
+     * The proxy service used to perform REST calls.
+     */
     private final BackupEnginesService service;
 
-    /** The service client containing this operation class. */
+    /**
+     * The service client containing this operation class.
+     */
     private final RecoveryServicesBackupClientImpl client;
 
     /**
      * Initializes an instance of BackupEnginesClientImpl.
-     *
+     * 
      * @param client the instance of the service client containing this operation class.
      */
     BackupEnginesClientImpl(RecoveryServicesBackupClientImpl client) {
-        this.service =
-            RestProxy.create(BackupEnginesService.class, client.getHttpPipeline(), client.getSerializerAdapter());
+        this.service
+            = RestProxy.create(BackupEnginesService.class, client.getHttpPipeline(), client.getSerializerAdapter());
         this.client = client;
     }
 
@@ -58,56 +61,40 @@ public final class BackupEnginesClientImpl implements BackupEnginesClient {
      */
     @Host("{$host}")
     @ServiceInterface(name = "RecoveryServicesBack")
-    private interface BackupEnginesService {
-        @Headers({"Content-Type: application/json"})
-        @Get(
-            "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices"
-                + "/vaults/{vaultName}/backupEngines")
-        @ExpectedResponses({200})
+    public interface BackupEnginesService {
+        @Headers({ "Content-Type: application/json" })
+        @Get("/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{vaultName}/backupEngines")
+        @ExpectedResponses({ 200 })
         @UnexpectedResponseExceptionType(ManagementException.class)
-        Mono<Response<BackupEngineBaseResourceList>> list(
-            @HostParam("$host") String endpoint,
-            @QueryParam("api-version") String apiVersion,
-            @PathParam("vaultName") String vaultName,
+        Mono<Response<BackupEngineBaseResourceList>> list(@HostParam("$host") String endpoint,
+            @QueryParam("api-version") String apiVersion, @PathParam("vaultName") String vaultName,
             @PathParam("resourceGroupName") String resourceGroupName,
-            @PathParam("subscriptionId") String subscriptionId,
-            @QueryParam("$filter") String filter,
-            @QueryParam("$skipToken") String skipToken,
-            @HeaderParam("Accept") String accept,
-            Context context);
+            @PathParam("subscriptionId") String subscriptionId, @QueryParam("$filter") String filter,
+            @QueryParam("$skipToken") String skipToken, @HeaderParam("Accept") String accept, Context context);
 
-        @Headers({"Content-Type: application/json"})
-        @Get(
-            "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices"
-                + "/vaults/{vaultName}/backupEngines/{backupEngineName}")
-        @ExpectedResponses({200})
+        @Headers({ "Content-Type: application/json" })
+        @Get("/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{vaultName}/backupEngines/{backupEngineName}")
+        @ExpectedResponses({ 200 })
         @UnexpectedResponseExceptionType(ManagementException.class)
-        Mono<Response<BackupEngineBaseResourceInner>> get(
-            @HostParam("$host") String endpoint,
-            @QueryParam("api-version") String apiVersion,
-            @PathParam("vaultName") String vaultName,
+        Mono<Response<BackupEngineBaseResourceInner>> get(@HostParam("$host") String endpoint,
+            @QueryParam("api-version") String apiVersion, @PathParam("vaultName") String vaultName,
             @PathParam("resourceGroupName") String resourceGroupName,
-            @PathParam("subscriptionId") String subscriptionId,
-            @PathParam("backupEngineName") String backupEngineName,
-            @QueryParam("$filter") String filter,
-            @QueryParam("$skipToken") String skipToken,
-            @HeaderParam("Accept") String accept,
-            Context context);
+            @PathParam("subscriptionId") String subscriptionId, @PathParam("backupEngineName") String backupEngineName,
+            @QueryParam("$filter") String filter, @QueryParam("$skipToken") String skipToken,
+            @HeaderParam("Accept") String accept, Context context);
 
-        @Headers({"Content-Type: application/json"})
+        @Headers({ "Content-Type: application/json" })
         @Get("{nextLink}")
-        @ExpectedResponses({200})
+        @ExpectedResponses({ 200 })
         @UnexpectedResponseExceptionType(ManagementException.class)
         Mono<Response<BackupEngineBaseResourceList>> listNext(
-            @PathParam(value = "nextLink", encoded = true) String nextLink,
-            @HostParam("$host") String endpoint,
-            @HeaderParam("Accept") String accept,
-            Context context);
+            @PathParam(value = "nextLink", encoded = true) String nextLink, @HostParam("$host") String endpoint,
+            @HeaderParam("Accept") String accept, Context context);
     }
 
     /**
      * Backup management servers registered to Recovery Services Vault. Returns a pageable list of servers.
-     *
+     * 
      * @param vaultName The name of the recovery services vault.
      * @param resourceGroupName The name of the resource group where the recovery services vault is present.
      * @param filter OData filter options.
@@ -115,16 +102,15 @@ public final class BackupEnginesClientImpl implements BackupEnginesClient {
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return list of BackupEngineBase resources.
+     * @return list of BackupEngineBase resources along with {@link PagedResponse} on successful completion of
+     * {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    private Mono<PagedResponse<BackupEngineBaseResourceInner>> listSinglePageAsync(
-        String vaultName, String resourceGroupName, String filter, String skipToken) {
+    private Mono<PagedResponse<BackupEngineBaseResourceInner>> listSinglePageAsync(String vaultName,
+        String resourceGroupName, String filter, String skipToken) {
         if (this.client.getEndpoint() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getEndpoint() is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
         }
         if (vaultName == null) {
             return Mono.error(new IllegalArgumentException("Parameter vaultName is required and cannot be null."));
@@ -134,41 +120,21 @@ public final class BackupEnginesClientImpl implements BackupEnginesClient {
                 .error(new IllegalArgumentException("Parameter resourceGroupName is required and cannot be null."));
         }
         if (this.client.getSubscriptionId() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getSubscriptionId() is required and cannot be null."));
+            return Mono.error(new IllegalArgumentException(
+                "Parameter this.client.getSubscriptionId() is required and cannot be null."));
         }
         final String accept = "application/json";
         return FluxUtil
-            .withContext(
-                context ->
-                    service
-                        .list(
-                            this.client.getEndpoint(),
-                            this.client.getApiVersion(),
-                            vaultName,
-                            resourceGroupName,
-                            this.client.getSubscriptionId(),
-                            filter,
-                            skipToken,
-                            accept,
-                            context))
-            .<PagedResponse<BackupEngineBaseResourceInner>>map(
-                res ->
-                    new PagedResponseBase<>(
-                        res.getRequest(),
-                        res.getStatusCode(),
-                        res.getHeaders(),
-                        res.getValue().value(),
-                        res.getValue().nextLink(),
-                        null))
+            .withContext(context -> service.list(this.client.getEndpoint(), this.client.getApiVersion(), vaultName,
+                resourceGroupName, this.client.getSubscriptionId(), filter, skipToken, accept, context))
+            .<PagedResponse<BackupEngineBaseResourceInner>>map(res -> new PagedResponseBase<>(res.getRequest(),
+                res.getStatusCode(), res.getHeaders(), res.getValue().value(), res.getValue().nextLink(), null))
             .contextWrite(context -> context.putAll(FluxUtil.toReactorContext(this.client.getContext()).readOnly()));
     }
 
     /**
      * Backup management servers registered to Recovery Services Vault. Returns a pageable list of servers.
-     *
+     * 
      * @param vaultName The name of the recovery services vault.
      * @param resourceGroupName The name of the resource group where the recovery services vault is present.
      * @param filter OData filter options.
@@ -177,16 +143,15 @@ public final class BackupEnginesClientImpl implements BackupEnginesClient {
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return list of BackupEngineBase resources.
+     * @return list of BackupEngineBase resources along with {@link PagedResponse} on successful completion of
+     * {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    private Mono<PagedResponse<BackupEngineBaseResourceInner>> listSinglePageAsync(
-        String vaultName, String resourceGroupName, String filter, String skipToken, Context context) {
+    private Mono<PagedResponse<BackupEngineBaseResourceInner>> listSinglePageAsync(String vaultName,
+        String resourceGroupName, String filter, String skipToken, Context context) {
         if (this.client.getEndpoint() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getEndpoint() is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
         }
         if (vaultName == null) {
             return Mono.error(new IllegalArgumentException("Parameter vaultName is required and cannot be null."));
@@ -196,38 +161,21 @@ public final class BackupEnginesClientImpl implements BackupEnginesClient {
                 .error(new IllegalArgumentException("Parameter resourceGroupName is required and cannot be null."));
         }
         if (this.client.getSubscriptionId() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getSubscriptionId() is required and cannot be null."));
+            return Mono.error(new IllegalArgumentException(
+                "Parameter this.client.getSubscriptionId() is required and cannot be null."));
         }
         final String accept = "application/json";
         context = this.client.mergeContext(context);
         return service
-            .list(
-                this.client.getEndpoint(),
-                this.client.getApiVersion(),
-                vaultName,
-                resourceGroupName,
-                this.client.getSubscriptionId(),
-                filter,
-                skipToken,
-                accept,
-                context)
-            .map(
-                res ->
-                    new PagedResponseBase<>(
-                        res.getRequest(),
-                        res.getStatusCode(),
-                        res.getHeaders(),
-                        res.getValue().value(),
-                        res.getValue().nextLink(),
-                        null));
+            .list(this.client.getEndpoint(), this.client.getApiVersion(), vaultName, resourceGroupName,
+                this.client.getSubscriptionId(), filter, skipToken, accept, context)
+            .map(res -> new PagedResponseBase<>(res.getRequest(), res.getStatusCode(), res.getHeaders(),
+                res.getValue().value(), res.getValue().nextLink(), null));
     }
 
     /**
      * Backup management servers registered to Recovery Services Vault. Returns a pageable list of servers.
-     *
+     * 
      * @param vaultName The name of the recovery services vault.
      * @param resourceGroupName The name of the resource group where the recovery services vault is present.
      * @param filter OData filter options.
@@ -235,38 +183,36 @@ public final class BackupEnginesClientImpl implements BackupEnginesClient {
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return list of BackupEngineBase resources.
+     * @return list of BackupEngineBase resources as paginated response with {@link PagedFlux}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
-    private PagedFlux<BackupEngineBaseResourceInner> listAsync(
-        String vaultName, String resourceGroupName, String filter, String skipToken) {
-        return new PagedFlux<>(
-            () -> listSinglePageAsync(vaultName, resourceGroupName, filter, skipToken),
+    private PagedFlux<BackupEngineBaseResourceInner> listAsync(String vaultName, String resourceGroupName,
+        String filter, String skipToken) {
+        return new PagedFlux<>(() -> listSinglePageAsync(vaultName, resourceGroupName, filter, skipToken),
             nextLink -> listNextSinglePageAsync(nextLink));
     }
 
     /**
      * Backup management servers registered to Recovery Services Vault. Returns a pageable list of servers.
-     *
+     * 
      * @param vaultName The name of the recovery services vault.
      * @param resourceGroupName The name of the resource group where the recovery services vault is present.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return list of BackupEngineBase resources.
+     * @return list of BackupEngineBase resources as paginated response with {@link PagedFlux}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
     private PagedFlux<BackupEngineBaseResourceInner> listAsync(String vaultName, String resourceGroupName) {
         final String filter = null;
         final String skipToken = null;
-        return new PagedFlux<>(
-            () -> listSinglePageAsync(vaultName, resourceGroupName, filter, skipToken),
+        return new PagedFlux<>(() -> listSinglePageAsync(vaultName, resourceGroupName, filter, skipToken),
             nextLink -> listNextSinglePageAsync(nextLink));
     }
 
     /**
      * Backup management servers registered to Recovery Services Vault. Returns a pageable list of servers.
-     *
+     * 
      * @param vaultName The name of the recovery services vault.
      * @param resourceGroupName The name of the resource group where the recovery services vault is present.
      * @param filter OData filter options.
@@ -275,25 +221,24 @@ public final class BackupEnginesClientImpl implements BackupEnginesClient {
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return list of BackupEngineBase resources.
+     * @return list of BackupEngineBase resources as paginated response with {@link PagedFlux}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
-    private PagedFlux<BackupEngineBaseResourceInner> listAsync(
-        String vaultName, String resourceGroupName, String filter, String skipToken, Context context) {
-        return new PagedFlux<>(
-            () -> listSinglePageAsync(vaultName, resourceGroupName, filter, skipToken, context),
+    private PagedFlux<BackupEngineBaseResourceInner> listAsync(String vaultName, String resourceGroupName,
+        String filter, String skipToken, Context context) {
+        return new PagedFlux<>(() -> listSinglePageAsync(vaultName, resourceGroupName, filter, skipToken, context),
             nextLink -> listNextSinglePageAsync(nextLink, context));
     }
 
     /**
      * Backup management servers registered to Recovery Services Vault. Returns a pageable list of servers.
-     *
+     * 
      * @param vaultName The name of the recovery services vault.
      * @param resourceGroupName The name of the resource group where the recovery services vault is present.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return list of BackupEngineBase resources.
+     * @return list of BackupEngineBase resources as paginated response with {@link PagedIterable}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
     public PagedIterable<BackupEngineBaseResourceInner> list(String vaultName, String resourceGroupName) {
@@ -304,7 +249,7 @@ public final class BackupEnginesClientImpl implements BackupEnginesClient {
 
     /**
      * Backup management servers registered to Recovery Services Vault. Returns a pageable list of servers.
-     *
+     * 
      * @param vaultName The name of the recovery services vault.
      * @param resourceGroupName The name of the resource group where the recovery services vault is present.
      * @param filter OData filter options.
@@ -313,17 +258,17 @@ public final class BackupEnginesClientImpl implements BackupEnginesClient {
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return list of BackupEngineBase resources.
+     * @return list of BackupEngineBase resources as paginated response with {@link PagedIterable}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
-    public PagedIterable<BackupEngineBaseResourceInner> list(
-        String vaultName, String resourceGroupName, String filter, String skipToken, Context context) {
+    public PagedIterable<BackupEngineBaseResourceInner> list(String vaultName, String resourceGroupName, String filter,
+        String skipToken, Context context) {
         return new PagedIterable<>(listAsync(vaultName, resourceGroupName, filter, skipToken, context));
     }
 
     /**
      * Returns backup management server registered to Recovery Services Vault.
-     *
+     * 
      * @param vaultName The name of the recovery services vault.
      * @param resourceGroupName The name of the resource group where the recovery services vault is present.
      * @param backupEngineName Name of the backup management server.
@@ -332,16 +277,14 @@ public final class BackupEnginesClientImpl implements BackupEnginesClient {
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the base backup engine class.
+     * @return the base backup engine class along with {@link Response} on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    private Mono<Response<BackupEngineBaseResourceInner>> getWithResponseAsync(
-        String vaultName, String resourceGroupName, String backupEngineName, String filter, String skipToken) {
+    private Mono<Response<BackupEngineBaseResourceInner>> getWithResponseAsync(String vaultName,
+        String resourceGroupName, String backupEngineName, String filter, String skipToken) {
         if (this.client.getEndpoint() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getEndpoint() is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
         }
         if (vaultName == null) {
             return Mono.error(new IllegalArgumentException("Parameter vaultName is required and cannot be null."));
@@ -351,10 +294,8 @@ public final class BackupEnginesClientImpl implements BackupEnginesClient {
                 .error(new IllegalArgumentException("Parameter resourceGroupName is required and cannot be null."));
         }
         if (this.client.getSubscriptionId() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getSubscriptionId() is required and cannot be null."));
+            return Mono.error(new IllegalArgumentException(
+                "Parameter this.client.getSubscriptionId() is required and cannot be null."));
         }
         if (backupEngineName == null) {
             return Mono
@@ -362,26 +303,15 @@ public final class BackupEnginesClientImpl implements BackupEnginesClient {
         }
         final String accept = "application/json";
         return FluxUtil
-            .withContext(
-                context ->
-                    service
-                        .get(
-                            this.client.getEndpoint(),
-                            this.client.getApiVersion(),
-                            vaultName,
-                            resourceGroupName,
-                            this.client.getSubscriptionId(),
-                            backupEngineName,
-                            filter,
-                            skipToken,
-                            accept,
-                            context))
+            .withContext(context -> service.get(this.client.getEndpoint(), this.client.getApiVersion(), vaultName,
+                resourceGroupName, this.client.getSubscriptionId(), backupEngineName, filter, skipToken, accept,
+                context))
             .contextWrite(context -> context.putAll(FluxUtil.toReactorContext(this.client.getContext()).readOnly()));
     }
 
     /**
      * Returns backup management server registered to Recovery Services Vault.
-     *
+     * 
      * @param vaultName The name of the recovery services vault.
      * @param resourceGroupName The name of the resource group where the recovery services vault is present.
      * @param backupEngineName Name of the backup management server.
@@ -391,21 +321,14 @@ public final class BackupEnginesClientImpl implements BackupEnginesClient {
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the base backup engine class.
+     * @return the base backup engine class along with {@link Response} on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    private Mono<Response<BackupEngineBaseResourceInner>> getWithResponseAsync(
-        String vaultName,
-        String resourceGroupName,
-        String backupEngineName,
-        String filter,
-        String skipToken,
-        Context context) {
+    private Mono<Response<BackupEngineBaseResourceInner>> getWithResponseAsync(String vaultName,
+        String resourceGroupName, String backupEngineName, String filter, String skipToken, Context context) {
         if (this.client.getEndpoint() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getEndpoint() is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
         }
         if (vaultName == null) {
             return Mono.error(new IllegalArgumentException("Parameter vaultName is required and cannot be null."));
@@ -415,10 +338,8 @@ public final class BackupEnginesClientImpl implements BackupEnginesClient {
                 .error(new IllegalArgumentException("Parameter resourceGroupName is required and cannot be null."));
         }
         if (this.client.getSubscriptionId() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getSubscriptionId() is required and cannot be null."));
+            return Mono.error(new IllegalArgumentException(
+                "Parameter this.client.getSubscriptionId() is required and cannot be null."));
         }
         if (backupEngineName == null) {
             return Mono
@@ -426,77 +347,53 @@ public final class BackupEnginesClientImpl implements BackupEnginesClient {
         }
         final String accept = "application/json";
         context = this.client.mergeContext(context);
-        return service
-            .get(
-                this.client.getEndpoint(),
-                this.client.getApiVersion(),
-                vaultName,
-                resourceGroupName,
-                this.client.getSubscriptionId(),
-                backupEngineName,
-                filter,
-                skipToken,
-                accept,
-                context);
+        return service.get(this.client.getEndpoint(), this.client.getApiVersion(), vaultName, resourceGroupName,
+            this.client.getSubscriptionId(), backupEngineName, filter, skipToken, accept, context);
     }
 
     /**
      * Returns backup management server registered to Recovery Services Vault.
-     *
+     * 
+     * @param vaultName The name of the recovery services vault.
+     * @param resourceGroupName The name of the resource group where the recovery services vault is present.
+     * @param backupEngineName Name of the backup management server.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return the base backup engine class on successful completion of {@link Mono}.
+     */
+    @ServiceMethod(returns = ReturnType.SINGLE)
+    private Mono<BackupEngineBaseResourceInner> getAsync(String vaultName, String resourceGroupName,
+        String backupEngineName) {
+        final String filter = null;
+        final String skipToken = null;
+        return getWithResponseAsync(vaultName, resourceGroupName, backupEngineName, filter, skipToken)
+            .flatMap(res -> Mono.justOrEmpty(res.getValue()));
+    }
+
+    /**
+     * Returns backup management server registered to Recovery Services Vault.
+     * 
      * @param vaultName The name of the recovery services vault.
      * @param resourceGroupName The name of the resource group where the recovery services vault is present.
      * @param backupEngineName Name of the backup management server.
      * @param filter OData filter options.
      * @param skipToken skipToken Filter.
+     * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the base backup engine class.
+     * @return the base backup engine class along with {@link Response}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    private Mono<BackupEngineBaseResourceInner> getAsync(
-        String vaultName, String resourceGroupName, String backupEngineName, String filter, String skipToken) {
-        return getWithResponseAsync(vaultName, resourceGroupName, backupEngineName, filter, skipToken)
-            .flatMap(
-                (Response<BackupEngineBaseResourceInner> res) -> {
-                    if (res.getValue() != null) {
-                        return Mono.just(res.getValue());
-                    } else {
-                        return Mono.empty();
-                    }
-                });
+    public Response<BackupEngineBaseResourceInner> getWithResponse(String vaultName, String resourceGroupName,
+        String backupEngineName, String filter, String skipToken, Context context) {
+        return getWithResponseAsync(vaultName, resourceGroupName, backupEngineName, filter, skipToken, context).block();
     }
 
     /**
      * Returns backup management server registered to Recovery Services Vault.
-     *
-     * @param vaultName The name of the recovery services vault.
-     * @param resourceGroupName The name of the resource group where the recovery services vault is present.
-     * @param backupEngineName Name of the backup management server.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the base backup engine class.
-     */
-    @ServiceMethod(returns = ReturnType.SINGLE)
-    private Mono<BackupEngineBaseResourceInner> getAsync(
-        String vaultName, String resourceGroupName, String backupEngineName) {
-        final String filter = null;
-        final String skipToken = null;
-        return getWithResponseAsync(vaultName, resourceGroupName, backupEngineName, filter, skipToken)
-            .flatMap(
-                (Response<BackupEngineBaseResourceInner> res) -> {
-                    if (res.getValue() != null) {
-                        return Mono.just(res.getValue());
-                    } else {
-                        return Mono.empty();
-                    }
-                });
-    }
-
-    /**
-     * Returns backup management server registered to Recovery Services Vault.
-     *
+     * 
      * @param vaultName The name of the recovery services vault.
      * @param resourceGroupName The name of the resource group where the recovery services vault is present.
      * @param backupEngineName Name of the backup management server.
@@ -509,42 +406,19 @@ public final class BackupEnginesClientImpl implements BackupEnginesClient {
     public BackupEngineBaseResourceInner get(String vaultName, String resourceGroupName, String backupEngineName) {
         final String filter = null;
         final String skipToken = null;
-        return getAsync(vaultName, resourceGroupName, backupEngineName, filter, skipToken).block();
-    }
-
-    /**
-     * Returns backup management server registered to Recovery Services Vault.
-     *
-     * @param vaultName The name of the recovery services vault.
-     * @param resourceGroupName The name of the resource group where the recovery services vault is present.
-     * @param backupEngineName Name of the backup management server.
-     * @param filter OData filter options.
-     * @param skipToken skipToken Filter.
-     * @param context The context to associate with this operation.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the base backup engine class.
-     */
-    @ServiceMethod(returns = ReturnType.SINGLE)
-    public Response<BackupEngineBaseResourceInner> getWithResponse(
-        String vaultName,
-        String resourceGroupName,
-        String backupEngineName,
-        String filter,
-        String skipToken,
-        Context context) {
-        return getWithResponseAsync(vaultName, resourceGroupName, backupEngineName, filter, skipToken, context).block();
+        return getWithResponse(vaultName, resourceGroupName, backupEngineName, filter, skipToken, Context.NONE)
+            .getValue();
     }
 
     /**
      * Get the next page of items.
-     *
-     * @param nextLink The nextLink parameter.
+     * 
+     * @param nextLink The URL to get the next list of items.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return list of BackupEngineBase resources.
+     * @return list of BackupEngineBase resources along with {@link PagedResponse} on successful completion of
+     * {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
     private Mono<PagedResponse<BackupEngineBaseResourceInner>> listNextSinglePageAsync(String nextLink) {
@@ -552,60 +426,41 @@ public final class BackupEnginesClientImpl implements BackupEnginesClient {
             return Mono.error(new IllegalArgumentException("Parameter nextLink is required and cannot be null."));
         }
         if (this.client.getEndpoint() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getEndpoint() is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
         }
         final String accept = "application/json";
-        return FluxUtil
-            .withContext(context -> service.listNext(nextLink, this.client.getEndpoint(), accept, context))
-            .<PagedResponse<BackupEngineBaseResourceInner>>map(
-                res ->
-                    new PagedResponseBase<>(
-                        res.getRequest(),
-                        res.getStatusCode(),
-                        res.getHeaders(),
-                        res.getValue().value(),
-                        res.getValue().nextLink(),
-                        null))
+        return FluxUtil.withContext(context -> service.listNext(nextLink, this.client.getEndpoint(), accept, context))
+            .<PagedResponse<BackupEngineBaseResourceInner>>map(res -> new PagedResponseBase<>(res.getRequest(),
+                res.getStatusCode(), res.getHeaders(), res.getValue().value(), res.getValue().nextLink(), null))
             .contextWrite(context -> context.putAll(FluxUtil.toReactorContext(this.client.getContext()).readOnly()));
     }
 
     /**
      * Get the next page of items.
-     *
-     * @param nextLink The nextLink parameter.
+     * 
+     * @param nextLink The URL to get the next list of items.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return list of BackupEngineBase resources.
+     * @return list of BackupEngineBase resources along with {@link PagedResponse} on successful completion of
+     * {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    private Mono<PagedResponse<BackupEngineBaseResourceInner>> listNextSinglePageAsync(
-        String nextLink, Context context) {
+    private Mono<PagedResponse<BackupEngineBaseResourceInner>> listNextSinglePageAsync(String nextLink,
+        Context context) {
         if (nextLink == null) {
             return Mono.error(new IllegalArgumentException("Parameter nextLink is required and cannot be null."));
         }
         if (this.client.getEndpoint() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getEndpoint() is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
         }
         final String accept = "application/json";
         context = this.client.mergeContext(context);
-        return service
-            .listNext(nextLink, this.client.getEndpoint(), accept, context)
-            .map(
-                res ->
-                    new PagedResponseBase<>(
-                        res.getRequest(),
-                        res.getStatusCode(),
-                        res.getHeaders(),
-                        res.getValue().value(),
-                        res.getValue().nextLink(),
-                        null));
+        return service.listNext(nextLink, this.client.getEndpoint(), accept, context)
+            .map(res -> new PagedResponseBase<>(res.getRequest(), res.getStatusCode(), res.getHeaders(),
+                res.getValue().value(), res.getValue().nextLink(), null));
     }
 }

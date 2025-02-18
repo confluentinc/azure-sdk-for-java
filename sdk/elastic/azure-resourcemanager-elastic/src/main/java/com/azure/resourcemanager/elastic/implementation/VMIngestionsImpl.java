@@ -12,40 +12,36 @@ import com.azure.resourcemanager.elastic.fluent.VMIngestionsClient;
 import com.azure.resourcemanager.elastic.fluent.models.VMIngestionDetailsResponseInner;
 import com.azure.resourcemanager.elastic.models.VMIngestionDetailsResponse;
 import com.azure.resourcemanager.elastic.models.VMIngestions;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 public final class VMIngestionsImpl implements VMIngestions {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(VMIngestionsImpl.class);
+    private static final ClientLogger LOGGER = new ClientLogger(VMIngestionsImpl.class);
 
     private final VMIngestionsClient innerClient;
 
     private final com.azure.resourcemanager.elastic.ElasticManager serviceManager;
 
-    public VMIngestionsImpl(
-        VMIngestionsClient innerClient, com.azure.resourcemanager.elastic.ElasticManager serviceManager) {
+    public VMIngestionsImpl(VMIngestionsClient innerClient,
+        com.azure.resourcemanager.elastic.ElasticManager serviceManager) {
         this.innerClient = innerClient;
         this.serviceManager = serviceManager;
+    }
+
+    public Response<VMIngestionDetailsResponse> detailsWithResponse(String resourceGroupName, String monitorName,
+        Context context) {
+        Response<VMIngestionDetailsResponseInner> inner
+            = this.serviceClient().detailsWithResponse(resourceGroupName, monitorName, context);
+        if (inner != null) {
+            return new SimpleResponse<>(inner.getRequest(), inner.getStatusCode(), inner.getHeaders(),
+                new VMIngestionDetailsResponseImpl(inner.getValue(), this.manager()));
+        } else {
+            return null;
+        }
     }
 
     public VMIngestionDetailsResponse details(String resourceGroupName, String monitorName) {
         VMIngestionDetailsResponseInner inner = this.serviceClient().details(resourceGroupName, monitorName);
         if (inner != null) {
             return new VMIngestionDetailsResponseImpl(inner, this.manager());
-        } else {
-            return null;
-        }
-    }
-
-    public Response<VMIngestionDetailsResponse> detailsWithResponse(
-        String resourceGroupName, String monitorName, Context context) {
-        Response<VMIngestionDetailsResponseInner> inner =
-            this.serviceClient().detailsWithResponse(resourceGroupName, monitorName, context);
-        if (inner != null) {
-            return new SimpleResponse<>(
-                inner.getRequest(),
-                inner.getStatusCode(),
-                inner.getHeaders(),
-                new VMIngestionDetailsResponseImpl(inner.getValue(), this.manager()));
         } else {
             return null;
         }

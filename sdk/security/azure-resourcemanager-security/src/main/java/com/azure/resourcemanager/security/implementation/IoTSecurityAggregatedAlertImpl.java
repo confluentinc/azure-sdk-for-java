@@ -18,8 +18,7 @@ public final class IoTSecurityAggregatedAlertImpl implements IoTSecurityAggregat
 
     private final com.azure.resourcemanager.security.SecurityManager serviceManager;
 
-    IoTSecurityAggregatedAlertImpl(
-        IoTSecurityAggregatedAlertInner innerObject,
+    IoTSecurityAggregatedAlertImpl(IoTSecurityAggregatedAlertInner innerObject,
         com.azure.resourcemanager.security.SecurityManager serviceManager) {
         this.innerObject = innerObject;
         this.serviceManager = serviceManager;
@@ -35,6 +34,15 @@ public final class IoTSecurityAggregatedAlertImpl implements IoTSecurityAggregat
 
     public String type() {
         return this.innerModel().type();
+    }
+
+    public Map<String, String> tags() {
+        Map<String, String> inner = this.innerModel().tags();
+        if (inner != null) {
+            return Collections.unmodifiableMap(inner);
+        } else {
+            return Collections.emptyMap();
+        }
     }
 
     public String alertType() {
@@ -91,15 +99,6 @@ public final class IoTSecurityAggregatedAlertImpl implements IoTSecurityAggregat
             return Collections.unmodifiableList(inner);
         } else {
             return Collections.emptyList();
-        }
-    }
-
-    public Map<String, String> tags() {
-        Map<String, String> inner = this.innerModel().tags();
-        if (inner != null) {
-            return Collections.unmodifiableMap(inner);
-        } else {
-            return Collections.emptyMap();
         }
     }
 

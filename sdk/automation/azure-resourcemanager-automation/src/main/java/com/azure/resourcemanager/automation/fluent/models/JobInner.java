@@ -5,397 +5,461 @@
 package com.azure.resourcemanager.automation.fluent.models;
 
 import com.azure.core.annotation.Fluent;
-import com.azure.core.annotation.JsonFlatten;
 import com.azure.core.management.ProxyResource;
-import com.azure.core.util.logging.ClientLogger;
+import com.azure.json.JsonReader;
+import com.azure.json.JsonToken;
+import com.azure.json.JsonWriter;
 import com.azure.resourcemanager.automation.models.JobProvisioningState;
 import com.azure.resourcemanager.automation.models.JobStatus;
 import com.azure.resourcemanager.automation.models.RunbookAssociationProperty;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import java.io.IOException;
 import java.time.OffsetDateTime;
 import java.util.Map;
 import java.util.UUID;
 
-/** Definition of the job. */
-@JsonFlatten
+/**
+ * Definition of the job.
+ */
 @Fluent
-public class JobInner extends ProxyResource {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(JobInner.class);
+public final class JobInner extends ProxyResource {
+    /*
+     * The properties of the job.
+     */
+    private JobProperties innerProperties;
 
     /*
-     * Gets or sets the runbook.
+     * The type of the resource.
      */
-    @JsonProperty(value = "properties.runbook")
-    private RunbookAssociationProperty runbook;
+    private String type;
 
     /*
-     * Gets or sets the job started by.
+     * The name of the resource.
      */
-    @JsonProperty(value = "properties.startedBy")
-    private String startedBy;
+    private String name;
 
     /*
-     * Gets or sets the runOn which specifies the group name where the job is
-     * to be executed.
+     * Fully qualified resource Id for the resource.
      */
-    @JsonProperty(value = "properties.runOn")
-    private String runOn;
+    private String id;
 
-    /*
-     * Gets or sets the id of the job.
+    /**
+     * Creates an instance of JobInner class.
      */
-    @JsonProperty(value = "properties.jobId")
-    private UUID jobId;
+    public JobInner() {
+    }
 
-    /*
-     * Gets or sets the creation time of the job.
+    /**
+     * Get the innerProperties property: The properties of the job.
+     * 
+     * @return the innerProperties value.
      */
-    @JsonProperty(value = "properties.creationTime")
-    private OffsetDateTime creationTime;
+    private JobProperties innerProperties() {
+        return this.innerProperties;
+    }
 
-    /*
-     * Gets or sets the status of the job.
+    /**
+     * Get the type property: The type of the resource.
+     * 
+     * @return the type value.
      */
-    @JsonProperty(value = "properties.status")
-    private JobStatus status;
+    @Override
+    public String type() {
+        return this.type;
+    }
 
-    /*
-     * Gets or sets the status details of the job.
+    /**
+     * Get the name property: The name of the resource.
+     * 
+     * @return the name value.
      */
-    @JsonProperty(value = "properties.statusDetails")
-    private String statusDetails;
+    @Override
+    public String name() {
+        return this.name;
+    }
 
-    /*
-     * Gets or sets the start time of the job.
+    /**
+     * Get the id property: Fully qualified resource Id for the resource.
+     * 
+     * @return the id value.
      */
-    @JsonProperty(value = "properties.startTime")
-    private OffsetDateTime startTime;
-
-    /*
-     * Gets or sets the end time of the job.
-     */
-    @JsonProperty(value = "properties.endTime")
-    private OffsetDateTime endTime;
-
-    /*
-     * Gets or sets the exception of the job.
-     */
-    @JsonProperty(value = "properties.exception")
-    private String exception;
-
-    /*
-     * Gets or sets the last modified time of the job.
-     */
-    @JsonProperty(value = "properties.lastModifiedTime")
-    private OffsetDateTime lastModifiedTime;
-
-    /*
-     * Gets or sets the last status modified time of the job.
-     */
-    @JsonProperty(value = "properties.lastStatusModifiedTime")
-    private OffsetDateTime lastStatusModifiedTime;
-
-    /*
-     * Gets or sets the parameters of the job.
-     */
-    @JsonProperty(value = "properties.parameters")
-    private Map<String, String> parameters;
-
-    /*
-     * The current provisioning state of the job.
-     */
-    @JsonProperty(value = "properties.provisioningState")
-    private JobProvisioningState provisioningState;
+    @Override
+    public String id() {
+        return this.id;
+    }
 
     /**
      * Get the runbook property: Gets or sets the runbook.
-     *
+     * 
      * @return the runbook value.
      */
     public RunbookAssociationProperty runbook() {
-        return this.runbook;
+        return this.innerProperties() == null ? null : this.innerProperties().runbook();
     }
 
     /**
      * Set the runbook property: Gets or sets the runbook.
-     *
+     * 
      * @param runbook the runbook value to set.
      * @return the JobInner object itself.
      */
     public JobInner withRunbook(RunbookAssociationProperty runbook) {
-        this.runbook = runbook;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new JobProperties();
+        }
+        this.innerProperties().withRunbook(runbook);
         return this;
     }
 
     /**
      * Get the startedBy property: Gets or sets the job started by.
-     *
+     * 
      * @return the startedBy value.
      */
     public String startedBy() {
-        return this.startedBy;
+        return this.innerProperties() == null ? null : this.innerProperties().startedBy();
     }
 
     /**
      * Set the startedBy property: Gets or sets the job started by.
-     *
+     * 
      * @param startedBy the startedBy value to set.
      * @return the JobInner object itself.
      */
     public JobInner withStartedBy(String startedBy) {
-        this.startedBy = startedBy;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new JobProperties();
+        }
+        this.innerProperties().withStartedBy(startedBy);
         return this;
     }
 
     /**
      * Get the runOn property: Gets or sets the runOn which specifies the group name where the job is to be executed.
-     *
+     * 
      * @return the runOn value.
      */
     public String runOn() {
-        return this.runOn;
+        return this.innerProperties() == null ? null : this.innerProperties().runOn();
     }
 
     /**
      * Set the runOn property: Gets or sets the runOn which specifies the group name where the job is to be executed.
-     *
+     * 
      * @param runOn the runOn value to set.
      * @return the JobInner object itself.
      */
     public JobInner withRunOn(String runOn) {
-        this.runOn = runOn;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new JobProperties();
+        }
+        this.innerProperties().withRunOn(runOn);
         return this;
     }
 
     /**
      * Get the jobId property: Gets or sets the id of the job.
-     *
+     * 
      * @return the jobId value.
      */
     public UUID jobId() {
-        return this.jobId;
+        return this.innerProperties() == null ? null : this.innerProperties().jobId();
     }
 
     /**
      * Set the jobId property: Gets or sets the id of the job.
-     *
+     * 
      * @param jobId the jobId value to set.
      * @return the JobInner object itself.
      */
     public JobInner withJobId(UUID jobId) {
-        this.jobId = jobId;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new JobProperties();
+        }
+        this.innerProperties().withJobId(jobId);
         return this;
     }
 
     /**
      * Get the creationTime property: Gets or sets the creation time of the job.
-     *
+     * 
      * @return the creationTime value.
      */
     public OffsetDateTime creationTime() {
-        return this.creationTime;
+        return this.innerProperties() == null ? null : this.innerProperties().creationTime();
     }
 
     /**
      * Set the creationTime property: Gets or sets the creation time of the job.
-     *
+     * 
      * @param creationTime the creationTime value to set.
      * @return the JobInner object itself.
      */
     public JobInner withCreationTime(OffsetDateTime creationTime) {
-        this.creationTime = creationTime;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new JobProperties();
+        }
+        this.innerProperties().withCreationTime(creationTime);
         return this;
     }
 
     /**
      * Get the status property: Gets or sets the status of the job.
-     *
+     * 
      * @return the status value.
      */
     public JobStatus status() {
-        return this.status;
+        return this.innerProperties() == null ? null : this.innerProperties().status();
     }
 
     /**
      * Set the status property: Gets or sets the status of the job.
-     *
+     * 
      * @param status the status value to set.
      * @return the JobInner object itself.
      */
     public JobInner withStatus(JobStatus status) {
-        this.status = status;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new JobProperties();
+        }
+        this.innerProperties().withStatus(status);
         return this;
     }
 
     /**
      * Get the statusDetails property: Gets or sets the status details of the job.
-     *
+     * 
      * @return the statusDetails value.
      */
     public String statusDetails() {
-        return this.statusDetails;
+        return this.innerProperties() == null ? null : this.innerProperties().statusDetails();
     }
 
     /**
      * Set the statusDetails property: Gets or sets the status details of the job.
-     *
+     * 
      * @param statusDetails the statusDetails value to set.
      * @return the JobInner object itself.
      */
     public JobInner withStatusDetails(String statusDetails) {
-        this.statusDetails = statusDetails;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new JobProperties();
+        }
+        this.innerProperties().withStatusDetails(statusDetails);
         return this;
     }
 
     /**
      * Get the startTime property: Gets or sets the start time of the job.
-     *
+     * 
      * @return the startTime value.
      */
     public OffsetDateTime startTime() {
-        return this.startTime;
+        return this.innerProperties() == null ? null : this.innerProperties().startTime();
     }
 
     /**
      * Set the startTime property: Gets or sets the start time of the job.
-     *
+     * 
      * @param startTime the startTime value to set.
      * @return the JobInner object itself.
      */
     public JobInner withStartTime(OffsetDateTime startTime) {
-        this.startTime = startTime;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new JobProperties();
+        }
+        this.innerProperties().withStartTime(startTime);
         return this;
     }
 
     /**
      * Get the endTime property: Gets or sets the end time of the job.
-     *
+     * 
      * @return the endTime value.
      */
     public OffsetDateTime endTime() {
-        return this.endTime;
+        return this.innerProperties() == null ? null : this.innerProperties().endTime();
     }
 
     /**
      * Set the endTime property: Gets or sets the end time of the job.
-     *
+     * 
      * @param endTime the endTime value to set.
      * @return the JobInner object itself.
      */
     public JobInner withEndTime(OffsetDateTime endTime) {
-        this.endTime = endTime;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new JobProperties();
+        }
+        this.innerProperties().withEndTime(endTime);
         return this;
     }
 
     /**
      * Get the exception property: Gets or sets the exception of the job.
-     *
+     * 
      * @return the exception value.
      */
     public String exception() {
-        return this.exception;
+        return this.innerProperties() == null ? null : this.innerProperties().exception();
     }
 
     /**
      * Set the exception property: Gets or sets the exception of the job.
-     *
+     * 
      * @param exception the exception value to set.
      * @return the JobInner object itself.
      */
     public JobInner withException(String exception) {
-        this.exception = exception;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new JobProperties();
+        }
+        this.innerProperties().withException(exception);
         return this;
     }
 
     /**
      * Get the lastModifiedTime property: Gets or sets the last modified time of the job.
-     *
+     * 
      * @return the lastModifiedTime value.
      */
     public OffsetDateTime lastModifiedTime() {
-        return this.lastModifiedTime;
+        return this.innerProperties() == null ? null : this.innerProperties().lastModifiedTime();
     }
 
     /**
      * Set the lastModifiedTime property: Gets or sets the last modified time of the job.
-     *
+     * 
      * @param lastModifiedTime the lastModifiedTime value to set.
      * @return the JobInner object itself.
      */
     public JobInner withLastModifiedTime(OffsetDateTime lastModifiedTime) {
-        this.lastModifiedTime = lastModifiedTime;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new JobProperties();
+        }
+        this.innerProperties().withLastModifiedTime(lastModifiedTime);
         return this;
     }
 
     /**
      * Get the lastStatusModifiedTime property: Gets or sets the last status modified time of the job.
-     *
+     * 
      * @return the lastStatusModifiedTime value.
      */
     public OffsetDateTime lastStatusModifiedTime() {
-        return this.lastStatusModifiedTime;
+        return this.innerProperties() == null ? null : this.innerProperties().lastStatusModifiedTime();
     }
 
     /**
      * Set the lastStatusModifiedTime property: Gets or sets the last status modified time of the job.
-     *
+     * 
      * @param lastStatusModifiedTime the lastStatusModifiedTime value to set.
      * @return the JobInner object itself.
      */
     public JobInner withLastStatusModifiedTime(OffsetDateTime lastStatusModifiedTime) {
-        this.lastStatusModifiedTime = lastStatusModifiedTime;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new JobProperties();
+        }
+        this.innerProperties().withLastStatusModifiedTime(lastStatusModifiedTime);
         return this;
     }
 
     /**
      * Get the parameters property: Gets or sets the parameters of the job.
-     *
+     * 
      * @return the parameters value.
      */
     public Map<String, String> parameters() {
-        return this.parameters;
+        return this.innerProperties() == null ? null : this.innerProperties().parameters();
     }
 
     /**
      * Set the parameters property: Gets or sets the parameters of the job.
-     *
+     * 
      * @param parameters the parameters value to set.
      * @return the JobInner object itself.
      */
     public JobInner withParameters(Map<String, String> parameters) {
-        this.parameters = parameters;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new JobProperties();
+        }
+        this.innerProperties().withParameters(parameters);
         return this;
     }
 
     /**
      * Get the provisioningState property: The current provisioning state of the job.
-     *
+     * 
      * @return the provisioningState value.
      */
     public JobProvisioningState provisioningState() {
-        return this.provisioningState;
+        return this.innerProperties() == null ? null : this.innerProperties().provisioningState();
     }
 
     /**
      * Set the provisioningState property: The current provisioning state of the job.
-     *
+     * 
      * @param provisioningState the provisioningState value to set.
      * @return the JobInner object itself.
      */
     public JobInner withProvisioningState(JobProvisioningState provisioningState) {
-        this.provisioningState = provisioningState;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new JobProperties();
+        }
+        this.innerProperties().withProvisioningState(provisioningState);
         return this;
     }
 
     /**
      * Validates the instance.
-     *
+     * 
      * @throws IllegalArgumentException thrown if the instance is not valid.
      */
     public void validate() {
-        if (runbook() != null) {
-            runbook().validate();
+        if (innerProperties() != null) {
+            innerProperties().validate();
         }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public JsonWriter toJson(JsonWriter jsonWriter) throws IOException {
+        jsonWriter.writeStartObject();
+        jsonWriter.writeJsonField("properties", this.innerProperties);
+        return jsonWriter.writeEndObject();
+    }
+
+    /**
+     * Reads an instance of JobInner from the JsonReader.
+     * 
+     * @param jsonReader The JsonReader being read.
+     * @return An instance of JobInner if the JsonReader was pointing to an instance of it, or null if it was pointing
+     * to JSON null.
+     * @throws IllegalStateException If the deserialized JSON object was missing any required properties.
+     * @throws IOException If an error occurs while reading the JobInner.
+     */
+    public static JobInner fromJson(JsonReader jsonReader) throws IOException {
+        return jsonReader.readObject(reader -> {
+            JobInner deserializedJobInner = new JobInner();
+            while (reader.nextToken() != JsonToken.END_OBJECT) {
+                String fieldName = reader.getFieldName();
+                reader.nextToken();
+
+                if ("id".equals(fieldName)) {
+                    deserializedJobInner.id = reader.getString();
+                } else if ("name".equals(fieldName)) {
+                    deserializedJobInner.name = reader.getString();
+                } else if ("type".equals(fieldName)) {
+                    deserializedJobInner.type = reader.getString();
+                } else if ("properties".equals(fieldName)) {
+                    deserializedJobInner.innerProperties = JobProperties.fromJson(reader);
+                } else {
+                    reader.skipChildren();
+                }
+            }
+
+            return deserializedJobInner;
+        });
     }
 }

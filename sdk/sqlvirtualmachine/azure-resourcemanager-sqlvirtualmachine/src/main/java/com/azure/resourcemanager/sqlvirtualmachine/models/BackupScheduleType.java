@@ -5,29 +5,46 @@
 package com.azure.resourcemanager.sqlvirtualmachine.models;
 
 import com.azure.core.util.ExpandableStringEnum;
-import com.fasterxml.jackson.annotation.JsonCreator;
 import java.util.Collection;
 
-/** Defines values for BackupScheduleType. */
+/**
+ * Backup schedule type.
+ */
 public final class BackupScheduleType extends ExpandableStringEnum<BackupScheduleType> {
-    /** Static value Manual for BackupScheduleType. */
+    /**
+     * Static value Manual for BackupScheduleType.
+     */
     public static final BackupScheduleType MANUAL = fromString("Manual");
 
-    /** Static value Automated for BackupScheduleType. */
+    /**
+     * Static value Automated for BackupScheduleType.
+     */
     public static final BackupScheduleType AUTOMATED = fromString("Automated");
 
     /**
+     * Creates a new instance of BackupScheduleType value.
+     * 
+     * @deprecated Use the {@link #fromString(String)} factory method.
+     */
+    @Deprecated
+    public BackupScheduleType() {
+    }
+
+    /**
      * Creates or finds a BackupScheduleType from its string representation.
-     *
+     * 
      * @param name a name to look for.
      * @return the corresponding BackupScheduleType.
      */
-    @JsonCreator
     public static BackupScheduleType fromString(String name) {
         return fromString(name, BackupScheduleType.class);
     }
 
-    /** @return known BackupScheduleType values. */
+    /**
+     * Gets known BackupScheduleType values.
+     * 
+     * @return known BackupScheduleType values.
+     */
     public static Collection<BackupScheduleType> values() {
         return values(BackupScheduleType.class);
     }

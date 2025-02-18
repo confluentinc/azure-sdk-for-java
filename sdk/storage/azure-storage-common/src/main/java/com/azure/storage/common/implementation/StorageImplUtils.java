@@ -6,35 +6,42 @@ package com.azure.storage.common.implementation;
 import com.azure.core.http.HttpMethod;
 import com.azure.core.http.HttpResponse;
 import com.azure.core.util.Context;
-import com.azure.core.util.UrlBuilder;
 import com.azure.core.util.CoreUtils;
+import com.azure.core.util.SharedExecutorService;
+import com.azure.core.util.UrlBuilder;
 import com.azure.core.util.logging.ClientLogger;
-import com.azure.storage.common.Utility;
+import reactor.core.publisher.Mono;
 
+import javax.crypto.Mac;
+import javax.crypto.spec.SecretKeySpec;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.time.Duration;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
+import java.util.AbstractMap;
 import java.util.Base64;
+import java.util.Collections;
+import java.util.Iterator;
 import java.util.Locale;
 import java.util.Map;
+import java.util.NoSuchElementException;
+import java.util.Objects;
 import java.util.TreeMap;
-import java.util.function.Function;
-import java.util.regex.Pattern;
-
-import reactor.core.publisher.Flux;
-import reactor.core.publisher.Mono;
-
-import javax.crypto.Mac;
-import javax.crypto.spec.SecretKeySpec;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
+import java.util.function.Supplier;
 
 import static com.azure.storage.common.Utility.urlDecode;
-import static com.azure.storage.common.implementation.Constants.HeaderConstants.ERROR_CODE;
+import static com.azure.storage.common.implementation.Constants.HeaderConstants.ERROR_CODE_HEADER_NAME;
 
 /**
  * Utility class which is used internally.
@@ -42,17 +49,15 @@ import static com.azure.storage.common.implementation.Constants.HeaderConstants.
 public class StorageImplUtils {
     private static final ClientLogger LOGGER = new ClientLogger(StorageImplUtils.class);
 
-    private static final String ARGUMENT_NULL_OR_EMPTY =
-        "The argument must not be null or an empty string. Argument name: %s.";
+    private static final String ARGUMENT_NULL_OR_EMPTY
+        = "The argument must not be null or an empty string. Argument name: %s.";
 
     private static final String PARAMETER_NOT_IN_RANGE = "The value of the parameter '%s' should be between %s and %s.";
 
-    private static final String NO_PATH_SEGMENTS = "URL %s does not contain path segments.";
-
     private static final String STRING_TO_SIGN_LOG_INFO_MESSAGE = "The string to sign computed by the SDK is: {}{}";
 
-    private static final String STRING_TO_SIGN_LOG_WARNING_MESSAGE = "Please remember to disable '{}' before going "
-        + "to production as this string can potentially contain PII.";
+    private static final String STRING_TO_SIGN_LOG_WARNING_MESSAGE
+        = "Please remember to disable '{}' before going " + "to production as this string can potentially contain PII.";
 
     private static final String STORAGE_EXCEPTION_LOG_STRING_TO_SIGN_MESSAGE = String.format(
         "If you are using a StorageSharedKeyCredential, and the server returned an "
@@ -68,59 +73,29 @@ public class StorageImplUtils {
         Constants.STORAGE_LOG_STRING_TO_SIGN, Constants.STORAGE_LOG_STRING_TO_SIGN,
         Constants.STORAGE_LOG_STRING_TO_SIGN);
 
-    /**
-     * @deprecated See value in {@link StorageImplUtils}
-     */
-    @Deprecated
-    public static final String INVALID_DATE_STRING = "Invalid Date String: %s.";
+    private static final String INVALID_BASE64_KEY
+        = "'base64Key' was not a valid Base64 scheme. Ensure the Storage account key or SAS key is properly formatted.";
 
-    /**
-     * Stores a reference to the date/time pattern with the greatest precision Java.util.Date is capable of expressing.
-     * @deprecated See value in {@link StorageImplUtils}
-     */
-    @Deprecated
-    public static final String MAX_PRECISION_PATTERN = "yyyy-MM-dd'T'HH:mm:ss.SSS";
+    private static final String INVALID_DATE_STRING = "Invalid Date String: %s.";
 
-    /**
-     * The length of a datestring that matches the MAX_PRECISION_PATTERN.
-     * @deprecated See value in {@link StorageImplUtils}
-     */
-    @Deprecated
-    public static final int MAX_PRECISION_DATESTRING_LENGTH = MAX_PRECISION_PATTERN.replaceAll("'", "")
-            .length();
+    private static final String MAX_PRECISION_PATTERN = "yyyy-MM-dd'T'HH:mm:ss.SSS";
 
-    /**
-     * Stores a reference to the ISO8601 date/time pattern.
-     * @deprecated See value in {@link StorageImplUtils}
-     */
-    @Deprecated
-    public static final String ISO8601_PATTERN = "yyyy-MM-dd'T'HH:mm:ss'Z'";
+    private static final int MAX_PRECISION_DATESTRING_LENGTH = MAX_PRECISION_PATTERN.replaceAll("'", "").length();
 
-    /**
-     * Stores a reference to the ISO8601 date/time pattern.
-     * @deprecated See value in {@link StorageImplUtils}
-     */
-    @Deprecated
-    public static final String ISO8601_PATTERN_NO_SECONDS = "yyyy-MM-dd'T'HH:mm'Z'";
+    // Use constant DateTimeFormatters as 'ofPattern' requires the passed pattern to be parsed each time, significantly
+    // increasing the overhead of using DateTimeFormatter.
+    private static final DateTimeFormatter MAX_PRECISION_FORMATTER
+        = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS").withLocale(Locale.ROOT);
 
-    /**
-     * A compiled Pattern that finds 'Z'. This is used as Java 8's String.replace method uses Pattern.compile
-     * internally without simple case opt-outs.
-     * @deprecated See value in {@link StorageImplUtils}
-     */
-    @Deprecated
-    public static final Pattern Z_PATTERN = Pattern.compile("Z");
+    private static final DateTimeFormatter ISO8601_FORMATTER
+        = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'").withLocale(Locale.ROOT);
 
-    /**
-     * Parses the query string into a key-value pair map that maintains key, query parameter key, order. The value is
-     * stored as a string (ex. key=val1,val2,val3 instead of key=[val1, val2, val3]).
-     *
-     * @param queryString Query string to parse
-     * @return a mapping of query string pieces as key-value pairs.
-     */
-    public static Map<String, String> parseQueryString(final String queryString) {
-        return parseQueryStringHelper(queryString, Utility::urlDecode);
-    }
+    private static final DateTimeFormatter NO_SECONDS_FORMATTER
+        = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm'Z'").withLocale(Locale.ROOT);
+
+    private static final DateTimeFormatter NO_TIME_FORMATTER
+        = DateTimeFormatter.ofPattern("yyyy-MM-dd").withLocale(Locale.ROOT);
+    private static final String ENCRYPTION_DATA_KEY = "encryptiondata";
 
     /**
      * Parses the query string into a key-value pair map that maintains key, query parameter key, order. The value is
@@ -134,28 +109,20 @@ public class StorageImplUtils {
         // query values from query values that container a comma.
         // Example 1: prefix=a%2cb => prefix={decode(a%2cb)} => prefix={"a,b"}
         // Example 2: prefix=a,b => prefix={decode(a),decode(b)} => prefix={"a", "b"}
-        return parseQueryStringHelper(queryString, value -> {
-            String[] v = value.split(",");
-            String[] ret = new String[v.length];
-            for (int i = 0; i < v.length; i++) {
-                ret[i] = urlDecode(v[i]);
-            }
-            return ret;
-        });
-    }
-
-    private static <T> Map<String, T> parseQueryStringHelper(final String queryString,
-                                                             Function<String, T> valueParser) {
-        TreeMap<String, T> pieces = new TreeMap<>();
+        TreeMap<String, String[]> pieces = new TreeMap<>();
 
         if (CoreUtils.isNullOrEmpty(queryString)) {
             return pieces;
         }
 
         for (String kvp : queryString.split("&")) {
-            int equalIndex = kvp.indexOf("=");
+            int equalIndex = kvp.indexOf('=');
             String key = urlDecode(kvp.substring(0, equalIndex).toLowerCase(Locale.ROOT));
-            T value = valueParser.apply(kvp.substring(equalIndex + 1));
+
+            String[] value = kvp.substring(equalIndex + 1).split(",");
+            for (int i = 0; i < value.length; i++) {
+                value[i] = urlDecode(value[i]);
+            }
 
             pieces.putIfAbsent(key, value);
         }
@@ -189,23 +156,7 @@ public class StorageImplUtils {
      * @return Mono with an applied timeout, if any.
      */
     public static <T> Mono<T> applyOptionalTimeout(Mono<T> publisher, Duration timeout) {
-        return timeout == null
-            ? publisher
-            : publisher.timeout(timeout);
-    }
-
-    /**
-     * Applies a timeout to a publisher if the given timeout is not null.
-     *
-     * @param publisher Flux to apply optional timeout to.
-     * @param timeout Optional timeout.
-     * @param <T> Return type of the Flux.
-     * @return Flux with an applied timeout, if any.
-     */
-    public static <T> Flux<T> applyOptionalTimeout(Flux<T> publisher, Duration timeout) {
-        return timeout == null
-            ? publisher
-            : publisher.timeout(timeout);
+        return timeout == null ? publisher : publisher.timeout(timeout);
     }
 
     /**
@@ -233,8 +184,8 @@ public class StorageImplUtils {
      */
     public static void assertInBounds(final String param, final long value, final long min, final long max) {
         if (value < min || value > max) {
-            throw LOGGER.logExceptionAsError(new IllegalArgumentException(String.format(Locale.ROOT,
-                PARAMETER_NOT_IN_RANGE, param, min, max)));
+            throw LOGGER.logExceptionAsError(
+                new IllegalArgumentException(String.format(Locale.ROOT, PARAMETER_NOT_IN_RANGE, param, min, max)));
         }
     }
 
@@ -248,8 +199,14 @@ public class StorageImplUtils {
      * string, or the UTF-8 charset isn't supported.
      */
     public static String computeHMac256(final String base64Key, final String stringToSign) {
+        byte[] key;
         try {
-            byte[] key = Base64.getDecoder().decode(base64Key);
+            key = Base64.getDecoder().decode(base64Key);
+        } catch (IllegalArgumentException ex) {
+            throw new RuntimeException(INVALID_BASE64_KEY, ex);
+        }
+
+        try {
             Mac hmacSHA256 = Mac.getInstance("HmacSHA256");
             hmacSHA256.init(new SecretKeySpec(key, "HmacSHA256"));
             byte[] utf8Bytes = stringToSign.getBytes(StandardCharsets.UTF_8);
@@ -285,30 +242,6 @@ public class StorageImplUtils {
         }
     }
 
-
-    /**
-     * Strips the last path segment from the passed URL.
-     *
-     * @param baseUrl URL having its last path segment stripped
-     * @return a URL with the path segment stripped.
-     * @throws IllegalArgumentException If stripping the last path segment causes the URL to become malformed or it
-     * doesn't contain any path segments.
-     */
-    public static URL stripLastPathSegment(URL baseUrl) {
-        UrlBuilder builder = UrlBuilder.parse(baseUrl);
-
-        if (builder.getPath() == null || !builder.getPath().contains("/")) {
-            throw new IllegalArgumentException(String.format(Locale.ROOT, NO_PATH_SEGMENTS, baseUrl));
-        }
-
-        builder.setPath(builder.getPath().substring(0, builder.getPath().lastIndexOf("/")));
-        try {
-            return builder.toUrl();
-        } catch (MalformedURLException ex) {
-            throw new IllegalArgumentException(ex);
-        }
-    }
-
     /**
      * Strips the account name from host part of the URL object.
      *
@@ -317,7 +250,7 @@ public class StorageImplUtils {
      */
     public static String getAccountName(URL url) {
         UrlBuilder builder = UrlBuilder.parse(url);
-        String accountName =  null;
+        String accountName = null;
         String host = builder.getHost();
         //Parse host to get account name
         // host will look like this : <accountname>.blob.core.windows.net
@@ -350,7 +283,8 @@ public class StorageImplUtils {
      * @param context Additional context to determine if the string to sign should be logged.
      */
     public static void logStringToSign(ClientLogger logger, String stringToSign, Context context) {
-        if (context != null && Boolean.TRUE.equals(context.getData(Constants.STORAGE_LOG_STRING_TO_SIGN).orElse(false))) {
+        if (context != null
+            && Boolean.TRUE.equals(context.getData(Constants.STORAGE_LOG_STRING_TO_SIGN).orElse(false))) {
             logger.info(STRING_TO_SIGN_LOG_INFO_MESSAGE, stringToSign, System.lineSeparator());
             logger.warning(STRING_TO_SIGN_LOG_WARNING_MESSAGE, Constants.STORAGE_LOG_STRING_TO_SIGN);
         }
@@ -368,10 +302,16 @@ public class StorageImplUtils {
             if (response.getStatusCode() == 403) {
                 return STORAGE_EXCEPTION_LOG_STRING_TO_SIGN_MESSAGE + message;
             }
-            if (response.getRequest() != null && response.getRequest().getHttpMethod() != null
+            if (response.getRequest() != null
+                && response.getRequest().getHttpMethod() != null
                 && response.getRequest().getHttpMethod().equals(HttpMethod.HEAD)
-                && response.getHeaders().getValue(ERROR_CODE) != null) {
-                return message.replaceFirst("(empty body)", response.getHeaders().getValue(ERROR_CODE));
+                && response.getHeaders().getValue(ERROR_CODE_HEADER_NAME) != null) {
+                int indexOfEmptyBody = message.indexOf("(empty body)");
+                if (indexOfEmptyBody >= 0) {
+                    return message.substring(0, indexOfEmptyBody)
+                        + response.getHeaders().getValue(ERROR_CODE_HEADER_NAME)
+                        + message.substring(indexOfEmptyBody + 12);
+                }
             }
         }
         return message;
@@ -386,7 +326,7 @@ public class StorageImplUtils {
      * @throws IllegalArgumentException If {@code dateString} doesn't match an ISO8601 pattern
      */
     public static TimeAndFormat parseDateAndFormat(String dateString) {
-        String pattern = MAX_PRECISION_PATTERN;
+        DateTimeFormatter formatter = MAX_PRECISION_FORMATTER;
         switch (dateString.length()) {
             case 28: // "yyyy-MM-dd'T'HH:mm:ss.SSSSSSS'Z'"-> [2012-01-04T23:21:59.1234567Z] length = 28
             case 27: // "yyyy-MM-dd'T'HH:mm:ss.SSSSSS'Z'"-> [2012-01-04T23:21:59.123456Z] length = 27
@@ -395,26 +335,208 @@ public class StorageImplUtils {
             case 24: // "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"-> [2012-01-04T23:21:59.123Z] length = 24
                 dateString = dateString.substring(0, MAX_PRECISION_DATESTRING_LENGTH);
                 break;
+
             case 23: // "yyyy-MM-dd'T'HH:mm:ss.SS'Z'"-> [2012-01-04T23:21:59.12Z] length = 23
                 // SS is assumed to be milliseconds, so a trailing 0 is necessary
-                dateString = Z_PATTERN.matcher(dateString).replaceAll("0");
+                if (dateString.endsWith("Z")) {
+                    dateString = dateString.substring(0, 22) + "0";
+                }
                 break;
+
             case 22: // "yyyy-MM-dd'T'HH:mm:ss.S'Z'"-> [2012-01-04T23:21:59.1Z] length = 22
                 // S is assumed to be milliseconds, so trailing 0's are necessary
-                dateString = Z_PATTERN.matcher(dateString).replaceAll("00");
+                if (dateString.endsWith("Z")) {
+                    dateString = dateString.substring(0, 21) + "00";
+                }
                 break;
+
             case 20: // "yyyy-MM-dd'T'HH:mm:ss'Z'"-> [2012-01-04T23:21:59Z] length = 20
-                pattern = ISO8601_PATTERN;
+                formatter = ISO8601_FORMATTER;
                 break;
+
             case 17: // "yyyy-MM-dd'T'HH:mm'Z'"-> [2012-01-04T23:21Z] length = 17
-                pattern = ISO8601_PATTERN_NO_SECONDS;
+                formatter = NO_SECONDS_FORMATTER;
                 break;
+
+            case 10: // "yyyy-MM-dd"-> [2012-01-04] length = 10
+                return new TimeAndFormat(LocalDate.parse(dateString).atStartOfDay(ZoneOffset.UTC).toOffsetDateTime(),
+                    NO_TIME_FORMATTER);
+
             default:
                 throw new IllegalArgumentException(String.format(Locale.ROOT, INVALID_DATE_STRING, dateString));
         }
 
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(pattern, Locale.ROOT);
         return new TimeAndFormat(LocalDateTime.parse(dateString, formatter).atZone(ZoneOffset.UTC).toOffsetDateTime(),
             formatter);
+    }
+
+    /**
+     * Parses the query parameters as an iterator to reduce overhead of {@link String#split(String)}.
+     * <p>
+     * Copied from azure-core until it's a public API.
+     *
+     * @param queryParameters Query parameters being parsed.
+     * @return Iterator that iterates over the query parameter key-value pairs.
+     */
+    public static Iterator<Map.Entry<String, String>> parseQueryParameters(String queryParameters) {
+        return (CoreUtils.isNullOrEmpty(queryParameters))
+            ? Collections.emptyIterator()
+            : new QueryParameterIterator(queryParameters);
+    }
+
+    private static final class QueryParameterIterator implements Iterator<Map.Entry<String, String>> {
+        private final String queryParameters;
+        private final int queryParametersLength;
+
+        private boolean done = false;
+        private int position;
+
+        QueryParameterIterator(String queryParameters) {
+            this.queryParameters = queryParameters;
+            this.queryParametersLength = queryParameters.length();
+
+            // If the URL query begins with '?' the first possible start of a query parameter key is the
+            // second character in the query.
+            position = (queryParameters.startsWith("?")) ? 1 : 0;
+        }
+
+        @Override
+        public boolean hasNext() {
+            return !done;
+        }
+
+        @Override
+        public Map.Entry<String, String> next() {
+            if (done) {
+                throw new NoSuchElementException();
+            }
+
+            int nextPosition = position;
+            char c;
+            while (nextPosition < queryParametersLength) {
+                // Next position can either be '=' or '&' as a query parameter may not have a '=', ex 'key&key2=value'.
+                c = queryParameters.charAt(nextPosition);
+                if (c == '=') {
+                    break;
+                } else if (c == '&') {
+                    String key = queryParameters.substring(position, nextPosition);
+
+                    // Position is set to nextPosition + 1 to skip over the '&'
+                    position = nextPosition + 1;
+
+                    return new AbstractMap.SimpleImmutableEntry<>(key, "");
+                }
+
+                nextPosition++;
+            }
+
+            if (nextPosition == queryParametersLength) {
+                // Query parameters completed.
+                done = true;
+                return new AbstractMap.SimpleImmutableEntry<>(queryParameters.substring(position), "");
+            }
+
+            String key = queryParameters.substring(position, nextPosition);
+
+            // Position is set to nextPosition + 1 to skip over the '='
+            position = nextPosition + 1;
+
+            nextPosition = queryParameters.indexOf('&', position);
+
+            String value = null;
+            if (nextPosition == -1) {
+                // This was the last key-value pair in the query parameters 'https://example.com?param=done'
+                done = true;
+                value = queryParameters.substring(position);
+            } else {
+                value = queryParameters.substring(position, nextPosition);
+                // Position is set to nextPosition + 1 to skip over the '&'
+                position = nextPosition + 1;
+            }
+
+            return new AbstractMap.SimpleImmutableEntry<>(key, value);
+        }
+    }
+
+    public static <T> T submitThreadPool(Supplier<T> operation, ClientLogger logger, Duration timeout) {
+        try {
+            return timeout != null
+                ? SharedExecutorService.getInstance()
+                    .submit(operation::get)
+                    .get(timeout.toMillis(), TimeUnit.MILLISECONDS)
+                : operation.get();
+        } catch (InterruptedException | ExecutionException | TimeoutException e) {
+            throw logger.logExceptionAsError(new RuntimeException(e));
+        } catch (RuntimeException e) {
+            throw LOGGER.logExceptionAsError(e);
+        }
+    }
+
+    public static String getEncryptionDataKey(Map<String, String> metadata) {
+        if (CoreUtils.isNullOrEmpty(metadata)) {
+            return null;
+        }
+        for (Map.Entry<String, String> entry : metadata.entrySet()) {
+            if (entry.getKey().length() != ENCRYPTION_DATA_KEY.length()) {
+                continue;
+            }
+            if (ENCRYPTION_DATA_KEY.regionMatches(true, 0, entry.getKey(), 0, ENCRYPTION_DATA_KEY.length())) {
+                return entry.getValue();
+            }
+        }
+        return null;
+    }
+
+    public static <T> T sendRequest(Callable<T> operation, Duration timeout,
+        Class<? extends RuntimeException> exceptionType) {
+        try {
+            if (timeout == null) {
+                return operation.call();
+            }
+            Future<T> future = SharedExecutorService.getInstance().submit(operation);
+            return getResultWithTimeout(future, timeout.toMillis(), exceptionType);
+        } catch (Exception e) {
+            Throwable cause = e.getCause();
+            if (exceptionType.isInstance(e)) {
+                // Safe to cast since we checked with isInstance
+                throw exceptionType.cast(e);
+            } else if (cause instanceof RuntimeException) {
+                // Throw as is if it's already a RuntimeException
+                throw (RuntimeException) cause;
+            } else if (cause instanceof Error) {
+                // Propagate if it's an Error
+                throw (Error) cause;
+            } else {
+                // Wrap in RuntimeException if it's neither Error nor RuntimeException
+                throw LOGGER.logExceptionAsError(new RuntimeException(cause));
+            }
+        }
+    }
+
+    public static <T> T getResultWithTimeout(Future<T> future, long timeoutInMillis,
+        Class<? extends RuntimeException> exceptionType)
+        throws InterruptedException, ExecutionException, TimeoutException {
+        Objects.requireNonNull(future, "'future' cannot be null.");
+
+        try {
+            if (timeoutInMillis <= 0) {
+                return future.get();
+            }
+            return future.get(timeoutInMillis, TimeUnit.MILLISECONDS);
+        } catch (TimeoutException e) {
+            future.cancel(true); // Cancel the operation as it's no longer needed
+            throw e;
+        } catch (ExecutionException e) {
+            Throwable cause = e.getCause();
+            if (cause instanceof Error) {
+                throw (Error) cause; // Rethrow if it's an Error
+            } else if (exceptionType.isInstance(cause)) {
+                throw e;
+            } else if (cause instanceof RuntimeException) {
+                throw (RuntimeException) cause; // Rethrow if it's another kind of RuntimeException
+            } else {
+                throw new RuntimeException(cause);
+            }
+        }
     }
 }

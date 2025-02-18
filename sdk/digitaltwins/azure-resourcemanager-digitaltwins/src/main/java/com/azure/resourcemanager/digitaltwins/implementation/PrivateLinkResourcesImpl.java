@@ -8,25 +8,36 @@ import com.azure.core.http.rest.Response;
 import com.azure.core.http.rest.SimpleResponse;
 import com.azure.core.util.Context;
 import com.azure.core.util.logging.ClientLogger;
-import com.azure.resourcemanager.digitaltwins.AzureDigitalTwinsManager;
 import com.azure.resourcemanager.digitaltwins.fluent.PrivateLinkResourcesClient;
 import com.azure.resourcemanager.digitaltwins.fluent.models.GroupIdInformationInner;
 import com.azure.resourcemanager.digitaltwins.fluent.models.GroupIdInformationResponseInner;
 import com.azure.resourcemanager.digitaltwins.models.GroupIdInformation;
 import com.azure.resourcemanager.digitaltwins.models.GroupIdInformationResponse;
 import com.azure.resourcemanager.digitaltwins.models.PrivateLinkResources;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 public final class PrivateLinkResourcesImpl implements PrivateLinkResources {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(PrivateLinkResourcesImpl.class);
+    private static final ClientLogger LOGGER = new ClientLogger(PrivateLinkResourcesImpl.class);
 
     private final PrivateLinkResourcesClient innerClient;
 
-    private final AzureDigitalTwinsManager serviceManager;
+    private final com.azure.resourcemanager.digitaltwins.AzureDigitalTwinsManager serviceManager;
 
-    public PrivateLinkResourcesImpl(PrivateLinkResourcesClient innerClient, AzureDigitalTwinsManager serviceManager) {
+    public PrivateLinkResourcesImpl(PrivateLinkResourcesClient innerClient,
+        com.azure.resourcemanager.digitaltwins.AzureDigitalTwinsManager serviceManager) {
         this.innerClient = innerClient;
         this.serviceManager = serviceManager;
+    }
+
+    public Response<GroupIdInformationResponse> listWithResponse(String resourceGroupName, String resourceName,
+        Context context) {
+        Response<GroupIdInformationResponseInner> inner
+            = this.serviceClient().listWithResponse(resourceGroupName, resourceName, context);
+        if (inner != null) {
+            return new SimpleResponse<>(inner.getRequest(), inner.getStatusCode(), inner.getHeaders(),
+                new GroupIdInformationResponseImpl(inner.getValue(), this.manager()));
+        } else {
+            return null;
+        }
     }
 
     public GroupIdInformationResponse list(String resourceGroupName, String resourceName) {
@@ -38,16 +49,13 @@ public final class PrivateLinkResourcesImpl implements PrivateLinkResources {
         }
     }
 
-    public Response<GroupIdInformationResponse> listWithResponse(
-        String resourceGroupName, String resourceName, Context context) {
-        Response<GroupIdInformationResponseInner> inner =
-            this.serviceClient().listWithResponse(resourceGroupName, resourceName, context);
+    public Response<GroupIdInformation> getWithResponse(String resourceGroupName, String resourceName,
+        String resourceId, Context context) {
+        Response<GroupIdInformationInner> inner
+            = this.serviceClient().getWithResponse(resourceGroupName, resourceName, resourceId, context);
         if (inner != null) {
-            return new SimpleResponse<>(
-                inner.getRequest(),
-                inner.getStatusCode(),
-                inner.getHeaders(),
-                new GroupIdInformationResponseImpl(inner.getValue(), this.manager()));
+            return new SimpleResponse<>(inner.getRequest(), inner.getStatusCode(), inner.getHeaders(),
+                new GroupIdInformationImpl(inner.getValue(), this.manager()));
         } else {
             return null;
         }
@@ -62,26 +70,11 @@ public final class PrivateLinkResourcesImpl implements PrivateLinkResources {
         }
     }
 
-    public Response<GroupIdInformation> getWithResponse(
-        String resourceGroupName, String resourceName, String resourceId, Context context) {
-        Response<GroupIdInformationInner> inner =
-            this.serviceClient().getWithResponse(resourceGroupName, resourceName, resourceId, context);
-        if (inner != null) {
-            return new SimpleResponse<>(
-                inner.getRequest(),
-                inner.getStatusCode(),
-                inner.getHeaders(),
-                new GroupIdInformationImpl(inner.getValue(), this.manager()));
-        } else {
-            return null;
-        }
-    }
-
     private PrivateLinkResourcesClient serviceClient() {
         return this.innerClient;
     }
 
-    private AzureDigitalTwinsManager manager() {
+    private com.azure.resourcemanager.digitaltwins.AzureDigitalTwinsManager manager() {
         return this.serviceManager;
     }
 }

@@ -5,29 +5,47 @@
 package com.azure.resourcemanager.containerservice.models;
 
 import com.azure.core.util.ExpandableStringEnum;
-import com.fasterxml.jackson.annotation.JsonCreator;
 import java.util.Collection;
 
-/** Defines values for ScaleDownMode. */
+/**
+ * Describes how VMs are added to or removed from Agent Pools. See [billing
+ * states](https://docs.microsoft.com/azure/virtual-machines/states-billing).
+ */
 public final class ScaleDownMode extends ExpandableStringEnum<ScaleDownMode> {
-    /** Static value Delete for ScaleDownMode. */
+    /**
+     * Static value Delete for ScaleDownMode.
+     */
     public static final ScaleDownMode DELETE = fromString("Delete");
 
-    /** Static value Deallocate for ScaleDownMode. */
+    /**
+     * Static value Deallocate for ScaleDownMode.
+     */
     public static final ScaleDownMode DEALLOCATE = fromString("Deallocate");
 
     /**
+     * Creates a new instance of ScaleDownMode value.
+     * 
+     * @deprecated Use the {@link #fromString(String)} factory method.
+     */
+    @Deprecated
+    public ScaleDownMode() {
+    }
+
+    /**
      * Creates or finds a ScaleDownMode from its string representation.
-     *
+     * 
      * @param name a name to look for.
      * @return the corresponding ScaleDownMode.
      */
-    @JsonCreator
     public static ScaleDownMode fromString(String name) {
         return fromString(name, ScaleDownMode.class);
     }
 
-    /** @return known ScaleDownMode values. */
+    /**
+     * Gets known ScaleDownMode values.
+     * 
+     * @return known ScaleDownMode values.
+     */
     public static Collection<ScaleDownMode> values() {
         return values(ScaleDownMode.class);
     }

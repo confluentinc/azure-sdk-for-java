@@ -29,38 +29,38 @@ import com.azure.core.http.rest.RestProxy;
 import com.azure.core.management.exception.ManagementException;
 import com.azure.core.util.Context;
 import com.azure.core.util.FluxUtil;
-import com.azure.core.util.logging.ClientLogger;
 import com.azure.resourcemanager.monitor.fluent.ActivityLogAlertsClient;
 import com.azure.resourcemanager.monitor.fluent.models.ActivityLogAlertResourceInner;
-import com.azure.resourcemanager.monitor.models.ActivityLogAlertList;
-import com.azure.resourcemanager.monitor.models.ActivityLogAlertPatchBody;
+import com.azure.resourcemanager.monitor.models.AlertRuleList;
+import com.azure.resourcemanager.monitor.models.AlertRulePatchObject;
 import com.azure.resourcemanager.resources.fluentcore.collection.InnerSupportsDelete;
 import com.azure.resourcemanager.resources.fluentcore.collection.InnerSupportsGet;
 import com.azure.resourcemanager.resources.fluentcore.collection.InnerSupportsListing;
 import reactor.core.publisher.Mono;
 
-/** An instance of this class provides access to all the operations defined in ActivityLogAlertsClient. */
-public final class ActivityLogAlertsClientImpl
-    implements InnerSupportsGet<ActivityLogAlertResourceInner>,
-        InnerSupportsListing<ActivityLogAlertResourceInner>,
-        InnerSupportsDelete<Void>,
-        ActivityLogAlertsClient {
-    private final ClientLogger logger = new ClientLogger(ActivityLogAlertsClientImpl.class);
-
-    /** The proxy service used to perform REST calls. */
+/**
+ * An instance of this class provides access to all the operations defined in ActivityLogAlertsClient.
+ */
+public final class ActivityLogAlertsClientImpl implements InnerSupportsGet<ActivityLogAlertResourceInner>,
+    InnerSupportsListing<ActivityLogAlertResourceInner>, InnerSupportsDelete<Void>, ActivityLogAlertsClient {
+    /**
+     * The proxy service used to perform REST calls.
+     */
     private final ActivityLogAlertsService service;
 
-    /** The service client containing this operation class. */
+    /**
+     * The service client containing this operation class.
+     */
     private final MonitorClientImpl client;
 
     /**
      * Initializes an instance of ActivityLogAlertsClientImpl.
-     *
+     * 
      * @param client the instance of the service client containing this operation class.
      */
     ActivityLogAlertsClientImpl(MonitorClientImpl client) {
-        this.service =
-            RestProxy.create(ActivityLogAlertsService.class, client.getHttpPipeline(), client.getSerializerAdapter());
+        this.service
+            = RestProxy.create(ActivityLogAlertsService.class, client.getHttpPipeline(), client.getSerializerAdapter());
         this.client = client;
     }
 
@@ -70,120 +70,106 @@ public final class ActivityLogAlertsClientImpl
      */
     @Host("{$host}")
     @ServiceInterface(name = "MonitorClientActivit")
-    private interface ActivityLogAlertsService {
-        @Headers({"Content-Type: application/json"})
-        @Put(
-            "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/microsoft.insights"
-                + "/activityLogAlerts/{activityLogAlertName}")
-        @ExpectedResponses({200, 201})
+    public interface ActivityLogAlertsService {
+        @Headers({ "Content-Type: application/json" })
+        @Put("/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Insights/activityLogAlerts/{activityLogAlertName}")
+        @ExpectedResponses({ 200, 201 })
         @UnexpectedResponseExceptionType(ManagementException.class)
-        Mono<Response<ActivityLogAlertResourceInner>> createOrUpdate(
-            @HostParam("$host") String endpoint,
+        Mono<Response<ActivityLogAlertResourceInner>> createOrUpdate(@HostParam("$host") String endpoint,
             @PathParam("subscriptionId") String subscriptionId,
             @PathParam("resourceGroupName") String resourceGroupName,
             @PathParam("activityLogAlertName") String activityLogAlertName,
             @QueryParam("api-version") String apiVersion,
-            @BodyParam("application/json") ActivityLogAlertResourceInner activityLogAlert,
-            @HeaderParam("Accept") String accept,
-            Context context);
+            @BodyParam("application/json") ActivityLogAlertResourceInner activityLogAlertRule,
+            @HeaderParam("Accept") String accept, Context context);
 
-        @Headers({"Content-Type: application/json"})
-        @Get(
-            "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/microsoft.insights"
-                + "/activityLogAlerts/{activityLogAlertName}")
-        @ExpectedResponses({200})
+        @Headers({ "Content-Type: application/json" })
+        @Get("/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Insights/activityLogAlerts/{activityLogAlertName}")
+        @ExpectedResponses({ 200 })
         @UnexpectedResponseExceptionType(ManagementException.class)
-        Mono<Response<ActivityLogAlertResourceInner>> getByResourceGroup(
-            @HostParam("$host") String endpoint,
+        Mono<Response<ActivityLogAlertResourceInner>> getByResourceGroup(@HostParam("$host") String endpoint,
+            @PathParam("subscriptionId") String subscriptionId,
+            @PathParam("resourceGroupName") String resourceGroupName,
+            @PathParam("activityLogAlertName") String activityLogAlertName,
+            @QueryParam("api-version") String apiVersion, @HeaderParam("Accept") String accept, Context context);
+
+        @Headers({ "Content-Type: application/json" })
+        @Delete("/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Insights/activityLogAlerts/{activityLogAlertName}")
+        @ExpectedResponses({ 200, 204 })
+        @UnexpectedResponseExceptionType(ManagementException.class)
+        Mono<Response<Void>> delete(@HostParam("$host") String endpoint,
+            @PathParam("subscriptionId") String subscriptionId,
+            @PathParam("resourceGroupName") String resourceGroupName,
+            @PathParam("activityLogAlertName") String activityLogAlertName,
+            @QueryParam("api-version") String apiVersion, @HeaderParam("Accept") String accept, Context context);
+
+        @Headers({ "Content-Type: application/json" })
+        @Patch("/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Insights/activityLogAlerts/{activityLogAlertName}")
+        @ExpectedResponses({ 200 })
+        @UnexpectedResponseExceptionType(ManagementException.class)
+        Mono<Response<ActivityLogAlertResourceInner>> update(@HostParam("$host") String endpoint,
             @PathParam("subscriptionId") String subscriptionId,
             @PathParam("resourceGroupName") String resourceGroupName,
             @PathParam("activityLogAlertName") String activityLogAlertName,
             @QueryParam("api-version") String apiVersion,
-            @HeaderParam("Accept") String accept,
-            Context context);
+            @BodyParam("application/json") AlertRulePatchObject activityLogAlertRulePatch,
+            @HeaderParam("Accept") String accept, Context context);
 
-        @Headers({"Content-Type: application/json"})
-        @Delete(
-            "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/microsoft.insights"
-                + "/activityLogAlerts/{activityLogAlertName}")
-        @ExpectedResponses({200, 204})
+        @Headers({ "Content-Type: application/json" })
+        @Get("/subscriptions/{subscriptionId}/providers/Microsoft.Insights/activityLogAlerts")
+        @ExpectedResponses({ 200 })
         @UnexpectedResponseExceptionType(ManagementException.class)
-        Mono<Response<Void>> delete(
-            @HostParam("$host") String endpoint,
-            @PathParam("subscriptionId") String subscriptionId,
-            @PathParam("resourceGroupName") String resourceGroupName,
-            @PathParam("activityLogAlertName") String activityLogAlertName,
-            @QueryParam("api-version") String apiVersion,
-            @HeaderParam("Accept") String accept,
-            Context context);
+        Mono<Response<AlertRuleList>> list(@HostParam("$host") String endpoint,
+            @PathParam("subscriptionId") String subscriptionId, @QueryParam("api-version") String apiVersion,
+            @HeaderParam("Accept") String accept, Context context);
 
-        @Headers({"Content-Type: application/json"})
-        @Patch(
-            "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/microsoft.insights"
-                + "/activityLogAlerts/{activityLogAlertName}")
-        @ExpectedResponses({200})
+        @Headers({ "Content-Type: application/json" })
+        @Get("/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Insights/activityLogAlerts")
+        @ExpectedResponses({ 200 })
         @UnexpectedResponseExceptionType(ManagementException.class)
-        Mono<Response<ActivityLogAlertResourceInner>> update(
-            @HostParam("$host") String endpoint,
+        Mono<Response<AlertRuleList>> listByResourceGroup(@HostParam("$host") String endpoint,
             @PathParam("subscriptionId") String subscriptionId,
-            @PathParam("resourceGroupName") String resourceGroupName,
-            @PathParam("activityLogAlertName") String activityLogAlertName,
-            @QueryParam("api-version") String apiVersion,
-            @BodyParam("application/json") ActivityLogAlertPatchBody activityLogAlertPatch,
-            @HeaderParam("Accept") String accept,
-            Context context);
+            @PathParam("resourceGroupName") String resourceGroupName, @QueryParam("api-version") String apiVersion,
+            @HeaderParam("Accept") String accept, Context context);
 
-        @Headers({"Content-Type: application/json"})
-        @Get("/subscriptions/{subscriptionId}/providers/microsoft.insights/activityLogAlerts")
-        @ExpectedResponses({200})
+        @Headers({ "Content-Type: application/json" })
+        @Get("{nextLink}")
+        @ExpectedResponses({ 200 })
         @UnexpectedResponseExceptionType(ManagementException.class)
-        Mono<Response<ActivityLogAlertList>> list(
-            @HostParam("$host") String endpoint,
-            @PathParam("subscriptionId") String subscriptionId,
-            @QueryParam("api-version") String apiVersion,
-            @HeaderParam("Accept") String accept,
-            Context context);
+        Mono<Response<AlertRuleList>> listBySubscriptionIdNext(
+            @PathParam(value = "nextLink", encoded = true) String nextLink, @HostParam("$host") String endpoint,
+            @HeaderParam("Accept") String accept, Context context);
 
-        @Headers({"Content-Type: application/json"})
-        @Get(
-            "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/microsoft.insights"
-                + "/activityLogAlerts")
-        @ExpectedResponses({200})
+        @Headers({ "Content-Type: application/json" })
+        @Get("{nextLink}")
+        @ExpectedResponses({ 200 })
         @UnexpectedResponseExceptionType(ManagementException.class)
-        Mono<Response<ActivityLogAlertList>> listByResourceGroup(
-            @HostParam("$host") String endpoint,
-            @PathParam("subscriptionId") String subscriptionId,
-            @PathParam("resourceGroupName") String resourceGroupName,
-            @QueryParam("api-version") String apiVersion,
-            @HeaderParam("Accept") String accept,
-            Context context);
+        Mono<Response<AlertRuleList>> listByResourceGroupNext(
+            @PathParam(value = "nextLink", encoded = true) String nextLink, @HostParam("$host") String endpoint,
+            @HeaderParam("Accept") String accept, Context context);
     }
 
     /**
-     * Create a new activity log alert or update an existing one.
-     *
-     * @param resourceGroupName The name of the resource group.
-     * @param activityLogAlertName The name of the activity log alert.
-     * @param activityLogAlert The activity log alert to create or use for the update.
+     * Create a new Activity Log Alert rule or update an existing one.
+     * 
+     * @param resourceGroupName The name of the resource group. The name is case insensitive.
+     * @param activityLogAlertName The name of the Activity Log Alert rule.
+     * @param activityLogAlertRule The Activity Log Alert rule to create or use for the update.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return an activity log alert resource.
+     * @return an Activity Log Alert rule resource along with {@link Response} on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    public Mono<Response<ActivityLogAlertResourceInner>> createOrUpdateWithResponseAsync(
-        String resourceGroupName, String activityLogAlertName, ActivityLogAlertResourceInner activityLogAlert) {
+    public Mono<Response<ActivityLogAlertResourceInner>> createOrUpdateWithResponseAsync(String resourceGroupName,
+        String activityLogAlertName, ActivityLogAlertResourceInner activityLogAlertRule) {
         if (this.client.getEndpoint() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getEndpoint() is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
         }
         if (this.client.getSubscriptionId() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getSubscriptionId() is required and cannot be null."));
+            return Mono.error(new IllegalArgumentException(
+                "Parameter this.client.getSubscriptionId() is required and cannot be null."));
         }
         if (resourceGroupName == null) {
             return Mono
@@ -193,59 +179,42 @@ public final class ActivityLogAlertsClientImpl
             return Mono
                 .error(new IllegalArgumentException("Parameter activityLogAlertName is required and cannot be null."));
         }
-        if (activityLogAlert == null) {
+        if (activityLogAlertRule == null) {
             return Mono
-                .error(new IllegalArgumentException("Parameter activityLogAlert is required and cannot be null."));
+                .error(new IllegalArgumentException("Parameter activityLogAlertRule is required and cannot be null."));
         } else {
-            activityLogAlert.validate();
+            activityLogAlertRule.validate();
         }
-        final String apiVersion = "2017-04-01";
+        final String apiVersion = "2020-10-01";
         final String accept = "application/json";
         return FluxUtil
-            .withContext(
-                context ->
-                    service
-                        .createOrUpdate(
-                            this.client.getEndpoint(),
-                            this.client.getSubscriptionId(),
-                            resourceGroupName,
-                            activityLogAlertName,
-                            apiVersion,
-                            activityLogAlert,
-                            accept,
-                            context))
+            .withContext(context -> service.createOrUpdate(this.client.getEndpoint(), this.client.getSubscriptionId(),
+                resourceGroupName, activityLogAlertName, apiVersion, activityLogAlertRule, accept, context))
             .contextWrite(context -> context.putAll(FluxUtil.toReactorContext(this.client.getContext()).readOnly()));
     }
 
     /**
-     * Create a new activity log alert or update an existing one.
-     *
-     * @param resourceGroupName The name of the resource group.
-     * @param activityLogAlertName The name of the activity log alert.
-     * @param activityLogAlert The activity log alert to create or use for the update.
+     * Create a new Activity Log Alert rule or update an existing one.
+     * 
+     * @param resourceGroupName The name of the resource group. The name is case insensitive.
+     * @param activityLogAlertName The name of the Activity Log Alert rule.
+     * @param activityLogAlertRule The Activity Log Alert rule to create or use for the update.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return an activity log alert resource.
+     * @return an Activity Log Alert rule resource along with {@link Response} on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    private Mono<Response<ActivityLogAlertResourceInner>> createOrUpdateWithResponseAsync(
-        String resourceGroupName,
-        String activityLogAlertName,
-        ActivityLogAlertResourceInner activityLogAlert,
-        Context context) {
+    private Mono<Response<ActivityLogAlertResourceInner>> createOrUpdateWithResponseAsync(String resourceGroupName,
+        String activityLogAlertName, ActivityLogAlertResourceInner activityLogAlertRule, Context context) {
         if (this.client.getEndpoint() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getEndpoint() is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
         }
         if (this.client.getSubscriptionId() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getSubscriptionId() is required and cannot be null."));
+            return Mono.error(new IllegalArgumentException(
+                "Parameter this.client.getSubscriptionId() is required and cannot be null."));
         }
         if (resourceGroupName == null) {
             return Mono
@@ -255,115 +224,94 @@ public final class ActivityLogAlertsClientImpl
             return Mono
                 .error(new IllegalArgumentException("Parameter activityLogAlertName is required and cannot be null."));
         }
-        if (activityLogAlert == null) {
+        if (activityLogAlertRule == null) {
             return Mono
-                .error(new IllegalArgumentException("Parameter activityLogAlert is required and cannot be null."));
+                .error(new IllegalArgumentException("Parameter activityLogAlertRule is required and cannot be null."));
         } else {
-            activityLogAlert.validate();
+            activityLogAlertRule.validate();
         }
-        final String apiVersion = "2017-04-01";
+        final String apiVersion = "2020-10-01";
         final String accept = "application/json";
         context = this.client.mergeContext(context);
-        return service
-            .createOrUpdate(
-                this.client.getEndpoint(),
-                this.client.getSubscriptionId(),
-                resourceGroupName,
-                activityLogAlertName,
-                apiVersion,
-                activityLogAlert,
-                accept,
-                context);
+        return service.createOrUpdate(this.client.getEndpoint(), this.client.getSubscriptionId(), resourceGroupName,
+            activityLogAlertName, apiVersion, activityLogAlertRule, accept, context);
     }
 
     /**
-     * Create a new activity log alert or update an existing one.
-     *
-     * @param resourceGroupName The name of the resource group.
-     * @param activityLogAlertName The name of the activity log alert.
-     * @param activityLogAlert The activity log alert to create or use for the update.
+     * Create a new Activity Log Alert rule or update an existing one.
+     * 
+     * @param resourceGroupName The name of the resource group. The name is case insensitive.
+     * @param activityLogAlertName The name of the Activity Log Alert rule.
+     * @param activityLogAlertRule The Activity Log Alert rule to create or use for the update.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return an activity log alert resource.
+     * @return an Activity Log Alert rule resource on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    public Mono<ActivityLogAlertResourceInner> createOrUpdateAsync(
-        String resourceGroupName, String activityLogAlertName, ActivityLogAlertResourceInner activityLogAlert) {
-        return createOrUpdateWithResponseAsync(resourceGroupName, activityLogAlertName, activityLogAlert)
-            .flatMap(
-                (Response<ActivityLogAlertResourceInner> res) -> {
-                    if (res.getValue() != null) {
-                        return Mono.just(res.getValue());
-                    } else {
-                        return Mono.empty();
-                    }
-                });
+    public Mono<ActivityLogAlertResourceInner> createOrUpdateAsync(String resourceGroupName,
+        String activityLogAlertName, ActivityLogAlertResourceInner activityLogAlertRule) {
+        return createOrUpdateWithResponseAsync(resourceGroupName, activityLogAlertName, activityLogAlertRule)
+            .flatMap(res -> Mono.justOrEmpty(res.getValue()));
     }
 
     /**
-     * Create a new activity log alert or update an existing one.
-     *
-     * @param resourceGroupName The name of the resource group.
-     * @param activityLogAlertName The name of the activity log alert.
-     * @param activityLogAlert The activity log alert to create or use for the update.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return an activity log alert resource.
-     */
-    @ServiceMethod(returns = ReturnType.SINGLE)
-    public ActivityLogAlertResourceInner createOrUpdate(
-        String resourceGroupName, String activityLogAlertName, ActivityLogAlertResourceInner activityLogAlert) {
-        return createOrUpdateAsync(resourceGroupName, activityLogAlertName, activityLogAlert).block();
-    }
-
-    /**
-     * Create a new activity log alert or update an existing one.
-     *
-     * @param resourceGroupName The name of the resource group.
-     * @param activityLogAlertName The name of the activity log alert.
-     * @param activityLogAlert The activity log alert to create or use for the update.
+     * Create a new Activity Log Alert rule or update an existing one.
+     * 
+     * @param resourceGroupName The name of the resource group. The name is case insensitive.
+     * @param activityLogAlertName The name of the Activity Log Alert rule.
+     * @param activityLogAlertRule The Activity Log Alert rule to create or use for the update.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return an activity log alert resource.
+     * @return an Activity Log Alert rule resource along with {@link Response}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    public Response<ActivityLogAlertResourceInner> createOrUpdateWithResponse(
-        String resourceGroupName,
-        String activityLogAlertName,
-        ActivityLogAlertResourceInner activityLogAlert,
-        Context context) {
-        return createOrUpdateWithResponseAsync(resourceGroupName, activityLogAlertName, activityLogAlert, context)
+    public Response<ActivityLogAlertResourceInner> createOrUpdateWithResponse(String resourceGroupName,
+        String activityLogAlertName, ActivityLogAlertResourceInner activityLogAlertRule, Context context) {
+        return createOrUpdateWithResponseAsync(resourceGroupName, activityLogAlertName, activityLogAlertRule, context)
             .block();
     }
 
     /**
-     * Get an activity log alert.
-     *
-     * @param resourceGroupName The name of the resource group.
-     * @param activityLogAlertName The name of the activity log alert.
+     * Create a new Activity Log Alert rule or update an existing one.
+     * 
+     * @param resourceGroupName The name of the resource group. The name is case insensitive.
+     * @param activityLogAlertName The name of the Activity Log Alert rule.
+     * @param activityLogAlertRule The Activity Log Alert rule to create or use for the update.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return an activity log alert.
+     * @return an Activity Log Alert rule resource.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    public Mono<Response<ActivityLogAlertResourceInner>> getByResourceGroupWithResponseAsync(
-        String resourceGroupName, String activityLogAlertName) {
+    public ActivityLogAlertResourceInner createOrUpdate(String resourceGroupName, String activityLogAlertName,
+        ActivityLogAlertResourceInner activityLogAlertRule) {
+        return createOrUpdateWithResponse(resourceGroupName, activityLogAlertName, activityLogAlertRule, Context.NONE)
+            .getValue();
+    }
+
+    /**
+     * Get an Activity Log Alert rule.
+     * 
+     * @param resourceGroupName The name of the resource group. The name is case insensitive.
+     * @param activityLogAlertName The name of the Activity Log Alert rule.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return an Activity Log Alert rule along with {@link Response} on successful completion of {@link Mono}.
+     */
+    @ServiceMethod(returns = ReturnType.SINGLE)
+    public Mono<Response<ActivityLogAlertResourceInner>> getByResourceGroupWithResponseAsync(String resourceGroupName,
+        String activityLogAlertName) {
         if (this.client.getEndpoint() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getEndpoint() is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
         }
         if (this.client.getSubscriptionId() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getSubscriptionId() is required and cannot be null."));
+            return Mono.error(new IllegalArgumentException(
+                "Parameter this.client.getSubscriptionId() is required and cannot be null."));
         }
         if (resourceGroupName == null) {
             return Mono
@@ -373,48 +321,35 @@ public final class ActivityLogAlertsClientImpl
             return Mono
                 .error(new IllegalArgumentException("Parameter activityLogAlertName is required and cannot be null."));
         }
-        final String apiVersion = "2017-04-01";
+        final String apiVersion = "2020-10-01";
         final String accept = "application/json";
         return FluxUtil
-            .withContext(
-                context ->
-                    service
-                        .getByResourceGroup(
-                            this.client.getEndpoint(),
-                            this.client.getSubscriptionId(),
-                            resourceGroupName,
-                            activityLogAlertName,
-                            apiVersion,
-                            accept,
-                            context))
+            .withContext(context -> service.getByResourceGroup(this.client.getEndpoint(),
+                this.client.getSubscriptionId(), resourceGroupName, activityLogAlertName, apiVersion, accept, context))
             .contextWrite(context -> context.putAll(FluxUtil.toReactorContext(this.client.getContext()).readOnly()));
     }
 
     /**
-     * Get an activity log alert.
-     *
-     * @param resourceGroupName The name of the resource group.
-     * @param activityLogAlertName The name of the activity log alert.
+     * Get an Activity Log Alert rule.
+     * 
+     * @param resourceGroupName The name of the resource group. The name is case insensitive.
+     * @param activityLogAlertName The name of the Activity Log Alert rule.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return an activity log alert.
+     * @return an Activity Log Alert rule along with {@link Response} on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    private Mono<Response<ActivityLogAlertResourceInner>> getByResourceGroupWithResponseAsync(
-        String resourceGroupName, String activityLogAlertName, Context context) {
+    private Mono<Response<ActivityLogAlertResourceInner>> getByResourceGroupWithResponseAsync(String resourceGroupName,
+        String activityLogAlertName, Context context) {
         if (this.client.getEndpoint() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getEndpoint() is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
         }
         if (this.client.getSubscriptionId() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getSubscriptionId() is required and cannot be null."));
+            return Mono.error(new IllegalArgumentException(
+                "Parameter this.client.getSubscriptionId() is required and cannot be null."));
         }
         if (resourceGroupName == null) {
             return Mono
@@ -424,99 +359,81 @@ public final class ActivityLogAlertsClientImpl
             return Mono
                 .error(new IllegalArgumentException("Parameter activityLogAlertName is required and cannot be null."));
         }
-        final String apiVersion = "2017-04-01";
+        final String apiVersion = "2020-10-01";
         final String accept = "application/json";
         context = this.client.mergeContext(context);
-        return service
-            .getByResourceGroup(
-                this.client.getEndpoint(),
-                this.client.getSubscriptionId(),
-                resourceGroupName,
-                activityLogAlertName,
-                apiVersion,
-                accept,
-                context);
+        return service.getByResourceGroup(this.client.getEndpoint(), this.client.getSubscriptionId(), resourceGroupName,
+            activityLogAlertName, apiVersion, accept, context);
     }
 
     /**
-     * Get an activity log alert.
-     *
-     * @param resourceGroupName The name of the resource group.
-     * @param activityLogAlertName The name of the activity log alert.
+     * Get an Activity Log Alert rule.
+     * 
+     * @param resourceGroupName The name of the resource group. The name is case insensitive.
+     * @param activityLogAlertName The name of the Activity Log Alert rule.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return an activity log alert.
+     * @return an Activity Log Alert rule on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    public Mono<ActivityLogAlertResourceInner> getByResourceGroupAsync(
-        String resourceGroupName, String activityLogAlertName) {
+    public Mono<ActivityLogAlertResourceInner> getByResourceGroupAsync(String resourceGroupName,
+        String activityLogAlertName) {
         return getByResourceGroupWithResponseAsync(resourceGroupName, activityLogAlertName)
-            .flatMap(
-                (Response<ActivityLogAlertResourceInner> res) -> {
-                    if (res.getValue() != null) {
-                        return Mono.just(res.getValue());
-                    } else {
-                        return Mono.empty();
-                    }
-                });
+            .flatMap(res -> Mono.justOrEmpty(res.getValue()));
     }
 
     /**
-     * Get an activity log alert.
-     *
-     * @param resourceGroupName The name of the resource group.
-     * @param activityLogAlertName The name of the activity log alert.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return an activity log alert.
-     */
-    @ServiceMethod(returns = ReturnType.SINGLE)
-    public ActivityLogAlertResourceInner getByResourceGroup(String resourceGroupName, String activityLogAlertName) {
-        return getByResourceGroupAsync(resourceGroupName, activityLogAlertName).block();
-    }
-
-    /**
-     * Get an activity log alert.
-     *
-     * @param resourceGroupName The name of the resource group.
-     * @param activityLogAlertName The name of the activity log alert.
+     * Get an Activity Log Alert rule.
+     * 
+     * @param resourceGroupName The name of the resource group. The name is case insensitive.
+     * @param activityLogAlertName The name of the Activity Log Alert rule.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return an activity log alert.
+     * @return an Activity Log Alert rule along with {@link Response}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    public Response<ActivityLogAlertResourceInner> getByResourceGroupWithResponse(
-        String resourceGroupName, String activityLogAlertName, Context context) {
+    public Response<ActivityLogAlertResourceInner> getByResourceGroupWithResponse(String resourceGroupName,
+        String activityLogAlertName, Context context) {
         return getByResourceGroupWithResponseAsync(resourceGroupName, activityLogAlertName, context).block();
     }
 
     /**
-     * Delete an activity log alert.
-     *
-     * @param resourceGroupName The name of the resource group.
-     * @param activityLogAlertName The name of the activity log alert.
+     * Get an Activity Log Alert rule.
+     * 
+     * @param resourceGroupName The name of the resource group. The name is case insensitive.
+     * @param activityLogAlertName The name of the Activity Log Alert rule.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the completion.
+     * @return an Activity Log Alert rule.
+     */
+    @ServiceMethod(returns = ReturnType.SINGLE)
+    public ActivityLogAlertResourceInner getByResourceGroup(String resourceGroupName, String activityLogAlertName) {
+        return getByResourceGroupWithResponse(resourceGroupName, activityLogAlertName, Context.NONE).getValue();
+    }
+
+    /**
+     * Delete an Activity Log Alert rule.
+     * 
+     * @param resourceGroupName The name of the resource group. The name is case insensitive.
+     * @param activityLogAlertName The name of the Activity Log Alert rule.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return the {@link Response} on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
     public Mono<Response<Void>> deleteWithResponseAsync(String resourceGroupName, String activityLogAlertName) {
         if (this.client.getEndpoint() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getEndpoint() is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
         }
         if (this.client.getSubscriptionId() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getSubscriptionId() is required and cannot be null."));
+            return Mono.error(new IllegalArgumentException(
+                "Parameter this.client.getSubscriptionId() is required and cannot be null."));
         }
         if (resourceGroupName == null) {
             return Mono
@@ -526,48 +443,35 @@ public final class ActivityLogAlertsClientImpl
             return Mono
                 .error(new IllegalArgumentException("Parameter activityLogAlertName is required and cannot be null."));
         }
-        final String apiVersion = "2017-04-01";
+        final String apiVersion = "2020-10-01";
         final String accept = "application/json";
         return FluxUtil
-            .withContext(
-                context ->
-                    service
-                        .delete(
-                            this.client.getEndpoint(),
-                            this.client.getSubscriptionId(),
-                            resourceGroupName,
-                            activityLogAlertName,
-                            apiVersion,
-                            accept,
-                            context))
+            .withContext(context -> service.delete(this.client.getEndpoint(), this.client.getSubscriptionId(),
+                resourceGroupName, activityLogAlertName, apiVersion, accept, context))
             .contextWrite(context -> context.putAll(FluxUtil.toReactorContext(this.client.getContext()).readOnly()));
     }
 
     /**
-     * Delete an activity log alert.
-     *
-     * @param resourceGroupName The name of the resource group.
-     * @param activityLogAlertName The name of the activity log alert.
+     * Delete an Activity Log Alert rule.
+     * 
+     * @param resourceGroupName The name of the resource group. The name is case insensitive.
+     * @param activityLogAlertName The name of the Activity Log Alert rule.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the completion.
+     * @return the {@link Response} on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    private Mono<Response<Void>> deleteWithResponseAsync(
-        String resourceGroupName, String activityLogAlertName, Context context) {
+    private Mono<Response<Void>> deleteWithResponseAsync(String resourceGroupName, String activityLogAlertName,
+        Context context) {
         if (this.client.getEndpoint() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getEndpoint() is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
         }
         if (this.client.getSubscriptionId() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getSubscriptionId() is required and cannot be null."));
+            return Mono.error(new IllegalArgumentException(
+                "Parameter this.client.getSubscriptionId() is required and cannot be null."));
         }
         if (resourceGroupName == null) {
             return Mono
@@ -577,60 +481,38 @@ public final class ActivityLogAlertsClientImpl
             return Mono
                 .error(new IllegalArgumentException("Parameter activityLogAlertName is required and cannot be null."));
         }
-        final String apiVersion = "2017-04-01";
+        final String apiVersion = "2020-10-01";
         final String accept = "application/json";
         context = this.client.mergeContext(context);
-        return service
-            .delete(
-                this.client.getEndpoint(),
-                this.client.getSubscriptionId(),
-                resourceGroupName,
-                activityLogAlertName,
-                apiVersion,
-                accept,
-                context);
+        return service.delete(this.client.getEndpoint(), this.client.getSubscriptionId(), resourceGroupName,
+            activityLogAlertName, apiVersion, accept, context);
     }
 
     /**
-     * Delete an activity log alert.
-     *
-     * @param resourceGroupName The name of the resource group.
-     * @param activityLogAlertName The name of the activity log alert.
+     * Delete an Activity Log Alert rule.
+     * 
+     * @param resourceGroupName The name of the resource group. The name is case insensitive.
+     * @param activityLogAlertName The name of the Activity Log Alert rule.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the completion.
+     * @return A {@link Mono} that completes when a successful response is received.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
     public Mono<Void> deleteAsync(String resourceGroupName, String activityLogAlertName) {
-        return deleteWithResponseAsync(resourceGroupName, activityLogAlertName)
-            .flatMap((Response<Void> res) -> Mono.empty());
+        return deleteWithResponseAsync(resourceGroupName, activityLogAlertName).flatMap(ignored -> Mono.empty());
     }
 
     /**
-     * Delete an activity log alert.
-     *
-     * @param resourceGroupName The name of the resource group.
-     * @param activityLogAlertName The name of the activity log alert.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     */
-    @ServiceMethod(returns = ReturnType.SINGLE)
-    public void delete(String resourceGroupName, String activityLogAlertName) {
-        deleteAsync(resourceGroupName, activityLogAlertName).block();
-    }
-
-    /**
-     * Delete an activity log alert.
-     *
-     * @param resourceGroupName The name of the resource group.
-     * @param activityLogAlertName The name of the activity log alert.
+     * Delete an Activity Log Alert rule.
+     * 
+     * @param resourceGroupName The name of the resource group. The name is case insensitive.
+     * @param activityLogAlertName The name of the Activity Log Alert rule.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the response.
+     * @return the {@link Response}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
     public Response<Void> deleteWithResponse(String resourceGroupName, String activityLogAlertName, Context context) {
@@ -638,30 +520,41 @@ public final class ActivityLogAlertsClientImpl
     }
 
     /**
-     * Updates an existing ActivityLogAlertResource's tags. To update other fields use the CreateOrUpdate method.
-     *
-     * @param resourceGroupName The name of the resource group.
-     * @param activityLogAlertName The name of the activity log alert.
-     * @param activityLogAlertPatch Parameters supplied to the operation.
+     * Delete an Activity Log Alert rule.
+     * 
+     * @param resourceGroupName The name of the resource group. The name is case insensitive.
+     * @param activityLogAlertName The name of the Activity Log Alert rule.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return an activity log alert resource.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    public Mono<Response<ActivityLogAlertResourceInner>> updateWithResponseAsync(
-        String resourceGroupName, String activityLogAlertName, ActivityLogAlertPatchBody activityLogAlertPatch) {
+    public void delete(String resourceGroupName, String activityLogAlertName) {
+        deleteWithResponse(resourceGroupName, activityLogAlertName, Context.NONE);
+    }
+
+    /**
+     * Updates 'tags' and 'enabled' fields in an existing Alert rule. This method is used to update the Alert rule tags,
+     * and to enable or disable the Alert rule. To update other fields use CreateOrUpdate operation.
+     * 
+     * @param resourceGroupName The name of the resource group. The name is case insensitive.
+     * @param activityLogAlertName The name of the Activity Log Alert rule.
+     * @param activityLogAlertRulePatch Parameters supplied to the operation.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return an Activity Log Alert rule resource along with {@link Response} on successful completion of {@link Mono}.
+     */
+    @ServiceMethod(returns = ReturnType.SINGLE)
+    public Mono<Response<ActivityLogAlertResourceInner>> updateWithResponseAsync(String resourceGroupName,
+        String activityLogAlertName, AlertRulePatchObject activityLogAlertRulePatch) {
         if (this.client.getEndpoint() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getEndpoint() is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
         }
         if (this.client.getSubscriptionId() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getSubscriptionId() is required and cannot be null."));
+            return Mono.error(new IllegalArgumentException(
+                "Parameter this.client.getSubscriptionId() is required and cannot be null."));
         }
         if (resourceGroupName == null) {
             return Mono
@@ -671,59 +564,43 @@ public final class ActivityLogAlertsClientImpl
             return Mono
                 .error(new IllegalArgumentException("Parameter activityLogAlertName is required and cannot be null."));
         }
-        if (activityLogAlertPatch == null) {
-            return Mono
-                .error(new IllegalArgumentException("Parameter activityLogAlertPatch is required and cannot be null."));
+        if (activityLogAlertRulePatch == null) {
+            return Mono.error(
+                new IllegalArgumentException("Parameter activityLogAlertRulePatch is required and cannot be null."));
         } else {
-            activityLogAlertPatch.validate();
+            activityLogAlertRulePatch.validate();
         }
-        final String apiVersion = "2017-04-01";
+        final String apiVersion = "2020-10-01";
         final String accept = "application/json";
         return FluxUtil
-            .withContext(
-                context ->
-                    service
-                        .update(
-                            this.client.getEndpoint(),
-                            this.client.getSubscriptionId(),
-                            resourceGroupName,
-                            activityLogAlertName,
-                            apiVersion,
-                            activityLogAlertPatch,
-                            accept,
-                            context))
+            .withContext(context -> service.update(this.client.getEndpoint(), this.client.getSubscriptionId(),
+                resourceGroupName, activityLogAlertName, apiVersion, activityLogAlertRulePatch, accept, context))
             .contextWrite(context -> context.putAll(FluxUtil.toReactorContext(this.client.getContext()).readOnly()));
     }
 
     /**
-     * Updates an existing ActivityLogAlertResource's tags. To update other fields use the CreateOrUpdate method.
-     *
-     * @param resourceGroupName The name of the resource group.
-     * @param activityLogAlertName The name of the activity log alert.
-     * @param activityLogAlertPatch Parameters supplied to the operation.
+     * Updates 'tags' and 'enabled' fields in an existing Alert rule. This method is used to update the Alert rule tags,
+     * and to enable or disable the Alert rule. To update other fields use CreateOrUpdate operation.
+     * 
+     * @param resourceGroupName The name of the resource group. The name is case insensitive.
+     * @param activityLogAlertName The name of the Activity Log Alert rule.
+     * @param activityLogAlertRulePatch Parameters supplied to the operation.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return an activity log alert resource.
+     * @return an Activity Log Alert rule resource along with {@link Response} on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    private Mono<Response<ActivityLogAlertResourceInner>> updateWithResponseAsync(
-        String resourceGroupName,
-        String activityLogAlertName,
-        ActivityLogAlertPatchBody activityLogAlertPatch,
-        Context context) {
+    private Mono<Response<ActivityLogAlertResourceInner>> updateWithResponseAsync(String resourceGroupName,
+        String activityLogAlertName, AlertRulePatchObject activityLogAlertRulePatch, Context context) {
         if (this.client.getEndpoint() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getEndpoint() is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
         }
         if (this.client.getSubscriptionId() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getSubscriptionId() is required and cannot be null."));
+            return Mono.error(new IllegalArgumentException(
+                "Parameter this.client.getSubscriptionId() is required and cannot be null."));
         }
         if (resourceGroupName == null) {
             return Mono
@@ -733,191 +610,168 @@ public final class ActivityLogAlertsClientImpl
             return Mono
                 .error(new IllegalArgumentException("Parameter activityLogAlertName is required and cannot be null."));
         }
-        if (activityLogAlertPatch == null) {
-            return Mono
-                .error(new IllegalArgumentException("Parameter activityLogAlertPatch is required and cannot be null."));
+        if (activityLogAlertRulePatch == null) {
+            return Mono.error(
+                new IllegalArgumentException("Parameter activityLogAlertRulePatch is required and cannot be null."));
         } else {
-            activityLogAlertPatch.validate();
+            activityLogAlertRulePatch.validate();
         }
-        final String apiVersion = "2017-04-01";
+        final String apiVersion = "2020-10-01";
         final String accept = "application/json";
         context = this.client.mergeContext(context);
-        return service
-            .update(
-                this.client.getEndpoint(),
-                this.client.getSubscriptionId(),
-                resourceGroupName,
-                activityLogAlertName,
-                apiVersion,
-                activityLogAlertPatch,
-                accept,
-                context);
+        return service.update(this.client.getEndpoint(), this.client.getSubscriptionId(), resourceGroupName,
+            activityLogAlertName, apiVersion, activityLogAlertRulePatch, accept, context);
     }
 
     /**
-     * Updates an existing ActivityLogAlertResource's tags. To update other fields use the CreateOrUpdate method.
-     *
-     * @param resourceGroupName The name of the resource group.
-     * @param activityLogAlertName The name of the activity log alert.
-     * @param activityLogAlertPatch Parameters supplied to the operation.
+     * Updates 'tags' and 'enabled' fields in an existing Alert rule. This method is used to update the Alert rule tags,
+     * and to enable or disable the Alert rule. To update other fields use CreateOrUpdate operation.
+     * 
+     * @param resourceGroupName The name of the resource group. The name is case insensitive.
+     * @param activityLogAlertName The name of the Activity Log Alert rule.
+     * @param activityLogAlertRulePatch Parameters supplied to the operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return an activity log alert resource.
+     * @return an Activity Log Alert rule resource on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    public Mono<ActivityLogAlertResourceInner> updateAsync(
-        String resourceGroupName, String activityLogAlertName, ActivityLogAlertPatchBody activityLogAlertPatch) {
-        return updateWithResponseAsync(resourceGroupName, activityLogAlertName, activityLogAlertPatch)
-            .flatMap(
-                (Response<ActivityLogAlertResourceInner> res) -> {
-                    if (res.getValue() != null) {
-                        return Mono.just(res.getValue());
-                    } else {
-                        return Mono.empty();
-                    }
-                });
+    public Mono<ActivityLogAlertResourceInner> updateAsync(String resourceGroupName, String activityLogAlertName,
+        AlertRulePatchObject activityLogAlertRulePatch) {
+        return updateWithResponseAsync(resourceGroupName, activityLogAlertName, activityLogAlertRulePatch)
+            .flatMap(res -> Mono.justOrEmpty(res.getValue()));
     }
 
     /**
-     * Updates an existing ActivityLogAlertResource's tags. To update other fields use the CreateOrUpdate method.
-     *
-     * @param resourceGroupName The name of the resource group.
-     * @param activityLogAlertName The name of the activity log alert.
-     * @param activityLogAlertPatch Parameters supplied to the operation.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return an activity log alert resource.
-     */
-    @ServiceMethod(returns = ReturnType.SINGLE)
-    public ActivityLogAlertResourceInner update(
-        String resourceGroupName, String activityLogAlertName, ActivityLogAlertPatchBody activityLogAlertPatch) {
-        return updateAsync(resourceGroupName, activityLogAlertName, activityLogAlertPatch).block();
-    }
-
-    /**
-     * Updates an existing ActivityLogAlertResource's tags. To update other fields use the CreateOrUpdate method.
-     *
-     * @param resourceGroupName The name of the resource group.
-     * @param activityLogAlertName The name of the activity log alert.
-     * @param activityLogAlertPatch Parameters supplied to the operation.
+     * Updates 'tags' and 'enabled' fields in an existing Alert rule. This method is used to update the Alert rule tags,
+     * and to enable or disable the Alert rule. To update other fields use CreateOrUpdate operation.
+     * 
+     * @param resourceGroupName The name of the resource group. The name is case insensitive.
+     * @param activityLogAlertName The name of the Activity Log Alert rule.
+     * @param activityLogAlertRulePatch Parameters supplied to the operation.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return an activity log alert resource.
+     * @return an Activity Log Alert rule resource along with {@link Response}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    public Response<ActivityLogAlertResourceInner> updateWithResponse(
-        String resourceGroupName,
-        String activityLogAlertName,
-        ActivityLogAlertPatchBody activityLogAlertPatch,
-        Context context) {
-        return updateWithResponseAsync(resourceGroupName, activityLogAlertName, activityLogAlertPatch, context).block();
+    public Response<ActivityLogAlertResourceInner> updateWithResponse(String resourceGroupName,
+        String activityLogAlertName, AlertRulePatchObject activityLogAlertRulePatch, Context context) {
+        return updateWithResponseAsync(resourceGroupName, activityLogAlertName, activityLogAlertRulePatch, context)
+            .block();
     }
 
     /**
-     * Get a list of all activity log alerts in a subscription.
-     *
+     * Updates 'tags' and 'enabled' fields in an existing Alert rule. This method is used to update the Alert rule tags,
+     * and to enable or disable the Alert rule. To update other fields use CreateOrUpdate operation.
+     * 
+     * @param resourceGroupName The name of the resource group. The name is case insensitive.
+     * @param activityLogAlertName The name of the Activity Log Alert rule.
+     * @param activityLogAlertRulePatch Parameters supplied to the operation.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return a list of all activity log alerts in a subscription.
+     * @return an Activity Log Alert rule resource.
+     */
+    @ServiceMethod(returns = ReturnType.SINGLE)
+    public ActivityLogAlertResourceInner update(String resourceGroupName, String activityLogAlertName,
+        AlertRulePatchObject activityLogAlertRulePatch) {
+        return updateWithResponse(resourceGroupName, activityLogAlertName, activityLogAlertRulePatch, Context.NONE)
+            .getValue();
+    }
+
+    /**
+     * Get a list of all Activity Log Alert rules in a subscription.
+     * 
+     * @throws ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return a list of all Activity Log Alert rules in a subscription along with {@link PagedResponse} on successful
+     * completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
     private Mono<PagedResponse<ActivityLogAlertResourceInner>> listSinglePageAsync() {
         if (this.client.getEndpoint() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getEndpoint() is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
         }
         if (this.client.getSubscriptionId() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getSubscriptionId() is required and cannot be null."));
+            return Mono.error(new IllegalArgumentException(
+                "Parameter this.client.getSubscriptionId() is required and cannot be null."));
         }
-        final String apiVersion = "2017-04-01";
+        final String apiVersion = "2020-10-01";
         final String accept = "application/json";
         return FluxUtil
-            .withContext(
-                context ->
-                    service
-                        .list(this.client.getEndpoint(), this.client.getSubscriptionId(), apiVersion, accept, context))
-            .<PagedResponse<ActivityLogAlertResourceInner>>map(
-                res ->
-                    new PagedResponseBase<>(
-                        res.getRequest(), res.getStatusCode(), res.getHeaders(), res.getValue().value(), null, null))
+            .withContext(context -> service.list(this.client.getEndpoint(), this.client.getSubscriptionId(), apiVersion,
+                accept, context))
+            .<PagedResponse<ActivityLogAlertResourceInner>>map(res -> new PagedResponseBase<>(res.getRequest(),
+                res.getStatusCode(), res.getHeaders(), res.getValue().value(), res.getValue().nextLink(), null))
             .contextWrite(context -> context.putAll(FluxUtil.toReactorContext(this.client.getContext()).readOnly()));
     }
 
     /**
-     * Get a list of all activity log alerts in a subscription.
-     *
+     * Get a list of all Activity Log Alert rules in a subscription.
+     * 
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return a list of all activity log alerts in a subscription.
+     * @return a list of all Activity Log Alert rules in a subscription along with {@link PagedResponse} on successful
+     * completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
     private Mono<PagedResponse<ActivityLogAlertResourceInner>> listSinglePageAsync(Context context) {
         if (this.client.getEndpoint() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getEndpoint() is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
         }
         if (this.client.getSubscriptionId() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getSubscriptionId() is required and cannot be null."));
+            return Mono.error(new IllegalArgumentException(
+                "Parameter this.client.getSubscriptionId() is required and cannot be null."));
         }
-        final String apiVersion = "2017-04-01";
+        final String apiVersion = "2020-10-01";
         final String accept = "application/json";
         context = this.client.mergeContext(context);
-        return service
-            .list(this.client.getEndpoint(), this.client.getSubscriptionId(), apiVersion, accept, context)
-            .map(
-                res ->
-                    new PagedResponseBase<>(
-                        res.getRequest(), res.getStatusCode(), res.getHeaders(), res.getValue().value(), null, null));
+        return service.list(this.client.getEndpoint(), this.client.getSubscriptionId(), apiVersion, accept, context)
+            .map(res -> new PagedResponseBase<>(res.getRequest(), res.getStatusCode(), res.getHeaders(),
+                res.getValue().value(), res.getValue().nextLink(), null));
     }
 
     /**
-     * Get a list of all activity log alerts in a subscription.
-     *
+     * Get a list of all Activity Log Alert rules in a subscription.
+     * 
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return a list of all activity log alerts in a subscription.
+     * @return a list of all Activity Log Alert rules in a subscription as paginated response with {@link PagedFlux}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
     public PagedFlux<ActivityLogAlertResourceInner> listAsync() {
-        return new PagedFlux<>(() -> listSinglePageAsync());
+        return new PagedFlux<>(() -> listSinglePageAsync(),
+            nextLink -> listBySubscriptionIdNextSinglePageAsync(nextLink));
     }
 
     /**
-     * Get a list of all activity log alerts in a subscription.
-     *
+     * Get a list of all Activity Log Alert rules in a subscription.
+     * 
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return a list of all activity log alerts in a subscription.
+     * @return a list of all Activity Log Alert rules in a subscription as paginated response with {@link PagedFlux}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
     private PagedFlux<ActivityLogAlertResourceInner> listAsync(Context context) {
-        return new PagedFlux<>(() -> listSinglePageAsync(context));
+        return new PagedFlux<>(() -> listSinglePageAsync(context),
+            nextLink -> listBySubscriptionIdNextSinglePageAsync(nextLink, context));
     }
 
     /**
-     * Get a list of all activity log alerts in a subscription.
-     *
+     * Get a list of all Activity Log Alert rules in a subscription.
+     * 
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return a list of all activity log alerts in a subscription.
+     * @return a list of all Activity Log Alert rules in a subscription as paginated response with
+     * {@link PagedIterable}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
     public PagedIterable<ActivityLogAlertResourceInner> list() {
@@ -925,13 +779,14 @@ public final class ActivityLogAlertsClientImpl
     }
 
     /**
-     * Get a list of all activity log alerts in a subscription.
-     *
+     * Get a list of all Activity Log Alert rules in a subscription.
+     * 
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return a list of all activity log alerts in a subscription.
+     * @return a list of all Activity Log Alert rules in a subscription as paginated response with
+     * {@link PagedIterable}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
     public PagedIterable<ActivityLogAlertResourceInner> list(Context context) {
@@ -939,137 +794,117 @@ public final class ActivityLogAlertsClientImpl
     }
 
     /**
-     * Get a list of all activity log alerts in a resource group.
-     *
-     * @param resourceGroupName The name of the resource group.
+     * Get a list of all Activity Log Alert rules in a resource group.
+     * 
+     * @param resourceGroupName The name of the resource group. The name is case insensitive.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return a list of all activity log alerts in a resource group.
+     * @return a list of all Activity Log Alert rules in a resource group along with {@link PagedResponse} on successful
+     * completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    private Mono<PagedResponse<ActivityLogAlertResourceInner>> listByResourceGroupSinglePageAsync(
-        String resourceGroupName) {
+    private Mono<PagedResponse<ActivityLogAlertResourceInner>>
+        listByResourceGroupSinglePageAsync(String resourceGroupName) {
         if (this.client.getEndpoint() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getEndpoint() is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
         }
         if (this.client.getSubscriptionId() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getSubscriptionId() is required and cannot be null."));
+            return Mono.error(new IllegalArgumentException(
+                "Parameter this.client.getSubscriptionId() is required and cannot be null."));
         }
         if (resourceGroupName == null) {
             return Mono
                 .error(new IllegalArgumentException("Parameter resourceGroupName is required and cannot be null."));
         }
-        final String apiVersion = "2017-04-01";
+        final String apiVersion = "2020-10-01";
         final String accept = "application/json";
         return FluxUtil
-            .withContext(
-                context ->
-                    service
-                        .listByResourceGroup(
-                            this.client.getEndpoint(),
-                            this.client.getSubscriptionId(),
-                            resourceGroupName,
-                            apiVersion,
-                            accept,
-                            context))
-            .<PagedResponse<ActivityLogAlertResourceInner>>map(
-                res ->
-                    new PagedResponseBase<>(
-                        res.getRequest(), res.getStatusCode(), res.getHeaders(), res.getValue().value(), null, null))
+            .withContext(context -> service.listByResourceGroup(this.client.getEndpoint(),
+                this.client.getSubscriptionId(), resourceGroupName, apiVersion, accept, context))
+            .<PagedResponse<ActivityLogAlertResourceInner>>map(res -> new PagedResponseBase<>(res.getRequest(),
+                res.getStatusCode(), res.getHeaders(), res.getValue().value(), res.getValue().nextLink(), null))
             .contextWrite(context -> context.putAll(FluxUtil.toReactorContext(this.client.getContext()).readOnly()));
     }
 
     /**
-     * Get a list of all activity log alerts in a resource group.
-     *
-     * @param resourceGroupName The name of the resource group.
+     * Get a list of all Activity Log Alert rules in a resource group.
+     * 
+     * @param resourceGroupName The name of the resource group. The name is case insensitive.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return a list of all activity log alerts in a resource group.
+     * @return a list of all Activity Log Alert rules in a resource group along with {@link PagedResponse} on successful
+     * completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    private Mono<PagedResponse<ActivityLogAlertResourceInner>> listByResourceGroupSinglePageAsync(
-        String resourceGroupName, Context context) {
+    private Mono<PagedResponse<ActivityLogAlertResourceInner>>
+        listByResourceGroupSinglePageAsync(String resourceGroupName, Context context) {
         if (this.client.getEndpoint() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getEndpoint() is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
         }
         if (this.client.getSubscriptionId() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getSubscriptionId() is required and cannot be null."));
+            return Mono.error(new IllegalArgumentException(
+                "Parameter this.client.getSubscriptionId() is required and cannot be null."));
         }
         if (resourceGroupName == null) {
             return Mono
                 .error(new IllegalArgumentException("Parameter resourceGroupName is required and cannot be null."));
         }
-        final String apiVersion = "2017-04-01";
+        final String apiVersion = "2020-10-01";
         final String accept = "application/json";
         context = this.client.mergeContext(context);
         return service
-            .listByResourceGroup(
-                this.client.getEndpoint(),
-                this.client.getSubscriptionId(),
-                resourceGroupName,
-                apiVersion,
-                accept,
-                context)
-            .map(
-                res ->
-                    new PagedResponseBase<>(
-                        res.getRequest(), res.getStatusCode(), res.getHeaders(), res.getValue().value(), null, null));
+            .listByResourceGroup(this.client.getEndpoint(), this.client.getSubscriptionId(), resourceGroupName,
+                apiVersion, accept, context)
+            .map(res -> new PagedResponseBase<>(res.getRequest(), res.getStatusCode(), res.getHeaders(),
+                res.getValue().value(), res.getValue().nextLink(), null));
     }
 
     /**
-     * Get a list of all activity log alerts in a resource group.
-     *
-     * @param resourceGroupName The name of the resource group.
+     * Get a list of all Activity Log Alert rules in a resource group.
+     * 
+     * @param resourceGroupName The name of the resource group. The name is case insensitive.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return a list of all activity log alerts in a resource group.
+     * @return a list of all Activity Log Alert rules in a resource group as paginated response with {@link PagedFlux}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
     public PagedFlux<ActivityLogAlertResourceInner> listByResourceGroupAsync(String resourceGroupName) {
-        return new PagedFlux<>(() -> listByResourceGroupSinglePageAsync(resourceGroupName));
+        return new PagedFlux<>(() -> listByResourceGroupSinglePageAsync(resourceGroupName),
+            nextLink -> listByResourceGroupNextSinglePageAsync(nextLink));
     }
 
     /**
-     * Get a list of all activity log alerts in a resource group.
-     *
-     * @param resourceGroupName The name of the resource group.
+     * Get a list of all Activity Log Alert rules in a resource group.
+     * 
+     * @param resourceGroupName The name of the resource group. The name is case insensitive.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return a list of all activity log alerts in a resource group.
+     * @return a list of all Activity Log Alert rules in a resource group as paginated response with {@link PagedFlux}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
-    private PagedFlux<ActivityLogAlertResourceInner> listByResourceGroupAsync(
-        String resourceGroupName, Context context) {
-        return new PagedFlux<>(() -> listByResourceGroupSinglePageAsync(resourceGroupName, context));
+    private PagedFlux<ActivityLogAlertResourceInner> listByResourceGroupAsync(String resourceGroupName,
+        Context context) {
+        return new PagedFlux<>(() -> listByResourceGroupSinglePageAsync(resourceGroupName, context),
+            nextLink -> listByResourceGroupNextSinglePageAsync(nextLink, context));
     }
 
     /**
-     * Get a list of all activity log alerts in a resource group.
-     *
-     * @param resourceGroupName The name of the resource group.
+     * Get a list of all Activity Log Alert rules in a resource group.
+     * 
+     * @param resourceGroupName The name of the resource group. The name is case insensitive.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return a list of all activity log alerts in a resource group.
+     * @return a list of all Activity Log Alert rules in a resource group as paginated response with
+     * {@link PagedIterable}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
     public PagedIterable<ActivityLogAlertResourceInner> listByResourceGroup(String resourceGroupName) {
@@ -1077,17 +912,131 @@ public final class ActivityLogAlertsClientImpl
     }
 
     /**
-     * Get a list of all activity log alerts in a resource group.
-     *
-     * @param resourceGroupName The name of the resource group.
+     * Get a list of all Activity Log Alert rules in a resource group.
+     * 
+     * @param resourceGroupName The name of the resource group. The name is case insensitive.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return a list of all activity log alerts in a resource group.
+     * @return a list of all Activity Log Alert rules in a resource group as paginated response with
+     * {@link PagedIterable}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
     public PagedIterable<ActivityLogAlertResourceInner> listByResourceGroup(String resourceGroupName, Context context) {
         return new PagedIterable<>(listByResourceGroupAsync(resourceGroupName, context));
+    }
+
+    /**
+     * Get the next page of items.
+     * 
+     * @param nextLink The URL to get the next list of items.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return a list of Activity Log Alert rules along with {@link PagedResponse} on successful completion of
+     * {@link Mono}.
+     */
+    @ServiceMethod(returns = ReturnType.SINGLE)
+    private Mono<PagedResponse<ActivityLogAlertResourceInner>>
+        listBySubscriptionIdNextSinglePageAsync(String nextLink) {
+        if (nextLink == null) {
+            return Mono.error(new IllegalArgumentException("Parameter nextLink is required and cannot be null."));
+        }
+        if (this.client.getEndpoint() == null) {
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
+        }
+        final String accept = "application/json";
+        return FluxUtil
+            .withContext(
+                context -> service.listBySubscriptionIdNext(nextLink, this.client.getEndpoint(), accept, context))
+            .<PagedResponse<ActivityLogAlertResourceInner>>map(res -> new PagedResponseBase<>(res.getRequest(),
+                res.getStatusCode(), res.getHeaders(), res.getValue().value(), res.getValue().nextLink(), null))
+            .contextWrite(context -> context.putAll(FluxUtil.toReactorContext(this.client.getContext()).readOnly()));
+    }
+
+    /**
+     * Get the next page of items.
+     * 
+     * @param nextLink The URL to get the next list of items.
+     * @param context The context to associate with this operation.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return a list of Activity Log Alert rules along with {@link PagedResponse} on successful completion of
+     * {@link Mono}.
+     */
+    @ServiceMethod(returns = ReturnType.SINGLE)
+    private Mono<PagedResponse<ActivityLogAlertResourceInner>> listBySubscriptionIdNextSinglePageAsync(String nextLink,
+        Context context) {
+        if (nextLink == null) {
+            return Mono.error(new IllegalArgumentException("Parameter nextLink is required and cannot be null."));
+        }
+        if (this.client.getEndpoint() == null) {
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
+        }
+        final String accept = "application/json";
+        context = this.client.mergeContext(context);
+        return service.listBySubscriptionIdNext(nextLink, this.client.getEndpoint(), accept, context)
+            .map(res -> new PagedResponseBase<>(res.getRequest(), res.getStatusCode(), res.getHeaders(),
+                res.getValue().value(), res.getValue().nextLink(), null));
+    }
+
+    /**
+     * Get the next page of items.
+     * 
+     * @param nextLink The URL to get the next list of items.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return a list of Activity Log Alert rules along with {@link PagedResponse} on successful completion of
+     * {@link Mono}.
+     */
+    @ServiceMethod(returns = ReturnType.SINGLE)
+    private Mono<PagedResponse<ActivityLogAlertResourceInner>> listByResourceGroupNextSinglePageAsync(String nextLink) {
+        if (nextLink == null) {
+            return Mono.error(new IllegalArgumentException("Parameter nextLink is required and cannot be null."));
+        }
+        if (this.client.getEndpoint() == null) {
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
+        }
+        final String accept = "application/json";
+        return FluxUtil
+            .withContext(
+                context -> service.listByResourceGroupNext(nextLink, this.client.getEndpoint(), accept, context))
+            .<PagedResponse<ActivityLogAlertResourceInner>>map(res -> new PagedResponseBase<>(res.getRequest(),
+                res.getStatusCode(), res.getHeaders(), res.getValue().value(), res.getValue().nextLink(), null))
+            .contextWrite(context -> context.putAll(FluxUtil.toReactorContext(this.client.getContext()).readOnly()));
+    }
+
+    /**
+     * Get the next page of items.
+     * 
+     * @param nextLink The URL to get the next list of items.
+     * @param context The context to associate with this operation.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return a list of Activity Log Alert rules along with {@link PagedResponse} on successful completion of
+     * {@link Mono}.
+     */
+    @ServiceMethod(returns = ReturnType.SINGLE)
+    private Mono<PagedResponse<ActivityLogAlertResourceInner>> listByResourceGroupNextSinglePageAsync(String nextLink,
+        Context context) {
+        if (nextLink == null) {
+            return Mono.error(new IllegalArgumentException("Parameter nextLink is required and cannot be null."));
+        }
+        if (this.client.getEndpoint() == null) {
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
+        }
+        final String accept = "application/json";
+        context = this.client.mergeContext(context);
+        return service.listByResourceGroupNext(nextLink, this.client.getEndpoint(), accept, context)
+            .map(res -> new PagedResponseBase<>(res.getRequest(), res.getStatusCode(), res.getHeaders(),
+                res.getValue().value(), res.getValue().nextLink(), null));
     }
 }

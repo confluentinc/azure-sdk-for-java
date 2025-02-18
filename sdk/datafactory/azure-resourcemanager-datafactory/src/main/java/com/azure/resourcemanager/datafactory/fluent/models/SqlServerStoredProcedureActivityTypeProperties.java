@@ -6,36 +6,37 @@ package com.azure.resourcemanager.datafactory.fluent.models;
 
 import com.azure.core.annotation.Fluent;
 import com.azure.core.util.logging.ClientLogger;
-import com.azure.resourcemanager.datafactory.models.StoredProcedureParameter;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import java.util.Map;
+import com.azure.json.JsonReader;
+import com.azure.json.JsonSerializable;
+import com.azure.json.JsonToken;
+import com.azure.json.JsonWriter;
+import java.io.IOException;
 
-/** SQL stored procedure activity properties. */
+/**
+ * SQL stored procedure activity properties.
+ */
 @Fluent
-public final class SqlServerStoredProcedureActivityTypeProperties {
-    @JsonIgnore
-    private final ClientLogger logger = new ClientLogger(SqlServerStoredProcedureActivityTypeProperties.class);
-
+public final class SqlServerStoredProcedureActivityTypeProperties
+    implements JsonSerializable<SqlServerStoredProcedureActivityTypeProperties> {
     /*
-     * Stored procedure name. Type: string (or Expression with resultType
-     * string).
+     * Stored procedure name. Type: string (or Expression with resultType string).
      */
-    @JsonProperty(value = "storedProcedureName", required = true)
     private Object storedProcedureName;
 
     /*
-     * Value and type setting for stored procedure parameters. Example:
-     * "{Parameter1: {value: "1", type: "int"}}".
+     * Value and type setting for stored procedure parameters. Example: "{Parameter1: {value: "1", type: "int"}}".
      */
-    @JsonProperty(value = "storedProcedureParameters")
-    @JsonInclude(value = JsonInclude.Include.NON_NULL, content = JsonInclude.Include.ALWAYS)
-    private Map<String, StoredProcedureParameter> storedProcedureParameters;
+    private Object storedProcedureParameters;
+
+    /**
+     * Creates an instance of SqlServerStoredProcedureActivityTypeProperties class.
+     */
+    public SqlServerStoredProcedureActivityTypeProperties() {
+    }
 
     /**
      * Get the storedProcedureName property: Stored procedure name. Type: string (or Expression with resultType string).
-     *
+     * 
      * @return the storedProcedureName value.
      */
     public Object storedProcedureName() {
@@ -44,7 +45,7 @@ public final class SqlServerStoredProcedureActivityTypeProperties {
 
     /**
      * Set the storedProcedureName property: Stored procedure name. Type: string (or Expression with resultType string).
-     *
+     * 
      * @param storedProcedureName the storedProcedureName value to set.
      * @return the SqlServerStoredProcedureActivityTypeProperties object itself.
      */
@@ -56,48 +57,81 @@ public final class SqlServerStoredProcedureActivityTypeProperties {
     /**
      * Get the storedProcedureParameters property: Value and type setting for stored procedure parameters. Example:
      * "{Parameter1: {value: "1", type: "int"}}".
-     *
+     * 
      * @return the storedProcedureParameters value.
      */
-    public Map<String, StoredProcedureParameter> storedProcedureParameters() {
+    public Object storedProcedureParameters() {
         return this.storedProcedureParameters;
     }
 
     /**
      * Set the storedProcedureParameters property: Value and type setting for stored procedure parameters. Example:
      * "{Parameter1: {value: "1", type: "int"}}".
-     *
+     * 
      * @param storedProcedureParameters the storedProcedureParameters value to set.
      * @return the SqlServerStoredProcedureActivityTypeProperties object itself.
      */
-    public SqlServerStoredProcedureActivityTypeProperties withStoredProcedureParameters(
-        Map<String, StoredProcedureParameter> storedProcedureParameters) {
+    public SqlServerStoredProcedureActivityTypeProperties
+        withStoredProcedureParameters(Object storedProcedureParameters) {
         this.storedProcedureParameters = storedProcedureParameters;
         return this;
     }
 
     /**
      * Validates the instance.
-     *
+     * 
      * @throws IllegalArgumentException thrown if the instance is not valid.
      */
     public void validate() {
         if (storedProcedureName() == null) {
-            throw logger
-                .logExceptionAsError(
-                    new IllegalArgumentException(
-                        "Missing required property storedProcedureName in model"
-                            + " SqlServerStoredProcedureActivityTypeProperties"));
+            throw LOGGER.atError()
+                .log(new IllegalArgumentException(
+                    "Missing required property storedProcedureName in model SqlServerStoredProcedureActivityTypeProperties"));
         }
-        if (storedProcedureParameters() != null) {
-            storedProcedureParameters()
-                .values()
-                .forEach(
-                    e -> {
-                        if (e != null) {
-                            e.validate();
-                        }
-                    });
-        }
+    }
+
+    private static final ClientLogger LOGGER = new ClientLogger(SqlServerStoredProcedureActivityTypeProperties.class);
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public JsonWriter toJson(JsonWriter jsonWriter) throws IOException {
+        jsonWriter.writeStartObject();
+        jsonWriter.writeUntypedField("storedProcedureName", this.storedProcedureName);
+        jsonWriter.writeUntypedField("storedProcedureParameters", this.storedProcedureParameters);
+        return jsonWriter.writeEndObject();
+    }
+
+    /**
+     * Reads an instance of SqlServerStoredProcedureActivityTypeProperties from the JsonReader.
+     * 
+     * @param jsonReader The JsonReader being read.
+     * @return An instance of SqlServerStoredProcedureActivityTypeProperties if the JsonReader was pointing to an
+     * instance of it, or null if it was pointing to JSON null.
+     * @throws IllegalStateException If the deserialized JSON object was missing any required properties.
+     * @throws IOException If an error occurs while reading the SqlServerStoredProcedureActivityTypeProperties.
+     */
+    public static SqlServerStoredProcedureActivityTypeProperties fromJson(JsonReader jsonReader) throws IOException {
+        return jsonReader.readObject(reader -> {
+            SqlServerStoredProcedureActivityTypeProperties deserializedSqlServerStoredProcedureActivityTypeProperties
+                = new SqlServerStoredProcedureActivityTypeProperties();
+            while (reader.nextToken() != JsonToken.END_OBJECT) {
+                String fieldName = reader.getFieldName();
+                reader.nextToken();
+
+                if ("storedProcedureName".equals(fieldName)) {
+                    deserializedSqlServerStoredProcedureActivityTypeProperties.storedProcedureName
+                        = reader.readUntyped();
+                } else if ("storedProcedureParameters".equals(fieldName)) {
+                    deserializedSqlServerStoredProcedureActivityTypeProperties.storedProcedureParameters
+                        = reader.readUntyped();
+                } else {
+                    reader.skipChildren();
+                }
+            }
+
+            return deserializedSqlServerStoredProcedureActivityTypeProperties;
+        });
     }
 }

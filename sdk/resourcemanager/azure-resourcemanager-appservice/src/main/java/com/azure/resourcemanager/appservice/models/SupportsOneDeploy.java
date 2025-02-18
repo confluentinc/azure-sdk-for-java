@@ -26,7 +26,7 @@ public interface SupportsOneDeploy {
      *
      * @param type the deploy type
      * @param file the file to upload
-     * @return the completable of the operation
+     * @return the completion of the operation
      */
     Mono<Void> deployAsync(DeployType type, File file);
 
@@ -45,7 +45,7 @@ public interface SupportsOneDeploy {
      * @param type the deploy type
      * @param file the file to upload
      * @param deployOptions the deploy options
-     * @return the completable of the operation
+     * @return the completion of the operation
      */
     Mono<Void> deployAsync(DeployType type, File file, DeployOptions deployOptions);
 
@@ -64,7 +64,7 @@ public interface SupportsOneDeploy {
      * @param type the deploy type
      * @param file the file to upload
      * @param length the length of the file
-     * @return the completable of the operation
+     * @return the completion of the operation
      */
     Mono<Void> deployAsync(DeployType type, InputStream file, long length);
 
@@ -85,7 +85,7 @@ public interface SupportsOneDeploy {
      * @param file the file to upload
      * @param length the length of the file
      * @param deployOptions the deploy options
-     * @return the completable of the operation
+     * @return the completion of the operation
      */
     Mono<Void> deployAsync(DeployType type, InputStream file, long length, DeployOptions deployOptions);
 
@@ -110,4 +110,20 @@ public interface SupportsOneDeploy {
      * if {@link DeployOptions#withTrackDeployment(Boolean)} set to True.
      */
     Mono<KuduDeploymentResult> pushDeployAsync(DeployType type, File file, DeployOptions deployOptions);
+
+    /**
+     * Gets deployment status for Azure Site.
+     *
+     * @param deploymentId GUID of the deployment operation
+     * @return the production deployment status for Azure Site
+     */
+    CsmDeploymentStatus getDeploymentStatus(String deploymentId);
+
+    /**
+     * Gets deployment status for Azure Site.
+     *
+     * @param deploymentId GUID of the deployment operation
+     * @return the production deployment status for Azure Site
+     */
+    Mono<CsmDeploymentStatus> getDeploymentStatusAsync(String deploymentId);
 }

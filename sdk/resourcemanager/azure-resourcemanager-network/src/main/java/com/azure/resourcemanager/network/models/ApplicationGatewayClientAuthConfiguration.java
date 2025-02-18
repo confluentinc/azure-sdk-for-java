@@ -5,24 +5,37 @@
 package com.azure.resourcemanager.network.models;
 
 import com.azure.core.annotation.Fluent;
-import com.azure.core.util.logging.ClientLogger;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.azure.json.JsonReader;
+import com.azure.json.JsonSerializable;
+import com.azure.json.JsonToken;
+import com.azure.json.JsonWriter;
+import java.io.IOException;
 
-/** Application gateway client authentication configuration. */
+/**
+ * Application gateway client authentication configuration.
+ */
 @Fluent
-public final class ApplicationGatewayClientAuthConfiguration {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(ApplicationGatewayClientAuthConfiguration.class);
-
+public final class ApplicationGatewayClientAuthConfiguration
+    implements JsonSerializable<ApplicationGatewayClientAuthConfiguration> {
     /*
      * Verify client certificate issuer name on the application gateway.
      */
-    @JsonProperty(value = "verifyClientCertIssuerDN")
     private Boolean verifyClientCertIssuerDN;
+
+    /*
+     * Verify client certificate revocation status.
+     */
+    private ApplicationGatewayClientRevocationOptions verifyClientRevocation;
+
+    /**
+     * Creates an instance of ApplicationGatewayClientAuthConfiguration class.
+     */
+    public ApplicationGatewayClientAuthConfiguration() {
+    }
 
     /**
      * Get the verifyClientCertIssuerDN property: Verify client certificate issuer name on the application gateway.
-     *
+     * 
      * @return the verifyClientCertIssuerDN value.
      */
     public Boolean verifyClientCertIssuerDN() {
@@ -31,7 +44,7 @@ public final class ApplicationGatewayClientAuthConfiguration {
 
     /**
      * Set the verifyClientCertIssuerDN property: Verify client certificate issuer name on the application gateway.
-     *
+     * 
      * @param verifyClientCertIssuerDN the verifyClientCertIssuerDN value to set.
      * @return the ApplicationGatewayClientAuthConfiguration object itself.
      */
@@ -41,10 +54,74 @@ public final class ApplicationGatewayClientAuthConfiguration {
     }
 
     /**
+     * Get the verifyClientRevocation property: Verify client certificate revocation status.
+     * 
+     * @return the verifyClientRevocation value.
+     */
+    public ApplicationGatewayClientRevocationOptions verifyClientRevocation() {
+        return this.verifyClientRevocation;
+    }
+
+    /**
+     * Set the verifyClientRevocation property: Verify client certificate revocation status.
+     * 
+     * @param verifyClientRevocation the verifyClientRevocation value to set.
+     * @return the ApplicationGatewayClientAuthConfiguration object itself.
+     */
+    public ApplicationGatewayClientAuthConfiguration
+        withVerifyClientRevocation(ApplicationGatewayClientRevocationOptions verifyClientRevocation) {
+        this.verifyClientRevocation = verifyClientRevocation;
+        return this;
+    }
+
+    /**
      * Validates the instance.
-     *
+     * 
      * @throws IllegalArgumentException thrown if the instance is not valid.
      */
     public void validate() {
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public JsonWriter toJson(JsonWriter jsonWriter) throws IOException {
+        jsonWriter.writeStartObject();
+        jsonWriter.writeBooleanField("verifyClientCertIssuerDN", this.verifyClientCertIssuerDN);
+        jsonWriter.writeStringField("verifyClientRevocation",
+            this.verifyClientRevocation == null ? null : this.verifyClientRevocation.toString());
+        return jsonWriter.writeEndObject();
+    }
+
+    /**
+     * Reads an instance of ApplicationGatewayClientAuthConfiguration from the JsonReader.
+     * 
+     * @param jsonReader The JsonReader being read.
+     * @return An instance of ApplicationGatewayClientAuthConfiguration if the JsonReader was pointing to an instance of
+     * it, or null if it was pointing to JSON null.
+     * @throws IOException If an error occurs while reading the ApplicationGatewayClientAuthConfiguration.
+     */
+    public static ApplicationGatewayClientAuthConfiguration fromJson(JsonReader jsonReader) throws IOException {
+        return jsonReader.readObject(reader -> {
+            ApplicationGatewayClientAuthConfiguration deserializedApplicationGatewayClientAuthConfiguration
+                = new ApplicationGatewayClientAuthConfiguration();
+            while (reader.nextToken() != JsonToken.END_OBJECT) {
+                String fieldName = reader.getFieldName();
+                reader.nextToken();
+
+                if ("verifyClientCertIssuerDN".equals(fieldName)) {
+                    deserializedApplicationGatewayClientAuthConfiguration.verifyClientCertIssuerDN
+                        = reader.getNullable(JsonReader::getBoolean);
+                } else if ("verifyClientRevocation".equals(fieldName)) {
+                    deserializedApplicationGatewayClientAuthConfiguration.verifyClientRevocation
+                        = ApplicationGatewayClientRevocationOptions.fromString(reader.getString());
+                } else {
+                    reader.skipChildren();
+                }
+            }
+
+            return deserializedApplicationGatewayClientAuthConfiguration;
+        });
     }
 }

@@ -17,7 +17,7 @@ import com.azure.resourcemanager.recoveryservicesbackup.models.ListRecoveryPoint
 public interface RecoveryPointsRecommendedForMovesClient {
     /**
      * Lists the recovery points recommended for move to another tier.
-     *
+     * 
      * @param vaultName The name of the recovery services vault.
      * @param resourceGroupName The name of the resource group where the recovery services vault is present.
      * @param fabricName The fabricName parameter.
@@ -27,20 +27,15 @@ public interface RecoveryPointsRecommendedForMovesClient {
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return list of RecoveryPoint resources.
+     * @return list of RecoveryPoint resources as paginated response with {@link PagedIterable}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
-    PagedIterable<RecoveryPointResourceInner> list(
-        String vaultName,
-        String resourceGroupName,
-        String fabricName,
-        String containerName,
-        String protectedItemName,
-        ListRecoveryPointsRecommendedForMoveRequest parameters);
+    PagedIterable<RecoveryPointResourceInner> list(String vaultName, String resourceGroupName, String fabricName,
+        String containerName, String protectedItemName, ListRecoveryPointsRecommendedForMoveRequest parameters);
 
     /**
      * Lists the recovery points recommended for move to another tier.
-     *
+     * 
      * @param vaultName The name of the recovery services vault.
      * @param resourceGroupName The name of the resource group where the recovery services vault is present.
      * @param fabricName The fabricName parameter.
@@ -51,15 +46,10 @@ public interface RecoveryPointsRecommendedForMovesClient {
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return list of RecoveryPoint resources.
+     * @return list of RecoveryPoint resources as paginated response with {@link PagedIterable}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
-    PagedIterable<RecoveryPointResourceInner> list(
-        String vaultName,
-        String resourceGroupName,
-        String fabricName,
-        String containerName,
-        String protectedItemName,
-        ListRecoveryPointsRecommendedForMoveRequest parameters,
+    PagedIterable<RecoveryPointResourceInner> list(String vaultName, String resourceGroupName, String fabricName,
+        String containerName, String protectedItemName, ListRecoveryPointsRecommendedForMoveRequest parameters,
         Context context);
 }

@@ -11,32 +11,31 @@ import com.azure.resourcemanager.synapse.fluent.SqlPoolUsagesClient;
 import com.azure.resourcemanager.synapse.fluent.models.SqlPoolUsageInner;
 import com.azure.resourcemanager.synapse.models.SqlPoolUsage;
 import com.azure.resourcemanager.synapse.models.SqlPoolUsages;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 public final class SqlPoolUsagesImpl implements SqlPoolUsages {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(SqlPoolUsagesImpl.class);
+    private static final ClientLogger LOGGER = new ClientLogger(SqlPoolUsagesImpl.class);
 
     private final SqlPoolUsagesClient innerClient;
 
     private final com.azure.resourcemanager.synapse.SynapseManager serviceManager;
 
-    public SqlPoolUsagesImpl(
-        SqlPoolUsagesClient innerClient, com.azure.resourcemanager.synapse.SynapseManager serviceManager) {
+    public SqlPoolUsagesImpl(SqlPoolUsagesClient innerClient,
+        com.azure.resourcemanager.synapse.SynapseManager serviceManager) {
         this.innerClient = innerClient;
         this.serviceManager = serviceManager;
     }
 
     public PagedIterable<SqlPoolUsage> list(String resourceGroupName, String workspaceName, String sqlPoolName) {
-        PagedIterable<SqlPoolUsageInner> inner =
-            this.serviceClient().list(resourceGroupName, workspaceName, sqlPoolName);
-        return Utils.mapPage(inner, inner1 -> new SqlPoolUsageImpl(inner1, this.manager()));
+        PagedIterable<SqlPoolUsageInner> inner
+            = this.serviceClient().list(resourceGroupName, workspaceName, sqlPoolName);
+        return ResourceManagerUtils.mapPage(inner, inner1 -> new SqlPoolUsageImpl(inner1, this.manager()));
     }
 
-    public PagedIterable<SqlPoolUsage> list(
-        String resourceGroupName, String workspaceName, String sqlPoolName, Context context) {
-        PagedIterable<SqlPoolUsageInner> inner =
-            this.serviceClient().list(resourceGroupName, workspaceName, sqlPoolName, context);
-        return Utils.mapPage(inner, inner1 -> new SqlPoolUsageImpl(inner1, this.manager()));
+    public PagedIterable<SqlPoolUsage> list(String resourceGroupName, String workspaceName, String sqlPoolName,
+        Context context) {
+        PagedIterable<SqlPoolUsageInner> inner
+            = this.serviceClient().list(resourceGroupName, workspaceName, sqlPoolName, context);
+        return ResourceManagerUtils.mapPage(inner, inner1 -> new SqlPoolUsageImpl(inner1, this.manager()));
     }
 
     private SqlPoolUsagesClient serviceClient() {

@@ -4,10 +4,14 @@
 package com.azure.resourcemanager.samples;
 
 import com.azure.core.test.annotation.DoNotRecord;
+import com.azure.core.util.Configuration;
+import com.azure.resourcemanager.compute.samples.CloneVirtualMachineToNewRegion;
+import com.azure.resourcemanager.compute.samples.CreateVirtualMachineEncryptedUsingCustomerManagedKey;
 import com.azure.resourcemanager.compute.samples.CreateVirtualMachineUsingCustomImageFromVHD;
 import com.azure.resourcemanager.compute.samples.CreateVirtualMachineUsingCustomImageFromVM;
 import com.azure.resourcemanager.compute.samples.CreateVirtualMachineUsingSpecializedDiskFromSnapshot;
 import com.azure.resourcemanager.compute.samples.CreateVirtualMachineUsingSpecializedDiskFromVhd;
+import com.azure.resourcemanager.compute.samples.CreateVirtualMachineWithTrustedLaunchFromGalleryImage;
 import com.azure.resourcemanager.compute.samples.CreateVirtualMachinesAsyncTrackingRelatedResources;
 import com.azure.resourcemanager.compute.samples.CreateVirtualMachinesInParallel;
 import com.azure.resourcemanager.compute.samples.CreateVirtualMachinesUsingCustomImageOrSpecializedVHD;
@@ -15,6 +19,7 @@ import com.azure.resourcemanager.compute.samples.ListComputeSkus;
 import com.azure.resourcemanager.compute.samples.ListVirtualMachineExtensionImages;
 import com.azure.resourcemanager.compute.samples.ListVirtualMachineImages;
 import com.azure.resourcemanager.compute.samples.ManageAvailabilitySet;
+import com.azure.resourcemanager.compute.samples.ManageDiskEncryptionSet;
 import com.azure.resourcemanager.compute.samples.ManageManagedDisks;
 import com.azure.resourcemanager.compute.samples.ManageResourceFromMSIEnabledVirtualMachineBelongsToAADGroup;
 import com.azure.resourcemanager.compute.samples.ManageStorageFromMSIEnabledVirtualMachine;
@@ -29,6 +34,7 @@ import com.azure.resourcemanager.compute.samples.ManageVirtualMachineWithDisk;
 import com.azure.resourcemanager.compute.samples.ManageVirtualMachineWithUnmanagedDisks;
 import com.azure.resourcemanager.compute.samples.ManageVirtualMachinesInParallel;
 import com.azure.resourcemanager.compute.samples.ConvertVirtualMachineToManagedDisks;
+import com.azure.resourcemanager.compute.samples.CreateMultipleVirtualMachinesAndBatchQueryStatus;
 import com.azure.resourcemanager.compute.samples.ManageZonalVirtualMachine;
 import com.azure.resourcemanager.compute.samples.ManageZonalVirtualMachineScaleSet;
 import org.junit.jupiter.api.Assertions;
@@ -78,7 +84,9 @@ public class ComputeSampleTests extends SamplesTestBase {
         Assertions.assertTrue(ListVirtualMachineExtensionImages.runSample(azureResourceManager));
     }
 
+    // record too large, playback takes 30+ seconds
     @Test
+    @DoNotRecord(skipInPlayback = true)
     public void testListVirtualMachineImages() {
         Assertions.assertTrue(ListVirtualMachineImages.runSample(azureResourceManager));
     }
@@ -150,15 +158,14 @@ public class ComputeSampleTests extends SamplesTestBase {
     }
 
     @Test
-    @Disabled("Skipping for now - looks like a service side issue")
     public void testManageStorageFromMSIEnabledVirtualMachine() {
         Assertions.assertTrue(ManageStorageFromMSIEnabledVirtualMachine.runSample(azureResourceManager));
     }
 
     @Test
-    @Disabled("Skipping for now - looks like a service side issue")
     public void testManageResourceFromMSIEnabledVirtualMachineBelongsToAADGroup() {
-        Assertions.assertTrue(ManageResourceFromMSIEnabledVirtualMachineBelongsToAADGroup.runSample(azureResourceManager));
+        Assertions
+            .assertTrue(ManageResourceFromMSIEnabledVirtualMachineBelongsToAADGroup.runSample(azureResourceManager));
     }
 
     @Test
@@ -174,5 +181,41 @@ public class ComputeSampleTests extends SamplesTestBase {
     @Test
     public void testManageZonalVirtualMachineScaleSet() {
         Assertions.assertTrue(ManageZonalVirtualMachineScaleSet.runSample(azureResourceManager));
+    }
+
+    @Test
+    @DoNotRecord(skipInPlayback = true)
+    public void testManageDiskEncryptionSet() {
+        final Configuration configuration = Configuration.getGlobalConfiguration();
+        String clientId = configuration.get(Configuration.PROPERTY_AZURE_CLIENT_ID);
+        Assertions.assertNotNull(clientId);
+        Assertions.assertTrue(ManageDiskEncryptionSet.runSample(azureResourceManager, clientId));
+    }
+
+    @Test
+    @DoNotRecord(skipInPlayback = true)
+    public void testCreateVirtualMachineEncryptedUsingCustomerManagedKey() {
+        final Configuration configuration = Configuration.getGlobalConfiguration();
+        String clientId = configuration.get(Configuration.PROPERTY_AZURE_CLIENT_ID);
+        Assertions.assertNotNull(clientId);
+        Assertions
+            .assertTrue(CreateVirtualMachineEncryptedUsingCustomerManagedKey.runSample(azureResourceManager, clientId));
+    }
+
+    @DoNotRecord(skipInPlayback = true)
+    @Test
+    public void testCloneVirtualMachineToNewRegion() {
+        Assertions.assertTrue(CloneVirtualMachineToNewRegion.runSample(azureResourceManager));
+    }
+
+    @Test
+    public void testCreateVirtualMachineWithTrustedLaunchFromGalleryImage() {
+        Assertions.assertTrue(CreateVirtualMachineWithTrustedLaunchFromGalleryImage.runSample(azureResourceManager));
+    }
+
+    @Test
+    public void testCreateMultipleVirtualMachinesAndBatchQueryStatus() {
+        Assertions.assertTrue(
+            CreateMultipleVirtualMachinesAndBatchQueryStatus.runSample(azureResourceManager, resourceGraphManager));
     }
 }

@@ -11,33 +11,31 @@ import com.azure.resourcemanager.apimanagement.fluent.ApiManagementServiceSkusCl
 import com.azure.resourcemanager.apimanagement.fluent.models.ResourceSkuResultInner;
 import com.azure.resourcemanager.apimanagement.models.ApiManagementServiceSkus;
 import com.azure.resourcemanager.apimanagement.models.ResourceSkuResult;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 public final class ApiManagementServiceSkusImpl implements ApiManagementServiceSkus {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(ApiManagementServiceSkusImpl.class);
+    private static final ClientLogger LOGGER = new ClientLogger(ApiManagementServiceSkusImpl.class);
 
     private final ApiManagementServiceSkusClient innerClient;
 
     private final com.azure.resourcemanager.apimanagement.ApiManagementManager serviceManager;
 
-    public ApiManagementServiceSkusImpl(
-        ApiManagementServiceSkusClient innerClient,
+    public ApiManagementServiceSkusImpl(ApiManagementServiceSkusClient innerClient,
         com.azure.resourcemanager.apimanagement.ApiManagementManager serviceManager) {
         this.innerClient = innerClient;
         this.serviceManager = serviceManager;
     }
 
     public PagedIterable<ResourceSkuResult> listAvailableServiceSkus(String resourceGroupName, String serviceName) {
-        PagedIterable<ResourceSkuResultInner> inner =
-            this.serviceClient().listAvailableServiceSkus(resourceGroupName, serviceName);
-        return Utils.mapPage(inner, inner1 -> new ResourceSkuResultImpl(inner1, this.manager()));
+        PagedIterable<ResourceSkuResultInner> inner
+            = this.serviceClient().listAvailableServiceSkus(resourceGroupName, serviceName);
+        return ResourceManagerUtils.mapPage(inner, inner1 -> new ResourceSkuResultImpl(inner1, this.manager()));
     }
 
-    public PagedIterable<ResourceSkuResult> listAvailableServiceSkus(
-        String resourceGroupName, String serviceName, Context context) {
-        PagedIterable<ResourceSkuResultInner> inner =
-            this.serviceClient().listAvailableServiceSkus(resourceGroupName, serviceName, context);
-        return Utils.mapPage(inner, inner1 -> new ResourceSkuResultImpl(inner1, this.manager()));
+    public PagedIterable<ResourceSkuResult> listAvailableServiceSkus(String resourceGroupName, String serviceName,
+        Context context) {
+        PagedIterable<ResourceSkuResultInner> inner
+            = this.serviceClient().listAvailableServiceSkus(resourceGroupName, serviceName, context);
+        return ResourceManagerUtils.mapPage(inner, inner1 -> new ResourceSkuResultImpl(inner1, this.manager()));
     }
 
     private ApiManagementServiceSkusClient serviceClient() {

@@ -19,51 +19,53 @@ import java.nio.ByteBuffer;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-/** An instance of this class provides access to all the operations defined in MigrationConfigsClient. */
+/**
+ * An instance of this class provides access to all the operations defined in MigrationConfigsClient.
+ */
 public interface MigrationConfigsClient {
     /**
      * Gets all migrationConfigurations.
-     *
+     * 
      * @param resourceGroupName Name of the Resource group within the Azure subscription.
      * @param namespaceName The namespace name.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return all migrationConfigurations.
+     * @return all migrationConfigurations as paginated response with {@link PagedFlux}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
     PagedFlux<MigrationConfigPropertiesInner> listAsync(String resourceGroupName, String namespaceName);
 
     /**
      * Gets all migrationConfigurations.
-     *
+     * 
      * @param resourceGroupName Name of the Resource group within the Azure subscription.
      * @param namespaceName The namespace name.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return all migrationConfigurations.
+     * @return all migrationConfigurations as paginated response with {@link PagedIterable}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
     PagedIterable<MigrationConfigPropertiesInner> list(String resourceGroupName, String namespaceName);
 
     /**
      * Gets all migrationConfigurations.
-     *
+     * 
      * @param resourceGroupName Name of the Resource group within the Azure subscription.
      * @param namespaceName The namespace name.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return all migrationConfigurations.
+     * @return all migrationConfigurations as paginated response with {@link PagedIterable}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
     PagedIterable<MigrationConfigPropertiesInner> list(String resourceGroupName, String namespaceName, Context context);
 
     /**
      * Creates Migration configuration and starts migration of entities from Standard to Premium namespace.
-     *
+     * 
      * @param resourceGroupName Name of the Resource group within the Azure subscription.
      * @param namespaceName The namespace name.
      * @param configName The configuration name. Should always be "$default".
@@ -71,18 +73,16 @@ public interface MigrationConfigsClient {
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return single item in List or Get Migration Config operation.
+     * @return single item in List or Get Migration Config operation along with {@link Response} on successful
+     * completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    Mono<Response<Flux<ByteBuffer>>> createAndStartMigrationWithResponseAsync(
-        String resourceGroupName,
-        String namespaceName,
-        MigrationConfigurationName configName,
-        MigrationConfigPropertiesInner parameters);
+    Mono<Response<Flux<ByteBuffer>>> createAndStartMigrationWithResponseAsync(String resourceGroupName,
+        String namespaceName, MigrationConfigurationName configName, MigrationConfigPropertiesInner parameters);
 
     /**
      * Creates Migration configuration and starts migration of entities from Standard to Premium namespace.
-     *
+     * 
      * @param resourceGroupName Name of the Resource group within the Azure subscription.
      * @param namespaceName The namespace name.
      * @param configName The configuration name. Should always be "$default".
@@ -90,19 +90,67 @@ public interface MigrationConfigsClient {
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return single item in List or Get Migration Config operation.
+     * @return the {@link PollerFlux} for polling of single item in List or Get Migration Config operation.
      */
-    @ServiceMethod(returns = ReturnType.SINGLE)
+    @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
     PollerFlux<PollResult<MigrationConfigPropertiesInner>, MigrationConfigPropertiesInner>
-        beginCreateAndStartMigrationAsync(
-            String resourceGroupName,
-            String namespaceName,
-            MigrationConfigurationName configName,
-            MigrationConfigPropertiesInner parameters);
+        beginCreateAndStartMigrationAsync(String resourceGroupName, String namespaceName,
+            MigrationConfigurationName configName, MigrationConfigPropertiesInner parameters);
 
     /**
      * Creates Migration configuration and starts migration of entities from Standard to Premium namespace.
-     *
+     * 
+     * @param resourceGroupName Name of the Resource group within the Azure subscription.
+     * @param namespaceName The namespace name.
+     * @param configName The configuration name. Should always be "$default".
+     * @param parameters Parameters required to create Migration Configuration.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return the {@link SyncPoller} for polling of single item in List or Get Migration Config operation.
+     */
+    @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
+    SyncPoller<PollResult<MigrationConfigPropertiesInner>, MigrationConfigPropertiesInner> beginCreateAndStartMigration(
+        String resourceGroupName, String namespaceName, MigrationConfigurationName configName,
+        MigrationConfigPropertiesInner parameters);
+
+    /**
+     * Creates Migration configuration and starts migration of entities from Standard to Premium namespace.
+     * 
+     * @param resourceGroupName Name of the Resource group within the Azure subscription.
+     * @param namespaceName The namespace name.
+     * @param configName The configuration name. Should always be "$default".
+     * @param parameters Parameters required to create Migration Configuration.
+     * @param context The context to associate with this operation.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return the {@link SyncPoller} for polling of single item in List or Get Migration Config operation.
+     */
+    @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
+    SyncPoller<PollResult<MigrationConfigPropertiesInner>, MigrationConfigPropertiesInner> beginCreateAndStartMigration(
+        String resourceGroupName, String namespaceName, MigrationConfigurationName configName,
+        MigrationConfigPropertiesInner parameters, Context context);
+
+    /**
+     * Creates Migration configuration and starts migration of entities from Standard to Premium namespace.
+     * 
+     * @param resourceGroupName Name of the Resource group within the Azure subscription.
+     * @param namespaceName The namespace name.
+     * @param configName The configuration name. Should always be "$default".
+     * @param parameters Parameters required to create Migration Configuration.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return single item in List or Get Migration Config operation on successful completion of {@link Mono}.
+     */
+    @ServiceMethod(returns = ReturnType.SINGLE)
+    Mono<MigrationConfigPropertiesInner> createAndStartMigrationAsync(String resourceGroupName, String namespaceName,
+        MigrationConfigurationName configName, MigrationConfigPropertiesInner parameters);
+
+    /**
+     * Creates Migration configuration and starts migration of entities from Standard to Premium namespace.
+     * 
      * @param resourceGroupName Name of the Resource group within the Azure subscription.
      * @param namespaceName The namespace name.
      * @param configName The configuration name. Should always be "$default".
@@ -113,15 +161,12 @@ public interface MigrationConfigsClient {
      * @return single item in List or Get Migration Config operation.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    SyncPoller<PollResult<MigrationConfigPropertiesInner>, MigrationConfigPropertiesInner> beginCreateAndStartMigration(
-        String resourceGroupName,
-        String namespaceName,
-        MigrationConfigurationName configName,
-        MigrationConfigPropertiesInner parameters);
+    MigrationConfigPropertiesInner createAndStartMigration(String resourceGroupName, String namespaceName,
+        MigrationConfigurationName configName, MigrationConfigPropertiesInner parameters);
 
     /**
      * Creates Migration configuration and starts migration of entities from Standard to Premium namespace.
-     *
+     * 
      * @param resourceGroupName Name of the Resource group within the Azure subscription.
      * @param namespaceName The namespace name.
      * @param configName The configuration name. Should always be "$default".
@@ -133,104 +178,57 @@ public interface MigrationConfigsClient {
      * @return single item in List or Get Migration Config operation.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    SyncPoller<PollResult<MigrationConfigPropertiesInner>, MigrationConfigPropertiesInner> beginCreateAndStartMigration(
-        String resourceGroupName,
-        String namespaceName,
-        MigrationConfigurationName configName,
-        MigrationConfigPropertiesInner parameters,
-        Context context);
-
-    /**
-     * Creates Migration configuration and starts migration of entities from Standard to Premium namespace.
-     *
-     * @param resourceGroupName Name of the Resource group within the Azure subscription.
-     * @param namespaceName The namespace name.
-     * @param configName The configuration name. Should always be "$default".
-     * @param parameters Parameters required to create Migration Configuration.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return single item in List or Get Migration Config operation.
-     */
-    @ServiceMethod(returns = ReturnType.SINGLE)
-    Mono<MigrationConfigPropertiesInner> createAndStartMigrationAsync(
-        String resourceGroupName,
-        String namespaceName,
-        MigrationConfigurationName configName,
-        MigrationConfigPropertiesInner parameters);
-
-    /**
-     * Creates Migration configuration and starts migration of entities from Standard to Premium namespace.
-     *
-     * @param resourceGroupName Name of the Resource group within the Azure subscription.
-     * @param namespaceName The namespace name.
-     * @param configName The configuration name. Should always be "$default".
-     * @param parameters Parameters required to create Migration Configuration.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return single item in List or Get Migration Config operation.
-     */
-    @ServiceMethod(returns = ReturnType.SINGLE)
-    MigrationConfigPropertiesInner createAndStartMigration(
-        String resourceGroupName,
-        String namespaceName,
-        MigrationConfigurationName configName,
-        MigrationConfigPropertiesInner parameters);
-
-    /**
-     * Creates Migration configuration and starts migration of entities from Standard to Premium namespace.
-     *
-     * @param resourceGroupName Name of the Resource group within the Azure subscription.
-     * @param namespaceName The namespace name.
-     * @param configName The configuration name. Should always be "$default".
-     * @param parameters Parameters required to create Migration Configuration.
-     * @param context The context to associate with this operation.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return single item in List or Get Migration Config operation.
-     */
-    @ServiceMethod(returns = ReturnType.SINGLE)
-    MigrationConfigPropertiesInner createAndStartMigration(
-        String resourceGroupName,
-        String namespaceName,
-        MigrationConfigurationName configName,
-        MigrationConfigPropertiesInner parameters,
-        Context context);
+    MigrationConfigPropertiesInner createAndStartMigration(String resourceGroupName, String namespaceName,
+        MigrationConfigurationName configName, MigrationConfigPropertiesInner parameters, Context context);
 
     /**
      * Deletes a MigrationConfiguration.
-     *
+     * 
      * @param resourceGroupName Name of the Resource group within the Azure subscription.
      * @param namespaceName The namespace name.
      * @param configName The configuration name. Should always be "$default".
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the completion.
+     * @return the {@link Response} on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    Mono<Response<Void>> deleteWithResponseAsync(
-        String resourceGroupName, String namespaceName, MigrationConfigurationName configName);
+    Mono<Response<Void>> deleteWithResponseAsync(String resourceGroupName, String namespaceName,
+        MigrationConfigurationName configName);
 
     /**
      * Deletes a MigrationConfiguration.
-     *
+     * 
      * @param resourceGroupName Name of the Resource group within the Azure subscription.
      * @param namespaceName The namespace name.
      * @param configName The configuration name. Should always be "$default".
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the completion.
+     * @return A {@link Mono} that completes when a successful response is received.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
     Mono<Void> deleteAsync(String resourceGroupName, String namespaceName, MigrationConfigurationName configName);
 
     /**
      * Deletes a MigrationConfiguration.
-     *
+     * 
+     * @param resourceGroupName Name of the Resource group within the Azure subscription.
+     * @param namespaceName The namespace name.
+     * @param configName The configuration name. Should always be "$default".
+     * @param context The context to associate with this operation.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return the {@link Response}.
+     */
+    @ServiceMethod(returns = ReturnType.SINGLE)
+    Response<Void> deleteWithResponse(String resourceGroupName, String namespaceName,
+        MigrationConfigurationName configName, Context context);
+
+    /**
+     * Deletes a MigrationConfiguration.
+     * 
      * @param resourceGroupName Name of the Resource group within the Azure subscription.
      * @param namespaceName The namespace name.
      * @param configName The configuration name. Should always be "$default".
@@ -242,8 +240,39 @@ public interface MigrationConfigsClient {
     void delete(String resourceGroupName, String namespaceName, MigrationConfigurationName configName);
 
     /**
-     * Deletes a MigrationConfiguration.
-     *
+     * Retrieves Migration Config.
+     * 
+     * @param resourceGroupName Name of the Resource group within the Azure subscription.
+     * @param namespaceName The namespace name.
+     * @param configName The configuration name. Should always be "$default".
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return single item in List or Get Migration Config operation along with {@link Response} on successful
+     * completion of {@link Mono}.
+     */
+    @ServiceMethod(returns = ReturnType.SINGLE)
+    Mono<Response<MigrationConfigPropertiesInner>> getWithResponseAsync(String resourceGroupName, String namespaceName,
+        MigrationConfigurationName configName);
+
+    /**
+     * Retrieves Migration Config.
+     * 
+     * @param resourceGroupName Name of the Resource group within the Azure subscription.
+     * @param namespaceName The namespace name.
+     * @param configName The configuration name. Should always be "$default".
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return single item in List or Get Migration Config operation on successful completion of {@link Mono}.
+     */
+    @ServiceMethod(returns = ReturnType.SINGLE)
+    Mono<MigrationConfigPropertiesInner> getAsync(String resourceGroupName, String namespaceName,
+        MigrationConfigurationName configName);
+
+    /**
+     * Retrieves Migration Config.
+     * 
      * @param resourceGroupName Name of the Resource group within the Azure subscription.
      * @param namespaceName The namespace name.
      * @param configName The configuration name. Should always be "$default".
@@ -251,15 +280,15 @@ public interface MigrationConfigsClient {
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the response.
+     * @return single item in List or Get Migration Config operation along with {@link Response}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    Response<Void> deleteWithResponse(
-        String resourceGroupName, String namespaceName, MigrationConfigurationName configName, Context context);
+    Response<MigrationConfigPropertiesInner> getWithResponse(String resourceGroupName, String namespaceName,
+        MigrationConfigurationName configName, Context context);
 
     /**
      * Retrieves Migration Config.
-     *
+     * 
      * @param resourceGroupName Name of the Resource group within the Azure subscription.
      * @param namespaceName The namespace name.
      * @param configName The configuration name. Should always be "$default".
@@ -269,42 +298,48 @@ public interface MigrationConfigsClient {
      * @return single item in List or Get Migration Config operation.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    Mono<Response<MigrationConfigPropertiesInner>> getWithResponseAsync(
-        String resourceGroupName, String namespaceName, MigrationConfigurationName configName);
+    MigrationConfigPropertiesInner get(String resourceGroupName, String namespaceName,
+        MigrationConfigurationName configName);
 
     /**
-     * Retrieves Migration Config.
-     *
+     * This operation Completes Migration of entities by pointing the connection strings to Premium namespace and any
+     * entities created after the operation will be under Premium Namespace. CompleteMigration operation will fail when
+     * entity migration is in-progress.
+     * 
      * @param resourceGroupName Name of the Resource group within the Azure subscription.
      * @param namespaceName The namespace name.
      * @param configName The configuration name. Should always be "$default".
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return single item in List or Get Migration Config operation.
+     * @return the {@link Response} on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    Mono<MigrationConfigPropertiesInner> getAsync(
-        String resourceGroupName, String namespaceName, MigrationConfigurationName configName);
+    Mono<Response<Void>> completeMigrationWithResponseAsync(String resourceGroupName, String namespaceName,
+        MigrationConfigurationName configName);
 
     /**
-     * Retrieves Migration Config.
-     *
+     * This operation Completes Migration of entities by pointing the connection strings to Premium namespace and any
+     * entities created after the operation will be under Premium Namespace. CompleteMigration operation will fail when
+     * entity migration is in-progress.
+     * 
      * @param resourceGroupName Name of the Resource group within the Azure subscription.
      * @param namespaceName The namespace name.
      * @param configName The configuration name. Should always be "$default".
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return single item in List or Get Migration Config operation.
+     * @return A {@link Mono} that completes when a successful response is received.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    MigrationConfigPropertiesInner get(
-        String resourceGroupName, String namespaceName, MigrationConfigurationName configName);
+    Mono<Void> completeMigrationAsync(String resourceGroupName, String namespaceName,
+        MigrationConfigurationName configName);
 
     /**
-     * Retrieves Migration Config.
-     *
+     * This operation Completes Migration of entities by pointing the connection strings to Premium namespace and any
+     * entities created after the operation will be under Premium Namespace. CompleteMigration operation will fail when
+     * entity migration is in-progress.
+     * 
      * @param resourceGroupName Name of the Resource group within the Azure subscription.
      * @param namespaceName The namespace name.
      * @param configName The configuration name. Should always be "$default".
@@ -312,51 +347,17 @@ public interface MigrationConfigsClient {
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return single item in List or Get Migration Config operation.
+     * @return the {@link Response}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    Response<MigrationConfigPropertiesInner> getWithResponse(
-        String resourceGroupName, String namespaceName, MigrationConfigurationName configName, Context context);
+    Response<Void> completeMigrationWithResponse(String resourceGroupName, String namespaceName,
+        MigrationConfigurationName configName, Context context);
 
     /**
      * This operation Completes Migration of entities by pointing the connection strings to Premium namespace and any
      * entities created after the operation will be under Premium Namespace. CompleteMigration operation will fail when
      * entity migration is in-progress.
-     *
-     * @param resourceGroupName Name of the Resource group within the Azure subscription.
-     * @param namespaceName The namespace name.
-     * @param configName The configuration name. Should always be "$default".
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the completion.
-     */
-    @ServiceMethod(returns = ReturnType.SINGLE)
-    Mono<Response<Void>> completeMigrationWithResponseAsync(
-        String resourceGroupName, String namespaceName, MigrationConfigurationName configName);
-
-    /**
-     * This operation Completes Migration of entities by pointing the connection strings to Premium namespace and any
-     * entities created after the operation will be under Premium Namespace. CompleteMigration operation will fail when
-     * entity migration is in-progress.
-     *
-     * @param resourceGroupName Name of the Resource group within the Azure subscription.
-     * @param namespaceName The namespace name.
-     * @param configName The configuration name. Should always be "$default".
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the completion.
-     */
-    @ServiceMethod(returns = ReturnType.SINGLE)
-    Mono<Void> completeMigrationAsync(
-        String resourceGroupName, String namespaceName, MigrationConfigurationName configName);
-
-    /**
-     * This operation Completes Migration of entities by pointing the connection strings to Premium namespace and any
-     * entities created after the operation will be under Premium Namespace. CompleteMigration operation will fail when
-     * entity migration is in-progress.
-     *
+     * 
      * @param resourceGroupName Name of the Resource group within the Azure subscription.
      * @param namespaceName The namespace name.
      * @param configName The configuration name. Should always be "$default".
@@ -368,10 +369,37 @@ public interface MigrationConfigsClient {
     void completeMigration(String resourceGroupName, String namespaceName, MigrationConfigurationName configName);
 
     /**
-     * This operation Completes Migration of entities by pointing the connection strings to Premium namespace and any
-     * entities created after the operation will be under Premium Namespace. CompleteMigration operation will fail when
-     * entity migration is in-progress.
-     *
+     * This operation reverts Migration.
+     * 
+     * @param resourceGroupName Name of the Resource group within the Azure subscription.
+     * @param namespaceName The namespace name.
+     * @param configName The configuration name. Should always be "$default".
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return the {@link Response} on successful completion of {@link Mono}.
+     */
+    @ServiceMethod(returns = ReturnType.SINGLE)
+    Mono<Response<Void>> revertWithResponseAsync(String resourceGroupName, String namespaceName,
+        MigrationConfigurationName configName);
+
+    /**
+     * This operation reverts Migration.
+     * 
+     * @param resourceGroupName Name of the Resource group within the Azure subscription.
+     * @param namespaceName The namespace name.
+     * @param configName The configuration name. Should always be "$default".
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return A {@link Mono} that completes when a successful response is received.
+     */
+    @ServiceMethod(returns = ReturnType.SINGLE)
+    Mono<Void> revertAsync(String resourceGroupName, String namespaceName, MigrationConfigurationName configName);
+
+    /**
+     * This operation reverts Migration.
+     * 
      * @param resourceGroupName Name of the Resource group within the Azure subscription.
      * @param namespaceName The namespace name.
      * @param configName The configuration name. Should always be "$default".
@@ -379,44 +407,15 @@ public interface MigrationConfigsClient {
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the response.
+     * @return the {@link Response}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    Response<Void> completeMigrationWithResponse(
-        String resourceGroupName, String namespaceName, MigrationConfigurationName configName, Context context);
+    Response<Void> revertWithResponse(String resourceGroupName, String namespaceName,
+        MigrationConfigurationName configName, Context context);
 
     /**
      * This operation reverts Migration.
-     *
-     * @param resourceGroupName Name of the Resource group within the Azure subscription.
-     * @param namespaceName The namespace name.
-     * @param configName The configuration name. Should always be "$default".
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the completion.
-     */
-    @ServiceMethod(returns = ReturnType.SINGLE)
-    Mono<Response<Void>> revertWithResponseAsync(
-        String resourceGroupName, String namespaceName, MigrationConfigurationName configName);
-
-    /**
-     * This operation reverts Migration.
-     *
-     * @param resourceGroupName Name of the Resource group within the Azure subscription.
-     * @param namespaceName The namespace name.
-     * @param configName The configuration name. Should always be "$default".
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the completion.
-     */
-    @ServiceMethod(returns = ReturnType.SINGLE)
-    Mono<Void> revertAsync(String resourceGroupName, String namespaceName, MigrationConfigurationName configName);
-
-    /**
-     * This operation reverts Migration.
-     *
+     * 
      * @param resourceGroupName Name of the Resource group within the Azure subscription.
      * @param namespaceName The namespace name.
      * @param configName The configuration name. Should always be "$default".
@@ -426,20 +425,4 @@ public interface MigrationConfigsClient {
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
     void revert(String resourceGroupName, String namespaceName, MigrationConfigurationName configName);
-
-    /**
-     * This operation reverts Migration.
-     *
-     * @param resourceGroupName Name of the Resource group within the Azure subscription.
-     * @param namespaceName The namespace name.
-     * @param configName The configuration name. Should always be "$default".
-     * @param context The context to associate with this operation.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the response.
-     */
-    @ServiceMethod(returns = ReturnType.SINGLE)
-    Response<Void> revertWithResponse(
-        String resourceGroupName, String namespaceName, MigrationConfigurationName configName, Context context);
 }

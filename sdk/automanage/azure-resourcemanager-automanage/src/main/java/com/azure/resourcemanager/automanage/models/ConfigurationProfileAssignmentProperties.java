@@ -5,45 +5,42 @@
 package com.azure.resourcemanager.automanage.models;
 
 import com.azure.core.annotation.Fluent;
-import com.azure.core.util.logging.ClientLogger;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import java.util.Map;
+import com.azure.json.JsonReader;
+import com.azure.json.JsonSerializable;
+import com.azure.json.JsonToken;
+import com.azure.json.JsonWriter;
+import java.io.IOException;
 
-/** Automanage configuration profile assignment properties. */
+/**
+ * Automanage configuration profile assignment properties.
+ */
 @Fluent
-public final class ConfigurationProfileAssignmentProperties {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(ConfigurationProfileAssignmentProperties.class);
-
+public final class ConfigurationProfileAssignmentProperties
+    implements JsonSerializable<ConfigurationProfileAssignmentProperties> {
     /*
      * The Automanage configurationProfile ARM Resource URI.
      */
-    @JsonProperty(value = "configurationProfile")
     private String configurationProfile;
 
     /*
      * The target VM resource URI
      */
-    @JsonProperty(value = "targetId")
     private String targetId;
 
     /*
      * The status of onboarding, which only appears in the response.
      */
-    @JsonProperty(value = "status", access = JsonProperty.Access.WRITE_ONLY)
     private String status;
 
-    /*
-     * The profileOverrides setting for the configuration profile assignment.
+    /**
+     * Creates an instance of ConfigurationProfileAssignmentProperties class.
      */
-    @JsonProperty(value = "profileOverrides")
-    @JsonInclude(value = JsonInclude.Include.NON_NULL, content = JsonInclude.Include.ALWAYS)
-    private Map<String, Object> profileOverrides;
+    public ConfigurationProfileAssignmentProperties() {
+    }
 
     /**
      * Get the configurationProfile property: The Automanage configurationProfile ARM Resource URI.
-     *
+     * 
      * @return the configurationProfile value.
      */
     public String configurationProfile() {
@@ -52,7 +49,7 @@ public final class ConfigurationProfileAssignmentProperties {
 
     /**
      * Set the configurationProfile property: The Automanage configurationProfile ARM Resource URI.
-     *
+     * 
      * @param configurationProfile the configurationProfile value to set.
      * @return the ConfigurationProfileAssignmentProperties object itself.
      */
@@ -63,7 +60,7 @@ public final class ConfigurationProfileAssignmentProperties {
 
     /**
      * Get the targetId property: The target VM resource URI.
-     *
+     * 
      * @return the targetId value.
      */
     public String targetId() {
@@ -71,19 +68,8 @@ public final class ConfigurationProfileAssignmentProperties {
     }
 
     /**
-     * Set the targetId property: The target VM resource URI.
-     *
-     * @param targetId the targetId value to set.
-     * @return the ConfigurationProfileAssignmentProperties object itself.
-     */
-    public ConfigurationProfileAssignmentProperties withTargetId(String targetId) {
-        this.targetId = targetId;
-        return this;
-    }
-
-    /**
      * Get the status property: The status of onboarding, which only appears in the response.
-     *
+     * 
      * @return the status value.
      */
     public String status() {
@@ -91,30 +77,51 @@ public final class ConfigurationProfileAssignmentProperties {
     }
 
     /**
-     * Get the profileOverrides property: The profileOverrides setting for the configuration profile assignment.
-     *
-     * @return the profileOverrides value.
-     */
-    public Map<String, Object> profileOverrides() {
-        return this.profileOverrides;
-    }
-
-    /**
-     * Set the profileOverrides property: The profileOverrides setting for the configuration profile assignment.
-     *
-     * @param profileOverrides the profileOverrides value to set.
-     * @return the ConfigurationProfileAssignmentProperties object itself.
-     */
-    public ConfigurationProfileAssignmentProperties withProfileOverrides(Map<String, Object> profileOverrides) {
-        this.profileOverrides = profileOverrides;
-        return this;
-    }
-
-    /**
      * Validates the instance.
-     *
+     * 
      * @throws IllegalArgumentException thrown if the instance is not valid.
      */
     public void validate() {
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public JsonWriter toJson(JsonWriter jsonWriter) throws IOException {
+        jsonWriter.writeStartObject();
+        jsonWriter.writeStringField("configurationProfile", this.configurationProfile);
+        return jsonWriter.writeEndObject();
+    }
+
+    /**
+     * Reads an instance of ConfigurationProfileAssignmentProperties from the JsonReader.
+     * 
+     * @param jsonReader The JsonReader being read.
+     * @return An instance of ConfigurationProfileAssignmentProperties if the JsonReader was pointing to an instance of
+     * it, or null if it was pointing to JSON null.
+     * @throws IOException If an error occurs while reading the ConfigurationProfileAssignmentProperties.
+     */
+    public static ConfigurationProfileAssignmentProperties fromJson(JsonReader jsonReader) throws IOException {
+        return jsonReader.readObject(reader -> {
+            ConfigurationProfileAssignmentProperties deserializedConfigurationProfileAssignmentProperties
+                = new ConfigurationProfileAssignmentProperties();
+            while (reader.nextToken() != JsonToken.END_OBJECT) {
+                String fieldName = reader.getFieldName();
+                reader.nextToken();
+
+                if ("configurationProfile".equals(fieldName)) {
+                    deserializedConfigurationProfileAssignmentProperties.configurationProfile = reader.getString();
+                } else if ("targetId".equals(fieldName)) {
+                    deserializedConfigurationProfileAssignmentProperties.targetId = reader.getString();
+                } else if ("status".equals(fieldName)) {
+                    deserializedConfigurationProfileAssignmentProperties.status = reader.getString();
+                } else {
+                    reader.skipChildren();
+                }
+            }
+
+            return deserializedConfigurationProfileAssignmentProperties;
+        });
     }
 }

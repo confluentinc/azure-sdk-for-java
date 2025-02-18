@@ -5,47 +5,52 @@
 package com.azure.resourcemanager.labservices.models;
 
 import com.azure.core.annotation.Fluent;
+import com.azure.core.util.CoreUtils;
 import com.azure.core.util.logging.ClientLogger;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import java.time.LocalDate;
+import com.azure.json.JsonReader;
+import com.azure.json.JsonSerializable;
+import com.azure.json.JsonToken;
+import com.azure.json.JsonWriter;
+import java.io.IOException;
+import java.time.OffsetDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
-/** Recurrence pattern of a lab schedule. */
+/**
+ * Recurrence pattern of a lab schedule.
+ */
 @Fluent
-public final class RecurrencePattern {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(RecurrencePattern.class);
-
+public final class RecurrencePattern implements JsonSerializable<RecurrencePattern> {
     /*
      * The frequency of the recurrence.
      */
-    @JsonProperty(value = "frequency", required = true)
     private RecurrenceFrequency frequency;
 
     /*
-     * The week days the schedule runs. Used for when the Frequency is set to
-     * Weekly.
+     * The week days the schedule runs. Used for when the Frequency is set to Weekly.
      */
-    @JsonProperty(value = "weekDays")
     private List<WeekDay> weekDays;
 
     /*
-     * The interval to invoke the schedule on. For example, interval = 2 and
-     * RecurrenceFrequency.Daily will run every 2 days. When no interval is
-     * supplied, an interval of 1 is used.
+     * The interval to invoke the schedule on. For example, interval = 2 and RecurrenceFrequency.Daily will run every 2
+     * days. When no interval is supplied, an interval of 1 is used.
      */
-    @JsonProperty(value = "interval")
     private Integer interval;
 
     /*
      * When the recurrence will expire. This date is inclusive.
      */
-    @JsonProperty(value = "expirationDate", required = true)
-    private LocalDate expirationDate;
+    private OffsetDateTime expirationDate;
+
+    /**
+     * Creates an instance of RecurrencePattern class.
+     */
+    public RecurrencePattern() {
+    }
 
     /**
      * Get the frequency property: The frequency of the recurrence.
-     *
+     * 
      * @return the frequency value.
      */
     public RecurrenceFrequency frequency() {
@@ -54,7 +59,7 @@ public final class RecurrencePattern {
 
     /**
      * Set the frequency property: The frequency of the recurrence.
-     *
+     * 
      * @param frequency the frequency value to set.
      * @return the RecurrencePattern object itself.
      */
@@ -65,7 +70,7 @@ public final class RecurrencePattern {
 
     /**
      * Get the weekDays property: The week days the schedule runs. Used for when the Frequency is set to Weekly.
-     *
+     * 
      * @return the weekDays value.
      */
     public List<WeekDay> weekDays() {
@@ -74,7 +79,7 @@ public final class RecurrencePattern {
 
     /**
      * Set the weekDays property: The week days the schedule runs. Used for when the Frequency is set to Weekly.
-     *
+     * 
      * @param weekDays the weekDays value to set.
      * @return the RecurrencePattern object itself.
      */
@@ -86,7 +91,7 @@ public final class RecurrencePattern {
     /**
      * Get the interval property: The interval to invoke the schedule on. For example, interval = 2 and
      * RecurrenceFrequency.Daily will run every 2 days. When no interval is supplied, an interval of 1 is used.
-     *
+     * 
      * @return the interval value.
      */
     public Integer interval() {
@@ -96,7 +101,7 @@ public final class RecurrencePattern {
     /**
      * Set the interval property: The interval to invoke the schedule on. For example, interval = 2 and
      * RecurrenceFrequency.Daily will run every 2 days. When no interval is supplied, an interval of 1 is used.
-     *
+     * 
      * @param interval the interval value to set.
      * @return the RecurrencePattern object itself.
      */
@@ -107,40 +112,90 @@ public final class RecurrencePattern {
 
     /**
      * Get the expirationDate property: When the recurrence will expire. This date is inclusive.
-     *
+     * 
      * @return the expirationDate value.
      */
-    public LocalDate expirationDate() {
+    public OffsetDateTime expirationDate() {
         return this.expirationDate;
     }
 
     /**
      * Set the expirationDate property: When the recurrence will expire. This date is inclusive.
-     *
+     * 
      * @param expirationDate the expirationDate value to set.
      * @return the RecurrencePattern object itself.
      */
-    public RecurrencePattern withExpirationDate(LocalDate expirationDate) {
+    public RecurrencePattern withExpirationDate(OffsetDateTime expirationDate) {
         this.expirationDate = expirationDate;
         return this;
     }
 
     /**
      * Validates the instance.
-     *
+     * 
      * @throws IllegalArgumentException thrown if the instance is not valid.
      */
     public void validate() {
         if (frequency() == null) {
-            throw logger
-                .logExceptionAsError(
-                    new IllegalArgumentException("Missing required property frequency in model RecurrencePattern"));
+            throw LOGGER.atError()
+                .log(new IllegalArgumentException("Missing required property frequency in model RecurrencePattern"));
         }
         if (expirationDate() == null) {
-            throw logger
-                .logExceptionAsError(
-                    new IllegalArgumentException(
-                        "Missing required property expirationDate in model RecurrencePattern"));
+            throw LOGGER.atError()
+                .log(new IllegalArgumentException(
+                    "Missing required property expirationDate in model RecurrencePattern"));
         }
+    }
+
+    private static final ClientLogger LOGGER = new ClientLogger(RecurrencePattern.class);
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public JsonWriter toJson(JsonWriter jsonWriter) throws IOException {
+        jsonWriter.writeStartObject();
+        jsonWriter.writeStringField("frequency", this.frequency == null ? null : this.frequency.toString());
+        jsonWriter.writeStringField("expirationDate",
+            this.expirationDate == null ? null : DateTimeFormatter.ISO_OFFSET_DATE_TIME.format(this.expirationDate));
+        jsonWriter.writeArrayField("weekDays", this.weekDays,
+            (writer, element) -> writer.writeString(element == null ? null : element.toString()));
+        jsonWriter.writeNumberField("interval", this.interval);
+        return jsonWriter.writeEndObject();
+    }
+
+    /**
+     * Reads an instance of RecurrencePattern from the JsonReader.
+     * 
+     * @param jsonReader The JsonReader being read.
+     * @return An instance of RecurrencePattern if the JsonReader was pointing to an instance of it, or null if it was
+     * pointing to JSON null.
+     * @throws IllegalStateException If the deserialized JSON object was missing any required properties.
+     * @throws IOException If an error occurs while reading the RecurrencePattern.
+     */
+    public static RecurrencePattern fromJson(JsonReader jsonReader) throws IOException {
+        return jsonReader.readObject(reader -> {
+            RecurrencePattern deserializedRecurrencePattern = new RecurrencePattern();
+            while (reader.nextToken() != JsonToken.END_OBJECT) {
+                String fieldName = reader.getFieldName();
+                reader.nextToken();
+
+                if ("frequency".equals(fieldName)) {
+                    deserializedRecurrencePattern.frequency = RecurrenceFrequency.fromString(reader.getString());
+                } else if ("expirationDate".equals(fieldName)) {
+                    deserializedRecurrencePattern.expirationDate = reader
+                        .getNullable(nonNullReader -> CoreUtils.parseBestOffsetDateTime(nonNullReader.getString()));
+                } else if ("weekDays".equals(fieldName)) {
+                    List<WeekDay> weekDays = reader.readArray(reader1 -> WeekDay.fromString(reader1.getString()));
+                    deserializedRecurrencePattern.weekDays = weekDays;
+                } else if ("interval".equals(fieldName)) {
+                    deserializedRecurrencePattern.interval = reader.getNullable(JsonReader::getInt);
+                } else {
+                    reader.skipChildren();
+                }
+            }
+
+            return deserializedRecurrencePattern;
+        });
     }
 }

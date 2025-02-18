@@ -5,30 +5,46 @@
 package com.azure.resourcemanager.mediaservices.models;
 
 import com.azure.core.annotation.Fluent;
-import com.azure.core.annotation.JsonFlatten;
 import com.azure.core.util.logging.ClientLogger;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import com.fasterxml.jackson.annotation.JsonTypeName;
+import com.azure.json.JsonReader;
+import com.azure.json.JsonToken;
+import com.azure.json.JsonWriter;
+import java.io.IOException;
 
-/** Specifies a configuration for Widevine licenses. */
-@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "@odata\\.type")
-@JsonTypeName("#Microsoft.Media.ContentKeyPolicyWidevineConfiguration")
-@JsonFlatten
+/**
+ * Specifies a configuration for Widevine licenses.
+ */
 @Fluent
-public class ContentKeyPolicyWidevineConfiguration extends ContentKeyPolicyConfiguration {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(ContentKeyPolicyWidevineConfiguration.class);
+public final class ContentKeyPolicyWidevineConfiguration extends ContentKeyPolicyConfiguration {
+    /*
+     * The discriminator for derived types.
+     */
+    private String odataType = "#Microsoft.Media.ContentKeyPolicyWidevineConfiguration";
 
     /*
      * The Widevine template.
      */
-    @JsonProperty(value = "widevineTemplate", required = true)
     private String widevineTemplate;
 
     /**
+     * Creates an instance of ContentKeyPolicyWidevineConfiguration class.
+     */
+    public ContentKeyPolicyWidevineConfiguration() {
+    }
+
+    /**
+     * Get the odataType property: The discriminator for derived types.
+     * 
+     * @return the odataType value.
+     */
+    @Override
+    public String odataType() {
+        return this.odataType;
+    }
+
+    /**
      * Get the widevineTemplate property: The Widevine template.
-     *
+     * 
      * @return the widevineTemplate value.
      */
     public String widevineTemplate() {
@@ -37,7 +53,7 @@ public class ContentKeyPolicyWidevineConfiguration extends ContentKeyPolicyConfi
 
     /**
      * Set the widevineTemplate property: The Widevine template.
-     *
+     * 
      * @param widevineTemplate the widevineTemplate value to set.
      * @return the ContentKeyPolicyWidevineConfiguration object itself.
      */
@@ -48,17 +64,58 @@ public class ContentKeyPolicyWidevineConfiguration extends ContentKeyPolicyConfi
 
     /**
      * Validates the instance.
-     *
+     * 
      * @throws IllegalArgumentException thrown if the instance is not valid.
      */
     @Override
     public void validate() {
-        super.validate();
         if (widevineTemplate() == null) {
-            throw logger
-                .logExceptionAsError(
-                    new IllegalArgumentException(
-                        "Missing required property widevineTemplate in model ContentKeyPolicyWidevineConfiguration"));
+            throw LOGGER.atError()
+                .log(new IllegalArgumentException(
+                    "Missing required property widevineTemplate in model ContentKeyPolicyWidevineConfiguration"));
         }
+    }
+
+    private static final ClientLogger LOGGER = new ClientLogger(ContentKeyPolicyWidevineConfiguration.class);
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public JsonWriter toJson(JsonWriter jsonWriter) throws IOException {
+        jsonWriter.writeStartObject();
+        jsonWriter.writeStringField("widevineTemplate", this.widevineTemplate);
+        jsonWriter.writeStringField("@odata.type", this.odataType);
+        return jsonWriter.writeEndObject();
+    }
+
+    /**
+     * Reads an instance of ContentKeyPolicyWidevineConfiguration from the JsonReader.
+     * 
+     * @param jsonReader The JsonReader being read.
+     * @return An instance of ContentKeyPolicyWidevineConfiguration if the JsonReader was pointing to an instance of it,
+     * or null if it was pointing to JSON null.
+     * @throws IllegalStateException If the deserialized JSON object was missing any required properties.
+     * @throws IOException If an error occurs while reading the ContentKeyPolicyWidevineConfiguration.
+     */
+    public static ContentKeyPolicyWidevineConfiguration fromJson(JsonReader jsonReader) throws IOException {
+        return jsonReader.readObject(reader -> {
+            ContentKeyPolicyWidevineConfiguration deserializedContentKeyPolicyWidevineConfiguration
+                = new ContentKeyPolicyWidevineConfiguration();
+            while (reader.nextToken() != JsonToken.END_OBJECT) {
+                String fieldName = reader.getFieldName();
+                reader.nextToken();
+
+                if ("widevineTemplate".equals(fieldName)) {
+                    deserializedContentKeyPolicyWidevineConfiguration.widevineTemplate = reader.getString();
+                } else if ("@odata.type".equals(fieldName)) {
+                    deserializedContentKeyPolicyWidevineConfiguration.odataType = reader.getString();
+                } else {
+                    reader.skipChildren();
+                }
+            }
+
+            return deserializedContentKeyPolicyWidevineConfiguration;
+        });
     }
 }

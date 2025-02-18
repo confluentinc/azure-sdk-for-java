@@ -5,29 +5,46 @@
 package com.azure.resourcemanager.compute.models;
 
 import com.azure.core.util.ExpandableStringEnum;
-import com.fasterxml.jackson.annotation.JsonCreator;
 import java.util.Collection;
 
-/** Defines values for VmDiskTypes. */
+/**
+ * VM disk types which are disallowed.
+ */
 public final class VmDiskTypes extends ExpandableStringEnum<VmDiskTypes> {
-    /** Static value None for VmDiskTypes. */
+    /**
+     * Static value None for VmDiskTypes.
+     */
     public static final VmDiskTypes NONE = fromString("None");
 
-    /** Static value Unmanaged for VmDiskTypes. */
+    /**
+     * Static value Unmanaged for VmDiskTypes.
+     */
     public static final VmDiskTypes UNMANAGED = fromString("Unmanaged");
 
     /**
+     * Creates a new instance of VmDiskTypes value.
+     * 
+     * @deprecated Use the {@link #fromString(String)} factory method.
+     */
+    @Deprecated
+    public VmDiskTypes() {
+    }
+
+    /**
      * Creates or finds a VmDiskTypes from its string representation.
-     *
+     * 
      * @param name a name to look for.
      * @return the corresponding VmDiskTypes.
      */
-    @JsonCreator
     public static VmDiskTypes fromString(String name) {
         return fromString(name, VmDiskTypes.class);
     }
 
-    /** @return known VmDiskTypes values. */
+    /**
+     * Gets known VmDiskTypes values.
+     * 
+     * @return known VmDiskTypes values.
+     */
     public static Collection<VmDiskTypes> values() {
         return values(VmDiskTypes.class);
     }

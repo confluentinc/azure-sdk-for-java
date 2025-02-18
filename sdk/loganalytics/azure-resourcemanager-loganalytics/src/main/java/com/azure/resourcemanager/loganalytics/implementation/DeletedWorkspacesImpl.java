@@ -11,17 +11,15 @@ import com.azure.resourcemanager.loganalytics.fluent.DeletedWorkspacesClient;
 import com.azure.resourcemanager.loganalytics.fluent.models.WorkspaceInner;
 import com.azure.resourcemanager.loganalytics.models.DeletedWorkspaces;
 import com.azure.resourcemanager.loganalytics.models.Workspace;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 public final class DeletedWorkspacesImpl implements DeletedWorkspaces {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(DeletedWorkspacesImpl.class);
+    private static final ClientLogger LOGGER = new ClientLogger(DeletedWorkspacesImpl.class);
 
     private final DeletedWorkspacesClient innerClient;
 
     private final com.azure.resourcemanager.loganalytics.LogAnalyticsManager serviceManager;
 
-    public DeletedWorkspacesImpl(
-        DeletedWorkspacesClient innerClient,
+    public DeletedWorkspacesImpl(DeletedWorkspacesClient innerClient,
         com.azure.resourcemanager.loganalytics.LogAnalyticsManager serviceManager) {
         this.innerClient = innerClient;
         this.serviceManager = serviceManager;
@@ -29,22 +27,22 @@ public final class DeletedWorkspacesImpl implements DeletedWorkspaces {
 
     public PagedIterable<Workspace> list() {
         PagedIterable<WorkspaceInner> inner = this.serviceClient().list();
-        return Utils.mapPage(inner, inner1 -> new WorkspaceImpl(inner1, this.manager()));
+        return ResourceManagerUtils.mapPage(inner, inner1 -> new WorkspaceImpl(inner1, this.manager()));
     }
 
     public PagedIterable<Workspace> list(Context context) {
         PagedIterable<WorkspaceInner> inner = this.serviceClient().list(context);
-        return Utils.mapPage(inner, inner1 -> new WorkspaceImpl(inner1, this.manager()));
+        return ResourceManagerUtils.mapPage(inner, inner1 -> new WorkspaceImpl(inner1, this.manager()));
     }
 
     public PagedIterable<Workspace> listByResourceGroup(String resourceGroupName) {
         PagedIterable<WorkspaceInner> inner = this.serviceClient().listByResourceGroup(resourceGroupName);
-        return Utils.mapPage(inner, inner1 -> new WorkspaceImpl(inner1, this.manager()));
+        return ResourceManagerUtils.mapPage(inner, inner1 -> new WorkspaceImpl(inner1, this.manager()));
     }
 
     public PagedIterable<Workspace> listByResourceGroup(String resourceGroupName, Context context) {
         PagedIterable<WorkspaceInner> inner = this.serviceClient().listByResourceGroup(resourceGroupName, context);
-        return Utils.mapPage(inner, inner1 -> new WorkspaceImpl(inner1, this.manager()));
+        return ResourceManagerUtils.mapPage(inner, inner1 -> new WorkspaceImpl(inner1, this.manager()));
     }
 
     private DeletedWorkspacesClient serviceClient() {

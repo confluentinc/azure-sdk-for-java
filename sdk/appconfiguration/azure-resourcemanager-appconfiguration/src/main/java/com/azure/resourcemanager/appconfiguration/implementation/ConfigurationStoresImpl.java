@@ -12,21 +12,21 @@ import com.azure.core.util.logging.ClientLogger;
 import com.azure.resourcemanager.appconfiguration.fluent.ConfigurationStoresClient;
 import com.azure.resourcemanager.appconfiguration.fluent.models.ApiKeyInner;
 import com.azure.resourcemanager.appconfiguration.fluent.models.ConfigurationStoreInner;
+import com.azure.resourcemanager.appconfiguration.fluent.models.DeletedConfigurationStoreInner;
 import com.azure.resourcemanager.appconfiguration.models.ApiKey;
 import com.azure.resourcemanager.appconfiguration.models.ConfigurationStore;
 import com.azure.resourcemanager.appconfiguration.models.ConfigurationStores;
+import com.azure.resourcemanager.appconfiguration.models.DeletedConfigurationStore;
 import com.azure.resourcemanager.appconfiguration.models.RegenerateKeyParameters;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 public final class ConfigurationStoresImpl implements ConfigurationStores {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(ConfigurationStoresImpl.class);
+    private static final ClientLogger LOGGER = new ClientLogger(ConfigurationStoresImpl.class);
 
     private final ConfigurationStoresClient innerClient;
 
     private final com.azure.resourcemanager.appconfiguration.AppConfigurationManager serviceManager;
 
-    public ConfigurationStoresImpl(
-        ConfigurationStoresClient innerClient,
+    public ConfigurationStoresImpl(ConfigurationStoresClient innerClient,
         com.azure.resourcemanager.appconfiguration.AppConfigurationManager serviceManager) {
         this.innerClient = innerClient;
         this.serviceManager = serviceManager;
@@ -34,45 +34,42 @@ public final class ConfigurationStoresImpl implements ConfigurationStores {
 
     public PagedIterable<ConfigurationStore> list() {
         PagedIterable<ConfigurationStoreInner> inner = this.serviceClient().list();
-        return Utils.mapPage(inner, inner1 -> new ConfigurationStoreImpl(inner1, this.manager()));
+        return ResourceManagerUtils.mapPage(inner, inner1 -> new ConfigurationStoreImpl(inner1, this.manager()));
     }
 
     public PagedIterable<ConfigurationStore> list(String skipToken, Context context) {
         PagedIterable<ConfigurationStoreInner> inner = this.serviceClient().list(skipToken, context);
-        return Utils.mapPage(inner, inner1 -> new ConfigurationStoreImpl(inner1, this.manager()));
+        return ResourceManagerUtils.mapPage(inner, inner1 -> new ConfigurationStoreImpl(inner1, this.manager()));
     }
 
     public PagedIterable<ConfigurationStore> listByResourceGroup(String resourceGroupName) {
         PagedIterable<ConfigurationStoreInner> inner = this.serviceClient().listByResourceGroup(resourceGroupName);
-        return Utils.mapPage(inner, inner1 -> new ConfigurationStoreImpl(inner1, this.manager()));
+        return ResourceManagerUtils.mapPage(inner, inner1 -> new ConfigurationStoreImpl(inner1, this.manager()));
     }
 
-    public PagedIterable<ConfigurationStore> listByResourceGroup(
-        String resourceGroupName, String skipToken, Context context) {
-        PagedIterable<ConfigurationStoreInner> inner =
-            this.serviceClient().listByResourceGroup(resourceGroupName, skipToken, context);
-        return Utils.mapPage(inner, inner1 -> new ConfigurationStoreImpl(inner1, this.manager()));
+    public PagedIterable<ConfigurationStore> listByResourceGroup(String resourceGroupName, String skipToken,
+        Context context) {
+        PagedIterable<ConfigurationStoreInner> inner
+            = this.serviceClient().listByResourceGroup(resourceGroupName, skipToken, context);
+        return ResourceManagerUtils.mapPage(inner, inner1 -> new ConfigurationStoreImpl(inner1, this.manager()));
+    }
+
+    public Response<ConfigurationStore> getByResourceGroupWithResponse(String resourceGroupName, String configStoreName,
+        Context context) {
+        Response<ConfigurationStoreInner> inner
+            = this.serviceClient().getByResourceGroupWithResponse(resourceGroupName, configStoreName, context);
+        if (inner != null) {
+            return new SimpleResponse<>(inner.getRequest(), inner.getStatusCode(), inner.getHeaders(),
+                new ConfigurationStoreImpl(inner.getValue(), this.manager()));
+        } else {
+            return null;
+        }
     }
 
     public ConfigurationStore getByResourceGroup(String resourceGroupName, String configStoreName) {
         ConfigurationStoreInner inner = this.serviceClient().getByResourceGroup(resourceGroupName, configStoreName);
         if (inner != null) {
             return new ConfigurationStoreImpl(inner, this.manager());
-        } else {
-            return null;
-        }
-    }
-
-    public Response<ConfigurationStore> getByResourceGroupWithResponse(
-        String resourceGroupName, String configStoreName, Context context) {
-        Response<ConfigurationStoreInner> inner =
-            this.serviceClient().getByResourceGroupWithResponse(resourceGroupName, configStoreName, context);
-        if (inner != null) {
-            return new SimpleResponse<>(
-                inner.getRequest(),
-                inner.getStatusCode(),
-                inner.getHeaders(),
-                new ConfigurationStoreImpl(inner.getValue(), this.manager()));
         } else {
             return null;
         }
@@ -88,20 +85,32 @@ public final class ConfigurationStoresImpl implements ConfigurationStores {
 
     public PagedIterable<ApiKey> listKeys(String resourceGroupName, String configStoreName) {
         PagedIterable<ApiKeyInner> inner = this.serviceClient().listKeys(resourceGroupName, configStoreName);
-        return Utils.mapPage(inner, inner1 -> new ApiKeyImpl(inner1, this.manager()));
+        return ResourceManagerUtils.mapPage(inner, inner1 -> new ApiKeyImpl(inner1, this.manager()));
     }
 
-    public PagedIterable<ApiKey> listKeys(
-        String resourceGroupName, String configStoreName, String skipToken, Context context) {
-        PagedIterable<ApiKeyInner> inner =
-            this.serviceClient().listKeys(resourceGroupName, configStoreName, skipToken, context);
-        return Utils.mapPage(inner, inner1 -> new ApiKeyImpl(inner1, this.manager()));
+    public PagedIterable<ApiKey> listKeys(String resourceGroupName, String configStoreName, String skipToken,
+        Context context) {
+        PagedIterable<ApiKeyInner> inner
+            = this.serviceClient().listKeys(resourceGroupName, configStoreName, skipToken, context);
+        return ResourceManagerUtils.mapPage(inner, inner1 -> new ApiKeyImpl(inner1, this.manager()));
     }
 
-    public ApiKey regenerateKey(
-        String resourceGroupName, String configStoreName, RegenerateKeyParameters regenerateKeyParameters) {
-        ApiKeyInner inner =
-            this.serviceClient().regenerateKey(resourceGroupName, configStoreName, regenerateKeyParameters);
+    public Response<ApiKey> regenerateKeyWithResponse(String resourceGroupName, String configStoreName,
+        RegenerateKeyParameters regenerateKeyParameters, Context context) {
+        Response<ApiKeyInner> inner = this.serviceClient()
+            .regenerateKeyWithResponse(resourceGroupName, configStoreName, regenerateKeyParameters, context);
+        if (inner != null) {
+            return new SimpleResponse<>(inner.getRequest(), inner.getStatusCode(), inner.getHeaders(),
+                new ApiKeyImpl(inner.getValue(), this.manager()));
+        } else {
+            return null;
+        }
+    }
+
+    public ApiKey regenerateKey(String resourceGroupName, String configStoreName,
+        RegenerateKeyParameters regenerateKeyParameters) {
+        ApiKeyInner inner
+            = this.serviceClient().regenerateKey(resourceGroupName, configStoreName, regenerateKeyParameters);
         if (inner != null) {
             return new ApiKeyImpl(inner, this.manager());
         } else {
@@ -109,106 +118,97 @@ public final class ConfigurationStoresImpl implements ConfigurationStores {
         }
     }
 
-    public Response<ApiKey> regenerateKeyWithResponse(
-        String resourceGroupName,
-        String configStoreName,
-        RegenerateKeyParameters regenerateKeyParameters,
+    public PagedIterable<DeletedConfigurationStore> listDeleted() {
+        PagedIterable<DeletedConfigurationStoreInner> inner = this.serviceClient().listDeleted();
+        return ResourceManagerUtils.mapPage(inner, inner1 -> new DeletedConfigurationStoreImpl(inner1, this.manager()));
+    }
+
+    public PagedIterable<DeletedConfigurationStore> listDeleted(Context context) {
+        PagedIterable<DeletedConfigurationStoreInner> inner = this.serviceClient().listDeleted(context);
+        return ResourceManagerUtils.mapPage(inner, inner1 -> new DeletedConfigurationStoreImpl(inner1, this.manager()));
+    }
+
+    public Response<DeletedConfigurationStore> getDeletedWithResponse(String location, String configStoreName,
         Context context) {
-        Response<ApiKeyInner> inner =
-            this
-                .serviceClient()
-                .regenerateKeyWithResponse(resourceGroupName, configStoreName, regenerateKeyParameters, context);
+        Response<DeletedConfigurationStoreInner> inner
+            = this.serviceClient().getDeletedWithResponse(location, configStoreName, context);
         if (inner != null) {
-            return new SimpleResponse<>(
-                inner.getRequest(),
-                inner.getStatusCode(),
-                inner.getHeaders(),
-                new ApiKeyImpl(inner.getValue(), this.manager()));
+            return new SimpleResponse<>(inner.getRequest(), inner.getStatusCode(), inner.getHeaders(),
+                new DeletedConfigurationStoreImpl(inner.getValue(), this.manager()));
         } else {
             return null;
         }
     }
 
-    public ConfigurationStore getById(String id) {
-        String resourceGroupName = Utils.getValueFromIdByName(id, "resourceGroups");
-        if (resourceGroupName == null) {
-            throw logger
-                .logExceptionAsError(
-                    new IllegalArgumentException(
-                        String
-                            .format("The resource ID '%s' is not valid. Missing path segment 'resourceGroups'.", id)));
+    public DeletedConfigurationStore getDeleted(String location, String configStoreName) {
+        DeletedConfigurationStoreInner inner = this.serviceClient().getDeleted(location, configStoreName);
+        if (inner != null) {
+            return new DeletedConfigurationStoreImpl(inner, this.manager());
+        } else {
+            return null;
         }
-        String configStoreName = Utils.getValueFromIdByName(id, "configurationStores");
+    }
+
+    public void purgeDeleted(String location, String configStoreName) {
+        this.serviceClient().purgeDeleted(location, configStoreName);
+    }
+
+    public void purgeDeleted(String location, String configStoreName, Context context) {
+        this.serviceClient().purgeDeleted(location, configStoreName, context);
+    }
+
+    public ConfigurationStore getById(String id) {
+        String resourceGroupName = ResourceManagerUtils.getValueFromIdByName(id, "resourceGroups");
+        if (resourceGroupName == null) {
+            throw LOGGER.logExceptionAsError(new IllegalArgumentException(
+                String.format("The resource ID '%s' is not valid. Missing path segment 'resourceGroups'.", id)));
+        }
+        String configStoreName = ResourceManagerUtils.getValueFromIdByName(id, "configurationStores");
         if (configStoreName == null) {
-            throw logger
-                .logExceptionAsError(
-                    new IllegalArgumentException(
-                        String
-                            .format(
-                                "The resource ID '%s' is not valid. Missing path segment 'configurationStores'.", id)));
+            throw LOGGER.logExceptionAsError(new IllegalArgumentException(
+                String.format("The resource ID '%s' is not valid. Missing path segment 'configurationStores'.", id)));
         }
         return this.getByResourceGroupWithResponse(resourceGroupName, configStoreName, Context.NONE).getValue();
     }
 
     public Response<ConfigurationStore> getByIdWithResponse(String id, Context context) {
-        String resourceGroupName = Utils.getValueFromIdByName(id, "resourceGroups");
+        String resourceGroupName = ResourceManagerUtils.getValueFromIdByName(id, "resourceGroups");
         if (resourceGroupName == null) {
-            throw logger
-                .logExceptionAsError(
-                    new IllegalArgumentException(
-                        String
-                            .format("The resource ID '%s' is not valid. Missing path segment 'resourceGroups'.", id)));
+            throw LOGGER.logExceptionAsError(new IllegalArgumentException(
+                String.format("The resource ID '%s' is not valid. Missing path segment 'resourceGroups'.", id)));
         }
-        String configStoreName = Utils.getValueFromIdByName(id, "configurationStores");
+        String configStoreName = ResourceManagerUtils.getValueFromIdByName(id, "configurationStores");
         if (configStoreName == null) {
-            throw logger
-                .logExceptionAsError(
-                    new IllegalArgumentException(
-                        String
-                            .format(
-                                "The resource ID '%s' is not valid. Missing path segment 'configurationStores'.", id)));
+            throw LOGGER.logExceptionAsError(new IllegalArgumentException(
+                String.format("The resource ID '%s' is not valid. Missing path segment 'configurationStores'.", id)));
         }
         return this.getByResourceGroupWithResponse(resourceGroupName, configStoreName, context);
     }
 
     public void deleteById(String id) {
-        String resourceGroupName = Utils.getValueFromIdByName(id, "resourceGroups");
+        String resourceGroupName = ResourceManagerUtils.getValueFromIdByName(id, "resourceGroups");
         if (resourceGroupName == null) {
-            throw logger
-                .logExceptionAsError(
-                    new IllegalArgumentException(
-                        String
-                            .format("The resource ID '%s' is not valid. Missing path segment 'resourceGroups'.", id)));
+            throw LOGGER.logExceptionAsError(new IllegalArgumentException(
+                String.format("The resource ID '%s' is not valid. Missing path segment 'resourceGroups'.", id)));
         }
-        String configStoreName = Utils.getValueFromIdByName(id, "configurationStores");
+        String configStoreName = ResourceManagerUtils.getValueFromIdByName(id, "configurationStores");
         if (configStoreName == null) {
-            throw logger
-                .logExceptionAsError(
-                    new IllegalArgumentException(
-                        String
-                            .format(
-                                "The resource ID '%s' is not valid. Missing path segment 'configurationStores'.", id)));
+            throw LOGGER.logExceptionAsError(new IllegalArgumentException(
+                String.format("The resource ID '%s' is not valid. Missing path segment 'configurationStores'.", id)));
         }
         this.delete(resourceGroupName, configStoreName, Context.NONE);
     }
 
     public void deleteByIdWithResponse(String id, Context context) {
-        String resourceGroupName = Utils.getValueFromIdByName(id, "resourceGroups");
+        String resourceGroupName = ResourceManagerUtils.getValueFromIdByName(id, "resourceGroups");
         if (resourceGroupName == null) {
-            throw logger
-                .logExceptionAsError(
-                    new IllegalArgumentException(
-                        String
-                            .format("The resource ID '%s' is not valid. Missing path segment 'resourceGroups'.", id)));
+            throw LOGGER.logExceptionAsError(new IllegalArgumentException(
+                String.format("The resource ID '%s' is not valid. Missing path segment 'resourceGroups'.", id)));
         }
-        String configStoreName = Utils.getValueFromIdByName(id, "configurationStores");
+        String configStoreName = ResourceManagerUtils.getValueFromIdByName(id, "configurationStores");
         if (configStoreName == null) {
-            throw logger
-                .logExceptionAsError(
-                    new IllegalArgumentException(
-                        String
-                            .format(
-                                "The resource ID '%s' is not valid. Missing path segment 'configurationStores'.", id)));
+            throw LOGGER.logExceptionAsError(new IllegalArgumentException(
+                String.format("The resource ID '%s' is not valid. Missing path segment 'configurationStores'.", id)));
         }
         this.delete(resourceGroupName, configStoreName, context);
     }

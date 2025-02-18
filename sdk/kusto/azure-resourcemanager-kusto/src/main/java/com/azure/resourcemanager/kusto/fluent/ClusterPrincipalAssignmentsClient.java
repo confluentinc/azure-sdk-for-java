@@ -15,48 +15,61 @@ import com.azure.resourcemanager.kusto.fluent.models.CheckNameResultInner;
 import com.azure.resourcemanager.kusto.fluent.models.ClusterPrincipalAssignmentInner;
 import com.azure.resourcemanager.kusto.models.ClusterPrincipalAssignmentCheckNameRequest;
 
-/** An instance of this class provides access to all the operations defined in ClusterPrincipalAssignmentsClient. */
+/**
+ * An instance of this class provides access to all the operations defined in ClusterPrincipalAssignmentsClient.
+ */
 public interface ClusterPrincipalAssignmentsClient {
     /**
      * Checks that the principal assignment name is valid and is not already in use.
-     *
-     * @param resourceGroupName The name of the resource group containing the Kusto cluster.
-     * @param clusterName The name of the Kusto cluster.
-     * @param principalAssignmentName The name of the principal assignment.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the result returned from a check name availability request.
-     */
-    @ServiceMethod(returns = ReturnType.SINGLE)
-    CheckNameResultInner checkNameAvailability(
-        String resourceGroupName,
-        String clusterName,
-        ClusterPrincipalAssignmentCheckNameRequest principalAssignmentName);
-
-    /**
-     * Checks that the principal assignment name is valid and is not already in use.
-     *
-     * @param resourceGroupName The name of the resource group containing the Kusto cluster.
+     * 
+     * @param resourceGroupName The name of the resource group. The name is case insensitive.
      * @param clusterName The name of the Kusto cluster.
      * @param principalAssignmentName The name of the principal assignment.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return the result returned from a check name availability request along with {@link Response}.
+     */
+    @ServiceMethod(returns = ReturnType.SINGLE)
+    Response<CheckNameResultInner> checkNameAvailabilityWithResponse(String resourceGroupName, String clusterName,
+        ClusterPrincipalAssignmentCheckNameRequest principalAssignmentName, Context context);
+
+    /**
+     * Checks that the principal assignment name is valid and is not already in use.
+     * 
+     * @param resourceGroupName The name of the resource group. The name is case insensitive.
+     * @param clusterName The name of the Kusto cluster.
+     * @param principalAssignmentName The name of the principal assignment.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
      * @return the result returned from a check name availability request.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    Response<CheckNameResultInner> checkNameAvailabilityWithResponse(
-        String resourceGroupName,
-        String clusterName,
-        ClusterPrincipalAssignmentCheckNameRequest principalAssignmentName,
-        Context context);
+    CheckNameResultInner checkNameAvailability(String resourceGroupName, String clusterName,
+        ClusterPrincipalAssignmentCheckNameRequest principalAssignmentName);
 
     /**
      * Gets a Kusto cluster principalAssignment.
-     *
-     * @param resourceGroupName The name of the resource group containing the Kusto cluster.
+     * 
+     * @param resourceGroupName The name of the resource group. The name is case insensitive.
+     * @param clusterName The name of the Kusto cluster.
+     * @param principalAssignmentName The name of the Kusto principalAssignment.
+     * @param context The context to associate with this operation.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return a Kusto cluster principalAssignment along with {@link Response}.
+     */
+    @ServiceMethod(returns = ReturnType.SINGLE)
+    Response<ClusterPrincipalAssignmentInner> getWithResponse(String resourceGroupName, String clusterName,
+        String principalAssignmentName, Context context);
+
+    /**
+     * Gets a Kusto cluster principalAssignment.
+     * 
+     * @param resourceGroupName The name of the resource group. The name is case insensitive.
      * @param clusterName The name of the Kusto cluster.
      * @param principalAssignmentName The name of the Kusto principalAssignment.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
@@ -68,44 +81,26 @@ public interface ClusterPrincipalAssignmentsClient {
     ClusterPrincipalAssignmentInner get(String resourceGroupName, String clusterName, String principalAssignmentName);
 
     /**
-     * Gets a Kusto cluster principalAssignment.
-     *
-     * @param resourceGroupName The name of the resource group containing the Kusto cluster.
-     * @param clusterName The name of the Kusto cluster.
-     * @param principalAssignmentName The name of the Kusto principalAssignment.
-     * @param context The context to associate with this operation.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return a Kusto cluster principalAssignment.
-     */
-    @ServiceMethod(returns = ReturnType.SINGLE)
-    Response<ClusterPrincipalAssignmentInner> getWithResponse(
-        String resourceGroupName, String clusterName, String principalAssignmentName, Context context);
-
-    /**
      * Create a Kusto cluster principalAssignment.
-     *
-     * @param resourceGroupName The name of the resource group containing the Kusto cluster.
+     * 
+     * @param resourceGroupName The name of the resource group. The name is case insensitive.
      * @param clusterName The name of the Kusto cluster.
      * @param principalAssignmentName The name of the Kusto principalAssignment.
      * @param parameters The Kusto cluster principalAssignment's parameters supplied for the operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return class representing a cluster principal assignment.
+     * @return the {@link SyncPoller} for polling of class representing a cluster principal assignment.
      */
-    @ServiceMethod(returns = ReturnType.SINGLE)
+    @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
     SyncPoller<PollResult<ClusterPrincipalAssignmentInner>, ClusterPrincipalAssignmentInner> beginCreateOrUpdate(
-        String resourceGroupName,
-        String clusterName,
-        String principalAssignmentName,
+        String resourceGroupName, String clusterName, String principalAssignmentName,
         ClusterPrincipalAssignmentInner parameters);
 
     /**
      * Create a Kusto cluster principalAssignment.
-     *
-     * @param resourceGroupName The name of the resource group containing the Kusto cluster.
+     * 
+     * @param resourceGroupName The name of the resource group. The name is case insensitive.
      * @param clusterName The name of the Kusto cluster.
      * @param principalAssignmentName The name of the Kusto principalAssignment.
      * @param parameters The Kusto cluster principalAssignment's parameters supplied for the operation.
@@ -113,20 +108,17 @@ public interface ClusterPrincipalAssignmentsClient {
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return class representing a cluster principal assignment.
+     * @return the {@link SyncPoller} for polling of class representing a cluster principal assignment.
      */
-    @ServiceMethod(returns = ReturnType.SINGLE)
+    @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
     SyncPoller<PollResult<ClusterPrincipalAssignmentInner>, ClusterPrincipalAssignmentInner> beginCreateOrUpdate(
-        String resourceGroupName,
-        String clusterName,
-        String principalAssignmentName,
-        ClusterPrincipalAssignmentInner parameters,
-        Context context);
+        String resourceGroupName, String clusterName, String principalAssignmentName,
+        ClusterPrincipalAssignmentInner parameters, Context context);
 
     /**
      * Create a Kusto cluster principalAssignment.
-     *
-     * @param resourceGroupName The name of the resource group containing the Kusto cluster.
+     * 
+     * @param resourceGroupName The name of the resource group. The name is case insensitive.
      * @param clusterName The name of the Kusto cluster.
      * @param principalAssignmentName The name of the Kusto principalAssignment.
      * @param parameters The Kusto cluster principalAssignment's parameters supplied for the operation.
@@ -136,16 +128,13 @@ public interface ClusterPrincipalAssignmentsClient {
      * @return class representing a cluster principal assignment.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    ClusterPrincipalAssignmentInner createOrUpdate(
-        String resourceGroupName,
-        String clusterName,
-        String principalAssignmentName,
-        ClusterPrincipalAssignmentInner parameters);
+    ClusterPrincipalAssignmentInner createOrUpdate(String resourceGroupName, String clusterName,
+        String principalAssignmentName, ClusterPrincipalAssignmentInner parameters);
 
     /**
      * Create a Kusto cluster principalAssignment.
-     *
-     * @param resourceGroupName The name of the resource group containing the Kusto cluster.
+     * 
+     * @param resourceGroupName The name of the resource group. The name is case insensitive.
      * @param clusterName The name of the Kusto cluster.
      * @param principalAssignmentName The name of the Kusto principalAssignment.
      * @param parameters The Kusto cluster principalAssignment's parameters supplied for the operation.
@@ -156,48 +145,44 @@ public interface ClusterPrincipalAssignmentsClient {
      * @return class representing a cluster principal assignment.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    ClusterPrincipalAssignmentInner createOrUpdate(
-        String resourceGroupName,
-        String clusterName,
-        String principalAssignmentName,
-        ClusterPrincipalAssignmentInner parameters,
-        Context context);
+    ClusterPrincipalAssignmentInner createOrUpdate(String resourceGroupName, String clusterName,
+        String principalAssignmentName, ClusterPrincipalAssignmentInner parameters, Context context);
 
     /**
      * Deletes a Kusto cluster principalAssignment.
-     *
-     * @param resourceGroupName The name of the resource group containing the Kusto cluster.
+     * 
+     * @param resourceGroupName The name of the resource group. The name is case insensitive.
      * @param clusterName The name of the Kusto cluster.
      * @param principalAssignmentName The name of the Kusto principalAssignment.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the completion.
+     * @return the {@link SyncPoller} for polling of long-running operation.
      */
-    @ServiceMethod(returns = ReturnType.SINGLE)
-    SyncPoller<PollResult<Void>, Void> beginDelete(
-        String resourceGroupName, String clusterName, String principalAssignmentName);
+    @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
+    SyncPoller<PollResult<Void>, Void> beginDelete(String resourceGroupName, String clusterName,
+        String principalAssignmentName);
 
     /**
      * Deletes a Kusto cluster principalAssignment.
-     *
-     * @param resourceGroupName The name of the resource group containing the Kusto cluster.
+     * 
+     * @param resourceGroupName The name of the resource group. The name is case insensitive.
      * @param clusterName The name of the Kusto cluster.
      * @param principalAssignmentName The name of the Kusto principalAssignment.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the completion.
+     * @return the {@link SyncPoller} for polling of long-running operation.
      */
-    @ServiceMethod(returns = ReturnType.SINGLE)
-    SyncPoller<PollResult<Void>, Void> beginDelete(
-        String resourceGroupName, String clusterName, String principalAssignmentName, Context context);
+    @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
+    SyncPoller<PollResult<Void>, Void> beginDelete(String resourceGroupName, String clusterName,
+        String principalAssignmentName, Context context);
 
     /**
      * Deletes a Kusto cluster principalAssignment.
-     *
-     * @param resourceGroupName The name of the resource group containing the Kusto cluster.
+     * 
+     * @param resourceGroupName The name of the resource group. The name is case insensitive.
      * @param clusterName The name of the Kusto cluster.
      * @param principalAssignmentName The name of the Kusto principalAssignment.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
@@ -209,8 +194,8 @@ public interface ClusterPrincipalAssignmentsClient {
 
     /**
      * Deletes a Kusto cluster principalAssignment.
-     *
-     * @param resourceGroupName The name of the resource group containing the Kusto cluster.
+     * 
+     * @param resourceGroupName The name of the resource group. The name is case insensitive.
      * @param clusterName The name of the Kusto cluster.
      * @param principalAssignmentName The name of the Kusto principalAssignment.
      * @param context The context to associate with this operation.
@@ -223,27 +208,29 @@ public interface ClusterPrincipalAssignmentsClient {
 
     /**
      * Lists all Kusto cluster principalAssignments.
-     *
-     * @param resourceGroupName The name of the resource group containing the Kusto cluster.
+     * 
+     * @param resourceGroupName The name of the resource group. The name is case insensitive.
      * @param clusterName The name of the Kusto cluster.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the list Kusto cluster principal assignments operation response.
+     * @return the list Kusto cluster principal assignments operation response as paginated response with
+     * {@link PagedIterable}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
     PagedIterable<ClusterPrincipalAssignmentInner> list(String resourceGroupName, String clusterName);
 
     /**
      * Lists all Kusto cluster principalAssignments.
-     *
-     * @param resourceGroupName The name of the resource group containing the Kusto cluster.
+     * 
+     * @param resourceGroupName The name of the resource group. The name is case insensitive.
      * @param clusterName The name of the Kusto cluster.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the list Kusto cluster principal assignments operation response.
+     * @return the list Kusto cluster principal assignments operation response as paginated response with
+     * {@link PagedIterable}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
     PagedIterable<ClusterPrincipalAssignmentInner> list(String resourceGroupName, String clusterName, Context context);

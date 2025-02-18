@@ -5,60 +5,83 @@
 package com.azure.storage.blob.implementation.models;
 
 import com.azure.core.annotation.Fluent;
+import com.azure.core.http.HttpHeaderName;
+import com.azure.core.http.HttpHeaders;
 import com.azure.core.util.DateTimeRfc1123;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
 import java.time.OffsetDateTime;
 
-/** The ContainersBreakLeaseHeaders model. */
-@JacksonXmlRootElement(localName = "null")
+/**
+ * The ContainersBreakLeaseHeaders model.
+ */
 @Fluent
 public final class ContainersBreakLeaseHeaders {
     /*
      * The x-ms-version property.
      */
-    @JsonProperty(value = "x-ms-version")
     private String xMsVersion;
 
     /*
      * The ETag property.
      */
-    @JsonProperty(value = "ETag")
     private String eTag;
 
     /*
      * The x-ms-lease-time property.
      */
-    @JsonProperty(value = "x-ms-lease-time")
     private Integer xMsLeaseTime;
 
     /*
      * The Last-Modified property.
      */
-    @JsonProperty(value = "Last-Modified")
     private DateTimeRfc1123 lastModified;
 
     /*
      * The x-ms-request-id property.
      */
-    @JsonProperty(value = "x-ms-request-id")
     private String xMsRequestId;
 
     /*
      * The x-ms-client-request-id property.
      */
-    @JsonProperty(value = "x-ms-client-request-id")
     private String xMsClientRequestId;
 
     /*
      * The Date property.
      */
-    @JsonProperty(value = "Date")
-    private DateTimeRfc1123 dateProperty;
+    private DateTimeRfc1123 date;
+
+    private static final HttpHeaderName X_MS_VERSION = HttpHeaderName.fromString("x-ms-version");
+
+    private static final HttpHeaderName X_MS_LEASE_TIME = HttpHeaderName.fromString("x-ms-lease-time");
+
+    // HttpHeaders containing the raw property values.
+    /**
+     * Creates an instance of ContainersBreakLeaseHeaders class.
+     * 
+     * @param rawHeaders The raw HttpHeaders that will be used to create the property values.
+     */
+    public ContainersBreakLeaseHeaders(HttpHeaders rawHeaders) {
+        this.xMsVersion = rawHeaders.getValue(X_MS_VERSION);
+        this.eTag = rawHeaders.getValue(HttpHeaderName.ETAG);
+        String xMsLeaseTime = rawHeaders.getValue(X_MS_LEASE_TIME);
+        if (xMsLeaseTime != null) {
+            this.xMsLeaseTime = Integer.parseInt(xMsLeaseTime);
+        }
+        String lastModified = rawHeaders.getValue(HttpHeaderName.LAST_MODIFIED);
+        if (lastModified != null) {
+            this.lastModified = new DateTimeRfc1123(lastModified);
+        }
+        this.xMsRequestId = rawHeaders.getValue(HttpHeaderName.X_MS_REQUEST_ID);
+        this.xMsClientRequestId = rawHeaders.getValue(HttpHeaderName.X_MS_CLIENT_REQUEST_ID);
+        String date = rawHeaders.getValue(HttpHeaderName.DATE);
+        if (date != null) {
+            this.date = new DateTimeRfc1123(date);
+        }
+    }
 
     /**
      * Get the xMsVersion property: The x-ms-version property.
-     *
+     * 
      * @return the xMsVersion value.
      */
     public String getXMsVersion() {
@@ -67,7 +90,7 @@ public final class ContainersBreakLeaseHeaders {
 
     /**
      * Set the xMsVersion property: The x-ms-version property.
-     *
+     * 
      * @param xMsVersion the xMsVersion value to set.
      * @return the ContainersBreakLeaseHeaders object itself.
      */
@@ -78,7 +101,7 @@ public final class ContainersBreakLeaseHeaders {
 
     /**
      * Get the eTag property: The ETag property.
-     *
+     * 
      * @return the eTag value.
      */
     public String getETag() {
@@ -87,7 +110,7 @@ public final class ContainersBreakLeaseHeaders {
 
     /**
      * Set the eTag property: The ETag property.
-     *
+     * 
      * @param eTag the eTag value to set.
      * @return the ContainersBreakLeaseHeaders object itself.
      */
@@ -98,7 +121,7 @@ public final class ContainersBreakLeaseHeaders {
 
     /**
      * Get the xMsLeaseTime property: The x-ms-lease-time property.
-     *
+     * 
      * @return the xMsLeaseTime value.
      */
     public Integer getXMsLeaseTime() {
@@ -107,7 +130,7 @@ public final class ContainersBreakLeaseHeaders {
 
     /**
      * Set the xMsLeaseTime property: The x-ms-lease-time property.
-     *
+     * 
      * @param xMsLeaseTime the xMsLeaseTime value to set.
      * @return the ContainersBreakLeaseHeaders object itself.
      */
@@ -118,7 +141,7 @@ public final class ContainersBreakLeaseHeaders {
 
     /**
      * Get the lastModified property: The Last-Modified property.
-     *
+     * 
      * @return the lastModified value.
      */
     public OffsetDateTime getLastModified() {
@@ -130,7 +153,7 @@ public final class ContainersBreakLeaseHeaders {
 
     /**
      * Set the lastModified property: The Last-Modified property.
-     *
+     * 
      * @param lastModified the lastModified value to set.
      * @return the ContainersBreakLeaseHeaders object itself.
      */
@@ -145,7 +168,7 @@ public final class ContainersBreakLeaseHeaders {
 
     /**
      * Get the xMsRequestId property: The x-ms-request-id property.
-     *
+     * 
      * @return the xMsRequestId value.
      */
     public String getXMsRequestId() {
@@ -154,7 +177,7 @@ public final class ContainersBreakLeaseHeaders {
 
     /**
      * Set the xMsRequestId property: The x-ms-request-id property.
-     *
+     * 
      * @param xMsRequestId the xMsRequestId value to set.
      * @return the ContainersBreakLeaseHeaders object itself.
      */
@@ -165,7 +188,7 @@ public final class ContainersBreakLeaseHeaders {
 
     /**
      * Get the xMsClientRequestId property: The x-ms-client-request-id property.
-     *
+     * 
      * @return the xMsClientRequestId value.
      */
     public String getXMsClientRequestId() {
@@ -174,7 +197,7 @@ public final class ContainersBreakLeaseHeaders {
 
     /**
      * Set the xMsClientRequestId property: The x-ms-client-request-id property.
-     *
+     * 
      * @param xMsClientRequestId the xMsClientRequestId value to set.
      * @return the ContainersBreakLeaseHeaders object itself.
      */
@@ -184,28 +207,28 @@ public final class ContainersBreakLeaseHeaders {
     }
 
     /**
-     * Get the dateProperty property: The Date property.
-     *
-     * @return the dateProperty value.
+     * Get the date property: The Date property.
+     * 
+     * @return the date value.
      */
-    public OffsetDateTime getDateProperty() {
-        if (this.dateProperty == null) {
+    public OffsetDateTime getDate() {
+        if (this.date == null) {
             return null;
         }
-        return this.dateProperty.getDateTime();
+        return this.date.getDateTime();
     }
 
     /**
-     * Set the dateProperty property: The Date property.
-     *
-     * @param dateProperty the dateProperty value to set.
+     * Set the date property: The Date property.
+     * 
+     * @param date the date value to set.
      * @return the ContainersBreakLeaseHeaders object itself.
      */
-    public ContainersBreakLeaseHeaders setDateProperty(OffsetDateTime dateProperty) {
-        if (dateProperty == null) {
-            this.dateProperty = null;
+    public ContainersBreakLeaseHeaders setDate(OffsetDateTime date) {
+        if (date == null) {
+            this.date = null;
         } else {
-            this.dateProperty = new DateTimeRfc1123(dateProperty);
+            this.date = new DateTimeRfc1123(date);
         }
         return this;
     }

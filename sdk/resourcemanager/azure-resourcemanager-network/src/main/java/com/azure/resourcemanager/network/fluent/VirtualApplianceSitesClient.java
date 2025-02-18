@@ -18,56 +18,58 @@ import java.nio.ByteBuffer;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-/** An instance of this class provides access to all the operations defined in VirtualApplianceSitesClient. */
+/**
+ * An instance of this class provides access to all the operations defined in VirtualApplianceSitesClient.
+ */
 public interface VirtualApplianceSitesClient {
     /**
      * Deletes the specified site from a Virtual Appliance.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param networkVirtualApplianceName The name of the Network Virtual Appliance.
      * @param siteName The name of the site.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the completion.
+     * @return the {@link Response} on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    Mono<Response<Flux<ByteBuffer>>> deleteWithResponseAsync(
-        String resourceGroupName, String networkVirtualApplianceName, String siteName);
+    Mono<Response<Flux<ByteBuffer>>> deleteWithResponseAsync(String resourceGroupName,
+        String networkVirtualApplianceName, String siteName);
 
     /**
      * Deletes the specified site from a Virtual Appliance.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param networkVirtualApplianceName The name of the Network Virtual Appliance.
      * @param siteName The name of the site.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the completion.
+     * @return the {@link PollerFlux} for polling of long-running operation.
      */
     @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
-    PollerFlux<PollResult<Void>, Void> beginDeleteAsync(
-        String resourceGroupName, String networkVirtualApplianceName, String siteName);
+    PollerFlux<PollResult<Void>, Void> beginDeleteAsync(String resourceGroupName, String networkVirtualApplianceName,
+        String siteName);
 
     /**
      * Deletes the specified site from a Virtual Appliance.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param networkVirtualApplianceName The name of the Network Virtual Appliance.
      * @param siteName The name of the site.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the completion.
+     * @return the {@link SyncPoller} for polling of long-running operation.
      */
     @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
-    SyncPoller<PollResult<Void>, Void> beginDelete(
-        String resourceGroupName, String networkVirtualApplianceName, String siteName);
+    SyncPoller<PollResult<Void>, Void> beginDelete(String resourceGroupName, String networkVirtualApplianceName,
+        String siteName);
 
     /**
      * Deletes the specified site from a Virtual Appliance.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param networkVirtualApplianceName The name of the Network Virtual Appliance.
      * @param siteName The name of the site.
@@ -75,29 +77,29 @@ public interface VirtualApplianceSitesClient {
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the completion.
+     * @return the {@link SyncPoller} for polling of long-running operation.
      */
     @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
-    SyncPoller<PollResult<Void>, Void> beginDelete(
-        String resourceGroupName, String networkVirtualApplianceName, String siteName, Context context);
+    SyncPoller<PollResult<Void>, Void> beginDelete(String resourceGroupName, String networkVirtualApplianceName,
+        String siteName, Context context);
 
     /**
      * Deletes the specified site from a Virtual Appliance.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param networkVirtualApplianceName The name of the Network Virtual Appliance.
      * @param siteName The name of the site.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the completion.
+     * @return A {@link Mono} that completes when a successful response is received.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
     Mono<Void> deleteAsync(String resourceGroupName, String networkVirtualApplianceName, String siteName);
 
     /**
      * Deletes the specified site from a Virtual Appliance.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param networkVirtualApplianceName The name of the Network Virtual Appliance.
      * @param siteName The name of the site.
@@ -110,7 +112,7 @@ public interface VirtualApplianceSitesClient {
 
     /**
      * Deletes the specified site from a Virtual Appliance.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param networkVirtualApplianceName The name of the Network Virtual Appliance.
      * @param siteName The name of the site.
@@ -124,37 +126,54 @@ public interface VirtualApplianceSitesClient {
 
     /**
      * Gets the specified Virtual Appliance Site.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param networkVirtualApplianceName The name of the Network Virtual Appliance.
      * @param siteName The name of the site.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the specified Virtual Appliance Site.
+     * @return the specified Virtual Appliance Site along with {@link Response} on successful completion of
+     * {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    Mono<Response<VirtualApplianceSiteInner>> getWithResponseAsync(
-        String resourceGroupName, String networkVirtualApplianceName, String siteName);
+    Mono<Response<VirtualApplianceSiteInner>> getWithResponseAsync(String resourceGroupName,
+        String networkVirtualApplianceName, String siteName);
 
     /**
      * Gets the specified Virtual Appliance Site.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param networkVirtualApplianceName The name of the Network Virtual Appliance.
      * @param siteName The name of the site.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the specified Virtual Appliance Site.
+     * @return the specified Virtual Appliance Site on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    Mono<VirtualApplianceSiteInner> getAsync(
-        String resourceGroupName, String networkVirtualApplianceName, String siteName);
+    Mono<VirtualApplianceSiteInner> getAsync(String resourceGroupName, String networkVirtualApplianceName,
+        String siteName);
 
     /**
      * Gets the specified Virtual Appliance Site.
-     *
+     * 
+     * @param resourceGroupName The name of the resource group.
+     * @param networkVirtualApplianceName The name of the Network Virtual Appliance.
+     * @param siteName The name of the site.
+     * @param context The context to associate with this operation.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return the specified Virtual Appliance Site along with {@link Response}.
+     */
+    @ServiceMethod(returns = ReturnType.SINGLE)
+    Response<VirtualApplianceSiteInner> getWithResponse(String resourceGroupName, String networkVirtualApplianceName,
+        String siteName, Context context);
+
+    /**
+     * Gets the specified Virtual Appliance Site.
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param networkVirtualApplianceName The name of the Network Virtual Appliance.
      * @param siteName The name of the site.
@@ -167,24 +186,8 @@ public interface VirtualApplianceSitesClient {
     VirtualApplianceSiteInner get(String resourceGroupName, String networkVirtualApplianceName, String siteName);
 
     /**
-     * Gets the specified Virtual Appliance Site.
-     *
-     * @param resourceGroupName The name of the resource group.
-     * @param networkVirtualApplianceName The name of the Network Virtual Appliance.
-     * @param siteName The name of the site.
-     * @param context The context to associate with this operation.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the specified Virtual Appliance Site.
-     */
-    @ServiceMethod(returns = ReturnType.SINGLE)
-    Response<VirtualApplianceSiteInner> getWithResponse(
-        String resourceGroupName, String networkVirtualApplianceName, String siteName, Context context);
-
-    /**
      * Creates or updates the specified Network Virtual Appliance Site.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param networkVirtualApplianceName The name of the Network Virtual Appliance.
      * @param siteName The name of the site.
@@ -192,18 +195,15 @@ public interface VirtualApplianceSitesClient {
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return virtual Appliance Site resource.
+     * @return virtual Appliance Site resource along with {@link Response} on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    Mono<Response<Flux<ByteBuffer>>> createOrUpdateWithResponseAsync(
-        String resourceGroupName,
-        String networkVirtualApplianceName,
-        String siteName,
-        VirtualApplianceSiteInner parameters);
+    Mono<Response<Flux<ByteBuffer>>> createOrUpdateWithResponseAsync(String resourceGroupName,
+        String networkVirtualApplianceName, String siteName, VirtualApplianceSiteInner parameters);
 
     /**
      * Creates or updates the specified Network Virtual Appliance Site.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param networkVirtualApplianceName The name of the Network Virtual Appliance.
      * @param siteName The name of the site.
@@ -211,18 +211,16 @@ public interface VirtualApplianceSitesClient {
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return virtual Appliance Site resource.
+     * @return the {@link PollerFlux} for polling of virtual Appliance Site resource.
      */
     @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
     PollerFlux<PollResult<VirtualApplianceSiteInner>, VirtualApplianceSiteInner> beginCreateOrUpdateAsync(
-        String resourceGroupName,
-        String networkVirtualApplianceName,
-        String siteName,
+        String resourceGroupName, String networkVirtualApplianceName, String siteName,
         VirtualApplianceSiteInner parameters);
 
     /**
      * Creates or updates the specified Network Virtual Appliance Site.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param networkVirtualApplianceName The name of the Network Virtual Appliance.
      * @param siteName The name of the site.
@@ -230,18 +228,16 @@ public interface VirtualApplianceSitesClient {
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return virtual Appliance Site resource.
+     * @return the {@link SyncPoller} for polling of virtual Appliance Site resource.
      */
     @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
     SyncPoller<PollResult<VirtualApplianceSiteInner>, VirtualApplianceSiteInner> beginCreateOrUpdate(
-        String resourceGroupName,
-        String networkVirtualApplianceName,
-        String siteName,
+        String resourceGroupName, String networkVirtualApplianceName, String siteName,
         VirtualApplianceSiteInner parameters);
 
     /**
      * Creates or updates the specified Network Virtual Appliance Site.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param networkVirtualApplianceName The name of the Network Virtual Appliance.
      * @param siteName The name of the site.
@@ -250,19 +246,32 @@ public interface VirtualApplianceSitesClient {
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return virtual Appliance Site resource.
+     * @return the {@link SyncPoller} for polling of virtual Appliance Site resource.
      */
     @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
     SyncPoller<PollResult<VirtualApplianceSiteInner>, VirtualApplianceSiteInner> beginCreateOrUpdate(
-        String resourceGroupName,
-        String networkVirtualApplianceName,
-        String siteName,
-        VirtualApplianceSiteInner parameters,
-        Context context);
+        String resourceGroupName, String networkVirtualApplianceName, String siteName,
+        VirtualApplianceSiteInner parameters, Context context);
 
     /**
      * Creates or updates the specified Network Virtual Appliance Site.
-     *
+     * 
+     * @param resourceGroupName The name of the resource group.
+     * @param networkVirtualApplianceName The name of the Network Virtual Appliance.
+     * @param siteName The name of the site.
+     * @param parameters Parameters supplied to the create or update Network Virtual Appliance Site operation.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return virtual Appliance Site resource on successful completion of {@link Mono}.
+     */
+    @ServiceMethod(returns = ReturnType.SINGLE)
+    Mono<VirtualApplianceSiteInner> createOrUpdateAsync(String resourceGroupName, String networkVirtualApplianceName,
+        String siteName, VirtualApplianceSiteInner parameters);
+
+    /**
+     * Creates or updates the specified Network Virtual Appliance Site.
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param networkVirtualApplianceName The name of the Network Virtual Appliance.
      * @param siteName The name of the site.
@@ -273,34 +282,12 @@ public interface VirtualApplianceSitesClient {
      * @return virtual Appliance Site resource.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    Mono<VirtualApplianceSiteInner> createOrUpdateAsync(
-        String resourceGroupName,
-        String networkVirtualApplianceName,
-        String siteName,
-        VirtualApplianceSiteInner parameters);
+    VirtualApplianceSiteInner createOrUpdate(String resourceGroupName, String networkVirtualApplianceName,
+        String siteName, VirtualApplianceSiteInner parameters);
 
     /**
      * Creates or updates the specified Network Virtual Appliance Site.
-     *
-     * @param resourceGroupName The name of the resource group.
-     * @param networkVirtualApplianceName The name of the Network Virtual Appliance.
-     * @param siteName The name of the site.
-     * @param parameters Parameters supplied to the create or update Network Virtual Appliance Site operation.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return virtual Appliance Site resource.
-     */
-    @ServiceMethod(returns = ReturnType.SINGLE)
-    VirtualApplianceSiteInner createOrUpdate(
-        String resourceGroupName,
-        String networkVirtualApplianceName,
-        String siteName,
-        VirtualApplianceSiteInner parameters);
-
-    /**
-     * Creates or updates the specified Network Virtual Appliance Site.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param networkVirtualApplianceName The name of the Network Virtual Appliance.
      * @param siteName The name of the site.
@@ -312,51 +299,50 @@ public interface VirtualApplianceSitesClient {
      * @return virtual Appliance Site resource.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    VirtualApplianceSiteInner createOrUpdate(
-        String resourceGroupName,
-        String networkVirtualApplianceName,
-        String siteName,
-        VirtualApplianceSiteInner parameters,
-        Context context);
+    VirtualApplianceSiteInner createOrUpdate(String resourceGroupName, String networkVirtualApplianceName,
+        String siteName, VirtualApplianceSiteInner parameters, Context context);
 
     /**
      * Lists all Network Virtual Appliance Sites in a Network Virtual Appliance resource.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param networkVirtualApplianceName The name of the Network Virtual Appliance.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return response for ListNetworkVirtualApplianceSites API service call.
+     * @return response for ListNetworkVirtualApplianceSites API service call as paginated response with
+     * {@link PagedFlux}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
     PagedFlux<VirtualApplianceSiteInner> listAsync(String resourceGroupName, String networkVirtualApplianceName);
 
     /**
      * Lists all Network Virtual Appliance Sites in a Network Virtual Appliance resource.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param networkVirtualApplianceName The name of the Network Virtual Appliance.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return response for ListNetworkVirtualApplianceSites API service call.
+     * @return response for ListNetworkVirtualApplianceSites API service call as paginated response with
+     * {@link PagedIterable}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
     PagedIterable<VirtualApplianceSiteInner> list(String resourceGroupName, String networkVirtualApplianceName);
 
     /**
      * Lists all Network Virtual Appliance Sites in a Network Virtual Appliance resource.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param networkVirtualApplianceName The name of the Network Virtual Appliance.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return response for ListNetworkVirtualApplianceSites API service call.
+     * @return response for ListNetworkVirtualApplianceSites API service call as paginated response with
+     * {@link PagedIterable}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
-    PagedIterable<VirtualApplianceSiteInner> list(
-        String resourceGroupName, String networkVirtualApplianceName, Context context);
+    PagedIterable<VirtualApplianceSiteInner> list(String resourceGroupName, String networkVirtualApplianceName,
+        Context context);
 }

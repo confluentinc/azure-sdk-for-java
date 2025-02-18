@@ -9,29 +9,27 @@ import com.azure.core.util.Context;
 import com.azure.core.util.logging.ClientLogger;
 import com.azure.resourcemanager.recoveryservicesbackup.fluent.JobsClient;
 import com.azure.resourcemanager.recoveryservicesbackup.models.Jobs;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 public final class JobsImpl implements Jobs {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(JobsImpl.class);
+    private static final ClientLogger LOGGER = new ClientLogger(JobsImpl.class);
 
     private final JobsClient innerClient;
 
     private final com.azure.resourcemanager.recoveryservicesbackup.RecoveryServicesBackupManager serviceManager;
 
-    public JobsImpl(
-        JobsClient innerClient,
+    public JobsImpl(JobsClient innerClient,
         com.azure.resourcemanager.recoveryservicesbackup.RecoveryServicesBackupManager serviceManager) {
         this.innerClient = innerClient;
         this.serviceManager = serviceManager;
     }
 
-    public void export(String vaultName, String resourceGroupName) {
-        this.serviceClient().export(vaultName, resourceGroupName);
+    public Response<Void> exportWithResponse(String vaultName, String resourceGroupName, String filter,
+        Context context) {
+        return this.serviceClient().exportWithResponse(vaultName, resourceGroupName, filter, context);
     }
 
-    public Response<Void> exportWithResponse(
-        String vaultName, String resourceGroupName, String filter, Context context) {
-        return this.serviceClient().exportWithResponse(vaultName, resourceGroupName, filter, context);
+    public void export(String vaultName, String resourceGroupName) {
+        this.serviceClient().export(vaultName, resourceGroupName);
     }
 
     private JobsClient serviceClient() {

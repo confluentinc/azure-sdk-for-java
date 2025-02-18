@@ -5,29 +5,47 @@
 package com.azure.resourcemanager.monitor.models;
 
 import com.azure.core.util.ExpandableStringEnum;
-import com.fasterxml.jackson.annotation.JsonCreator;
 import java.util.Collection;
 
-/** Defines values for DataStatus. */
+/**
+ * The status of VM Insights data from the resource. When reported as `present` the data array will contain information
+ * about the data containers to which data for the specified resource is being routed.
+ */
 public final class DataStatus extends ExpandableStringEnum<DataStatus> {
-    /** Static value present for DataStatus. */
+    /**
+     * Static value present for DataStatus.
+     */
     public static final DataStatus PRESENT = fromString("present");
 
-    /** Static value notPresent for DataStatus. */
+    /**
+     * Static value notPresent for DataStatus.
+     */
     public static final DataStatus NOT_PRESENT = fromString("notPresent");
 
     /**
+     * Creates a new instance of DataStatus value.
+     * 
+     * @deprecated Use the {@link #fromString(String)} factory method.
+     */
+    @Deprecated
+    public DataStatus() {
+    }
+
+    /**
      * Creates or finds a DataStatus from its string representation.
-     *
+     * 
      * @param name a name to look for.
      * @return the corresponding DataStatus.
      */
-    @JsonCreator
     public static DataStatus fromString(String name) {
         return fromString(name, DataStatus.class);
     }
 
-    /** @return known DataStatus values. */
+    /**
+     * Gets known DataStatus values.
+     * 
+     * @return known DataStatus values.
+     */
     public static Collection<DataStatus> values() {
         return values(DataStatus.class);
     }

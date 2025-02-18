@@ -14,10 +14,9 @@ import com.azure.resourcemanager.security.fluent.models.AlertInner;
 import com.azure.resourcemanager.security.models.Alert;
 import com.azure.resourcemanager.security.models.AlertSimulatorRequestBody;
 import com.azure.resourcemanager.security.models.Alerts;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 public final class AlertsImpl implements Alerts {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(AlertsImpl.class);
+    private static final ClientLogger LOGGER = new ClientLogger(AlertsImpl.class);
 
     private final AlertsClient innerClient;
 
@@ -30,45 +29,56 @@ public final class AlertsImpl implements Alerts {
 
     public PagedIterable<Alert> list() {
         PagedIterable<AlertInner> inner = this.serviceClient().list();
-        return Utils.mapPage(inner, inner1 -> new AlertImpl(inner1, this.manager()));
+        return ResourceManagerUtils.mapPage(inner, inner1 -> new AlertImpl(inner1, this.manager()));
     }
 
     public PagedIterable<Alert> list(Context context) {
         PagedIterable<AlertInner> inner = this.serviceClient().list(context);
-        return Utils.mapPage(inner, inner1 -> new AlertImpl(inner1, this.manager()));
+        return ResourceManagerUtils.mapPage(inner, inner1 -> new AlertImpl(inner1, this.manager()));
     }
 
     public PagedIterable<Alert> listByResourceGroup(String resourceGroupName) {
         PagedIterable<AlertInner> inner = this.serviceClient().listByResourceGroup(resourceGroupName);
-        return Utils.mapPage(inner, inner1 -> new AlertImpl(inner1, this.manager()));
+        return ResourceManagerUtils.mapPage(inner, inner1 -> new AlertImpl(inner1, this.manager()));
     }
 
     public PagedIterable<Alert> listByResourceGroup(String resourceGroupName, Context context) {
         PagedIterable<AlertInner> inner = this.serviceClient().listByResourceGroup(resourceGroupName, context);
-        return Utils.mapPage(inner, inner1 -> new AlertImpl(inner1, this.manager()));
+        return ResourceManagerUtils.mapPage(inner, inner1 -> new AlertImpl(inner1, this.manager()));
     }
 
     public PagedIterable<Alert> listSubscriptionLevelByRegion(String ascLocation) {
         PagedIterable<AlertInner> inner = this.serviceClient().listSubscriptionLevelByRegion(ascLocation);
-        return Utils.mapPage(inner, inner1 -> new AlertImpl(inner1, this.manager()));
+        return ResourceManagerUtils.mapPage(inner, inner1 -> new AlertImpl(inner1, this.manager()));
     }
 
     public PagedIterable<Alert> listSubscriptionLevelByRegion(String ascLocation, Context context) {
         PagedIterable<AlertInner> inner = this.serviceClient().listSubscriptionLevelByRegion(ascLocation, context);
-        return Utils.mapPage(inner, inner1 -> new AlertImpl(inner1, this.manager()));
+        return ResourceManagerUtils.mapPage(inner, inner1 -> new AlertImpl(inner1, this.manager()));
     }
 
     public PagedIterable<Alert> listResourceGroupLevelByRegion(String ascLocation, String resourceGroupName) {
-        PagedIterable<AlertInner> inner =
-            this.serviceClient().listResourceGroupLevelByRegion(ascLocation, resourceGroupName);
-        return Utils.mapPage(inner, inner1 -> new AlertImpl(inner1, this.manager()));
+        PagedIterable<AlertInner> inner
+            = this.serviceClient().listResourceGroupLevelByRegion(ascLocation, resourceGroupName);
+        return ResourceManagerUtils.mapPage(inner, inner1 -> new AlertImpl(inner1, this.manager()));
     }
 
-    public PagedIterable<Alert> listResourceGroupLevelByRegion(
-        String ascLocation, String resourceGroupName, Context context) {
-        PagedIterable<AlertInner> inner =
-            this.serviceClient().listResourceGroupLevelByRegion(ascLocation, resourceGroupName, context);
-        return Utils.mapPage(inner, inner1 -> new AlertImpl(inner1, this.manager()));
+    public PagedIterable<Alert> listResourceGroupLevelByRegion(String ascLocation, String resourceGroupName,
+        Context context) {
+        PagedIterable<AlertInner> inner
+            = this.serviceClient().listResourceGroupLevelByRegion(ascLocation, resourceGroupName, context);
+        return ResourceManagerUtils.mapPage(inner, inner1 -> new AlertImpl(inner1, this.manager()));
+    }
+
+    public Response<Alert> getSubscriptionLevelWithResponse(String ascLocation, String alertName, Context context) {
+        Response<AlertInner> inner
+            = this.serviceClient().getSubscriptionLevelWithResponse(ascLocation, alertName, context);
+        if (inner != null) {
+            return new SimpleResponse<>(inner.getRequest(), inner.getStatusCode(), inner.getHeaders(),
+                new AlertImpl(inner.getValue(), this.manager()));
+        } else {
+            return null;
+        }
     }
 
     public Alert getSubscriptionLevel(String ascLocation, String alertName) {
@@ -80,22 +90,20 @@ public final class AlertsImpl implements Alerts {
         }
     }
 
-    public Response<Alert> getSubscriptionLevelWithResponse(String ascLocation, String alertName, Context context) {
-        Response<AlertInner> inner =
-            this.serviceClient().getSubscriptionLevelWithResponse(ascLocation, alertName, context);
+    public Response<Alert> getResourceGroupLevelWithResponse(String resourceGroupName, String ascLocation,
+        String alertName, Context context) {
+        Response<AlertInner> inner = this.serviceClient()
+            .getResourceGroupLevelWithResponse(resourceGroupName, ascLocation, alertName, context);
         if (inner != null) {
-            return new SimpleResponse<>(
-                inner.getRequest(),
-                inner.getStatusCode(),
-                inner.getHeaders(),
+            return new SimpleResponse<>(inner.getRequest(), inner.getStatusCode(), inner.getHeaders(),
                 new AlertImpl(inner.getValue(), this.manager()));
         } else {
             return null;
         }
     }
 
-    public Alert getResourceGroupLevel(String ascLocation, String alertName, String resourceGroupName) {
-        AlertInner inner = this.serviceClient().getResourceGroupLevel(ascLocation, alertName, resourceGroupName);
+    public Alert getResourceGroupLevel(String resourceGroupName, String ascLocation, String alertName) {
+        AlertInner inner = this.serviceClient().getResourceGroupLevel(resourceGroupName, ascLocation, alertName);
         if (inner != null) {
             return new AlertImpl(inner, this.manager());
         } else {
@@ -103,80 +111,83 @@ public final class AlertsImpl implements Alerts {
         }
     }
 
-    public Response<Alert> getResourceGroupLevelWithResponse(
-        String ascLocation, String alertName, String resourceGroupName, Context context) {
-        Response<AlertInner> inner =
-            this.serviceClient().getResourceGroupLevelWithResponse(ascLocation, alertName, resourceGroupName, context);
-        if (inner != null) {
-            return new SimpleResponse<>(
-                inner.getRequest(),
-                inner.getStatusCode(),
-                inner.getHeaders(),
-                new AlertImpl(inner.getValue(), this.manager()));
-        } else {
-            return null;
-        }
+    public Response<Void> updateSubscriptionLevelStateToDismissWithResponse(String ascLocation, String alertName,
+        Context context) {
+        return this.serviceClient().updateSubscriptionLevelStateToDismissWithResponse(ascLocation, alertName, context);
     }
 
     public void updateSubscriptionLevelStateToDismiss(String ascLocation, String alertName) {
         this.serviceClient().updateSubscriptionLevelStateToDismiss(ascLocation, alertName);
     }
 
-    public Response<Void> updateSubscriptionLevelStateToDismissWithResponse(
-        String ascLocation, String alertName, Context context) {
-        return this.serviceClient().updateSubscriptionLevelStateToDismissWithResponse(ascLocation, alertName, context);
+    public Response<Void> updateSubscriptionLevelStateToResolveWithResponse(String ascLocation, String alertName,
+        Context context) {
+        return this.serviceClient().updateSubscriptionLevelStateToResolveWithResponse(ascLocation, alertName, context);
     }
 
     public void updateSubscriptionLevelStateToResolve(String ascLocation, String alertName) {
         this.serviceClient().updateSubscriptionLevelStateToResolve(ascLocation, alertName);
     }
 
-    public Response<Void> updateSubscriptionLevelStateToResolveWithResponse(
-        String ascLocation, String alertName, Context context) {
-        return this.serviceClient().updateSubscriptionLevelStateToResolveWithResponse(ascLocation, alertName, context);
+    public Response<Void> updateSubscriptionLevelStateToActivateWithResponse(String ascLocation, String alertName,
+        Context context) {
+        return this.serviceClient().updateSubscriptionLevelStateToActivateWithResponse(ascLocation, alertName, context);
     }
 
     public void updateSubscriptionLevelStateToActivate(String ascLocation, String alertName) {
         this.serviceClient().updateSubscriptionLevelStateToActivate(ascLocation, alertName);
     }
 
-    public Response<Void> updateSubscriptionLevelStateToActivateWithResponse(
+    public Response<Void> updateSubscriptionLevelStateToInProgressWithResponse(String ascLocation, String alertName,
+        Context context) {
+        return this.serviceClient()
+            .updateSubscriptionLevelStateToInProgressWithResponse(ascLocation, alertName, context);
+    }
+
+    public void updateSubscriptionLevelStateToInProgress(String ascLocation, String alertName) {
+        this.serviceClient().updateSubscriptionLevelStateToInProgress(ascLocation, alertName);
+    }
+
+    public Response<Void> updateResourceGroupLevelStateToResolveWithResponse(String resourceGroupName,
         String ascLocation, String alertName, Context context) {
-        return this.serviceClient().updateSubscriptionLevelStateToActivateWithResponse(ascLocation, alertName, context);
+        return this.serviceClient()
+            .updateResourceGroupLevelStateToResolveWithResponse(resourceGroupName, ascLocation, alertName, context);
     }
 
-    public void updateResourceGroupLevelStateToResolve(String ascLocation, String alertName, String resourceGroupName) {
-        this.serviceClient().updateResourceGroupLevelStateToResolve(ascLocation, alertName, resourceGroupName);
+    public void updateResourceGroupLevelStateToResolve(String resourceGroupName, String ascLocation, String alertName) {
+        this.serviceClient().updateResourceGroupLevelStateToResolve(resourceGroupName, ascLocation, alertName);
     }
 
-    public Response<Void> updateResourceGroupLevelStateToResolveWithResponse(
-        String ascLocation, String alertName, String resourceGroupName, Context context) {
-        return this
-            .serviceClient()
-            .updateResourceGroupLevelStateToResolveWithResponse(ascLocation, alertName, resourceGroupName, context);
+    public Response<Void> updateResourceGroupLevelStateToDismissWithResponse(String resourceGroupName,
+        String ascLocation, String alertName, Context context) {
+        return this.serviceClient()
+            .updateResourceGroupLevelStateToDismissWithResponse(resourceGroupName, ascLocation, alertName, context);
     }
 
-    public void updateResourceGroupLevelStateToDismiss(String ascLocation, String alertName, String resourceGroupName) {
-        this.serviceClient().updateResourceGroupLevelStateToDismiss(ascLocation, alertName, resourceGroupName);
+    public void updateResourceGroupLevelStateToDismiss(String resourceGroupName, String ascLocation, String alertName) {
+        this.serviceClient().updateResourceGroupLevelStateToDismiss(resourceGroupName, ascLocation, alertName);
     }
 
-    public Response<Void> updateResourceGroupLevelStateToDismissWithResponse(
-        String ascLocation, String alertName, String resourceGroupName, Context context) {
-        return this
-            .serviceClient()
-            .updateResourceGroupLevelStateToDismissWithResponse(ascLocation, alertName, resourceGroupName, context);
+    public Response<Void> updateResourceGroupLevelStateToActivateWithResponse(String resourceGroupName,
+        String ascLocation, String alertName, Context context) {
+        return this.serviceClient()
+            .updateResourceGroupLevelStateToActivateWithResponse(resourceGroupName, ascLocation, alertName, context);
     }
 
-    public void updateResourceGroupLevelStateToActivate(
-        String ascLocation, String alertName, String resourceGroupName) {
-        this.serviceClient().updateResourceGroupLevelStateToActivate(ascLocation, alertName, resourceGroupName);
+    public void updateResourceGroupLevelStateToActivate(String resourceGroupName, String ascLocation,
+        String alertName) {
+        this.serviceClient().updateResourceGroupLevelStateToActivate(resourceGroupName, ascLocation, alertName);
     }
 
-    public Response<Void> updateResourceGroupLevelStateToActivateWithResponse(
-        String ascLocation, String alertName, String resourceGroupName, Context context) {
-        return this
-            .serviceClient()
-            .updateResourceGroupLevelStateToActivateWithResponse(ascLocation, alertName, resourceGroupName, context);
+    public Response<Void> updateResourceGroupLevelStateToInProgressWithResponse(String resourceGroupName,
+        String ascLocation, String alertName, Context context) {
+        return this.serviceClient()
+            .updateResourceGroupLevelStateToInProgressWithResponse(resourceGroupName, ascLocation, alertName, context);
+    }
+
+    public void updateResourceGroupLevelStateToInProgress(String resourceGroupName, String ascLocation,
+        String alertName) {
+        this.serviceClient().updateResourceGroupLevelStateToInProgress(resourceGroupName, ascLocation, alertName);
     }
 
     public void simulate(String ascLocation, AlertSimulatorRequestBody alertSimulatorRequestBody) {

@@ -4,24 +4,33 @@
 
 package com.azure.resourcemanager.recoveryservicesbackup.models;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonValue;
-
-/** Defines values for RecoveryPointTierType. */
+/**
+ * Recovery point tier type.
+ */
 public enum RecoveryPointTierType {
-    /** Enum value Invalid. */
+    /**
+     * Enum value Invalid.
+     */
     INVALID("Invalid"),
 
-    /** Enum value InstantRP. */
+    /**
+     * Enum value InstantRP.
+     */
     INSTANT_RP("InstantRP"),
 
-    /** Enum value HardenedRP. */
+    /**
+     * Enum value HardenedRP.
+     */
     HARDENED_RP("HardenedRP"),
 
-    /** Enum value ArchivedRP. */
+    /**
+     * Enum value ArchivedRP.
+     */
     ARCHIVED_RP("ArchivedRP");
 
-    /** The actual serialized value for a RecoveryPointTierType instance. */
+    /**
+     * The actual serialized value for a RecoveryPointTierType instance.
+     */
     private final String value;
 
     RecoveryPointTierType(String value) {
@@ -30,12 +39,14 @@ public enum RecoveryPointTierType {
 
     /**
      * Parses a serialized value to a RecoveryPointTierType instance.
-     *
+     * 
      * @param value the serialized value to parse.
      * @return the parsed RecoveryPointTierType object, or null if unable to parse.
      */
-    @JsonCreator
     public static RecoveryPointTierType fromString(String value) {
+        if (value == null) {
+            return null;
+        }
         RecoveryPointTierType[] items = RecoveryPointTierType.values();
         for (RecoveryPointTierType item : items) {
             if (item.toString().equalsIgnoreCase(value)) {
@@ -45,7 +56,9 @@ public enum RecoveryPointTierType {
         return null;
     }
 
-    @JsonValue
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String toString() {
         return this.value;

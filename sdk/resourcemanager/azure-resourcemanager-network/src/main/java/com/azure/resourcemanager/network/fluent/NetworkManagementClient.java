@@ -14,13 +14,21 @@ import com.azure.core.management.polling.PollResult;
 import com.azure.core.util.Context;
 import com.azure.core.util.polling.PollerFlux;
 import com.azure.core.util.polling.SyncPoller;
+import com.azure.resourcemanager.network.fluent.models.ActiveConnectivityConfigurationsListResultInner;
+import com.azure.resourcemanager.network.fluent.models.ActiveSecurityAdminRulesListResultInner;
 import com.azure.resourcemanager.network.fluent.models.BastionActiveSessionInner;
 import com.azure.resourcemanager.network.fluent.models.BastionSessionStateInner;
 import com.azure.resourcemanager.network.fluent.models.BastionShareableLinkInner;
 import com.azure.resourcemanager.network.fluent.models.DnsNameAvailabilityResultInner;
+import com.azure.resourcemanager.network.fluent.models.ExpressRouteProviderPortInner;
+import com.azure.resourcemanager.network.fluent.models.NetworkManagerEffectiveConnectivityConfigurationListResultInner;
+import com.azure.resourcemanager.network.fluent.models.NetworkManagerEffectiveSecurityAdminRulesListResultInner;
 import com.azure.resourcemanager.network.fluent.models.VirtualWanSecurityProvidersInner;
 import com.azure.resourcemanager.network.fluent.models.VpnProfileResponseInner;
+import com.azure.resourcemanager.network.models.ActiveConfigurationParameter;
 import com.azure.resourcemanager.network.models.BastionShareableLinkListRequest;
+import com.azure.resourcemanager.network.models.BastionShareableLinkTokenListRequest;
+import com.azure.resourcemanager.network.models.QueryRequestOptions;
 import com.azure.resourcemanager.network.models.SessionIds;
 import com.azure.resourcemanager.network.models.VirtualWanVpnProfileParameters;
 import java.nio.ByteBuffer;
@@ -28,7 +36,9 @@ import java.time.Duration;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-/** The interface for NetworkManagementClient class. */
+/**
+ * The interface for NetworkManagementClient class.
+ */
 public interface NetworkManagementClient {
     /**
      * Gets The subscription credentials which uniquely identify the Microsoft Azure subscription. The subscription ID
@@ -79,6 +89,20 @@ public interface NetworkManagementClient {
      * @return the ApplicationGatewayPrivateEndpointConnectionsClient object.
      */
     ApplicationGatewayPrivateEndpointConnectionsClient getApplicationGatewayPrivateEndpointConnections();
+
+    /**
+     * Gets the ApplicationGatewayWafDynamicManifestsDefaultsClient object to access its operations.
+     *
+     * @return the ApplicationGatewayWafDynamicManifestsDefaultsClient object.
+     */
+    ApplicationGatewayWafDynamicManifestsDefaultsClient getApplicationGatewayWafDynamicManifestsDefaults();
+
+    /**
+     * Gets the ApplicationGatewayWafDynamicManifestsClient object to access its operations.
+     *
+     * @return the ApplicationGatewayWafDynamicManifestsClient object.
+     */
+    ApplicationGatewayWafDynamicManifestsClient getApplicationGatewayWafDynamicManifests();
 
     /**
      * Gets the ApplicationSecurityGroupsClient object to access its operations.
@@ -149,6 +173,13 @@ public interface NetworkManagementClient {
      * @return the PublicIpAddressesClient object.
      */
     PublicIpAddressesClient getPublicIpAddresses();
+
+    /**
+     * Gets the VipSwapsClient object to access its operations.
+     *
+     * @return the VipSwapsClient object.
+     */
+    VipSwapsClient getVipSwaps();
 
     /**
      * Gets the CustomIpPrefixesClient object to access its operations.
@@ -263,6 +294,20 @@ public interface NetworkManagementClient {
     ExpressRouteLinksClient getExpressRouteLinks();
 
     /**
+     * Gets the ExpressRoutePortAuthorizationsClient object to access its operations.
+     *
+     * @return the ExpressRoutePortAuthorizationsClient object.
+     */
+    ExpressRoutePortAuthorizationsClient getExpressRoutePortAuthorizations();
+
+    /**
+     * Gets the ExpressRouteProviderPortsLocationsClient object to access its operations.
+     *
+     * @return the ExpressRouteProviderPortsLocationsClient object.
+     */
+    ExpressRouteProviderPortsLocationsClient getExpressRouteProviderPortsLocations();
+
+    /**
      * Gets the FirewallPoliciesClient object to access its operations.
      *
      * @return the FirewallPoliciesClient object.
@@ -296,6 +341,41 @@ public interface NetworkManagementClient {
      * @return the FirewallPolicyIdpsSignaturesFilterValuesClient object.
      */
     FirewallPolicyIdpsSignaturesFilterValuesClient getFirewallPolicyIdpsSignaturesFilterValues();
+
+    /**
+     * Gets the FirewallPolicyDraftsClient object to access its operations.
+     *
+     * @return the FirewallPolicyDraftsClient object.
+     */
+    FirewallPolicyDraftsClient getFirewallPolicyDrafts();
+
+    /**
+     * Gets the FirewallPolicyDeploymentsClient object to access its operations.
+     *
+     * @return the FirewallPolicyDeploymentsClient object.
+     */
+    FirewallPolicyDeploymentsClient getFirewallPolicyDeployments();
+
+    /**
+     * Gets the FirewallPolicyRuleCollectionGroupDraftsClient object to access its operations.
+     *
+     * @return the FirewallPolicyRuleCollectionGroupDraftsClient object.
+     */
+    FirewallPolicyRuleCollectionGroupDraftsClient getFirewallPolicyRuleCollectionGroupDrafts();
+
+    /**
+     * Gets the IpamPoolsClient object to access its operations.
+     *
+     * @return the IpamPoolsClient object.
+     */
+    IpamPoolsClient getIpamPools();
+
+    /**
+     * Gets the StaticCidrsClient object to access its operations.
+     *
+     * @return the StaticCidrsClient object.
+     */
+    StaticCidrsClient getStaticCidrs();
 
     /**
      * Gets the IpAllocationsClient object to access its operations.
@@ -396,6 +476,132 @@ public interface NetworkManagementClient {
     NetworkInterfaceTapConfigurationsClient getNetworkInterfaceTapConfigurations();
 
     /**
+     * Gets the NetworkManagersClient object to access its operations.
+     *
+     * @return the NetworkManagersClient object.
+     */
+    NetworkManagersClient getNetworkManagers();
+
+    /**
+     * Gets the NetworkManagerCommitsClient object to access its operations.
+     *
+     * @return the NetworkManagerCommitsClient object.
+     */
+    NetworkManagerCommitsClient getNetworkManagerCommits();
+
+    /**
+     * Gets the NetworkManagerDeploymentStatusOperationsClient object to access its operations.
+     *
+     * @return the NetworkManagerDeploymentStatusOperationsClient object.
+     */
+    NetworkManagerDeploymentStatusOperationsClient getNetworkManagerDeploymentStatusOperations();
+
+    /**
+     * Gets the SubscriptionNetworkManagerConnectionsClient object to access its operations.
+     *
+     * @return the SubscriptionNetworkManagerConnectionsClient object.
+     */
+    SubscriptionNetworkManagerConnectionsClient getSubscriptionNetworkManagerConnections();
+
+    /**
+     * Gets the ManagementGroupNetworkManagerConnectionsClient object to access its operations.
+     *
+     * @return the ManagementGroupNetworkManagerConnectionsClient object.
+     */
+    ManagementGroupNetworkManagerConnectionsClient getManagementGroupNetworkManagerConnections();
+
+    /**
+     * Gets the ConnectivityConfigurationsClient object to access its operations.
+     *
+     * @return the ConnectivityConfigurationsClient object.
+     */
+    ConnectivityConfigurationsClient getConnectivityConfigurations();
+
+    /**
+     * Gets the NetworkGroupsClient object to access its operations.
+     *
+     * @return the NetworkGroupsClient object.
+     */
+    NetworkGroupsClient getNetworkGroups();
+
+    /**
+     * Gets the StaticMembersClient object to access its operations.
+     *
+     * @return the StaticMembersClient object.
+     */
+    StaticMembersClient getStaticMembers();
+
+    /**
+     * Gets the NetworkManagerRoutingConfigurationsClient object to access its operations.
+     *
+     * @return the NetworkManagerRoutingConfigurationsClient object.
+     */
+    NetworkManagerRoutingConfigurationsClient getNetworkManagerRoutingConfigurations();
+
+    /**
+     * Gets the RoutingRuleCollectionsClient object to access its operations.
+     *
+     * @return the RoutingRuleCollectionsClient object.
+     */
+    RoutingRuleCollectionsClient getRoutingRuleCollections();
+
+    /**
+     * Gets the RoutingRulesClient object to access its operations.
+     *
+     * @return the RoutingRulesClient object.
+     */
+    RoutingRulesClient getRoutingRules();
+
+    /**
+     * Gets the ScopeConnectionsClient object to access its operations.
+     *
+     * @return the ScopeConnectionsClient object.
+     */
+    ScopeConnectionsClient getScopeConnections();
+
+    /**
+     * Gets the SecurityAdminConfigurationsClient object to access its operations.
+     *
+     * @return the SecurityAdminConfigurationsClient object.
+     */
+    SecurityAdminConfigurationsClient getSecurityAdminConfigurations();
+
+    /**
+     * Gets the AdminRuleCollectionsClient object to access its operations.
+     *
+     * @return the AdminRuleCollectionsClient object.
+     */
+    AdminRuleCollectionsClient getAdminRuleCollections();
+
+    /**
+     * Gets the AdminRulesClient object to access its operations.
+     *
+     * @return the AdminRulesClient object.
+     */
+    AdminRulesClient getAdminRules();
+
+    /**
+     * Gets the SecurityUserConfigurationsClient object to access its operations.
+     *
+     * @return the SecurityUserConfigurationsClient object.
+     */
+    SecurityUserConfigurationsClient getSecurityUserConfigurations();
+
+    /**
+     * Gets the SecurityUserRuleCollectionsClient object to access its operations.
+     *
+     * @return the SecurityUserRuleCollectionsClient object.
+     */
+    SecurityUserRuleCollectionsClient getSecurityUserRuleCollections();
+
+    /**
+     * Gets the SecurityUserRulesClient object to access its operations.
+     *
+     * @return the SecurityUserRulesClient object.
+     */
+    SecurityUserRulesClient getSecurityUserRules();
+
+    /**
      * Gets the NetworkProfilesClient object to access its operations.
      *
      * @return the NetworkProfilesClient object.
@@ -422,6 +628,27 @@ public interface NetworkManagementClient {
      * @return the DefaultSecurityRulesClient object.
      */
     DefaultSecurityRulesClient getDefaultSecurityRules();
+
+    /**
+     * Gets the ReachabilityAnalysisIntentsClient object to access its operations.
+     *
+     * @return the ReachabilityAnalysisIntentsClient object.
+     */
+    ReachabilityAnalysisIntentsClient getReachabilityAnalysisIntents();
+
+    /**
+     * Gets the ReachabilityAnalysisRunsClient object to access its operations.
+     *
+     * @return the ReachabilityAnalysisRunsClient object.
+     */
+    ReachabilityAnalysisRunsClient getReachabilityAnalysisRuns();
+
+    /**
+     * Gets the VerifierWorkspacesClient object to access its operations.
+     *
+     * @return the VerifierWorkspacesClient object.
+     */
+    VerifierWorkspacesClient getVerifierWorkspaces();
 
     /**
      * Gets the NetworkVirtualAppliancesClient object to access its operations.
@@ -718,11 +945,25 @@ public interface NetworkManagementClient {
     VpnServerConfigurationsClient getVpnServerConfigurations();
 
     /**
+     * Gets the ConfigurationPolicyGroupsClient object to access its operations.
+     *
+     * @return the ConfigurationPolicyGroupsClient object.
+     */
+    ConfigurationPolicyGroupsClient getConfigurationPolicyGroups();
+
+    /**
      * Gets the VirtualHubsClient object to access its operations.
      *
      * @return the VirtualHubsClient object.
      */
     VirtualHubsClient getVirtualHubs();
+
+    /**
+     * Gets the RouteMapsClient object to access its operations.
+     *
+     * @return the RouteMapsClient object.
+     */
+    RouteMapsClient getRouteMaps();
 
     /**
      * Gets the HubVirtualNetworkConnectionsClient object to access its operations.
@@ -802,6 +1043,13 @@ public interface NetworkManagementClient {
     ExpressRouteConnectionsClient getExpressRouteConnections();
 
     /**
+     * Gets the NetworkVirtualApplianceConnectionsClient object to access its operations.
+     *
+     * @return the NetworkVirtualApplianceConnectionsClient object.
+     */
+    NetworkVirtualApplianceConnectionsClient getNetworkVirtualApplianceConnections();
+
+    /**
      * Gets the VirtualHubBgpConnectionsClient object to access its operations.
      *
      * @return the VirtualHubBgpConnectionsClient object.
@@ -841,197 +1089,302 @@ public interface NetworkManagementClient {
      *
      * @param resourceGroupName The name of the resource group.
      * @param bastionHostname The name of the Bastion Host.
-     * @param bslRequest Post request for all the Bastion Shareable Link endpoints.
+     * @param bslRequest Post request for Create/Delete/Get Bastion Shareable Link endpoints.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return response for all the Bastion Shareable Link endpoints.
+     * @return response for all the Bastion Shareable Link endpoints as paginated response with {@link PagedFlux}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
-    PagedFlux<BastionShareableLinkInner> putBastionShareableLinkAsync(
-        String resourceGroupName, String bastionHostname, BastionShareableLinkListRequest bslRequest);
+    PagedFlux<BastionShareableLinkInner> putBastionShareableLinkAsync(String resourceGroupName, String bastionHostname,
+        BastionShareableLinkListRequest bslRequest);
 
     /**
      * Creates a Bastion Shareable Links for all the VMs specified in the request.
      *
      * @param resourceGroupName The name of the resource group.
      * @param bastionHostname The name of the Bastion Host.
-     * @param bslRequest Post request for all the Bastion Shareable Link endpoints.
+     * @param bslRequest Post request for Create/Delete/Get Bastion Shareable Link endpoints.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return response for all the Bastion Shareable Link endpoints.
+     * @return response for all the Bastion Shareable Link endpoints as paginated response with {@link PagedIterable}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
-    PagedIterable<BastionShareableLinkInner> putBastionShareableLink(
-        String resourceGroupName, String bastionHostname, BastionShareableLinkListRequest bslRequest);
+    PagedIterable<BastionShareableLinkInner> putBastionShareableLink(String resourceGroupName, String bastionHostname,
+        BastionShareableLinkListRequest bslRequest);
 
     /**
      * Creates a Bastion Shareable Links for all the VMs specified in the request.
      *
      * @param resourceGroupName The name of the resource group.
      * @param bastionHostname The name of the Bastion Host.
-     * @param bslRequest Post request for all the Bastion Shareable Link endpoints.
+     * @param bslRequest Post request for Create/Delete/Get Bastion Shareable Link endpoints.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return response for all the Bastion Shareable Link endpoints.
+     * @return response for all the Bastion Shareable Link endpoints as paginated response with {@link PagedIterable}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
-    PagedIterable<BastionShareableLinkInner> putBastionShareableLink(
-        String resourceGroupName, String bastionHostname, BastionShareableLinkListRequest bslRequest, Context context);
+    PagedIterable<BastionShareableLinkInner> putBastionShareableLink(String resourceGroupName, String bastionHostname,
+        BastionShareableLinkListRequest bslRequest, Context context);
 
     /**
      * Deletes the Bastion Shareable Links for all the VMs specified in the request.
      *
      * @param resourceGroupName The name of the resource group.
      * @param bastionHostname The name of the Bastion Host.
-     * @param bslRequest Post request for all the Bastion Shareable Link endpoints.
+     * @param bslRequest Post request for Create/Delete/Get Bastion Shareable Link endpoints.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the completion.
+     * @return the {@link Response} on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    Mono<Response<Flux<ByteBuffer>>> deleteBastionShareableLinkWithResponseAsync(
-        String resourceGroupName, String bastionHostname, BastionShareableLinkListRequest bslRequest);
+    Mono<Response<Flux<ByteBuffer>>> deleteBastionShareableLinkWithResponseAsync(String resourceGroupName,
+        String bastionHostname, BastionShareableLinkListRequest bslRequest);
 
     /**
      * Deletes the Bastion Shareable Links for all the VMs specified in the request.
      *
      * @param resourceGroupName The name of the resource group.
      * @param bastionHostname The name of the Bastion Host.
-     * @param bslRequest Post request for all the Bastion Shareable Link endpoints.
+     * @param bslRequest Post request for Create/Delete/Get Bastion Shareable Link endpoints.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the completion.
+     * @return the {@link PollerFlux} for polling of long-running operation.
      */
     @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
-    PollerFlux<PollResult<Void>, Void> beginDeleteBastionShareableLinkAsync(
-        String resourceGroupName, String bastionHostname, BastionShareableLinkListRequest bslRequest);
+    PollerFlux<PollResult<Void>, Void> beginDeleteBastionShareableLinkAsync(String resourceGroupName,
+        String bastionHostname, BastionShareableLinkListRequest bslRequest);
 
     /**
      * Deletes the Bastion Shareable Links for all the VMs specified in the request.
      *
      * @param resourceGroupName The name of the resource group.
      * @param bastionHostname The name of the Bastion Host.
-     * @param bslRequest Post request for all the Bastion Shareable Link endpoints.
+     * @param bslRequest Post request for Create/Delete/Get Bastion Shareable Link endpoints.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the completion.
+     * @return the {@link SyncPoller} for polling of long-running operation.
      */
     @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
-    SyncPoller<PollResult<Void>, Void> beginDeleteBastionShareableLink(
-        String resourceGroupName, String bastionHostname, BastionShareableLinkListRequest bslRequest);
+    SyncPoller<PollResult<Void>, Void> beginDeleteBastionShareableLink(String resourceGroupName, String bastionHostname,
+        BastionShareableLinkListRequest bslRequest);
 
     /**
      * Deletes the Bastion Shareable Links for all the VMs specified in the request.
      *
      * @param resourceGroupName The name of the resource group.
      * @param bastionHostname The name of the Bastion Host.
-     * @param bslRequest Post request for all the Bastion Shareable Link endpoints.
+     * @param bslRequest Post request for Create/Delete/Get Bastion Shareable Link endpoints.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the completion.
+     * @return the {@link SyncPoller} for polling of long-running operation.
      */
     @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
-    SyncPoller<PollResult<Void>, Void> beginDeleteBastionShareableLink(
-        String resourceGroupName, String bastionHostname, BastionShareableLinkListRequest bslRequest, Context context);
+    SyncPoller<PollResult<Void>, Void> beginDeleteBastionShareableLink(String resourceGroupName, String bastionHostname,
+        BastionShareableLinkListRequest bslRequest, Context context);
 
     /**
      * Deletes the Bastion Shareable Links for all the VMs specified in the request.
      *
      * @param resourceGroupName The name of the resource group.
      * @param bastionHostname The name of the Bastion Host.
-     * @param bslRequest Post request for all the Bastion Shareable Link endpoints.
+     * @param bslRequest Post request for Create/Delete/Get Bastion Shareable Link endpoints.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the completion.
+     * @return A {@link Mono} that completes when a successful response is received.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    Mono<Void> deleteBastionShareableLinkAsync(
-        String resourceGroupName, String bastionHostname, BastionShareableLinkListRequest bslRequest);
+    Mono<Void> deleteBastionShareableLinkAsync(String resourceGroupName, String bastionHostname,
+        BastionShareableLinkListRequest bslRequest);
 
     /**
      * Deletes the Bastion Shareable Links for all the VMs specified in the request.
      *
      * @param resourceGroupName The name of the resource group.
      * @param bastionHostname The name of the Bastion Host.
-     * @param bslRequest Post request for all the Bastion Shareable Link endpoints.
+     * @param bslRequest Post request for Create/Delete/Get Bastion Shareable Link endpoints.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    void deleteBastionShareableLink(
-        String resourceGroupName, String bastionHostname, BastionShareableLinkListRequest bslRequest);
+    void deleteBastionShareableLink(String resourceGroupName, String bastionHostname,
+        BastionShareableLinkListRequest bslRequest);
 
     /**
      * Deletes the Bastion Shareable Links for all the VMs specified in the request.
      *
      * @param resourceGroupName The name of the resource group.
      * @param bastionHostname The name of the Bastion Host.
-     * @param bslRequest Post request for all the Bastion Shareable Link endpoints.
+     * @param bslRequest Post request for Create/Delete/Get Bastion Shareable Link endpoints.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    void deleteBastionShareableLink(
-        String resourceGroupName, String bastionHostname, BastionShareableLinkListRequest bslRequest, Context context);
+    void deleteBastionShareableLink(String resourceGroupName, String bastionHostname,
+        BastionShareableLinkListRequest bslRequest, Context context);
+
+    /**
+     * Deletes the Bastion Shareable Links for all the tokens specified in the request.
+     *
+     * @param resourceGroupName The name of the resource group.
+     * @param bastionHostname The name of the Bastion Host.
+     * @param bslTokenRequest Post request for Delete Bastion Shareable Link By Token endpoint.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return the {@link Response} on successful completion of {@link Mono}.
+     */
+    @ServiceMethod(returns = ReturnType.SINGLE)
+    Mono<Response<Flux<ByteBuffer>>> deleteBastionShareableLinkByTokenWithResponseAsync(String resourceGroupName,
+        String bastionHostname, BastionShareableLinkTokenListRequest bslTokenRequest);
+
+    /**
+     * Deletes the Bastion Shareable Links for all the tokens specified in the request.
+     *
+     * @param resourceGroupName The name of the resource group.
+     * @param bastionHostname The name of the Bastion Host.
+     * @param bslTokenRequest Post request for Delete Bastion Shareable Link By Token endpoint.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return the {@link PollerFlux} for polling of long-running operation.
+     */
+    @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
+    PollerFlux<PollResult<Void>, Void> beginDeleteBastionShareableLinkByTokenAsync(String resourceGroupName,
+        String bastionHostname, BastionShareableLinkTokenListRequest bslTokenRequest);
+
+    /**
+     * Deletes the Bastion Shareable Links for all the tokens specified in the request.
+     *
+     * @param resourceGroupName The name of the resource group.
+     * @param bastionHostname The name of the Bastion Host.
+     * @param bslTokenRequest Post request for Delete Bastion Shareable Link By Token endpoint.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return the {@link SyncPoller} for polling of long-running operation.
+     */
+    @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
+    SyncPoller<PollResult<Void>, Void> beginDeleteBastionShareableLinkByToken(String resourceGroupName,
+        String bastionHostname, BastionShareableLinkTokenListRequest bslTokenRequest);
+
+    /**
+     * Deletes the Bastion Shareable Links for all the tokens specified in the request.
+     *
+     * @param resourceGroupName The name of the resource group.
+     * @param bastionHostname The name of the Bastion Host.
+     * @param bslTokenRequest Post request for Delete Bastion Shareable Link By Token endpoint.
+     * @param context The context to associate with this operation.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return the {@link SyncPoller} for polling of long-running operation.
+     */
+    @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
+    SyncPoller<PollResult<Void>, Void> beginDeleteBastionShareableLinkByToken(String resourceGroupName,
+        String bastionHostname, BastionShareableLinkTokenListRequest bslTokenRequest, Context context);
+
+    /**
+     * Deletes the Bastion Shareable Links for all the tokens specified in the request.
+     *
+     * @param resourceGroupName The name of the resource group.
+     * @param bastionHostname The name of the Bastion Host.
+     * @param bslTokenRequest Post request for Delete Bastion Shareable Link By Token endpoint.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return A {@link Mono} that completes when a successful response is received.
+     */
+    @ServiceMethod(returns = ReturnType.SINGLE)
+    Mono<Void> deleteBastionShareableLinkByTokenAsync(String resourceGroupName, String bastionHostname,
+        BastionShareableLinkTokenListRequest bslTokenRequest);
+
+    /**
+     * Deletes the Bastion Shareable Links for all the tokens specified in the request.
+     *
+     * @param resourceGroupName The name of the resource group.
+     * @param bastionHostname The name of the Bastion Host.
+     * @param bslTokenRequest Post request for Delete Bastion Shareable Link By Token endpoint.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     */
+    @ServiceMethod(returns = ReturnType.SINGLE)
+    void deleteBastionShareableLinkByToken(String resourceGroupName, String bastionHostname,
+        BastionShareableLinkTokenListRequest bslTokenRequest);
+
+    /**
+     * Deletes the Bastion Shareable Links for all the tokens specified in the request.
+     *
+     * @param resourceGroupName The name of the resource group.
+     * @param bastionHostname The name of the Bastion Host.
+     * @param bslTokenRequest Post request for Delete Bastion Shareable Link By Token endpoint.
+     * @param context The context to associate with this operation.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     */
+    @ServiceMethod(returns = ReturnType.SINGLE)
+    void deleteBastionShareableLinkByToken(String resourceGroupName, String bastionHostname,
+        BastionShareableLinkTokenListRequest bslTokenRequest, Context context);
 
     /**
      * Return the Bastion Shareable Links for all the VMs specified in the request.
      *
      * @param resourceGroupName The name of the resource group.
      * @param bastionHostname The name of the Bastion Host.
-     * @param bslRequest Post request for all the Bastion Shareable Link endpoints.
+     * @param bslRequest Post request for Create/Delete/Get Bastion Shareable Link endpoints.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return response for all the Bastion Shareable Link endpoints.
+     * @return response for all the Bastion Shareable Link endpoints as paginated response with {@link PagedFlux}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
-    PagedFlux<BastionShareableLinkInner> getBastionShareableLinkAsync(
-        String resourceGroupName, String bastionHostname, BastionShareableLinkListRequest bslRequest);
+    PagedFlux<BastionShareableLinkInner> getBastionShareableLinkAsync(String resourceGroupName, String bastionHostname,
+        BastionShareableLinkListRequest bslRequest);
 
     /**
      * Return the Bastion Shareable Links for all the VMs specified in the request.
      *
      * @param resourceGroupName The name of the resource group.
      * @param bastionHostname The name of the Bastion Host.
-     * @param bslRequest Post request for all the Bastion Shareable Link endpoints.
+     * @param bslRequest Post request for Create/Delete/Get Bastion Shareable Link endpoints.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return response for all the Bastion Shareable Link endpoints.
+     * @return response for all the Bastion Shareable Link endpoints as paginated response with {@link PagedIterable}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
-    PagedIterable<BastionShareableLinkInner> getBastionShareableLink(
-        String resourceGroupName, String bastionHostname, BastionShareableLinkListRequest bslRequest);
+    PagedIterable<BastionShareableLinkInner> getBastionShareableLink(String resourceGroupName, String bastionHostname,
+        BastionShareableLinkListRequest bslRequest);
 
     /**
      * Return the Bastion Shareable Links for all the VMs specified in the request.
      *
      * @param resourceGroupName The name of the resource group.
      * @param bastionHostname The name of the Bastion Host.
-     * @param bslRequest Post request for all the Bastion Shareable Link endpoints.
+     * @param bslRequest Post request for Create/Delete/Get Bastion Shareable Link endpoints.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return response for all the Bastion Shareable Link endpoints.
+     * @return response for all the Bastion Shareable Link endpoints as paginated response with {@link PagedIterable}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
-    PagedIterable<BastionShareableLinkInner> getBastionShareableLink(
-        String resourceGroupName, String bastionHostname, BastionShareableLinkListRequest bslRequest, Context context);
+    PagedIterable<BastionShareableLinkInner> getBastionShareableLink(String resourceGroupName, String bastionHostname,
+        BastionShareableLinkListRequest bslRequest, Context context);
 
     /**
      * Returns the list of currently active sessions on the Bastion.
@@ -1041,7 +1394,7 @@ public interface NetworkManagementClient {
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return response for GetActiveSessions.
+     * @return response for GetActiveSessions as paginated response with {@link PagedFlux}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
     PagedFlux<BastionActiveSessionInner> getActiveSessionsAsync(String resourceGroupName, String bastionHostname);
@@ -1054,7 +1407,7 @@ public interface NetworkManagementClient {
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return response for GetActiveSessions.
+     * @return response for GetActiveSessions as paginated response with {@link PagedIterable}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
     PagedIterable<BastionActiveSessionInner> getActiveSessions(String resourceGroupName, String bastionHostname);
@@ -1068,11 +1421,11 @@ public interface NetworkManagementClient {
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return response for GetActiveSessions.
+     * @return response for GetActiveSessions as paginated response with {@link PagedIterable}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
-    PagedIterable<BastionActiveSessionInner> getActiveSessions(
-        String resourceGroupName, String bastionHostname, Context context);
+    PagedIterable<BastionActiveSessionInner> getActiveSessions(String resourceGroupName, String bastionHostname,
+        Context context);
 
     /**
      * Returns the list of currently active sessions on the Bastion.
@@ -1083,11 +1436,11 @@ public interface NetworkManagementClient {
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return response for DisconnectActiveSessions.
+     * @return response for DisconnectActiveSessions as paginated response with {@link PagedFlux}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
-    PagedFlux<BastionSessionStateInner> disconnectActiveSessionsAsync(
-        String resourceGroupName, String bastionHostname, SessionIds sessionIds);
+    PagedFlux<BastionSessionStateInner> disconnectActiveSessionsAsync(String resourceGroupName, String bastionHostname,
+        SessionIds sessionIds);
 
     /**
      * Returns the list of currently active sessions on the Bastion.
@@ -1098,11 +1451,11 @@ public interface NetworkManagementClient {
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return response for DisconnectActiveSessions.
+     * @return response for DisconnectActiveSessions as paginated response with {@link PagedIterable}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
-    PagedIterable<BastionSessionStateInner> disconnectActiveSessions(
-        String resourceGroupName, String bastionHostname, SessionIds sessionIds);
+    PagedIterable<BastionSessionStateInner> disconnectActiveSessions(String resourceGroupName, String bastionHostname,
+        SessionIds sessionIds);
 
     /**
      * Returns the list of currently active sessions on the Bastion.
@@ -1114,37 +1467,38 @@ public interface NetworkManagementClient {
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return response for DisconnectActiveSessions.
+     * @return response for DisconnectActiveSessions as paginated response with {@link PagedIterable}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
-    PagedIterable<BastionSessionStateInner> disconnectActiveSessions(
-        String resourceGroupName, String bastionHostname, SessionIds sessionIds, Context context);
+    PagedIterable<BastionSessionStateInner> disconnectActiveSessions(String resourceGroupName, String bastionHostname,
+        SessionIds sessionIds, Context context);
 
     /**
      * Checks whether a domain name in the cloudapp.azure.com zone is available for use.
      *
      * @param location The location of the domain name.
      * @param domainNameLabel The domain name to be verified. It must conform to the following regular expression:
-     *     ^[a-z][a-z0-9-]{1,61}[a-z0-9]$.
+     * ^[a-z][a-z0-9-]{1,61}[a-z0-9]$.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return response for the CheckDnsNameAvailability API service call.
+     * @return response for the CheckDnsNameAvailability API service call along with {@link Response} on successful
+     * completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    Mono<Response<DnsNameAvailabilityResultInner>> checkDnsNameAvailabilityWithResponseAsync(
-        String location, String domainNameLabel);
+    Mono<Response<DnsNameAvailabilityResultInner>> checkDnsNameAvailabilityWithResponseAsync(String location,
+        String domainNameLabel);
 
     /**
      * Checks whether a domain name in the cloudapp.azure.com zone is available for use.
      *
      * @param location The location of the domain name.
      * @param domainNameLabel The domain name to be verified. It must conform to the following regular expression:
-     *     ^[a-z][a-z0-9-]{1,61}[a-z0-9]$.
+     * ^[a-z][a-z0-9-]{1,61}[a-z0-9]$.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return response for the CheckDnsNameAvailability API service call.
+     * @return response for the CheckDnsNameAvailability API service call on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
     Mono<DnsNameAvailabilityResultInner> checkDnsNameAvailabilityAsync(String location, String domainNameLabel);
@@ -1154,7 +1508,23 @@ public interface NetworkManagementClient {
      *
      * @param location The location of the domain name.
      * @param domainNameLabel The domain name to be verified. It must conform to the following regular expression:
-     *     ^[a-z][a-z0-9-]{1,61}[a-z0-9]$.
+     * ^[a-z][a-z0-9-]{1,61}[a-z0-9]$.
+     * @param context The context to associate with this operation.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return response for the CheckDnsNameAvailability API service call along with {@link Response}.
+     */
+    @ServiceMethod(returns = ReturnType.SINGLE)
+    Response<DnsNameAvailabilityResultInner> checkDnsNameAvailabilityWithResponse(String location,
+        String domainNameLabel, Context context);
+
+    /**
+     * Checks whether a domain name in the cloudapp.azure.com zone is available for use.
+     *
+     * @param location The location of the domain name.
+     * @param domainNameLabel The domain name to be verified. It must conform to the following regular expression:
+     * ^[a-z][a-z0-9-]{1,61}[a-z0-9]$.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
@@ -1164,20 +1534,329 @@ public interface NetworkManagementClient {
     DnsNameAvailabilityResultInner checkDnsNameAvailability(String location, String domainNameLabel);
 
     /**
-     * Checks whether a domain name in the cloudapp.azure.com zone is available for use.
+     * Retrieves detail of a provider port.
      *
-     * @param location The location of the domain name.
-     * @param domainNameLabel The domain name to be verified. It must conform to the following regular expression:
-     *     ^[a-z][a-z0-9-]{1,61}[a-z0-9]$.
+     * @param providerport The name of the provider port.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return expressRouteProviderPort resource along with {@link Response} on successful completion of {@link Mono}.
+     */
+    @ServiceMethod(returns = ReturnType.SINGLE)
+    Mono<Response<ExpressRouteProviderPortInner>> expressRouteProviderPortWithResponseAsync(String providerport);
+
+    /**
+     * Retrieves detail of a provider port.
+     *
+     * @param providerport The name of the provider port.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return expressRouteProviderPort resource on successful completion of {@link Mono}.
+     */
+    @ServiceMethod(returns = ReturnType.SINGLE)
+    Mono<ExpressRouteProviderPortInner> expressRouteProviderPortAsync(String providerport);
+
+    /**
+     * Retrieves detail of a provider port.
+     *
+     * @param providerport The name of the provider port.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return response for the CheckDnsNameAvailability API service call.
+     * @return expressRouteProviderPort resource along with {@link Response}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    Response<DnsNameAvailabilityResultInner> checkDnsNameAvailabilityWithResponse(
-        String location, String domainNameLabel, Context context);
+    Response<ExpressRouteProviderPortInner> expressRouteProviderPortWithResponse(String providerport, Context context);
+
+    /**
+     * Retrieves detail of a provider port.
+     *
+     * @param providerport The name of the provider port.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return expressRouteProviderPort resource.
+     */
+    @ServiceMethod(returns = ReturnType.SINGLE)
+    ExpressRouteProviderPortInner expressRouteProviderPort(String providerport);
+
+    /**
+     * Lists active connectivity configurations in a network manager.
+     *
+     * @param resourceGroupName The name of the resource group.
+     * @param networkManagerName The name of the network manager.
+     * @param parameters Active Configuration Parameter.
+     * @param top An optional query parameter which specifies the maximum number of records to be returned by the
+     * server.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return result of the request to list active connectivity configurations along with {@link Response} on
+     * successful completion of {@link Mono}.
+     */
+    @ServiceMethod(returns = ReturnType.SINGLE)
+    Mono<Response<ActiveConnectivityConfigurationsListResultInner>>
+        listActiveConnectivityConfigurationsWithResponseAsync(String resourceGroupName, String networkManagerName,
+            ActiveConfigurationParameter parameters, Integer top);
+
+    /**
+     * Lists active connectivity configurations in a network manager.
+     *
+     * @param resourceGroupName The name of the resource group.
+     * @param networkManagerName The name of the network manager.
+     * @param parameters Active Configuration Parameter.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return result of the request to list active connectivity configurations on successful completion of
+     * {@link Mono}.
+     */
+    @ServiceMethod(returns = ReturnType.SINGLE)
+    Mono<ActiveConnectivityConfigurationsListResultInner> listActiveConnectivityConfigurationsAsync(
+        String resourceGroupName, String networkManagerName, ActiveConfigurationParameter parameters);
+
+    /**
+     * Lists active connectivity configurations in a network manager.
+     *
+     * @param resourceGroupName The name of the resource group.
+     * @param networkManagerName The name of the network manager.
+     * @param parameters Active Configuration Parameter.
+     * @param top An optional query parameter which specifies the maximum number of records to be returned by the
+     * server.
+     * @param context The context to associate with this operation.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return result of the request to list active connectivity configurations along with {@link Response}.
+     */
+    @ServiceMethod(returns = ReturnType.SINGLE)
+    Response<ActiveConnectivityConfigurationsListResultInner> listActiveConnectivityConfigurationsWithResponse(
+        String resourceGroupName, String networkManagerName, ActiveConfigurationParameter parameters, Integer top,
+        Context context);
+
+    /**
+     * Lists active connectivity configurations in a network manager.
+     *
+     * @param resourceGroupName The name of the resource group.
+     * @param networkManagerName The name of the network manager.
+     * @param parameters Active Configuration Parameter.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return result of the request to list active connectivity configurations.
+     */
+    @ServiceMethod(returns = ReturnType.SINGLE)
+    ActiveConnectivityConfigurationsListResultInner listActiveConnectivityConfigurations(String resourceGroupName,
+        String networkManagerName, ActiveConfigurationParameter parameters);
+
+    /**
+     * Lists active security admin rules in a network manager.
+     *
+     * @param resourceGroupName The name of the resource group.
+     * @param networkManagerName The name of the network manager.
+     * @param parameters Active Configuration Parameter.
+     * @param top An optional query parameter which specifies the maximum number of records to be returned by the
+     * server.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return result of the request to list active security admin rules along with {@link Response} on successful
+     * completion of {@link Mono}.
+     */
+    @ServiceMethod(returns = ReturnType.SINGLE)
+    Mono<Response<ActiveSecurityAdminRulesListResultInner>> listActiveSecurityAdminRulesWithResponseAsync(
+        String resourceGroupName, String networkManagerName, ActiveConfigurationParameter parameters, Integer top);
+
+    /**
+     * Lists active security admin rules in a network manager.
+     *
+     * @param resourceGroupName The name of the resource group.
+     * @param networkManagerName The name of the network manager.
+     * @param parameters Active Configuration Parameter.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return result of the request to list active security admin rules on successful completion of {@link Mono}.
+     */
+    @ServiceMethod(returns = ReturnType.SINGLE)
+    Mono<ActiveSecurityAdminRulesListResultInner> listActiveSecurityAdminRulesAsync(String resourceGroupName,
+        String networkManagerName, ActiveConfigurationParameter parameters);
+
+    /**
+     * Lists active security admin rules in a network manager.
+     *
+     * @param resourceGroupName The name of the resource group.
+     * @param networkManagerName The name of the network manager.
+     * @param parameters Active Configuration Parameter.
+     * @param top An optional query parameter which specifies the maximum number of records to be returned by the
+     * server.
+     * @param context The context to associate with this operation.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return result of the request to list active security admin rules along with {@link Response}.
+     */
+    @ServiceMethod(returns = ReturnType.SINGLE)
+    Response<ActiveSecurityAdminRulesListResultInner> listActiveSecurityAdminRulesWithResponse(String resourceGroupName,
+        String networkManagerName, ActiveConfigurationParameter parameters, Integer top, Context context);
+
+    /**
+     * Lists active security admin rules in a network manager.
+     *
+     * @param resourceGroupName The name of the resource group.
+     * @param networkManagerName The name of the network manager.
+     * @param parameters Active Configuration Parameter.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return result of the request to list active security admin rules.
+     */
+    @ServiceMethod(returns = ReturnType.SINGLE)
+    ActiveSecurityAdminRulesListResultInner listActiveSecurityAdminRules(String resourceGroupName,
+        String networkManagerName, ActiveConfigurationParameter parameters);
+
+    /**
+     * List all effective connectivity configurations applied on a virtual network.
+     *
+     * @param resourceGroupName The name of the resource group.
+     * @param virtualNetworkName The name of the virtual network.
+     * @param parameters Parameters supplied to list correct page.
+     * @param top An optional query parameter which specifies the maximum number of records to be returned by the
+     * server.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return result of the request to list networkManagerEffectiveConnectivityConfiguration along with
+     * {@link Response} on successful completion of {@link Mono}.
+     */
+    @ServiceMethod(returns = ReturnType.SINGLE)
+    Mono<Response<NetworkManagerEffectiveConnectivityConfigurationListResultInner>>
+        listNetworkManagerEffectiveConnectivityConfigurationsWithResponseAsync(String resourceGroupName,
+            String virtualNetworkName, QueryRequestOptions parameters, Integer top);
+
+    /**
+     * List all effective connectivity configurations applied on a virtual network.
+     *
+     * @param resourceGroupName The name of the resource group.
+     * @param virtualNetworkName The name of the virtual network.
+     * @param parameters Parameters supplied to list correct page.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return result of the request to list networkManagerEffectiveConnectivityConfiguration on successful completion
+     * of {@link Mono}.
+     */
+    @ServiceMethod(returns = ReturnType.SINGLE)
+    Mono<NetworkManagerEffectiveConnectivityConfigurationListResultInner>
+        listNetworkManagerEffectiveConnectivityConfigurationsAsync(String resourceGroupName, String virtualNetworkName,
+            QueryRequestOptions parameters);
+
+    /**
+     * List all effective connectivity configurations applied on a virtual network.
+     *
+     * @param resourceGroupName The name of the resource group.
+     * @param virtualNetworkName The name of the virtual network.
+     * @param parameters Parameters supplied to list correct page.
+     * @param top An optional query parameter which specifies the maximum number of records to be returned by the
+     * server.
+     * @param context The context to associate with this operation.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return result of the request to list networkManagerEffectiveConnectivityConfiguration along with
+     * {@link Response}.
+     */
+    @ServiceMethod(returns = ReturnType.SINGLE)
+    Response<NetworkManagerEffectiveConnectivityConfigurationListResultInner>
+        listNetworkManagerEffectiveConnectivityConfigurationsWithResponse(String resourceGroupName,
+            String virtualNetworkName, QueryRequestOptions parameters, Integer top, Context context);
+
+    /**
+     * List all effective connectivity configurations applied on a virtual network.
+     *
+     * @param resourceGroupName The name of the resource group.
+     * @param virtualNetworkName The name of the virtual network.
+     * @param parameters Parameters supplied to list correct page.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return result of the request to list networkManagerEffectiveConnectivityConfiguration.
+     */
+    @ServiceMethod(returns = ReturnType.SINGLE)
+    NetworkManagerEffectiveConnectivityConfigurationListResultInner
+        listNetworkManagerEffectiveConnectivityConfigurations(String resourceGroupName, String virtualNetworkName,
+            QueryRequestOptions parameters);
+
+    /**
+     * List all effective security admin rules applied on a virtual network.
+     *
+     * @param resourceGroupName The name of the resource group.
+     * @param virtualNetworkName The name of the virtual network.
+     * @param parameters Parameters supplied to list correct page.
+     * @param top An optional query parameter which specifies the maximum number of records to be returned by the
+     * server.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return result of the request to list networkManagerEffectiveSecurityAdminRules along with {@link Response} on
+     * successful completion of {@link Mono}.
+     */
+    @ServiceMethod(returns = ReturnType.SINGLE)
+    Mono<Response<NetworkManagerEffectiveSecurityAdminRulesListResultInner>>
+        listNetworkManagerEffectiveSecurityAdminRulesWithResponseAsync(String resourceGroupName,
+            String virtualNetworkName, QueryRequestOptions parameters, Integer top);
+
+    /**
+     * List all effective security admin rules applied on a virtual network.
+     *
+     * @param resourceGroupName The name of the resource group.
+     * @param virtualNetworkName The name of the virtual network.
+     * @param parameters Parameters supplied to list correct page.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return result of the request to list networkManagerEffectiveSecurityAdminRules on successful completion of
+     * {@link Mono}.
+     */
+    @ServiceMethod(returns = ReturnType.SINGLE)
+    Mono<NetworkManagerEffectiveSecurityAdminRulesListResultInner> listNetworkManagerEffectiveSecurityAdminRulesAsync(
+        String resourceGroupName, String virtualNetworkName, QueryRequestOptions parameters);
+
+    /**
+     * List all effective security admin rules applied on a virtual network.
+     *
+     * @param resourceGroupName The name of the resource group.
+     * @param virtualNetworkName The name of the virtual network.
+     * @param parameters Parameters supplied to list correct page.
+     * @param top An optional query parameter which specifies the maximum number of records to be returned by the
+     * server.
+     * @param context The context to associate with this operation.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return result of the request to list networkManagerEffectiveSecurityAdminRules along with {@link Response}.
+     */
+    @ServiceMethod(returns = ReturnType.SINGLE)
+    Response<NetworkManagerEffectiveSecurityAdminRulesListResultInner>
+        listNetworkManagerEffectiveSecurityAdminRulesWithResponse(String resourceGroupName, String virtualNetworkName,
+            QueryRequestOptions parameters, Integer top, Context context);
+
+    /**
+     * List all effective security admin rules applied on a virtual network.
+     *
+     * @param resourceGroupName The name of the resource group.
+     * @param virtualNetworkName The name of the virtual network.
+     * @param parameters Parameters supplied to list correct page.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return result of the request to list networkManagerEffectiveSecurityAdminRules.
+     */
+    @ServiceMethod(returns = ReturnType.SINGLE)
+    NetworkManagerEffectiveSecurityAdminRulesListResultInner listNetworkManagerEffectiveSecurityAdminRules(
+        String resourceGroupName, String virtualNetworkName, QueryRequestOptions parameters);
 
     /**
      * Gives the supported security providers for the virtual wan.
@@ -1187,11 +1866,11 @@ public interface NetworkManagementClient {
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return collection of SecurityProviders.
+     * @return collection of SecurityProviders along with {@link Response} on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    Mono<Response<VirtualWanSecurityProvidersInner>> supportedSecurityProvidersWithResponseAsync(
-        String resourceGroupName, String virtualWanName);
+    Mono<Response<VirtualWanSecurityProvidersInner>>
+        supportedSecurityProvidersWithResponseAsync(String resourceGroupName, String virtualWanName);
 
     /**
      * Gives the supported security providers for the virtual wan.
@@ -1201,11 +1880,26 @@ public interface NetworkManagementClient {
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return collection of SecurityProviders.
+     * @return collection of SecurityProviders on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    Mono<VirtualWanSecurityProvidersInner> supportedSecurityProvidersAsync(
-        String resourceGroupName, String virtualWanName);
+    Mono<VirtualWanSecurityProvidersInner> supportedSecurityProvidersAsync(String resourceGroupName,
+        String virtualWanName);
+
+    /**
+     * Gives the supported security providers for the virtual wan.
+     *
+     * @param resourceGroupName The resource group name.
+     * @param virtualWanName The name of the VirtualWAN for which supported security providers are needed.
+     * @param context The context to associate with this operation.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return collection of SecurityProviders along with {@link Response}.
+     */
+    @ServiceMethod(returns = ReturnType.SINGLE)
+    Response<VirtualWanSecurityProvidersInner> supportedSecurityProvidersWithResponse(String resourceGroupName,
+        String virtualWanName, Context context);
 
     /**
      * Gives the supported security providers for the virtual wan.
@@ -1221,21 +1915,6 @@ public interface NetworkManagementClient {
     VirtualWanSecurityProvidersInner supportedSecurityProviders(String resourceGroupName, String virtualWanName);
 
     /**
-     * Gives the supported security providers for the virtual wan.
-     *
-     * @param resourceGroupName The resource group name.
-     * @param virtualWanName The name of the VirtualWAN for which supported security providers are needed.
-     * @param context The context to associate with this operation.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return collection of SecurityProviders.
-     */
-    @ServiceMethod(returns = ReturnType.SINGLE)
-    Response<VirtualWanSecurityProvidersInner> supportedSecurityProvidersWithResponse(
-        String resourceGroupName, String virtualWanName, Context context);
-
-    /**
      * Generates a unique VPN profile for P2S clients for VirtualWan and associated VpnServerConfiguration combination
      * in the specified resource group.
      *
@@ -1245,7 +1924,8 @@ public interface NetworkManagementClient {
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return vpn Profile Response for package generation.
+     * @return vpn Profile Response for package generation along with {@link Response} on successful completion of
+     * {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
     Mono<Response<Flux<ByteBuffer>>> generatevirtualwanvpnserverconfigurationvpnprofileWithResponseAsync(
@@ -1261,12 +1941,63 @@ public interface NetworkManagementClient {
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return vpn Profile Response for package generation.
+     * @return the {@link PollerFlux} for polling of vpn Profile Response for package generation.
      */
     @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
     PollerFlux<PollResult<VpnProfileResponseInner>, VpnProfileResponseInner>
-        beginGeneratevirtualwanvpnserverconfigurationvpnprofileAsync(
-            String resourceGroupName, String virtualWanName, VirtualWanVpnProfileParameters vpnClientParams);
+        beginGeneratevirtualwanvpnserverconfigurationvpnprofileAsync(String resourceGroupName, String virtualWanName,
+            VirtualWanVpnProfileParameters vpnClientParams);
+
+    /**
+     * Generates a unique VPN profile for P2S clients for VirtualWan and associated VpnServerConfiguration combination
+     * in the specified resource group.
+     *
+     * @param resourceGroupName The resource group name.
+     * @param virtualWanName The name of the VirtualWAN whose associated VpnServerConfigurations is needed.
+     * @param vpnClientParams Parameters supplied to the generate VirtualWan VPN profile generation operation.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return the {@link SyncPoller} for polling of vpn Profile Response for package generation.
+     */
+    @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
+    SyncPoller<PollResult<VpnProfileResponseInner>, VpnProfileResponseInner>
+        beginGeneratevirtualwanvpnserverconfigurationvpnprofile(String resourceGroupName, String virtualWanName,
+            VirtualWanVpnProfileParameters vpnClientParams);
+
+    /**
+     * Generates a unique VPN profile for P2S clients for VirtualWan and associated VpnServerConfiguration combination
+     * in the specified resource group.
+     *
+     * @param resourceGroupName The resource group name.
+     * @param virtualWanName The name of the VirtualWAN whose associated VpnServerConfigurations is needed.
+     * @param vpnClientParams Parameters supplied to the generate VirtualWan VPN profile generation operation.
+     * @param context The context to associate with this operation.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return the {@link SyncPoller} for polling of vpn Profile Response for package generation.
+     */
+    @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
+    SyncPoller<PollResult<VpnProfileResponseInner>, VpnProfileResponseInner>
+        beginGeneratevirtualwanvpnserverconfigurationvpnprofile(String resourceGroupName, String virtualWanName,
+            VirtualWanVpnProfileParameters vpnClientParams, Context context);
+
+    /**
+     * Generates a unique VPN profile for P2S clients for VirtualWan and associated VpnServerConfiguration combination
+     * in the specified resource group.
+     *
+     * @param resourceGroupName The resource group name.
+     * @param virtualWanName The name of the VirtualWAN whose associated VpnServerConfigurations is needed.
+     * @param vpnClientParams Parameters supplied to the generate VirtualWan VPN profile generation operation.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return vpn Profile Response for package generation on successful completion of {@link Mono}.
+     */
+    @ServiceMethod(returns = ReturnType.SINGLE)
+    Mono<VpnProfileResponseInner> generatevirtualwanvpnserverconfigurationvpnprofileAsync(String resourceGroupName,
+        String virtualWanName, VirtualWanVpnProfileParameters vpnClientParams);
 
     /**
      * Generates a unique VPN profile for P2S clients for VirtualWan and associated VpnServerConfiguration combination
@@ -1280,10 +2011,9 @@ public interface NetworkManagementClient {
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
      * @return vpn Profile Response for package generation.
      */
-    @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
-    SyncPoller<PollResult<VpnProfileResponseInner>, VpnProfileResponseInner>
-        beginGeneratevirtualwanvpnserverconfigurationvpnprofile(
-            String resourceGroupName, String virtualWanName, VirtualWanVpnProfileParameters vpnClientParams);
+    @ServiceMethod(returns = ReturnType.SINGLE)
+    VpnProfileResponseInner generatevirtualwanvpnserverconfigurationvpnprofile(String resourceGroupName,
+        String virtualWanName, VirtualWanVpnProfileParameters vpnClientParams);
 
     /**
      * Generates a unique VPN profile for P2S clients for VirtualWan and associated VpnServerConfiguration combination
@@ -1298,63 +2028,7 @@ public interface NetworkManagementClient {
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
      * @return vpn Profile Response for package generation.
      */
-    @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
-    SyncPoller<PollResult<VpnProfileResponseInner>, VpnProfileResponseInner>
-        beginGeneratevirtualwanvpnserverconfigurationvpnprofile(
-            String resourceGroupName,
-            String virtualWanName,
-            VirtualWanVpnProfileParameters vpnClientParams,
-            Context context);
-
-    /**
-     * Generates a unique VPN profile for P2S clients for VirtualWan and associated VpnServerConfiguration combination
-     * in the specified resource group.
-     *
-     * @param resourceGroupName The resource group name.
-     * @param virtualWanName The name of the VirtualWAN whose associated VpnServerConfigurations is needed.
-     * @param vpnClientParams Parameters supplied to the generate VirtualWan VPN profile generation operation.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return vpn Profile Response for package generation.
-     */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    Mono<VpnProfileResponseInner> generatevirtualwanvpnserverconfigurationvpnprofileAsync(
-        String resourceGroupName, String virtualWanName, VirtualWanVpnProfileParameters vpnClientParams);
-
-    /**
-     * Generates a unique VPN profile for P2S clients for VirtualWan and associated VpnServerConfiguration combination
-     * in the specified resource group.
-     *
-     * @param resourceGroupName The resource group name.
-     * @param virtualWanName The name of the VirtualWAN whose associated VpnServerConfigurations is needed.
-     * @param vpnClientParams Parameters supplied to the generate VirtualWan VPN profile generation operation.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return vpn Profile Response for package generation.
-     */
-    @ServiceMethod(returns = ReturnType.SINGLE)
-    VpnProfileResponseInner generatevirtualwanvpnserverconfigurationvpnprofile(
-        String resourceGroupName, String virtualWanName, VirtualWanVpnProfileParameters vpnClientParams);
-
-    /**
-     * Generates a unique VPN profile for P2S clients for VirtualWan and associated VpnServerConfiguration combination
-     * in the specified resource group.
-     *
-     * @param resourceGroupName The resource group name.
-     * @param virtualWanName The name of the VirtualWAN whose associated VpnServerConfigurations is needed.
-     * @param vpnClientParams Parameters supplied to the generate VirtualWan VPN profile generation operation.
-     * @param context The context to associate with this operation.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return vpn Profile Response for package generation.
-     */
-    @ServiceMethod(returns = ReturnType.SINGLE)
-    VpnProfileResponseInner generatevirtualwanvpnserverconfigurationvpnprofile(
-        String resourceGroupName,
-        String virtualWanName,
-        VirtualWanVpnProfileParameters vpnClientParams,
-        Context context);
+    VpnProfileResponseInner generatevirtualwanvpnserverconfigurationvpnprofile(String resourceGroupName,
+        String virtualWanName, VirtualWanVpnProfileParameters vpnClientParams, Context context);
 }

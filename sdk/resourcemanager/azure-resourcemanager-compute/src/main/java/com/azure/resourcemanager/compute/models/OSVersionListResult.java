@@ -6,31 +6,39 @@ package com.azure.resourcemanager.compute.models;
 
 import com.azure.core.annotation.Fluent;
 import com.azure.core.util.logging.ClientLogger;
+import com.azure.json.JsonReader;
+import com.azure.json.JsonSerializable;
+import com.azure.json.JsonToken;
+import com.azure.json.JsonWriter;
 import com.azure.resourcemanager.compute.fluent.models.OSVersionInner;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import java.io.IOException;
 import java.util.List;
 
-/** The OSVersionListResult model. */
+/**
+ * The list operation result.
+ */
 @Fluent
-public final class OSVersionListResult {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(OSVersionListResult.class);
-
+public final class OSVersionListResult implements JsonSerializable<OSVersionListResult> {
     /*
-     * The value property.
+     * The list of resources.
      */
-    @JsonProperty(value = "value", required = true)
     private List<OSVersionInner> value;
 
     /*
-     * The nextLink property.
+     * The URI to fetch the next page of resources. Use this to get the next page of resources. Do this till nextLink is
+     * null to fetch all the resources.
      */
-    @JsonProperty(value = "nextLink")
     private String nextLink;
 
     /**
-     * Get the value property: The value property.
-     *
+     * Creates an instance of OSVersionListResult class.
+     */
+    public OSVersionListResult() {
+    }
+
+    /**
+     * Get the value property: The list of resources.
+     * 
      * @return the value value.
      */
     public List<OSVersionInner> value() {
@@ -38,8 +46,8 @@ public final class OSVersionListResult {
     }
 
     /**
-     * Set the value property: The value property.
-     *
+     * Set the value property: The list of resources.
+     * 
      * @param value the value value to set.
      * @return the OSVersionListResult object itself.
      */
@@ -49,8 +57,9 @@ public final class OSVersionListResult {
     }
 
     /**
-     * Get the nextLink property: The nextLink property.
-     *
+     * Get the nextLink property: The URI to fetch the next page of resources. Use this to get the next page of
+     * resources. Do this till nextLink is null to fetch all the resources.
+     * 
      * @return the nextLink value.
      */
     public String nextLink() {
@@ -58,8 +67,9 @@ public final class OSVersionListResult {
     }
 
     /**
-     * Set the nextLink property: The nextLink property.
-     *
+     * Set the nextLink property: The URI to fetch the next page of resources. Use this to get the next page of
+     * resources. Do this till nextLink is null to fetch all the resources.
+     * 
      * @param nextLink the nextLink value to set.
      * @return the OSVersionListResult object itself.
      */
@@ -70,16 +80,58 @@ public final class OSVersionListResult {
 
     /**
      * Validates the instance.
-     *
+     * 
      * @throws IllegalArgumentException thrown if the instance is not valid.
      */
     public void validate() {
         if (value() == null) {
-            throw logger
-                .logExceptionAsError(
-                    new IllegalArgumentException("Missing required property value in model OSVersionListResult"));
+            throw LOGGER.atError()
+                .log(new IllegalArgumentException("Missing required property value in model OSVersionListResult"));
         } else {
             value().forEach(e -> e.validate());
         }
+    }
+
+    private static final ClientLogger LOGGER = new ClientLogger(OSVersionListResult.class);
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public JsonWriter toJson(JsonWriter jsonWriter) throws IOException {
+        jsonWriter.writeStartObject();
+        jsonWriter.writeArrayField("value", this.value, (writer, element) -> writer.writeJson(element));
+        jsonWriter.writeStringField("nextLink", this.nextLink);
+        return jsonWriter.writeEndObject();
+    }
+
+    /**
+     * Reads an instance of OSVersionListResult from the JsonReader.
+     * 
+     * @param jsonReader The JsonReader being read.
+     * @return An instance of OSVersionListResult if the JsonReader was pointing to an instance of it, or null if it was
+     * pointing to JSON null.
+     * @throws IllegalStateException If the deserialized JSON object was missing any required properties.
+     * @throws IOException If an error occurs while reading the OSVersionListResult.
+     */
+    public static OSVersionListResult fromJson(JsonReader jsonReader) throws IOException {
+        return jsonReader.readObject(reader -> {
+            OSVersionListResult deserializedOSVersionListResult = new OSVersionListResult();
+            while (reader.nextToken() != JsonToken.END_OBJECT) {
+                String fieldName = reader.getFieldName();
+                reader.nextToken();
+
+                if ("value".equals(fieldName)) {
+                    List<OSVersionInner> value = reader.readArray(reader1 -> OSVersionInner.fromJson(reader1));
+                    deserializedOSVersionListResult.value = value;
+                } else if ("nextLink".equals(fieldName)) {
+                    deserializedOSVersionListResult.nextLink = reader.getString();
+                } else {
+                    reader.skipChildren();
+                }
+            }
+
+            return deserializedOSVersionListResult;
+        });
     }
 }

@@ -9,10 +9,63 @@ import java.util.Objects;
 import java.util.function.Function;
 
 /**
+ * <p>
  * Represents a credential that uses a shared access signature to authenticate to an Azure Service.
+ * It is used for authenticating and authorizing access to Azure services using a shared access signature.
+ * </p>
+ *
+ * <p>
+ * A shared access signature is a string-based token that grants limited permissions and access to specific
+ * resources within an Azure service for a specified period. It allows you to provide time-limited access to your
+ * resources without sharing your account key or other sensitive credentials.
+ * </p>
+ *
+ * <p>
+ * The {@link AzureSasCredential} enables you to authenticate and access Azure services that
+ * support shared access signatures. By creating an instance of the {@link AzureSasCredential} class and providing the
+ * SAS token as a parameter, you can use this credential to authenticate requests to Azure services.
+ * </p>
+ *
+ * <p>
+ * To use the Credential, you typically pass it to the appropriate Azure client or service client
+ * builder during instantiation. The library internally handles the authentication process and includes the
+ * SAS token in the HTTP requests made to the Azure service, allowing you to access the resources specified in
+ * the SAS token.
+ * </p>
+ *
+ * <p>
+ * The {@link AzureSasCredential} is particularly useful when you need to grant temporary and limited access to
+ * specific resources, such as Azure Storage containers, blobs, queues, or files, without exposing
+ * your account key.
+ * </p>
+ *
+ * <p>
+ * It's important to note that the availability and usage of the {@link AzureSasCredential} may depend on the
+ * specific Azure service and its support for shared access signatures. Additionally, the format and content of the
+ * SAS token may vary depending on the service and resource you are targeting.
+ * </p>
+ *
+ * <p>
+ * <strong>Sample: Azure SAS Authentication</strong>
+ * </p>
+ *
+ * <p>
+ * The following code sample demonstrates the creation of a {@link com.azure.core.credential.AzureSasCredential},
+ * using the sas token to configure it.
+ * </p>
+ *
+ * <!-- src_embed com.azure.core.credential.azureSasCredential -->
+ * <pre>
+ * AzureSasCredential azureSasCredential =
+ *     new AzureSasCredential&#40;&quot;AZURE-SERVICE-SAS-KEY&quot;&#41;;
+ * </pre>
+ * <!-- end com.azure.core.credential.azureSasCredential -->
+ *
+ * @see com.azure.core.credential
  */
 public final class AzureSasCredential {
-    private final ClientLogger logger = new ClientLogger(AzureSasCredential.class);
+    // AzureSasCredential is a commonly used credential type, use a static logger.
+    private static final ClientLogger LOGGER = new ClientLogger(AzureSasCredential.class);
     private final Function<String, String> signatureEncoder;
 
     private volatile String signature;
@@ -46,7 +99,7 @@ public final class AzureSasCredential {
     public AzureSasCredential(String signature, Function<String, String> signatureEncoder) {
         Objects.requireNonNull(signature, "'signature' cannot be null.");
         if (signature.isEmpty()) {
-            throw logger.logExceptionAsError(new IllegalArgumentException("'signature' cannot be empty."));
+            throw LOGGER.logExceptionAsError(new IllegalArgumentException("'signature' cannot be empty."));
         }
 
         this.signatureEncoder = signatureEncoder;
@@ -73,7 +126,7 @@ public final class AzureSasCredential {
     public AzureSasCredential update(String signature) {
         Objects.requireNonNull(signature, "'signature' cannot be null.");
         if (signature.isEmpty()) {
-            throw logger.logExceptionAsError(new IllegalArgumentException("'signature' cannot be empty."));
+            throw LOGGER.logExceptionAsError(new IllegalArgumentException("'signature' cannot be empty."));
         }
 
         this.signature = (signatureEncoder == null) ? signature : signatureEncoder.apply(signature);

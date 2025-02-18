@@ -76,6 +76,18 @@ public final class AttestationImpl implements Attestation, Attestation.Definitio
         return this.innerModel().lastComplianceStateChangeAt();
     }
 
+    public OffsetDateTime assessmentDate() {
+        return this.innerModel().assessmentDate();
+    }
+
+    public Object metadata() {
+        return this.innerModel().metadata();
+    }
+
+    public String resourceGroupName() {
+        return resourceGroupName;
+    }
+
     public AttestationInner innerModel() {
         return this.innerObject;
     }
@@ -94,20 +106,16 @@ public final class AttestationImpl implements Attestation, Attestation.Definitio
     }
 
     public Attestation create() {
-        this.innerObject =
-            serviceManager
-                .serviceClient()
-                .getAttestations()
-                .createOrUpdateAtResourceGroup(resourceGroupName, attestationName, this.innerModel(), Context.NONE);
+        this.innerObject = serviceManager.serviceClient()
+            .getAttestations()
+            .createOrUpdateAtResourceGroup(resourceGroupName, attestationName, this.innerModel(), Context.NONE);
         return this;
     }
 
     public Attestation create(Context context) {
-        this.innerObject =
-            serviceManager
-                .serviceClient()
-                .getAttestations()
-                .createOrUpdateAtResourceGroup(resourceGroupName, attestationName, this.innerModel(), context);
+        this.innerObject = serviceManager.serviceClient()
+            .getAttestations()
+            .createOrUpdateAtResourceGroup(resourceGroupName, attestationName, this.innerModel(), context);
         return this;
     }
 
@@ -122,48 +130,40 @@ public final class AttestationImpl implements Attestation, Attestation.Definitio
     }
 
     public Attestation apply() {
-        this.innerObject =
-            serviceManager
-                .serviceClient()
-                .getAttestations()
-                .createOrUpdateAtResourceGroup(resourceGroupName, attestationName, this.innerModel(), Context.NONE);
+        this.innerObject = serviceManager.serviceClient()
+            .getAttestations()
+            .createOrUpdateAtResourceGroup(resourceGroupName, attestationName, this.innerModel(), Context.NONE);
         return this;
     }
 
     public Attestation apply(Context context) {
-        this.innerObject =
-            serviceManager
-                .serviceClient()
-                .getAttestations()
-                .createOrUpdateAtResourceGroup(resourceGroupName, attestationName, this.innerModel(), context);
+        this.innerObject = serviceManager.serviceClient()
+            .getAttestations()
+            .createOrUpdateAtResourceGroup(resourceGroupName, attestationName, this.innerModel(), context);
         return this;
     }
 
-    AttestationImpl(
-        AttestationInner innerObject, com.azure.resourcemanager.policyinsights.PolicyInsightsManager serviceManager) {
+    AttestationImpl(AttestationInner innerObject,
+        com.azure.resourcemanager.policyinsights.PolicyInsightsManager serviceManager) {
         this.innerObject = innerObject;
         this.serviceManager = serviceManager;
-        this.resourceGroupName = Utils.getValueFromIdByName(innerObject.id(), "resourceGroups");
-        this.attestationName = Utils.getValueFromIdByName(innerObject.id(), "attestations");
+        this.resourceGroupName = ResourceManagerUtils.getValueFromIdByName(innerObject.id(), "resourceGroups");
+        this.attestationName = ResourceManagerUtils.getValueFromIdByName(innerObject.id(), "attestations");
     }
 
     public Attestation refresh() {
-        this.innerObject =
-            serviceManager
-                .serviceClient()
-                .getAttestations()
-                .getByResourceGroupWithResponse(resourceGroupName, attestationName, Context.NONE)
-                .getValue();
+        this.innerObject = serviceManager.serviceClient()
+            .getAttestations()
+            .getByResourceGroupWithResponse(resourceGroupName, attestationName, Context.NONE)
+            .getValue();
         return this;
     }
 
     public Attestation refresh(Context context) {
-        this.innerObject =
-            serviceManager
-                .serviceClient()
-                .getAttestations()
-                .getByResourceGroupWithResponse(resourceGroupName, attestationName, context)
-                .getValue();
+        this.innerObject = serviceManager.serviceClient()
+            .getAttestations()
+            .getByResourceGroupWithResponse(resourceGroupName, attestationName, context)
+            .getValue();
         return this;
     }
 
@@ -199,6 +199,16 @@ public final class AttestationImpl implements Attestation, Attestation.Definitio
 
     public AttestationImpl withEvidence(List<AttestationEvidence> evidence) {
         this.innerModel().withEvidence(evidence);
+        return this;
+    }
+
+    public AttestationImpl withAssessmentDate(OffsetDateTime assessmentDate) {
+        this.innerModel().withAssessmentDate(assessmentDate);
+        return this;
+    }
+
+    public AttestationImpl withMetadata(Object metadata) {
+        this.innerModel().withMetadata(metadata);
         return this;
     }
 }

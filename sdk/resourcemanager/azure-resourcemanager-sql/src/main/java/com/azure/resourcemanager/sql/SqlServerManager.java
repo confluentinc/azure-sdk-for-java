@@ -6,15 +6,17 @@ package com.azure.resourcemanager.sql;
 import com.azure.core.credential.TokenCredential;
 import com.azure.core.http.HttpPipeline;
 import com.azure.resourcemanager.resources.fluentcore.arm.AzureConfigurable;
-import com.azure.resourcemanager.resources.fluentcore.arm.implementation.AzureConfigurableImpl;
 import com.azure.resourcemanager.resources.fluentcore.arm.Manager;
 import com.azure.core.management.profile.AzureProfile;
+import com.azure.resourcemanager.resources.fluentcore.arm.implementation.AzureConfigurableImpl;
 import com.azure.resourcemanager.resources.fluentcore.utils.HttpPipelineProvider;
 import com.azure.resourcemanager.sql.fluent.SqlManagementClient;
 import com.azure.resourcemanager.sql.implementation.SqlManagementClientBuilder;
 import com.azure.resourcemanager.sql.implementation.SqlServersImpl;
 import com.azure.resourcemanager.sql.models.SqlServers;
 import com.azure.resourcemanager.storage.StorageManager;
+
+import java.util.Objects;
 
 /** Entry point to Azure SQLServer resource management. */
 public class SqlServerManager extends Manager<SqlManagementClient> {
@@ -30,20 +32,20 @@ public class SqlServerManager extends Manager<SqlManagementClient> {
      * @param profile The AzureProfile to use.
      */
     protected SqlServerManager(HttpPipeline httpPipeline, AzureProfile profile) {
-        super(
-            httpPipeline,
-            profile,
-            new SqlManagementClientBuilder()
-                .pipeline(httpPipeline)
+        super(httpPipeline, profile,
+            new SqlManagementClientBuilder().pipeline(httpPipeline)
                 .subscriptionId(profile.getSubscriptionId())
                 .endpoint(profile.getEnvironment().getResourceManagerEndpoint())
                 .buildClient());
-        this.storageManager = AzureConfigurableImpl.configureHttpPipeline(httpPipeline, StorageManager.configure())
-            .authenticate(null, profile);
+        this.storageManager = StorageManager.authenticate(httpPipeline, profile);
         this.tenantId = profile.getTenantId();
     }
 
-    /** @return the storage manager in sql manager */
+    /**
+     * Gets the storage manager in sql manager.
+     *
+     * @return the storage manager in sql manager
+     */
     public StorageManager storageManager() {
         return storageManager;
     }
@@ -65,17 +67,21 @@ public class SqlServerManager extends Manager<SqlManagementClient> {
      * @return the SqlServer
      */
     public static SqlServerManager authenticate(TokenCredential credential, AzureProfile profile) {
+        Objects.requireNonNull(credential, "'credential' cannot be null.");
+        Objects.requireNonNull(profile, "'profile' cannot be null.");
         return authenticate(HttpPipelineProvider.buildHttpPipeline(credential, profile), profile);
     }
 
     /**
      * Creates an instance of SqlServer that exposes Compute resource management API entry points.
      *
-     * @param httpPipeline the HttpPipeline to be used for API calls.
+     * @param httpPipeline the {@link HttpPipeline} configured with Azure authentication credential.
      * @param profile the profile to use
      * @return the SqlServer
      */
-    private static SqlServerManager authenticate(HttpPipeline httpPipeline, AzureProfile profile) {
+    public static SqlServerManager authenticate(HttpPipeline httpPipeline, AzureProfile profile) {
+        Objects.requireNonNull(httpPipeline, "'httpPipeline' cannot be null.");
+        Objects.requireNonNull(profile, "'profile' cannot be null.");
         return new SqlServerManager(httpPipeline, profile);
     }
 
@@ -99,7 +105,11 @@ public class SqlServerManager extends Manager<SqlManagementClient> {
         }
     }
 
-    /** @return the SQL Server management API entry point */
+    /**
+     * Gets the API entry point of SQL Server management.
+     *
+     * @return the SQL Server management API entry point
+     */
     public SqlServers sqlServers() {
         if (sqlServers == null) {
             sqlServers = new SqlServersImpl(this);

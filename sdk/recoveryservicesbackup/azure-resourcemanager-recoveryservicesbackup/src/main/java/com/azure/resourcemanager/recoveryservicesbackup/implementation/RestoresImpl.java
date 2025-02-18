@@ -9,62 +9,32 @@ import com.azure.core.util.logging.ClientLogger;
 import com.azure.resourcemanager.recoveryservicesbackup.fluent.RestoresClient;
 import com.azure.resourcemanager.recoveryservicesbackup.models.RestoreRequestResource;
 import com.azure.resourcemanager.recoveryservicesbackup.models.Restores;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 public final class RestoresImpl implements Restores {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(RestoresImpl.class);
+    private static final ClientLogger LOGGER = new ClientLogger(RestoresImpl.class);
 
     private final RestoresClient innerClient;
 
     private final com.azure.resourcemanager.recoveryservicesbackup.RecoveryServicesBackupManager serviceManager;
 
-    public RestoresImpl(
-        RestoresClient innerClient,
+    public RestoresImpl(RestoresClient innerClient,
         com.azure.resourcemanager.recoveryservicesbackup.RecoveryServicesBackupManager serviceManager) {
         this.innerClient = innerClient;
         this.serviceManager = serviceManager;
     }
 
-    public void trigger(
-        String vaultName,
-        String resourceGroupName,
-        String fabricName,
-        String containerName,
-        String protectedItemName,
-        String recoveryPointId,
-        RestoreRequestResource parameters) {
-        this
-            .serviceClient()
-            .trigger(
-                vaultName,
-                resourceGroupName,
-                fabricName,
-                containerName,
-                protectedItemName,
-                recoveryPointId,
+    public void trigger(String vaultName, String resourceGroupName, String fabricName, String containerName,
+        String protectedItemName, String recoveryPointId, RestoreRequestResource parameters) {
+        this.serviceClient()
+            .trigger(vaultName, resourceGroupName, fabricName, containerName, protectedItemName, recoveryPointId,
                 parameters);
     }
 
-    public void trigger(
-        String vaultName,
-        String resourceGroupName,
-        String fabricName,
-        String containerName,
-        String protectedItemName,
-        String recoveryPointId,
-        RestoreRequestResource parameters,
-        Context context) {
-        this
-            .serviceClient()
-            .trigger(
-                vaultName,
-                resourceGroupName,
-                fabricName,
-                containerName,
-                protectedItemName,
-                recoveryPointId,
-                parameters,
-                context);
+    public void trigger(String vaultName, String resourceGroupName, String fabricName, String containerName,
+        String protectedItemName, String recoveryPointId, RestoreRequestResource parameters, Context context) {
+        this.serviceClient()
+            .trigger(vaultName, resourceGroupName, fabricName, containerName, protectedItemName, recoveryPointId,
+                parameters, context);
     }
 
     private RestoresClient serviceClient() {

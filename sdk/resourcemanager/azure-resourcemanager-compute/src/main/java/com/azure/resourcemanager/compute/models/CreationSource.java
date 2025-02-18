@@ -18,7 +18,11 @@ public class CreationSource {
         this.creationData = creationData;
     }
 
-    /** @return type of the source from which disk or snapshot is created */
+    /**
+     * Gets type of the source from which disk or snapshot is created.
+     *
+     * @return type of the source from which disk or snapshot is created
+     */
     public CreationSourceType type() {
         DiskCreateOption createOption = this.creationData.createOption();
         if (createOption == DiskCreateOption.FROM_IMAGE) {
@@ -31,7 +35,7 @@ public class CreationSource {
         if (createOption == DiskCreateOption.IMPORT) {
             return CreationSourceType.IMPORTED_FROM_VHD;
         }
-        if (createOption == DiskCreateOption.COPY) {
+        if (createOption == DiskCreateOption.COPY || createOption == DiskCreateOption.COPY_START) {
             String sourceResourceId = this.creationData.sourceResourceId();
             if (sourceResourceId == null && this.creationData.sourceUri() != null) {
                 sourceResourceId = this.creationData.sourceUri();
@@ -52,7 +56,11 @@ public class CreationSource {
         return CreationSourceType.UNKNOWN;
     }
 
-    /** @return ID of the source */
+    /**
+     * Gets ID of the source.
+     *
+     * @return ID of the source
+     */
     public String sourceId() {
         if (this.type() == CreationSourceType.FROM_OS_DISK_IMAGE
             || this.type() == CreationSourceType.FROM_DATA_DISK_IMAGE) {
@@ -79,6 +87,8 @@ public class CreationSource {
     }
 
     /**
+     * Gets the LUN value of the data disk image if this disk or snapshot is created from a data disk image.
+     *
      * @return the LUN value of the data disk image if this disk or snapshot is created from a data disk image, -1
      *     otherwise
      */

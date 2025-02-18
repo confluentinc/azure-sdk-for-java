@@ -6,117 +6,105 @@ package com.azure.resourcemanager.datafactory.fluent.models;
 
 import com.azure.core.annotation.Fluent;
 import com.azure.core.util.logging.ClientLogger;
+import com.azure.json.JsonReader;
+import com.azure.json.JsonSerializable;
+import com.azure.json.JsonToken;
+import com.azure.json.JsonWriter;
 import com.azure.resourcemanager.datafactory.models.SecretBase;
 import com.azure.resourcemanager.datafactory.models.SparkAuthenticationType;
 import com.azure.resourcemanager.datafactory.models.SparkServerType;
 import com.azure.resourcemanager.datafactory.models.SparkThriftTransportProtocol;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import java.io.IOException;
 
-/** Spark Server linked service properties. */
+/**
+ * Spark Server linked service properties.
+ */
 @Fluent
-public final class SparkLinkedServiceTypeProperties {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(SparkLinkedServiceTypeProperties.class);
-
+public final class SparkLinkedServiceTypeProperties implements JsonSerializable<SparkLinkedServiceTypeProperties> {
     /*
      * IP address or host name of the Spark server
      */
-    @JsonProperty(value = "host", required = true)
     private Object host;
 
     /*
-     * The TCP port that the Spark server uses to listen for client
-     * connections.
+     * The TCP port that the Spark server uses to listen for client connections.
      */
-    @JsonProperty(value = "port", required = true)
     private Object port;
 
     /*
      * The type of Spark server.
      */
-    @JsonProperty(value = "serverType")
     private SparkServerType serverType;
 
     /*
      * The transport protocol to use in the Thrift layer.
      */
-    @JsonProperty(value = "thriftTransportProtocol")
     private SparkThriftTransportProtocol thriftTransportProtocol;
 
     /*
      * The authentication method used to access the Spark server.
      */
-    @JsonProperty(value = "authenticationType", required = true)
     private SparkAuthenticationType authenticationType;
 
     /*
      * The user name that you use to access Spark Server.
      */
-    @JsonProperty(value = "username")
     private Object username;
 
     /*
-     * The password corresponding to the user name that you provided in the
-     * Username field
+     * The password corresponding to the user name that you provided in the Username field
      */
-    @JsonProperty(value = "password")
     private SecretBase password;
 
     /*
      * The partial URL corresponding to the Spark server.
      */
-    @JsonProperty(value = "httpPath")
     private Object httpPath;
 
     /*
-     * Specifies whether the connections to the server are encrypted using SSL.
-     * The default value is false.
+     * Specifies whether the connections to the server are encrypted using SSL. The default value is false.
      */
-    @JsonProperty(value = "enableSsl")
     private Object enableSsl;
 
     /*
-     * The full path of the .pem file containing trusted CA certificates for
-     * verifying the server when connecting over SSL. This property can only be
-     * set when using SSL on self-hosted IR. The default value is the
-     * cacerts.pem file installed with the IR.
+     * The full path of the .pem file containing trusted CA certificates for verifying the server when connecting over
+     * SSL. This property can only be set when using SSL on self-hosted IR. The default value is the cacerts.pem file
+     * installed with the IR.
      */
-    @JsonProperty(value = "trustedCertPath")
     private Object trustedCertPath;
 
     /*
-     * Specifies whether to use a CA certificate from the system trust store or
-     * from a specified PEM file. The default value is false.
+     * Specifies whether to use a CA certificate from the system trust store or from a specified PEM file. The default
+     * value is false.
      */
-    @JsonProperty(value = "useSystemTrustStore")
     private Object useSystemTrustStore;
 
     /*
-     * Specifies whether to require a CA-issued SSL certificate name to match
-     * the host name of the server when connecting over SSL. The default value
-     * is false.
+     * Specifies whether to require a CA-issued SSL certificate name to match the host name of the server when
+     * connecting over SSL. The default value is false.
      */
-    @JsonProperty(value = "allowHostNameCNMismatch")
     private Object allowHostnameCNMismatch;
 
     /*
-     * Specifies whether to allow self-signed certificates from the server. The
-     * default value is false.
+     * Specifies whether to allow self-signed certificates from the server. The default value is false.
      */
-    @JsonProperty(value = "allowSelfSignedServerCert")
     private Object allowSelfSignedServerCert;
 
     /*
-     * The encrypted credential used for authentication. Credentials are
-     * encrypted using the integration runtime credential manager. Type: string
-     * (or Expression with resultType string).
+     * The encrypted credential used for authentication. Credentials are encrypted using the integration runtime
+     * credential manager. Type: string.
      */
-    @JsonProperty(value = "encryptedCredential")
-    private Object encryptedCredential;
+    private String encryptedCredential;
+
+    /**
+     * Creates an instance of SparkLinkedServiceTypeProperties class.
+     */
+    public SparkLinkedServiceTypeProperties() {
+    }
 
     /**
      * Get the host property: IP address or host name of the Spark server.
-     *
+     * 
      * @return the host value.
      */
     public Object host() {
@@ -125,7 +113,7 @@ public final class SparkLinkedServiceTypeProperties {
 
     /**
      * Set the host property: IP address or host name of the Spark server.
-     *
+     * 
      * @param host the host value to set.
      * @return the SparkLinkedServiceTypeProperties object itself.
      */
@@ -136,7 +124,7 @@ public final class SparkLinkedServiceTypeProperties {
 
     /**
      * Get the port property: The TCP port that the Spark server uses to listen for client connections.
-     *
+     * 
      * @return the port value.
      */
     public Object port() {
@@ -145,7 +133,7 @@ public final class SparkLinkedServiceTypeProperties {
 
     /**
      * Set the port property: The TCP port that the Spark server uses to listen for client connections.
-     *
+     * 
      * @param port the port value to set.
      * @return the SparkLinkedServiceTypeProperties object itself.
      */
@@ -156,7 +144,7 @@ public final class SparkLinkedServiceTypeProperties {
 
     /**
      * Get the serverType property: The type of Spark server.
-     *
+     * 
      * @return the serverType value.
      */
     public SparkServerType serverType() {
@@ -165,7 +153,7 @@ public final class SparkLinkedServiceTypeProperties {
 
     /**
      * Set the serverType property: The type of Spark server.
-     *
+     * 
      * @param serverType the serverType value to set.
      * @return the SparkLinkedServiceTypeProperties object itself.
      */
@@ -176,7 +164,7 @@ public final class SparkLinkedServiceTypeProperties {
 
     /**
      * Get the thriftTransportProtocol property: The transport protocol to use in the Thrift layer.
-     *
+     * 
      * @return the thriftTransportProtocol value.
      */
     public SparkThriftTransportProtocol thriftTransportProtocol() {
@@ -185,19 +173,19 @@ public final class SparkLinkedServiceTypeProperties {
 
     /**
      * Set the thriftTransportProtocol property: The transport protocol to use in the Thrift layer.
-     *
+     * 
      * @param thriftTransportProtocol the thriftTransportProtocol value to set.
      * @return the SparkLinkedServiceTypeProperties object itself.
      */
-    public SparkLinkedServiceTypeProperties withThriftTransportProtocol(
-        SparkThriftTransportProtocol thriftTransportProtocol) {
+    public SparkLinkedServiceTypeProperties
+        withThriftTransportProtocol(SparkThriftTransportProtocol thriftTransportProtocol) {
         this.thriftTransportProtocol = thriftTransportProtocol;
         return this;
     }
 
     /**
      * Get the authenticationType property: The authentication method used to access the Spark server.
-     *
+     * 
      * @return the authenticationType value.
      */
     public SparkAuthenticationType authenticationType() {
@@ -206,7 +194,7 @@ public final class SparkLinkedServiceTypeProperties {
 
     /**
      * Set the authenticationType property: The authentication method used to access the Spark server.
-     *
+     * 
      * @param authenticationType the authenticationType value to set.
      * @return the SparkLinkedServiceTypeProperties object itself.
      */
@@ -217,7 +205,7 @@ public final class SparkLinkedServiceTypeProperties {
 
     /**
      * Get the username property: The user name that you use to access Spark Server.
-     *
+     * 
      * @return the username value.
      */
     public Object username() {
@@ -226,7 +214,7 @@ public final class SparkLinkedServiceTypeProperties {
 
     /**
      * Set the username property: The user name that you use to access Spark Server.
-     *
+     * 
      * @param username the username value to set.
      * @return the SparkLinkedServiceTypeProperties object itself.
      */
@@ -237,7 +225,7 @@ public final class SparkLinkedServiceTypeProperties {
 
     /**
      * Get the password property: The password corresponding to the user name that you provided in the Username field.
-     *
+     * 
      * @return the password value.
      */
     public SecretBase password() {
@@ -246,7 +234,7 @@ public final class SparkLinkedServiceTypeProperties {
 
     /**
      * Set the password property: The password corresponding to the user name that you provided in the Username field.
-     *
+     * 
      * @param password the password value to set.
      * @return the SparkLinkedServiceTypeProperties object itself.
      */
@@ -257,7 +245,7 @@ public final class SparkLinkedServiceTypeProperties {
 
     /**
      * Get the httpPath property: The partial URL corresponding to the Spark server.
-     *
+     * 
      * @return the httpPath value.
      */
     public Object httpPath() {
@@ -266,7 +254,7 @@ public final class SparkLinkedServiceTypeProperties {
 
     /**
      * Set the httpPath property: The partial URL corresponding to the Spark server.
-     *
+     * 
      * @param httpPath the httpPath value to set.
      * @return the SparkLinkedServiceTypeProperties object itself.
      */
@@ -278,7 +266,7 @@ public final class SparkLinkedServiceTypeProperties {
     /**
      * Get the enableSsl property: Specifies whether the connections to the server are encrypted using SSL. The default
      * value is false.
-     *
+     * 
      * @return the enableSsl value.
      */
     public Object enableSsl() {
@@ -288,7 +276,7 @@ public final class SparkLinkedServiceTypeProperties {
     /**
      * Set the enableSsl property: Specifies whether the connections to the server are encrypted using SSL. The default
      * value is false.
-     *
+     * 
      * @param enableSsl the enableSsl value to set.
      * @return the SparkLinkedServiceTypeProperties object itself.
      */
@@ -301,7 +289,7 @@ public final class SparkLinkedServiceTypeProperties {
      * Get the trustedCertPath property: The full path of the .pem file containing trusted CA certificates for verifying
      * the server when connecting over SSL. This property can only be set when using SSL on self-hosted IR. The default
      * value is the cacerts.pem file installed with the IR.
-     *
+     * 
      * @return the trustedCertPath value.
      */
     public Object trustedCertPath() {
@@ -312,7 +300,7 @@ public final class SparkLinkedServiceTypeProperties {
      * Set the trustedCertPath property: The full path of the .pem file containing trusted CA certificates for verifying
      * the server when connecting over SSL. This property can only be set when using SSL on self-hosted IR. The default
      * value is the cacerts.pem file installed with the IR.
-     *
+     * 
      * @param trustedCertPath the trustedCertPath value to set.
      * @return the SparkLinkedServiceTypeProperties object itself.
      */
@@ -324,7 +312,7 @@ public final class SparkLinkedServiceTypeProperties {
     /**
      * Get the useSystemTrustStore property: Specifies whether to use a CA certificate from the system trust store or
      * from a specified PEM file. The default value is false.
-     *
+     * 
      * @return the useSystemTrustStore value.
      */
     public Object useSystemTrustStore() {
@@ -334,7 +322,7 @@ public final class SparkLinkedServiceTypeProperties {
     /**
      * Set the useSystemTrustStore property: Specifies whether to use a CA certificate from the system trust store or
      * from a specified PEM file. The default value is false.
-     *
+     * 
      * @param useSystemTrustStore the useSystemTrustStore value to set.
      * @return the SparkLinkedServiceTypeProperties object itself.
      */
@@ -346,7 +334,7 @@ public final class SparkLinkedServiceTypeProperties {
     /**
      * Get the allowHostnameCNMismatch property: Specifies whether to require a CA-issued SSL certificate name to match
      * the host name of the server when connecting over SSL. The default value is false.
-     *
+     * 
      * @return the allowHostnameCNMismatch value.
      */
     public Object allowHostnameCNMismatch() {
@@ -356,7 +344,7 @@ public final class SparkLinkedServiceTypeProperties {
     /**
      * Set the allowHostnameCNMismatch property: Specifies whether to require a CA-issued SSL certificate name to match
      * the host name of the server when connecting over SSL. The default value is false.
-     *
+     * 
      * @param allowHostnameCNMismatch the allowHostnameCNMismatch value to set.
      * @return the SparkLinkedServiceTypeProperties object itself.
      */
@@ -368,7 +356,7 @@ public final class SparkLinkedServiceTypeProperties {
     /**
      * Get the allowSelfSignedServerCert property: Specifies whether to allow self-signed certificates from the server.
      * The default value is false.
-     *
+     * 
      * @return the allowSelfSignedServerCert value.
      */
     public Object allowSelfSignedServerCert() {
@@ -378,7 +366,7 @@ public final class SparkLinkedServiceTypeProperties {
     /**
      * Set the allowSelfSignedServerCert property: Specifies whether to allow self-signed certificates from the server.
      * The default value is false.
-     *
+     * 
      * @param allowSelfSignedServerCert the allowSelfSignedServerCert value to set.
      * @return the SparkLinkedServiceTypeProperties object itself.
      */
@@ -389,52 +377,133 @@ public final class SparkLinkedServiceTypeProperties {
 
     /**
      * Get the encryptedCredential property: The encrypted credential used for authentication. Credentials are encrypted
-     * using the integration runtime credential manager. Type: string (or Expression with resultType string).
-     *
+     * using the integration runtime credential manager. Type: string.
+     * 
      * @return the encryptedCredential value.
      */
-    public Object encryptedCredential() {
+    public String encryptedCredential() {
         return this.encryptedCredential;
     }
 
     /**
      * Set the encryptedCredential property: The encrypted credential used for authentication. Credentials are encrypted
-     * using the integration runtime credential manager. Type: string (or Expression with resultType string).
-     *
+     * using the integration runtime credential manager. Type: string.
+     * 
      * @param encryptedCredential the encryptedCredential value to set.
      * @return the SparkLinkedServiceTypeProperties object itself.
      */
-    public SparkLinkedServiceTypeProperties withEncryptedCredential(Object encryptedCredential) {
+    public SparkLinkedServiceTypeProperties withEncryptedCredential(String encryptedCredential) {
         this.encryptedCredential = encryptedCredential;
         return this;
     }
 
     /**
      * Validates the instance.
-     *
+     * 
      * @throws IllegalArgumentException thrown if the instance is not valid.
      */
     public void validate() {
         if (host() == null) {
-            throw logger
-                .logExceptionAsError(
-                    new IllegalArgumentException(
-                        "Missing required property host in model SparkLinkedServiceTypeProperties"));
+            throw LOGGER.atError()
+                .log(new IllegalArgumentException(
+                    "Missing required property host in model SparkLinkedServiceTypeProperties"));
         }
         if (port() == null) {
-            throw logger
-                .logExceptionAsError(
-                    new IllegalArgumentException(
-                        "Missing required property port in model SparkLinkedServiceTypeProperties"));
+            throw LOGGER.atError()
+                .log(new IllegalArgumentException(
+                    "Missing required property port in model SparkLinkedServiceTypeProperties"));
         }
         if (authenticationType() == null) {
-            throw logger
-                .logExceptionAsError(
-                    new IllegalArgumentException(
-                        "Missing required property authenticationType in model SparkLinkedServiceTypeProperties"));
+            throw LOGGER.atError()
+                .log(new IllegalArgumentException(
+                    "Missing required property authenticationType in model SparkLinkedServiceTypeProperties"));
         }
         if (password() != null) {
             password().validate();
         }
+    }
+
+    private static final ClientLogger LOGGER = new ClientLogger(SparkLinkedServiceTypeProperties.class);
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public JsonWriter toJson(JsonWriter jsonWriter) throws IOException {
+        jsonWriter.writeStartObject();
+        jsonWriter.writeUntypedField("host", this.host);
+        jsonWriter.writeUntypedField("port", this.port);
+        jsonWriter.writeStringField("authenticationType",
+            this.authenticationType == null ? null : this.authenticationType.toString());
+        jsonWriter.writeStringField("serverType", this.serverType == null ? null : this.serverType.toString());
+        jsonWriter.writeStringField("thriftTransportProtocol",
+            this.thriftTransportProtocol == null ? null : this.thriftTransportProtocol.toString());
+        jsonWriter.writeUntypedField("username", this.username);
+        jsonWriter.writeJsonField("password", this.password);
+        jsonWriter.writeUntypedField("httpPath", this.httpPath);
+        jsonWriter.writeUntypedField("enableSsl", this.enableSsl);
+        jsonWriter.writeUntypedField("trustedCertPath", this.trustedCertPath);
+        jsonWriter.writeUntypedField("useSystemTrustStore", this.useSystemTrustStore);
+        jsonWriter.writeUntypedField("allowHostNameCNMismatch", this.allowHostnameCNMismatch);
+        jsonWriter.writeUntypedField("allowSelfSignedServerCert", this.allowSelfSignedServerCert);
+        jsonWriter.writeStringField("encryptedCredential", this.encryptedCredential);
+        return jsonWriter.writeEndObject();
+    }
+
+    /**
+     * Reads an instance of SparkLinkedServiceTypeProperties from the JsonReader.
+     * 
+     * @param jsonReader The JsonReader being read.
+     * @return An instance of SparkLinkedServiceTypeProperties if the JsonReader was pointing to an instance of it, or
+     * null if it was pointing to JSON null.
+     * @throws IllegalStateException If the deserialized JSON object was missing any required properties.
+     * @throws IOException If an error occurs while reading the SparkLinkedServiceTypeProperties.
+     */
+    public static SparkLinkedServiceTypeProperties fromJson(JsonReader jsonReader) throws IOException {
+        return jsonReader.readObject(reader -> {
+            SparkLinkedServiceTypeProperties deserializedSparkLinkedServiceTypeProperties
+                = new SparkLinkedServiceTypeProperties();
+            while (reader.nextToken() != JsonToken.END_OBJECT) {
+                String fieldName = reader.getFieldName();
+                reader.nextToken();
+
+                if ("host".equals(fieldName)) {
+                    deserializedSparkLinkedServiceTypeProperties.host = reader.readUntyped();
+                } else if ("port".equals(fieldName)) {
+                    deserializedSparkLinkedServiceTypeProperties.port = reader.readUntyped();
+                } else if ("authenticationType".equals(fieldName)) {
+                    deserializedSparkLinkedServiceTypeProperties.authenticationType
+                        = SparkAuthenticationType.fromString(reader.getString());
+                } else if ("serverType".equals(fieldName)) {
+                    deserializedSparkLinkedServiceTypeProperties.serverType
+                        = SparkServerType.fromString(reader.getString());
+                } else if ("thriftTransportProtocol".equals(fieldName)) {
+                    deserializedSparkLinkedServiceTypeProperties.thriftTransportProtocol
+                        = SparkThriftTransportProtocol.fromString(reader.getString());
+                } else if ("username".equals(fieldName)) {
+                    deserializedSparkLinkedServiceTypeProperties.username = reader.readUntyped();
+                } else if ("password".equals(fieldName)) {
+                    deserializedSparkLinkedServiceTypeProperties.password = SecretBase.fromJson(reader);
+                } else if ("httpPath".equals(fieldName)) {
+                    deserializedSparkLinkedServiceTypeProperties.httpPath = reader.readUntyped();
+                } else if ("enableSsl".equals(fieldName)) {
+                    deserializedSparkLinkedServiceTypeProperties.enableSsl = reader.readUntyped();
+                } else if ("trustedCertPath".equals(fieldName)) {
+                    deserializedSparkLinkedServiceTypeProperties.trustedCertPath = reader.readUntyped();
+                } else if ("useSystemTrustStore".equals(fieldName)) {
+                    deserializedSparkLinkedServiceTypeProperties.useSystemTrustStore = reader.readUntyped();
+                } else if ("allowHostNameCNMismatch".equals(fieldName)) {
+                    deserializedSparkLinkedServiceTypeProperties.allowHostnameCNMismatch = reader.readUntyped();
+                } else if ("allowSelfSignedServerCert".equals(fieldName)) {
+                    deserializedSparkLinkedServiceTypeProperties.allowSelfSignedServerCert = reader.readUntyped();
+                } else if ("encryptedCredential".equals(fieldName)) {
+                    deserializedSparkLinkedServiceTypeProperties.encryptedCredential = reader.getString();
+                } else {
+                    reader.skipChildren();
+                }
+            }
+
+            return deserializedSparkLinkedServiceTypeProperties;
+        });
     }
 }

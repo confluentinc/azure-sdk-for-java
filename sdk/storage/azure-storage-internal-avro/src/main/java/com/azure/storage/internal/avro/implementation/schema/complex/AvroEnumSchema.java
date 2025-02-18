@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.function.Consumer;
 
 /**
- * An enum is encoded by a int, representing the zero-based position of the symbol in the schema.
+ * An enum is encoded by an int, representing the zero-based position of the symbol in the schema.
  *
  * Add an IntegerSchema and convert the result into the Enum by indexing the values.
  *
@@ -20,7 +20,7 @@ import java.util.function.Consumer;
  */
 public class AvroEnumSchema extends AvroCompositeSchema {
 
-    private final ClientLogger logger = new ClientLogger(AvroEnumSchema.class);
+    private static final ClientLogger LOGGER = new ClientLogger(AvroEnumSchema.class);
 
     private final List<String> values;
 
@@ -40,10 +40,7 @@ public class AvroEnumSchema extends AvroCompositeSchema {
     public void pushToStack() {
         this.state.pushToStack(this);
         /* Read the index, call onIndex. */
-        AvroIntegerSchema indexSchema = new AvroIntegerSchema(
-            this.state,
-            this::onIndex
-        );
+        AvroIntegerSchema indexSchema = new AvroIntegerSchema(this.state, this::onIndex);
         indexSchema.pushToStack();
     }
 
@@ -56,7 +53,7 @@ public class AvroEnumSchema extends AvroCompositeSchema {
         checkType("index", index, Integer.class);
         Integer i = (Integer) index;
         if (i < 0 || i >= this.values.size()) {
-            throw logger.logExceptionAsError(new IllegalArgumentException("Invalid index to parse enum"));
+            throw LOGGER.logExceptionAsError(new IllegalArgumentException("Invalid index to parse enum"));
         }
         /* Using the zero-based index, get the appropriate symbol, then we're done. */
         this.result = this.values.get(i);

@@ -5,124 +5,126 @@
 package com.azure.resourcemanager.securityinsights.fluent.models;
 
 import com.azure.core.annotation.Immutable;
-import com.azure.core.util.logging.ClientLogger;
+import com.azure.json.JsonReader;
+import com.azure.json.JsonToken;
+import com.azure.json.JsonWriter;
 import com.azure.resourcemanager.securityinsights.models.EntityCommonProperties;
 import com.azure.resourcemanager.securityinsights.models.ThreatIntelligence;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
-/** IoTDevice entity property bag. */
+/**
+ * IoTDevice entity property bag.
+ */
 @Immutable
 public final class IoTDeviceEntityProperties extends EntityCommonProperties {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(IoTDeviceEntityProperties.class);
-
     /*
      * The ID of the IoT Device in the IoT Hub
      */
-    @JsonProperty(value = "deviceId", access = JsonProperty.Access.WRITE_ONLY)
     private String deviceId;
 
     /*
      * The friendly name of the device
      */
-    @JsonProperty(value = "deviceName", access = JsonProperty.Access.WRITE_ONLY)
     private String deviceName;
 
     /*
      * The source of the device
      */
-    @JsonProperty(value = "source", access = JsonProperty.Access.WRITE_ONLY)
     private String source;
 
     /*
      * The ID of the security agent running on the device
      */
-    @JsonProperty(value = "iotSecurityAgentId", access = JsonProperty.Access.WRITE_ONLY)
     private UUID iotSecurityAgentId;
 
     /*
      * The type of the device
      */
-    @JsonProperty(value = "deviceType", access = JsonProperty.Access.WRITE_ONLY)
     private String deviceType;
 
     /*
      * The vendor of the device
      */
-    @JsonProperty(value = "vendor", access = JsonProperty.Access.WRITE_ONLY)
     private String vendor;
 
     /*
      * The ID of the edge device
      */
-    @JsonProperty(value = "edgeId", access = JsonProperty.Access.WRITE_ONLY)
     private String edgeId;
 
     /*
      * The MAC address of the device
      */
-    @JsonProperty(value = "macAddress", access = JsonProperty.Access.WRITE_ONLY)
     private String macAddress;
 
     /*
      * The model of the device
      */
-    @JsonProperty(value = "model", access = JsonProperty.Access.WRITE_ONLY)
     private String model;
 
     /*
      * The serial number of the device
      */
-    @JsonProperty(value = "serialNumber", access = JsonProperty.Access.WRITE_ONLY)
     private String serialNumber;
 
     /*
      * The firmware version of the device
      */
-    @JsonProperty(value = "firmwareVersion", access = JsonProperty.Access.WRITE_ONLY)
     private String firmwareVersion;
 
     /*
      * The operating system of the device
      */
-    @JsonProperty(value = "operatingSystem", access = JsonProperty.Access.WRITE_ONLY)
     private String operatingSystem;
 
     /*
      * The AzureResource entity id of the IoT Hub
      */
-    @JsonProperty(value = "iotHubEntityId", access = JsonProperty.Access.WRITE_ONLY)
     private String iotHubEntityId;
 
     /*
      * The Host entity id of this device
      */
-    @JsonProperty(value = "hostEntityId", access = JsonProperty.Access.WRITE_ONLY)
     private String hostEntityId;
 
     /*
      * The IP entity if of this device
      */
-    @JsonProperty(value = "ipAddressEntityId", access = JsonProperty.Access.WRITE_ONLY)
     private String ipAddressEntityId;
 
     /*
      * A list of TI contexts attached to the IoTDevice entity.
      */
-    @JsonProperty(value = "threatIntelligence", access = JsonProperty.Access.WRITE_ONLY)
     private List<ThreatIntelligence> threatIntelligence;
 
     /*
      * A list of protocols of the IoTDevice entity.
      */
-    @JsonProperty(value = "protocols", access = JsonProperty.Access.WRITE_ONLY)
     private List<String> protocols;
+
+    /*
+     * The graph item display name which is a short humanly readable description of the graph item instance. This
+     * property is optional and might be system generated.
+     */
+    private String friendlyName;
+
+    /*
+     * A bag of custom fields that should be part of the entity and will be presented to the user.
+     */
+    private Map<String, Object> additionalData;
+
+    /**
+     * Creates an instance of IoTDeviceEntityProperties class.
+     */
+    public IoTDeviceEntityProperties() {
+    }
 
     /**
      * Get the deviceId property: The ID of the IoT Device in the IoT Hub.
-     *
+     * 
      * @return the deviceId value.
      */
     public String deviceId() {
@@ -131,7 +133,7 @@ public final class IoTDeviceEntityProperties extends EntityCommonProperties {
 
     /**
      * Get the deviceName property: The friendly name of the device.
-     *
+     * 
      * @return the deviceName value.
      */
     public String deviceName() {
@@ -140,7 +142,7 @@ public final class IoTDeviceEntityProperties extends EntityCommonProperties {
 
     /**
      * Get the source property: The source of the device.
-     *
+     * 
      * @return the source value.
      */
     public String source() {
@@ -149,7 +151,7 @@ public final class IoTDeviceEntityProperties extends EntityCommonProperties {
 
     /**
      * Get the iotSecurityAgentId property: The ID of the security agent running on the device.
-     *
+     * 
      * @return the iotSecurityAgentId value.
      */
     public UUID iotSecurityAgentId() {
@@ -158,7 +160,7 @@ public final class IoTDeviceEntityProperties extends EntityCommonProperties {
 
     /**
      * Get the deviceType property: The type of the device.
-     *
+     * 
      * @return the deviceType value.
      */
     public String deviceType() {
@@ -167,7 +169,7 @@ public final class IoTDeviceEntityProperties extends EntityCommonProperties {
 
     /**
      * Get the vendor property: The vendor of the device.
-     *
+     * 
      * @return the vendor value.
      */
     public String vendor() {
@@ -176,7 +178,7 @@ public final class IoTDeviceEntityProperties extends EntityCommonProperties {
 
     /**
      * Get the edgeId property: The ID of the edge device.
-     *
+     * 
      * @return the edgeId value.
      */
     public String edgeId() {
@@ -185,7 +187,7 @@ public final class IoTDeviceEntityProperties extends EntityCommonProperties {
 
     /**
      * Get the macAddress property: The MAC address of the device.
-     *
+     * 
      * @return the macAddress value.
      */
     public String macAddress() {
@@ -194,7 +196,7 @@ public final class IoTDeviceEntityProperties extends EntityCommonProperties {
 
     /**
      * Get the model property: The model of the device.
-     *
+     * 
      * @return the model value.
      */
     public String model() {
@@ -203,7 +205,7 @@ public final class IoTDeviceEntityProperties extends EntityCommonProperties {
 
     /**
      * Get the serialNumber property: The serial number of the device.
-     *
+     * 
      * @return the serialNumber value.
      */
     public String serialNumber() {
@@ -212,7 +214,7 @@ public final class IoTDeviceEntityProperties extends EntityCommonProperties {
 
     /**
      * Get the firmwareVersion property: The firmware version of the device.
-     *
+     * 
      * @return the firmwareVersion value.
      */
     public String firmwareVersion() {
@@ -221,7 +223,7 @@ public final class IoTDeviceEntityProperties extends EntityCommonProperties {
 
     /**
      * Get the operatingSystem property: The operating system of the device.
-     *
+     * 
      * @return the operatingSystem value.
      */
     public String operatingSystem() {
@@ -230,7 +232,7 @@ public final class IoTDeviceEntityProperties extends EntityCommonProperties {
 
     /**
      * Get the iotHubEntityId property: The AzureResource entity id of the IoT Hub.
-     *
+     * 
      * @return the iotHubEntityId value.
      */
     public String iotHubEntityId() {
@@ -239,7 +241,7 @@ public final class IoTDeviceEntityProperties extends EntityCommonProperties {
 
     /**
      * Get the hostEntityId property: The Host entity id of this device.
-     *
+     * 
      * @return the hostEntityId value.
      */
     public String hostEntityId() {
@@ -248,7 +250,7 @@ public final class IoTDeviceEntityProperties extends EntityCommonProperties {
 
     /**
      * Get the ipAddressEntityId property: The IP entity if of this device.
-     *
+     * 
      * @return the ipAddressEntityId value.
      */
     public String ipAddressEntityId() {
@@ -257,7 +259,7 @@ public final class IoTDeviceEntityProperties extends EntityCommonProperties {
 
     /**
      * Get the threatIntelligence property: A list of TI contexts attached to the IoTDevice entity.
-     *
+     * 
      * @return the threatIntelligence value.
      */
     public List<ThreatIntelligence> threatIntelligence() {
@@ -266,7 +268,7 @@ public final class IoTDeviceEntityProperties extends EntityCommonProperties {
 
     /**
      * Get the protocols property: A list of protocols of the IoTDevice entity.
-     *
+     * 
      * @return the protocols value.
      */
     public List<String> protocols() {
@@ -274,15 +276,112 @@ public final class IoTDeviceEntityProperties extends EntityCommonProperties {
     }
 
     /**
+     * Get the friendlyName property: The graph item display name which is a short humanly readable description of the
+     * graph item instance. This property is optional and might be system generated.
+     * 
+     * @return the friendlyName value.
+     */
+    @Override
+    public String friendlyName() {
+        return this.friendlyName;
+    }
+
+    /**
+     * Get the additionalData property: A bag of custom fields that should be part of the entity and will be presented
+     * to the user.
+     * 
+     * @return the additionalData value.
+     */
+    @Override
+    public Map<String, Object> additionalData() {
+        return this.additionalData;
+    }
+
+    /**
      * Validates the instance.
-     *
+     * 
      * @throws IllegalArgumentException thrown if the instance is not valid.
      */
     @Override
     public void validate() {
-        super.validate();
         if (threatIntelligence() != null) {
             threatIntelligence().forEach(e -> e.validate());
         }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public JsonWriter toJson(JsonWriter jsonWriter) throws IOException {
+        jsonWriter.writeStartObject();
+        return jsonWriter.writeEndObject();
+    }
+
+    /**
+     * Reads an instance of IoTDeviceEntityProperties from the JsonReader.
+     * 
+     * @param jsonReader The JsonReader being read.
+     * @return An instance of IoTDeviceEntityProperties if the JsonReader was pointing to an instance of it, or null if
+     * it was pointing to JSON null.
+     * @throws IOException If an error occurs while reading the IoTDeviceEntityProperties.
+     */
+    public static IoTDeviceEntityProperties fromJson(JsonReader jsonReader) throws IOException {
+        return jsonReader.readObject(reader -> {
+            IoTDeviceEntityProperties deserializedIoTDeviceEntityProperties = new IoTDeviceEntityProperties();
+            while (reader.nextToken() != JsonToken.END_OBJECT) {
+                String fieldName = reader.getFieldName();
+                reader.nextToken();
+
+                if ("additionalData".equals(fieldName)) {
+                    Map<String, Object> additionalData = reader.readMap(reader1 -> reader1.readUntyped());
+                    deserializedIoTDeviceEntityProperties.additionalData = additionalData;
+                } else if ("friendlyName".equals(fieldName)) {
+                    deserializedIoTDeviceEntityProperties.friendlyName = reader.getString();
+                } else if ("deviceId".equals(fieldName)) {
+                    deserializedIoTDeviceEntityProperties.deviceId = reader.getString();
+                } else if ("deviceName".equals(fieldName)) {
+                    deserializedIoTDeviceEntityProperties.deviceName = reader.getString();
+                } else if ("source".equals(fieldName)) {
+                    deserializedIoTDeviceEntityProperties.source = reader.getString();
+                } else if ("iotSecurityAgentId".equals(fieldName)) {
+                    deserializedIoTDeviceEntityProperties.iotSecurityAgentId
+                        = reader.getNullable(nonNullReader -> UUID.fromString(nonNullReader.getString()));
+                } else if ("deviceType".equals(fieldName)) {
+                    deserializedIoTDeviceEntityProperties.deviceType = reader.getString();
+                } else if ("vendor".equals(fieldName)) {
+                    deserializedIoTDeviceEntityProperties.vendor = reader.getString();
+                } else if ("edgeId".equals(fieldName)) {
+                    deserializedIoTDeviceEntityProperties.edgeId = reader.getString();
+                } else if ("macAddress".equals(fieldName)) {
+                    deserializedIoTDeviceEntityProperties.macAddress = reader.getString();
+                } else if ("model".equals(fieldName)) {
+                    deserializedIoTDeviceEntityProperties.model = reader.getString();
+                } else if ("serialNumber".equals(fieldName)) {
+                    deserializedIoTDeviceEntityProperties.serialNumber = reader.getString();
+                } else if ("firmwareVersion".equals(fieldName)) {
+                    deserializedIoTDeviceEntityProperties.firmwareVersion = reader.getString();
+                } else if ("operatingSystem".equals(fieldName)) {
+                    deserializedIoTDeviceEntityProperties.operatingSystem = reader.getString();
+                } else if ("iotHubEntityId".equals(fieldName)) {
+                    deserializedIoTDeviceEntityProperties.iotHubEntityId = reader.getString();
+                } else if ("hostEntityId".equals(fieldName)) {
+                    deserializedIoTDeviceEntityProperties.hostEntityId = reader.getString();
+                } else if ("ipAddressEntityId".equals(fieldName)) {
+                    deserializedIoTDeviceEntityProperties.ipAddressEntityId = reader.getString();
+                } else if ("threatIntelligence".equals(fieldName)) {
+                    List<ThreatIntelligence> threatIntelligence
+                        = reader.readArray(reader1 -> ThreatIntelligence.fromJson(reader1));
+                    deserializedIoTDeviceEntityProperties.threatIntelligence = threatIntelligence;
+                } else if ("protocols".equals(fieldName)) {
+                    List<String> protocols = reader.readArray(reader1 -> reader1.getString());
+                    deserializedIoTDeviceEntityProperties.protocols = protocols;
+                } else {
+                    reader.skipChildren();
+                }
+            }
+
+            return deserializedIoTDeviceEntityProperties;
+        });
     }
 }

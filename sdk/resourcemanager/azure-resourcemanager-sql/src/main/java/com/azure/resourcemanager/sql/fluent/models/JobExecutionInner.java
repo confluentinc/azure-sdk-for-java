@@ -5,237 +5,269 @@
 package com.azure.resourcemanager.sql.fluent.models;
 
 import com.azure.core.annotation.Fluent;
-import com.azure.core.annotation.JsonFlatten;
 import com.azure.core.management.ProxyResource;
-import com.azure.core.util.logging.ClientLogger;
+import com.azure.json.JsonReader;
+import com.azure.json.JsonToken;
+import com.azure.json.JsonWriter;
 import com.azure.resourcemanager.sql.models.JobExecutionLifecycle;
 import com.azure.resourcemanager.sql.models.JobExecutionTarget;
 import com.azure.resourcemanager.sql.models.ProvisioningState;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import java.io.IOException;
 import java.time.OffsetDateTime;
 import java.util.UUID;
 
-/** An execution of a job. */
-@JsonFlatten
+/**
+ * An execution of a job.
+ */
 @Fluent
-public class JobExecutionInner extends ProxyResource {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(JobExecutionInner.class);
+public final class JobExecutionInner extends ProxyResource {
+    /*
+     * Resource properties.
+     */
+    private JobExecutionProperties innerProperties;
 
     /*
-     * The job version number.
+     * The type of the resource.
      */
-    @JsonProperty(value = "properties.jobVersion", access = JsonProperty.Access.WRITE_ONLY)
-    private Integer jobVersion;
+    private String type;
 
     /*
-     * The job step name.
+     * The name of the resource.
      */
-    @JsonProperty(value = "properties.stepName", access = JsonProperty.Access.WRITE_ONLY)
-    private String stepName;
+    private String name;
 
     /*
-     * The job step id.
+     * Fully qualified resource Id for the resource.
      */
-    @JsonProperty(value = "properties.stepId", access = JsonProperty.Access.WRITE_ONLY)
-    private Integer stepId;
+    private String id;
 
-    /*
-     * The unique identifier of the job execution.
+    /**
+     * Creates an instance of JobExecutionInner class.
      */
-    @JsonProperty(value = "properties.jobExecutionId", access = JsonProperty.Access.WRITE_ONLY)
-    private UUID jobExecutionId;
+    public JobExecutionInner() {
+    }
 
-    /*
-     * The detailed state of the job execution.
+    /**
+     * Get the innerProperties property: Resource properties.
+     * 
+     * @return the innerProperties value.
      */
-    @JsonProperty(value = "properties.lifecycle", access = JsonProperty.Access.WRITE_ONLY)
-    private JobExecutionLifecycle lifecycle;
+    private JobExecutionProperties innerProperties() {
+        return this.innerProperties;
+    }
 
-    /*
-     * The ARM provisioning state of the job execution.
+    /**
+     * Get the type property: The type of the resource.
+     * 
+     * @return the type value.
      */
-    @JsonProperty(value = "properties.provisioningState", access = JsonProperty.Access.WRITE_ONLY)
-    private ProvisioningState provisioningState;
+    @Override
+    public String type() {
+        return this.type;
+    }
 
-    /*
-     * The time that the job execution was created.
+    /**
+     * Get the name property: The name of the resource.
+     * 
+     * @return the name value.
      */
-    @JsonProperty(value = "properties.createTime", access = JsonProperty.Access.WRITE_ONLY)
-    private OffsetDateTime createTime;
+    @Override
+    public String name() {
+        return this.name;
+    }
 
-    /*
-     * The time that the job execution started.
+    /**
+     * Get the id property: Fully qualified resource Id for the resource.
+     * 
+     * @return the id value.
      */
-    @JsonProperty(value = "properties.startTime", access = JsonProperty.Access.WRITE_ONLY)
-    private OffsetDateTime startTime;
-
-    /*
-     * The time that the job execution completed.
-     */
-    @JsonProperty(value = "properties.endTime", access = JsonProperty.Access.WRITE_ONLY)
-    private OffsetDateTime endTime;
-
-    /*
-     * Number of times the job execution has been attempted.
-     */
-    @JsonProperty(value = "properties.currentAttempts")
-    private Integer currentAttempts;
-
-    /*
-     * Start time of the current attempt.
-     */
-    @JsonProperty(value = "properties.currentAttemptStartTime", access = JsonProperty.Access.WRITE_ONLY)
-    private OffsetDateTime currentAttemptStartTime;
-
-    /*
-     * The last status or error message.
-     */
-    @JsonProperty(value = "properties.lastMessage", access = JsonProperty.Access.WRITE_ONLY)
-    private String lastMessage;
-
-    /*
-     * The target that this execution is executed on.
-     */
-    @JsonProperty(value = "properties.target", access = JsonProperty.Access.WRITE_ONLY)
-    private JobExecutionTarget target;
+    @Override
+    public String id() {
+        return this.id;
+    }
 
     /**
      * Get the jobVersion property: The job version number.
-     *
+     * 
      * @return the jobVersion value.
      */
     public Integer jobVersion() {
-        return this.jobVersion;
+        return this.innerProperties() == null ? null : this.innerProperties().jobVersion();
     }
 
     /**
      * Get the stepName property: The job step name.
-     *
+     * 
      * @return the stepName value.
      */
     public String stepName() {
-        return this.stepName;
+        return this.innerProperties() == null ? null : this.innerProperties().stepName();
     }
 
     /**
      * Get the stepId property: The job step id.
-     *
+     * 
      * @return the stepId value.
      */
     public Integer stepId() {
-        return this.stepId;
+        return this.innerProperties() == null ? null : this.innerProperties().stepId();
     }
 
     /**
      * Get the jobExecutionId property: The unique identifier of the job execution.
-     *
+     * 
      * @return the jobExecutionId value.
      */
     public UUID jobExecutionId() {
-        return this.jobExecutionId;
+        return this.innerProperties() == null ? null : this.innerProperties().jobExecutionId();
     }
 
     /**
      * Get the lifecycle property: The detailed state of the job execution.
-     *
+     * 
      * @return the lifecycle value.
      */
     public JobExecutionLifecycle lifecycle() {
-        return this.lifecycle;
+        return this.innerProperties() == null ? null : this.innerProperties().lifecycle();
     }
 
     /**
      * Get the provisioningState property: The ARM provisioning state of the job execution.
-     *
+     * 
      * @return the provisioningState value.
      */
     public ProvisioningState provisioningState() {
-        return this.provisioningState;
+        return this.innerProperties() == null ? null : this.innerProperties().provisioningState();
     }
 
     /**
      * Get the createTime property: The time that the job execution was created.
-     *
+     * 
      * @return the createTime value.
      */
     public OffsetDateTime createTime() {
-        return this.createTime;
+        return this.innerProperties() == null ? null : this.innerProperties().createTime();
     }
 
     /**
      * Get the startTime property: The time that the job execution started.
-     *
+     * 
      * @return the startTime value.
      */
     public OffsetDateTime startTime() {
-        return this.startTime;
+        return this.innerProperties() == null ? null : this.innerProperties().startTime();
     }
 
     /**
      * Get the endTime property: The time that the job execution completed.
-     *
+     * 
      * @return the endTime value.
      */
     public OffsetDateTime endTime() {
-        return this.endTime;
+        return this.innerProperties() == null ? null : this.innerProperties().endTime();
     }
 
     /**
      * Get the currentAttempts property: Number of times the job execution has been attempted.
-     *
+     * 
      * @return the currentAttempts value.
      */
     public Integer currentAttempts() {
-        return this.currentAttempts;
+        return this.innerProperties() == null ? null : this.innerProperties().currentAttempts();
     }
 
     /**
      * Set the currentAttempts property: Number of times the job execution has been attempted.
-     *
+     * 
      * @param currentAttempts the currentAttempts value to set.
      * @return the JobExecutionInner object itself.
      */
     public JobExecutionInner withCurrentAttempts(Integer currentAttempts) {
-        this.currentAttempts = currentAttempts;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new JobExecutionProperties();
+        }
+        this.innerProperties().withCurrentAttempts(currentAttempts);
         return this;
     }
 
     /**
      * Get the currentAttemptStartTime property: Start time of the current attempt.
-     *
+     * 
      * @return the currentAttemptStartTime value.
      */
     public OffsetDateTime currentAttemptStartTime() {
-        return this.currentAttemptStartTime;
+        return this.innerProperties() == null ? null : this.innerProperties().currentAttemptStartTime();
     }
 
     /**
      * Get the lastMessage property: The last status or error message.
-     *
+     * 
      * @return the lastMessage value.
      */
     public String lastMessage() {
-        return this.lastMessage;
+        return this.innerProperties() == null ? null : this.innerProperties().lastMessage();
     }
 
     /**
      * Get the target property: The target that this execution is executed on.
-     *
+     * 
      * @return the target value.
      */
     public JobExecutionTarget target() {
-        return this.target;
+        return this.innerProperties() == null ? null : this.innerProperties().target();
     }
 
     /**
      * Validates the instance.
-     *
+     * 
      * @throws IllegalArgumentException thrown if the instance is not valid.
      */
     public void validate() {
-        if (target() != null) {
-            target().validate();
+        if (innerProperties() != null) {
+            innerProperties().validate();
         }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public JsonWriter toJson(JsonWriter jsonWriter) throws IOException {
+        jsonWriter.writeStartObject();
+        jsonWriter.writeJsonField("properties", this.innerProperties);
+        return jsonWriter.writeEndObject();
+    }
+
+    /**
+     * Reads an instance of JobExecutionInner from the JsonReader.
+     * 
+     * @param jsonReader The JsonReader being read.
+     * @return An instance of JobExecutionInner if the JsonReader was pointing to an instance of it, or null if it was
+     * pointing to JSON null.
+     * @throws IllegalStateException If the deserialized JSON object was missing any required properties.
+     * @throws IOException If an error occurs while reading the JobExecutionInner.
+     */
+    public static JobExecutionInner fromJson(JsonReader jsonReader) throws IOException {
+        return jsonReader.readObject(reader -> {
+            JobExecutionInner deserializedJobExecutionInner = new JobExecutionInner();
+            while (reader.nextToken() != JsonToken.END_OBJECT) {
+                String fieldName = reader.getFieldName();
+                reader.nextToken();
+
+                if ("id".equals(fieldName)) {
+                    deserializedJobExecutionInner.id = reader.getString();
+                } else if ("name".equals(fieldName)) {
+                    deserializedJobExecutionInner.name = reader.getString();
+                } else if ("type".equals(fieldName)) {
+                    deserializedJobExecutionInner.type = reader.getString();
+                } else if ("properties".equals(fieldName)) {
+                    deserializedJobExecutionInner.innerProperties = JobExecutionProperties.fromJson(reader);
+                } else {
+                    reader.skipChildren();
+                }
+            }
+
+            return deserializedJobExecutionInner;
+        });
     }
 }

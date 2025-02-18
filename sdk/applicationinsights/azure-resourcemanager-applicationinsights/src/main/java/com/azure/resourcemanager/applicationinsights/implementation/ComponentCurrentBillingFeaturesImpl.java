@@ -12,25 +12,35 @@ import com.azure.resourcemanager.applicationinsights.fluent.ComponentCurrentBill
 import com.azure.resourcemanager.applicationinsights.fluent.models.ApplicationInsightsComponentBillingFeaturesInner;
 import com.azure.resourcemanager.applicationinsights.models.ApplicationInsightsComponentBillingFeatures;
 import com.azure.resourcemanager.applicationinsights.models.ComponentCurrentBillingFeatures;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 public final class ComponentCurrentBillingFeaturesImpl implements ComponentCurrentBillingFeatures {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(ComponentCurrentBillingFeaturesImpl.class);
+    private static final ClientLogger LOGGER = new ClientLogger(ComponentCurrentBillingFeaturesImpl.class);
 
     private final ComponentCurrentBillingFeaturesClient innerClient;
 
     private final com.azure.resourcemanager.applicationinsights.ApplicationInsightsManager serviceManager;
 
-    public ComponentCurrentBillingFeaturesImpl(
-        ComponentCurrentBillingFeaturesClient innerClient,
+    public ComponentCurrentBillingFeaturesImpl(ComponentCurrentBillingFeaturesClient innerClient,
         com.azure.resourcemanager.applicationinsights.ApplicationInsightsManager serviceManager) {
         this.innerClient = innerClient;
         this.serviceManager = serviceManager;
     }
 
+    public Response<ApplicationInsightsComponentBillingFeatures> getWithResponse(String resourceGroupName,
+        String resourceName, Context context) {
+        Response<ApplicationInsightsComponentBillingFeaturesInner> inner
+            = this.serviceClient().getWithResponse(resourceGroupName, resourceName, context);
+        if (inner != null) {
+            return new SimpleResponse<>(inner.getRequest(), inner.getStatusCode(), inner.getHeaders(),
+                new ApplicationInsightsComponentBillingFeaturesImpl(inner.getValue(), this.manager()));
+        } else {
+            return null;
+        }
+    }
+
     public ApplicationInsightsComponentBillingFeatures get(String resourceGroupName, String resourceName) {
-        ApplicationInsightsComponentBillingFeaturesInner inner =
-            this.serviceClient().get(resourceGroupName, resourceName);
+        ApplicationInsightsComponentBillingFeaturesInner inner
+            = this.serviceClient().get(resourceGroupName, resourceName);
         if (inner != null) {
             return new ApplicationInsightsComponentBillingFeaturesImpl(inner, this.manager());
         } else {
@@ -38,49 +48,25 @@ public final class ComponentCurrentBillingFeaturesImpl implements ComponentCurre
         }
     }
 
-    public Response<ApplicationInsightsComponentBillingFeatures> getWithResponse(
-        String resourceGroupName, String resourceName, Context context) {
-        Response<ApplicationInsightsComponentBillingFeaturesInner> inner =
-            this.serviceClient().getWithResponse(resourceGroupName, resourceName, context);
-        if (inner != null) {
-            return new SimpleResponse<>(
-                inner.getRequest(),
-                inner.getStatusCode(),
-                inner.getHeaders(),
-                new ApplicationInsightsComponentBillingFeaturesImpl(inner.getValue(), this.manager()));
-        } else {
-            return null;
-        }
-    }
-
-    public ApplicationInsightsComponentBillingFeatures update(
-        String resourceGroupName,
-        String resourceName,
-        ApplicationInsightsComponentBillingFeaturesInner billingFeaturesProperties) {
-        ApplicationInsightsComponentBillingFeaturesInner inner =
-            this.serviceClient().update(resourceGroupName, resourceName, billingFeaturesProperties);
-        if (inner != null) {
-            return new ApplicationInsightsComponentBillingFeaturesImpl(inner, this.manager());
-        } else {
-            return null;
-        }
-    }
-
-    public Response<ApplicationInsightsComponentBillingFeatures> updateWithResponse(
-        String resourceGroupName,
-        String resourceName,
-        ApplicationInsightsComponentBillingFeaturesInner billingFeaturesProperties,
+    public Response<ApplicationInsightsComponentBillingFeatures> updateWithResponse(String resourceGroupName,
+        String resourceName, ApplicationInsightsComponentBillingFeaturesInner billingFeaturesProperties,
         Context context) {
-        Response<ApplicationInsightsComponentBillingFeaturesInner> inner =
-            this
-                .serviceClient()
-                .updateWithResponse(resourceGroupName, resourceName, billingFeaturesProperties, context);
+        Response<ApplicationInsightsComponentBillingFeaturesInner> inner = this.serviceClient()
+            .updateWithResponse(resourceGroupName, resourceName, billingFeaturesProperties, context);
         if (inner != null) {
-            return new SimpleResponse<>(
-                inner.getRequest(),
-                inner.getStatusCode(),
-                inner.getHeaders(),
+            return new SimpleResponse<>(inner.getRequest(), inner.getStatusCode(), inner.getHeaders(),
                 new ApplicationInsightsComponentBillingFeaturesImpl(inner.getValue(), this.manager()));
+        } else {
+            return null;
+        }
+    }
+
+    public ApplicationInsightsComponentBillingFeatures update(String resourceGroupName, String resourceName,
+        ApplicationInsightsComponentBillingFeaturesInner billingFeaturesProperties) {
+        ApplicationInsightsComponentBillingFeaturesInner inner
+            = this.serviceClient().update(resourceGroupName, resourceName, billingFeaturesProperties);
+        if (inner != null) {
+            return new ApplicationInsightsComponentBillingFeaturesImpl(inner, this.manager());
         } else {
             return null;
         }

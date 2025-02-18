@@ -22,38 +22,55 @@ import java.nio.ByteBuffer;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-/** An instance of this class provides access to all the operations defined in VpnSitesClient. */
+/**
+ * An instance of this class provides access to all the operations defined in VpnSitesClient.
+ */
 public interface VpnSitesClient
     extends InnerSupportsGet<VpnSiteInner>, InnerSupportsListing<VpnSiteInner>, InnerSupportsDelete<Void> {
     /**
      * Retrieves the details of a VPN site.
-     *
+     * 
      * @param resourceGroupName The resource group name of the VpnSite.
      * @param vpnSiteName The name of the VpnSite being retrieved.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return vpnSite Resource.
+     * @return vpnSite Resource along with {@link Response} on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
     Mono<Response<VpnSiteInner>> getByResourceGroupWithResponseAsync(String resourceGroupName, String vpnSiteName);
 
     /**
      * Retrieves the details of a VPN site.
-     *
+     * 
      * @param resourceGroupName The resource group name of the VpnSite.
      * @param vpnSiteName The name of the VpnSite being retrieved.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return vpnSite Resource.
+     * @return vpnSite Resource on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
     Mono<VpnSiteInner> getByResourceGroupAsync(String resourceGroupName, String vpnSiteName);
 
     /**
      * Retrieves the details of a VPN site.
-     *
+     * 
+     * @param resourceGroupName The resource group name of the VpnSite.
+     * @param vpnSiteName The name of the VpnSite being retrieved.
+     * @param context The context to associate with this operation.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return vpnSite Resource along with {@link Response}.
+     */
+    @ServiceMethod(returns = ReturnType.SINGLE)
+    Response<VpnSiteInner> getByResourceGroupWithResponse(String resourceGroupName, String vpnSiteName,
+        Context context);
+
+    /**
+     * Retrieves the details of a VPN site.
+     * 
      * @param resourceGroupName The resource group name of the VpnSite.
      * @param vpnSiteName The name of the VpnSite being retrieved.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
@@ -65,68 +82,53 @@ public interface VpnSitesClient
     VpnSiteInner getByResourceGroup(String resourceGroupName, String vpnSiteName);
 
     /**
-     * Retrieves the details of a VPN site.
-     *
+     * Creates a VpnSite resource if it doesn't exist else updates the existing VpnSite.
+     * 
      * @param resourceGroupName The resource group name of the VpnSite.
-     * @param vpnSiteName The name of the VpnSite being retrieved.
-     * @param context The context to associate with this operation.
+     * @param vpnSiteName The name of the VpnSite being created or updated.
+     * @param vpnSiteParameters Parameters supplied to create or update VpnSite.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return vpnSite Resource.
+     * @return vpnSite Resource along with {@link Response} on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    Response<VpnSiteInner> getByResourceGroupWithResponse(
-        String resourceGroupName, String vpnSiteName, Context context);
+    Mono<Response<Flux<ByteBuffer>>> createOrUpdateWithResponseAsync(String resourceGroupName, String vpnSiteName,
+        VpnSiteInner vpnSiteParameters);
 
     /**
      * Creates a VpnSite resource if it doesn't exist else updates the existing VpnSite.
-     *
+     * 
      * @param resourceGroupName The resource group name of the VpnSite.
      * @param vpnSiteName The name of the VpnSite being created or updated.
      * @param vpnSiteParameters Parameters supplied to create or update VpnSite.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return vpnSite Resource.
-     */
-    @ServiceMethod(returns = ReturnType.SINGLE)
-    Mono<Response<Flux<ByteBuffer>>> createOrUpdateWithResponseAsync(
-        String resourceGroupName, String vpnSiteName, VpnSiteInner vpnSiteParameters);
-
-    /**
-     * Creates a VpnSite resource if it doesn't exist else updates the existing VpnSite.
-     *
-     * @param resourceGroupName The resource group name of the VpnSite.
-     * @param vpnSiteName The name of the VpnSite being created or updated.
-     * @param vpnSiteParameters Parameters supplied to create or update VpnSite.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return vpnSite Resource.
+     * @return the {@link PollerFlux} for polling of vpnSite Resource.
      */
     @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
-    PollerFlux<PollResult<VpnSiteInner>, VpnSiteInner> beginCreateOrUpdateAsync(
-        String resourceGroupName, String vpnSiteName, VpnSiteInner vpnSiteParameters);
+    PollerFlux<PollResult<VpnSiteInner>, VpnSiteInner> beginCreateOrUpdateAsync(String resourceGroupName,
+        String vpnSiteName, VpnSiteInner vpnSiteParameters);
 
     /**
      * Creates a VpnSite resource if it doesn't exist else updates the existing VpnSite.
-     *
+     * 
      * @param resourceGroupName The resource group name of the VpnSite.
      * @param vpnSiteName The name of the VpnSite being created or updated.
      * @param vpnSiteParameters Parameters supplied to create or update VpnSite.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return vpnSite Resource.
+     * @return the {@link SyncPoller} for polling of vpnSite Resource.
      */
     @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
-    SyncPoller<PollResult<VpnSiteInner>, VpnSiteInner> beginCreateOrUpdate(
-        String resourceGroupName, String vpnSiteName, VpnSiteInner vpnSiteParameters);
+    SyncPoller<PollResult<VpnSiteInner>, VpnSiteInner> beginCreateOrUpdate(String resourceGroupName, String vpnSiteName,
+        VpnSiteInner vpnSiteParameters);
 
     /**
      * Creates a VpnSite resource if it doesn't exist else updates the existing VpnSite.
-     *
+     * 
      * @param resourceGroupName The resource group name of the VpnSite.
      * @param vpnSiteName The name of the VpnSite being created or updated.
      * @param vpnSiteParameters Parameters supplied to create or update VpnSite.
@@ -134,30 +136,30 @@ public interface VpnSitesClient
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return vpnSite Resource.
+     * @return the {@link SyncPoller} for polling of vpnSite Resource.
      */
     @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
-    SyncPoller<PollResult<VpnSiteInner>, VpnSiteInner> beginCreateOrUpdate(
-        String resourceGroupName, String vpnSiteName, VpnSiteInner vpnSiteParameters, Context context);
+    SyncPoller<PollResult<VpnSiteInner>, VpnSiteInner> beginCreateOrUpdate(String resourceGroupName, String vpnSiteName,
+        VpnSiteInner vpnSiteParameters, Context context);
 
     /**
      * Creates a VpnSite resource if it doesn't exist else updates the existing VpnSite.
-     *
+     * 
      * @param resourceGroupName The resource group name of the VpnSite.
      * @param vpnSiteName The name of the VpnSite being created or updated.
      * @param vpnSiteParameters Parameters supplied to create or update VpnSite.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return vpnSite Resource.
+     * @return vpnSite Resource on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    Mono<VpnSiteInner> createOrUpdateAsync(
-        String resourceGroupName, String vpnSiteName, VpnSiteInner vpnSiteParameters);
+    Mono<VpnSiteInner> createOrUpdateAsync(String resourceGroupName, String vpnSiteName,
+        VpnSiteInner vpnSiteParameters);
 
     /**
      * Creates a VpnSite resource if it doesn't exist else updates the existing VpnSite.
-     *
+     * 
      * @param resourceGroupName The resource group name of the VpnSite.
      * @param vpnSiteName The name of the VpnSite being created or updated.
      * @param vpnSiteParameters Parameters supplied to create or update VpnSite.
@@ -171,7 +173,7 @@ public interface VpnSitesClient
 
     /**
      * Creates a VpnSite resource if it doesn't exist else updates the existing VpnSite.
-     *
+     * 
      * @param resourceGroupName The resource group name of the VpnSite.
      * @param vpnSiteName The name of the VpnSite being created or updated.
      * @param vpnSiteParameters Parameters supplied to create or update VpnSite.
@@ -182,41 +184,57 @@ public interface VpnSitesClient
      * @return vpnSite Resource.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    VpnSiteInner createOrUpdate(
-        String resourceGroupName, String vpnSiteName, VpnSiteInner vpnSiteParameters, Context context);
+    VpnSiteInner createOrUpdate(String resourceGroupName, String vpnSiteName, VpnSiteInner vpnSiteParameters,
+        Context context);
 
     /**
      * Updates VpnSite tags.
-     *
+     * 
      * @param resourceGroupName The resource group name of the VpnSite.
      * @param vpnSiteName The name of the VpnSite being updated.
      * @param vpnSiteParameters Parameters supplied to update VpnSite tags.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return vpnSite Resource.
+     * @return vpnSite Resource along with {@link Response} on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    Mono<Response<VpnSiteInner>> updateTagsWithResponseAsync(
-        String resourceGroupName, String vpnSiteName, TagsObject vpnSiteParameters);
+    Mono<Response<VpnSiteInner>> updateTagsWithResponseAsync(String resourceGroupName, String vpnSiteName,
+        TagsObject vpnSiteParameters);
 
     /**
      * Updates VpnSite tags.
-     *
+     * 
      * @param resourceGroupName The resource group name of the VpnSite.
      * @param vpnSiteName The name of the VpnSite being updated.
      * @param vpnSiteParameters Parameters supplied to update VpnSite tags.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return vpnSite Resource.
+     * @return vpnSite Resource on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
     Mono<VpnSiteInner> updateTagsAsync(String resourceGroupName, String vpnSiteName, TagsObject vpnSiteParameters);
 
     /**
      * Updates VpnSite tags.
-     *
+     * 
+     * @param resourceGroupName The resource group name of the VpnSite.
+     * @param vpnSiteName The name of the VpnSite being updated.
+     * @param vpnSiteParameters Parameters supplied to update VpnSite tags.
+     * @param context The context to associate with this operation.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return vpnSite Resource along with {@link Response}.
+     */
+    @ServiceMethod(returns = ReturnType.SINGLE)
+    Response<VpnSiteInner> updateTagsWithResponse(String resourceGroupName, String vpnSiteName,
+        TagsObject vpnSiteParameters, Context context);
+
+    /**
+     * Updates VpnSite tags.
+     * 
      * @param resourceGroupName The resource group name of the VpnSite.
      * @param vpnSiteName The name of the VpnSite being updated.
      * @param vpnSiteParameters Parameters supplied to update VpnSite tags.
@@ -229,90 +247,74 @@ public interface VpnSitesClient
     VpnSiteInner updateTags(String resourceGroupName, String vpnSiteName, TagsObject vpnSiteParameters);
 
     /**
-     * Updates VpnSite tags.
-     *
-     * @param resourceGroupName The resource group name of the VpnSite.
-     * @param vpnSiteName The name of the VpnSite being updated.
-     * @param vpnSiteParameters Parameters supplied to update VpnSite tags.
-     * @param context The context to associate with this operation.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return vpnSite Resource.
-     */
-    @ServiceMethod(returns = ReturnType.SINGLE)
-    Response<VpnSiteInner> updateTagsWithResponse(
-        String resourceGroupName, String vpnSiteName, TagsObject vpnSiteParameters, Context context);
-
-    /**
      * Deletes a VpnSite.
-     *
+     * 
      * @param resourceGroupName The resource group name of the VpnSite.
      * @param vpnSiteName The name of the VpnSite being deleted.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the completion.
+     * @return the {@link Response} on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
     Mono<Response<Flux<ByteBuffer>>> deleteWithResponseAsync(String resourceGroupName, String vpnSiteName);
 
     /**
      * Deletes a VpnSite.
-     *
+     * 
      * @param resourceGroupName The resource group name of the VpnSite.
      * @param vpnSiteName The name of the VpnSite being deleted.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the completion.
+     * @return the {@link PollerFlux} for polling of long-running operation.
      */
     @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
     PollerFlux<PollResult<Void>, Void> beginDeleteAsync(String resourceGroupName, String vpnSiteName);
 
     /**
      * Deletes a VpnSite.
-     *
+     * 
      * @param resourceGroupName The resource group name of the VpnSite.
      * @param vpnSiteName The name of the VpnSite being deleted.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the completion.
+     * @return the {@link SyncPoller} for polling of long-running operation.
      */
     @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
     SyncPoller<PollResult<Void>, Void> beginDelete(String resourceGroupName, String vpnSiteName);
 
     /**
      * Deletes a VpnSite.
-     *
+     * 
      * @param resourceGroupName The resource group name of the VpnSite.
      * @param vpnSiteName The name of the VpnSite being deleted.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the completion.
+     * @return the {@link SyncPoller} for polling of long-running operation.
      */
     @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
     SyncPoller<PollResult<Void>, Void> beginDelete(String resourceGroupName, String vpnSiteName, Context context);
 
     /**
      * Deletes a VpnSite.
-     *
+     * 
      * @param resourceGroupName The resource group name of the VpnSite.
      * @param vpnSiteName The name of the VpnSite being deleted.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the completion.
+     * @return A {@link Mono} that completes when a successful response is received.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
     Mono<Void> deleteAsync(String resourceGroupName, String vpnSiteName);
 
     /**
      * Deletes a VpnSite.
-     *
+     * 
      * @param resourceGroupName The resource group name of the VpnSite.
      * @param vpnSiteName The name of the VpnSite being deleted.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
@@ -324,7 +326,7 @@ public interface VpnSitesClient
 
     /**
      * Deletes a VpnSite.
-     *
+     * 
      * @param resourceGroupName The resource group name of the VpnSite.
      * @param vpnSiteName The name of the VpnSite being deleted.
      * @param context The context to associate with this operation.
@@ -337,69 +339,69 @@ public interface VpnSitesClient
 
     /**
      * Lists all the vpnSites in a resource group.
-     *
+     * 
      * @param resourceGroupName The resource group name of the VpnSite.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return result of the request to list VpnSites.
+     * @return result of the request to list VpnSites as paginated response with {@link PagedFlux}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
     PagedFlux<VpnSiteInner> listByResourceGroupAsync(String resourceGroupName);
 
     /**
      * Lists all the vpnSites in a resource group.
-     *
+     * 
      * @param resourceGroupName The resource group name of the VpnSite.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return result of the request to list VpnSites.
+     * @return result of the request to list VpnSites as paginated response with {@link PagedIterable}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
     PagedIterable<VpnSiteInner> listByResourceGroup(String resourceGroupName);
 
     /**
      * Lists all the vpnSites in a resource group.
-     *
+     * 
      * @param resourceGroupName The resource group name of the VpnSite.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return result of the request to list VpnSites.
+     * @return result of the request to list VpnSites as paginated response with {@link PagedIterable}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
     PagedIterable<VpnSiteInner> listByResourceGroup(String resourceGroupName, Context context);
 
     /**
      * Lists all the VpnSites in a subscription.
-     *
+     * 
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return result of the request to list VpnSites.
+     * @return result of the request to list VpnSites as paginated response with {@link PagedFlux}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
     PagedFlux<VpnSiteInner> listAsync();
 
     /**
      * Lists all the VpnSites in a subscription.
-     *
+     * 
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return result of the request to list VpnSites.
+     * @return result of the request to list VpnSites as paginated response with {@link PagedIterable}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
     PagedIterable<VpnSiteInner> list();
 
     /**
      * Lists all the VpnSites in a subscription.
-     *
+     * 
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return result of the request to list VpnSites.
+     * @return result of the request to list VpnSites as paginated response with {@link PagedIterable}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
     PagedIterable<VpnSiteInner> list(Context context);

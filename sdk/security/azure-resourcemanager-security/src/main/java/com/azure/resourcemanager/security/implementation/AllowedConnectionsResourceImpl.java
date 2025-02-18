@@ -16,8 +16,7 @@ public final class AllowedConnectionsResourceImpl implements AllowedConnectionsR
 
     private final com.azure.resourcemanager.security.SecurityManager serviceManager;
 
-    AllowedConnectionsResourceImpl(
-        AllowedConnectionsResourceInner innerObject,
+    AllowedConnectionsResourceImpl(AllowedConnectionsResourceInner innerObject,
         com.azure.resourcemanager.security.SecurityManager serviceManager) {
         this.innerObject = innerObject;
         this.serviceManager = serviceManager;
@@ -35,6 +34,10 @@ public final class AllowedConnectionsResourceImpl implements AllowedConnectionsR
         return this.innerModel().type();
     }
 
+    public String location() {
+        return this.innerModel().location();
+    }
+
     public OffsetDateTime calculatedDateTime() {
         return this.innerModel().calculatedDateTime();
     }
@@ -46,10 +49,6 @@ public final class AllowedConnectionsResourceImpl implements AllowedConnectionsR
         } else {
             return Collections.emptyList();
         }
-    }
-
-    public String location() {
-        return this.innerModel().location();
     }
 
     public AllowedConnectionsResourceInner innerModel() {

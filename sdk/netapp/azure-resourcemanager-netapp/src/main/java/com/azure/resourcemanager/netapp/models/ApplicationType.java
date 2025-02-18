@@ -5,26 +5,46 @@
 package com.azure.resourcemanager.netapp.models;
 
 import com.azure.core.util.ExpandableStringEnum;
-import com.fasterxml.jackson.annotation.JsonCreator;
 import java.util.Collection;
 
-/** Defines values for ApplicationType. */
+/**
+ * Application Type.
+ */
 public final class ApplicationType extends ExpandableStringEnum<ApplicationType> {
-    /** Static value SAP-HANA for ApplicationType. */
+    /**
+     * Static value SAP-HANA for ApplicationType.
+     */
     public static final ApplicationType SAP_HANA = fromString("SAP-HANA");
 
     /**
+     * Static value ORACLE for ApplicationType.
+     */
+    public static final ApplicationType ORACLE = fromString("ORACLE");
+
+    /**
+     * Creates a new instance of ApplicationType value.
+     * 
+     * @deprecated Use the {@link #fromString(String)} factory method.
+     */
+    @Deprecated
+    public ApplicationType() {
+    }
+
+    /**
      * Creates or finds a ApplicationType from its string representation.
-     *
+     * 
      * @param name a name to look for.
      * @return the corresponding ApplicationType.
      */
-    @JsonCreator
     public static ApplicationType fromString(String name) {
         return fromString(name, ApplicationType.class);
     }
 
-    /** @return known ApplicationType values. */
+    /**
+     * Gets known ApplicationType values.
+     * 
+     * @return known ApplicationType values.
+     */
     public static Collection<ApplicationType> values() {
         return values(ApplicationType.class);
     }

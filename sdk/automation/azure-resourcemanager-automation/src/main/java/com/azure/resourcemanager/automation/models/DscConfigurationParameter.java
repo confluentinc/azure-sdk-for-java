@@ -5,43 +5,46 @@
 package com.azure.resourcemanager.automation.models;
 
 import com.azure.core.annotation.Fluent;
-import com.azure.core.util.logging.ClientLogger;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.azure.json.JsonReader;
+import com.azure.json.JsonSerializable;
+import com.azure.json.JsonToken;
+import com.azure.json.JsonWriter;
+import java.io.IOException;
 
-/** Definition of the configuration parameter type. */
+/**
+ * Definition of the configuration parameter type.
+ */
 @Fluent
-public final class DscConfigurationParameter {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(DscConfigurationParameter.class);
-
+public final class DscConfigurationParameter implements JsonSerializable<DscConfigurationParameter> {
     /*
      * Gets or sets the type of the parameter.
      */
-    @JsonProperty(value = "type")
     private String type;
 
     /*
-     * Gets or sets a Boolean value to indicate whether the parameter is
-     * mandatory or not.
+     * Gets or sets a Boolean value to indicate whether the parameter is mandatory or not.
      */
-    @JsonProperty(value = "isMandatory")
     private Boolean isMandatory;
 
     /*
      * Get or sets the position of the parameter.
      */
-    @JsonProperty(value = "position")
     private Integer position;
 
     /*
      * Gets or sets the default value of parameter.
      */
-    @JsonProperty(value = "defaultValue")
     private String defaultValue;
 
     /**
+     * Creates an instance of DscConfigurationParameter class.
+     */
+    public DscConfigurationParameter() {
+    }
+
+    /**
      * Get the type property: Gets or sets the type of the parameter.
-     *
+     * 
      * @return the type value.
      */
     public String type() {
@@ -50,7 +53,7 @@ public final class DscConfigurationParameter {
 
     /**
      * Set the type property: Gets or sets the type of the parameter.
-     *
+     * 
      * @param type the type value to set.
      * @return the DscConfigurationParameter object itself.
      */
@@ -61,7 +64,7 @@ public final class DscConfigurationParameter {
 
     /**
      * Get the isMandatory property: Gets or sets a Boolean value to indicate whether the parameter is mandatory or not.
-     *
+     * 
      * @return the isMandatory value.
      */
     public Boolean isMandatory() {
@@ -70,7 +73,7 @@ public final class DscConfigurationParameter {
 
     /**
      * Set the isMandatory property: Gets or sets a Boolean value to indicate whether the parameter is mandatory or not.
-     *
+     * 
      * @param isMandatory the isMandatory value to set.
      * @return the DscConfigurationParameter object itself.
      */
@@ -81,7 +84,7 @@ public final class DscConfigurationParameter {
 
     /**
      * Get the position property: Get or sets the position of the parameter.
-     *
+     * 
      * @return the position value.
      */
     public Integer position() {
@@ -90,7 +93,7 @@ public final class DscConfigurationParameter {
 
     /**
      * Set the position property: Get or sets the position of the parameter.
-     *
+     * 
      * @param position the position value to set.
      * @return the DscConfigurationParameter object itself.
      */
@@ -101,7 +104,7 @@ public final class DscConfigurationParameter {
 
     /**
      * Get the defaultValue property: Gets or sets the default value of parameter.
-     *
+     * 
      * @return the defaultValue value.
      */
     public String defaultValue() {
@@ -110,7 +113,7 @@ public final class DscConfigurationParameter {
 
     /**
      * Set the defaultValue property: Gets or sets the default value of parameter.
-     *
+     * 
      * @param defaultValue the defaultValue value to set.
      * @return the DscConfigurationParameter object itself.
      */
@@ -121,9 +124,54 @@ public final class DscConfigurationParameter {
 
     /**
      * Validates the instance.
-     *
+     * 
      * @throws IllegalArgumentException thrown if the instance is not valid.
      */
     public void validate() {
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public JsonWriter toJson(JsonWriter jsonWriter) throws IOException {
+        jsonWriter.writeStartObject();
+        jsonWriter.writeStringField("type", this.type);
+        jsonWriter.writeBooleanField("isMandatory", this.isMandatory);
+        jsonWriter.writeNumberField("position", this.position);
+        jsonWriter.writeStringField("defaultValue", this.defaultValue);
+        return jsonWriter.writeEndObject();
+    }
+
+    /**
+     * Reads an instance of DscConfigurationParameter from the JsonReader.
+     * 
+     * @param jsonReader The JsonReader being read.
+     * @return An instance of DscConfigurationParameter if the JsonReader was pointing to an instance of it, or null if
+     * it was pointing to JSON null.
+     * @throws IOException If an error occurs while reading the DscConfigurationParameter.
+     */
+    public static DscConfigurationParameter fromJson(JsonReader jsonReader) throws IOException {
+        return jsonReader.readObject(reader -> {
+            DscConfigurationParameter deserializedDscConfigurationParameter = new DscConfigurationParameter();
+            while (reader.nextToken() != JsonToken.END_OBJECT) {
+                String fieldName = reader.getFieldName();
+                reader.nextToken();
+
+                if ("type".equals(fieldName)) {
+                    deserializedDscConfigurationParameter.type = reader.getString();
+                } else if ("isMandatory".equals(fieldName)) {
+                    deserializedDscConfigurationParameter.isMandatory = reader.getNullable(JsonReader::getBoolean);
+                } else if ("position".equals(fieldName)) {
+                    deserializedDscConfigurationParameter.position = reader.getNullable(JsonReader::getInt);
+                } else if ("defaultValue".equals(fieldName)) {
+                    deserializedDscConfigurationParameter.defaultValue = reader.getString();
+                } else {
+                    reader.skipChildren();
+                }
+            }
+
+            return deserializedDscConfigurationParameter;
+        });
     }
 }

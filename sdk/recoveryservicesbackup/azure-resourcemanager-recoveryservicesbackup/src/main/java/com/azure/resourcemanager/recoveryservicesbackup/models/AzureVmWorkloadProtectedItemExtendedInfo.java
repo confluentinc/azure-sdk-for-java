@@ -5,38 +5,65 @@
 package com.azure.resourcemanager.recoveryservicesbackup.models;
 
 import com.azure.core.annotation.Fluent;
-import com.azure.core.util.logging.ClientLogger;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.azure.core.util.CoreUtils;
+import com.azure.json.JsonReader;
+import com.azure.json.JsonSerializable;
+import com.azure.json.JsonToken;
+import com.azure.json.JsonWriter;
+import java.io.IOException;
 import java.time.OffsetDateTime;
+import java.time.format.DateTimeFormatter;
 
-/** Additional information on Azure Workload for SQL specific backup item. */
+/**
+ * Additional information on Azure Workload for SQL specific backup item.
+ */
 @Fluent
-public final class AzureVmWorkloadProtectedItemExtendedInfo {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(AzureVmWorkloadProtectedItemExtendedInfo.class);
+public final class AzureVmWorkloadProtectedItemExtendedInfo
+    implements JsonSerializable<AzureVmWorkloadProtectedItemExtendedInfo> {
+    /*
+     * The oldest backup copy available for this backup item across all tiers.
+     */
+    private OffsetDateTime oldestRecoveryPoint;
 
     /*
-     * The oldest backup copy available for this backup item.
+     * The oldest backup copy available for this backup item in vault tier
      */
-    @JsonProperty(value = "oldestRecoveryPoint")
-    private OffsetDateTime oldestRecoveryPoint;
+    private OffsetDateTime oldestRecoveryPointInVault;
+
+    /*
+     * The oldest backup copy available for this backup item in archive tier
+     */
+    private OffsetDateTime oldestRecoveryPointInArchive;
+
+    /*
+     * The latest backup copy available for this backup item in archive tier
+     */
+    private OffsetDateTime newestRecoveryPointInArchive;
 
     /*
      * Number of backup copies available for this backup item.
      */
-    @JsonProperty(value = "recoveryPointCount")
     private Integer recoveryPointCount;
 
     /*
-     * Indicates consistency of policy object and policy applied to this backup
-     * item.
+     * Indicates consistency of policy object and policy applied to this backup item.
      */
-    @JsonProperty(value = "policyState")
     private String policyState;
 
+    /*
+     * Indicates consistency of policy object and policy applied to this backup item.
+     */
+    private String recoveryModel;
+
     /**
-     * Get the oldestRecoveryPoint property: The oldest backup copy available for this backup item.
-     *
+     * Creates an instance of AzureVmWorkloadProtectedItemExtendedInfo class.
+     */
+    public AzureVmWorkloadProtectedItemExtendedInfo() {
+    }
+
+    /**
+     * Get the oldestRecoveryPoint property: The oldest backup copy available for this backup item across all tiers.
+     * 
      * @return the oldestRecoveryPoint value.
      */
     public OffsetDateTime oldestRecoveryPoint() {
@@ -44,8 +71,8 @@ public final class AzureVmWorkloadProtectedItemExtendedInfo {
     }
 
     /**
-     * Set the oldestRecoveryPoint property: The oldest backup copy available for this backup item.
-     *
+     * Set the oldestRecoveryPoint property: The oldest backup copy available for this backup item across all tiers.
+     * 
      * @param oldestRecoveryPoint the oldestRecoveryPoint value to set.
      * @return the AzureVmWorkloadProtectedItemExtendedInfo object itself.
      */
@@ -55,8 +82,75 @@ public final class AzureVmWorkloadProtectedItemExtendedInfo {
     }
 
     /**
+     * Get the oldestRecoveryPointInVault property: The oldest backup copy available for this backup item in vault tier.
+     * 
+     * @return the oldestRecoveryPointInVault value.
+     */
+    public OffsetDateTime oldestRecoveryPointInVault() {
+        return this.oldestRecoveryPointInVault;
+    }
+
+    /**
+     * Set the oldestRecoveryPointInVault property: The oldest backup copy available for this backup item in vault tier.
+     * 
+     * @param oldestRecoveryPointInVault the oldestRecoveryPointInVault value to set.
+     * @return the AzureVmWorkloadProtectedItemExtendedInfo object itself.
+     */
+    public AzureVmWorkloadProtectedItemExtendedInfo
+        withOldestRecoveryPointInVault(OffsetDateTime oldestRecoveryPointInVault) {
+        this.oldestRecoveryPointInVault = oldestRecoveryPointInVault;
+        return this;
+    }
+
+    /**
+     * Get the oldestRecoveryPointInArchive property: The oldest backup copy available for this backup item in archive
+     * tier.
+     * 
+     * @return the oldestRecoveryPointInArchive value.
+     */
+    public OffsetDateTime oldestRecoveryPointInArchive() {
+        return this.oldestRecoveryPointInArchive;
+    }
+
+    /**
+     * Set the oldestRecoveryPointInArchive property: The oldest backup copy available for this backup item in archive
+     * tier.
+     * 
+     * @param oldestRecoveryPointInArchive the oldestRecoveryPointInArchive value to set.
+     * @return the AzureVmWorkloadProtectedItemExtendedInfo object itself.
+     */
+    public AzureVmWorkloadProtectedItemExtendedInfo
+        withOldestRecoveryPointInArchive(OffsetDateTime oldestRecoveryPointInArchive) {
+        this.oldestRecoveryPointInArchive = oldestRecoveryPointInArchive;
+        return this;
+    }
+
+    /**
+     * Get the newestRecoveryPointInArchive property: The latest backup copy available for this backup item in archive
+     * tier.
+     * 
+     * @return the newestRecoveryPointInArchive value.
+     */
+    public OffsetDateTime newestRecoveryPointInArchive() {
+        return this.newestRecoveryPointInArchive;
+    }
+
+    /**
+     * Set the newestRecoveryPointInArchive property: The latest backup copy available for this backup item in archive
+     * tier.
+     * 
+     * @param newestRecoveryPointInArchive the newestRecoveryPointInArchive value to set.
+     * @return the AzureVmWorkloadProtectedItemExtendedInfo object itself.
+     */
+    public AzureVmWorkloadProtectedItemExtendedInfo
+        withNewestRecoveryPointInArchive(OffsetDateTime newestRecoveryPointInArchive) {
+        this.newestRecoveryPointInArchive = newestRecoveryPointInArchive;
+        return this;
+    }
+
+    /**
      * Get the recoveryPointCount property: Number of backup copies available for this backup item.
-     *
+     * 
      * @return the recoveryPointCount value.
      */
     public Integer recoveryPointCount() {
@@ -65,7 +159,7 @@ public final class AzureVmWorkloadProtectedItemExtendedInfo {
 
     /**
      * Set the recoveryPointCount property: Number of backup copies available for this backup item.
-     *
+     * 
      * @param recoveryPointCount the recoveryPointCount value to set.
      * @return the AzureVmWorkloadProtectedItemExtendedInfo object itself.
      */
@@ -76,7 +170,7 @@ public final class AzureVmWorkloadProtectedItemExtendedInfo {
 
     /**
      * Get the policyState property: Indicates consistency of policy object and policy applied to this backup item.
-     *
+     * 
      * @return the policyState value.
      */
     public String policyState() {
@@ -85,7 +179,7 @@ public final class AzureVmWorkloadProtectedItemExtendedInfo {
 
     /**
      * Set the policyState property: Indicates consistency of policy object and policy applied to this backup item.
-     *
+     * 
      * @param policyState the policyState value to set.
      * @return the AzureVmWorkloadProtectedItemExtendedInfo object itself.
      */
@@ -95,10 +189,102 @@ public final class AzureVmWorkloadProtectedItemExtendedInfo {
     }
 
     /**
+     * Get the recoveryModel property: Indicates consistency of policy object and policy applied to this backup item.
+     * 
+     * @return the recoveryModel value.
+     */
+    public String recoveryModel() {
+        return this.recoveryModel;
+    }
+
+    /**
+     * Set the recoveryModel property: Indicates consistency of policy object and policy applied to this backup item.
+     * 
+     * @param recoveryModel the recoveryModel value to set.
+     * @return the AzureVmWorkloadProtectedItemExtendedInfo object itself.
+     */
+    public AzureVmWorkloadProtectedItemExtendedInfo withRecoveryModel(String recoveryModel) {
+        this.recoveryModel = recoveryModel;
+        return this;
+    }
+
+    /**
      * Validates the instance.
-     *
+     * 
      * @throws IllegalArgumentException thrown if the instance is not valid.
      */
     public void validate() {
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public JsonWriter toJson(JsonWriter jsonWriter) throws IOException {
+        jsonWriter.writeStartObject();
+        jsonWriter.writeStringField("oldestRecoveryPoint",
+            this.oldestRecoveryPoint == null
+                ? null
+                : DateTimeFormatter.ISO_OFFSET_DATE_TIME.format(this.oldestRecoveryPoint));
+        jsonWriter.writeStringField("oldestRecoveryPointInVault",
+            this.oldestRecoveryPointInVault == null
+                ? null
+                : DateTimeFormatter.ISO_OFFSET_DATE_TIME.format(this.oldestRecoveryPointInVault));
+        jsonWriter.writeStringField("oldestRecoveryPointInArchive",
+            this.oldestRecoveryPointInArchive == null
+                ? null
+                : DateTimeFormatter.ISO_OFFSET_DATE_TIME.format(this.oldestRecoveryPointInArchive));
+        jsonWriter.writeStringField("newestRecoveryPointInArchive",
+            this.newestRecoveryPointInArchive == null
+                ? null
+                : DateTimeFormatter.ISO_OFFSET_DATE_TIME.format(this.newestRecoveryPointInArchive));
+        jsonWriter.writeNumberField("recoveryPointCount", this.recoveryPointCount);
+        jsonWriter.writeStringField("policyState", this.policyState);
+        jsonWriter.writeStringField("recoveryModel", this.recoveryModel);
+        return jsonWriter.writeEndObject();
+    }
+
+    /**
+     * Reads an instance of AzureVmWorkloadProtectedItemExtendedInfo from the JsonReader.
+     * 
+     * @param jsonReader The JsonReader being read.
+     * @return An instance of AzureVmWorkloadProtectedItemExtendedInfo if the JsonReader was pointing to an instance of
+     * it, or null if it was pointing to JSON null.
+     * @throws IOException If an error occurs while reading the AzureVmWorkloadProtectedItemExtendedInfo.
+     */
+    public static AzureVmWorkloadProtectedItemExtendedInfo fromJson(JsonReader jsonReader) throws IOException {
+        return jsonReader.readObject(reader -> {
+            AzureVmWorkloadProtectedItemExtendedInfo deserializedAzureVmWorkloadProtectedItemExtendedInfo
+                = new AzureVmWorkloadProtectedItemExtendedInfo();
+            while (reader.nextToken() != JsonToken.END_OBJECT) {
+                String fieldName = reader.getFieldName();
+                reader.nextToken();
+
+                if ("oldestRecoveryPoint".equals(fieldName)) {
+                    deserializedAzureVmWorkloadProtectedItemExtendedInfo.oldestRecoveryPoint = reader
+                        .getNullable(nonNullReader -> CoreUtils.parseBestOffsetDateTime(nonNullReader.getString()));
+                } else if ("oldestRecoveryPointInVault".equals(fieldName)) {
+                    deserializedAzureVmWorkloadProtectedItemExtendedInfo.oldestRecoveryPointInVault = reader
+                        .getNullable(nonNullReader -> CoreUtils.parseBestOffsetDateTime(nonNullReader.getString()));
+                } else if ("oldestRecoveryPointInArchive".equals(fieldName)) {
+                    deserializedAzureVmWorkloadProtectedItemExtendedInfo.oldestRecoveryPointInArchive = reader
+                        .getNullable(nonNullReader -> CoreUtils.parseBestOffsetDateTime(nonNullReader.getString()));
+                } else if ("newestRecoveryPointInArchive".equals(fieldName)) {
+                    deserializedAzureVmWorkloadProtectedItemExtendedInfo.newestRecoveryPointInArchive = reader
+                        .getNullable(nonNullReader -> CoreUtils.parseBestOffsetDateTime(nonNullReader.getString()));
+                } else if ("recoveryPointCount".equals(fieldName)) {
+                    deserializedAzureVmWorkloadProtectedItemExtendedInfo.recoveryPointCount
+                        = reader.getNullable(JsonReader::getInt);
+                } else if ("policyState".equals(fieldName)) {
+                    deserializedAzureVmWorkloadProtectedItemExtendedInfo.policyState = reader.getString();
+                } else if ("recoveryModel".equals(fieldName)) {
+                    deserializedAzureVmWorkloadProtectedItemExtendedInfo.recoveryModel = reader.getString();
+                } else {
+                    reader.skipChildren();
+                }
+            }
+
+            return deserializedAzureVmWorkloadProtectedItemExtendedInfo;
+        });
     }
 }

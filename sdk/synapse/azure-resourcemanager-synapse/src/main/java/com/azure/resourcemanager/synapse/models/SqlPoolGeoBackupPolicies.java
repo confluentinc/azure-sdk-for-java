@@ -8,24 +8,30 @@ import com.azure.core.http.rest.PagedIterable;
 import com.azure.core.http.rest.Response;
 import com.azure.core.util.Context;
 
-/** Resource collection API of SqlPoolGeoBackupPolicies. */
+/**
+ * Resource collection API of SqlPoolGeoBackupPolicies.
+ */
 public interface SqlPoolGeoBackupPolicies {
     /**
+     * List SQL pool geo backup policies
+     * 
      * Get list of SQL pool geo backup policies.
-     *
+     * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
      * @param workspaceName The name of the workspace.
      * @param sqlPoolName SQL pool name.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return list of SQL pool geo backup policies.
+     * @return list of SQL pool geo backup policies as paginated response with {@link PagedIterable}.
      */
     PagedIterable<GeoBackupPolicy> list(String resourceGroupName, String workspaceName, String sqlPoolName);
 
     /**
+     * List SQL pool geo backup policies
+     * 
      * Get list of SQL pool geo backup policies.
-     *
+     * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
      * @param workspaceName The name of the workspace.
      * @param sqlPoolName SQL pool name.
@@ -33,14 +39,34 @@ public interface SqlPoolGeoBackupPolicies {
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return list of SQL pool geo backup policies.
+     * @return list of SQL pool geo backup policies as paginated response with {@link PagedIterable}.
      */
-    PagedIterable<GeoBackupPolicy> list(
-        String resourceGroupName, String workspaceName, String sqlPoolName, Context context);
+    PagedIterable<GeoBackupPolicy> list(String resourceGroupName, String workspaceName, String sqlPoolName,
+        Context context);
 
     /**
+     * Get a SQL pool geo backup policy
+     * 
      * Get the specified SQL pool geo backup policy.
-     *
+     * 
+     * @param resourceGroupName The name of the resource group. The name is case insensitive.
+     * @param workspaceName The name of the workspace.
+     * @param sqlPoolName SQL pool name.
+     * @param geoBackupPolicyName The name of the geo backup policy.
+     * @param context The context to associate with this operation.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return the specified SQL pool geo backup policy along with {@link Response}.
+     */
+    Response<GeoBackupPolicy> getWithResponse(String resourceGroupName, String workspaceName, String sqlPoolName,
+        GeoBackupPolicyName geoBackupPolicyName, Context context);
+
+    /**
+     * Get a SQL pool geo backup policy
+     * 
+     * Get the specified SQL pool geo backup policy.
+     * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
      * @param workspaceName The name of the workspace.
      * @param sqlPoolName SQL pool name.
@@ -50,32 +76,14 @@ public interface SqlPoolGeoBackupPolicies {
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
      * @return the specified SQL pool geo backup policy.
      */
-    GeoBackupPolicy get(
-        String resourceGroupName, String workspaceName, String sqlPoolName, GeoBackupPolicyName geoBackupPolicyName);
+    GeoBackupPolicy get(String resourceGroupName, String workspaceName, String sqlPoolName,
+        GeoBackupPolicyName geoBackupPolicyName);
 
     /**
+     * Get a SQL pool geo backup policy
+     * 
      * Get the specified SQL pool geo backup policy.
-     *
-     * @param resourceGroupName The name of the resource group. The name is case insensitive.
-     * @param workspaceName The name of the workspace.
-     * @param sqlPoolName SQL pool name.
-     * @param geoBackupPolicyName The name of the geo backup policy.
-     * @param context The context to associate with this operation.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the specified SQL pool geo backup policy along with {@link Response}.
-     */
-    Response<GeoBackupPolicy> getWithResponse(
-        String resourceGroupName,
-        String workspaceName,
-        String sqlPoolName,
-        GeoBackupPolicyName geoBackupPolicyName,
-        Context context);
-
-    /**
-     * Get the specified SQL pool geo backup policy.
-     *
+     * 
      * @param id the resource ID.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
@@ -85,8 +93,10 @@ public interface SqlPoolGeoBackupPolicies {
     GeoBackupPolicy getById(String id);
 
     /**
+     * Get a SQL pool geo backup policy
+     * 
      * Get the specified SQL pool geo backup policy.
-     *
+     * 
      * @param id the resource ID.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
@@ -98,7 +108,7 @@ public interface SqlPoolGeoBackupPolicies {
 
     /**
      * Begins definition for a new GeoBackupPolicy resource.
-     *
+     * 
      * @param name resource name.
      * @return the first stage of the new GeoBackupPolicy definition.
      */

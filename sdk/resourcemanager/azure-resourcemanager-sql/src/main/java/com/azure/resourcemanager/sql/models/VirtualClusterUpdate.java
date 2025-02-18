@@ -5,47 +5,48 @@
 package com.azure.resourcemanager.sql.models;
 
 import com.azure.core.annotation.Fluent;
-import com.azure.core.annotation.JsonFlatten;
-import com.azure.core.util.logging.ClientLogger;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.azure.json.JsonReader;
+import com.azure.json.JsonSerializable;
+import com.azure.json.JsonToken;
+import com.azure.json.JsonWriter;
+import com.azure.resourcemanager.sql.fluent.models.VirtualClusterProperties;
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
-/** An update request for an Azure SQL Database virtual cluster. */
-@JsonFlatten
+/**
+ * An update request for an Azure SQL Database virtual cluster.
+ */
 @Fluent
-public class VirtualClusterUpdate {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(VirtualClusterUpdate.class);
+public final class VirtualClusterUpdate implements JsonSerializable<VirtualClusterUpdate> {
+    /*
+     * Resource properties.
+     */
+    private VirtualClusterProperties innerProperties;
 
     /*
      * Resource tags.
      */
-    @JsonProperty(value = "tags")
     private Map<String, String> tags;
 
-    /*
-     * Subnet resource ID for the virtual cluster.
+    /**
+     * Creates an instance of VirtualClusterUpdate class.
      */
-    @JsonProperty(value = "properties.subnetId", access = JsonProperty.Access.WRITE_ONLY)
-    private String subnetId;
+    public VirtualClusterUpdate() {
+    }
 
-    /*
-     * If the service has different generations of hardware, for the same SKU,
-     * then that can be captured here.
+    /**
+     * Get the innerProperties property: Resource properties.
+     * 
+     * @return the innerProperties value.
      */
-    @JsonProperty(value = "properties.family")
-    private String family;
-
-    /*
-     * List of resources in this virtual cluster.
-     */
-    @JsonProperty(value = "properties.childResources", access = JsonProperty.Access.WRITE_ONLY)
-    private List<String> childResources;
+    private VirtualClusterProperties innerProperties() {
+        return this.innerProperties;
+    }
 
     /**
      * Get the tags property: Resource tags.
-     *
+     * 
      * @return the tags value.
      */
     public Map<String, String> tags() {
@@ -54,7 +55,7 @@ public class VirtualClusterUpdate {
 
     /**
      * Set the tags property: Resource tags.
-     *
+     * 
      * @param tags the tags value to set.
      * @return the VirtualClusterUpdate object itself.
      */
@@ -65,49 +66,120 @@ public class VirtualClusterUpdate {
 
     /**
      * Get the subnetId property: Subnet resource ID for the virtual cluster.
-     *
+     * 
      * @return the subnetId value.
      */
     public String subnetId() {
-        return this.subnetId;
+        return this.innerProperties() == null ? null : this.innerProperties().subnetId();
     }
 
     /**
      * Get the family property: If the service has different generations of hardware, for the same SKU, then that can be
      * captured here.
-     *
+     * 
      * @return the family value.
      */
     public String family() {
-        return this.family;
+        return this.innerProperties() == null ? null : this.innerProperties().family();
     }
 
     /**
      * Set the family property: If the service has different generations of hardware, for the same SKU, then that can be
      * captured here.
-     *
+     * 
      * @param family the family value to set.
      * @return the VirtualClusterUpdate object itself.
      */
     public VirtualClusterUpdate withFamily(String family) {
-        this.family = family;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new VirtualClusterProperties();
+        }
+        this.innerProperties().withFamily(family);
         return this;
     }
 
     /**
      * Get the childResources property: List of resources in this virtual cluster.
-     *
+     * 
      * @return the childResources value.
      */
     public List<String> childResources() {
-        return this.childResources;
+        return this.innerProperties() == null ? null : this.innerProperties().childResources();
+    }
+
+    /**
+     * Get the maintenanceConfigurationId property: Specifies maintenance configuration id to apply to this virtual
+     * cluster.
+     * 
+     * @return the maintenanceConfigurationId value.
+     */
+    public String maintenanceConfigurationId() {
+        return this.innerProperties() == null ? null : this.innerProperties().maintenanceConfigurationId();
+    }
+
+    /**
+     * Set the maintenanceConfigurationId property: Specifies maintenance configuration id to apply to this virtual
+     * cluster.
+     * 
+     * @param maintenanceConfigurationId the maintenanceConfigurationId value to set.
+     * @return the VirtualClusterUpdate object itself.
+     */
+    public VirtualClusterUpdate withMaintenanceConfigurationId(String maintenanceConfigurationId) {
+        if (this.innerProperties() == null) {
+            this.innerProperties = new VirtualClusterProperties();
+        }
+        this.innerProperties().withMaintenanceConfigurationId(maintenanceConfigurationId);
+        return this;
     }
 
     /**
      * Validates the instance.
-     *
+     * 
      * @throws IllegalArgumentException thrown if the instance is not valid.
      */
     public void validate() {
+        if (innerProperties() != null) {
+            innerProperties().validate();
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public JsonWriter toJson(JsonWriter jsonWriter) throws IOException {
+        jsonWriter.writeStartObject();
+        jsonWriter.writeJsonField("properties", this.innerProperties);
+        jsonWriter.writeMapField("tags", this.tags, (writer, element) -> writer.writeString(element));
+        return jsonWriter.writeEndObject();
+    }
+
+    /**
+     * Reads an instance of VirtualClusterUpdate from the JsonReader.
+     * 
+     * @param jsonReader The JsonReader being read.
+     * @return An instance of VirtualClusterUpdate if the JsonReader was pointing to an instance of it, or null if it
+     * was pointing to JSON null.
+     * @throws IOException If an error occurs while reading the VirtualClusterUpdate.
+     */
+    public static VirtualClusterUpdate fromJson(JsonReader jsonReader) throws IOException {
+        return jsonReader.readObject(reader -> {
+            VirtualClusterUpdate deserializedVirtualClusterUpdate = new VirtualClusterUpdate();
+            while (reader.nextToken() != JsonToken.END_OBJECT) {
+                String fieldName = reader.getFieldName();
+                reader.nextToken();
+
+                if ("properties".equals(fieldName)) {
+                    deserializedVirtualClusterUpdate.innerProperties = VirtualClusterProperties.fromJson(reader);
+                } else if ("tags".equals(fieldName)) {
+                    Map<String, String> tags = reader.readMap(reader1 -> reader1.getString());
+                    deserializedVirtualClusterUpdate.tags = tags;
+                } else {
+                    reader.skipChildren();
+                }
+            }
+
+            return deserializedVirtualClusterUpdate;
+        });
     }
 }

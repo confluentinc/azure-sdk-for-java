@@ -4,21 +4,28 @@
 
 package com.azure.resourcemanager.batch.models;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonValue;
-
-/** Defines values for CachingType. */
+/**
+ * The type of caching to enable for the disk.
+ */
 public enum CachingType {
-    /** Enum value None. */
+    /**
+     * Enum value None.
+     */
     NONE("None"),
 
-    /** Enum value ReadOnly. */
+    /**
+     * Enum value ReadOnly.
+     */
     READ_ONLY("ReadOnly"),
 
-    /** Enum value ReadWrite. */
+    /**
+     * Enum value ReadWrite.
+     */
     READ_WRITE("ReadWrite");
 
-    /** The actual serialized value for a CachingType instance. */
+    /**
+     * The actual serialized value for a CachingType instance.
+     */
     private final String value;
 
     CachingType(String value) {
@@ -27,12 +34,14 @@ public enum CachingType {
 
     /**
      * Parses a serialized value to a CachingType instance.
-     *
+     * 
      * @param value the serialized value to parse.
      * @return the parsed CachingType object, or null if unable to parse.
      */
-    @JsonCreator
     public static CachingType fromString(String value) {
+        if (value == null) {
+            return null;
+        }
         CachingType[] items = CachingType.values();
         for (CachingType item : items) {
             if (item.toString().equalsIgnoreCase(value)) {
@@ -42,7 +51,9 @@ public enum CachingType {
         return null;
     }
 
-    @JsonValue
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String toString() {
         return this.value;

@@ -6,78 +6,76 @@ package com.azure.resourcemanager.cdn.models;
 
 import com.azure.core.annotation.Fluent;
 import com.azure.core.util.logging.ClientLogger;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.azure.json.JsonReader;
+import com.azure.json.JsonSerializable;
+import com.azure.json.JsonToken;
+import com.azure.json.JsonWriter;
+import java.io.IOException;
 
-/** Describes the parameters for using a user's KeyVault for URL Signing Key. */
+/**
+ * Describes the parameters for using a user's KeyVault for URL Signing Key.
+ */
 @Fluent
-public final class KeyVaultSigningKeyParameters {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(KeyVaultSigningKeyParameters.class);
-
+public final class KeyVaultSigningKeyParameters implements JsonSerializable<KeyVaultSigningKeyParameters> {
     /*
-     * The @odata.type property.
+     * The typeName property.
      */
-    @JsonProperty(value = "@odata.type", required = true)
-    private String odataType;
+    private String typeName = "KeyVaultSigningKeyParameters";
 
     /*
      * Subscription Id of the user's Key Vault containing the secret
      */
-    @JsonProperty(value = "subscriptionId", required = true)
     private String subscriptionId;
 
     /*
      * Resource group of the user's Key Vault containing the secret
      */
-    @JsonProperty(value = "resourceGroupName", required = true)
     private String resourceGroupName;
 
     /*
      * The name of the user's Key Vault containing the secret
      */
-    @JsonProperty(value = "vaultName", required = true)
     private String vaultName;
 
     /*
      * The name of secret in Key Vault.
      */
-    @JsonProperty(value = "secretName", required = true)
     private String secretName;
 
     /*
      * The version(GUID) of secret in Key Vault.
      */
-    @JsonProperty(value = "secretVersion", required = true)
     private String secretVersion;
 
-    /** Creates an instance of KeyVaultSigningKeyParameters class. */
-    public KeyVaultSigningKeyParameters() {
-        odataType = "#Microsoft.Azure.Cdn.Models.KeyVaultSigningKeyParameters";
-    }
-
     /**
-     * Get the odataType property: The @odata.type property.
-     *
-     * @return the odataType value.
+     * Creates an instance of KeyVaultSigningKeyParameters class.
      */
-    public String odataType() {
-        return this.odataType;
+    public KeyVaultSigningKeyParameters() {
     }
 
     /**
-     * Set the odataType property: The @odata.type property.
-     *
-     * @param odataType the odataType value to set.
+     * Get the typeName property: The typeName property.
+     * 
+     * @return the typeName value.
+     */
+    public String typeName() {
+        return this.typeName;
+    }
+
+    /**
+     * Set the typeName property: The typeName property.
+     * 
+     * @param typeName the typeName value to set.
      * @return the KeyVaultSigningKeyParameters object itself.
      */
-    public KeyVaultSigningKeyParameters withOdataType(String odataType) {
-        this.odataType = odataType;
+    public KeyVaultSigningKeyParameters withTypeName(String typeName) {
+        this.typeName = typeName;
         return this;
     }
 
     /**
      * Get the subscriptionId property: Subscription Id of the user's Key Vault containing the secret.
-     *
+     * 
      * @return the subscriptionId value.
      */
     public String subscriptionId() {
@@ -86,7 +84,7 @@ public final class KeyVaultSigningKeyParameters {
 
     /**
      * Set the subscriptionId property: Subscription Id of the user's Key Vault containing the secret.
-     *
+     * 
      * @param subscriptionId the subscriptionId value to set.
      * @return the KeyVaultSigningKeyParameters object itself.
      */
@@ -97,7 +95,7 @@ public final class KeyVaultSigningKeyParameters {
 
     /**
      * Get the resourceGroupName property: Resource group of the user's Key Vault containing the secret.
-     *
+     * 
      * @return the resourceGroupName value.
      */
     public String resourceGroupName() {
@@ -106,7 +104,7 @@ public final class KeyVaultSigningKeyParameters {
 
     /**
      * Set the resourceGroupName property: Resource group of the user's Key Vault containing the secret.
-     *
+     * 
      * @param resourceGroupName the resourceGroupName value to set.
      * @return the KeyVaultSigningKeyParameters object itself.
      */
@@ -117,7 +115,7 @@ public final class KeyVaultSigningKeyParameters {
 
     /**
      * Get the vaultName property: The name of the user's Key Vault containing the secret.
-     *
+     * 
      * @return the vaultName value.
      */
     public String vaultName() {
@@ -126,7 +124,7 @@ public final class KeyVaultSigningKeyParameters {
 
     /**
      * Set the vaultName property: The name of the user's Key Vault containing the secret.
-     *
+     * 
      * @param vaultName the vaultName value to set.
      * @return the KeyVaultSigningKeyParameters object itself.
      */
@@ -137,7 +135,7 @@ public final class KeyVaultSigningKeyParameters {
 
     /**
      * Get the secretName property: The name of secret in Key Vault.
-     *
+     * 
      * @return the secretName value.
      */
     public String secretName() {
@@ -146,7 +144,7 @@ public final class KeyVaultSigningKeyParameters {
 
     /**
      * Set the secretName property: The name of secret in Key Vault.
-     *
+     * 
      * @param secretName the secretName value to set.
      * @return the KeyVaultSigningKeyParameters object itself.
      */
@@ -157,7 +155,7 @@ public final class KeyVaultSigningKeyParameters {
 
     /**
      * Get the secretVersion property: The version(GUID) of secret in Key Vault.
-     *
+     * 
      * @return the secretVersion value.
      */
     public String secretVersion() {
@@ -166,7 +164,7 @@ public final class KeyVaultSigningKeyParameters {
 
     /**
      * Set the secretVersion property: The version(GUID) of secret in Key Vault.
-     *
+     * 
      * @param secretVersion the secretVersion value to set.
      * @return the KeyVaultSigningKeyParameters object itself.
      */
@@ -177,39 +175,86 @@ public final class KeyVaultSigningKeyParameters {
 
     /**
      * Validates the instance.
-     *
+     * 
      * @throws IllegalArgumentException thrown if the instance is not valid.
      */
     public void validate() {
         if (subscriptionId() == null) {
-            throw logger
-                .logExceptionAsError(
-                    new IllegalArgumentException(
-                        "Missing required property subscriptionId in model KeyVaultSigningKeyParameters"));
+            throw LOGGER.atError()
+                .log(new IllegalArgumentException(
+                    "Missing required property subscriptionId in model KeyVaultSigningKeyParameters"));
         }
         if (resourceGroupName() == null) {
-            throw logger
-                .logExceptionAsError(
-                    new IllegalArgumentException(
-                        "Missing required property resourceGroupName in model KeyVaultSigningKeyParameters"));
+            throw LOGGER.atError()
+                .log(new IllegalArgumentException(
+                    "Missing required property resourceGroupName in model KeyVaultSigningKeyParameters"));
         }
         if (vaultName() == null) {
-            throw logger
-                .logExceptionAsError(
-                    new IllegalArgumentException(
-                        "Missing required property vaultName in model KeyVaultSigningKeyParameters"));
+            throw LOGGER.atError()
+                .log(new IllegalArgumentException(
+                    "Missing required property vaultName in model KeyVaultSigningKeyParameters"));
         }
         if (secretName() == null) {
-            throw logger
-                .logExceptionAsError(
-                    new IllegalArgumentException(
-                        "Missing required property secretName in model KeyVaultSigningKeyParameters"));
+            throw LOGGER.atError()
+                .log(new IllegalArgumentException(
+                    "Missing required property secretName in model KeyVaultSigningKeyParameters"));
         }
         if (secretVersion() == null) {
-            throw logger
-                .logExceptionAsError(
-                    new IllegalArgumentException(
-                        "Missing required property secretVersion in model KeyVaultSigningKeyParameters"));
+            throw LOGGER.atError()
+                .log(new IllegalArgumentException(
+                    "Missing required property secretVersion in model KeyVaultSigningKeyParameters"));
         }
+    }
+
+    private static final ClientLogger LOGGER = new ClientLogger(KeyVaultSigningKeyParameters.class);
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public JsonWriter toJson(JsonWriter jsonWriter) throws IOException {
+        jsonWriter.writeStartObject();
+        jsonWriter.writeStringField("typeName", this.typeName);
+        jsonWriter.writeStringField("subscriptionId", this.subscriptionId);
+        jsonWriter.writeStringField("resourceGroupName", this.resourceGroupName);
+        jsonWriter.writeStringField("vaultName", this.vaultName);
+        jsonWriter.writeStringField("secretName", this.secretName);
+        jsonWriter.writeStringField("secretVersion", this.secretVersion);
+        return jsonWriter.writeEndObject();
+    }
+
+    /**
+     * Reads an instance of KeyVaultSigningKeyParameters from the JsonReader.
+     * 
+     * @param jsonReader The JsonReader being read.
+     * @return An instance of KeyVaultSigningKeyParameters if the JsonReader was pointing to an instance of it, or null
+     * if it was pointing to JSON null.
+     * @throws IllegalStateException If the deserialized JSON object was missing any required properties.
+     * @throws IOException If an error occurs while reading the KeyVaultSigningKeyParameters.
+     */
+    public static KeyVaultSigningKeyParameters fromJson(JsonReader jsonReader) throws IOException {
+        return jsonReader.readObject(reader -> {
+            KeyVaultSigningKeyParameters deserializedKeyVaultSigningKeyParameters = new KeyVaultSigningKeyParameters();
+            while (reader.nextToken() != JsonToken.END_OBJECT) {
+                String fieldName = reader.getFieldName();
+                reader.nextToken();
+
+                if ("subscriptionId".equals(fieldName)) {
+                    deserializedKeyVaultSigningKeyParameters.subscriptionId = reader.getString();
+                } else if ("resourceGroupName".equals(fieldName)) {
+                    deserializedKeyVaultSigningKeyParameters.resourceGroupName = reader.getString();
+                } else if ("vaultName".equals(fieldName)) {
+                    deserializedKeyVaultSigningKeyParameters.vaultName = reader.getString();
+                } else if ("secretName".equals(fieldName)) {
+                    deserializedKeyVaultSigningKeyParameters.secretName = reader.getString();
+                } else if ("secretVersion".equals(fieldName)) {
+                    deserializedKeyVaultSigningKeyParameters.secretVersion = reader.getString();
+                } else {
+                    reader.skipChildren();
+                }
+            }
+
+            return deserializedKeyVaultSigningKeyParameters;
+        });
     }
 }

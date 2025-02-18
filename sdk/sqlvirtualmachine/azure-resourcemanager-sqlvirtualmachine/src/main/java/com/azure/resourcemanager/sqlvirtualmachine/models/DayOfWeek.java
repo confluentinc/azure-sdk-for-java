@@ -4,33 +4,53 @@
 
 package com.azure.resourcemanager.sqlvirtualmachine.models;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonValue;
-
-/** Defines values for DayOfWeek. */
+/**
+ * Day of week to apply the patch on.
+ */
 public enum DayOfWeek {
-    /** Enum value Monday. */
+    /**
+     * Enum value Everyday.
+     */
+    EVERYDAY("Everyday"),
+
+    /**
+     * Enum value Monday.
+     */
     MONDAY("Monday"),
 
-    /** Enum value Tuesday. */
+    /**
+     * Enum value Tuesday.
+     */
     TUESDAY("Tuesday"),
 
-    /** Enum value Wednesday. */
+    /**
+     * Enum value Wednesday.
+     */
     WEDNESDAY("Wednesday"),
 
-    /** Enum value Thursday. */
+    /**
+     * Enum value Thursday.
+     */
     THURSDAY("Thursday"),
 
-    /** Enum value Friday. */
+    /**
+     * Enum value Friday.
+     */
     FRIDAY("Friday"),
 
-    /** Enum value Saturday. */
+    /**
+     * Enum value Saturday.
+     */
     SATURDAY("Saturday"),
 
-    /** Enum value Sunday. */
+    /**
+     * Enum value Sunday.
+     */
     SUNDAY("Sunday");
 
-    /** The actual serialized value for a DayOfWeek instance. */
+    /**
+     * The actual serialized value for a DayOfWeek instance.
+     */
     private final String value;
 
     DayOfWeek(String value) {
@@ -39,12 +59,14 @@ public enum DayOfWeek {
 
     /**
      * Parses a serialized value to a DayOfWeek instance.
-     *
+     * 
      * @param value the serialized value to parse.
      * @return the parsed DayOfWeek object, or null if unable to parse.
      */
-    @JsonCreator
     public static DayOfWeek fromString(String value) {
+        if (value == null) {
+            return null;
+        }
         DayOfWeek[] items = DayOfWeek.values();
         for (DayOfWeek item : items) {
             if (item.toString().equalsIgnoreCase(value)) {
@@ -54,7 +76,9 @@ public enum DayOfWeek {
         return null;
     }
 
-    @JsonValue
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String toString() {
         return this.value;

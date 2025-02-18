@@ -6,67 +6,64 @@ package com.azure.resourcemanager.datafactory.fluent.models;
 
 import com.azure.core.annotation.Fluent;
 import com.azure.core.util.logging.ClientLogger;
+import com.azure.json.JsonReader;
+import com.azure.json.JsonSerializable;
+import com.azure.json.JsonToken;
+import com.azure.json.JsonWriter;
 import com.azure.resourcemanager.datafactory.models.SecretBase;
 import com.azure.resourcemanager.datafactory.models.SybaseAuthenticationType;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import java.io.IOException;
 
-/** Sybase linked service properties. */
+/**
+ * Sybase linked service properties.
+ */
 @Fluent
-public final class SybaseLinkedServiceTypeProperties {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(SybaseLinkedServiceTypeProperties.class);
-
+public final class SybaseLinkedServiceTypeProperties implements JsonSerializable<SybaseLinkedServiceTypeProperties> {
     /*
-     * Server name for connection. Type: string (or Expression with resultType
-     * string).
+     * Server name for connection. Type: string (or Expression with resultType string).
      */
-    @JsonProperty(value = "server", required = true)
     private Object server;
 
     /*
-     * Database name for connection. Type: string (or Expression with
-     * resultType string).
+     * Database name for connection. Type: string (or Expression with resultType string).
      */
-    @JsonProperty(value = "database", required = true)
     private Object database;
 
     /*
-     * Schema name for connection. Type: string (or Expression with resultType
-     * string).
+     * Schema name for connection. Type: string (or Expression with resultType string).
      */
-    @JsonProperty(value = "schema")
     private Object schema;
 
     /*
      * AuthenticationType to be used for connection.
      */
-    @JsonProperty(value = "authenticationType")
     private SybaseAuthenticationType authenticationType;
 
     /*
-     * Username for authentication. Type: string (or Expression with resultType
-     * string).
+     * Username for authentication. Type: string (or Expression with resultType string).
      */
-    @JsonProperty(value = "username")
     private Object username;
 
     /*
      * Password for authentication.
      */
-    @JsonProperty(value = "password")
     private SecretBase password;
 
     /*
-     * The encrypted credential used for authentication. Credentials are
-     * encrypted using the integration runtime credential manager. Type: string
-     * (or Expression with resultType string).
+     * The encrypted credential used for authentication. Credentials are encrypted using the integration runtime
+     * credential manager. Type: string.
      */
-    @JsonProperty(value = "encryptedCredential")
-    private Object encryptedCredential;
+    private String encryptedCredential;
+
+    /**
+     * Creates an instance of SybaseLinkedServiceTypeProperties class.
+     */
+    public SybaseLinkedServiceTypeProperties() {
+    }
 
     /**
      * Get the server property: Server name for connection. Type: string (or Expression with resultType string).
-     *
+     * 
      * @return the server value.
      */
     public Object server() {
@@ -75,7 +72,7 @@ public final class SybaseLinkedServiceTypeProperties {
 
     /**
      * Set the server property: Server name for connection. Type: string (or Expression with resultType string).
-     *
+     * 
      * @param server the server value to set.
      * @return the SybaseLinkedServiceTypeProperties object itself.
      */
@@ -86,7 +83,7 @@ public final class SybaseLinkedServiceTypeProperties {
 
     /**
      * Get the database property: Database name for connection. Type: string (or Expression with resultType string).
-     *
+     * 
      * @return the database value.
      */
     public Object database() {
@@ -95,7 +92,7 @@ public final class SybaseLinkedServiceTypeProperties {
 
     /**
      * Set the database property: Database name for connection. Type: string (or Expression with resultType string).
-     *
+     * 
      * @param database the database value to set.
      * @return the SybaseLinkedServiceTypeProperties object itself.
      */
@@ -106,7 +103,7 @@ public final class SybaseLinkedServiceTypeProperties {
 
     /**
      * Get the schema property: Schema name for connection. Type: string (or Expression with resultType string).
-     *
+     * 
      * @return the schema value.
      */
     public Object schema() {
@@ -115,7 +112,7 @@ public final class SybaseLinkedServiceTypeProperties {
 
     /**
      * Set the schema property: Schema name for connection. Type: string (or Expression with resultType string).
-     *
+     * 
      * @param schema the schema value to set.
      * @return the SybaseLinkedServiceTypeProperties object itself.
      */
@@ -126,7 +123,7 @@ public final class SybaseLinkedServiceTypeProperties {
 
     /**
      * Get the authenticationType property: AuthenticationType to be used for connection.
-     *
+     * 
      * @return the authenticationType value.
      */
     public SybaseAuthenticationType authenticationType() {
@@ -135,7 +132,7 @@ public final class SybaseLinkedServiceTypeProperties {
 
     /**
      * Set the authenticationType property: AuthenticationType to be used for connection.
-     *
+     * 
      * @param authenticationType the authenticationType value to set.
      * @return the SybaseLinkedServiceTypeProperties object itself.
      */
@@ -146,7 +143,7 @@ public final class SybaseLinkedServiceTypeProperties {
 
     /**
      * Get the username property: Username for authentication. Type: string (or Expression with resultType string).
-     *
+     * 
      * @return the username value.
      */
     public Object username() {
@@ -155,7 +152,7 @@ public final class SybaseLinkedServiceTypeProperties {
 
     /**
      * Set the username property: Username for authentication. Type: string (or Expression with resultType string).
-     *
+     * 
      * @param username the username value to set.
      * @return the SybaseLinkedServiceTypeProperties object itself.
      */
@@ -166,7 +163,7 @@ public final class SybaseLinkedServiceTypeProperties {
 
     /**
      * Get the password property: Password for authentication.
-     *
+     * 
      * @return the password value.
      */
     public SecretBase password() {
@@ -175,7 +172,7 @@ public final class SybaseLinkedServiceTypeProperties {
 
     /**
      * Set the password property: Password for authentication.
-     *
+     * 
      * @param password the password value to set.
      * @return the SybaseLinkedServiceTypeProperties object itself.
      */
@@ -186,46 +183,104 @@ public final class SybaseLinkedServiceTypeProperties {
 
     /**
      * Get the encryptedCredential property: The encrypted credential used for authentication. Credentials are encrypted
-     * using the integration runtime credential manager. Type: string (or Expression with resultType string).
-     *
+     * using the integration runtime credential manager. Type: string.
+     * 
      * @return the encryptedCredential value.
      */
-    public Object encryptedCredential() {
+    public String encryptedCredential() {
         return this.encryptedCredential;
     }
 
     /**
      * Set the encryptedCredential property: The encrypted credential used for authentication. Credentials are encrypted
-     * using the integration runtime credential manager. Type: string (or Expression with resultType string).
-     *
+     * using the integration runtime credential manager. Type: string.
+     * 
      * @param encryptedCredential the encryptedCredential value to set.
      * @return the SybaseLinkedServiceTypeProperties object itself.
      */
-    public SybaseLinkedServiceTypeProperties withEncryptedCredential(Object encryptedCredential) {
+    public SybaseLinkedServiceTypeProperties withEncryptedCredential(String encryptedCredential) {
         this.encryptedCredential = encryptedCredential;
         return this;
     }
 
     /**
      * Validates the instance.
-     *
+     * 
      * @throws IllegalArgumentException thrown if the instance is not valid.
      */
     public void validate() {
         if (server() == null) {
-            throw logger
-                .logExceptionAsError(
-                    new IllegalArgumentException(
-                        "Missing required property server in model SybaseLinkedServiceTypeProperties"));
+            throw LOGGER.atError()
+                .log(new IllegalArgumentException(
+                    "Missing required property server in model SybaseLinkedServiceTypeProperties"));
         }
         if (database() == null) {
-            throw logger
-                .logExceptionAsError(
-                    new IllegalArgumentException(
-                        "Missing required property database in model SybaseLinkedServiceTypeProperties"));
+            throw LOGGER.atError()
+                .log(new IllegalArgumentException(
+                    "Missing required property database in model SybaseLinkedServiceTypeProperties"));
         }
         if (password() != null) {
             password().validate();
         }
+    }
+
+    private static final ClientLogger LOGGER = new ClientLogger(SybaseLinkedServiceTypeProperties.class);
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public JsonWriter toJson(JsonWriter jsonWriter) throws IOException {
+        jsonWriter.writeStartObject();
+        jsonWriter.writeUntypedField("server", this.server);
+        jsonWriter.writeUntypedField("database", this.database);
+        jsonWriter.writeUntypedField("schema", this.schema);
+        jsonWriter.writeStringField("authenticationType",
+            this.authenticationType == null ? null : this.authenticationType.toString());
+        jsonWriter.writeUntypedField("username", this.username);
+        jsonWriter.writeJsonField("password", this.password);
+        jsonWriter.writeStringField("encryptedCredential", this.encryptedCredential);
+        return jsonWriter.writeEndObject();
+    }
+
+    /**
+     * Reads an instance of SybaseLinkedServiceTypeProperties from the JsonReader.
+     * 
+     * @param jsonReader The JsonReader being read.
+     * @return An instance of SybaseLinkedServiceTypeProperties if the JsonReader was pointing to an instance of it, or
+     * null if it was pointing to JSON null.
+     * @throws IllegalStateException If the deserialized JSON object was missing any required properties.
+     * @throws IOException If an error occurs while reading the SybaseLinkedServiceTypeProperties.
+     */
+    public static SybaseLinkedServiceTypeProperties fromJson(JsonReader jsonReader) throws IOException {
+        return jsonReader.readObject(reader -> {
+            SybaseLinkedServiceTypeProperties deserializedSybaseLinkedServiceTypeProperties
+                = new SybaseLinkedServiceTypeProperties();
+            while (reader.nextToken() != JsonToken.END_OBJECT) {
+                String fieldName = reader.getFieldName();
+                reader.nextToken();
+
+                if ("server".equals(fieldName)) {
+                    deserializedSybaseLinkedServiceTypeProperties.server = reader.readUntyped();
+                } else if ("database".equals(fieldName)) {
+                    deserializedSybaseLinkedServiceTypeProperties.database = reader.readUntyped();
+                } else if ("schema".equals(fieldName)) {
+                    deserializedSybaseLinkedServiceTypeProperties.schema = reader.readUntyped();
+                } else if ("authenticationType".equals(fieldName)) {
+                    deserializedSybaseLinkedServiceTypeProperties.authenticationType
+                        = SybaseAuthenticationType.fromString(reader.getString());
+                } else if ("username".equals(fieldName)) {
+                    deserializedSybaseLinkedServiceTypeProperties.username = reader.readUntyped();
+                } else if ("password".equals(fieldName)) {
+                    deserializedSybaseLinkedServiceTypeProperties.password = SecretBase.fromJson(reader);
+                } else if ("encryptedCredential".equals(fieldName)) {
+                    deserializedSybaseLinkedServiceTypeProperties.encryptedCredential = reader.getString();
+                } else {
+                    reader.skipChildren();
+                }
+            }
+
+            return deserializedSybaseLinkedServiceTypeProperties;
+        });
     }
 }

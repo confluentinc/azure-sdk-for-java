@@ -8,11 +8,27 @@ import com.azure.core.http.rest.PagedIterable;
 import com.azure.core.http.rest.Response;
 import com.azure.core.util.Context;
 
-/** Resource collection API of AutomationAccounts. */
+/**
+ * Resource collection API of AutomationAccounts.
+ */
 public interface AutomationAccounts {
     /**
      * Delete an automation account.
-     *
+     * 
+     * @param resourceGroupName Name of an Azure Resource group.
+     * @param automationAccountName The name of the automation account.
+     * @param context The context to associate with this operation.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return the {@link Response}.
+     */
+    Response<Void> deleteByResourceGroupWithResponse(String resourceGroupName, String automationAccountName,
+        Context context);
+
+    /**
+     * Delete an automation account.
+     * 
      * @param resourceGroupName Name of an Azure Resource group.
      * @param automationAccountName The name of the automation account.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
@@ -22,21 +38,22 @@ public interface AutomationAccounts {
     void deleteByResourceGroup(String resourceGroupName, String automationAccountName);
 
     /**
-     * Delete an automation account.
-     *
+     * Get information about an Automation Account.
+     * 
      * @param resourceGroupName Name of an Azure Resource group.
      * @param automationAccountName The name of the automation account.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the response.
+     * @return information about an Automation Account along with {@link Response}.
      */
-    Response<Void> deleteWithResponse(String resourceGroupName, String automationAccountName, Context context);
+    Response<AutomationAccount> getByResourceGroupWithResponse(String resourceGroupName, String automationAccountName,
+        Context context);
 
     /**
      * Get information about an Automation Account.
-     *
+     * 
      * @param resourceGroupName Name of an Azure Resource group.
      * @param automationAccountName The name of the automation account.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
@@ -47,88 +64,78 @@ public interface AutomationAccounts {
     AutomationAccount getByResourceGroup(String resourceGroupName, String automationAccountName);
 
     /**
-     * Get information about an Automation Account.
-     *
-     * @param resourceGroupName Name of an Azure Resource group.
-     * @param automationAccountName The name of the automation account.
-     * @param context The context to associate with this operation.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return information about an Automation Account.
-     */
-    Response<AutomationAccount> getByResourceGroupWithResponse(
-        String resourceGroupName, String automationAccountName, Context context);
-
-    /**
      * Retrieve a list of accounts within a given resource group.
-     *
+     * 
      * @param resourceGroupName Name of an Azure Resource group.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the response model for the list account operation.
+     * @return the response model for the list account operation as paginated response with {@link PagedIterable}.
      */
     PagedIterable<AutomationAccount> listByResourceGroup(String resourceGroupName);
 
     /**
      * Retrieve a list of accounts within a given resource group.
-     *
+     * 
      * @param resourceGroupName Name of an Azure Resource group.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the response model for the list account operation.
+     * @return the response model for the list account operation as paginated response with {@link PagedIterable}.
      */
     PagedIterable<AutomationAccount> listByResourceGroup(String resourceGroupName, Context context);
 
     /**
+     * Lists the Automation Accounts within an Azure subscription.
+     * 
      * Retrieve a list of accounts within a given subscription.
-     *
+     * 
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the response model for the list account operation.
+     * @return the response model for the list account operation as paginated response with {@link PagedIterable}.
      */
     PagedIterable<AutomationAccount> list();
 
     /**
+     * Lists the Automation Accounts within an Azure subscription.
+     * 
      * Retrieve a list of accounts within a given subscription.
-     *
+     * 
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the response model for the list account operation.
+     * @return the response model for the list account operation as paginated response with {@link PagedIterable}.
      */
     PagedIterable<AutomationAccount> list(Context context);
 
     /**
      * Get information about an Automation Account.
-     *
+     * 
      * @param id the resource ID.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return information about an Automation Account.
+     * @return information about an Automation Account along with {@link Response}.
      */
     AutomationAccount getById(String id);
 
     /**
      * Get information about an Automation Account.
-     *
+     * 
      * @param id the resource ID.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return information about an Automation Account.
+     * @return information about an Automation Account along with {@link Response}.
      */
     Response<AutomationAccount> getByIdWithResponse(String id, Context context);
 
     /**
      * Delete an automation account.
-     *
+     * 
      * @param id the resource ID.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
@@ -138,19 +145,19 @@ public interface AutomationAccounts {
 
     /**
      * Delete an automation account.
-     *
+     * 
      * @param id the resource ID.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the response.
+     * @return the {@link Response}.
      */
     Response<Void> deleteByIdWithResponse(String id, Context context);
 
     /**
      * Begins definition for a new AutomationAccount resource.
-     *
+     * 
      * @param name resource name.
      * @return the first stage of the new AutomationAccount definition.
      */

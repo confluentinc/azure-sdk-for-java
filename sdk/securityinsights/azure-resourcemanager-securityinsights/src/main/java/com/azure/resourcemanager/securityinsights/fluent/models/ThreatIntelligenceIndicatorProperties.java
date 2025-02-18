@@ -5,195 +5,183 @@
 package com.azure.resourcemanager.securityinsights.fluent.models;
 
 import com.azure.core.annotation.Fluent;
-import com.azure.core.util.logging.ClientLogger;
+import com.azure.json.JsonReader;
+import com.azure.json.JsonToken;
+import com.azure.json.JsonWriter;
 import com.azure.resourcemanager.securityinsights.models.EntityCommonProperties;
 import com.azure.resourcemanager.securityinsights.models.ThreatIntelligenceExternalReference;
 import com.azure.resourcemanager.securityinsights.models.ThreatIntelligenceGranularMarkingModel;
 import com.azure.resourcemanager.securityinsights.models.ThreatIntelligenceKillChainPhase;
 import com.azure.resourcemanager.securityinsights.models.ThreatIntelligenceParsedPattern;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
-/** Describes threat intelligence entity properties. */
+/**
+ * Describes threat intelligence entity properties.
+ */
 @Fluent
 public final class ThreatIntelligenceIndicatorProperties extends EntityCommonProperties {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(ThreatIntelligenceIndicatorProperties.class);
-
     /*
      * List of tags
      */
-    @JsonProperty(value = "threatIntelligenceTags")
     private List<String> threatIntelligenceTags;
 
     /*
      * Last updated time in UTC
      */
-    @JsonProperty(value = "lastUpdatedTimeUtc")
     private String lastUpdatedTimeUtc;
 
     /*
      * Source of a threat intelligence entity
      */
-    @JsonProperty(value = "source")
     private String source;
 
     /*
      * Display name of a threat intelligence entity
      */
-    @JsonProperty(value = "displayName")
     private String displayName;
 
     /*
      * Description of a threat intelligence entity
      */
-    @JsonProperty(value = "description")
     private String description;
 
     /*
      * Indicator types of threat intelligence entities
      */
-    @JsonProperty(value = "indicatorTypes")
     private List<String> indicatorTypes;
 
     /*
      * Pattern of a threat intelligence entity
      */
-    @JsonProperty(value = "pattern")
     private String pattern;
 
     /*
      * Pattern type of a threat intelligence entity
      */
-    @JsonProperty(value = "patternType")
     private String patternType;
 
     /*
      * Pattern version of a threat intelligence entity
      */
-    @JsonProperty(value = "patternVersion")
     private String patternVersion;
 
     /*
      * Kill chain phases
      */
-    @JsonProperty(value = "killChainPhases")
     private List<ThreatIntelligenceKillChainPhase> killChainPhases;
 
     /*
      * Parsed patterns
      */
-    @JsonProperty(value = "parsedPattern")
     private List<ThreatIntelligenceParsedPattern> parsedPattern;
 
     /*
      * External ID of threat intelligence entity
      */
-    @JsonProperty(value = "externalId")
     private String externalId;
 
     /*
      * Created by reference of threat intelligence entity
      */
-    @JsonProperty(value = "createdByRef")
     private String createdByRef;
 
     /*
      * Is threat intelligence entity defanged
      */
-    @JsonProperty(value = "defanged")
     private Boolean defanged;
 
     /*
      * External last updated time in UTC
      */
-    @JsonProperty(value = "externalLastUpdatedTimeUtc")
     private String externalLastUpdatedTimeUtc;
 
     /*
      * External References
      */
-    @JsonProperty(value = "externalReferences")
     private List<ThreatIntelligenceExternalReference> externalReferences;
 
     /*
      * Granular Markings
      */
-    @JsonProperty(value = "granularMarkings")
     private List<ThreatIntelligenceGranularMarkingModel> granularMarkings;
 
     /*
-     * Labels  of threat intelligence entity
+     * Labels of threat intelligence entity
      */
-    @JsonProperty(value = "labels")
     private List<String> labels;
 
     /*
      * Is threat intelligence entity revoked
      */
-    @JsonProperty(value = "revoked")
     private Boolean revoked;
 
     /*
      * Confidence of threat intelligence entity
      */
-    @JsonProperty(value = "confidence")
     private Integer confidence;
 
     /*
      * Threat intelligence entity object marking references
      */
-    @JsonProperty(value = "objectMarkingRefs")
     private List<String> objectMarkingRefs;
 
     /*
      * Language of threat intelligence entity
      */
-    @JsonProperty(value = "language")
     private String language;
 
     /*
      * Threat types
      */
-    @JsonProperty(value = "threatTypes")
     private List<String> threatTypes;
 
     /*
      * Valid from
      */
-    @JsonProperty(value = "validFrom")
     private String validFrom;
 
     /*
      * Valid until
      */
-    @JsonProperty(value = "validUntil")
     private String validUntil;
 
     /*
      * Created by
      */
-    @JsonProperty(value = "created")
     private String created;
 
     /*
      * Modified by
      */
-    @JsonProperty(value = "modified")
     private String modified;
 
     /*
      * Extensions map
      */
-    @JsonProperty(value = "extensions")
-    @JsonInclude(value = JsonInclude.Include.NON_NULL, content = JsonInclude.Include.ALWAYS)
     private Map<String, Object> extensions;
+
+    /*
+     * The graph item display name which is a short humanly readable description of the graph item instance. This
+     * property is optional and might be system generated.
+     */
+    private String friendlyName;
+
+    /*
+     * A bag of custom fields that should be part of the entity and will be presented to the user.
+     */
+    private Map<String, Object> additionalData;
+
+    /**
+     * Creates an instance of ThreatIntelligenceIndicatorProperties class.
+     */
+    public ThreatIntelligenceIndicatorProperties() {
+    }
 
     /**
      * Get the threatIntelligenceTags property: List of tags.
-     *
+     * 
      * @return the threatIntelligenceTags value.
      */
     public List<String> threatIntelligenceTags() {
@@ -202,7 +190,7 @@ public final class ThreatIntelligenceIndicatorProperties extends EntityCommonPro
 
     /**
      * Set the threatIntelligenceTags property: List of tags.
-     *
+     * 
      * @param threatIntelligenceTags the threatIntelligenceTags value to set.
      * @return the ThreatIntelligenceIndicatorProperties object itself.
      */
@@ -213,7 +201,7 @@ public final class ThreatIntelligenceIndicatorProperties extends EntityCommonPro
 
     /**
      * Get the lastUpdatedTimeUtc property: Last updated time in UTC.
-     *
+     * 
      * @return the lastUpdatedTimeUtc value.
      */
     public String lastUpdatedTimeUtc() {
@@ -222,7 +210,7 @@ public final class ThreatIntelligenceIndicatorProperties extends EntityCommonPro
 
     /**
      * Set the lastUpdatedTimeUtc property: Last updated time in UTC.
-     *
+     * 
      * @param lastUpdatedTimeUtc the lastUpdatedTimeUtc value to set.
      * @return the ThreatIntelligenceIndicatorProperties object itself.
      */
@@ -233,7 +221,7 @@ public final class ThreatIntelligenceIndicatorProperties extends EntityCommonPro
 
     /**
      * Get the source property: Source of a threat intelligence entity.
-     *
+     * 
      * @return the source value.
      */
     public String source() {
@@ -242,7 +230,7 @@ public final class ThreatIntelligenceIndicatorProperties extends EntityCommonPro
 
     /**
      * Set the source property: Source of a threat intelligence entity.
-     *
+     * 
      * @param source the source value to set.
      * @return the ThreatIntelligenceIndicatorProperties object itself.
      */
@@ -253,7 +241,7 @@ public final class ThreatIntelligenceIndicatorProperties extends EntityCommonPro
 
     /**
      * Get the displayName property: Display name of a threat intelligence entity.
-     *
+     * 
      * @return the displayName value.
      */
     public String displayName() {
@@ -262,7 +250,7 @@ public final class ThreatIntelligenceIndicatorProperties extends EntityCommonPro
 
     /**
      * Set the displayName property: Display name of a threat intelligence entity.
-     *
+     * 
      * @param displayName the displayName value to set.
      * @return the ThreatIntelligenceIndicatorProperties object itself.
      */
@@ -273,7 +261,7 @@ public final class ThreatIntelligenceIndicatorProperties extends EntityCommonPro
 
     /**
      * Get the description property: Description of a threat intelligence entity.
-     *
+     * 
      * @return the description value.
      */
     public String description() {
@@ -282,7 +270,7 @@ public final class ThreatIntelligenceIndicatorProperties extends EntityCommonPro
 
     /**
      * Set the description property: Description of a threat intelligence entity.
-     *
+     * 
      * @param description the description value to set.
      * @return the ThreatIntelligenceIndicatorProperties object itself.
      */
@@ -293,7 +281,7 @@ public final class ThreatIntelligenceIndicatorProperties extends EntityCommonPro
 
     /**
      * Get the indicatorTypes property: Indicator types of threat intelligence entities.
-     *
+     * 
      * @return the indicatorTypes value.
      */
     public List<String> indicatorTypes() {
@@ -302,7 +290,7 @@ public final class ThreatIntelligenceIndicatorProperties extends EntityCommonPro
 
     /**
      * Set the indicatorTypes property: Indicator types of threat intelligence entities.
-     *
+     * 
      * @param indicatorTypes the indicatorTypes value to set.
      * @return the ThreatIntelligenceIndicatorProperties object itself.
      */
@@ -313,7 +301,7 @@ public final class ThreatIntelligenceIndicatorProperties extends EntityCommonPro
 
     /**
      * Get the pattern property: Pattern of a threat intelligence entity.
-     *
+     * 
      * @return the pattern value.
      */
     public String pattern() {
@@ -322,7 +310,7 @@ public final class ThreatIntelligenceIndicatorProperties extends EntityCommonPro
 
     /**
      * Set the pattern property: Pattern of a threat intelligence entity.
-     *
+     * 
      * @param pattern the pattern value to set.
      * @return the ThreatIntelligenceIndicatorProperties object itself.
      */
@@ -333,7 +321,7 @@ public final class ThreatIntelligenceIndicatorProperties extends EntityCommonPro
 
     /**
      * Get the patternType property: Pattern type of a threat intelligence entity.
-     *
+     * 
      * @return the patternType value.
      */
     public String patternType() {
@@ -342,7 +330,7 @@ public final class ThreatIntelligenceIndicatorProperties extends EntityCommonPro
 
     /**
      * Set the patternType property: Pattern type of a threat intelligence entity.
-     *
+     * 
      * @param patternType the patternType value to set.
      * @return the ThreatIntelligenceIndicatorProperties object itself.
      */
@@ -353,7 +341,7 @@ public final class ThreatIntelligenceIndicatorProperties extends EntityCommonPro
 
     /**
      * Get the patternVersion property: Pattern version of a threat intelligence entity.
-     *
+     * 
      * @return the patternVersion value.
      */
     public String patternVersion() {
@@ -362,7 +350,7 @@ public final class ThreatIntelligenceIndicatorProperties extends EntityCommonPro
 
     /**
      * Set the patternVersion property: Pattern version of a threat intelligence entity.
-     *
+     * 
      * @param patternVersion the patternVersion value to set.
      * @return the ThreatIntelligenceIndicatorProperties object itself.
      */
@@ -373,7 +361,7 @@ public final class ThreatIntelligenceIndicatorProperties extends EntityCommonPro
 
     /**
      * Get the killChainPhases property: Kill chain phases.
-     *
+     * 
      * @return the killChainPhases value.
      */
     public List<ThreatIntelligenceKillChainPhase> killChainPhases() {
@@ -382,19 +370,19 @@ public final class ThreatIntelligenceIndicatorProperties extends EntityCommonPro
 
     /**
      * Set the killChainPhases property: Kill chain phases.
-     *
+     * 
      * @param killChainPhases the killChainPhases value to set.
      * @return the ThreatIntelligenceIndicatorProperties object itself.
      */
-    public ThreatIntelligenceIndicatorProperties withKillChainPhases(
-        List<ThreatIntelligenceKillChainPhase> killChainPhases) {
+    public ThreatIntelligenceIndicatorProperties
+        withKillChainPhases(List<ThreatIntelligenceKillChainPhase> killChainPhases) {
         this.killChainPhases = killChainPhases;
         return this;
     }
 
     /**
      * Get the parsedPattern property: Parsed patterns.
-     *
+     * 
      * @return the parsedPattern value.
      */
     public List<ThreatIntelligenceParsedPattern> parsedPattern() {
@@ -403,19 +391,19 @@ public final class ThreatIntelligenceIndicatorProperties extends EntityCommonPro
 
     /**
      * Set the parsedPattern property: Parsed patterns.
-     *
+     * 
      * @param parsedPattern the parsedPattern value to set.
      * @return the ThreatIntelligenceIndicatorProperties object itself.
      */
-    public ThreatIntelligenceIndicatorProperties withParsedPattern(
-        List<ThreatIntelligenceParsedPattern> parsedPattern) {
+    public ThreatIntelligenceIndicatorProperties
+        withParsedPattern(List<ThreatIntelligenceParsedPattern> parsedPattern) {
         this.parsedPattern = parsedPattern;
         return this;
     }
 
     /**
      * Get the externalId property: External ID of threat intelligence entity.
-     *
+     * 
      * @return the externalId value.
      */
     public String externalId() {
@@ -424,7 +412,7 @@ public final class ThreatIntelligenceIndicatorProperties extends EntityCommonPro
 
     /**
      * Set the externalId property: External ID of threat intelligence entity.
-     *
+     * 
      * @param externalId the externalId value to set.
      * @return the ThreatIntelligenceIndicatorProperties object itself.
      */
@@ -435,7 +423,7 @@ public final class ThreatIntelligenceIndicatorProperties extends EntityCommonPro
 
     /**
      * Get the createdByRef property: Created by reference of threat intelligence entity.
-     *
+     * 
      * @return the createdByRef value.
      */
     public String createdByRef() {
@@ -444,7 +432,7 @@ public final class ThreatIntelligenceIndicatorProperties extends EntityCommonPro
 
     /**
      * Set the createdByRef property: Created by reference of threat intelligence entity.
-     *
+     * 
      * @param createdByRef the createdByRef value to set.
      * @return the ThreatIntelligenceIndicatorProperties object itself.
      */
@@ -455,7 +443,7 @@ public final class ThreatIntelligenceIndicatorProperties extends EntityCommonPro
 
     /**
      * Get the defanged property: Is threat intelligence entity defanged.
-     *
+     * 
      * @return the defanged value.
      */
     public Boolean defanged() {
@@ -464,7 +452,7 @@ public final class ThreatIntelligenceIndicatorProperties extends EntityCommonPro
 
     /**
      * Set the defanged property: Is threat intelligence entity defanged.
-     *
+     * 
      * @param defanged the defanged value to set.
      * @return the ThreatIntelligenceIndicatorProperties object itself.
      */
@@ -475,7 +463,7 @@ public final class ThreatIntelligenceIndicatorProperties extends EntityCommonPro
 
     /**
      * Get the externalLastUpdatedTimeUtc property: External last updated time in UTC.
-     *
+     * 
      * @return the externalLastUpdatedTimeUtc value.
      */
     public String externalLastUpdatedTimeUtc() {
@@ -484,7 +472,7 @@ public final class ThreatIntelligenceIndicatorProperties extends EntityCommonPro
 
     /**
      * Set the externalLastUpdatedTimeUtc property: External last updated time in UTC.
-     *
+     * 
      * @param externalLastUpdatedTimeUtc the externalLastUpdatedTimeUtc value to set.
      * @return the ThreatIntelligenceIndicatorProperties object itself.
      */
@@ -495,7 +483,7 @@ public final class ThreatIntelligenceIndicatorProperties extends EntityCommonPro
 
     /**
      * Get the externalReferences property: External References.
-     *
+     * 
      * @return the externalReferences value.
      */
     public List<ThreatIntelligenceExternalReference> externalReferences() {
@@ -504,19 +492,19 @@ public final class ThreatIntelligenceIndicatorProperties extends EntityCommonPro
 
     /**
      * Set the externalReferences property: External References.
-     *
+     * 
      * @param externalReferences the externalReferences value to set.
      * @return the ThreatIntelligenceIndicatorProperties object itself.
      */
-    public ThreatIntelligenceIndicatorProperties withExternalReferences(
-        List<ThreatIntelligenceExternalReference> externalReferences) {
+    public ThreatIntelligenceIndicatorProperties
+        withExternalReferences(List<ThreatIntelligenceExternalReference> externalReferences) {
         this.externalReferences = externalReferences;
         return this;
     }
 
     /**
      * Get the granularMarkings property: Granular Markings.
-     *
+     * 
      * @return the granularMarkings value.
      */
     public List<ThreatIntelligenceGranularMarkingModel> granularMarkings() {
@@ -525,19 +513,19 @@ public final class ThreatIntelligenceIndicatorProperties extends EntityCommonPro
 
     /**
      * Set the granularMarkings property: Granular Markings.
-     *
+     * 
      * @param granularMarkings the granularMarkings value to set.
      * @return the ThreatIntelligenceIndicatorProperties object itself.
      */
-    public ThreatIntelligenceIndicatorProperties withGranularMarkings(
-        List<ThreatIntelligenceGranularMarkingModel> granularMarkings) {
+    public ThreatIntelligenceIndicatorProperties
+        withGranularMarkings(List<ThreatIntelligenceGranularMarkingModel> granularMarkings) {
         this.granularMarkings = granularMarkings;
         return this;
     }
 
     /**
      * Get the labels property: Labels of threat intelligence entity.
-     *
+     * 
      * @return the labels value.
      */
     public List<String> labels() {
@@ -546,7 +534,7 @@ public final class ThreatIntelligenceIndicatorProperties extends EntityCommonPro
 
     /**
      * Set the labels property: Labels of threat intelligence entity.
-     *
+     * 
      * @param labels the labels value to set.
      * @return the ThreatIntelligenceIndicatorProperties object itself.
      */
@@ -557,7 +545,7 @@ public final class ThreatIntelligenceIndicatorProperties extends EntityCommonPro
 
     /**
      * Get the revoked property: Is threat intelligence entity revoked.
-     *
+     * 
      * @return the revoked value.
      */
     public Boolean revoked() {
@@ -566,7 +554,7 @@ public final class ThreatIntelligenceIndicatorProperties extends EntityCommonPro
 
     /**
      * Set the revoked property: Is threat intelligence entity revoked.
-     *
+     * 
      * @param revoked the revoked value to set.
      * @return the ThreatIntelligenceIndicatorProperties object itself.
      */
@@ -577,7 +565,7 @@ public final class ThreatIntelligenceIndicatorProperties extends EntityCommonPro
 
     /**
      * Get the confidence property: Confidence of threat intelligence entity.
-     *
+     * 
      * @return the confidence value.
      */
     public Integer confidence() {
@@ -586,7 +574,7 @@ public final class ThreatIntelligenceIndicatorProperties extends EntityCommonPro
 
     /**
      * Set the confidence property: Confidence of threat intelligence entity.
-     *
+     * 
      * @param confidence the confidence value to set.
      * @return the ThreatIntelligenceIndicatorProperties object itself.
      */
@@ -597,7 +585,7 @@ public final class ThreatIntelligenceIndicatorProperties extends EntityCommonPro
 
     /**
      * Get the objectMarkingRefs property: Threat intelligence entity object marking references.
-     *
+     * 
      * @return the objectMarkingRefs value.
      */
     public List<String> objectMarkingRefs() {
@@ -606,7 +594,7 @@ public final class ThreatIntelligenceIndicatorProperties extends EntityCommonPro
 
     /**
      * Set the objectMarkingRefs property: Threat intelligence entity object marking references.
-     *
+     * 
      * @param objectMarkingRefs the objectMarkingRefs value to set.
      * @return the ThreatIntelligenceIndicatorProperties object itself.
      */
@@ -617,7 +605,7 @@ public final class ThreatIntelligenceIndicatorProperties extends EntityCommonPro
 
     /**
      * Get the language property: Language of threat intelligence entity.
-     *
+     * 
      * @return the language value.
      */
     public String language() {
@@ -626,7 +614,7 @@ public final class ThreatIntelligenceIndicatorProperties extends EntityCommonPro
 
     /**
      * Set the language property: Language of threat intelligence entity.
-     *
+     * 
      * @param language the language value to set.
      * @return the ThreatIntelligenceIndicatorProperties object itself.
      */
@@ -637,7 +625,7 @@ public final class ThreatIntelligenceIndicatorProperties extends EntityCommonPro
 
     /**
      * Get the threatTypes property: Threat types.
-     *
+     * 
      * @return the threatTypes value.
      */
     public List<String> threatTypes() {
@@ -646,7 +634,7 @@ public final class ThreatIntelligenceIndicatorProperties extends EntityCommonPro
 
     /**
      * Set the threatTypes property: Threat types.
-     *
+     * 
      * @param threatTypes the threatTypes value to set.
      * @return the ThreatIntelligenceIndicatorProperties object itself.
      */
@@ -657,7 +645,7 @@ public final class ThreatIntelligenceIndicatorProperties extends EntityCommonPro
 
     /**
      * Get the validFrom property: Valid from.
-     *
+     * 
      * @return the validFrom value.
      */
     public String validFrom() {
@@ -666,7 +654,7 @@ public final class ThreatIntelligenceIndicatorProperties extends EntityCommonPro
 
     /**
      * Set the validFrom property: Valid from.
-     *
+     * 
      * @param validFrom the validFrom value to set.
      * @return the ThreatIntelligenceIndicatorProperties object itself.
      */
@@ -677,7 +665,7 @@ public final class ThreatIntelligenceIndicatorProperties extends EntityCommonPro
 
     /**
      * Get the validUntil property: Valid until.
-     *
+     * 
      * @return the validUntil value.
      */
     public String validUntil() {
@@ -686,7 +674,7 @@ public final class ThreatIntelligenceIndicatorProperties extends EntityCommonPro
 
     /**
      * Set the validUntil property: Valid until.
-     *
+     * 
      * @param validUntil the validUntil value to set.
      * @return the ThreatIntelligenceIndicatorProperties object itself.
      */
@@ -697,7 +685,7 @@ public final class ThreatIntelligenceIndicatorProperties extends EntityCommonPro
 
     /**
      * Get the created property: Created by.
-     *
+     * 
      * @return the created value.
      */
     public String created() {
@@ -706,7 +694,7 @@ public final class ThreatIntelligenceIndicatorProperties extends EntityCommonPro
 
     /**
      * Set the created property: Created by.
-     *
+     * 
      * @param created the created value to set.
      * @return the ThreatIntelligenceIndicatorProperties object itself.
      */
@@ -717,7 +705,7 @@ public final class ThreatIntelligenceIndicatorProperties extends EntityCommonPro
 
     /**
      * Get the modified property: Modified by.
-     *
+     * 
      * @return the modified value.
      */
     public String modified() {
@@ -726,7 +714,7 @@ public final class ThreatIntelligenceIndicatorProperties extends EntityCommonPro
 
     /**
      * Set the modified property: Modified by.
-     *
+     * 
      * @param modified the modified value to set.
      * @return the ThreatIntelligenceIndicatorProperties object itself.
      */
@@ -737,7 +725,7 @@ public final class ThreatIntelligenceIndicatorProperties extends EntityCommonPro
 
     /**
      * Get the extensions property: Extensions map.
-     *
+     * 
      * @return the extensions value.
      */
     public Map<String, Object> extensions() {
@@ -746,7 +734,7 @@ public final class ThreatIntelligenceIndicatorProperties extends EntityCommonPro
 
     /**
      * Set the extensions property: Extensions map.
-     *
+     * 
      * @param extensions the extensions value to set.
      * @return the ThreatIntelligenceIndicatorProperties object itself.
      */
@@ -756,13 +744,34 @@ public final class ThreatIntelligenceIndicatorProperties extends EntityCommonPro
     }
 
     /**
+     * Get the friendlyName property: The graph item display name which is a short humanly readable description of the
+     * graph item instance. This property is optional and might be system generated.
+     * 
+     * @return the friendlyName value.
+     */
+    @Override
+    public String friendlyName() {
+        return this.friendlyName;
+    }
+
+    /**
+     * Get the additionalData property: A bag of custom fields that should be part of the entity and will be presented
+     * to the user.
+     * 
+     * @return the additionalData value.
+     */
+    @Override
+    public Map<String, Object> additionalData() {
+        return this.additionalData;
+    }
+
+    /**
      * Validates the instance.
-     *
+     * 
      * @throws IllegalArgumentException thrown if the instance is not valid.
      */
     @Override
     public void validate() {
-        super.validate();
         if (killChainPhases() != null) {
             killChainPhases().forEach(e -> e.validate());
         }
@@ -775,5 +784,151 @@ public final class ThreatIntelligenceIndicatorProperties extends EntityCommonPro
         if (granularMarkings() != null) {
             granularMarkings().forEach(e -> e.validate());
         }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public JsonWriter toJson(JsonWriter jsonWriter) throws IOException {
+        jsonWriter.writeStartObject();
+        jsonWriter.writeArrayField("threatIntelligenceTags", this.threatIntelligenceTags,
+            (writer, element) -> writer.writeString(element));
+        jsonWriter.writeStringField("lastUpdatedTimeUtc", this.lastUpdatedTimeUtc);
+        jsonWriter.writeStringField("source", this.source);
+        jsonWriter.writeStringField("displayName", this.displayName);
+        jsonWriter.writeStringField("description", this.description);
+        jsonWriter.writeArrayField("indicatorTypes", this.indicatorTypes,
+            (writer, element) -> writer.writeString(element));
+        jsonWriter.writeStringField("pattern", this.pattern);
+        jsonWriter.writeStringField("patternType", this.patternType);
+        jsonWriter.writeStringField("patternVersion", this.patternVersion);
+        jsonWriter.writeArrayField("killChainPhases", this.killChainPhases,
+            (writer, element) -> writer.writeJson(element));
+        jsonWriter.writeArrayField("parsedPattern", this.parsedPattern, (writer, element) -> writer.writeJson(element));
+        jsonWriter.writeStringField("externalId", this.externalId);
+        jsonWriter.writeStringField("createdByRef", this.createdByRef);
+        jsonWriter.writeBooleanField("defanged", this.defanged);
+        jsonWriter.writeStringField("externalLastUpdatedTimeUtc", this.externalLastUpdatedTimeUtc);
+        jsonWriter.writeArrayField("externalReferences", this.externalReferences,
+            (writer, element) -> writer.writeJson(element));
+        jsonWriter.writeArrayField("granularMarkings", this.granularMarkings,
+            (writer, element) -> writer.writeJson(element));
+        jsonWriter.writeArrayField("labels", this.labels, (writer, element) -> writer.writeString(element));
+        jsonWriter.writeBooleanField("revoked", this.revoked);
+        jsonWriter.writeNumberField("confidence", this.confidence);
+        jsonWriter.writeArrayField("objectMarkingRefs", this.objectMarkingRefs,
+            (writer, element) -> writer.writeString(element));
+        jsonWriter.writeStringField("language", this.language);
+        jsonWriter.writeArrayField("threatTypes", this.threatTypes, (writer, element) -> writer.writeString(element));
+        jsonWriter.writeStringField("validFrom", this.validFrom);
+        jsonWriter.writeStringField("validUntil", this.validUntil);
+        jsonWriter.writeStringField("created", this.created);
+        jsonWriter.writeStringField("modified", this.modified);
+        jsonWriter.writeMapField("extensions", this.extensions, (writer, element) -> writer.writeUntyped(element));
+        return jsonWriter.writeEndObject();
+    }
+
+    /**
+     * Reads an instance of ThreatIntelligenceIndicatorProperties from the JsonReader.
+     * 
+     * @param jsonReader The JsonReader being read.
+     * @return An instance of ThreatIntelligenceIndicatorProperties if the JsonReader was pointing to an instance of it,
+     * or null if it was pointing to JSON null.
+     * @throws IOException If an error occurs while reading the ThreatIntelligenceIndicatorProperties.
+     */
+    public static ThreatIntelligenceIndicatorProperties fromJson(JsonReader jsonReader) throws IOException {
+        return jsonReader.readObject(reader -> {
+            ThreatIntelligenceIndicatorProperties deserializedThreatIntelligenceIndicatorProperties
+                = new ThreatIntelligenceIndicatorProperties();
+            while (reader.nextToken() != JsonToken.END_OBJECT) {
+                String fieldName = reader.getFieldName();
+                reader.nextToken();
+
+                if ("additionalData".equals(fieldName)) {
+                    Map<String, Object> additionalData = reader.readMap(reader1 -> reader1.readUntyped());
+                    deserializedThreatIntelligenceIndicatorProperties.additionalData = additionalData;
+                } else if ("friendlyName".equals(fieldName)) {
+                    deserializedThreatIntelligenceIndicatorProperties.friendlyName = reader.getString();
+                } else if ("threatIntelligenceTags".equals(fieldName)) {
+                    List<String> threatIntelligenceTags = reader.readArray(reader1 -> reader1.getString());
+                    deserializedThreatIntelligenceIndicatorProperties.threatIntelligenceTags = threatIntelligenceTags;
+                } else if ("lastUpdatedTimeUtc".equals(fieldName)) {
+                    deserializedThreatIntelligenceIndicatorProperties.lastUpdatedTimeUtc = reader.getString();
+                } else if ("source".equals(fieldName)) {
+                    deserializedThreatIntelligenceIndicatorProperties.source = reader.getString();
+                } else if ("displayName".equals(fieldName)) {
+                    deserializedThreatIntelligenceIndicatorProperties.displayName = reader.getString();
+                } else if ("description".equals(fieldName)) {
+                    deserializedThreatIntelligenceIndicatorProperties.description = reader.getString();
+                } else if ("indicatorTypes".equals(fieldName)) {
+                    List<String> indicatorTypes = reader.readArray(reader1 -> reader1.getString());
+                    deserializedThreatIntelligenceIndicatorProperties.indicatorTypes = indicatorTypes;
+                } else if ("pattern".equals(fieldName)) {
+                    deserializedThreatIntelligenceIndicatorProperties.pattern = reader.getString();
+                } else if ("patternType".equals(fieldName)) {
+                    deserializedThreatIntelligenceIndicatorProperties.patternType = reader.getString();
+                } else if ("patternVersion".equals(fieldName)) {
+                    deserializedThreatIntelligenceIndicatorProperties.patternVersion = reader.getString();
+                } else if ("killChainPhases".equals(fieldName)) {
+                    List<ThreatIntelligenceKillChainPhase> killChainPhases
+                        = reader.readArray(reader1 -> ThreatIntelligenceKillChainPhase.fromJson(reader1));
+                    deserializedThreatIntelligenceIndicatorProperties.killChainPhases = killChainPhases;
+                } else if ("parsedPattern".equals(fieldName)) {
+                    List<ThreatIntelligenceParsedPattern> parsedPattern
+                        = reader.readArray(reader1 -> ThreatIntelligenceParsedPattern.fromJson(reader1));
+                    deserializedThreatIntelligenceIndicatorProperties.parsedPattern = parsedPattern;
+                } else if ("externalId".equals(fieldName)) {
+                    deserializedThreatIntelligenceIndicatorProperties.externalId = reader.getString();
+                } else if ("createdByRef".equals(fieldName)) {
+                    deserializedThreatIntelligenceIndicatorProperties.createdByRef = reader.getString();
+                } else if ("defanged".equals(fieldName)) {
+                    deserializedThreatIntelligenceIndicatorProperties.defanged
+                        = reader.getNullable(JsonReader::getBoolean);
+                } else if ("externalLastUpdatedTimeUtc".equals(fieldName)) {
+                    deserializedThreatIntelligenceIndicatorProperties.externalLastUpdatedTimeUtc = reader.getString();
+                } else if ("externalReferences".equals(fieldName)) {
+                    List<ThreatIntelligenceExternalReference> externalReferences
+                        = reader.readArray(reader1 -> ThreatIntelligenceExternalReference.fromJson(reader1));
+                    deserializedThreatIntelligenceIndicatorProperties.externalReferences = externalReferences;
+                } else if ("granularMarkings".equals(fieldName)) {
+                    List<ThreatIntelligenceGranularMarkingModel> granularMarkings
+                        = reader.readArray(reader1 -> ThreatIntelligenceGranularMarkingModel.fromJson(reader1));
+                    deserializedThreatIntelligenceIndicatorProperties.granularMarkings = granularMarkings;
+                } else if ("labels".equals(fieldName)) {
+                    List<String> labels = reader.readArray(reader1 -> reader1.getString());
+                    deserializedThreatIntelligenceIndicatorProperties.labels = labels;
+                } else if ("revoked".equals(fieldName)) {
+                    deserializedThreatIntelligenceIndicatorProperties.revoked
+                        = reader.getNullable(JsonReader::getBoolean);
+                } else if ("confidence".equals(fieldName)) {
+                    deserializedThreatIntelligenceIndicatorProperties.confidence
+                        = reader.getNullable(JsonReader::getInt);
+                } else if ("objectMarkingRefs".equals(fieldName)) {
+                    List<String> objectMarkingRefs = reader.readArray(reader1 -> reader1.getString());
+                    deserializedThreatIntelligenceIndicatorProperties.objectMarkingRefs = objectMarkingRefs;
+                } else if ("language".equals(fieldName)) {
+                    deserializedThreatIntelligenceIndicatorProperties.language = reader.getString();
+                } else if ("threatTypes".equals(fieldName)) {
+                    List<String> threatTypes = reader.readArray(reader1 -> reader1.getString());
+                    deserializedThreatIntelligenceIndicatorProperties.threatTypes = threatTypes;
+                } else if ("validFrom".equals(fieldName)) {
+                    deserializedThreatIntelligenceIndicatorProperties.validFrom = reader.getString();
+                } else if ("validUntil".equals(fieldName)) {
+                    deserializedThreatIntelligenceIndicatorProperties.validUntil = reader.getString();
+                } else if ("created".equals(fieldName)) {
+                    deserializedThreatIntelligenceIndicatorProperties.created = reader.getString();
+                } else if ("modified".equals(fieldName)) {
+                    deserializedThreatIntelligenceIndicatorProperties.modified = reader.getString();
+                } else if ("extensions".equals(fieldName)) {
+                    Map<String, Object> extensions = reader.readMap(reader1 -> reader1.readUntyped());
+                    deserializedThreatIntelligenceIndicatorProperties.extensions = extensions;
+                } else {
+                    reader.skipChildren();
+                }
+            }
+
+            return deserializedThreatIntelligenceIndicatorProperties;
+        });
     }
 }

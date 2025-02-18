@@ -6,60 +6,62 @@ package com.azure.resourcemanager.cdn.models;
 
 import com.azure.core.annotation.Fluent;
 import com.azure.core.util.logging.ClientLogger;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.azure.json.JsonReader;
+import com.azure.json.JsonSerializable;
+import com.azure.json.JsonToken;
+import com.azure.json.JsonWriter;
+import java.io.IOException;
 
-/** Defines the parameters for the cache-key query string action. */
+/**
+ * Defines the parameters for the cache-key query string action.
+ */
 @Fluent
-public final class CacheKeyQueryStringActionParameters {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(CacheKeyQueryStringActionParameters.class);
-
+public final class CacheKeyQueryStringActionParameters
+    implements JsonSerializable<CacheKeyQueryStringActionParameters> {
     /*
-     * The @odata.type property.
+     * The typeName property.
      */
-    @JsonProperty(value = "@odata.type", required = true)
-    private String odataType;
+    private String typeName = "DeliveryRuleCacheKeyQueryStringBehaviorActionParameters";
 
     /*
      * Caching behavior for the requests
      */
-    @JsonProperty(value = "queryStringBehavior", required = true)
     private QueryStringBehavior queryStringBehavior;
 
     /*
      * query parameters to include or exclude (comma separated).
      */
-    @JsonProperty(value = "queryParameters")
     private String queryParameters;
 
-    /** Creates an instance of CacheKeyQueryStringActionParameters class. */
-    public CacheKeyQueryStringActionParameters() {
-        odataType = "#Microsoft.Azure.Cdn.Models.DeliveryRuleCacheKeyQueryStringBehaviorActionParameters";
-    }
-
     /**
-     * Get the odataType property: The @odata.type property.
-     *
-     * @return the odataType value.
+     * Creates an instance of CacheKeyQueryStringActionParameters class.
      */
-    public String odataType() {
-        return this.odataType;
+    public CacheKeyQueryStringActionParameters() {
     }
 
     /**
-     * Set the odataType property: The @odata.type property.
-     *
-     * @param odataType the odataType value to set.
+     * Get the typeName property: The typeName property.
+     * 
+     * @return the typeName value.
+     */
+    public String typeName() {
+        return this.typeName;
+    }
+
+    /**
+     * Set the typeName property: The typeName property.
+     * 
+     * @param typeName the typeName value to set.
      * @return the CacheKeyQueryStringActionParameters object itself.
      */
-    public CacheKeyQueryStringActionParameters withOdataType(String odataType) {
-        this.odataType = odataType;
+    public CacheKeyQueryStringActionParameters withTypeName(String typeName) {
+        this.typeName = typeName;
         return this;
     }
 
     /**
      * Get the queryStringBehavior property: Caching behavior for the requests.
-     *
+     * 
      * @return the queryStringBehavior value.
      */
     public QueryStringBehavior queryStringBehavior() {
@@ -68,7 +70,7 @@ public final class CacheKeyQueryStringActionParameters {
 
     /**
      * Set the queryStringBehavior property: Caching behavior for the requests.
-     *
+     * 
      * @param queryStringBehavior the queryStringBehavior value to set.
      * @return the CacheKeyQueryStringActionParameters object itself.
      */
@@ -79,7 +81,7 @@ public final class CacheKeyQueryStringActionParameters {
 
     /**
      * Get the queryParameters property: query parameters to include or exclude (comma separated).
-     *
+     * 
      * @return the queryParameters value.
      */
     public String queryParameters() {
@@ -88,7 +90,7 @@ public final class CacheKeyQueryStringActionParameters {
 
     /**
      * Set the queryParameters property: query parameters to include or exclude (comma separated).
-     *
+     * 
      * @param queryParameters the queryParameters value to set.
      * @return the CacheKeyQueryStringActionParameters object itself.
      */
@@ -99,15 +101,60 @@ public final class CacheKeyQueryStringActionParameters {
 
     /**
      * Validates the instance.
-     *
+     * 
      * @throws IllegalArgumentException thrown if the instance is not valid.
      */
     public void validate() {
         if (queryStringBehavior() == null) {
-            throw logger
-                .logExceptionAsError(
-                    new IllegalArgumentException(
-                        "Missing required property queryStringBehavior in model CacheKeyQueryStringActionParameters"));
+            throw LOGGER.atError()
+                .log(new IllegalArgumentException(
+                    "Missing required property queryStringBehavior in model CacheKeyQueryStringActionParameters"));
         }
+    }
+
+    private static final ClientLogger LOGGER = new ClientLogger(CacheKeyQueryStringActionParameters.class);
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public JsonWriter toJson(JsonWriter jsonWriter) throws IOException {
+        jsonWriter.writeStartObject();
+        jsonWriter.writeStringField("typeName", this.typeName);
+        jsonWriter.writeStringField("queryStringBehavior",
+            this.queryStringBehavior == null ? null : this.queryStringBehavior.toString());
+        jsonWriter.writeStringField("queryParameters", this.queryParameters);
+        return jsonWriter.writeEndObject();
+    }
+
+    /**
+     * Reads an instance of CacheKeyQueryStringActionParameters from the JsonReader.
+     * 
+     * @param jsonReader The JsonReader being read.
+     * @return An instance of CacheKeyQueryStringActionParameters if the JsonReader was pointing to an instance of it,
+     * or null if it was pointing to JSON null.
+     * @throws IllegalStateException If the deserialized JSON object was missing any required properties.
+     * @throws IOException If an error occurs while reading the CacheKeyQueryStringActionParameters.
+     */
+    public static CacheKeyQueryStringActionParameters fromJson(JsonReader jsonReader) throws IOException {
+        return jsonReader.readObject(reader -> {
+            CacheKeyQueryStringActionParameters deserializedCacheKeyQueryStringActionParameters
+                = new CacheKeyQueryStringActionParameters();
+            while (reader.nextToken() != JsonToken.END_OBJECT) {
+                String fieldName = reader.getFieldName();
+                reader.nextToken();
+
+                if ("queryStringBehavior".equals(fieldName)) {
+                    deserializedCacheKeyQueryStringActionParameters.queryStringBehavior
+                        = QueryStringBehavior.fromString(reader.getString());
+                } else if ("queryParameters".equals(fieldName)) {
+                    deserializedCacheKeyQueryStringActionParameters.queryParameters = reader.getString();
+                } else {
+                    reader.skipChildren();
+                }
+            }
+
+            return deserializedCacheKeyQueryStringActionParameters;
+        });
     }
 }

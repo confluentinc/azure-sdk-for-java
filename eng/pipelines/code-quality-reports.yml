@@ -1,112 +1,128 @@
-jobs:
-  - job: 'Linting'
+parameters:
+  - name: Artifacts
+    type: object
+    default:
+      - name: azure-core
+        groupId: com.azure
+        safeName: azurecore
+      - name: core
+        groupId: io.clientcore
+        safeName: core
 
-    variables:
-      - template: /eng/pipelines/templates/variables/globals.yml
+extends:
+  template: /eng/pipelines/templates/stages/1es-redirect.yml
+  parameters:
+    stages:
+      - stage: Linting
+        jobs:
+          - job: 'Linting'
 
-    pool:
-      name: azsdk-pool-mms-ubuntu-2004-general
+            timeoutInMinutes: 180
 
-    steps:
-      # Skip sparse checkout for the `azure-sdk-for-<lang>-pr` private mirrored repositories
-      # as we require the github service connection to be loaded.
-      - ${{ if not(contains(variables['Build.DefinitionName'], 'java-pr')) }}:
-          - template: /eng/common/pipelines/templates/steps/sparse-checkout.yml
-            parameters:
-              Paths:
-                # Checkout Core as it triggers building all SDKs that use code-quality-reports
-                - 'sdk/core'
-                - '**/*.xml'
-                - '!sdk/**/test-recordings'
-                - '!sdk/**/session-records'
+            variables:
+              - template: /eng/pipelines/templates/variables/globals.yml
+              - template: /eng/pipelines/templates/variables/image.yml
+              - name: ArtifactsJson
+                value: '${{ convertToJson(parameters.Artifacts) }}'
 
-      - template: /eng/pipelines/templates/steps/install-reporting-tools.yml
+            pool:
+              name: $(LINUXPOOL)
+              image: $(LINUXVMIMAGE)
+              os: linux
 
-      - task: UsePythonVersion@0
-        displayName: 'Use Python 3.6'
-        inputs:
-          versionSpec: '3.6'
+            steps:
+              # Skip sparse checkout for the `azure-sdk-for-<lang>-pr` private mirrored repositories
+              # as we require the GitHub service connection to be loaded.
+              - ${{ if not(contains(variables['Build.DefinitionName'], 'java-pr')) }}:
+                  - template: /eng/common/pipelines/templates/steps/sparse-checkout.yml
+                    parameters:
+                      Paths:
+                        - '**/*.xml'
+                        - '!sdk/**/test-recordings'
+                        - '!sdk/**/session-records'
 
-      - task: PythonScript@0
-        displayName: 'Set versions for source build'
-        inputs:
-          scriptPath: 'eng/versioning/set_versions.py'
-          arguments: '--build-type client --pst'
+              - task: UsePythonVersion@0
+                displayName: 'Use Python $(PythonVersion)'
+                inputs:
+                  versionSpec: $(PythonVersion)
 
-      - task: PythonScript@0
-        displayName: 'Update versions for source build'
-        inputs:
-          scriptPath: 'eng/versioning/update_versions.py'
-          arguments: '--update-type library --build-type client --sr'
+              - task: PythonScript@0
+                displayName: 'Set versions for source build'
+                inputs:
+                  scriptPath: 'eng/versioning/set_versions.py'
+                  arguments: '--build-type client --pst'
 
-      - template: /eng/pipelines/templates/steps/generate-project-list.yml
-        parameters:
-          Artifacts:
-            - name: azure-core
-              groupId: com.azure
-              safeName: azurecore
-          AdditionalModules:
-            - name: perf-test-core
-              groupId: com.azure
-          JobType: 'linting'
-          SDKType: tools
-          ServiceDirectory: code-quality-reports
+              - task: PythonScript@0
+                displayName: 'Update versions for source build'
+                inputs:
+                  scriptPath: 'eng/versioning/update_versions.py'
+                  arguments: '--update-type library --build-type client --sr'
 
-      - task: PythonScript@0
-        displayName: 'Generate directories variable for sparse checkout'
-        inputs:
-          scriptPath: 'eng/scripts/generate_from_source_pom.py'
-          arguments: '--set-pipeline-variable CheckoutDirectories --set-skip-linting-projects SkipLintingProjects --project-list $(ProjectList)'
-          workingDirectory: '$(System.DefaultWorkingDirectory)'
+              - template: /eng/pipelines/templates/steps/generate-project-list-and-cache-maven-repository.yml
+                parameters:
+                  JobType: 'linting'
 
-      - template: /eng/common/pipelines/templates/steps/sparse-checkout.yml
-        parameters:
-          SkipDefaultCheckout: true
-          Paths: $(CheckoutDirectories)
+              # The only time generate_from_source_pom.py should be used to set the SparseCheckoutDirectories
+              # is for FromSource runs or, in the case of code quality reports, a run that needs to build
+              # everything using the latest source. It'll greedily set any service directories as it figures
+              # out what libraries, their dependents and so on, that need to be in ClientFromSourcePom.xml
+              - task: PythonScript@0
+                displayName: 'Generate FromSource POM and directories for sparse checkout'
+                inputs:
+                  scriptPath: 'eng/scripts/generate_from_source_pom.py'
+                  arguments: '--set-skip-linting-projects SkipLintingProjects --artifacts-list $(ArtifactsList) --additional-modules-list $(AdditionalModulesList)'
+                  workingDirectory: '$(System.DefaultWorkingDirectory)'
 
-      - task: Maven@3
-        displayName: 'Build Projects'
-        inputs:
-          mavenPomFile: ClientFromSourcePom.xml
-          goals: 'install'
-          options: '$(DefaultOptions) -T 2C -DskipTests -Dgpg.skip -DtrimStackTrace=false -Dmaven.javadoc.skip=true -Dcodesnippet.skip=true -Dcheckstyle.skip -Dspotbugs.skip -Drevapi.skip=true -Djacoco.skip=true --quiet'
-          mavenOptions: '$(MemoryOptions) $(LoggingOptions)'
-          javaHomeOption: 'JDKVersion'
-          jdkVersionOption: $(JavaBuildVersion)
-          jdkArchitectureOption: 'x64'
-          publishJUnitResults: false
+              - template: /eng/common/pipelines/templates/steps/sparse-checkout.yml
+                parameters:
+                  SkipCheckoutNone: true
+                  Paths: $(SparseCheckoutDirectories)
 
-      - task: Maven@3
-        displayName: 'Run Linting'
-        inputs:
-          mavenPomFile: ClientFromSourcePom.xml
-          goals: 'checkstyle:check spotbugs:check'
-          # Skip failing on Checkstyle and Spotbugs errors.
-          # This is being done as the error reporting will be captured, so if any error reports exist the build can be
-          # failed later allowing all libraries to be validated.
-          options: '$(DefaultOptions) -T 1C -Dcheckstyle.failOnViolation=false -Dcheckstyle.failsOnError=false -Dspotbugs.failOnError=false -pl "!com.azure:azure-sdk-from-source,$(SkipLintingProjects)"'
-          mavenOptions: '$(MemoryOptions) $(LoggingOptions)'
-          javaHomeOption: 'JDKVersion'
-          jdkVersionOption: $(JavaBuildVersion)
-          jdkArchitectureOption: 'x64'
-          publishJUnitResults: false
+              - task: PowerShell@2
+                inputs:
+                  filePath: $(System.DefaultWorkingDirectory)/eng/pipelines/scripts/Get-Linting-Commands.ps1
+                  arguments: >
+                    -BuildReason $(Build.Reason)
+                    -SourceBranch "HEAD"
+                    -LintingPipelineVariable "LintingGoals"
+                  pwsh: true
+                displayName: 'Generate Linting Commands'
 
-      - task: PowerShell@2
-        inputs:
-          filePath: $(System.DefaultWorkingDirectory)/eng/pipelines/scripts/Get-Linting-Reports.ps1
-          arguments: -OutputDirectory $(Build.ArtifactStagingDirectory)/linting-reports
-          pwsh: true
-          workingDirectory: $(Pipeline.Workspace)
-        displayName: 'Generate Linting Reports'
-        condition: always()
+              - template: /eng/pipelines/templates/steps/install-reporting-tools.yml
 
-      - publish: $(Build.ArtifactStagingDirectory)/linting-reports.zip
-        displayName: 'Publish Linting Reports'
-        artifact: linting-reports-$(System.StageName)-$(System.JobName)-$(System.JobAttempt)
-        condition: always()
+              - task: Maven@4
+                displayName: 'Build and Run Linting'
+                inputs:
+                  mavenPomFile: ClientFromSourcePom.xml
+                  goals: 'install'
+                  options: '$(DefaultOptions) -T 2C -DskipTests -Dgpg.skip -DtrimStackTrace=false -Dmaven.javadoc.skip=true -Dcodesnippet.skip=true $(LintingGoals) -Djacoco.skip=true -Dspotless.skip=true -pl "!com.azure:azure-sdk-from-source,$(SkipLintingProjects)"'
+                  mavenOptions: '$(MemoryOptions) $(LoggingOptions)'
+                  javaHomeOption: 'JDKVersion'
+                  jdkVersionOption: $(JavaBuildVersion)
+                  jdkArchitectureOption: 'x64'
+                  publishJUnitResults: false
+                condition: and(succeeded(), eq(variables['RunLinting'], 'true'))
 
-      - pwsh: |
-          if ((Get-ChildItem -Path $(Build.ArtifactStagingDirectory)/linting-reports -Directory | Measure-Object).Count -gt 0) {
-            exit 1
-          }
-        displayName: 'Fail Pipeline if Linting Reports Exist'
+              - task: PowerShell@2
+                inputs:
+                  filePath: $(System.DefaultWorkingDirectory)/eng/pipelines/scripts/Get-Linting-Reports.ps1
+                  arguments: -StagingDirectory $(Build.ArtifactStagingDirectory)
+                  pwsh: true
+                  workingDirectory: $(Pipeline.Workspace)
+                displayName: 'Generate Linting Reports'
+                condition: and(always(), ne(variables['LintingGoals'], ''))
+
+              - template: /eng/common/pipelines/templates/steps/publish-1es-artifact.yml
+                parameters:
+                  ArtifactName: linting-report
+                  ArtifactPath: '$(Build.ArtifactStagingDirectory)/troubleshooting/linting-report.zip'
+                  CustomCondition: eq(variables['HAS_TROUBLESHOOTING'], 'true')
+
+              - task: PowerShell@2
+                displayName: Clean up maven local cache
+                inputs:
+                  pwsh: true
+                  filePath: $(Build.SourcesDirectory)/eng/scripts/Remove-Azure-Artifacts-From-Cache.ps1
+                  arguments: >
+                    -MavenCacheFolder $(MAVEN_CACHE_FOLDER)
+                continueOnError: true

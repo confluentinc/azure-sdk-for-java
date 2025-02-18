@@ -5,72 +5,46 @@
 package com.azure.resourcemanager.mediaservices.models;
 
 import com.azure.core.annotation.Fluent;
-import com.azure.core.annotation.JsonFlatten;
-import com.azure.core.util.logging.ClientLogger;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.azure.json.JsonReader;
+import com.azure.json.JsonSerializable;
+import com.azure.json.JsonToken;
+import com.azure.json.JsonWriter;
+import com.azure.resourcemanager.mediaservices.fluent.models.MediaServiceProperties;
+import com.azure.resourcemanager.mediaservices.fluent.models.PrivateEndpointConnectionInner;
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-/** A Media Services account update. */
-@JsonFlatten
+/**
+ * A Media Services account update.
+ */
 @Fluent
-public class MediaServiceUpdate {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(MediaServiceUpdate.class);
-
+public final class MediaServiceUpdate implements JsonSerializable<MediaServiceUpdate> {
     /*
      * Resource tags.
      */
-    @JsonProperty(value = "tags")
     private Map<String, String> tags;
+
+    /*
+     * The resource properties.
+     */
+    private MediaServiceProperties innerProperties;
 
     /*
      * The Managed Identity for the Media Services account.
      */
-    @JsonProperty(value = "identity")
     private MediaServiceIdentity identity;
 
-    /*
-     * The Media Services account ID.
+    /**
+     * Creates an instance of MediaServiceUpdate class.
      */
-    @JsonProperty(value = "properties.mediaServiceId", access = JsonProperty.Access.WRITE_ONLY)
-    private UUID mediaServiceId;
-
-    /*
-     * The storage accounts for this resource.
-     */
-    @JsonProperty(value = "properties.storageAccounts")
-    private List<StorageAccount> storageAccounts;
-
-    /*
-     * The storageAuthentication property.
-     */
-    @JsonProperty(value = "properties.storageAuthentication")
-    private StorageAuthentication storageAuthentication;
-
-    /*
-     * The account encryption properties.
-     */
-    @JsonProperty(value = "properties.encryption")
-    private AccountEncryption encryption;
-
-    /*
-     * The Key Delivery properties for Media Services account.
-     */
-    @JsonProperty(value = "properties.keyDelivery")
-    private KeyDelivery keyDelivery;
-
-    /*
-     * Whether or not public network access is allowed for resources under the
-     * Media Services account.
-     */
-    @JsonProperty(value = "properties.publicNetworkAccess")
-    private PublicNetworkAccess publicNetworkAccess;
+    public MediaServiceUpdate() {
+    }
 
     /**
      * Get the tags property: Resource tags.
-     *
+     * 
      * @return the tags value.
      */
     public Map<String, String> tags() {
@@ -79,7 +53,7 @@ public class MediaServiceUpdate {
 
     /**
      * Set the tags property: Resource tags.
-     *
+     * 
      * @param tags the tags value to set.
      * @return the MediaServiceUpdate object itself.
      */
@@ -89,8 +63,17 @@ public class MediaServiceUpdate {
     }
 
     /**
+     * Get the innerProperties property: The resource properties.
+     * 
+     * @return the innerProperties value.
+     */
+    private MediaServiceProperties innerProperties() {
+        return this.innerProperties;
+    }
+
+    /**
      * Get the identity property: The Managed Identity for the Media Services account.
-     *
+     * 
      * @return the identity value.
      */
     public MediaServiceIdentity identity() {
@@ -99,7 +82,7 @@ public class MediaServiceUpdate {
 
     /**
      * Set the identity property: The Managed Identity for the Media Services account.
-     *
+     * 
      * @param identity the identity value to set.
      * @return the MediaServiceUpdate object itself.
      */
@@ -110,132 +93,228 @@ public class MediaServiceUpdate {
 
     /**
      * Get the mediaServiceId property: The Media Services account ID.
-     *
+     * 
      * @return the mediaServiceId value.
      */
     public UUID mediaServiceId() {
-        return this.mediaServiceId;
+        return this.innerProperties() == null ? null : this.innerProperties().mediaServiceId();
     }
 
     /**
      * Get the storageAccounts property: The storage accounts for this resource.
-     *
+     * 
      * @return the storageAccounts value.
      */
     public List<StorageAccount> storageAccounts() {
-        return this.storageAccounts;
+        return this.innerProperties() == null ? null : this.innerProperties().storageAccounts();
     }
 
     /**
      * Set the storageAccounts property: The storage accounts for this resource.
-     *
+     * 
      * @param storageAccounts the storageAccounts value to set.
      * @return the MediaServiceUpdate object itself.
      */
     public MediaServiceUpdate withStorageAccounts(List<StorageAccount> storageAccounts) {
-        this.storageAccounts = storageAccounts;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new MediaServiceProperties();
+        }
+        this.innerProperties().withStorageAccounts(storageAccounts);
         return this;
     }
 
     /**
      * Get the storageAuthentication property: The storageAuthentication property.
-     *
+     * 
      * @return the storageAuthentication value.
      */
     public StorageAuthentication storageAuthentication() {
-        return this.storageAuthentication;
+        return this.innerProperties() == null ? null : this.innerProperties().storageAuthentication();
     }
 
     /**
      * Set the storageAuthentication property: The storageAuthentication property.
-     *
+     * 
      * @param storageAuthentication the storageAuthentication value to set.
      * @return the MediaServiceUpdate object itself.
      */
     public MediaServiceUpdate withStorageAuthentication(StorageAuthentication storageAuthentication) {
-        this.storageAuthentication = storageAuthentication;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new MediaServiceProperties();
+        }
+        this.innerProperties().withStorageAuthentication(storageAuthentication);
         return this;
     }
 
     /**
      * Get the encryption property: The account encryption properties.
-     *
+     * 
      * @return the encryption value.
      */
     public AccountEncryption encryption() {
-        return this.encryption;
+        return this.innerProperties() == null ? null : this.innerProperties().encryption();
     }
 
     /**
      * Set the encryption property: The account encryption properties.
-     *
+     * 
      * @param encryption the encryption value to set.
      * @return the MediaServiceUpdate object itself.
      */
     public MediaServiceUpdate withEncryption(AccountEncryption encryption) {
-        this.encryption = encryption;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new MediaServiceProperties();
+        }
+        this.innerProperties().withEncryption(encryption);
         return this;
     }
 
     /**
      * Get the keyDelivery property: The Key Delivery properties for Media Services account.
-     *
+     * 
      * @return the keyDelivery value.
      */
     public KeyDelivery keyDelivery() {
-        return this.keyDelivery;
+        return this.innerProperties() == null ? null : this.innerProperties().keyDelivery();
     }
 
     /**
      * Set the keyDelivery property: The Key Delivery properties for Media Services account.
-     *
+     * 
      * @param keyDelivery the keyDelivery value to set.
      * @return the MediaServiceUpdate object itself.
      */
     public MediaServiceUpdate withKeyDelivery(KeyDelivery keyDelivery) {
-        this.keyDelivery = keyDelivery;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new MediaServiceProperties();
+        }
+        this.innerProperties().withKeyDelivery(keyDelivery);
         return this;
     }
 
     /**
      * Get the publicNetworkAccess property: Whether or not public network access is allowed for resources under the
      * Media Services account.
-     *
+     * 
      * @return the publicNetworkAccess value.
      */
     public PublicNetworkAccess publicNetworkAccess() {
-        return this.publicNetworkAccess;
+        return this.innerProperties() == null ? null : this.innerProperties().publicNetworkAccess();
     }
 
     /**
      * Set the publicNetworkAccess property: Whether or not public network access is allowed for resources under the
      * Media Services account.
-     *
+     * 
      * @param publicNetworkAccess the publicNetworkAccess value to set.
      * @return the MediaServiceUpdate object itself.
      */
     public MediaServiceUpdate withPublicNetworkAccess(PublicNetworkAccess publicNetworkAccess) {
-        this.publicNetworkAccess = publicNetworkAccess;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new MediaServiceProperties();
+        }
+        this.innerProperties().withPublicNetworkAccess(publicNetworkAccess);
+        return this;
+    }
+
+    /**
+     * Get the provisioningState property: Provisioning state of the Media Services account.
+     * 
+     * @return the provisioningState value.
+     */
+    public ProvisioningState provisioningState() {
+        return this.innerProperties() == null ? null : this.innerProperties().provisioningState();
+    }
+
+    /**
+     * Get the privateEndpointConnections property: The Private Endpoint Connections created for the Media Service
+     * account.
+     * 
+     * @return the privateEndpointConnections value.
+     */
+    public List<PrivateEndpointConnectionInner> privateEndpointConnections() {
+        return this.innerProperties() == null ? null : this.innerProperties().privateEndpointConnections();
+    }
+
+    /**
+     * Get the minimumTlsVersion property: The minimum TLS version allowed for this account's requests. This is an
+     * optional property. If unspecified, a secure default value will be used.
+     * 
+     * @return the minimumTlsVersion value.
+     */
+    public MinimumTlsVersion minimumTlsVersion() {
+        return this.innerProperties() == null ? null : this.innerProperties().minimumTlsVersion();
+    }
+
+    /**
+     * Set the minimumTlsVersion property: The minimum TLS version allowed for this account's requests. This is an
+     * optional property. If unspecified, a secure default value will be used.
+     * 
+     * @param minimumTlsVersion the minimumTlsVersion value to set.
+     * @return the MediaServiceUpdate object itself.
+     */
+    public MediaServiceUpdate withMinimumTlsVersion(MinimumTlsVersion minimumTlsVersion) {
+        if (this.innerProperties() == null) {
+            this.innerProperties = new MediaServiceProperties();
+        }
+        this.innerProperties().withMinimumTlsVersion(minimumTlsVersion);
         return this;
     }
 
     /**
      * Validates the instance.
-     *
+     * 
      * @throws IllegalArgumentException thrown if the instance is not valid.
      */
     public void validate() {
+        if (innerProperties() != null) {
+            innerProperties().validate();
+        }
         if (identity() != null) {
             identity().validate();
         }
-        if (storageAccounts() != null) {
-            storageAccounts().forEach(e -> e.validate());
-        }
-        if (encryption() != null) {
-            encryption().validate();
-        }
-        if (keyDelivery() != null) {
-            keyDelivery().validate();
-        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public JsonWriter toJson(JsonWriter jsonWriter) throws IOException {
+        jsonWriter.writeStartObject();
+        jsonWriter.writeMapField("tags", this.tags, (writer, element) -> writer.writeString(element));
+        jsonWriter.writeJsonField("properties", this.innerProperties);
+        jsonWriter.writeJsonField("identity", this.identity);
+        return jsonWriter.writeEndObject();
+    }
+
+    /**
+     * Reads an instance of MediaServiceUpdate from the JsonReader.
+     * 
+     * @param jsonReader The JsonReader being read.
+     * @return An instance of MediaServiceUpdate if the JsonReader was pointing to an instance of it, or null if it was
+     * pointing to JSON null.
+     * @throws IOException If an error occurs while reading the MediaServiceUpdate.
+     */
+    public static MediaServiceUpdate fromJson(JsonReader jsonReader) throws IOException {
+        return jsonReader.readObject(reader -> {
+            MediaServiceUpdate deserializedMediaServiceUpdate = new MediaServiceUpdate();
+            while (reader.nextToken() != JsonToken.END_OBJECT) {
+                String fieldName = reader.getFieldName();
+                reader.nextToken();
+
+                if ("tags".equals(fieldName)) {
+                    Map<String, String> tags = reader.readMap(reader1 -> reader1.getString());
+                    deserializedMediaServiceUpdate.tags = tags;
+                } else if ("properties".equals(fieldName)) {
+                    deserializedMediaServiceUpdate.innerProperties = MediaServiceProperties.fromJson(reader);
+                } else if ("identity".equals(fieldName)) {
+                    deserializedMediaServiceUpdate.identity = MediaServiceIdentity.fromJson(reader);
+                } else {
+                    reader.skipChildren();
+                }
+            }
+
+            return deserializedMediaServiceUpdate;
+        });
     }
 }

@@ -5,50 +5,53 @@
 package com.azure.resourcemanager.appservice.models;
 
 import com.azure.core.annotation.Fluent;
-import com.azure.core.util.logging.ClientLogger;
+import com.azure.json.JsonReader;
+import com.azure.json.JsonSerializable;
+import com.azure.json.JsonToken;
+import com.azure.json.JsonWriter;
 import com.azure.resourcemanager.appservice.fluent.models.DetectorDefinition;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import java.io.IOException;
 import java.util.List;
 
-/** Class Representing Detector Evidence used for analysis. */
+/**
+ * Class Representing Detector Evidence used for analysis.
+ */
 @Fluent
-public final class AnalysisData {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(AnalysisData.class);
-
+public final class AnalysisData implements JsonSerializable<AnalysisData> {
     /*
      * Name of the Detector
      */
-    @JsonProperty(value = "source")
     private String source;
 
     /*
      * Detector Definition
      */
-    @JsonProperty(value = "detectorDefinition")
     private DetectorDefinition detectorDefinition;
 
     /*
      * Source Metrics
      */
-    @JsonProperty(value = "metrics")
     private List<DiagnosticMetricSet> metrics;
 
     /*
      * Additional Source Data
      */
-    @JsonProperty(value = "data")
     private List<List<NameValuePair>> data;
 
     /*
      * Detector Meta Data
      */
-    @JsonProperty(value = "detectorMetaData")
     private ResponseMetadata detectorMetadata;
 
     /**
+     * Creates an instance of AnalysisData class.
+     */
+    public AnalysisData() {
+    }
+
+    /**
      * Get the source property: Name of the Detector.
-     *
+     * 
      * @return the source value.
      */
     public String source() {
@@ -57,7 +60,7 @@ public final class AnalysisData {
 
     /**
      * Set the source property: Name of the Detector.
-     *
+     * 
      * @param source the source value to set.
      * @return the AnalysisData object itself.
      */
@@ -68,7 +71,7 @@ public final class AnalysisData {
 
     /**
      * Get the detectorDefinition property: Detector Definition.
-     *
+     * 
      * @return the detectorDefinition value.
      */
     public DetectorDefinition detectorDefinition() {
@@ -77,7 +80,7 @@ public final class AnalysisData {
 
     /**
      * Set the detectorDefinition property: Detector Definition.
-     *
+     * 
      * @param detectorDefinition the detectorDefinition value to set.
      * @return the AnalysisData object itself.
      */
@@ -88,7 +91,7 @@ public final class AnalysisData {
 
     /**
      * Get the metrics property: Source Metrics.
-     *
+     * 
      * @return the metrics value.
      */
     public List<DiagnosticMetricSet> metrics() {
@@ -97,7 +100,7 @@ public final class AnalysisData {
 
     /**
      * Set the metrics property: Source Metrics.
-     *
+     * 
      * @param metrics the metrics value to set.
      * @return the AnalysisData object itself.
      */
@@ -108,7 +111,7 @@ public final class AnalysisData {
 
     /**
      * Get the data property: Additional Source Data.
-     *
+     * 
      * @return the data value.
      */
     public List<List<NameValuePair>> data() {
@@ -117,7 +120,7 @@ public final class AnalysisData {
 
     /**
      * Set the data property: Additional Source Data.
-     *
+     * 
      * @param data the data value to set.
      * @return the AnalysisData object itself.
      */
@@ -128,7 +131,7 @@ public final class AnalysisData {
 
     /**
      * Get the detectorMetadata property: Detector Meta Data.
-     *
+     * 
      * @return the detectorMetadata value.
      */
     public ResponseMetadata detectorMetadata() {
@@ -137,7 +140,7 @@ public final class AnalysisData {
 
     /**
      * Set the detectorMetadata property: Detector Meta Data.
-     *
+     * 
      * @param detectorMetadata the detectorMetadata value to set.
      * @return the AnalysisData object itself.
      */
@@ -148,7 +151,7 @@ public final class AnalysisData {
 
     /**
      * Validates the instance.
-     *
+     * 
      * @throws IllegalArgumentException thrown if the instance is not valid.
      */
     public void validate() {
@@ -164,5 +167,58 @@ public final class AnalysisData {
         if (detectorMetadata() != null) {
             detectorMetadata().validate();
         }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public JsonWriter toJson(JsonWriter jsonWriter) throws IOException {
+        jsonWriter.writeStartObject();
+        jsonWriter.writeStringField("source", this.source);
+        jsonWriter.writeJsonField("detectorDefinition", this.detectorDefinition);
+        jsonWriter.writeArrayField("metrics", this.metrics, (writer, element) -> writer.writeJson(element));
+        jsonWriter.writeArrayField("data", this.data,
+            (writer, element) -> writer.writeArray(element, (writer1, element1) -> writer1.writeJson(element1)));
+        jsonWriter.writeJsonField("detectorMetaData", this.detectorMetadata);
+        return jsonWriter.writeEndObject();
+    }
+
+    /**
+     * Reads an instance of AnalysisData from the JsonReader.
+     * 
+     * @param jsonReader The JsonReader being read.
+     * @return An instance of AnalysisData if the JsonReader was pointing to an instance of it, or null if it was
+     * pointing to JSON null.
+     * @throws IOException If an error occurs while reading the AnalysisData.
+     */
+    public static AnalysisData fromJson(JsonReader jsonReader) throws IOException {
+        return jsonReader.readObject(reader -> {
+            AnalysisData deserializedAnalysisData = new AnalysisData();
+            while (reader.nextToken() != JsonToken.END_OBJECT) {
+                String fieldName = reader.getFieldName();
+                reader.nextToken();
+
+                if ("source".equals(fieldName)) {
+                    deserializedAnalysisData.source = reader.getString();
+                } else if ("detectorDefinition".equals(fieldName)) {
+                    deserializedAnalysisData.detectorDefinition = DetectorDefinition.fromJson(reader);
+                } else if ("metrics".equals(fieldName)) {
+                    List<DiagnosticMetricSet> metrics
+                        = reader.readArray(reader1 -> DiagnosticMetricSet.fromJson(reader1));
+                    deserializedAnalysisData.metrics = metrics;
+                } else if ("data".equals(fieldName)) {
+                    List<List<NameValuePair>> data
+                        = reader.readArray(reader1 -> reader1.readArray(reader2 -> NameValuePair.fromJson(reader2)));
+                    deserializedAnalysisData.data = data;
+                } else if ("detectorMetaData".equals(fieldName)) {
+                    deserializedAnalysisData.detectorMetadata = ResponseMetadata.fromJson(reader);
+                } else {
+                    reader.skipChildren();
+                }
+            }
+
+            return deserializedAnalysisData;
+        });
     }
 }

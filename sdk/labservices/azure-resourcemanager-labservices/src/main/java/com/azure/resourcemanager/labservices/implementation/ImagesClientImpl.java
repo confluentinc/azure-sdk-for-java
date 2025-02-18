@@ -28,26 +28,29 @@ import com.azure.core.http.rest.RestProxy;
 import com.azure.core.management.exception.ManagementException;
 import com.azure.core.util.Context;
 import com.azure.core.util.FluxUtil;
-import com.azure.core.util.logging.ClientLogger;
 import com.azure.resourcemanager.labservices.fluent.ImagesClient;
 import com.azure.resourcemanager.labservices.fluent.models.ImageInner;
 import com.azure.resourcemanager.labservices.models.ImageUpdate;
 import com.azure.resourcemanager.labservices.models.PagedImages;
 import reactor.core.publisher.Mono;
 
-/** An instance of this class provides access to all the operations defined in ImagesClient. */
+/**
+ * An instance of this class provides access to all the operations defined in ImagesClient.
+ */
 public final class ImagesClientImpl implements ImagesClient {
-    private final ClientLogger logger = new ClientLogger(ImagesClientImpl.class);
-
-    /** The proxy service used to perform REST calls. */
+    /**
+     * The proxy service used to perform REST calls.
+     */
     private final ImagesService service;
 
-    /** The service client containing this operation class. */
+    /**
+     * The service client containing this operation class.
+     */
     private final LabServicesClientImpl client;
 
     /**
      * Initializes an instance of ImagesClientImpl.
-     *
+     * 
      * @param client the instance of the service client containing this operation class.
      */
     ImagesClientImpl(LabServicesClientImpl client) {
@@ -61,111 +64,78 @@ public final class ImagesClientImpl implements ImagesClient {
      */
     @Host("{$host}")
     @ServiceInterface(name = "LabServicesClientIma")
-    private interface ImagesService {
-        @Headers({"Content-Type: application/json"})
-        @Get(
-            "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.LabServices"
-                + "/labPlans/{labPlanName}/images")
-        @ExpectedResponses({200})
+    public interface ImagesService {
+        @Headers({ "Content-Type: application/json" })
+        @Get("/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.LabServices/labPlans/{labPlanName}/images")
+        @ExpectedResponses({ 200 })
         @UnexpectedResponseExceptionType(ManagementException.class)
-        Mono<Response<PagedImages>> listByLabPlan(
-            @HostParam("$host") String endpoint,
-            @QueryParam("api-version") String apiVersion,
-            @PathParam("subscriptionId") String subscriptionId,
-            @PathParam("resourceGroupName") String resourceGroupName,
-            @PathParam("labPlanName") String labPlanName,
-            @QueryParam("$filter") String filter,
-            @HeaderParam("Accept") String accept,
-            Context context);
+        Mono<Response<PagedImages>> listByLabPlan(@HostParam("$host") String endpoint,
+            @QueryParam("api-version") String apiVersion, @PathParam("subscriptionId") String subscriptionId,
+            @PathParam("resourceGroupName") String resourceGroupName, @PathParam("labPlanName") String labPlanName,
+            @QueryParam("$filter") String filter, @HeaderParam("Accept") String accept, Context context);
 
-        @Headers({"Content-Type: application/json"})
-        @Get(
-            "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.LabServices"
-                + "/labPlans/{labPlanName}/images/{imageName}")
-        @ExpectedResponses({200})
+        @Headers({ "Content-Type: application/json" })
+        @Get("/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.LabServices/labPlans/{labPlanName}/images/{imageName}")
+        @ExpectedResponses({ 200 })
         @UnexpectedResponseExceptionType(ManagementException.class)
-        Mono<Response<ImageInner>> get(
-            @HostParam("$host") String endpoint,
-            @QueryParam("api-version") String apiVersion,
-            @PathParam("subscriptionId") String subscriptionId,
-            @PathParam("resourceGroupName") String resourceGroupName,
-            @PathParam("labPlanName") String labPlanName,
-            @PathParam("imageName") String imageName,
-            @HeaderParam("Accept") String accept,
-            Context context);
+        Mono<Response<ImageInner>> get(@HostParam("$host") String endpoint,
+            @QueryParam("api-version") String apiVersion, @PathParam("subscriptionId") String subscriptionId,
+            @PathParam("resourceGroupName") String resourceGroupName, @PathParam("labPlanName") String labPlanName,
+            @PathParam("imageName") String imageName, @HeaderParam("Accept") String accept, Context context);
 
-        @Headers({"Content-Type: application/json"})
-        @Put(
-            "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.LabServices"
-                + "/labPlans/{labPlanName}/images/{imageName}")
-        @ExpectedResponses({200})
+        @Headers({ "Content-Type: application/json" })
+        @Put("/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.LabServices/labPlans/{labPlanName}/images/{imageName}")
+        @ExpectedResponses({ 200 })
         @UnexpectedResponseExceptionType(ManagementException.class)
-        Mono<Response<ImageInner>> createOrUpdate(
-            @HostParam("$host") String endpoint,
-            @QueryParam("api-version") String apiVersion,
-            @PathParam("subscriptionId") String subscriptionId,
-            @PathParam("resourceGroupName") String resourceGroupName,
-            @PathParam("labPlanName") String labPlanName,
-            @PathParam("imageName") String imageName,
-            @BodyParam("application/json") ImageInner body,
-            @HeaderParam("Accept") String accept,
-            Context context);
+        Mono<Response<ImageInner>> createOrUpdate(@HostParam("$host") String endpoint,
+            @QueryParam("api-version") String apiVersion, @PathParam("subscriptionId") String subscriptionId,
+            @PathParam("resourceGroupName") String resourceGroupName, @PathParam("labPlanName") String labPlanName,
+            @PathParam("imageName") String imageName, @BodyParam("application/json") ImageInner body,
+            @HeaderParam("Accept") String accept, Context context);
 
-        @Headers({"Content-Type: application/json"})
-        @Patch(
-            "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.LabServices"
-                + "/labPlans/{labPlanName}/images/{imageName}")
-        @ExpectedResponses({200})
+        @Headers({ "Content-Type: application/json" })
+        @Patch("/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.LabServices/labPlans/{labPlanName}/images/{imageName}")
+        @ExpectedResponses({ 200 })
         @UnexpectedResponseExceptionType(ManagementException.class)
-        Mono<Response<ImageInner>> update(
-            @HostParam("$host") String endpoint,
-            @QueryParam("api-version") String apiVersion,
-            @PathParam("subscriptionId") String subscriptionId,
-            @PathParam("resourceGroupName") String resourceGroupName,
-            @PathParam("labPlanName") String labPlanName,
-            @PathParam("imageName") String imageName,
-            @BodyParam("application/json") ImageUpdate body,
-            @HeaderParam("Accept") String accept,
-            Context context);
+        Mono<Response<ImageInner>> update(@HostParam("$host") String endpoint,
+            @QueryParam("api-version") String apiVersion, @PathParam("subscriptionId") String subscriptionId,
+            @PathParam("resourceGroupName") String resourceGroupName, @PathParam("labPlanName") String labPlanName,
+            @PathParam("imageName") String imageName, @BodyParam("application/json") ImageUpdate body,
+            @HeaderParam("Accept") String accept, Context context);
 
-        @Headers({"Content-Type: application/json"})
+        @Headers({ "Content-Type: application/json" })
         @Get("{nextLink}")
-        @ExpectedResponses({200})
+        @ExpectedResponses({ 200 })
         @UnexpectedResponseExceptionType(ManagementException.class)
-        Mono<Response<PagedImages>> listByLabPlanNext(
-            @PathParam(value = "nextLink", encoded = true) String nextLink,
-            @HostParam("$host") String endpoint,
-            @HeaderParam("Accept") String accept,
-            Context context);
+        Mono<Response<PagedImages>> listByLabPlanNext(@PathParam(value = "nextLink", encoded = true) String nextLink,
+            @HostParam("$host") String endpoint, @HeaderParam("Accept") String accept, Context context);
     }
 
     /**
+     * Gets all images.
+     * 
      * Gets all images from galleries attached to a lab plan.
-     *
+     * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
      * @param labPlanName The name of the lab plan that uniquely identifies it within containing resource group. Used in
-     *     resource URIs and in UI.
+     * resource URIs and in UI.
      * @param filter The filter to apply to the operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
      * @return all images from galleries attached to a lab plan along with {@link PagedResponse} on successful
-     *     completion of {@link Mono}.
+     * completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    private Mono<PagedResponse<ImageInner>> listByLabPlanSinglePageAsync(
-        String resourceGroupName, String labPlanName, String filter) {
+    private Mono<PagedResponse<ImageInner>> listByLabPlanSinglePageAsync(String resourceGroupName, String labPlanName,
+        String filter) {
         if (this.client.getEndpoint() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getEndpoint() is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
         }
         if (this.client.getSubscriptionId() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getSubscriptionId() is required and cannot be null."));
+            return Mono.error(new IllegalArgumentException(
+                "Parameter this.client.getSubscriptionId() is required and cannot be null."));
         }
         if (resourceGroupName == null) {
             return Mono
@@ -176,58 +146,39 @@ public final class ImagesClientImpl implements ImagesClient {
         }
         final String accept = "application/json";
         return FluxUtil
-            .withContext(
-                context ->
-                    service
-                        .listByLabPlan(
-                            this.client.getEndpoint(),
-                            this.client.getApiVersion(),
-                            this.client.getSubscriptionId(),
-                            resourceGroupName,
-                            labPlanName,
-                            filter,
-                            accept,
-                            context))
-            .<PagedResponse<ImageInner>>map(
-                res ->
-                    new PagedResponseBase<>(
-                        res.getRequest(),
-                        res.getStatusCode(),
-                        res.getHeaders(),
-                        res.getValue().value(),
-                        res.getValue().nextLink(),
-                        null))
+            .withContext(context -> service.listByLabPlan(this.client.getEndpoint(), this.client.getApiVersion(),
+                this.client.getSubscriptionId(), resourceGroupName, labPlanName, filter, accept, context))
+            .<PagedResponse<ImageInner>>map(res -> new PagedResponseBase<>(res.getRequest(), res.getStatusCode(),
+                res.getHeaders(), res.getValue().value(), res.getValue().nextLink(), null))
             .contextWrite(context -> context.putAll(FluxUtil.toReactorContext(this.client.getContext()).readOnly()));
     }
 
     /**
+     * Gets all images.
+     * 
      * Gets all images from galleries attached to a lab plan.
-     *
+     * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
      * @param labPlanName The name of the lab plan that uniquely identifies it within containing resource group. Used in
-     *     resource URIs and in UI.
+     * resource URIs and in UI.
      * @param filter The filter to apply to the operation.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
      * @return all images from galleries attached to a lab plan along with {@link PagedResponse} on successful
-     *     completion of {@link Mono}.
+     * completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    private Mono<PagedResponse<ImageInner>> listByLabPlanSinglePageAsync(
-        String resourceGroupName, String labPlanName, String filter, Context context) {
+    private Mono<PagedResponse<ImageInner>> listByLabPlanSinglePageAsync(String resourceGroupName, String labPlanName,
+        String filter, Context context) {
         if (this.client.getEndpoint() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getEndpoint() is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
         }
         if (this.client.getSubscriptionId() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getSubscriptionId() is required and cannot be null."));
+            return Mono.error(new IllegalArgumentException(
+                "Parameter this.client.getSubscriptionId() is required and cannot be null."));
         }
         if (resourceGroupName == null) {
             return Mono
@@ -239,95 +190,86 @@ public final class ImagesClientImpl implements ImagesClient {
         final String accept = "application/json";
         context = this.client.mergeContext(context);
         return service
-            .listByLabPlan(
-                this.client.getEndpoint(),
-                this.client.getApiVersion(),
-                this.client.getSubscriptionId(),
-                resourceGroupName,
-                labPlanName,
-                filter,
-                accept,
-                context)
-            .map(
-                res ->
-                    new PagedResponseBase<>(
-                        res.getRequest(),
-                        res.getStatusCode(),
-                        res.getHeaders(),
-                        res.getValue().value(),
-                        res.getValue().nextLink(),
-                        null));
+            .listByLabPlan(this.client.getEndpoint(), this.client.getApiVersion(), this.client.getSubscriptionId(),
+                resourceGroupName, labPlanName, filter, accept, context)
+            .map(res -> new PagedResponseBase<>(res.getRequest(), res.getStatusCode(), res.getHeaders(),
+                res.getValue().value(), res.getValue().nextLink(), null));
     }
 
     /**
+     * Gets all images.
+     * 
      * Gets all images from galleries attached to a lab plan.
-     *
+     * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
      * @param labPlanName The name of the lab plan that uniquely identifies it within containing resource group. Used in
-     *     resource URIs and in UI.
+     * resource URIs and in UI.
      * @param filter The filter to apply to the operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return all images from galleries attached to a lab plan.
+     * @return all images from galleries attached to a lab plan as paginated response with {@link PagedFlux}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
     private PagedFlux<ImageInner> listByLabPlanAsync(String resourceGroupName, String labPlanName, String filter) {
-        return new PagedFlux<>(
-            () -> listByLabPlanSinglePageAsync(resourceGroupName, labPlanName, filter),
+        return new PagedFlux<>(() -> listByLabPlanSinglePageAsync(resourceGroupName, labPlanName, filter),
             nextLink -> listByLabPlanNextSinglePageAsync(nextLink));
     }
 
     /**
+     * Gets all images.
+     * 
      * Gets all images from galleries attached to a lab plan.
-     *
+     * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
      * @param labPlanName The name of the lab plan that uniquely identifies it within containing resource group. Used in
-     *     resource URIs and in UI.
+     * resource URIs and in UI.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return all images from galleries attached to a lab plan.
+     * @return all images from galleries attached to a lab plan as paginated response with {@link PagedFlux}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
     private PagedFlux<ImageInner> listByLabPlanAsync(String resourceGroupName, String labPlanName) {
         final String filter = null;
-        return new PagedFlux<>(
-            () -> listByLabPlanSinglePageAsync(resourceGroupName, labPlanName, filter),
+        return new PagedFlux<>(() -> listByLabPlanSinglePageAsync(resourceGroupName, labPlanName, filter),
             nextLink -> listByLabPlanNextSinglePageAsync(nextLink));
     }
 
     /**
+     * Gets all images.
+     * 
      * Gets all images from galleries attached to a lab plan.
-     *
+     * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
      * @param labPlanName The name of the lab plan that uniquely identifies it within containing resource group. Used in
-     *     resource URIs and in UI.
+     * resource URIs and in UI.
      * @param filter The filter to apply to the operation.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return all images from galleries attached to a lab plan.
+     * @return all images from galleries attached to a lab plan as paginated response with {@link PagedFlux}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
-    private PagedFlux<ImageInner> listByLabPlanAsync(
-        String resourceGroupName, String labPlanName, String filter, Context context) {
-        return new PagedFlux<>(
-            () -> listByLabPlanSinglePageAsync(resourceGroupName, labPlanName, filter, context),
+    private PagedFlux<ImageInner> listByLabPlanAsync(String resourceGroupName, String labPlanName, String filter,
+        Context context) {
+        return new PagedFlux<>(() -> listByLabPlanSinglePageAsync(resourceGroupName, labPlanName, filter, context),
             nextLink -> listByLabPlanNextSinglePageAsync(nextLink, context));
     }
 
     /**
+     * Gets all images.
+     * 
      * Gets all images from galleries attached to a lab plan.
-     *
+     * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
      * @param labPlanName The name of the lab plan that uniquely identifies it within containing resource group. Used in
-     *     resource URIs and in UI.
+     * resource URIs and in UI.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return all images from galleries attached to a lab plan.
+     * @return all images from galleries attached to a lab plan as paginated response with {@link PagedIterable}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
     public PagedIterable<ImageInner> listByLabPlan(String resourceGroupName, String labPlanName) {
@@ -336,30 +278,34 @@ public final class ImagesClientImpl implements ImagesClient {
     }
 
     /**
+     * Gets all images.
+     * 
      * Gets all images from galleries attached to a lab plan.
-     *
+     * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
      * @param labPlanName The name of the lab plan that uniquely identifies it within containing resource group. Used in
-     *     resource URIs and in UI.
+     * resource URIs and in UI.
      * @param filter The filter to apply to the operation.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return all images from galleries attached to a lab plan.
+     * @return all images from galleries attached to a lab plan as paginated response with {@link PagedIterable}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
-    public PagedIterable<ImageInner> listByLabPlan(
-        String resourceGroupName, String labPlanName, String filter, Context context) {
+    public PagedIterable<ImageInner> listByLabPlan(String resourceGroupName, String labPlanName, String filter,
+        Context context) {
         return new PagedIterable<>(listByLabPlanAsync(resourceGroupName, labPlanName, filter, context));
     }
 
     /**
+     * Gets an image.
+     * 
      * Gets an image resource.
-     *
+     * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
      * @param labPlanName The name of the lab plan that uniquely identifies it within containing resource group. Used in
-     *     resource URIs and in UI.
+     * resource URIs and in UI.
      * @param imageName The image name.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
@@ -367,19 +313,15 @@ public final class ImagesClientImpl implements ImagesClient {
      * @return an image resource along with {@link Response} on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    private Mono<Response<ImageInner>> getWithResponseAsync(
-        String resourceGroupName, String labPlanName, String imageName) {
+    private Mono<Response<ImageInner>> getWithResponseAsync(String resourceGroupName, String labPlanName,
+        String imageName) {
         if (this.client.getEndpoint() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getEndpoint() is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
         }
         if (this.client.getSubscriptionId() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getSubscriptionId() is required and cannot be null."));
+            return Mono.error(new IllegalArgumentException(
+                "Parameter this.client.getSubscriptionId() is required and cannot be null."));
         }
         if (resourceGroupName == null) {
             return Mono
@@ -393,27 +335,19 @@ public final class ImagesClientImpl implements ImagesClient {
         }
         final String accept = "application/json";
         return FluxUtil
-            .withContext(
-                context ->
-                    service
-                        .get(
-                            this.client.getEndpoint(),
-                            this.client.getApiVersion(),
-                            this.client.getSubscriptionId(),
-                            resourceGroupName,
-                            labPlanName,
-                            imageName,
-                            accept,
-                            context))
+            .withContext(context -> service.get(this.client.getEndpoint(), this.client.getApiVersion(),
+                this.client.getSubscriptionId(), resourceGroupName, labPlanName, imageName, accept, context))
             .contextWrite(context -> context.putAll(FluxUtil.toReactorContext(this.client.getContext()).readOnly()));
     }
 
     /**
+     * Gets an image.
+     * 
      * Gets an image resource.
-     *
+     * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
      * @param labPlanName The name of the lab plan that uniquely identifies it within containing resource group. Used in
-     *     resource URIs and in UI.
+     * resource URIs and in UI.
      * @param imageName The image name.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
@@ -422,19 +356,15 @@ public final class ImagesClientImpl implements ImagesClient {
      * @return an image resource along with {@link Response} on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    private Mono<Response<ImageInner>> getWithResponseAsync(
-        String resourceGroupName, String labPlanName, String imageName, Context context) {
+    private Mono<Response<ImageInner>> getWithResponseAsync(String resourceGroupName, String labPlanName,
+        String imageName, Context context) {
         if (this.client.getEndpoint() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getEndpoint() is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
         }
         if (this.client.getSubscriptionId() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getSubscriptionId() is required and cannot be null."));
+            return Mono.error(new IllegalArgumentException(
+                "Parameter this.client.getSubscriptionId() is required and cannot be null."));
         }
         if (resourceGroupName == null) {
             return Mono
@@ -448,24 +378,18 @@ public final class ImagesClientImpl implements ImagesClient {
         }
         final String accept = "application/json";
         context = this.client.mergeContext(context);
-        return service
-            .get(
-                this.client.getEndpoint(),
-                this.client.getApiVersion(),
-                this.client.getSubscriptionId(),
-                resourceGroupName,
-                labPlanName,
-                imageName,
-                accept,
-                context);
+        return service.get(this.client.getEndpoint(), this.client.getApiVersion(), this.client.getSubscriptionId(),
+            resourceGroupName, labPlanName, imageName, accept, context);
     }
 
     /**
+     * Gets an image.
+     * 
      * Gets an image resource.
-     *
+     * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
      * @param labPlanName The name of the lab plan that uniquely identifies it within containing resource group. Used in
-     *     resource URIs and in UI.
+     * resource URIs and in UI.
      * @param imageName The image name.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
@@ -475,39 +399,17 @@ public final class ImagesClientImpl implements ImagesClient {
     @ServiceMethod(returns = ReturnType.SINGLE)
     private Mono<ImageInner> getAsync(String resourceGroupName, String labPlanName, String imageName) {
         return getWithResponseAsync(resourceGroupName, labPlanName, imageName)
-            .flatMap(
-                (Response<ImageInner> res) -> {
-                    if (res.getValue() != null) {
-                        return Mono.just(res.getValue());
-                    } else {
-                        return Mono.empty();
-                    }
-                });
+            .flatMap(res -> Mono.justOrEmpty(res.getValue()));
     }
 
     /**
+     * Gets an image.
+     * 
      * Gets an image resource.
-     *
+     * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
      * @param labPlanName The name of the lab plan that uniquely identifies it within containing resource group. Used in
-     *     resource URIs and in UI.
-     * @param imageName The image name.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return an image resource.
-     */
-    @ServiceMethod(returns = ReturnType.SINGLE)
-    public ImageInner get(String resourceGroupName, String labPlanName, String imageName) {
-        return getAsync(resourceGroupName, labPlanName, imageName).block();
-    }
-
-    /**
-     * Gets an image resource.
-     *
-     * @param resourceGroupName The name of the resource group. The name is case insensitive.
-     * @param labPlanName The name of the lab plan that uniquely identifies it within containing resource group. Used in
-     *     resource URIs and in UI.
+     * resource URIs and in UI.
      * @param imageName The image name.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
@@ -516,17 +418,38 @@ public final class ImagesClientImpl implements ImagesClient {
      * @return an image resource along with {@link Response}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    public Response<ImageInner> getWithResponse(
-        String resourceGroupName, String labPlanName, String imageName, Context context) {
+    public Response<ImageInner> getWithResponse(String resourceGroupName, String labPlanName, String imageName,
+        Context context) {
         return getWithResponseAsync(resourceGroupName, labPlanName, imageName, context).block();
     }
 
     /**
-     * Updates an image resource via PUT. Creating new resources via PUT will not function.
-     *
+     * Gets an image.
+     * 
+     * Gets an image resource.
+     * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
      * @param labPlanName The name of the lab plan that uniquely identifies it within containing resource group. Used in
-     *     resource URIs and in UI.
+     * resource URIs and in UI.
+     * @param imageName The image name.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return an image resource.
+     */
+    @ServiceMethod(returns = ReturnType.SINGLE)
+    public ImageInner get(String resourceGroupName, String labPlanName, String imageName) {
+        return getWithResponse(resourceGroupName, labPlanName, imageName, Context.NONE).getValue();
+    }
+
+    /**
+     * Updates an image via PUT.
+     * 
+     * Updates an image resource via PUT. Creating new resources via PUT will not function.
+     * 
+     * @param resourceGroupName The name of the resource group. The name is case insensitive.
+     * @param labPlanName The name of the lab plan that uniquely identifies it within containing resource group. Used in
+     * resource URIs and in UI.
      * @param imageName The image name.
      * @param body The request body.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
@@ -535,19 +458,15 @@ public final class ImagesClientImpl implements ImagesClient {
      * @return lab services virtual machine image along with {@link Response} on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    private Mono<Response<ImageInner>> createOrUpdateWithResponseAsync(
-        String resourceGroupName, String labPlanName, String imageName, ImageInner body) {
+    private Mono<Response<ImageInner>> createOrUpdateWithResponseAsync(String resourceGroupName, String labPlanName,
+        String imageName, ImageInner body) {
         if (this.client.getEndpoint() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getEndpoint() is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
         }
         if (this.client.getSubscriptionId() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getSubscriptionId() is required and cannot be null."));
+            return Mono.error(new IllegalArgumentException(
+                "Parameter this.client.getSubscriptionId() is required and cannot be null."));
         }
         if (resourceGroupName == null) {
             return Mono
@@ -566,28 +485,19 @@ public final class ImagesClientImpl implements ImagesClient {
         }
         final String accept = "application/json";
         return FluxUtil
-            .withContext(
-                context ->
-                    service
-                        .createOrUpdate(
-                            this.client.getEndpoint(),
-                            this.client.getApiVersion(),
-                            this.client.getSubscriptionId(),
-                            resourceGroupName,
-                            labPlanName,
-                            imageName,
-                            body,
-                            accept,
-                            context))
+            .withContext(context -> service.createOrUpdate(this.client.getEndpoint(), this.client.getApiVersion(),
+                this.client.getSubscriptionId(), resourceGroupName, labPlanName, imageName, body, accept, context))
             .contextWrite(context -> context.putAll(FluxUtil.toReactorContext(this.client.getContext()).readOnly()));
     }
 
     /**
+     * Updates an image via PUT.
+     * 
      * Updates an image resource via PUT. Creating new resources via PUT will not function.
-     *
+     * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
      * @param labPlanName The name of the lab plan that uniquely identifies it within containing resource group. Used in
-     *     resource URIs and in UI.
+     * resource URIs and in UI.
      * @param imageName The image name.
      * @param body The request body.
      * @param context The context to associate with this operation.
@@ -597,19 +507,15 @@ public final class ImagesClientImpl implements ImagesClient {
      * @return lab services virtual machine image along with {@link Response} on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    private Mono<Response<ImageInner>> createOrUpdateWithResponseAsync(
-        String resourceGroupName, String labPlanName, String imageName, ImageInner body, Context context) {
+    private Mono<Response<ImageInner>> createOrUpdateWithResponseAsync(String resourceGroupName, String labPlanName,
+        String imageName, ImageInner body, Context context) {
         if (this.client.getEndpoint() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getEndpoint() is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
         }
         if (this.client.getSubscriptionId() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getSubscriptionId() is required and cannot be null."));
+            return Mono.error(new IllegalArgumentException(
+                "Parameter this.client.getSubscriptionId() is required and cannot be null."));
         }
         if (resourceGroupName == null) {
             return Mono
@@ -628,25 +534,18 @@ public final class ImagesClientImpl implements ImagesClient {
         }
         final String accept = "application/json";
         context = this.client.mergeContext(context);
-        return service
-            .createOrUpdate(
-                this.client.getEndpoint(),
-                this.client.getApiVersion(),
-                this.client.getSubscriptionId(),
-                resourceGroupName,
-                labPlanName,
-                imageName,
-                body,
-                accept,
-                context);
+        return service.createOrUpdate(this.client.getEndpoint(), this.client.getApiVersion(),
+            this.client.getSubscriptionId(), resourceGroupName, labPlanName, imageName, body, accept, context);
     }
 
     /**
+     * Updates an image via PUT.
+     * 
      * Updates an image resource via PUT. Creating new resources via PUT will not function.
-     *
+     * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
      * @param labPlanName The name of the lab plan that uniquely identifies it within containing resource group. Used in
-     *     resource URIs and in UI.
+     * resource URIs and in UI.
      * @param imageName The image name.
      * @param body The request body.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
@@ -655,25 +554,42 @@ public final class ImagesClientImpl implements ImagesClient {
      * @return lab services virtual machine image on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    private Mono<ImageInner> createOrUpdateAsync(
-        String resourceGroupName, String labPlanName, String imageName, ImageInner body) {
+    private Mono<ImageInner> createOrUpdateAsync(String resourceGroupName, String labPlanName, String imageName,
+        ImageInner body) {
         return createOrUpdateWithResponseAsync(resourceGroupName, labPlanName, imageName, body)
-            .flatMap(
-                (Response<ImageInner> res) -> {
-                    if (res.getValue() != null) {
-                        return Mono.just(res.getValue());
-                    } else {
-                        return Mono.empty();
-                    }
-                });
+            .flatMap(res -> Mono.justOrEmpty(res.getValue()));
     }
 
     /**
+     * Updates an image via PUT.
+     * 
      * Updates an image resource via PUT. Creating new resources via PUT will not function.
-     *
+     * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
      * @param labPlanName The name of the lab plan that uniquely identifies it within containing resource group. Used in
-     *     resource URIs and in UI.
+     * resource URIs and in UI.
+     * @param imageName The image name.
+     * @param body The request body.
+     * @param context The context to associate with this operation.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return lab services virtual machine image along with {@link Response}.
+     */
+    @ServiceMethod(returns = ReturnType.SINGLE)
+    public Response<ImageInner> createOrUpdateWithResponse(String resourceGroupName, String labPlanName,
+        String imageName, ImageInner body, Context context) {
+        return createOrUpdateWithResponseAsync(resourceGroupName, labPlanName, imageName, body, context).block();
+    }
+
+    /**
+     * Updates an image via PUT.
+     * 
+     * Updates an image resource via PUT. Creating new resources via PUT will not function.
+     * 
+     * @param resourceGroupName The name of the resource group. The name is case insensitive.
+     * @param labPlanName The name of the lab plan that uniquely identifies it within containing resource group. Used in
+     * resource URIs and in UI.
      * @param imageName The image name.
      * @param body The request body.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
@@ -683,35 +599,17 @@ public final class ImagesClientImpl implements ImagesClient {
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
     public ImageInner createOrUpdate(String resourceGroupName, String labPlanName, String imageName, ImageInner body) {
-        return createOrUpdateAsync(resourceGroupName, labPlanName, imageName, body).block();
+        return createOrUpdateWithResponse(resourceGroupName, labPlanName, imageName, body, Context.NONE).getValue();
     }
 
     /**
-     * Updates an image resource via PUT. Creating new resources via PUT will not function.
-     *
-     * @param resourceGroupName The name of the resource group. The name is case insensitive.
-     * @param labPlanName The name of the lab plan that uniquely identifies it within containing resource group. Used in
-     *     resource URIs and in UI.
-     * @param imageName The image name.
-     * @param body The request body.
-     * @param context The context to associate with this operation.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return lab services virtual machine image along with {@link Response}.
-     */
-    @ServiceMethod(returns = ReturnType.SINGLE)
-    public Response<ImageInner> createOrUpdateWithResponse(
-        String resourceGroupName, String labPlanName, String imageName, ImageInner body, Context context) {
-        return createOrUpdateWithResponseAsync(resourceGroupName, labPlanName, imageName, body, context).block();
-    }
-
-    /**
+     * Updates an image.
+     * 
      * Updates an image resource.
-     *
+     * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
      * @param labPlanName The name of the lab plan that uniquely identifies it within containing resource group. Used in
-     *     resource URIs and in UI.
+     * resource URIs and in UI.
      * @param imageName The image name.
      * @param body The request body.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
@@ -720,19 +618,15 @@ public final class ImagesClientImpl implements ImagesClient {
      * @return lab services virtual machine image along with {@link Response} on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    private Mono<Response<ImageInner>> updateWithResponseAsync(
-        String resourceGroupName, String labPlanName, String imageName, ImageUpdate body) {
+    private Mono<Response<ImageInner>> updateWithResponseAsync(String resourceGroupName, String labPlanName,
+        String imageName, ImageUpdate body) {
         if (this.client.getEndpoint() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getEndpoint() is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
         }
         if (this.client.getSubscriptionId() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getSubscriptionId() is required and cannot be null."));
+            return Mono.error(new IllegalArgumentException(
+                "Parameter this.client.getSubscriptionId() is required and cannot be null."));
         }
         if (resourceGroupName == null) {
             return Mono
@@ -751,28 +645,19 @@ public final class ImagesClientImpl implements ImagesClient {
         }
         final String accept = "application/json";
         return FluxUtil
-            .withContext(
-                context ->
-                    service
-                        .update(
-                            this.client.getEndpoint(),
-                            this.client.getApiVersion(),
-                            this.client.getSubscriptionId(),
-                            resourceGroupName,
-                            labPlanName,
-                            imageName,
-                            body,
-                            accept,
-                            context))
+            .withContext(context -> service.update(this.client.getEndpoint(), this.client.getApiVersion(),
+                this.client.getSubscriptionId(), resourceGroupName, labPlanName, imageName, body, accept, context))
             .contextWrite(context -> context.putAll(FluxUtil.toReactorContext(this.client.getContext()).readOnly()));
     }
 
     /**
+     * Updates an image.
+     * 
      * Updates an image resource.
-     *
+     * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
      * @param labPlanName The name of the lab plan that uniquely identifies it within containing resource group. Used in
-     *     resource URIs and in UI.
+     * resource URIs and in UI.
      * @param imageName The image name.
      * @param body The request body.
      * @param context The context to associate with this operation.
@@ -782,19 +667,15 @@ public final class ImagesClientImpl implements ImagesClient {
      * @return lab services virtual machine image along with {@link Response} on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    private Mono<Response<ImageInner>> updateWithResponseAsync(
-        String resourceGroupName, String labPlanName, String imageName, ImageUpdate body, Context context) {
+    private Mono<Response<ImageInner>> updateWithResponseAsync(String resourceGroupName, String labPlanName,
+        String imageName, ImageUpdate body, Context context) {
         if (this.client.getEndpoint() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getEndpoint() is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
         }
         if (this.client.getSubscriptionId() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getSubscriptionId() is required and cannot be null."));
+            return Mono.error(new IllegalArgumentException(
+                "Parameter this.client.getSubscriptionId() is required and cannot be null."));
         }
         if (resourceGroupName == null) {
             return Mono
@@ -813,25 +694,18 @@ public final class ImagesClientImpl implements ImagesClient {
         }
         final String accept = "application/json";
         context = this.client.mergeContext(context);
-        return service
-            .update(
-                this.client.getEndpoint(),
-                this.client.getApiVersion(),
-                this.client.getSubscriptionId(),
-                resourceGroupName,
-                labPlanName,
-                imageName,
-                body,
-                accept,
-                context);
+        return service.update(this.client.getEndpoint(), this.client.getApiVersion(), this.client.getSubscriptionId(),
+            resourceGroupName, labPlanName, imageName, body, accept, context);
     }
 
     /**
+     * Updates an image.
+     * 
      * Updates an image resource.
-     *
+     * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
      * @param labPlanName The name of the lab plan that uniquely identifies it within containing resource group. Used in
-     *     resource URIs and in UI.
+     * resource URIs and in UI.
      * @param imageName The image name.
      * @param body The request body.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
@@ -840,25 +714,42 @@ public final class ImagesClientImpl implements ImagesClient {
      * @return lab services virtual machine image on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    private Mono<ImageInner> updateAsync(
-        String resourceGroupName, String labPlanName, String imageName, ImageUpdate body) {
+    private Mono<ImageInner> updateAsync(String resourceGroupName, String labPlanName, String imageName,
+        ImageUpdate body) {
         return updateWithResponseAsync(resourceGroupName, labPlanName, imageName, body)
-            .flatMap(
-                (Response<ImageInner> res) -> {
-                    if (res.getValue() != null) {
-                        return Mono.just(res.getValue());
-                    } else {
-                        return Mono.empty();
-                    }
-                });
+            .flatMap(res -> Mono.justOrEmpty(res.getValue()));
     }
 
     /**
+     * Updates an image.
+     * 
      * Updates an image resource.
-     *
+     * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
      * @param labPlanName The name of the lab plan that uniquely identifies it within containing resource group. Used in
-     *     resource URIs and in UI.
+     * resource URIs and in UI.
+     * @param imageName The image name.
+     * @param body The request body.
+     * @param context The context to associate with this operation.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return lab services virtual machine image along with {@link Response}.
+     */
+    @ServiceMethod(returns = ReturnType.SINGLE)
+    public Response<ImageInner> updateWithResponse(String resourceGroupName, String labPlanName, String imageName,
+        ImageUpdate body, Context context) {
+        return updateWithResponseAsync(resourceGroupName, labPlanName, imageName, body, context).block();
+    }
+
+    /**
+     * Updates an image.
+     * 
+     * Updates an image resource.
+     * 
+     * @param resourceGroupName The name of the resource group. The name is case insensitive.
+     * @param labPlanName The name of the lab plan that uniquely identifies it within containing resource group. Used in
+     * resource URIs and in UI.
      * @param imageName The image name.
      * @param body The request body.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
@@ -868,38 +759,18 @@ public final class ImagesClientImpl implements ImagesClient {
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
     public ImageInner update(String resourceGroupName, String labPlanName, String imageName, ImageUpdate body) {
-        return updateAsync(resourceGroupName, labPlanName, imageName, body).block();
-    }
-
-    /**
-     * Updates an image resource.
-     *
-     * @param resourceGroupName The name of the resource group. The name is case insensitive.
-     * @param labPlanName The name of the lab plan that uniquely identifies it within containing resource group. Used in
-     *     resource URIs and in UI.
-     * @param imageName The image name.
-     * @param body The request body.
-     * @param context The context to associate with this operation.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return lab services virtual machine image along with {@link Response}.
-     */
-    @ServiceMethod(returns = ReturnType.SINGLE)
-    public Response<ImageInner> updateWithResponse(
-        String resourceGroupName, String labPlanName, String imageName, ImageUpdate body, Context context) {
-        return updateWithResponseAsync(resourceGroupName, labPlanName, imageName, body, context).block();
+        return updateWithResponse(resourceGroupName, labPlanName, imageName, body, Context.NONE).getValue();
     }
 
     /**
      * Get the next page of items.
-     *
-     * @param nextLink The nextLink parameter.
+     * 
+     * @param nextLink The URL to get the next list of items.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
      * @return paged list of Lab services virtual machine images along with {@link PagedResponse} on successful
-     *     completion of {@link Mono}.
+     * completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
     private Mono<PagedResponse<ImageInner>> listByLabPlanNextSinglePageAsync(String nextLink) {
@@ -907,36 +778,27 @@ public final class ImagesClientImpl implements ImagesClient {
             return Mono.error(new IllegalArgumentException("Parameter nextLink is required and cannot be null."));
         }
         if (this.client.getEndpoint() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getEndpoint() is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
         }
         final String accept = "application/json";
         return FluxUtil
             .withContext(context -> service.listByLabPlanNext(nextLink, this.client.getEndpoint(), accept, context))
-            .<PagedResponse<ImageInner>>map(
-                res ->
-                    new PagedResponseBase<>(
-                        res.getRequest(),
-                        res.getStatusCode(),
-                        res.getHeaders(),
-                        res.getValue().value(),
-                        res.getValue().nextLink(),
-                        null))
+            .<PagedResponse<ImageInner>>map(res -> new PagedResponseBase<>(res.getRequest(), res.getStatusCode(),
+                res.getHeaders(), res.getValue().value(), res.getValue().nextLink(), null))
             .contextWrite(context -> context.putAll(FluxUtil.toReactorContext(this.client.getContext()).readOnly()));
     }
 
     /**
      * Get the next page of items.
-     *
-     * @param nextLink The nextLink parameter.
+     * 
+     * @param nextLink The URL to get the next list of items.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
      * @return paged list of Lab services virtual machine images along with {@link PagedResponse} on successful
-     *     completion of {@link Mono}.
+     * completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
     private Mono<PagedResponse<ImageInner>> listByLabPlanNextSinglePageAsync(String nextLink, Context context) {
@@ -944,23 +806,13 @@ public final class ImagesClientImpl implements ImagesClient {
             return Mono.error(new IllegalArgumentException("Parameter nextLink is required and cannot be null."));
         }
         if (this.client.getEndpoint() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getEndpoint() is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
         }
         final String accept = "application/json";
         context = this.client.mergeContext(context);
-        return service
-            .listByLabPlanNext(nextLink, this.client.getEndpoint(), accept, context)
-            .map(
-                res ->
-                    new PagedResponseBase<>(
-                        res.getRequest(),
-                        res.getStatusCode(),
-                        res.getHeaders(),
-                        res.getValue().value(),
-                        res.getValue().nextLink(),
-                        null));
+        return service.listByLabPlanNext(nextLink, this.client.getEndpoint(), accept, context)
+            .map(res -> new PagedResponseBase<>(res.getRequest(), res.getStatusCode(), res.getHeaders(),
+                res.getValue().value(), res.getValue().nextLink(), null));
     }
 }

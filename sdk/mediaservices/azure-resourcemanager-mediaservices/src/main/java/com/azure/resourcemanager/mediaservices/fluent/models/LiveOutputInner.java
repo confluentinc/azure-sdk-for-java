@@ -5,98 +5,65 @@
 package com.azure.resourcemanager.mediaservices.fluent.models;
 
 import com.azure.core.annotation.Fluent;
-import com.azure.core.annotation.JsonFlatten;
 import com.azure.core.management.ProxyResource;
 import com.azure.core.management.SystemData;
-import com.azure.core.util.logging.ClientLogger;
+import com.azure.json.JsonReader;
+import com.azure.json.JsonToken;
+import com.azure.json.JsonWriter;
 import com.azure.resourcemanager.mediaservices.models.Hls;
 import com.azure.resourcemanager.mediaservices.models.LiveOutputResourceState;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import java.io.IOException;
 import java.time.Duration;
 import java.time.OffsetDateTime;
 
-/** The Live Output. */
-@JsonFlatten
+/**
+ * The Live Output.
+ */
 @Fluent
-public class LiveOutputInner extends ProxyResource {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(LiveOutputInner.class);
+public final class LiveOutputInner extends ProxyResource {
+    /*
+     * Live output properties.
+     */
+    private LiveOutputProperties innerProperties;
 
     /*
      * The system metadata relating to this resource.
      */
-    @JsonProperty(value = "systemData", access = JsonProperty.Access.WRITE_ONLY)
     private SystemData systemData;
 
     /*
-     * The description of the live output.
+     * The type of the resource.
      */
-    @JsonProperty(value = "properties.description")
-    private String description;
+    private String type;
 
     /*
-     * The asset that the live output will write to.
+     * The name of the resource.
      */
-    @JsonProperty(value = "properties.assetName")
-    private String assetName;
+    private String name;
 
     /*
-     * ISO 8601 time between 1 minute to 25 hours to indicate the maximum
-     * content length that can be archived in the asset for this live output.
-     * This also sets the maximum content length for the rewind window. For
-     * example, use PT1H30M to indicate 1 hour and 30 minutes of archive
-     * window.
+     * Fully qualified resource Id for the resource.
      */
-    @JsonProperty(value = "properties.archiveWindowLength")
-    private Duration archiveWindowLength;
+    private String id;
 
-    /*
-     * The manifest file name. If not provided, the service will generate one
-     * automatically.
+    /**
+     * Creates an instance of LiveOutputInner class.
      */
-    @JsonProperty(value = "properties.manifestName")
-    private String manifestName;
+    public LiveOutputInner() {
+    }
 
-    /*
-     * HTTP Live Streaming (HLS) packing setting for the live output.
+    /**
+     * Get the innerProperties property: Live output properties.
+     * 
+     * @return the innerProperties value.
      */
-    @JsonProperty(value = "properties.hls")
-    private Hls hls;
-
-    /*
-     * The initial timestamp that the live output will start at, any content
-     * before this value will not be archived.
-     */
-    @JsonProperty(value = "properties.outputSnapTime")
-    private Long outputSnapTime;
-
-    /*
-     * The creation time the live output.
-     */
-    @JsonProperty(value = "properties.created", access = JsonProperty.Access.WRITE_ONLY)
-    private OffsetDateTime created;
-
-    /*
-     * The time the live output was last modified.
-     */
-    @JsonProperty(value = "properties.lastModified", access = JsonProperty.Access.WRITE_ONLY)
-    private OffsetDateTime lastModified;
-
-    /*
-     * The provisioning state of the live output.
-     */
-    @JsonProperty(value = "properties.provisioningState", access = JsonProperty.Access.WRITE_ONLY)
-    private String provisioningState;
-
-    /*
-     * The resource state of the live output.
-     */
-    @JsonProperty(value = "properties.resourceState", access = JsonProperty.Access.WRITE_ONLY)
-    private LiveOutputResourceState resourceState;
+    private LiveOutputProperties innerProperties() {
+        return this.innerProperties;
+    }
 
     /**
      * Get the systemData property: The system metadata relating to this resource.
-     *
+     * 
      * @return the systemData value.
      */
     public SystemData systemData() {
@@ -104,42 +71,78 @@ public class LiveOutputInner extends ProxyResource {
     }
 
     /**
+     * Get the type property: The type of the resource.
+     * 
+     * @return the type value.
+     */
+    @Override
+    public String type() {
+        return this.type;
+    }
+
+    /**
+     * Get the name property: The name of the resource.
+     * 
+     * @return the name value.
+     */
+    @Override
+    public String name() {
+        return this.name;
+    }
+
+    /**
+     * Get the id property: Fully qualified resource Id for the resource.
+     * 
+     * @return the id value.
+     */
+    @Override
+    public String id() {
+        return this.id;
+    }
+
+    /**
      * Get the description property: The description of the live output.
-     *
+     * 
      * @return the description value.
      */
     public String description() {
-        return this.description;
+        return this.innerProperties() == null ? null : this.innerProperties().description();
     }
 
     /**
      * Set the description property: The description of the live output.
-     *
+     * 
      * @param description the description value to set.
      * @return the LiveOutputInner object itself.
      */
     public LiveOutputInner withDescription(String description) {
-        this.description = description;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new LiveOutputProperties();
+        }
+        this.innerProperties().withDescription(description);
         return this;
     }
 
     /**
      * Get the assetName property: The asset that the live output will write to.
-     *
+     * 
      * @return the assetName value.
      */
     public String assetName() {
-        return this.assetName;
+        return this.innerProperties() == null ? null : this.innerProperties().assetName();
     }
 
     /**
      * Set the assetName property: The asset that the live output will write to.
-     *
+     * 
      * @param assetName the assetName value to set.
      * @return the LiveOutputInner object itself.
      */
     public LiveOutputInner withAssetName(String assetName) {
-        this.assetName = assetName;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new LiveOutputProperties();
+        }
+        this.innerProperties().withAssetName(assetName);
         return this;
     }
 
@@ -147,134 +150,222 @@ public class LiveOutputInner extends ProxyResource {
      * Get the archiveWindowLength property: ISO 8601 time between 1 minute to 25 hours to indicate the maximum content
      * length that can be archived in the asset for this live output. This also sets the maximum content length for the
      * rewind window. For example, use PT1H30M to indicate 1 hour and 30 minutes of archive window.
-     *
+     * 
      * @return the archiveWindowLength value.
      */
     public Duration archiveWindowLength() {
-        return this.archiveWindowLength;
+        return this.innerProperties() == null ? null : this.innerProperties().archiveWindowLength();
     }
 
     /**
      * Set the archiveWindowLength property: ISO 8601 time between 1 minute to 25 hours to indicate the maximum content
      * length that can be archived in the asset for this live output. This also sets the maximum content length for the
      * rewind window. For example, use PT1H30M to indicate 1 hour and 30 minutes of archive window.
-     *
+     * 
      * @param archiveWindowLength the archiveWindowLength value to set.
      * @return the LiveOutputInner object itself.
      */
     public LiveOutputInner withArchiveWindowLength(Duration archiveWindowLength) {
-        this.archiveWindowLength = archiveWindowLength;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new LiveOutputProperties();
+        }
+        this.innerProperties().withArchiveWindowLength(archiveWindowLength);
+        return this;
+    }
+
+    /**
+     * Get the rewindWindowLength property: ISO 8601 time between 1 minute to the duration of archiveWindowLength to
+     * control seek-able window length during Live. The service won't use this property once LiveOutput stops. The
+     * archived VOD will have full content with original ArchiveWindowLength. For example, use PT1H30M to indicate 1
+     * hour and 30 minutes of rewind window length. Service will use implicit default value 30m only if Live Event
+     * enables LL.
+     * 
+     * @return the rewindWindowLength value.
+     */
+    public Duration rewindWindowLength() {
+        return this.innerProperties() == null ? null : this.innerProperties().rewindWindowLength();
+    }
+
+    /**
+     * Set the rewindWindowLength property: ISO 8601 time between 1 minute to the duration of archiveWindowLength to
+     * control seek-able window length during Live. The service won't use this property once LiveOutput stops. The
+     * archived VOD will have full content with original ArchiveWindowLength. For example, use PT1H30M to indicate 1
+     * hour and 30 minutes of rewind window length. Service will use implicit default value 30m only if Live Event
+     * enables LL.
+     * 
+     * @param rewindWindowLength the rewindWindowLength value to set.
+     * @return the LiveOutputInner object itself.
+     */
+    public LiveOutputInner withRewindWindowLength(Duration rewindWindowLength) {
+        if (this.innerProperties() == null) {
+            this.innerProperties = new LiveOutputProperties();
+        }
+        this.innerProperties().withRewindWindowLength(rewindWindowLength);
         return this;
     }
 
     /**
      * Get the manifestName property: The manifest file name. If not provided, the service will generate one
      * automatically.
-     *
+     * 
      * @return the manifestName value.
      */
     public String manifestName() {
-        return this.manifestName;
+        return this.innerProperties() == null ? null : this.innerProperties().manifestName();
     }
 
     /**
      * Set the manifestName property: The manifest file name. If not provided, the service will generate one
      * automatically.
-     *
+     * 
      * @param manifestName the manifestName value to set.
      * @return the LiveOutputInner object itself.
      */
     public LiveOutputInner withManifestName(String manifestName) {
-        this.manifestName = manifestName;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new LiveOutputProperties();
+        }
+        this.innerProperties().withManifestName(manifestName);
         return this;
     }
 
     /**
      * Get the hls property: HTTP Live Streaming (HLS) packing setting for the live output.
-     *
+     * 
      * @return the hls value.
      */
     public Hls hls() {
-        return this.hls;
+        return this.innerProperties() == null ? null : this.innerProperties().hls();
     }
 
     /**
      * Set the hls property: HTTP Live Streaming (HLS) packing setting for the live output.
-     *
+     * 
      * @param hls the hls value to set.
      * @return the LiveOutputInner object itself.
      */
     public LiveOutputInner withHls(Hls hls) {
-        this.hls = hls;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new LiveOutputProperties();
+        }
+        this.innerProperties().withHls(hls);
         return this;
     }
 
     /**
      * Get the outputSnapTime property: The initial timestamp that the live output will start at, any content before
      * this value will not be archived.
-     *
+     * 
      * @return the outputSnapTime value.
      */
     public Long outputSnapTime() {
-        return this.outputSnapTime;
+        return this.innerProperties() == null ? null : this.innerProperties().outputSnapTime();
     }
 
     /**
      * Set the outputSnapTime property: The initial timestamp that the live output will start at, any content before
      * this value will not be archived.
-     *
+     * 
      * @param outputSnapTime the outputSnapTime value to set.
      * @return the LiveOutputInner object itself.
      */
     public LiveOutputInner withOutputSnapTime(Long outputSnapTime) {
-        this.outputSnapTime = outputSnapTime;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new LiveOutputProperties();
+        }
+        this.innerProperties().withOutputSnapTime(outputSnapTime);
         return this;
     }
 
     /**
      * Get the created property: The creation time the live output.
-     *
+     * 
      * @return the created value.
      */
     public OffsetDateTime created() {
-        return this.created;
+        return this.innerProperties() == null ? null : this.innerProperties().created();
     }
 
     /**
      * Get the lastModified property: The time the live output was last modified.
-     *
+     * 
      * @return the lastModified value.
      */
     public OffsetDateTime lastModified() {
-        return this.lastModified;
+        return this.innerProperties() == null ? null : this.innerProperties().lastModified();
     }
 
     /**
      * Get the provisioningState property: The provisioning state of the live output.
-     *
+     * 
      * @return the provisioningState value.
      */
     public String provisioningState() {
-        return this.provisioningState;
+        return this.innerProperties() == null ? null : this.innerProperties().provisioningState();
     }
 
     /**
      * Get the resourceState property: The resource state of the live output.
-     *
+     * 
      * @return the resourceState value.
      */
     public LiveOutputResourceState resourceState() {
-        return this.resourceState;
+        return this.innerProperties() == null ? null : this.innerProperties().resourceState();
     }
 
     /**
      * Validates the instance.
-     *
+     * 
      * @throws IllegalArgumentException thrown if the instance is not valid.
      */
     public void validate() {
-        if (hls() != null) {
-            hls().validate();
+        if (innerProperties() != null) {
+            innerProperties().validate();
         }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public JsonWriter toJson(JsonWriter jsonWriter) throws IOException {
+        jsonWriter.writeStartObject();
+        jsonWriter.writeJsonField("properties", this.innerProperties);
+        return jsonWriter.writeEndObject();
+    }
+
+    /**
+     * Reads an instance of LiveOutputInner from the JsonReader.
+     * 
+     * @param jsonReader The JsonReader being read.
+     * @return An instance of LiveOutputInner if the JsonReader was pointing to an instance of it, or null if it was
+     * pointing to JSON null.
+     * @throws IllegalStateException If the deserialized JSON object was missing any required properties.
+     * @throws IOException If an error occurs while reading the LiveOutputInner.
+     */
+    public static LiveOutputInner fromJson(JsonReader jsonReader) throws IOException {
+        return jsonReader.readObject(reader -> {
+            LiveOutputInner deserializedLiveOutputInner = new LiveOutputInner();
+            while (reader.nextToken() != JsonToken.END_OBJECT) {
+                String fieldName = reader.getFieldName();
+                reader.nextToken();
+
+                if ("id".equals(fieldName)) {
+                    deserializedLiveOutputInner.id = reader.getString();
+                } else if ("name".equals(fieldName)) {
+                    deserializedLiveOutputInner.name = reader.getString();
+                } else if ("type".equals(fieldName)) {
+                    deserializedLiveOutputInner.type = reader.getString();
+                } else if ("properties".equals(fieldName)) {
+                    deserializedLiveOutputInner.innerProperties = LiveOutputProperties.fromJson(reader);
+                } else if ("systemData".equals(fieldName)) {
+                    deserializedLiveOutputInner.systemData = SystemData.fromJson(reader);
+                } else {
+                    reader.skipChildren();
+                }
+            }
+
+            return deserializedLiveOutputInner;
+        });
     }
 }

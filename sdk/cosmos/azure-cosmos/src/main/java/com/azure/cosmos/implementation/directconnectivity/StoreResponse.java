@@ -3,57 +3,102 @@
 
 package com.azure.cosmos.implementation.directconnectivity;
 
-import com.azure.cosmos.CosmosDiagnostics;
 import com.azure.cosmos.implementation.HttpConstants;
 import com.azure.cosmos.implementation.RequestTimeline;
 import com.azure.cosmos.implementation.apachecommons.lang.StringUtils;
 import com.azure.cosmos.implementation.directconnectivity.rntbd.RntbdChannelAcquisitionTimeline;
+import com.azure.cosmos.implementation.directconnectivity.rntbd.RntbdChannelStatistics;
 import com.azure.cosmos.implementation.directconnectivity.rntbd.RntbdEndpointStatistics;
+import com.fasterxml.jackson.databind.JsonNode;
+import io.netty.buffer.ByteBufInputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Map.Entry;
+import java.util.Map;
+import java.util.Set;
+
+import static com.azure.cosmos.implementation.guava25.base.Preconditions.checkArgument;
 
 /**
  * Used internally to represents a response from the store.
  */
 public class StoreResponse {
-    final static Logger LOGGER = LoggerFactory.getLogger(StoreResponse.class);
+    private static final Logger logger = LoggerFactory.getLogger(StoreResponse.class.getSimpleName());
     final private int status;
     final private String[] responseHeaderNames;
     final private String[] responseHeaderValues;
-    final private byte[] content;
-
-    private CosmosDiagnostics cosmosDiagnostics;
-    private int pendingRequestQueueSize;
     private int requestPayloadLength;
     private RequestTimeline requestTimeline;
     private RntbdChannelAcquisitionTimeline channelAcquisitionTimeline;
-    private int rntbdChannelTaskQueueSize;
     private RntbdEndpointStatistics rntbdEndpointStatistics;
+    private RntbdChannelStatistics channelStatistics;
     private int rntbdRequestLength;
     private int rntbdResponseLength;
+    private final Map<String, Set<String>> replicaStatusList;
+    private String faultInjectionRuleId;
+    private List<String> faultInjectionRuleEvaluationResults;
+
+    private final JsonNodeStorePayload responsePayload;
 
     public StoreResponse(
             int status,
-            List<Entry<String, String>> headerEntries,
-            byte[] content) {
+            Map<String, String> headerMap,
+            ByteBufInputStream contentStream,
+            int responsePayloadLength) {
 
+        checkArgument((contentStream == null) == (responsePayloadLength == 0),
+            "Parameter 'contentStream' must be consistent with 'responsePayloadLength'.");
         requestTimeline = RequestTimeline.empty();
-        responseHeaderNames = new String[headerEntries.size()];
-        responseHeaderValues = new String[headerEntries.size()];
+        responseHeaderNames = new String[headerMap.size()];
+        responseHeaderValues = new String[headerMap.size()];
 
         int i = 0;
-
-        for(Entry<String, String> headerEntry: headerEntries) {
+        for (Map.Entry<String, String> headerEntry : headerMap.entrySet()) {
             responseHeaderNames[i] = headerEntry.getKey();
             responseHeaderValues[i] = headerEntry.getValue();
             i++;
         }
 
         this.status = status;
-        this.content = content;
+        replicaStatusList = new HashMap<>();
+        if (contentStream != null) {
+            try {
+                this.responsePayload = new JsonNodeStorePayload(contentStream, responsePayloadLength);
+            }
+            finally {
+                try {
+                    contentStream.close();
+                } catch (IOException e) {
+                    logger.debug("Could not successfully close content stream.", e);
+                }
+            }
+        } else {
+            this.responsePayload = null;
+        }
+    }
+
+    private StoreResponse(
+        int status,
+        Map<String, String> headerMap,
+        JsonNodeStorePayload responsePayload) {
+
+        requestTimeline = RequestTimeline.empty();
+        responseHeaderNames = new String[headerMap.size()];
+        responseHeaderValues = new String[headerMap.size()];
+
+        int i = 0;
+        for (Map.Entry<String, String> headerEntry : headerMap.entrySet()) {
+            responseHeaderNames[i] = headerEntry.getKey();
+            responseHeaderValues[i] = headerEntry.getValue();
+            i++;
+        }
+
+        this.status = status;
+        replicaStatusList = new HashMap<>();
+        this.responsePayload = responsePayload;
     }
 
     public int getStatus() {
@@ -66,22 +111,6 @@ public class StoreResponse {
 
     public String[] getResponseHeaderValues() {
         return responseHeaderValues;
-    }
-
-    public int getRntbdChannelTaskQueueSize() {
-        return rntbdChannelTaskQueueSize;
-    }
-
-    public void setRntbdChannelTaskQueueSize(int rntbdChannelTaskQueueSize) {
-        this.rntbdChannelTaskQueueSize = rntbdChannelTaskQueueSize;
-    }
-
-    public int getPendingRequestQueueSize() {
-        return this.pendingRequestQueueSize;
-    }
-
-    public void setRntbdPendingRequestSize(int pendingRequestQueueSize) {
-        this.pendingRequestQueueSize = pendingRequestQueueSize;
     }
 
     public void setRntbdRequestLength(int rntbdRequestLength) {
@@ -108,12 +137,20 @@ public class StoreResponse {
         this.requestPayloadLength = requestPayloadLength;
     }
 
-    public byte[] getResponseBody() {
-        return this.content;
+    public JsonNode getResponseBodyAsJson() {
+        if (this.responsePayload == null) {
+            return null;
+        }
+
+        return this.responsePayload.getPayload();
     }
 
     public int getResponseBodyLength() {
-        return (this.content != null) ? this.content.length : 0;
+        if (this.responsePayload == null) {
+            return 0;
+        }
+
+        return this.responsePayload.getResponsePayloadSize();
     }
 
     public long getLSN() {
@@ -129,8 +166,12 @@ public class StoreResponse {
         return this.getHeaderValue(WFConstants.BackendHeaders.PARTITION_KEY_RANGE_ID);
     }
 
-    public String getContinuation() {
-        return this.getHeaderValue(HttpConstants.HttpHeaders.CONTINUATION);
+    public String getActivityId() {
+        return this.getHeaderValue(HttpConstants.HttpHeaders.ACTIVITY_ID);
+    }
+
+    public String getCorrelatedActivityId() {
+        return this.getHeaderValue(HttpConstants.HttpHeaders.CORRELATED_ACTIVITY_ID);
     }
 
     public String getHeaderValue(String attribute) {
@@ -147,10 +188,6 @@ public class StoreResponse {
         return null;
     }
 
-    public CosmosDiagnostics getCosmosDiagnostics() {
-        return cosmosDiagnostics;
-    }
-
     public double getRequestCharge() {
         String value = this.getHeaderValue(HttpConstants.HttpHeaders.REQUEST_CHARGE);
         if (StringUtils.isEmpty(value)) {
@@ -159,12 +196,11 @@ public class StoreResponse {
         return Double.parseDouble(value);
     }
 
-    StoreResponse setCosmosDiagnostics(CosmosDiagnostics cosmosDiagnostics) {
-        this.cosmosDiagnostics = cosmosDiagnostics;
-        return this;
+    public String getSessionTokenString() {
+        return this.getHeaderValue(HttpConstants.HttpHeaders.SESSION_TOKEN);
     }
 
-    void setRequestTimeline(RequestTimeline requestTimeline) {
+    public void setRequestTimeline(RequestTimeline requestTimeline) {
         this.requestTimeline = requestTimeline;
     }
 
@@ -172,7 +208,7 @@ public class StoreResponse {
         return this.requestTimeline;
     }
 
-    void setChannelAcquisitionTimeline(RntbdChannelAcquisitionTimeline channelAcquisitionTimeline) {
+    public void setChannelAcquisitionTimeline(RntbdChannelAcquisitionTimeline channelAcquisitionTimeline) {
         this.channelAcquisitionTimeline = channelAcquisitionTimeline;
     }
 
@@ -180,12 +216,20 @@ public class StoreResponse {
         return this.channelAcquisitionTimeline;
     }
 
-    void setEndpointStatistics(RntbdEndpointStatistics rntbdEndpointStatistics) {
+    public void setEndpointStatistics(RntbdEndpointStatistics rntbdEndpointStatistics) {
         this.rntbdEndpointStatistics = rntbdEndpointStatistics;
     }
 
-    RntbdEndpointStatistics getEndpointStsts() {
+    RntbdEndpointStatistics getEndpointStatistics() {
         return this.rntbdEndpointStatistics;
+    }
+
+    public void setChannelStatistics(RntbdChannelStatistics channelStatistics) {
+        this.channelStatistics = channelStatistics;
+    }
+
+    public RntbdChannelStatistics getChannelStatistics() {
+        return this.channelStatistics;
     }
 
     int getSubStatusCode() {
@@ -199,5 +243,45 @@ public class StoreResponse {
             }
         }
         return subStatusCode;
+    }
+
+    public Map<String, Set<String>> getReplicaStatusList() {
+        return this.replicaStatusList;
+    }
+
+    public String getFaultInjectionRuleId() {
+        return this.faultInjectionRuleId;
+    }
+
+    public void setFaultInjectionRuleId(String faultInjectionRuleId) {
+        this.faultInjectionRuleId = faultInjectionRuleId;
+    }
+
+    public List<String> getFaultInjectionRuleEvaluationResults() {
+        return this.faultInjectionRuleEvaluationResults;
+    }
+
+    public void setFaultInjectionRuleEvaluationResults(List<String> results) {
+        this.faultInjectionRuleEvaluationResults = results;
+    }
+
+    public StoreResponse withRemappedStatusCode(int newStatusCode, double additionalRequestCharge) {
+
+        Map<String, String> headers = new HashMap<>();
+        for (int i = 0; i < this.responseHeaderNames.length; i++) {
+            String headerName = this.responseHeaderNames[i];
+            if (headerName.equalsIgnoreCase(HttpConstants.HttpHeaders.REQUEST_CHARGE)) {
+                double currentRequestCharge = this.getRequestCharge();
+                double newRequestCharge = currentRequestCharge + additionalRequestCharge;
+                headers.put(headerName, String.valueOf(newRequestCharge));
+            } else {
+                headers.put(headerName, this.responseHeaderValues[i]);
+            }
+        }
+
+        return new StoreResponse(
+            newStatusCode,
+            headers,
+            this.responsePayload);
     }
 }

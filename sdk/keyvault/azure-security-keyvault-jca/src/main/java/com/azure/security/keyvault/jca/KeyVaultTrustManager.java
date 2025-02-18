@@ -21,6 +21,8 @@ import static java.util.logging.Level.WARNING;
 
 /**
  * The Azure Key Vault variant of the X509TrustManager.
+ *
+ * @see X509ExtendedTrustManager
  */
 public final class KeyVaultTrustManager extends X509ExtendedTrustManager {
 
@@ -79,9 +81,16 @@ public final class KeyVaultTrustManager extends X509ExtendedTrustManager {
         }
     }
 
+    /**
+     * Check if the client is trusted.
+     *
+     * @param chain the chain
+     * @param authType the authType
+     * @throws CertificateException if any of the certificates in the
+     *          keystore could not be loaded.
+     */
     @Override
-    public void checkClientTrusted(X509Certificate[] chain, String authType)
-        throws CertificateException {
+    public void checkClientTrusted(X509Certificate[] chain, String authType) throws CertificateException {
 
         boolean pass = true;
 
@@ -110,9 +119,16 @@ public final class KeyVaultTrustManager extends X509ExtendedTrustManager {
         }
     }
 
+    /**
+     * Check if the server is trusted.
+     *
+     * @param chain the chain
+     * @param authType the authType
+     * @throws CertificateException if any of the certificates in the
+     *          keystore could not be loaded.
+     */
     @Override
-    public void checkServerTrusted(X509Certificate[] chain, String authType)
-        throws CertificateException {
+    public void checkServerTrusted(X509Certificate[] chain, String authType) throws CertificateException {
 
         boolean pass = true;
 
@@ -141,28 +157,73 @@ public final class KeyVaultTrustManager extends X509ExtendedTrustManager {
         }
     }
 
+    /**
+     * Get accepted issuers.
+     *
+     * @return X509Certificate the X509Certificate
+     */
     @Override
     public X509Certificate[] getAcceptedIssuers() {
         return new X509Certificate[0];
     }
 
+    /**
+     * Check if the client is trusted.
+     *
+     * @param chain the chain
+     * @param authType the authType
+     * @param socket the socket
+     * @throws CertificateException if any of the certificates in the
+     *          keystore could not be loaded.
+     */
     @Override
-    public void checkClientTrusted(X509Certificate[] chain, String authType, Socket socket) throws CertificateException {
+    public void checkClientTrusted(X509Certificate[] chain, String authType, Socket socket)
+        throws CertificateException {
         checkClientTrusted(chain, authType);
     }
 
+    /**
+     * Check if the server is trusted.
+     *
+     * @param chain the chain
+     * @param authType the authType
+     * @param socket the socket
+     * @throws CertificateException if any of the certificates in the
+     *          keystore could not be loaded.
+     */
     @Override
-    public void checkServerTrusted(X509Certificate[] chain, String authType, Socket socket) throws CertificateException {
+    public void checkServerTrusted(X509Certificate[] chain, String authType, Socket socket)
+        throws CertificateException {
         checkServerTrusted(chain, authType);
     }
 
+    /**
+     * Check if the client is trusted.
+     *
+     * @param chain the chain
+     * @param authType the authType
+     * @param engine the engine
+     * @throws CertificateException if any of the certificates in the
+     *          keystore could not be loaded.
+     */
     @Override
-    public void checkClientTrusted(X509Certificate[] chain, String authType, SSLEngine engine) throws CertificateException {
+    public void checkClientTrusted(X509Certificate[] chain, String authType, SSLEngine engine)
+        throws CertificateException {
         checkClientTrusted(chain, authType);
     }
 
+    /**
+     * Check if the server is trusted.
+     *
+     * @param chain the chain
+     * @param authType the authType
+     * @param engine the engine
+     * @throws CertificateException if any of the certificates in the
+     *          keystore could not be loaded.
+     */
     @Override
-    public void checkServerTrusted(X509Certificate[] chain, String authType, SSLEngine engine) throws CertificateException {
+    public void checkServerTrusted(X509Certificate[] chain, String authType, SSLEngine engine)
+        throws CertificateException {
         checkServerTrusted(chain, authType);
     }
 }

@@ -6,41 +6,46 @@ package com.azure.resourcemanager.compute.models;
 
 import com.azure.core.annotation.Fluent;
 import com.azure.core.util.logging.ClientLogger;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.azure.json.JsonReader;
+import com.azure.json.JsonSerializable;
+import com.azure.json.JsonToken;
+import com.azure.json.JsonWriter;
+import java.io.IOException;
 
-/** Describes the properties of a run command parameter. */
+/**
+ * Describes the properties of a run command parameter.
+ */
 @Fluent
-public final class RunCommandParameterDefinition {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(RunCommandParameterDefinition.class);
-
+public final class RunCommandParameterDefinition implements JsonSerializable<RunCommandParameterDefinition> {
     /*
      * The run command parameter name.
      */
-    @JsonProperty(value = "name", required = true)
     private String name;
 
     /*
      * The run command parameter type.
      */
-    @JsonProperty(value = "type", required = true)
     private String type;
 
     /*
      * The run command parameter default value.
      */
-    @JsonProperty(value = "defaultValue")
     private String defaultValue;
 
     /*
      * The run command parameter required.
      */
-    @JsonProperty(value = "required")
     private Boolean required;
 
     /**
+     * Creates an instance of RunCommandParameterDefinition class.
+     */
+    public RunCommandParameterDefinition() {
+    }
+
+    /**
      * Get the name property: The run command parameter name.
-     *
+     * 
      * @return the name value.
      */
     public String name() {
@@ -49,7 +54,7 @@ public final class RunCommandParameterDefinition {
 
     /**
      * Set the name property: The run command parameter name.
-     *
+     * 
      * @param name the name value to set.
      * @return the RunCommandParameterDefinition object itself.
      */
@@ -60,7 +65,7 @@ public final class RunCommandParameterDefinition {
 
     /**
      * Get the type property: The run command parameter type.
-     *
+     * 
      * @return the type value.
      */
     public String type() {
@@ -69,7 +74,7 @@ public final class RunCommandParameterDefinition {
 
     /**
      * Set the type property: The run command parameter type.
-     *
+     * 
      * @param type the type value to set.
      * @return the RunCommandParameterDefinition object itself.
      */
@@ -80,7 +85,7 @@ public final class RunCommandParameterDefinition {
 
     /**
      * Get the defaultValue property: The run command parameter default value.
-     *
+     * 
      * @return the defaultValue value.
      */
     public String defaultValue() {
@@ -89,7 +94,7 @@ public final class RunCommandParameterDefinition {
 
     /**
      * Set the defaultValue property: The run command parameter default value.
-     *
+     * 
      * @param defaultValue the defaultValue value to set.
      * @return the RunCommandParameterDefinition object itself.
      */
@@ -100,7 +105,7 @@ public final class RunCommandParameterDefinition {
 
     /**
      * Get the required property: The run command parameter required.
-     *
+     * 
      * @return the required value.
      */
     public Boolean required() {
@@ -109,7 +114,7 @@ public final class RunCommandParameterDefinition {
 
     /**
      * Set the required property: The run command parameter required.
-     *
+     * 
      * @param required the required value to set.
      * @return the RunCommandParameterDefinition object itself.
      */
@@ -120,21 +125,68 @@ public final class RunCommandParameterDefinition {
 
     /**
      * Validates the instance.
-     *
+     * 
      * @throws IllegalArgumentException thrown if the instance is not valid.
      */
     public void validate() {
         if (name() == null) {
-            throw logger
-                .logExceptionAsError(
-                    new IllegalArgumentException(
-                        "Missing required property name in model RunCommandParameterDefinition"));
+            throw LOGGER.atError()
+                .log(new IllegalArgumentException(
+                    "Missing required property name in model RunCommandParameterDefinition"));
         }
         if (type() == null) {
-            throw logger
-                .logExceptionAsError(
-                    new IllegalArgumentException(
-                        "Missing required property type in model RunCommandParameterDefinition"));
+            throw LOGGER.atError()
+                .log(new IllegalArgumentException(
+                    "Missing required property type in model RunCommandParameterDefinition"));
         }
+    }
+
+    private static final ClientLogger LOGGER = new ClientLogger(RunCommandParameterDefinition.class);
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public JsonWriter toJson(JsonWriter jsonWriter) throws IOException {
+        jsonWriter.writeStartObject();
+        jsonWriter.writeStringField("name", this.name);
+        jsonWriter.writeStringField("type", this.type);
+        jsonWriter.writeStringField("defaultValue", this.defaultValue);
+        jsonWriter.writeBooleanField("required", this.required);
+        return jsonWriter.writeEndObject();
+    }
+
+    /**
+     * Reads an instance of RunCommandParameterDefinition from the JsonReader.
+     * 
+     * @param jsonReader The JsonReader being read.
+     * @return An instance of RunCommandParameterDefinition if the JsonReader was pointing to an instance of it, or null
+     * if it was pointing to JSON null.
+     * @throws IllegalStateException If the deserialized JSON object was missing any required properties.
+     * @throws IOException If an error occurs while reading the RunCommandParameterDefinition.
+     */
+    public static RunCommandParameterDefinition fromJson(JsonReader jsonReader) throws IOException {
+        return jsonReader.readObject(reader -> {
+            RunCommandParameterDefinition deserializedRunCommandParameterDefinition
+                = new RunCommandParameterDefinition();
+            while (reader.nextToken() != JsonToken.END_OBJECT) {
+                String fieldName = reader.getFieldName();
+                reader.nextToken();
+
+                if ("name".equals(fieldName)) {
+                    deserializedRunCommandParameterDefinition.name = reader.getString();
+                } else if ("type".equals(fieldName)) {
+                    deserializedRunCommandParameterDefinition.type = reader.getString();
+                } else if ("defaultValue".equals(fieldName)) {
+                    deserializedRunCommandParameterDefinition.defaultValue = reader.getString();
+                } else if ("required".equals(fieldName)) {
+                    deserializedRunCommandParameterDefinition.required = reader.getNullable(JsonReader::getBoolean);
+                } else {
+                    reader.skipChildren();
+                }
+            }
+
+            return deserializedRunCommandParameterDefinition;
+        });
     }
 }

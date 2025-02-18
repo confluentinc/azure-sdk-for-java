@@ -5,58 +5,53 @@
 package com.azure.resourcemanager.relay.models;
 
 import com.azure.core.annotation.Fluent;
-import com.azure.core.annotation.JsonFlatten;
-import com.azure.core.util.logging.ClientLogger;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.azure.json.JsonReader;
+import com.azure.json.JsonToken;
+import com.azure.json.JsonWriter;
+import com.azure.resourcemanager.relay.fluent.models.RelayNamespaceProperties;
+import java.io.IOException;
 import java.time.OffsetDateTime;
 import java.util.Map;
 
-/** Description of a namespace resource. */
-@JsonFlatten
+/**
+ * Description of a namespace resource.
+ */
 @Fluent
-public class RelayUpdateParameters extends ResourceNamespacePatch {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(RelayUpdateParameters.class);
-
+public final class RelayUpdateParameters extends ResourceNamespacePatch {
     /*
      * SKU of the namespace.
      */
-    @JsonProperty(value = "sku")
     private Sku sku;
 
     /*
-     * The provisioningState property.
+     * Description of Relay namespace.
      */
-    @JsonProperty(value = "properties.provisioningState", access = JsonProperty.Access.WRITE_ONLY)
-    private ProvisioningStateEnum provisioningState;
+    private RelayNamespaceProperties innerProperties;
 
     /*
-     * The time the namespace was created.
+     * The type of the resource.
      */
-    @JsonProperty(value = "properties.createdAt", access = JsonProperty.Access.WRITE_ONLY)
-    private OffsetDateTime createdAt;
+    private String type;
 
     /*
-     * The time the namespace was updated.
+     * The name of the resource.
      */
-    @JsonProperty(value = "properties.updatedAt", access = JsonProperty.Access.WRITE_ONLY)
-    private OffsetDateTime updatedAt;
+    private String name;
 
     /*
-     * Endpoint you can use to perform Service Bus operations.
+     * Fully qualified resource Id for the resource.
      */
-    @JsonProperty(value = "properties.serviceBusEndpoint", access = JsonProperty.Access.WRITE_ONLY)
-    private String serviceBusEndpoint;
+    private String id;
 
-    /*
-     * Identifier for Azure Insights metrics.
+    /**
+     * Creates an instance of RelayUpdateParameters class.
      */
-    @JsonProperty(value = "properties.metricId", access = JsonProperty.Access.WRITE_ONLY)
-    private String metricId;
+    public RelayUpdateParameters() {
+    }
 
     /**
      * Get the sku property: SKU of the namespace.
-     *
+     * 
      * @return the sku value.
      */
     public Sku sku() {
@@ -65,7 +60,7 @@ public class RelayUpdateParameters extends ResourceNamespacePatch {
 
     /**
      * Set the sku property: SKU of the namespace.
-     *
+     * 
      * @param sku the sku value to set.
      * @return the RelayUpdateParameters object itself.
      */
@@ -75,51 +70,47 @@ public class RelayUpdateParameters extends ResourceNamespacePatch {
     }
 
     /**
-     * Get the provisioningState property: The provisioningState property.
-     *
-     * @return the provisioningState value.
+     * Get the innerProperties property: Description of Relay namespace.
+     * 
+     * @return the innerProperties value.
      */
-    public ProvisioningStateEnum provisioningState() {
-        return this.provisioningState;
+    private RelayNamespaceProperties innerProperties() {
+        return this.innerProperties;
     }
 
     /**
-     * Get the createdAt property: The time the namespace was created.
-     *
-     * @return the createdAt value.
+     * Get the type property: The type of the resource.
+     * 
+     * @return the type value.
      */
-    public OffsetDateTime createdAt() {
-        return this.createdAt;
+    @Override
+    public String type() {
+        return this.type;
     }
 
     /**
-     * Get the updatedAt property: The time the namespace was updated.
-     *
-     * @return the updatedAt value.
+     * Get the name property: The name of the resource.
+     * 
+     * @return the name value.
      */
-    public OffsetDateTime updatedAt() {
-        return this.updatedAt;
+    @Override
+    public String name() {
+        return this.name;
     }
 
     /**
-     * Get the serviceBusEndpoint property: Endpoint you can use to perform Service Bus operations.
-     *
-     * @return the serviceBusEndpoint value.
+     * Get the id property: Fully qualified resource Id for the resource.
+     * 
+     * @return the id value.
      */
-    public String serviceBusEndpoint() {
-        return this.serviceBusEndpoint;
+    @Override
+    public String id() {
+        return this.id;
     }
 
     /**
-     * Get the metricId property: Identifier for Azure Insights metrics.
-     *
-     * @return the metricId value.
+     * {@inheritDoc}
      */
-    public String metricId() {
-        return this.metricId;
-    }
-
-    /** {@inheritDoc} */
     @Override
     public RelayUpdateParameters withTags(Map<String, String> tags) {
         super.withTags(tags);
@@ -127,15 +118,112 @@ public class RelayUpdateParameters extends ResourceNamespacePatch {
     }
 
     /**
+     * Get the provisioningState property: The provisioningState property.
+     * 
+     * @return the provisioningState value.
+     */
+    public ProvisioningStateEnum provisioningState() {
+        return this.innerProperties() == null ? null : this.innerProperties().provisioningState();
+    }
+
+    /**
+     * Get the createdAt property: The time the namespace was created.
+     * 
+     * @return the createdAt value.
+     */
+    public OffsetDateTime createdAt() {
+        return this.innerProperties() == null ? null : this.innerProperties().createdAt();
+    }
+
+    /**
+     * Get the updatedAt property: The time the namespace was updated.
+     * 
+     * @return the updatedAt value.
+     */
+    public OffsetDateTime updatedAt() {
+        return this.innerProperties() == null ? null : this.innerProperties().updatedAt();
+    }
+
+    /**
+     * Get the serviceBusEndpoint property: Endpoint you can use to perform Service Bus operations.
+     * 
+     * @return the serviceBusEndpoint value.
+     */
+    public String serviceBusEndpoint() {
+        return this.innerProperties() == null ? null : this.innerProperties().serviceBusEndpoint();
+    }
+
+    /**
+     * Get the metricId property: Identifier for Azure Insights metrics.
+     * 
+     * @return the metricId value.
+     */
+    public String metricId() {
+        return this.innerProperties() == null ? null : this.innerProperties().metricId();
+    }
+
+    /**
      * Validates the instance.
-     *
+     * 
      * @throws IllegalArgumentException thrown if the instance is not valid.
      */
     @Override
     public void validate() {
-        super.validate();
         if (sku() != null) {
             sku().validate();
         }
+        if (innerProperties() != null) {
+            innerProperties().validate();
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public JsonWriter toJson(JsonWriter jsonWriter) throws IOException {
+        jsonWriter.writeStartObject();
+        jsonWriter.writeMapField("tags", tags(), (writer, element) -> writer.writeString(element));
+        jsonWriter.writeJsonField("sku", this.sku);
+        jsonWriter.writeJsonField("properties", this.innerProperties);
+        return jsonWriter.writeEndObject();
+    }
+
+    /**
+     * Reads an instance of RelayUpdateParameters from the JsonReader.
+     * 
+     * @param jsonReader The JsonReader being read.
+     * @return An instance of RelayUpdateParameters if the JsonReader was pointing to an instance of it, or null if it
+     * was pointing to JSON null.
+     * @throws IllegalStateException If the deserialized JSON object was missing any required properties.
+     * @throws IOException If an error occurs while reading the RelayUpdateParameters.
+     */
+    public static RelayUpdateParameters fromJson(JsonReader jsonReader) throws IOException {
+        return jsonReader.readObject(reader -> {
+            RelayUpdateParameters deserializedRelayUpdateParameters = new RelayUpdateParameters();
+            while (reader.nextToken() != JsonToken.END_OBJECT) {
+                String fieldName = reader.getFieldName();
+                reader.nextToken();
+
+                if ("id".equals(fieldName)) {
+                    deserializedRelayUpdateParameters.id = reader.getString();
+                } else if ("name".equals(fieldName)) {
+                    deserializedRelayUpdateParameters.name = reader.getString();
+                } else if ("type".equals(fieldName)) {
+                    deserializedRelayUpdateParameters.type = reader.getString();
+                } else if ("tags".equals(fieldName)) {
+                    Map<String, String> tags = reader.readMap(reader1 -> reader1.getString());
+                    deserializedRelayUpdateParameters.withTags(tags);
+                } else if ("sku".equals(fieldName)) {
+                    deserializedRelayUpdateParameters.sku = Sku.fromJson(reader);
+                } else if ("properties".equals(fieldName)) {
+                    deserializedRelayUpdateParameters.innerProperties = RelayNamespaceProperties.fromJson(reader);
+                } else {
+                    reader.skipChildren();
+                }
+            }
+
+            return deserializedRelayUpdateParameters;
+        });
     }
 }

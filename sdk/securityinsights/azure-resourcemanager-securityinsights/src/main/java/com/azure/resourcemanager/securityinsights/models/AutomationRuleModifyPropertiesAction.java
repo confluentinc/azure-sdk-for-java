@@ -5,47 +5,65 @@
 package com.azure.resourcemanager.securityinsights.models;
 
 import com.azure.core.annotation.Fluent;
-import com.azure.core.util.logging.ClientLogger;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import com.fasterxml.jackson.annotation.JsonTypeName;
+import com.azure.json.JsonReader;
+import com.azure.json.JsonToken;
+import com.azure.json.JsonWriter;
+import java.io.IOException;
 
-/** Describes an automation rule action to modify an object's properties. */
-@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "actionType")
-@JsonTypeName("ModifyProperties")
+/**
+ * Describes an automation rule action to modify an object's properties.
+ */
 @Fluent
 public final class AutomationRuleModifyPropertiesAction extends AutomationRuleAction {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(AutomationRuleModifyPropertiesAction.class);
+    /*
+     * The type of the automation rule action.
+     */
+    private ActionType actionType = ActionType.MODIFY_PROPERTIES;
 
     /*
-     * The configuration of the modify properties automation rule action
+     * The actionConfiguration property.
      */
-    @JsonProperty(value = "actionConfiguration", required = true)
-    private AutomationRuleModifyPropertiesActionConfiguration actionConfiguration;
+    private IncidentPropertiesAction actionConfiguration;
 
     /**
-     * Get the actionConfiguration property: The configuration of the modify properties automation rule action.
-     *
+     * Creates an instance of AutomationRuleModifyPropertiesAction class.
+     */
+    public AutomationRuleModifyPropertiesAction() {
+    }
+
+    /**
+     * Get the actionType property: The type of the automation rule action.
+     * 
+     * @return the actionType value.
+     */
+    @Override
+    public ActionType actionType() {
+        return this.actionType;
+    }
+
+    /**
+     * Get the actionConfiguration property: The actionConfiguration property.
+     * 
      * @return the actionConfiguration value.
      */
-    public AutomationRuleModifyPropertiesActionConfiguration actionConfiguration() {
+    public IncidentPropertiesAction actionConfiguration() {
         return this.actionConfiguration;
     }
 
     /**
-     * Set the actionConfiguration property: The configuration of the modify properties automation rule action.
-     *
+     * Set the actionConfiguration property: The actionConfiguration property.
+     * 
      * @param actionConfiguration the actionConfiguration value to set.
      * @return the AutomationRuleModifyPropertiesAction object itself.
      */
-    public AutomationRuleModifyPropertiesAction withActionConfiguration(
-        AutomationRuleModifyPropertiesActionConfiguration actionConfiguration) {
+    public AutomationRuleModifyPropertiesAction withActionConfiguration(IncidentPropertiesAction actionConfiguration) {
         this.actionConfiguration = actionConfiguration;
         return this;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public AutomationRuleModifyPropertiesAction withOrder(int order) {
         super.withOrder(order);
@@ -54,19 +72,59 @@ public final class AutomationRuleModifyPropertiesAction extends AutomationRuleAc
 
     /**
      * Validates the instance.
-     *
+     * 
      * @throws IllegalArgumentException thrown if the instance is not valid.
      */
     @Override
     public void validate() {
-        super.validate();
-        if (actionConfiguration() == null) {
-            throw logger
-                .logExceptionAsError(
-                    new IllegalArgumentException(
-                        "Missing required property actionConfiguration in model AutomationRuleModifyPropertiesAction"));
-        } else {
+        if (actionConfiguration() != null) {
             actionConfiguration().validate();
         }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public JsonWriter toJson(JsonWriter jsonWriter) throws IOException {
+        jsonWriter.writeStartObject();
+        jsonWriter.writeIntField("order", order());
+        jsonWriter.writeStringField("actionType", this.actionType == null ? null : this.actionType.toString());
+        jsonWriter.writeJsonField("actionConfiguration", this.actionConfiguration);
+        return jsonWriter.writeEndObject();
+    }
+
+    /**
+     * Reads an instance of AutomationRuleModifyPropertiesAction from the JsonReader.
+     * 
+     * @param jsonReader The JsonReader being read.
+     * @return An instance of AutomationRuleModifyPropertiesAction if the JsonReader was pointing to an instance of it,
+     * or null if it was pointing to JSON null.
+     * @throws IllegalStateException If the deserialized JSON object was missing any required properties.
+     * @throws IOException If an error occurs while reading the AutomationRuleModifyPropertiesAction.
+     */
+    public static AutomationRuleModifyPropertiesAction fromJson(JsonReader jsonReader) throws IOException {
+        return jsonReader.readObject(reader -> {
+            AutomationRuleModifyPropertiesAction deserializedAutomationRuleModifyPropertiesAction
+                = new AutomationRuleModifyPropertiesAction();
+            while (reader.nextToken() != JsonToken.END_OBJECT) {
+                String fieldName = reader.getFieldName();
+                reader.nextToken();
+
+                if ("order".equals(fieldName)) {
+                    deserializedAutomationRuleModifyPropertiesAction.withOrder(reader.getInt());
+                } else if ("actionType".equals(fieldName)) {
+                    deserializedAutomationRuleModifyPropertiesAction.actionType
+                        = ActionType.fromString(reader.getString());
+                } else if ("actionConfiguration".equals(fieldName)) {
+                    deserializedAutomationRuleModifyPropertiesAction.actionConfiguration
+                        = IncidentPropertiesAction.fromJson(reader);
+                } else {
+                    reader.skipChildren();
+                }
+            }
+
+            return deserializedAutomationRuleModifyPropertiesAction;
+        });
     }
 }

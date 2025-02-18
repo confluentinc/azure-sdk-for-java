@@ -13,39 +13,42 @@ import com.azure.resourcemanager.storagecache.fluent.CachesClient;
 import com.azure.resourcemanager.storagecache.fluent.models.CacheInner;
 import com.azure.resourcemanager.storagecache.models.Cache;
 import com.azure.resourcemanager.storagecache.models.Caches;
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.azure.resourcemanager.storagecache.models.PrimingJob;
+import com.azure.resourcemanager.storagecache.models.PrimingJobIdParameter;
+import com.azure.resourcemanager.storagecache.models.StorageTargetSpaceAllocation;
+import java.util.List;
 
 public final class CachesImpl implements Caches {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(CachesImpl.class);
+    private static final ClientLogger LOGGER = new ClientLogger(CachesImpl.class);
 
     private final CachesClient innerClient;
 
     private final com.azure.resourcemanager.storagecache.StorageCacheManager serviceManager;
 
-    public CachesImpl(
-        CachesClient innerClient, com.azure.resourcemanager.storagecache.StorageCacheManager serviceManager) {
+    public CachesImpl(CachesClient innerClient,
+        com.azure.resourcemanager.storagecache.StorageCacheManager serviceManager) {
         this.innerClient = innerClient;
         this.serviceManager = serviceManager;
     }
 
     public PagedIterable<Cache> list() {
         PagedIterable<CacheInner> inner = this.serviceClient().list();
-        return Utils.mapPage(inner, inner1 -> new CacheImpl(inner1, this.manager()));
+        return ResourceManagerUtils.mapPage(inner, inner1 -> new CacheImpl(inner1, this.manager()));
     }
 
     public PagedIterable<Cache> list(Context context) {
         PagedIterable<CacheInner> inner = this.serviceClient().list(context);
-        return Utils.mapPage(inner, inner1 -> new CacheImpl(inner1, this.manager()));
+        return ResourceManagerUtils.mapPage(inner, inner1 -> new CacheImpl(inner1, this.manager()));
     }
 
     public PagedIterable<Cache> listByResourceGroup(String resourceGroupName) {
         PagedIterable<CacheInner> inner = this.serviceClient().listByResourceGroup(resourceGroupName);
-        return Utils.mapPage(inner, inner1 -> new CacheImpl(inner1, this.manager()));
+        return ResourceManagerUtils.mapPage(inner, inner1 -> new CacheImpl(inner1, this.manager()));
     }
 
     public PagedIterable<Cache> listByResourceGroup(String resourceGroupName, Context context) {
         PagedIterable<CacheInner> inner = this.serviceClient().listByResourceGroup(resourceGroupName, context);
-        return Utils.mapPage(inner, inner1 -> new CacheImpl(inner1, this.manager()));
+        return ResourceManagerUtils.mapPage(inner, inner1 -> new CacheImpl(inner1, this.manager()));
     }
 
     public void deleteByResourceGroup(String resourceGroupName, String cacheName) {
@@ -56,24 +59,21 @@ public final class CachesImpl implements Caches {
         this.serviceClient().delete(resourceGroupName, cacheName, context);
     }
 
-    public Cache getByResourceGroup(String resourceGroupName, String cacheName) {
-        CacheInner inner = this.serviceClient().getByResourceGroup(resourceGroupName, cacheName);
+    public Response<Cache> getByResourceGroupWithResponse(String resourceGroupName, String cacheName, Context context) {
+        Response<CacheInner> inner
+            = this.serviceClient().getByResourceGroupWithResponse(resourceGroupName, cacheName, context);
         if (inner != null) {
-            return new CacheImpl(inner, this.manager());
+            return new SimpleResponse<>(inner.getRequest(), inner.getStatusCode(), inner.getHeaders(),
+                new CacheImpl(inner.getValue(), this.manager()));
         } else {
             return null;
         }
     }
 
-    public Response<Cache> getByResourceGroupWithResponse(String resourceGroupName, String cacheName, Context context) {
-        Response<CacheInner> inner =
-            this.serviceClient().getByResourceGroupWithResponse(resourceGroupName, cacheName, context);
+    public Cache getByResourceGroup(String resourceGroupName, String cacheName) {
+        CacheInner inner = this.serviceClient().getByResourceGroup(resourceGroupName, cacheName);
         if (inner != null) {
-            return new SimpleResponse<>(
-                inner.getRequest(),
-                inner.getStatusCode(),
-                inner.getHeaders(),
-                new CacheImpl(inner.getValue(), this.manager()));
+            return new CacheImpl(inner, this.manager());
         } else {
             return null;
         }
@@ -111,6 +111,41 @@ public final class CachesImpl implements Caches {
         this.serviceClient().stop(resourceGroupName, cacheName, context);
     }
 
+    public void startPrimingJob(String resourceGroupName, String cacheName) {
+        this.serviceClient().startPrimingJob(resourceGroupName, cacheName);
+    }
+
+    public void startPrimingJob(String resourceGroupName, String cacheName, PrimingJob primingjob, Context context) {
+        this.serviceClient().startPrimingJob(resourceGroupName, cacheName, primingjob, context);
+    }
+
+    public void stopPrimingJob(String resourceGroupName, String cacheName) {
+        this.serviceClient().stopPrimingJob(resourceGroupName, cacheName);
+    }
+
+    public void stopPrimingJob(String resourceGroupName, String cacheName, PrimingJobIdParameter primingJobId,
+        Context context) {
+        this.serviceClient().stopPrimingJob(resourceGroupName, cacheName, primingJobId, context);
+    }
+
+    public void pausePrimingJob(String resourceGroupName, String cacheName) {
+        this.serviceClient().pausePrimingJob(resourceGroupName, cacheName);
+    }
+
+    public void pausePrimingJob(String resourceGroupName, String cacheName, PrimingJobIdParameter primingJobId,
+        Context context) {
+        this.serviceClient().pausePrimingJob(resourceGroupName, cacheName, primingJobId, context);
+    }
+
+    public void resumePrimingJob(String resourceGroupName, String cacheName) {
+        this.serviceClient().resumePrimingJob(resourceGroupName, cacheName);
+    }
+
+    public void resumePrimingJob(String resourceGroupName, String cacheName, PrimingJobIdParameter primingJobId,
+        Context context) {
+        this.serviceClient().resumePrimingJob(resourceGroupName, cacheName, primingJobId, context);
+    }
+
     public void upgradeFirmware(String resourceGroupName, String cacheName) {
         this.serviceClient().upgradeFirmware(resourceGroupName, cacheName);
     }
@@ -119,78 +154,67 @@ public final class CachesImpl implements Caches {
         this.serviceClient().upgradeFirmware(resourceGroupName, cacheName, context);
     }
 
+    public void spaceAllocation(String resourceGroupName, String cacheName) {
+        this.serviceClient().spaceAllocation(resourceGroupName, cacheName);
+    }
+
+    public void spaceAllocation(String resourceGroupName, String cacheName,
+        List<StorageTargetSpaceAllocation> spaceAllocation, Context context) {
+        this.serviceClient().spaceAllocation(resourceGroupName, cacheName, spaceAllocation, context);
+    }
+
     public Cache getById(String id) {
-        String resourceGroupName = Utils.getValueFromIdByName(id, "resourcegroups");
+        String resourceGroupName = ResourceManagerUtils.getValueFromIdByName(id, "resourcegroups");
         if (resourceGroupName == null) {
-            throw logger
-                .logExceptionAsError(
-                    new IllegalArgumentException(
-                        String
-                            .format("The resource ID '%s' is not valid. Missing path segment 'resourcegroups'.", id)));
+            throw LOGGER.logExceptionAsError(new IllegalArgumentException(
+                String.format("The resource ID '%s' is not valid. Missing path segment 'resourcegroups'.", id)));
         }
-        String cacheName = Utils.getValueFromIdByName(id, "caches");
+        String cacheName = ResourceManagerUtils.getValueFromIdByName(id, "caches");
         if (cacheName == null) {
-            throw logger
-                .logExceptionAsError(
-                    new IllegalArgumentException(
-                        String.format("The resource ID '%s' is not valid. Missing path segment 'caches'.", id)));
+            throw LOGGER.logExceptionAsError(new IllegalArgumentException(
+                String.format("The resource ID '%s' is not valid. Missing path segment 'caches'.", id)));
         }
         return this.getByResourceGroupWithResponse(resourceGroupName, cacheName, Context.NONE).getValue();
     }
 
     public Response<Cache> getByIdWithResponse(String id, Context context) {
-        String resourceGroupName = Utils.getValueFromIdByName(id, "resourcegroups");
+        String resourceGroupName = ResourceManagerUtils.getValueFromIdByName(id, "resourcegroups");
         if (resourceGroupName == null) {
-            throw logger
-                .logExceptionAsError(
-                    new IllegalArgumentException(
-                        String
-                            .format("The resource ID '%s' is not valid. Missing path segment 'resourcegroups'.", id)));
+            throw LOGGER.logExceptionAsError(new IllegalArgumentException(
+                String.format("The resource ID '%s' is not valid. Missing path segment 'resourcegroups'.", id)));
         }
-        String cacheName = Utils.getValueFromIdByName(id, "caches");
+        String cacheName = ResourceManagerUtils.getValueFromIdByName(id, "caches");
         if (cacheName == null) {
-            throw logger
-                .logExceptionAsError(
-                    new IllegalArgumentException(
-                        String.format("The resource ID '%s' is not valid. Missing path segment 'caches'.", id)));
+            throw LOGGER.logExceptionAsError(new IllegalArgumentException(
+                String.format("The resource ID '%s' is not valid. Missing path segment 'caches'.", id)));
         }
         return this.getByResourceGroupWithResponse(resourceGroupName, cacheName, context);
     }
 
     public void deleteById(String id) {
-        String resourceGroupName = Utils.getValueFromIdByName(id, "resourcegroups");
+        String resourceGroupName = ResourceManagerUtils.getValueFromIdByName(id, "resourcegroups");
         if (resourceGroupName == null) {
-            throw logger
-                .logExceptionAsError(
-                    new IllegalArgumentException(
-                        String
-                            .format("The resource ID '%s' is not valid. Missing path segment 'resourcegroups'.", id)));
+            throw LOGGER.logExceptionAsError(new IllegalArgumentException(
+                String.format("The resource ID '%s' is not valid. Missing path segment 'resourcegroups'.", id)));
         }
-        String cacheName = Utils.getValueFromIdByName(id, "caches");
+        String cacheName = ResourceManagerUtils.getValueFromIdByName(id, "caches");
         if (cacheName == null) {
-            throw logger
-                .logExceptionAsError(
-                    new IllegalArgumentException(
-                        String.format("The resource ID '%s' is not valid. Missing path segment 'caches'.", id)));
+            throw LOGGER.logExceptionAsError(new IllegalArgumentException(
+                String.format("The resource ID '%s' is not valid. Missing path segment 'caches'.", id)));
         }
         this.delete(resourceGroupName, cacheName, Context.NONE);
     }
 
     public void deleteByIdWithResponse(String id, Context context) {
-        String resourceGroupName = Utils.getValueFromIdByName(id, "resourcegroups");
+        String resourceGroupName = ResourceManagerUtils.getValueFromIdByName(id, "resourcegroups");
         if (resourceGroupName == null) {
-            throw logger
-                .logExceptionAsError(
-                    new IllegalArgumentException(
-                        String
-                            .format("The resource ID '%s' is not valid. Missing path segment 'resourcegroups'.", id)));
+            throw LOGGER.logExceptionAsError(new IllegalArgumentException(
+                String.format("The resource ID '%s' is not valid. Missing path segment 'resourcegroups'.", id)));
         }
-        String cacheName = Utils.getValueFromIdByName(id, "caches");
+        String cacheName = ResourceManagerUtils.getValueFromIdByName(id, "caches");
         if (cacheName == null) {
-            throw logger
-                .logExceptionAsError(
-                    new IllegalArgumentException(
-                        String.format("The resource ID '%s' is not valid. Missing path segment 'caches'.", id)));
+            throw LOGGER.logExceptionAsError(new IllegalArgumentException(
+                String.format("The resource ID '%s' is not valid. Missing path segment 'caches'.", id)));
         }
         this.delete(resourceGroupName, cacheName, context);
     }

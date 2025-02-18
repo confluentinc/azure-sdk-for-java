@@ -27,7 +27,6 @@ import com.azure.core.http.rest.RestProxy;
 import com.azure.core.management.polling.PollResult;
 import com.azure.core.util.Context;
 import com.azure.core.util.FluxUtil;
-import com.azure.core.util.logging.ClientLogger;
 import com.azure.core.util.polling.PollerFlux;
 import com.azure.core.util.polling.SyncPoller;
 import com.azure.resourcemanager.compute.fluent.CloudServicesUpdateDomainsClient;
@@ -38,26 +37,28 @@ import java.nio.ByteBuffer;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-/** An instance of this class provides access to all the operations defined in CloudServicesUpdateDomainsClient. */
+/**
+ * An instance of this class provides access to all the operations defined in CloudServicesUpdateDomainsClient.
+ */
 public final class CloudServicesUpdateDomainsClientImpl implements CloudServicesUpdateDomainsClient {
-    private final ClientLogger logger = new ClientLogger(CloudServicesUpdateDomainsClientImpl.class);
-
-    /** The proxy service used to perform REST calls. */
+    /**
+     * The proxy service used to perform REST calls.
+     */
     private final CloudServicesUpdateDomainsService service;
 
-    /** The service client containing this operation class. */
+    /**
+     * The service client containing this operation class.
+     */
     private final ComputeManagementClientImpl client;
 
     /**
      * Initializes an instance of CloudServicesUpdateDomainsClientImpl.
-     *
+     * 
      * @param client the instance of the service client containing this operation class.
      */
     CloudServicesUpdateDomainsClientImpl(ComputeManagementClientImpl client) {
-        this.service =
-            RestProxy
-                .create(
-                    CloudServicesUpdateDomainsService.class, client.getHttpPipeline(), client.getSerializerAdapter());
+        this.service = RestProxy.create(CloudServicesUpdateDomainsService.class, client.getHttpPipeline(),
+            client.getSerializerAdapter());
         this.client = client;
     }
 
@@ -67,73 +68,53 @@ public final class CloudServicesUpdateDomainsClientImpl implements CloudServices
      */
     @Host("{$host}")
     @ServiceInterface(name = "ComputeManagementCli")
-    private interface CloudServicesUpdateDomainsService {
-        @Headers({"Content-Type: application/json"})
-        @Put(
-            "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute"
-                + "/cloudServices/{cloudServiceName}/updateDomains/{updateDomain}")
-        @ExpectedResponses({200, 202})
+    public interface CloudServicesUpdateDomainsService {
+        @Headers({ "Content-Type: application/json" })
+        @Put("/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/cloudServices/{cloudServiceName}/updateDomains/{updateDomain}")
+        @ExpectedResponses({ 200, 202 })
         @UnexpectedResponseExceptionType(ApiErrorException.class)
-        Mono<Response<Flux<ByteBuffer>>> walkUpdateDomain(
-            @HostParam("$host") String endpoint,
+        Mono<Response<Flux<ByteBuffer>>> walkUpdateDomain(@HostParam("$host") String endpoint,
             @PathParam("resourceGroupName") String resourceGroupName,
-            @PathParam("cloudServiceName") String cloudServiceName,
-            @PathParam("updateDomain") int updateDomain,
-            @PathParam("subscriptionId") String subscriptionId,
-            @QueryParam("api-version") String apiVersion,
-            @BodyParam("application/json") UpdateDomainInner parameters,
-            @HeaderParam("Accept") String accept,
+            @PathParam("cloudServiceName") String cloudServiceName, @PathParam("updateDomain") int updateDomain,
+            @PathParam("subscriptionId") String subscriptionId, @QueryParam("api-version") String apiVersion,
+            @BodyParam("application/json") UpdateDomainInner parameters, @HeaderParam("Accept") String accept,
             Context context);
 
-        @Headers({"Content-Type: application/json"})
-        @Get(
-            "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute"
-                + "/cloudServices/{cloudServiceName}/updateDomains/{updateDomain}")
-        @ExpectedResponses({200})
+        @Headers({ "Content-Type: application/json" })
+        @Get("/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/cloudServices/{cloudServiceName}/updateDomains/{updateDomain}")
+        @ExpectedResponses({ 200 })
         @UnexpectedResponseExceptionType(ApiErrorException.class)
-        Mono<Response<UpdateDomainInner>> getUpdateDomain(
-            @HostParam("$host") String endpoint,
+        Mono<Response<UpdateDomainInner>> getUpdateDomain(@HostParam("$host") String endpoint,
             @PathParam("resourceGroupName") String resourceGroupName,
-            @PathParam("cloudServiceName") String cloudServiceName,
-            @PathParam("updateDomain") int updateDomain,
-            @PathParam("subscriptionId") String subscriptionId,
-            @QueryParam("api-version") String apiVersion,
-            @HeaderParam("Accept") String accept,
-            Context context);
+            @PathParam("cloudServiceName") String cloudServiceName, @PathParam("updateDomain") int updateDomain,
+            @PathParam("subscriptionId") String subscriptionId, @QueryParam("api-version") String apiVersion,
+            @HeaderParam("Accept") String accept, Context context);
 
-        @Headers({"Content-Type: application/json"})
-        @Get(
-            "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute"
-                + "/cloudServices/{cloudServiceName}/updateDomains")
-        @ExpectedResponses({200})
+        @Headers({ "Content-Type: application/json" })
+        @Get("/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/cloudServices/{cloudServiceName}/updateDomains")
+        @ExpectedResponses({ 200 })
         @UnexpectedResponseExceptionType(ApiErrorException.class)
-        Mono<Response<UpdateDomainListResult>> listUpdateDomains(
-            @HostParam("$host") String endpoint,
+        Mono<Response<UpdateDomainListResult>> listUpdateDomains(@HostParam("$host") String endpoint,
             @PathParam("resourceGroupName") String resourceGroupName,
-            @PathParam("cloudServiceName") String cloudServiceName,
-            @PathParam("subscriptionId") String subscriptionId,
-            @QueryParam("api-version") String apiVersion,
-            @HeaderParam("Accept") String accept,
-            Context context);
+            @PathParam("cloudServiceName") String cloudServiceName, @PathParam("subscriptionId") String subscriptionId,
+            @QueryParam("api-version") String apiVersion, @HeaderParam("Accept") String accept, Context context);
 
-        @Headers({"Content-Type: application/json"})
+        @Headers({ "Content-Type: application/json" })
         @Get("{nextLink}")
-        @ExpectedResponses({200})
+        @ExpectedResponses({ 200 })
         @UnexpectedResponseExceptionType(ApiErrorException.class)
         Mono<Response<UpdateDomainListResult>> listUpdateDomainsNext(
-            @PathParam(value = "nextLink", encoded = true) String nextLink,
-            @HostParam("$host") String endpoint,
-            @HeaderParam("Accept") String accept,
-            Context context);
+            @PathParam(value = "nextLink", encoded = true) String nextLink, @HostParam("$host") String endpoint,
+            @HeaderParam("Accept") String accept, Context context);
     }
 
     /**
      * Updates the role instances in the specified update domain.
-     *
+     * 
      * @param resourceGroupName Name of the resource group.
      * @param cloudServiceName Name of the cloud service.
      * @param updateDomain Specifies an integer value that identifies the update domain. Update domains are identified
-     *     with a zero-based index: the first update domain has an ID of 0, the second has an ID of 1, and so on.
+     * with a zero-based index: the first update domain has an ID of 0, the second has an ID of 1, and so on.
      * @param parameters The update domain object.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ApiErrorException thrown if the request is rejected by server.
@@ -141,13 +122,11 @@ public final class CloudServicesUpdateDomainsClientImpl implements CloudServices
      * @return the {@link Response} on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    public Mono<Response<Flux<ByteBuffer>>> walkUpdateDomainWithResponseAsync(
-        String resourceGroupName, String cloudServiceName, int updateDomain, UpdateDomainInner parameters) {
+    public Mono<Response<Flux<ByteBuffer>>> walkUpdateDomainWithResponseAsync(String resourceGroupName,
+        String cloudServiceName, int updateDomain, UpdateDomainInner parameters) {
         if (this.client.getEndpoint() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getEndpoint() is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
         }
         if (resourceGroupName == null) {
             return Mono
@@ -158,40 +137,28 @@ public final class CloudServicesUpdateDomainsClientImpl implements CloudServices
                 .error(new IllegalArgumentException("Parameter cloudServiceName is required and cannot be null."));
         }
         if (this.client.getSubscriptionId() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getSubscriptionId() is required and cannot be null."));
+            return Mono.error(new IllegalArgumentException(
+                "Parameter this.client.getSubscriptionId() is required and cannot be null."));
         }
         if (parameters != null) {
             parameters.validate();
         }
-        final String apiVersion = "2021-03-01";
+        final String apiVersion = "2024-11-04";
         final String accept = "application/json";
         return FluxUtil
             .withContext(
-                context ->
-                    service
-                        .walkUpdateDomain(
-                            this.client.getEndpoint(),
-                            resourceGroupName,
-                            cloudServiceName,
-                            updateDomain,
-                            this.client.getSubscriptionId(),
-                            apiVersion,
-                            parameters,
-                            accept,
-                            context))
+                context -> service.walkUpdateDomain(this.client.getEndpoint(), resourceGroupName, cloudServiceName,
+                    updateDomain, this.client.getSubscriptionId(), apiVersion, parameters, accept, context))
             .contextWrite(context -> context.putAll(FluxUtil.toReactorContext(this.client.getContext()).readOnly()));
     }
 
     /**
      * Updates the role instances in the specified update domain.
-     *
+     * 
      * @param resourceGroupName Name of the resource group.
      * @param cloudServiceName Name of the cloud service.
      * @param updateDomain Specifies an integer value that identifies the update domain. Update domains are identified
-     *     with a zero-based index: the first update domain has an ID of 0, the second has an ID of 1, and so on.
+     * with a zero-based index: the first update domain has an ID of 0, the second has an ID of 1, and so on.
      * @param parameters The update domain object.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
@@ -200,17 +167,11 @@ public final class CloudServicesUpdateDomainsClientImpl implements CloudServices
      * @return the {@link Response} on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    private Mono<Response<Flux<ByteBuffer>>> walkUpdateDomainWithResponseAsync(
-        String resourceGroupName,
-        String cloudServiceName,
-        int updateDomain,
-        UpdateDomainInner parameters,
-        Context context) {
+    private Mono<Response<Flux<ByteBuffer>>> walkUpdateDomainWithResponseAsync(String resourceGroupName,
+        String cloudServiceName, int updateDomain, UpdateDomainInner parameters, Context context) {
         if (this.client.getEndpoint() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getEndpoint() is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
         }
         if (resourceGroupName == null) {
             return Mono
@@ -221,135 +182,135 @@ public final class CloudServicesUpdateDomainsClientImpl implements CloudServices
                 .error(new IllegalArgumentException("Parameter cloudServiceName is required and cannot be null."));
         }
         if (this.client.getSubscriptionId() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getSubscriptionId() is required and cannot be null."));
+            return Mono.error(new IllegalArgumentException(
+                "Parameter this.client.getSubscriptionId() is required and cannot be null."));
         }
         if (parameters != null) {
             parameters.validate();
         }
-        final String apiVersion = "2021-03-01";
+        final String apiVersion = "2024-11-04";
         final String accept = "application/json";
         context = this.client.mergeContext(context);
-        return service
-            .walkUpdateDomain(
-                this.client.getEndpoint(),
-                resourceGroupName,
-                cloudServiceName,
-                updateDomain,
-                this.client.getSubscriptionId(),
-                apiVersion,
-                parameters,
-                accept,
-                context);
+        return service.walkUpdateDomain(this.client.getEndpoint(), resourceGroupName, cloudServiceName, updateDomain,
+            this.client.getSubscriptionId(), apiVersion, parameters, accept, context);
     }
 
     /**
      * Updates the role instances in the specified update domain.
-     *
+     * 
      * @param resourceGroupName Name of the resource group.
      * @param cloudServiceName Name of the cloud service.
      * @param updateDomain Specifies an integer value that identifies the update domain. Update domains are identified
-     *     with a zero-based index: the first update domain has an ID of 0, the second has an ID of 1, and so on.
+     * with a zero-based index: the first update domain has an ID of 0, the second has an ID of 1, and so on.
      * @param parameters The update domain object.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ApiErrorException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the {@link Response} on successful completion of {@link Mono}.
+     * @return the {@link PollerFlux} for polling of long-running operation.
      */
     @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
-    public PollerFlux<PollResult<Void>, Void> beginWalkUpdateDomainAsync(
-        String resourceGroupName, String cloudServiceName, int updateDomain, UpdateDomainInner parameters) {
-        Mono<Response<Flux<ByteBuffer>>> mono =
-            walkUpdateDomainWithResponseAsync(resourceGroupName, cloudServiceName, updateDomain, parameters);
-        return this
-            .client
-            .<Void, Void>getLroResult(
-                mono, this.client.getHttpPipeline(), Void.class, Void.class, this.client.getContext());
+    public PollerFlux<PollResult<Void>, Void> beginWalkUpdateDomainAsync(String resourceGroupName,
+        String cloudServiceName, int updateDomain, UpdateDomainInner parameters) {
+        Mono<Response<Flux<ByteBuffer>>> mono
+            = walkUpdateDomainWithResponseAsync(resourceGroupName, cloudServiceName, updateDomain, parameters);
+        return this.client.<Void, Void>getLroResult(mono, this.client.getHttpPipeline(), Void.class, Void.class,
+            this.client.getContext());
     }
 
     /**
      * Updates the role instances in the specified update domain.
-     *
+     * 
      * @param resourceGroupName Name of the resource group.
      * @param cloudServiceName Name of the cloud service.
      * @param updateDomain Specifies an integer value that identifies the update domain. Update domains are identified
-     *     with a zero-based index: the first update domain has an ID of 0, the second has an ID of 1, and so on.
+     * with a zero-based index: the first update domain has an ID of 0, the second has an ID of 1, and so on.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws ApiErrorException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return the {@link PollerFlux} for polling of long-running operation.
+     */
+    @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
+    public PollerFlux<PollResult<Void>, Void> beginWalkUpdateDomainAsync(String resourceGroupName,
+        String cloudServiceName, int updateDomain) {
+        final UpdateDomainInner parameters = null;
+        Mono<Response<Flux<ByteBuffer>>> mono
+            = walkUpdateDomainWithResponseAsync(resourceGroupName, cloudServiceName, updateDomain, parameters);
+        return this.client.<Void, Void>getLroResult(mono, this.client.getHttpPipeline(), Void.class, Void.class,
+            this.client.getContext());
+    }
+
+    /**
+     * Updates the role instances in the specified update domain.
+     * 
+     * @param resourceGroupName Name of the resource group.
+     * @param cloudServiceName Name of the cloud service.
+     * @param updateDomain Specifies an integer value that identifies the update domain. Update domains are identified
+     * with a zero-based index: the first update domain has an ID of 0, the second has an ID of 1, and so on.
      * @param parameters The update domain object.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ApiErrorException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the {@link Response} on successful completion of {@link Mono}.
+     * @return the {@link PollerFlux} for polling of long-running operation.
      */
     @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
-    private PollerFlux<PollResult<Void>, Void> beginWalkUpdateDomainAsync(
-        String resourceGroupName,
-        String cloudServiceName,
-        int updateDomain,
-        UpdateDomainInner parameters,
-        Context context) {
+    private PollerFlux<PollResult<Void>, Void> beginWalkUpdateDomainAsync(String resourceGroupName,
+        String cloudServiceName, int updateDomain, UpdateDomainInner parameters, Context context) {
         context = this.client.mergeContext(context);
-        Mono<Response<Flux<ByteBuffer>>> mono =
-            walkUpdateDomainWithResponseAsync(resourceGroupName, cloudServiceName, updateDomain, parameters, context);
-        return this
-            .client
-            .<Void, Void>getLroResult(mono, this.client.getHttpPipeline(), Void.class, Void.class, context);
+        Mono<Response<Flux<ByteBuffer>>> mono
+            = walkUpdateDomainWithResponseAsync(resourceGroupName, cloudServiceName, updateDomain, parameters, context);
+        return this.client.<Void, Void>getLroResult(mono, this.client.getHttpPipeline(), Void.class, Void.class,
+            context);
     }
 
     /**
      * Updates the role instances in the specified update domain.
-     *
+     * 
      * @param resourceGroupName Name of the resource group.
      * @param cloudServiceName Name of the cloud service.
      * @param updateDomain Specifies an integer value that identifies the update domain. Update domains are identified
-     *     with a zero-based index: the first update domain has an ID of 0, the second has an ID of 1, and so on.
-     * @param parameters The update domain object.
+     * with a zero-based index: the first update domain has an ID of 0, the second has an ID of 1, and so on.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ApiErrorException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the {@link Response} on successful completion of {@link Mono}.
+     * @return the {@link SyncPoller} for polling of long-running operation.
      */
     @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
-    public SyncPoller<PollResult<Void>, Void> beginWalkUpdateDomain(
-        String resourceGroupName, String cloudServiceName, int updateDomain, UpdateDomainInner parameters) {
-        return beginWalkUpdateDomainAsync(resourceGroupName, cloudServiceName, updateDomain, parameters)
+    public SyncPoller<PollResult<Void>, Void> beginWalkUpdateDomain(String resourceGroupName, String cloudServiceName,
+        int updateDomain) {
+        final UpdateDomainInner parameters = null;
+        return this.beginWalkUpdateDomainAsync(resourceGroupName, cloudServiceName, updateDomain, parameters)
             .getSyncPoller();
     }
 
     /**
      * Updates the role instances in the specified update domain.
-     *
+     * 
      * @param resourceGroupName Name of the resource group.
      * @param cloudServiceName Name of the cloud service.
      * @param updateDomain Specifies an integer value that identifies the update domain. Update domains are identified
-     *     with a zero-based index: the first update domain has an ID of 0, the second has an ID of 1, and so on.
+     * with a zero-based index: the first update domain has an ID of 0, the second has an ID of 1, and so on.
      * @param parameters The update domain object.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ApiErrorException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the {@link Response} on successful completion of {@link Mono}.
+     * @return the {@link SyncPoller} for polling of long-running operation.
      */
     @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
-    public SyncPoller<PollResult<Void>, Void> beginWalkUpdateDomain(
-        String resourceGroupName,
-        String cloudServiceName,
-        int updateDomain,
-        UpdateDomainInner parameters,
-        Context context) {
-        return beginWalkUpdateDomainAsync(resourceGroupName, cloudServiceName, updateDomain, parameters, context)
+    public SyncPoller<PollResult<Void>, Void> beginWalkUpdateDomain(String resourceGroupName, String cloudServiceName,
+        int updateDomain, UpdateDomainInner parameters, Context context) {
+        return this.beginWalkUpdateDomainAsync(resourceGroupName, cloudServiceName, updateDomain, parameters, context)
             .getSyncPoller();
     }
 
     /**
      * Updates the role instances in the specified update domain.
-     *
+     * 
      * @param resourceGroupName Name of the resource group.
      * @param cloudServiceName Name of the cloud service.
      * @param updateDomain Specifies an integer value that identifies the update domain. Update domains are identified
-     *     with a zero-based index: the first update domain has an ID of 0, the second has an ID of 1, and so on.
+     * with a zero-based index: the first update domain has an ID of 0, the second has an ID of 1, and so on.
      * @param parameters The update domain object.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ApiErrorException thrown if the request is rejected by server.
@@ -357,20 +318,19 @@ public final class CloudServicesUpdateDomainsClientImpl implements CloudServices
      * @return A {@link Mono} that completes when a successful response is received.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    public Mono<Void> walkUpdateDomainAsync(
-        String resourceGroupName, String cloudServiceName, int updateDomain, UpdateDomainInner parameters) {
-        return beginWalkUpdateDomainAsync(resourceGroupName, cloudServiceName, updateDomain, parameters)
-            .last()
+    public Mono<Void> walkUpdateDomainAsync(String resourceGroupName, String cloudServiceName, int updateDomain,
+        UpdateDomainInner parameters) {
+        return beginWalkUpdateDomainAsync(resourceGroupName, cloudServiceName, updateDomain, parameters).last()
             .flatMap(this.client::getLroFinalResultOrError);
     }
 
     /**
      * Updates the role instances in the specified update domain.
-     *
+     * 
      * @param resourceGroupName Name of the resource group.
      * @param cloudServiceName Name of the cloud service.
      * @param updateDomain Specifies an integer value that identifies the update domain. Update domains are identified
-     *     with a zero-based index: the first update domain has an ID of 0, the second has an ID of 1, and so on.
+     * with a zero-based index: the first update domain has an ID of 0, the second has an ID of 1, and so on.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ApiErrorException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
@@ -379,18 +339,17 @@ public final class CloudServicesUpdateDomainsClientImpl implements CloudServices
     @ServiceMethod(returns = ReturnType.SINGLE)
     public Mono<Void> walkUpdateDomainAsync(String resourceGroupName, String cloudServiceName, int updateDomain) {
         final UpdateDomainInner parameters = null;
-        return beginWalkUpdateDomainAsync(resourceGroupName, cloudServiceName, updateDomain, parameters)
-            .last()
+        return beginWalkUpdateDomainAsync(resourceGroupName, cloudServiceName, updateDomain, parameters).last()
             .flatMap(this.client::getLroFinalResultOrError);
     }
 
     /**
      * Updates the role instances in the specified update domain.
-     *
+     * 
      * @param resourceGroupName Name of the resource group.
      * @param cloudServiceName Name of the cloud service.
      * @param updateDomain Specifies an integer value that identifies the update domain. Update domains are identified
-     *     with a zero-based index: the first update domain has an ID of 0, the second has an ID of 1, and so on.
+     * with a zero-based index: the first update domain has an ID of 0, the second has an ID of 1, and so on.
      * @param parameters The update domain object.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
@@ -399,42 +358,19 @@ public final class CloudServicesUpdateDomainsClientImpl implements CloudServices
      * @return A {@link Mono} that completes when a successful response is received.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    private Mono<Void> walkUpdateDomainAsync(
-        String resourceGroupName,
-        String cloudServiceName,
-        int updateDomain,
-        UpdateDomainInner parameters,
-        Context context) {
-        return beginWalkUpdateDomainAsync(resourceGroupName, cloudServiceName, updateDomain, parameters, context)
-            .last()
+    private Mono<Void> walkUpdateDomainAsync(String resourceGroupName, String cloudServiceName, int updateDomain,
+        UpdateDomainInner parameters, Context context) {
+        return beginWalkUpdateDomainAsync(resourceGroupName, cloudServiceName, updateDomain, parameters, context).last()
             .flatMap(this.client::getLroFinalResultOrError);
     }
 
     /**
      * Updates the role instances in the specified update domain.
-     *
+     * 
      * @param resourceGroupName Name of the resource group.
      * @param cloudServiceName Name of the cloud service.
      * @param updateDomain Specifies an integer value that identifies the update domain. Update domains are identified
-     *     with a zero-based index: the first update domain has an ID of 0, the second has an ID of 1, and so on.
-     * @param parameters The update domain object.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws ApiErrorException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     */
-    @ServiceMethod(returns = ReturnType.SINGLE)
-    public void walkUpdateDomain(
-        String resourceGroupName, String cloudServiceName, int updateDomain, UpdateDomainInner parameters) {
-        walkUpdateDomainAsync(resourceGroupName, cloudServiceName, updateDomain, parameters).block();
-    }
-
-    /**
-     * Updates the role instances in the specified update domain.
-     *
-     * @param resourceGroupName Name of the resource group.
-     * @param cloudServiceName Name of the cloud service.
-     * @param updateDomain Specifies an integer value that identifies the update domain. Update domains are identified
-     *     with a zero-based index: the first update domain has an ID of 0, the second has an ID of 1, and so on.
+     * with a zero-based index: the first update domain has an ID of 0, the second has an ID of 1, and so on.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ApiErrorException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
@@ -447,11 +383,11 @@ public final class CloudServicesUpdateDomainsClientImpl implements CloudServices
 
     /**
      * Updates the role instances in the specified update domain.
-     *
+     * 
      * @param resourceGroupName Name of the resource group.
      * @param cloudServiceName Name of the cloud service.
      * @param updateDomain Specifies an integer value that identifies the update domain. Update domains are identified
-     *     with a zero-based index: the first update domain has an ID of 0, the second has an ID of 1, and so on.
+     * with a zero-based index: the first update domain has an ID of 0, the second has an ID of 1, and so on.
      * @param parameters The update domain object.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
@@ -459,37 +395,31 @@ public final class CloudServicesUpdateDomainsClientImpl implements CloudServices
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    public void walkUpdateDomain(
-        String resourceGroupName,
-        String cloudServiceName,
-        int updateDomain,
-        UpdateDomainInner parameters,
-        Context context) {
+    public void walkUpdateDomain(String resourceGroupName, String cloudServiceName, int updateDomain,
+        UpdateDomainInner parameters, Context context) {
         walkUpdateDomainAsync(resourceGroupName, cloudServiceName, updateDomain, parameters, context).block();
     }
 
     /**
      * Gets the specified update domain of a cloud service. Use nextLink property in the response to get the next page
      * of update domains. Do this till nextLink is null to fetch all the update domains.
-     *
+     * 
      * @param resourceGroupName Name of the resource group.
      * @param cloudServiceName Name of the cloud service.
      * @param updateDomain Specifies an integer value that identifies the update domain. Update domains are identified
-     *     with a zero-based index: the first update domain has an ID of 0, the second has an ID of 1, and so on.
+     * with a zero-based index: the first update domain has an ID of 0, the second has an ID of 1, and so on.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ApiErrorException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
      * @return the specified update domain of a cloud service along with {@link Response} on successful completion of
-     *     {@link Mono}.
+     * {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    public Mono<Response<UpdateDomainInner>> getUpdateDomainWithResponseAsync(
-        String resourceGroupName, String cloudServiceName, int updateDomain) {
+    public Mono<Response<UpdateDomainInner>> getUpdateDomainWithResponseAsync(String resourceGroupName,
+        String cloudServiceName, int updateDomain) {
         if (this.client.getEndpoint() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getEndpoint() is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
         }
         if (resourceGroupName == null) {
             return Mono
@@ -500,52 +430,38 @@ public final class CloudServicesUpdateDomainsClientImpl implements CloudServices
                 .error(new IllegalArgumentException("Parameter cloudServiceName is required and cannot be null."));
         }
         if (this.client.getSubscriptionId() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getSubscriptionId() is required and cannot be null."));
+            return Mono.error(new IllegalArgumentException(
+                "Parameter this.client.getSubscriptionId() is required and cannot be null."));
         }
-        final String apiVersion = "2021-03-01";
+        final String apiVersion = "2024-11-04";
         final String accept = "application/json";
         return FluxUtil
-            .withContext(
-                context ->
-                    service
-                        .getUpdateDomain(
-                            this.client.getEndpoint(),
-                            resourceGroupName,
-                            cloudServiceName,
-                            updateDomain,
-                            this.client.getSubscriptionId(),
-                            apiVersion,
-                            accept,
-                            context))
+            .withContext(context -> service.getUpdateDomain(this.client.getEndpoint(), resourceGroupName,
+                cloudServiceName, updateDomain, this.client.getSubscriptionId(), apiVersion, accept, context))
             .contextWrite(context -> context.putAll(FluxUtil.toReactorContext(this.client.getContext()).readOnly()));
     }
 
     /**
      * Gets the specified update domain of a cloud service. Use nextLink property in the response to get the next page
      * of update domains. Do this till nextLink is null to fetch all the update domains.
-     *
+     * 
      * @param resourceGroupName Name of the resource group.
      * @param cloudServiceName Name of the cloud service.
      * @param updateDomain Specifies an integer value that identifies the update domain. Update domains are identified
-     *     with a zero-based index: the first update domain has an ID of 0, the second has an ID of 1, and so on.
+     * with a zero-based index: the first update domain has an ID of 0, the second has an ID of 1, and so on.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ApiErrorException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
      * @return the specified update domain of a cloud service along with {@link Response} on successful completion of
-     *     {@link Mono}.
+     * {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    private Mono<Response<UpdateDomainInner>> getUpdateDomainWithResponseAsync(
-        String resourceGroupName, String cloudServiceName, int updateDomain, Context context) {
+    private Mono<Response<UpdateDomainInner>> getUpdateDomainWithResponseAsync(String resourceGroupName,
+        String cloudServiceName, int updateDomain, Context context) {
         if (this.client.getEndpoint() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getEndpoint() is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
         }
         if (resourceGroupName == null) {
             return Mono
@@ -556,79 +472,44 @@ public final class CloudServicesUpdateDomainsClientImpl implements CloudServices
                 .error(new IllegalArgumentException("Parameter cloudServiceName is required and cannot be null."));
         }
         if (this.client.getSubscriptionId() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getSubscriptionId() is required and cannot be null."));
+            return Mono.error(new IllegalArgumentException(
+                "Parameter this.client.getSubscriptionId() is required and cannot be null."));
         }
-        final String apiVersion = "2021-03-01";
+        final String apiVersion = "2024-11-04";
         final String accept = "application/json";
         context = this.client.mergeContext(context);
-        return service
-            .getUpdateDomain(
-                this.client.getEndpoint(),
-                resourceGroupName,
-                cloudServiceName,
-                updateDomain,
-                this.client.getSubscriptionId(),
-                apiVersion,
-                accept,
-                context);
+        return service.getUpdateDomain(this.client.getEndpoint(), resourceGroupName, cloudServiceName, updateDomain,
+            this.client.getSubscriptionId(), apiVersion, accept, context);
     }
 
     /**
      * Gets the specified update domain of a cloud service. Use nextLink property in the response to get the next page
      * of update domains. Do this till nextLink is null to fetch all the update domains.
-     *
+     * 
      * @param resourceGroupName Name of the resource group.
      * @param cloudServiceName Name of the cloud service.
      * @param updateDomain Specifies an integer value that identifies the update domain. Update domains are identified
-     *     with a zero-based index: the first update domain has an ID of 0, the second has an ID of 1, and so on.
+     * with a zero-based index: the first update domain has an ID of 0, the second has an ID of 1, and so on.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ApiErrorException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
      * @return the specified update domain of a cloud service on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    public Mono<UpdateDomainInner> getUpdateDomainAsync(
-        String resourceGroupName, String cloudServiceName, int updateDomain) {
+    public Mono<UpdateDomainInner> getUpdateDomainAsync(String resourceGroupName, String cloudServiceName,
+        int updateDomain) {
         return getUpdateDomainWithResponseAsync(resourceGroupName, cloudServiceName, updateDomain)
-            .flatMap(
-                (Response<UpdateDomainInner> res) -> {
-                    if (res.getValue() != null) {
-                        return Mono.just(res.getValue());
-                    } else {
-                        return Mono.empty();
-                    }
-                });
+            .flatMap(res -> Mono.justOrEmpty(res.getValue()));
     }
 
     /**
      * Gets the specified update domain of a cloud service. Use nextLink property in the response to get the next page
      * of update domains. Do this till nextLink is null to fetch all the update domains.
-     *
+     * 
      * @param resourceGroupName Name of the resource group.
      * @param cloudServiceName Name of the cloud service.
      * @param updateDomain Specifies an integer value that identifies the update domain. Update domains are identified
-     *     with a zero-based index: the first update domain has an ID of 0, the second has an ID of 1, and so on.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws ApiErrorException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the specified update domain of a cloud service.
-     */
-    @ServiceMethod(returns = ReturnType.SINGLE)
-    public UpdateDomainInner getUpdateDomain(String resourceGroupName, String cloudServiceName, int updateDomain) {
-        return getUpdateDomainAsync(resourceGroupName, cloudServiceName, updateDomain).block();
-    }
-
-    /**
-     * Gets the specified update domain of a cloud service. Use nextLink property in the response to get the next page
-     * of update domains. Do this till nextLink is null to fetch all the update domains.
-     *
-     * @param resourceGroupName Name of the resource group.
-     * @param cloudServiceName Name of the cloud service.
-     * @param updateDomain Specifies an integer value that identifies the update domain. Update domains are identified
-     *     with a zero-based index: the first update domain has an ID of 0, the second has an ID of 1, and so on.
+     * with a zero-based index: the first update domain has an ID of 0, the second has an ID of 1, and so on.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ApiErrorException thrown if the request is rejected by server.
@@ -636,30 +517,46 @@ public final class CloudServicesUpdateDomainsClientImpl implements CloudServices
      * @return the specified update domain of a cloud service along with {@link Response}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    public Response<UpdateDomainInner> getUpdateDomainWithResponse(
-        String resourceGroupName, String cloudServiceName, int updateDomain, Context context) {
+    public Response<UpdateDomainInner> getUpdateDomainWithResponse(String resourceGroupName, String cloudServiceName,
+        int updateDomain, Context context) {
         return getUpdateDomainWithResponseAsync(resourceGroupName, cloudServiceName, updateDomain, context).block();
     }
 
     /**
+     * Gets the specified update domain of a cloud service. Use nextLink property in the response to get the next page
+     * of update domains. Do this till nextLink is null to fetch all the update domains.
+     * 
+     * @param resourceGroupName Name of the resource group.
+     * @param cloudServiceName Name of the cloud service.
+     * @param updateDomain Specifies an integer value that identifies the update domain. Update domains are identified
+     * with a zero-based index: the first update domain has an ID of 0, the second has an ID of 1, and so on.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws ApiErrorException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return the specified update domain of a cloud service.
+     */
+    @ServiceMethod(returns = ReturnType.SINGLE)
+    public UpdateDomainInner getUpdateDomain(String resourceGroupName, String cloudServiceName, int updateDomain) {
+        return getUpdateDomainWithResponse(resourceGroupName, cloudServiceName, updateDomain, Context.NONE).getValue();
+    }
+
+    /**
      * Gets a list of all update domains in a cloud service.
-     *
+     * 
      * @param resourceGroupName Name of the resource group.
      * @param cloudServiceName Name of the cloud service.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ApiErrorException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
      * @return a list of all update domains in a cloud service along with {@link PagedResponse} on successful completion
-     *     of {@link Mono}.
+     * of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    private Mono<PagedResponse<UpdateDomainInner>> listUpdateDomainsSinglePageAsync(
-        String resourceGroupName, String cloudServiceName) {
+    private Mono<PagedResponse<UpdateDomainInner>> listUpdateDomainsSinglePageAsync(String resourceGroupName,
+        String cloudServiceName) {
         if (this.client.getEndpoint() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getEndpoint() is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
         }
         if (resourceGroupName == null) {
             return Mono
@@ -670,40 +567,22 @@ public final class CloudServicesUpdateDomainsClientImpl implements CloudServices
                 .error(new IllegalArgumentException("Parameter cloudServiceName is required and cannot be null."));
         }
         if (this.client.getSubscriptionId() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getSubscriptionId() is required and cannot be null."));
+            return Mono.error(new IllegalArgumentException(
+                "Parameter this.client.getSubscriptionId() is required and cannot be null."));
         }
-        final String apiVersion = "2021-03-01";
+        final String apiVersion = "2024-11-04";
         final String accept = "application/json";
         return FluxUtil
-            .withContext(
-                context ->
-                    service
-                        .listUpdateDomains(
-                            this.client.getEndpoint(),
-                            resourceGroupName,
-                            cloudServiceName,
-                            this.client.getSubscriptionId(),
-                            apiVersion,
-                            accept,
-                            context))
-            .<PagedResponse<UpdateDomainInner>>map(
-                res ->
-                    new PagedResponseBase<>(
-                        res.getRequest(),
-                        res.getStatusCode(),
-                        res.getHeaders(),
-                        res.getValue().value(),
-                        res.getValue().nextLink(),
-                        null))
+            .withContext(context -> service.listUpdateDomains(this.client.getEndpoint(), resourceGroupName,
+                cloudServiceName, this.client.getSubscriptionId(), apiVersion, accept, context))
+            .<PagedResponse<UpdateDomainInner>>map(res -> new PagedResponseBase<>(res.getRequest(), res.getStatusCode(),
+                res.getHeaders(), res.getValue().value(), res.getValue().nextLink(), null))
             .contextWrite(context -> context.putAll(FluxUtil.toReactorContext(this.client.getContext()).readOnly()));
     }
 
     /**
      * Gets a list of all update domains in a cloud service.
-     *
+     * 
      * @param resourceGroupName Name of the resource group.
      * @param cloudServiceName Name of the cloud service.
      * @param context The context to associate with this operation.
@@ -711,16 +590,14 @@ public final class CloudServicesUpdateDomainsClientImpl implements CloudServices
      * @throws ApiErrorException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
      * @return a list of all update domains in a cloud service along with {@link PagedResponse} on successful completion
-     *     of {@link Mono}.
+     * of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    private Mono<PagedResponse<UpdateDomainInner>> listUpdateDomainsSinglePageAsync(
-        String resourceGroupName, String cloudServiceName, Context context) {
+    private Mono<PagedResponse<UpdateDomainInner>> listUpdateDomainsSinglePageAsync(String resourceGroupName,
+        String cloudServiceName, Context context) {
         if (this.client.getEndpoint() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getEndpoint() is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
         }
         if (resourceGroupName == null) {
             return Mono
@@ -731,79 +608,62 @@ public final class CloudServicesUpdateDomainsClientImpl implements CloudServices
                 .error(new IllegalArgumentException("Parameter cloudServiceName is required and cannot be null."));
         }
         if (this.client.getSubscriptionId() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getSubscriptionId() is required and cannot be null."));
+            return Mono.error(new IllegalArgumentException(
+                "Parameter this.client.getSubscriptionId() is required and cannot be null."));
         }
-        final String apiVersion = "2021-03-01";
+        final String apiVersion = "2024-11-04";
         final String accept = "application/json";
         context = this.client.mergeContext(context);
         return service
-            .listUpdateDomains(
-                this.client.getEndpoint(),
-                resourceGroupName,
-                cloudServiceName,
-                this.client.getSubscriptionId(),
-                apiVersion,
-                accept,
-                context)
-            .map(
-                res ->
-                    new PagedResponseBase<>(
-                        res.getRequest(),
-                        res.getStatusCode(),
-                        res.getHeaders(),
-                        res.getValue().value(),
-                        res.getValue().nextLink(),
-                        null));
+            .listUpdateDomains(this.client.getEndpoint(), resourceGroupName, cloudServiceName,
+                this.client.getSubscriptionId(), apiVersion, accept, context)
+            .map(res -> new PagedResponseBase<>(res.getRequest(), res.getStatusCode(), res.getHeaders(),
+                res.getValue().value(), res.getValue().nextLink(), null));
     }
 
     /**
      * Gets a list of all update domains in a cloud service.
-     *
+     * 
      * @param resourceGroupName Name of the resource group.
      * @param cloudServiceName Name of the cloud service.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ApiErrorException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return a list of all update domains in a cloud service.
+     * @return a list of all update domains in a cloud service as paginated response with {@link PagedFlux}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
     public PagedFlux<UpdateDomainInner> listUpdateDomainsAsync(String resourceGroupName, String cloudServiceName) {
-        return new PagedFlux<>(
-            () -> listUpdateDomainsSinglePageAsync(resourceGroupName, cloudServiceName),
+        return new PagedFlux<>(() -> listUpdateDomainsSinglePageAsync(resourceGroupName, cloudServiceName),
             nextLink -> listUpdateDomainsNextSinglePageAsync(nextLink));
     }
 
     /**
      * Gets a list of all update domains in a cloud service.
-     *
+     * 
      * @param resourceGroupName Name of the resource group.
      * @param cloudServiceName Name of the cloud service.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ApiErrorException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return a list of all update domains in a cloud service.
+     * @return a list of all update domains in a cloud service as paginated response with {@link PagedFlux}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
-    private PagedFlux<UpdateDomainInner> listUpdateDomainsAsync(
-        String resourceGroupName, String cloudServiceName, Context context) {
-        return new PagedFlux<>(
-            () -> listUpdateDomainsSinglePageAsync(resourceGroupName, cloudServiceName, context),
+    private PagedFlux<UpdateDomainInner> listUpdateDomainsAsync(String resourceGroupName, String cloudServiceName,
+        Context context) {
+        return new PagedFlux<>(() -> listUpdateDomainsSinglePageAsync(resourceGroupName, cloudServiceName, context),
             nextLink -> listUpdateDomainsNextSinglePageAsync(nextLink, context));
     }
 
     /**
      * Gets a list of all update domains in a cloud service.
-     *
+     * 
      * @param resourceGroupName Name of the resource group.
      * @param cloudServiceName Name of the cloud service.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ApiErrorException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return a list of all update domains in a cloud service.
+     * @return a list of all update domains in a cloud service as paginated response with {@link PagedIterable}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
     public PagedIterable<UpdateDomainInner> listUpdateDomains(String resourceGroupName, String cloudServiceName) {
@@ -812,29 +672,29 @@ public final class CloudServicesUpdateDomainsClientImpl implements CloudServices
 
     /**
      * Gets a list of all update domains in a cloud service.
-     *
+     * 
      * @param resourceGroupName Name of the resource group.
      * @param cloudServiceName Name of the cloud service.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ApiErrorException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return a list of all update domains in a cloud service.
+     * @return a list of all update domains in a cloud service as paginated response with {@link PagedIterable}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
-    public PagedIterable<UpdateDomainInner> listUpdateDomains(
-        String resourceGroupName, String cloudServiceName, Context context) {
+    public PagedIterable<UpdateDomainInner> listUpdateDomains(String resourceGroupName, String cloudServiceName,
+        Context context) {
         return new PagedIterable<>(listUpdateDomainsAsync(resourceGroupName, cloudServiceName, context));
     }
 
     /**
      * Get the next page of items.
-     *
-     * @param nextLink The nextLink parameter.
+     * 
+     * @param nextLink The URL to get the next list of items.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ApiErrorException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the response body along with {@link PagedResponse} on successful completion of {@link Mono}.
+     * @return the list operation result along with {@link PagedResponse} on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
     private Mono<PagedResponse<UpdateDomainInner>> listUpdateDomainsNextSinglePageAsync(String nextLink) {
@@ -842,60 +702,41 @@ public final class CloudServicesUpdateDomainsClientImpl implements CloudServices
             return Mono.error(new IllegalArgumentException("Parameter nextLink is required and cannot be null."));
         }
         if (this.client.getEndpoint() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getEndpoint() is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
         }
         final String accept = "application/json";
         return FluxUtil
             .withContext(context -> service.listUpdateDomainsNext(nextLink, this.client.getEndpoint(), accept, context))
-            .<PagedResponse<UpdateDomainInner>>map(
-                res ->
-                    new PagedResponseBase<>(
-                        res.getRequest(),
-                        res.getStatusCode(),
-                        res.getHeaders(),
-                        res.getValue().value(),
-                        res.getValue().nextLink(),
-                        null))
+            .<PagedResponse<UpdateDomainInner>>map(res -> new PagedResponseBase<>(res.getRequest(), res.getStatusCode(),
+                res.getHeaders(), res.getValue().value(), res.getValue().nextLink(), null))
             .contextWrite(context -> context.putAll(FluxUtil.toReactorContext(this.client.getContext()).readOnly()));
     }
 
     /**
      * Get the next page of items.
-     *
-     * @param nextLink The nextLink parameter.
+     * 
+     * @param nextLink The URL to get the next list of items.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ApiErrorException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the response body along with {@link PagedResponse} on successful completion of {@link Mono}.
+     * @return the list operation result along with {@link PagedResponse} on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    private Mono<PagedResponse<UpdateDomainInner>> listUpdateDomainsNextSinglePageAsync(
-        String nextLink, Context context) {
+    private Mono<PagedResponse<UpdateDomainInner>> listUpdateDomainsNextSinglePageAsync(String nextLink,
+        Context context) {
         if (nextLink == null) {
             return Mono.error(new IllegalArgumentException("Parameter nextLink is required and cannot be null."));
         }
         if (this.client.getEndpoint() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getEndpoint() is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
         }
         final String accept = "application/json";
         context = this.client.mergeContext(context);
-        return service
-            .listUpdateDomainsNext(nextLink, this.client.getEndpoint(), accept, context)
-            .map(
-                res ->
-                    new PagedResponseBase<>(
-                        res.getRequest(),
-                        res.getStatusCode(),
-                        res.getHeaders(),
-                        res.getValue().value(),
-                        res.getValue().nextLink(),
-                        null));
+        return service.listUpdateDomainsNext(nextLink, this.client.getEndpoint(), accept, context)
+            .map(res -> new PagedResponseBase<>(res.getRequest(), res.getStatusCode(), res.getHeaders(),
+                res.getValue().value(), res.getValue().nextLink(), null));
     }
 }

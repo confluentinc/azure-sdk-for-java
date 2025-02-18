@@ -3,7 +3,7 @@
 
 package com.azure.core.serializer.json.jackson;
 
-import com.azure.core.implementation.jackson.ObjectMapperShim;
+import com.azure.core.serializer.json.jackson.implementation.ObjectMapperShim;
 import com.azure.core.util.logging.ClientLogger;
 import com.azure.core.util.serializer.JsonSerializer;
 import com.azure.core.util.serializer.MemberNameConverter;
@@ -21,7 +21,7 @@ import java.lang.reflect.Member;
  */
 public final class JacksonJsonSerializer implements JsonSerializer, MemberNameConverter {
 
-    private final ClientLogger logger = new ClientLogger(JacksonJsonSerializer.class);
+    private static final ClientLogger LOGGER = new ClientLogger(JacksonJsonSerializer.class);
 
     private final ObjectMapperShim mapper;
 
@@ -47,7 +47,7 @@ public final class JacksonJsonSerializer implements JsonSerializer, MemberNameCo
         try {
             return mapper.readValue(data, typeReference.getJavaType());
         } catch (IOException ex) {
-            throw logger.logExceptionAsError(new UncheckedIOException(ex));
+            throw LOGGER.logExceptionAsError(new UncheckedIOException(ex));
         }
     }
 
@@ -60,7 +60,7 @@ public final class JacksonJsonSerializer implements JsonSerializer, MemberNameCo
         try {
             return mapper.readValue(stream, typeReference.getJavaType());
         } catch (IOException ex) {
-            throw logger.logExceptionAsError(new UncheckedIOException(ex));
+            throw LOGGER.logExceptionAsError(new UncheckedIOException(ex));
         }
     }
 
@@ -79,7 +79,7 @@ public final class JacksonJsonSerializer implements JsonSerializer, MemberNameCo
         try {
             return mapper.writeValueAsBytes(value);
         } catch (IOException ex) {
-            throw logger.logExceptionAsError(new UncheckedIOException(ex));
+            throw LOGGER.logExceptionAsError(new UncheckedIOException(ex));
         }
     }
 
@@ -88,7 +88,7 @@ public final class JacksonJsonSerializer implements JsonSerializer, MemberNameCo
         try {
             mapper.writeValue(stream, value);
         } catch (IOException ex) {
-            throw logger.logExceptionAsError(new UncheckedIOException(ex));
+            throw LOGGER.logExceptionAsError(new UncheckedIOException(ex));
         }
     }
 

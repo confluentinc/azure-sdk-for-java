@@ -5,75 +5,127 @@
 package com.azure.resourcemanager.netapp.fluent.models;
 
 import com.azure.core.annotation.Fluent;
-import com.azure.core.util.logging.ClientLogger;
+import com.azure.json.JsonReader;
+import com.azure.json.JsonSerializable;
+import com.azure.json.JsonToken;
+import com.azure.json.JsonWriter;
+import com.azure.resourcemanager.netapp.models.CoolAccessRetrievalPolicy;
 import com.azure.resourcemanager.netapp.models.ServiceLevel;
+import com.azure.resourcemanager.netapp.models.SmbAccessBasedEnumeration;
+import com.azure.resourcemanager.netapp.models.SmbNonBrowsable;
 import com.azure.resourcemanager.netapp.models.VolumePatchPropertiesDataProtection;
 import com.azure.resourcemanager.netapp.models.VolumePatchPropertiesExportPolicy;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import java.io.IOException;
+import java.util.List;
 
-/** Patchable volume properties. */
+/**
+ * Patchable volume properties.
+ */
 @Fluent
-public final class VolumePatchProperties {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(VolumePatchProperties.class);
-
+public final class VolumePatchProperties implements JsonSerializable<VolumePatchProperties> {
     /*
-     * serviceLevel The service level of the file system
+     * The service level of the file system
      */
-    @JsonProperty(value = "serviceLevel")
     private ServiceLevel serviceLevel;
 
     /*
-     * usageThreshold Maximum storage quota allowed for a file system in bytes.
-     * This is a soft quota used for alerting only. Minimum size is 100 GiB.
-     * Upper limit is 100TiB. Specified in bytes.
+     * Maximum storage quota allowed for a file system in bytes. This is a soft quota used for alerting only. For
+     * regular volumes, valid values are in the range 50GiB to 100TiB. For large volumes, valid values are in the range
+     * 100TiB to 1PiB, and on an exceptional basis, from to 2400GiB to 2400TiB. Values expressed in bytes as multiples
+     * of 1 GiB.
      */
-    @JsonProperty(value = "usageThreshold")
     private Long usageThreshold;
 
     /*
-     * exportPolicy Set of export policy rules
+     * Set of export policy rules
      */
-    @JsonProperty(value = "exportPolicy")
     private VolumePatchPropertiesExportPolicy exportPolicy;
 
     /*
-     * Maximum throughput in Mibps that can be achieved by this volume and this
-     * will be accepted as input only for manual qosType volume
+     * Set of protocol types, default NFSv3, CIFS for SMB protocol
      */
-    @JsonProperty(value = "throughputMibps")
+    private List<String> protocolTypes;
+
+    /*
+     * Maximum throughput in MiB/s that can be achieved by this volume and this will be accepted as input only for
+     * manual qosType volume
+     */
     private Float throughputMibps;
 
     /*
-     * DataProtection DataProtection type volumes include an object containing
-     * details of the replication
+     * DataProtection type volumes include an object containing details of the replication
      */
-    @JsonProperty(value = "dataProtection")
     private VolumePatchPropertiesDataProtection dataProtection;
 
     /*
      * Specifies if default quota is enabled for the volume.
      */
-    @JsonProperty(value = "isDefaultQuotaEnabled")
     private Boolean isDefaultQuotaEnabled;
 
     /*
-     * Default user quota for volume in KiBs. If isDefaultQuotaEnabled is set,
-     * the minimum value of 4 KiBs applies .
+     * Default user quota for volume in KiBs. If isDefaultQuotaEnabled is set, the minimum value of 4 KiBs applies .
      */
-    @JsonProperty(value = "defaultUserQuotaInKiBs")
     private Long defaultUserQuotaInKiBs;
 
     /*
-     * Default group quota for volume in KiBs. If isDefaultQuotaEnabled is set,
-     * the minimum value of 4 KiBs applies.
+     * Default group quota for volume in KiBs. If isDefaultQuotaEnabled is set, the minimum value of 4 KiBs applies.
      */
-    @JsonProperty(value = "defaultGroupQuotaInKiBs")
     private Long defaultGroupQuotaInKiBs;
 
+    /*
+     * UNIX permissions for NFS volume accepted in octal 4 digit format. First digit selects the set user ID(4), set
+     * group ID (2) and sticky (1) attributes. Second digit selects permission for the owner of the file: read (4),
+     * write (2) and execute (1). Third selects permissions for other users in the same group. the fourth for other
+     * users not in the group. 0755 - gives read/write/execute permissions to owner and read/execute to group and other
+     * users.
+     */
+    private String unixPermissions;
+
+    /*
+     * Specifies whether Cool Access(tiering) is enabled for the volume.
+     */
+    private Boolean coolAccess;
+
+    /*
+     * Specifies the number of days after which data that is not accessed by clients will be tiered.
+     */
+    private Integer coolnessPeriod;
+
+    /*
+     * coolAccessRetrievalPolicy determines the data retrieval behavior from the cool tier to standard storage based on
+     * the read pattern for cool access enabled volumes. The possible values for this field are:
+     * Default - Data will be pulled from cool tier to standard storage on random reads. This policy is the default.
+     * OnRead - All client-driven data read is pulled from cool tier to standard storage on both sequential and random
+     * reads.
+     * Never - No client-driven data is pulled from cool tier to standard storage.
+     */
+    private CoolAccessRetrievalPolicy coolAccessRetrievalPolicy;
+
+    /*
+     * If enabled (true) the volume will contain a read-only snapshot directory which provides access to each of the
+     * volume's snapshots.
+     */
+    private Boolean snapshotDirectoryVisible;
+
+    /*
+     * Enables access-based enumeration share property for SMB Shares. Only applicable for SMB/DualProtocol volume
+     */
+    private SmbAccessBasedEnumeration smbAccessBasedEnumeration;
+
+    /*
+     * Enables non-browsable property for SMB Shares. Only applicable for SMB/DualProtocol volume
+     */
+    private SmbNonBrowsable smbNonBrowsable;
+
     /**
-     * Get the serviceLevel property: serviceLevel The service level of the file system.
-     *
+     * Creates an instance of VolumePatchProperties class.
+     */
+    public VolumePatchProperties() {
+    }
+
+    /**
+     * Get the serviceLevel property: The service level of the file system.
+     * 
      * @return the serviceLevel value.
      */
     public ServiceLevel serviceLevel() {
@@ -81,8 +133,8 @@ public final class VolumePatchProperties {
     }
 
     /**
-     * Set the serviceLevel property: serviceLevel The service level of the file system.
-     *
+     * Set the serviceLevel property: The service level of the file system.
+     * 
      * @param serviceLevel the serviceLevel value to set.
      * @return the VolumePatchProperties object itself.
      */
@@ -92,9 +144,11 @@ public final class VolumePatchProperties {
     }
 
     /**
-     * Get the usageThreshold property: usageThreshold Maximum storage quota allowed for a file system in bytes. This is
-     * a soft quota used for alerting only. Minimum size is 100 GiB. Upper limit is 100TiB. Specified in bytes.
-     *
+     * Get the usageThreshold property: Maximum storage quota allowed for a file system in bytes. This is a soft quota
+     * used for alerting only. For regular volumes, valid values are in the range 50GiB to 100TiB. For large volumes,
+     * valid values are in the range 100TiB to 1PiB, and on an exceptional basis, from to 2400GiB to 2400TiB. Values
+     * expressed in bytes as multiples of 1 GiB.
+     * 
      * @return the usageThreshold value.
      */
     public Long usageThreshold() {
@@ -102,9 +156,11 @@ public final class VolumePatchProperties {
     }
 
     /**
-     * Set the usageThreshold property: usageThreshold Maximum storage quota allowed for a file system in bytes. This is
-     * a soft quota used for alerting only. Minimum size is 100 GiB. Upper limit is 100TiB. Specified in bytes.
-     *
+     * Set the usageThreshold property: Maximum storage quota allowed for a file system in bytes. This is a soft quota
+     * used for alerting only. For regular volumes, valid values are in the range 50GiB to 100TiB. For large volumes,
+     * valid values are in the range 100TiB to 1PiB, and on an exceptional basis, from to 2400GiB to 2400TiB. Values
+     * expressed in bytes as multiples of 1 GiB.
+     * 
      * @param usageThreshold the usageThreshold value to set.
      * @return the VolumePatchProperties object itself.
      */
@@ -114,8 +170,8 @@ public final class VolumePatchProperties {
     }
 
     /**
-     * Get the exportPolicy property: exportPolicy Set of export policy rules.
-     *
+     * Get the exportPolicy property: Set of export policy rules.
+     * 
      * @return the exportPolicy value.
      */
     public VolumePatchPropertiesExportPolicy exportPolicy() {
@@ -123,8 +179,8 @@ public final class VolumePatchProperties {
     }
 
     /**
-     * Set the exportPolicy property: exportPolicy Set of export policy rules.
-     *
+     * Set the exportPolicy property: Set of export policy rules.
+     * 
      * @param exportPolicy the exportPolicy value to set.
      * @return the VolumePatchProperties object itself.
      */
@@ -134,9 +190,29 @@ public final class VolumePatchProperties {
     }
 
     /**
-     * Get the throughputMibps property: Maximum throughput in Mibps that can be achieved by this volume and this will
+     * Get the protocolTypes property: Set of protocol types, default NFSv3, CIFS for SMB protocol.
+     * 
+     * @return the protocolTypes value.
+     */
+    public List<String> protocolTypes() {
+        return this.protocolTypes;
+    }
+
+    /**
+     * Set the protocolTypes property: Set of protocol types, default NFSv3, CIFS for SMB protocol.
+     * 
+     * @param protocolTypes the protocolTypes value to set.
+     * @return the VolumePatchProperties object itself.
+     */
+    public VolumePatchProperties withProtocolTypes(List<String> protocolTypes) {
+        this.protocolTypes = protocolTypes;
+        return this;
+    }
+
+    /**
+     * Get the throughputMibps property: Maximum throughput in MiB/s that can be achieved by this volume and this will
      * be accepted as input only for manual qosType volume.
-     *
+     * 
      * @return the throughputMibps value.
      */
     public Float throughputMibps() {
@@ -144,9 +220,9 @@ public final class VolumePatchProperties {
     }
 
     /**
-     * Set the throughputMibps property: Maximum throughput in Mibps that can be achieved by this volume and this will
+     * Set the throughputMibps property: Maximum throughput in MiB/s that can be achieved by this volume and this will
      * be accepted as input only for manual qosType volume.
-     *
+     * 
      * @param throughputMibps the throughputMibps value to set.
      * @return the VolumePatchProperties object itself.
      */
@@ -156,9 +232,9 @@ public final class VolumePatchProperties {
     }
 
     /**
-     * Get the dataProtection property: DataProtection DataProtection type volumes include an object containing details
-     * of the replication.
-     *
+     * Get the dataProtection property: DataProtection type volumes include an object containing details of the
+     * replication.
+     * 
      * @return the dataProtection value.
      */
     public VolumePatchPropertiesDataProtection dataProtection() {
@@ -166,9 +242,9 @@ public final class VolumePatchProperties {
     }
 
     /**
-     * Set the dataProtection property: DataProtection DataProtection type volumes include an object containing details
-     * of the replication.
-     *
+     * Set the dataProtection property: DataProtection type volumes include an object containing details of the
+     * replication.
+     * 
      * @param dataProtection the dataProtection value to set.
      * @return the VolumePatchProperties object itself.
      */
@@ -179,7 +255,7 @@ public final class VolumePatchProperties {
 
     /**
      * Get the isDefaultQuotaEnabled property: Specifies if default quota is enabled for the volume.
-     *
+     * 
      * @return the isDefaultQuotaEnabled value.
      */
     public Boolean isDefaultQuotaEnabled() {
@@ -188,7 +264,7 @@ public final class VolumePatchProperties {
 
     /**
      * Set the isDefaultQuotaEnabled property: Specifies if default quota is enabled for the volume.
-     *
+     * 
      * @param isDefaultQuotaEnabled the isDefaultQuotaEnabled value to set.
      * @return the VolumePatchProperties object itself.
      */
@@ -200,7 +276,7 @@ public final class VolumePatchProperties {
     /**
      * Get the defaultUserQuotaInKiBs property: Default user quota for volume in KiBs. If isDefaultQuotaEnabled is set,
      * the minimum value of 4 KiBs applies .
-     *
+     * 
      * @return the defaultUserQuotaInKiBs value.
      */
     public Long defaultUserQuotaInKiBs() {
@@ -210,7 +286,7 @@ public final class VolumePatchProperties {
     /**
      * Set the defaultUserQuotaInKiBs property: Default user quota for volume in KiBs. If isDefaultQuotaEnabled is set,
      * the minimum value of 4 KiBs applies .
-     *
+     * 
      * @param defaultUserQuotaInKiBs the defaultUserQuotaInKiBs value to set.
      * @return the VolumePatchProperties object itself.
      */
@@ -222,7 +298,7 @@ public final class VolumePatchProperties {
     /**
      * Get the defaultGroupQuotaInKiBs property: Default group quota for volume in KiBs. If isDefaultQuotaEnabled is
      * set, the minimum value of 4 KiBs applies.
-     *
+     * 
      * @return the defaultGroupQuotaInKiBs value.
      */
     public Long defaultGroupQuotaInKiBs() {
@@ -232,7 +308,7 @@ public final class VolumePatchProperties {
     /**
      * Set the defaultGroupQuotaInKiBs property: Default group quota for volume in KiBs. If isDefaultQuotaEnabled is
      * set, the minimum value of 4 KiBs applies.
-     *
+     * 
      * @param defaultGroupQuotaInKiBs the defaultGroupQuotaInKiBs value to set.
      * @return the VolumePatchProperties object itself.
      */
@@ -242,8 +318,176 @@ public final class VolumePatchProperties {
     }
 
     /**
+     * Get the unixPermissions property: UNIX permissions for NFS volume accepted in octal 4 digit format. First digit
+     * selects the set user ID(4), set group ID (2) and sticky (1) attributes. Second digit selects permission for the
+     * owner of the file: read (4), write (2) and execute (1). Third selects permissions for other users in the same
+     * group. the fourth for other users not in the group. 0755 - gives read/write/execute permissions to owner and
+     * read/execute to group and other users.
+     * 
+     * @return the unixPermissions value.
+     */
+    public String unixPermissions() {
+        return this.unixPermissions;
+    }
+
+    /**
+     * Set the unixPermissions property: UNIX permissions for NFS volume accepted in octal 4 digit format. First digit
+     * selects the set user ID(4), set group ID (2) and sticky (1) attributes. Second digit selects permission for the
+     * owner of the file: read (4), write (2) and execute (1). Third selects permissions for other users in the same
+     * group. the fourth for other users not in the group. 0755 - gives read/write/execute permissions to owner and
+     * read/execute to group and other users.
+     * 
+     * @param unixPermissions the unixPermissions value to set.
+     * @return the VolumePatchProperties object itself.
+     */
+    public VolumePatchProperties withUnixPermissions(String unixPermissions) {
+        this.unixPermissions = unixPermissions;
+        return this;
+    }
+
+    /**
+     * Get the coolAccess property: Specifies whether Cool Access(tiering) is enabled for the volume.
+     * 
+     * @return the coolAccess value.
+     */
+    public Boolean coolAccess() {
+        return this.coolAccess;
+    }
+
+    /**
+     * Set the coolAccess property: Specifies whether Cool Access(tiering) is enabled for the volume.
+     * 
+     * @param coolAccess the coolAccess value to set.
+     * @return the VolumePatchProperties object itself.
+     */
+    public VolumePatchProperties withCoolAccess(Boolean coolAccess) {
+        this.coolAccess = coolAccess;
+        return this;
+    }
+
+    /**
+     * Get the coolnessPeriod property: Specifies the number of days after which data that is not accessed by clients
+     * will be tiered.
+     * 
+     * @return the coolnessPeriod value.
+     */
+    public Integer coolnessPeriod() {
+        return this.coolnessPeriod;
+    }
+
+    /**
+     * Set the coolnessPeriod property: Specifies the number of days after which data that is not accessed by clients
+     * will be tiered.
+     * 
+     * @param coolnessPeriod the coolnessPeriod value to set.
+     * @return the VolumePatchProperties object itself.
+     */
+    public VolumePatchProperties withCoolnessPeriod(Integer coolnessPeriod) {
+        this.coolnessPeriod = coolnessPeriod;
+        return this;
+    }
+
+    /**
+     * Get the coolAccessRetrievalPolicy property: coolAccessRetrievalPolicy determines the data retrieval behavior from
+     * the cool tier to standard storage based on the read pattern for cool access enabled volumes. The possible values
+     * for this field are:
+     * Default - Data will be pulled from cool tier to standard storage on random reads. This policy is the default.
+     * OnRead - All client-driven data read is pulled from cool tier to standard storage on both sequential and random
+     * reads.
+     * Never - No client-driven data is pulled from cool tier to standard storage.
+     * 
+     * @return the coolAccessRetrievalPolicy value.
+     */
+    public CoolAccessRetrievalPolicy coolAccessRetrievalPolicy() {
+        return this.coolAccessRetrievalPolicy;
+    }
+
+    /**
+     * Set the coolAccessRetrievalPolicy property: coolAccessRetrievalPolicy determines the data retrieval behavior from
+     * the cool tier to standard storage based on the read pattern for cool access enabled volumes. The possible values
+     * for this field are:
+     * Default - Data will be pulled from cool tier to standard storage on random reads. This policy is the default.
+     * OnRead - All client-driven data read is pulled from cool tier to standard storage on both sequential and random
+     * reads.
+     * Never - No client-driven data is pulled from cool tier to standard storage.
+     * 
+     * @param coolAccessRetrievalPolicy the coolAccessRetrievalPolicy value to set.
+     * @return the VolumePatchProperties object itself.
+     */
+    public VolumePatchProperties withCoolAccessRetrievalPolicy(CoolAccessRetrievalPolicy coolAccessRetrievalPolicy) {
+        this.coolAccessRetrievalPolicy = coolAccessRetrievalPolicy;
+        return this;
+    }
+
+    /**
+     * Get the snapshotDirectoryVisible property: If enabled (true) the volume will contain a read-only snapshot
+     * directory which provides access to each of the volume's snapshots.
+     * 
+     * @return the snapshotDirectoryVisible value.
+     */
+    public Boolean snapshotDirectoryVisible() {
+        return this.snapshotDirectoryVisible;
+    }
+
+    /**
+     * Set the snapshotDirectoryVisible property: If enabled (true) the volume will contain a read-only snapshot
+     * directory which provides access to each of the volume's snapshots.
+     * 
+     * @param snapshotDirectoryVisible the snapshotDirectoryVisible value to set.
+     * @return the VolumePatchProperties object itself.
+     */
+    public VolumePatchProperties withSnapshotDirectoryVisible(Boolean snapshotDirectoryVisible) {
+        this.snapshotDirectoryVisible = snapshotDirectoryVisible;
+        return this;
+    }
+
+    /**
+     * Get the smbAccessBasedEnumeration property: Enables access-based enumeration share property for SMB Shares. Only
+     * applicable for SMB/DualProtocol volume.
+     * 
+     * @return the smbAccessBasedEnumeration value.
+     */
+    public SmbAccessBasedEnumeration smbAccessBasedEnumeration() {
+        return this.smbAccessBasedEnumeration;
+    }
+
+    /**
+     * Set the smbAccessBasedEnumeration property: Enables access-based enumeration share property for SMB Shares. Only
+     * applicable for SMB/DualProtocol volume.
+     * 
+     * @param smbAccessBasedEnumeration the smbAccessBasedEnumeration value to set.
+     * @return the VolumePatchProperties object itself.
+     */
+    public VolumePatchProperties withSmbAccessBasedEnumeration(SmbAccessBasedEnumeration smbAccessBasedEnumeration) {
+        this.smbAccessBasedEnumeration = smbAccessBasedEnumeration;
+        return this;
+    }
+
+    /**
+     * Get the smbNonBrowsable property: Enables non-browsable property for SMB Shares. Only applicable for
+     * SMB/DualProtocol volume.
+     * 
+     * @return the smbNonBrowsable value.
+     */
+    public SmbNonBrowsable smbNonBrowsable() {
+        return this.smbNonBrowsable;
+    }
+
+    /**
+     * Set the smbNonBrowsable property: Enables non-browsable property for SMB Shares. Only applicable for
+     * SMB/DualProtocol volume.
+     * 
+     * @param smbNonBrowsable the smbNonBrowsable value to set.
+     * @return the VolumePatchProperties object itself.
+     */
+    public VolumePatchProperties withSmbNonBrowsable(SmbNonBrowsable smbNonBrowsable) {
+        this.smbNonBrowsable = smbNonBrowsable;
+        return this;
+    }
+
+    /**
      * Validates the instance.
-     *
+     * 
      * @throws IllegalArgumentException thrown if the instance is not valid.
      */
     public void validate() {
@@ -253,5 +497,96 @@ public final class VolumePatchProperties {
         if (dataProtection() != null) {
             dataProtection().validate();
         }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public JsonWriter toJson(JsonWriter jsonWriter) throws IOException {
+        jsonWriter.writeStartObject();
+        jsonWriter.writeStringField("serviceLevel", this.serviceLevel == null ? null : this.serviceLevel.toString());
+        jsonWriter.writeNumberField("usageThreshold", this.usageThreshold);
+        jsonWriter.writeJsonField("exportPolicy", this.exportPolicy);
+        jsonWriter.writeArrayField("protocolTypes", this.protocolTypes,
+            (writer, element) -> writer.writeString(element));
+        jsonWriter.writeNumberField("throughputMibps", this.throughputMibps);
+        jsonWriter.writeJsonField("dataProtection", this.dataProtection);
+        jsonWriter.writeBooleanField("isDefaultQuotaEnabled", this.isDefaultQuotaEnabled);
+        jsonWriter.writeNumberField("defaultUserQuotaInKiBs", this.defaultUserQuotaInKiBs);
+        jsonWriter.writeNumberField("defaultGroupQuotaInKiBs", this.defaultGroupQuotaInKiBs);
+        jsonWriter.writeStringField("unixPermissions", this.unixPermissions);
+        jsonWriter.writeBooleanField("coolAccess", this.coolAccess);
+        jsonWriter.writeNumberField("coolnessPeriod", this.coolnessPeriod);
+        jsonWriter.writeStringField("coolAccessRetrievalPolicy",
+            this.coolAccessRetrievalPolicy == null ? null : this.coolAccessRetrievalPolicy.toString());
+        jsonWriter.writeBooleanField("snapshotDirectoryVisible", this.snapshotDirectoryVisible);
+        jsonWriter.writeStringField("smbAccessBasedEnumeration",
+            this.smbAccessBasedEnumeration == null ? null : this.smbAccessBasedEnumeration.toString());
+        jsonWriter.writeStringField("smbNonBrowsable",
+            this.smbNonBrowsable == null ? null : this.smbNonBrowsable.toString());
+        return jsonWriter.writeEndObject();
+    }
+
+    /**
+     * Reads an instance of VolumePatchProperties from the JsonReader.
+     * 
+     * @param jsonReader The JsonReader being read.
+     * @return An instance of VolumePatchProperties if the JsonReader was pointing to an instance of it, or null if it
+     * was pointing to JSON null.
+     * @throws IOException If an error occurs while reading the VolumePatchProperties.
+     */
+    public static VolumePatchProperties fromJson(JsonReader jsonReader) throws IOException {
+        return jsonReader.readObject(reader -> {
+            VolumePatchProperties deserializedVolumePatchProperties = new VolumePatchProperties();
+            while (reader.nextToken() != JsonToken.END_OBJECT) {
+                String fieldName = reader.getFieldName();
+                reader.nextToken();
+
+                if ("serviceLevel".equals(fieldName)) {
+                    deserializedVolumePatchProperties.serviceLevel = ServiceLevel.fromString(reader.getString());
+                } else if ("usageThreshold".equals(fieldName)) {
+                    deserializedVolumePatchProperties.usageThreshold = reader.getNullable(JsonReader::getLong);
+                } else if ("exportPolicy".equals(fieldName)) {
+                    deserializedVolumePatchProperties.exportPolicy = VolumePatchPropertiesExportPolicy.fromJson(reader);
+                } else if ("protocolTypes".equals(fieldName)) {
+                    List<String> protocolTypes = reader.readArray(reader1 -> reader1.getString());
+                    deserializedVolumePatchProperties.protocolTypes = protocolTypes;
+                } else if ("throughputMibps".equals(fieldName)) {
+                    deserializedVolumePatchProperties.throughputMibps = reader.getNullable(JsonReader::getFloat);
+                } else if ("dataProtection".equals(fieldName)) {
+                    deserializedVolumePatchProperties.dataProtection
+                        = VolumePatchPropertiesDataProtection.fromJson(reader);
+                } else if ("isDefaultQuotaEnabled".equals(fieldName)) {
+                    deserializedVolumePatchProperties.isDefaultQuotaEnabled
+                        = reader.getNullable(JsonReader::getBoolean);
+                } else if ("defaultUserQuotaInKiBs".equals(fieldName)) {
+                    deserializedVolumePatchProperties.defaultUserQuotaInKiBs = reader.getNullable(JsonReader::getLong);
+                } else if ("defaultGroupQuotaInKiBs".equals(fieldName)) {
+                    deserializedVolumePatchProperties.defaultGroupQuotaInKiBs = reader.getNullable(JsonReader::getLong);
+                } else if ("unixPermissions".equals(fieldName)) {
+                    deserializedVolumePatchProperties.unixPermissions = reader.getString();
+                } else if ("coolAccess".equals(fieldName)) {
+                    deserializedVolumePatchProperties.coolAccess = reader.getNullable(JsonReader::getBoolean);
+                } else if ("coolnessPeriod".equals(fieldName)) {
+                    deserializedVolumePatchProperties.coolnessPeriod = reader.getNullable(JsonReader::getInt);
+                } else if ("coolAccessRetrievalPolicy".equals(fieldName)) {
+                    deserializedVolumePatchProperties.coolAccessRetrievalPolicy
+                        = CoolAccessRetrievalPolicy.fromString(reader.getString());
+                } else if ("snapshotDirectoryVisible".equals(fieldName)) {
+                    deserializedVolumePatchProperties.snapshotDirectoryVisible
+                        = reader.getNullable(JsonReader::getBoolean);
+                } else if ("smbAccessBasedEnumeration".equals(fieldName)) {
+                    deserializedVolumePatchProperties.smbAccessBasedEnumeration
+                        = SmbAccessBasedEnumeration.fromString(reader.getString());
+                } else if ("smbNonBrowsable".equals(fieldName)) {
+                    deserializedVolumePatchProperties.smbNonBrowsable = SmbNonBrowsable.fromString(reader.getString());
+                } else {
+                    reader.skipChildren();
+                }
+            }
+
+            return deserializedVolumePatchProperties;
+        });
     }
 }

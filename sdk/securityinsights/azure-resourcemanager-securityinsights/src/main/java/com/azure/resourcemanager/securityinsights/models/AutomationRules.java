@@ -8,36 +8,28 @@ import com.azure.core.http.rest.PagedIterable;
 import com.azure.core.http.rest.Response;
 import com.azure.core.util.Context;
 
-/** Resource collection API of AutomationRules. */
+/**
+ * Resource collection API of AutomationRules.
+ */
 public interface AutomationRules {
     /**
-     * Gets all automation rules.
-     *
+     * Gets the automation rule.
+     * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
      * @param workspaceName The name of the workspace.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return all automation rules.
-     */
-    PagedIterable<AutomationRule> list(String resourceGroupName, String workspaceName);
-
-    /**
-     * Gets all automation rules.
-     *
-     * @param resourceGroupName The name of the resource group. The name is case insensitive.
-     * @param workspaceName The name of the workspace.
+     * @param automationRuleId Automation rule ID.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return all automation rules.
+     * @return the automation rule along with {@link Response}.
      */
-    PagedIterable<AutomationRule> list(String resourceGroupName, String workspaceName, Context context);
+    Response<AutomationRule> getWithResponse(String resourceGroupName, String workspaceName, String automationRuleId,
+        Context context);
 
     /**
      * Gets the automation rule.
-     *
+     * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
      * @param workspaceName The name of the workspace.
      * @param automationRuleId Automation rule ID.
@@ -49,8 +41,8 @@ public interface AutomationRules {
     AutomationRule get(String resourceGroupName, String workspaceName, String automationRuleId);
 
     /**
-     * Gets the automation rule.
-     *
+     * Delete the automation rule.
+     * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
      * @param workspaceName The name of the workspace.
      * @param automationRuleId Automation rule ID.
@@ -58,41 +50,52 @@ public interface AutomationRules {
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the automation rule along with {@link Response}.
+     * @return any object along with {@link Response}.
      */
-    Response<AutomationRule> getWithResponse(
-        String resourceGroupName, String workspaceName, String automationRuleId, Context context);
+    Response<Object> deleteWithResponse(String resourceGroupName, String workspaceName, String automationRuleId,
+        Context context);
 
     /**
      * Delete the automation rule.
-     *
+     * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
      * @param workspaceName The name of the workspace.
      * @param automationRuleId Automation rule ID.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return any object.
      */
-    void delete(String resourceGroupName, String workspaceName, String automationRuleId);
+    Object delete(String resourceGroupName, String workspaceName, String automationRuleId);
 
     /**
-     * Delete the automation rule.
-     *
+     * Gets all automation rules.
+     * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
      * @param workspaceName The name of the workspace.
-     * @param automationRuleId Automation rule ID.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return all automation rules as paginated response with {@link PagedIterable}.
+     */
+    PagedIterable<AutomationRule> list(String resourceGroupName, String workspaceName);
+
+    /**
+     * Gets all automation rules.
+     * 
+     * @param resourceGroupName The name of the resource group. The name is case insensitive.
+     * @param workspaceName The name of the workspace.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the {@link Response}.
+     * @return all automation rules as paginated response with {@link PagedIterable}.
      */
-    Response<Void> deleteWithResponse(
-        String resourceGroupName, String workspaceName, String automationRuleId, Context context);
+    PagedIterable<AutomationRule> list(String resourceGroupName, String workspaceName, Context context);
 
     /**
      * Gets the automation rule.
-     *
+     * 
      * @param id the resource ID.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
@@ -103,7 +106,7 @@ public interface AutomationRules {
 
     /**
      * Gets the automation rule.
-     *
+     * 
      * @param id the resource ID.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
@@ -115,29 +118,30 @@ public interface AutomationRules {
 
     /**
      * Delete the automation rule.
-     *
+     * 
      * @param id the resource ID.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return any object along with {@link Response}.
      */
-    void deleteById(String id);
+    Object deleteById(String id);
 
     /**
      * Delete the automation rule.
-     *
+     * 
      * @param id the resource ID.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the {@link Response}.
+     * @return any object along with {@link Response}.
      */
-    Response<Void> deleteByIdWithResponse(String id, Context context);
+    Response<Object> deleteByIdWithResponse(String id, Context context);
 
     /**
      * Begins definition for a new AutomationRule resource.
-     *
+     * 
      * @param name resource name.
      * @return the first stage of the new AutomationRule definition.
      */

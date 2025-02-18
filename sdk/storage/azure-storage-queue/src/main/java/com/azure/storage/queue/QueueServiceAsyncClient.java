@@ -40,9 +40,6 @@ import java.util.function.Function;
 import static com.azure.core.util.FluxUtil.monoError;
 import static com.azure.core.util.FluxUtil.pagedFluxError;
 import static com.azure.core.util.FluxUtil.withContext;
-import static com.azure.core.util.tracing.Tracer.AZ_TRACING_NAMESPACE_KEY;
-import static com.azure.storage.common.Utility.STORAGE_TRACING_NAMESPACE_VALUE;
-
 
 /**
  * This class provides a client that contains all the operations for interacting with a queue account in Azure Storage.
@@ -68,7 +65,7 @@ import static com.azure.storage.common.Utility.STORAGE_TRACING_NAMESPACE_VALUE;
  */
 @ServiceClient(builder = QueueServiceClientBuilder.class, isAsync = true)
 public final class QueueServiceAsyncClient {
-    private final ClientLogger logger = new ClientLogger(QueueServiceAsyncClient.class);
+    private static final ClientLogger LOGGER = new ClientLogger(QueueServiceAsyncClient.class);
     private final AzureQueueStorageImpl client;
     private final String accountName;
     private final QueueServiceVersion serviceVersion;
@@ -94,6 +91,8 @@ public final class QueueServiceAsyncClient {
     }
 
     /**
+     * Gets the URL of the storage queue.
+     *
      * @return the URL of the storage queue
      */
     public String getQueueServiceUrl() {
@@ -127,8 +126,10 @@ public final class QueueServiceAsyncClient {
      * @return QueueAsyncClient that interacts with the specified queue
      */
     public QueueAsyncClient getQueueAsyncClient(String queueName) {
-        return new QueueAsyncClient(client, queueName, accountName, serviceVersion,
-            messageEncoding, processMessageDecodingErrorAsyncHandler, processMessageDecodingErrorHandler);
+        QueueClient queueClient = new QueueClient(client, queueName, accountName, serviceVersion, messageEncoding,
+            processMessageDecodingErrorAsyncHandler, processMessageDecodingErrorHandler, null);
+        return new QueueAsyncClient(client, queueName, accountName, serviceVersion, messageEncoding,
+            processMessageDecodingErrorAsyncHandler, processMessageDecodingErrorHandler, queueClient);
     }
 
     /**
@@ -156,11 +157,7 @@ public final class QueueServiceAsyncClient {
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
     public Mono<QueueAsyncClient> createQueue(String queueName) {
-        try {
-            return createQueueWithResponse(queueName, null).flatMap(FluxUtil::toMono);
-        } catch (RuntimeException ex) {
-            return monoError(logger, ex);
-        }
+        return createQueueWithResponse(queueName, null).flatMap(FluxUtil::toMono);
     }
 
     /**
@@ -192,19 +189,12 @@ public final class QueueServiceAsyncClient {
     public Mono<Response<QueueAsyncClient>> createQueueWithResponse(String queueName, Map<String, String> metadata) {
         try {
             Objects.requireNonNull(queueName, "'queueName' cannot be null.");
-            return withContext(context -> createQueueWithResponse(queueName, metadata, context));
+            QueueAsyncClient queueAsyncClient = getQueueAsyncClient(queueName);
+            return queueAsyncClient.createWithResponse(metadata)
+                .map(response -> new SimpleResponse<>(response, queueAsyncClient));
         } catch (RuntimeException ex) {
-            return monoError(logger, ex);
+            return monoError(LOGGER, ex);
         }
-    }
-
-    Mono<Response<QueueAsyncClient>> createQueueWithResponse(String queueName, Map<String, String> metadata,
-        Context context) {
-        QueueAsyncClient queueAsyncClient = new QueueAsyncClient(client, queueName, accountName,
-            serviceVersion, messageEncoding, processMessageDecodingErrorAsyncHandler, processMessageDecodingErrorHandler);
-
-        return queueAsyncClient.createWithResponse(metadata, context)
-            .map(response -> new SimpleResponse<>(response, queueAsyncClient));
     }
 
     /**
@@ -228,11 +218,7 @@ public final class QueueServiceAsyncClient {
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
     public Mono<Void> deleteQueue(String queueName) {
-        try {
-            return deleteQueueWithResponse(queueName).flatMap(FluxUtil::toMono);
-        } catch (RuntimeException ex) {
-            return monoError(logger, ex);
-        }
+        return deleteQueueWithResponse(queueName).flatMap(FluxUtil::toMono);
     }
 
     /**
@@ -257,16 +243,10 @@ public final class QueueServiceAsyncClient {
     @ServiceMethod(returns = ReturnType.SINGLE)
     public Mono<Response<Void>> deleteQueueWithResponse(String queueName) {
         try {
-            return withContext(context -> deleteQueueWithResponse(queueName, context));
+            return getQueueAsyncClient(queueName).deleteWithResponse();
         } catch (RuntimeException ex) {
-            return monoError(logger, ex);
+            return monoError(LOGGER, ex);
         }
-    }
-
-    Mono<Response<Void>> deleteQueueWithResponse(String queueName, Context context) {
-        return new QueueAsyncClient(client, queueName, accountName,
-            serviceVersion, messageEncoding, processMessageDecodingErrorAsyncHandler, processMessageDecodingErrorHandler)
-            .deleteWithResponse(context);
     }
 
     /**
@@ -296,7 +276,7 @@ public final class QueueServiceAsyncClient {
         try {
             return listQueuesWithOptionalTimeout(null, null, null, Context.NONE);
         } catch (RuntimeException ex) {
-            return pagedFluxError(logger, ex);
+            return pagedFluxError(LOGGER, ex);
         }
     }
 
@@ -332,7 +312,7 @@ public final class QueueServiceAsyncClient {
         try {
             return listQueuesWithOptionalTimeout(null, options, null, Context.NONE);
         } catch (RuntimeException ex) {
-            return pagedFluxError(logger, ex);
+            return pagedFluxError(LOGGER, ex);
         }
     }
 
@@ -361,11 +341,11 @@ public final class QueueServiceAsyncClient {
             }
         }
 
-        BiFunction<String, Integer, Mono<PagedResponse<QueueItem>>> retriever =
-            (nextMarker, pageSize) -> StorageImplUtils.applyOptionalTimeout(this.client.getServices()
-                .listQueuesSegmentSinglePageAsync(prefix, nextMarker,
-                    pageSize == null ? maxResultsPerPage : pageSize, include,
-                    null, null, context), timeout);
+        BiFunction<String, Integer, Mono<PagedResponse<QueueItem>>> retriever = (nextMarker,
+            pageSize) -> StorageImplUtils.applyOptionalTimeout(this.client.getServices()
+                .listQueuesSegmentSinglePageAsync(prefix, nextMarker, pageSize == null ? maxResultsPerPage : pageSize,
+                    include, null, null, context),
+                timeout);
 
         return new PagedFlux<>(pageSize -> retriever.apply(marker, pageSize), retriever);
     }
@@ -396,11 +376,7 @@ public final class QueueServiceAsyncClient {
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
     public Mono<QueueServiceProperties> getProperties() {
-        try {
-            return getPropertiesWithResponse().flatMap(FluxUtil::toMono);
-        } catch (RuntimeException ex) {
-            return monoError(logger, ex);
-        }
+        return getPropertiesWithResponse().flatMap(FluxUtil::toMono);
     }
 
     /**
@@ -433,14 +409,14 @@ public final class QueueServiceAsyncClient {
         try {
             return withContext(this::getPropertiesWithResponse);
         } catch (RuntimeException ex) {
-            return monoError(logger, ex);
+            return monoError(LOGGER, ex);
         }
     }
 
     Mono<Response<QueueServiceProperties>> getPropertiesWithResponse(Context context) {
         context = context == null ? Context.NONE : context;
-        return client.getServices().getPropertiesWithResponseAsync(null, null,
-            context.addData(AZ_TRACING_NAMESPACE_KEY, STORAGE_TRACING_NAMESPACE_VALUE))
+        return client.getServices()
+            .getPropertiesWithResponseAsync(null, null, context)
             .map(response -> new SimpleResponse<>(response, response.getValue()));
     }
 
@@ -497,11 +473,7 @@ public final class QueueServiceAsyncClient {
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
     public Mono<Void> setProperties(QueueServiceProperties properties) {
-        try {
-            return setPropertiesWithResponse(properties).flatMap(FluxUtil::toMono);
-        } catch (RuntimeException ex) {
-            return monoError(logger, ex);
-        }
+        return setPropertiesWithResponse(properties).flatMap(FluxUtil::toMono);
     }
 
     /**
@@ -562,15 +534,13 @@ public final class QueueServiceAsyncClient {
         try {
             return withContext(context -> setPropertiesWithResponse(properties, context));
         } catch (RuntimeException ex) {
-            return monoError(logger, ex);
+            return monoError(LOGGER, ex);
         }
     }
 
     Mono<Response<Void>> setPropertiesWithResponse(QueueServiceProperties properties, Context context) {
         context = context == null ? Context.NONE : context;
-        return client.getServices().setPropertiesWithResponseAsync(properties, null, null,
-            context.addData(AZ_TRACING_NAMESPACE_KEY, STORAGE_TRACING_NAMESPACE_VALUE))
-            .map(response -> new SimpleResponse<>(response, null));
+        return client.getServices().setPropertiesNoCustomHeadersWithResponseAsync(properties, null, null, context);
     }
 
     /**
@@ -597,11 +567,7 @@ public final class QueueServiceAsyncClient {
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
     public Mono<QueueServiceStatistics> getStatistics() {
-        try {
-            return getStatisticsWithResponse().flatMap(FluxUtil::toMono);
-        } catch (RuntimeException ex) {
-            return monoError(logger, ex);
-        }
+        return getStatisticsWithResponse().flatMap(FluxUtil::toMono);
     }
 
     /**
@@ -632,17 +598,16 @@ public final class QueueServiceAsyncClient {
         try {
             return withContext(this::getStatisticsWithResponse);
         } catch (RuntimeException ex) {
-            return monoError(logger, ex);
+            return monoError(LOGGER, ex);
         }
     }
 
     Mono<Response<QueueServiceStatistics>> getStatisticsWithResponse(Context context) {
         context = context == null ? Context.NONE : context;
-        return client.getServices().getStatisticsWithResponseAsync(null, null,
-            context.addData(AZ_TRACING_NAMESPACE_KEY, STORAGE_TRACING_NAMESPACE_VALUE))
+        return client.getServices()
+            .getStatisticsWithResponseAsync(null, null, context)
             .map(response -> new SimpleResponse<>(response, response.getValue()));
     }
-
 
     /**
      * Get associated account name.
@@ -724,8 +689,24 @@ public final class QueueServiceAsyncClient {
      * @return A {@code String} representing the SAS query parameters.
      */
     public String generateAccountSas(AccountSasSignatureValues accountSasSignatureValues, Context context) {
-        return new AccountSasImplUtil(accountSasSignatureValues, null)
-            .generateSas(SasImplUtils.extractSharedKeyCredential(getHttpPipeline()), context);
+        return generateAccountSas(accountSasSignatureValues, null, context);
     }
 
+    /**
+     * Generates an account SAS for the Azure Storage account using the specified {@link AccountSasSignatureValues}.
+     * <p>Note : The client must be authenticated via {@link StorageSharedKeyCredential}
+     * <p>See {@link AccountSasSignatureValues} for more information on how to construct an account SAS.</p>
+     *
+     * @param accountSasSignatureValues {@link AccountSasSignatureValues}
+     * @param stringToSignHandler For debugging purposes only. Returns the string to sign that was used to generate the
+     * signature.
+     * @param context Additional context that is passed through the code when generating a SAS.
+     *
+     * @return A {@code String} representing the SAS query parameters.
+     */
+    public String generateAccountSas(AccountSasSignatureValues accountSasSignatureValues,
+        Consumer<String> stringToSignHandler, Context context) {
+        return new AccountSasImplUtil(accountSasSignatureValues, null)
+            .generateSas(SasImplUtils.extractSharedKeyCredential(getHttpPipeline()), stringToSignHandler, context);
+    }
 }

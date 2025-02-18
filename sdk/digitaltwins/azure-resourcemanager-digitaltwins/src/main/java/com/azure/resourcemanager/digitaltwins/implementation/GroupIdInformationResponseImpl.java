@@ -4,7 +4,6 @@
 
 package com.azure.resourcemanager.digitaltwins.implementation;
 
-import com.azure.resourcemanager.digitaltwins.AzureDigitalTwinsManager;
 import com.azure.resourcemanager.digitaltwins.fluent.models.GroupIdInformationInner;
 import com.azure.resourcemanager.digitaltwins.fluent.models.GroupIdInformationResponseInner;
 import com.azure.resourcemanager.digitaltwins.models.GroupIdInformation;
@@ -16,10 +15,10 @@ import java.util.stream.Collectors;
 public final class GroupIdInformationResponseImpl implements GroupIdInformationResponse {
     private GroupIdInformationResponseInner innerObject;
 
-    private final AzureDigitalTwinsManager serviceManager;
+    private final com.azure.resourcemanager.digitaltwins.AzureDigitalTwinsManager serviceManager;
 
-    GroupIdInformationResponseImpl(
-        GroupIdInformationResponseInner innerObject, AzureDigitalTwinsManager serviceManager) {
+    GroupIdInformationResponseImpl(GroupIdInformationResponseInner innerObject,
+        com.azure.resourcemanager.digitaltwins.AzureDigitalTwinsManager serviceManager) {
         this.innerObject = innerObject;
         this.serviceManager = serviceManager;
     }
@@ -27,12 +26,9 @@ public final class GroupIdInformationResponseImpl implements GroupIdInformationR
     public List<GroupIdInformation> value() {
         List<GroupIdInformationInner> inner = this.innerModel().value();
         if (inner != null) {
-            return Collections
-                .unmodifiableList(
-                    inner
-                        .stream()
-                        .map(inner1 -> new GroupIdInformationImpl(inner1, this.manager()))
-                        .collect(Collectors.toList()));
+            return Collections.unmodifiableList(inner.stream()
+                .map(inner1 -> new GroupIdInformationImpl(inner1, this.manager()))
+                .collect(Collectors.toList()));
         } else {
             return Collections.emptyList();
         }
@@ -42,7 +38,7 @@ public final class GroupIdInformationResponseImpl implements GroupIdInformationR
         return this.innerObject;
     }
 
-    private AzureDigitalTwinsManager manager() {
+    private com.azure.resourcemanager.digitaltwins.AzureDigitalTwinsManager manager() {
         return this.serviceManager;
     }
 }

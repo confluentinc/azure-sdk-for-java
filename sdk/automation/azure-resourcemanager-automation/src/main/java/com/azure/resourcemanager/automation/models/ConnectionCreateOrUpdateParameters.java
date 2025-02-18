@@ -5,45 +5,39 @@
 package com.azure.resourcemanager.automation.models;
 
 import com.azure.core.annotation.Fluent;
-import com.azure.core.annotation.JsonFlatten;
 import com.azure.core.util.logging.ClientLogger;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.azure.json.JsonReader;
+import com.azure.json.JsonSerializable;
+import com.azure.json.JsonToken;
+import com.azure.json.JsonWriter;
+import com.azure.resourcemanager.automation.fluent.models.ConnectionCreateOrUpdateProperties;
+import java.io.IOException;
 import java.util.Map;
 
-/** The parameters supplied to the create or update connection operation. */
-@JsonFlatten
+/**
+ * The parameters supplied to the create or update connection operation.
+ */
 @Fluent
-public class ConnectionCreateOrUpdateParameters {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(ConnectionCreateOrUpdateParameters.class);
-
+public final class ConnectionCreateOrUpdateParameters implements JsonSerializable<ConnectionCreateOrUpdateParameters> {
     /*
      * Gets or sets the name of the connection.
      */
-    @JsonProperty(value = "name", required = true)
     private String name;
 
     /*
-     * Gets or sets the description of the connection.
+     * Gets or sets the properties of the connection.
      */
-    @JsonProperty(value = "properties.description")
-    private String description;
+    private ConnectionCreateOrUpdateProperties innerProperties = new ConnectionCreateOrUpdateProperties();
 
-    /*
-     * Gets or sets the connectionType of the connection.
+    /**
+     * Creates an instance of ConnectionCreateOrUpdateParameters class.
      */
-    @JsonProperty(value = "properties.connectionType", required = true)
-    private ConnectionTypeAssociationProperty connectionType;
-
-    /*
-     * Gets or sets the field definition properties of the connection.
-     */
-    @JsonProperty(value = "properties.fieldDefinitionValues")
-    private Map<String, String> fieldDefinitionValues;
+    public ConnectionCreateOrUpdateParameters() {
+    }
 
     /**
      * Get the name property: Gets or sets the name of the connection.
-     *
+     * 
      * @return the name value.
      */
     public String name() {
@@ -52,7 +46,7 @@ public class ConnectionCreateOrUpdateParameters {
 
     /**
      * Set the name property: Gets or sets the name of the connection.
-     *
+     * 
      * @param name the name value to set.
      * @return the ConnectionCreateOrUpdateParameters object itself.
      */
@@ -62,84 +56,144 @@ public class ConnectionCreateOrUpdateParameters {
     }
 
     /**
+     * Get the innerProperties property: Gets or sets the properties of the connection.
+     * 
+     * @return the innerProperties value.
+     */
+    private ConnectionCreateOrUpdateProperties innerProperties() {
+        return this.innerProperties;
+    }
+
+    /**
      * Get the description property: Gets or sets the description of the connection.
-     *
+     * 
      * @return the description value.
      */
     public String description() {
-        return this.description;
+        return this.innerProperties() == null ? null : this.innerProperties().description();
     }
 
     /**
      * Set the description property: Gets or sets the description of the connection.
-     *
+     * 
      * @param description the description value to set.
      * @return the ConnectionCreateOrUpdateParameters object itself.
      */
     public ConnectionCreateOrUpdateParameters withDescription(String description) {
-        this.description = description;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new ConnectionCreateOrUpdateProperties();
+        }
+        this.innerProperties().withDescription(description);
         return this;
     }
 
     /**
      * Get the connectionType property: Gets or sets the connectionType of the connection.
-     *
+     * 
      * @return the connectionType value.
      */
     public ConnectionTypeAssociationProperty connectionType() {
-        return this.connectionType;
+        return this.innerProperties() == null ? null : this.innerProperties().connectionType();
     }
 
     /**
      * Set the connectionType property: Gets or sets the connectionType of the connection.
-     *
+     * 
      * @param connectionType the connectionType value to set.
      * @return the ConnectionCreateOrUpdateParameters object itself.
      */
     public ConnectionCreateOrUpdateParameters withConnectionType(ConnectionTypeAssociationProperty connectionType) {
-        this.connectionType = connectionType;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new ConnectionCreateOrUpdateProperties();
+        }
+        this.innerProperties().withConnectionType(connectionType);
         return this;
     }
 
     /**
      * Get the fieldDefinitionValues property: Gets or sets the field definition properties of the connection.
-     *
+     * 
      * @return the fieldDefinitionValues value.
      */
     public Map<String, String> fieldDefinitionValues() {
-        return this.fieldDefinitionValues;
+        return this.innerProperties() == null ? null : this.innerProperties().fieldDefinitionValues();
     }
 
     /**
      * Set the fieldDefinitionValues property: Gets or sets the field definition properties of the connection.
-     *
+     * 
      * @param fieldDefinitionValues the fieldDefinitionValues value to set.
      * @return the ConnectionCreateOrUpdateParameters object itself.
      */
     public ConnectionCreateOrUpdateParameters withFieldDefinitionValues(Map<String, String> fieldDefinitionValues) {
-        this.fieldDefinitionValues = fieldDefinitionValues;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new ConnectionCreateOrUpdateProperties();
+        }
+        this.innerProperties().withFieldDefinitionValues(fieldDefinitionValues);
         return this;
     }
 
     /**
      * Validates the instance.
-     *
+     * 
      * @throws IllegalArgumentException thrown if the instance is not valid.
      */
     public void validate() {
         if (name() == null) {
-            throw logger
-                .logExceptionAsError(
-                    new IllegalArgumentException(
-                        "Missing required property name in model ConnectionCreateOrUpdateParameters"));
+            throw LOGGER.atError()
+                .log(new IllegalArgumentException(
+                    "Missing required property name in model ConnectionCreateOrUpdateParameters"));
         }
-        if (connectionType() == null) {
-            throw logger
-                .logExceptionAsError(
-                    new IllegalArgumentException(
-                        "Missing required property connectionType in model ConnectionCreateOrUpdateParameters"));
+        if (innerProperties() == null) {
+            throw LOGGER.atError()
+                .log(new IllegalArgumentException(
+                    "Missing required property innerProperties in model ConnectionCreateOrUpdateParameters"));
         } else {
-            connectionType().validate();
+            innerProperties().validate();
         }
+    }
+
+    private static final ClientLogger LOGGER = new ClientLogger(ConnectionCreateOrUpdateParameters.class);
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public JsonWriter toJson(JsonWriter jsonWriter) throws IOException {
+        jsonWriter.writeStartObject();
+        jsonWriter.writeStringField("name", this.name);
+        jsonWriter.writeJsonField("properties", this.innerProperties);
+        return jsonWriter.writeEndObject();
+    }
+
+    /**
+     * Reads an instance of ConnectionCreateOrUpdateParameters from the JsonReader.
+     * 
+     * @param jsonReader The JsonReader being read.
+     * @return An instance of ConnectionCreateOrUpdateParameters if the JsonReader was pointing to an instance of it, or
+     * null if it was pointing to JSON null.
+     * @throws IllegalStateException If the deserialized JSON object was missing any required properties.
+     * @throws IOException If an error occurs while reading the ConnectionCreateOrUpdateParameters.
+     */
+    public static ConnectionCreateOrUpdateParameters fromJson(JsonReader jsonReader) throws IOException {
+        return jsonReader.readObject(reader -> {
+            ConnectionCreateOrUpdateParameters deserializedConnectionCreateOrUpdateParameters
+                = new ConnectionCreateOrUpdateParameters();
+            while (reader.nextToken() != JsonToken.END_OBJECT) {
+                String fieldName = reader.getFieldName();
+                reader.nextToken();
+
+                if ("name".equals(fieldName)) {
+                    deserializedConnectionCreateOrUpdateParameters.name = reader.getString();
+                } else if ("properties".equals(fieldName)) {
+                    deserializedConnectionCreateOrUpdateParameters.innerProperties
+                        = ConnectionCreateOrUpdateProperties.fromJson(reader);
+                } else {
+                    reader.skipChildren();
+                }
+            }
+
+            return deserializedConnectionCreateOrUpdateParameters;
+        });
     }
 }

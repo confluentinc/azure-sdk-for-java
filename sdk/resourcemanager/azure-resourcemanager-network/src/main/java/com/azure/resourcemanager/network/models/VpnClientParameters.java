@@ -5,47 +5,49 @@
 package com.azure.resourcemanager.network.models;
 
 import com.azure.core.annotation.Fluent;
-import com.azure.core.util.logging.ClientLogger;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.azure.json.JsonReader;
+import com.azure.json.JsonSerializable;
+import com.azure.json.JsonToken;
+import com.azure.json.JsonWriter;
+import java.io.IOException;
 import java.util.List;
 
-/** Vpn Client Parameters for package generation. */
+/**
+ * Vpn Client Parameters for package generation.
+ */
 @Fluent
-public final class VpnClientParameters {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(VpnClientParameters.class);
-
+public final class VpnClientParameters implements JsonSerializable<VpnClientParameters> {
     /*
      * VPN client Processor Architecture.
      */
-    @JsonProperty(value = "processorArchitecture")
     private ProcessorArchitecture processorArchitecture;
 
     /*
      * VPN client authentication method.
      */
-    @JsonProperty(value = "authenticationMethod")
     private AuthenticationMethod authenticationMethod;
 
     /*
-     * The public certificate data for the radius server authentication
-     * certificate as a Base-64 encoded string. Required only if external
-     * radius authentication has been configured with EAPTLS authentication.
+     * The public certificate data for the radius server authentication certificate as a Base-64 encoded string.
+     * Required only if external radius authentication has been configured with EAPTLS authentication.
      */
-    @JsonProperty(value = "radiusServerAuthCertificate")
     private String radiusServerAuthCertificate;
 
     /*
-     * A list of client root certificates public certificate data encoded as
-     * Base-64 strings. Optional parameter for external radius based
-     * authentication with EAPTLS.
+     * A list of client root certificates public certificate data encoded as Base-64 strings. Optional parameter for
+     * external radius based authentication with EAPTLS.
      */
-    @JsonProperty(value = "clientRootCertificates")
     private List<String> clientRootCertificates;
 
     /**
+     * Creates an instance of VpnClientParameters class.
+     */
+    public VpnClientParameters() {
+    }
+
+    /**
      * Get the processorArchitecture property: VPN client Processor Architecture.
-     *
+     * 
      * @return the processorArchitecture value.
      */
     public ProcessorArchitecture processorArchitecture() {
@@ -54,7 +56,7 @@ public final class VpnClientParameters {
 
     /**
      * Set the processorArchitecture property: VPN client Processor Architecture.
-     *
+     * 
      * @param processorArchitecture the processorArchitecture value to set.
      * @return the VpnClientParameters object itself.
      */
@@ -65,7 +67,7 @@ public final class VpnClientParameters {
 
     /**
      * Get the authenticationMethod property: VPN client authentication method.
-     *
+     * 
      * @return the authenticationMethod value.
      */
     public AuthenticationMethod authenticationMethod() {
@@ -74,7 +76,7 @@ public final class VpnClientParameters {
 
     /**
      * Set the authenticationMethod property: VPN client authentication method.
-     *
+     * 
      * @param authenticationMethod the authenticationMethod value to set.
      * @return the VpnClientParameters object itself.
      */
@@ -87,7 +89,7 @@ public final class VpnClientParameters {
      * Get the radiusServerAuthCertificate property: The public certificate data for the radius server authentication
      * certificate as a Base-64 encoded string. Required only if external radius authentication has been configured with
      * EAPTLS authentication.
-     *
+     * 
      * @return the radiusServerAuthCertificate value.
      */
     public String radiusServerAuthCertificate() {
@@ -98,7 +100,7 @@ public final class VpnClientParameters {
      * Set the radiusServerAuthCertificate property: The public certificate data for the radius server authentication
      * certificate as a Base-64 encoded string. Required only if external radius authentication has been configured with
      * EAPTLS authentication.
-     *
+     * 
      * @param radiusServerAuthCertificate the radiusServerAuthCertificate value to set.
      * @return the VpnClientParameters object itself.
      */
@@ -110,7 +112,7 @@ public final class VpnClientParameters {
     /**
      * Get the clientRootCertificates property: A list of client root certificates public certificate data encoded as
      * Base-64 strings. Optional parameter for external radius based authentication with EAPTLS.
-     *
+     * 
      * @return the clientRootCertificates value.
      */
     public List<String> clientRootCertificates() {
@@ -120,7 +122,7 @@ public final class VpnClientParameters {
     /**
      * Set the clientRootCertificates property: A list of client root certificates public certificate data encoded as
      * Base-64 strings. Optional parameter for external radius based authentication with EAPTLS.
-     *
+     * 
      * @param clientRootCertificates the clientRootCertificates value to set.
      * @return the VpnClientParameters object itself.
      */
@@ -131,9 +133,60 @@ public final class VpnClientParameters {
 
     /**
      * Validates the instance.
-     *
+     * 
      * @throws IllegalArgumentException thrown if the instance is not valid.
      */
     public void validate() {
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public JsonWriter toJson(JsonWriter jsonWriter) throws IOException {
+        jsonWriter.writeStartObject();
+        jsonWriter.writeStringField("processorArchitecture",
+            this.processorArchitecture == null ? null : this.processorArchitecture.toString());
+        jsonWriter.writeStringField("authenticationMethod",
+            this.authenticationMethod == null ? null : this.authenticationMethod.toString());
+        jsonWriter.writeStringField("radiusServerAuthCertificate", this.radiusServerAuthCertificate);
+        jsonWriter.writeArrayField("clientRootCertificates", this.clientRootCertificates,
+            (writer, element) -> writer.writeString(element));
+        return jsonWriter.writeEndObject();
+    }
+
+    /**
+     * Reads an instance of VpnClientParameters from the JsonReader.
+     * 
+     * @param jsonReader The JsonReader being read.
+     * @return An instance of VpnClientParameters if the JsonReader was pointing to an instance of it, or null if it was
+     * pointing to JSON null.
+     * @throws IOException If an error occurs while reading the VpnClientParameters.
+     */
+    public static VpnClientParameters fromJson(JsonReader jsonReader) throws IOException {
+        return jsonReader.readObject(reader -> {
+            VpnClientParameters deserializedVpnClientParameters = new VpnClientParameters();
+            while (reader.nextToken() != JsonToken.END_OBJECT) {
+                String fieldName = reader.getFieldName();
+                reader.nextToken();
+
+                if ("processorArchitecture".equals(fieldName)) {
+                    deserializedVpnClientParameters.processorArchitecture
+                        = ProcessorArchitecture.fromString(reader.getString());
+                } else if ("authenticationMethod".equals(fieldName)) {
+                    deserializedVpnClientParameters.authenticationMethod
+                        = AuthenticationMethod.fromString(reader.getString());
+                } else if ("radiusServerAuthCertificate".equals(fieldName)) {
+                    deserializedVpnClientParameters.radiusServerAuthCertificate = reader.getString();
+                } else if ("clientRootCertificates".equals(fieldName)) {
+                    List<String> clientRootCertificates = reader.readArray(reader1 -> reader1.getString());
+                    deserializedVpnClientParameters.clientRootCertificates = clientRootCertificates;
+                } else {
+                    reader.skipChildren();
+                }
+            }
+
+            return deserializedVpnClientParameters;
+        });
     }
 }

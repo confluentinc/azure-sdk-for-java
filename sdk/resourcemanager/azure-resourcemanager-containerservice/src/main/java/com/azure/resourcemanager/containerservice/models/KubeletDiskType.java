@@ -5,29 +5,46 @@
 package com.azure.resourcemanager.containerservice.models;
 
 import com.azure.core.util.ExpandableStringEnum;
-import com.fasterxml.jackson.annotation.JsonCreator;
 import java.util.Collection;
 
-/** Defines values for KubeletDiskType. */
+/**
+ * Determines the placement of emptyDir volumes, container runtime data root, and Kubelet ephemeral storage.
+ */
 public final class KubeletDiskType extends ExpandableStringEnum<KubeletDiskType> {
-    /** Static value OS for KubeletDiskType. */
+    /**
+     * Static value OS for KubeletDiskType.
+     */
     public static final KubeletDiskType OS = fromString("OS");
 
-    /** Static value Temporary for KubeletDiskType. */
+    /**
+     * Static value Temporary for KubeletDiskType.
+     */
     public static final KubeletDiskType TEMPORARY = fromString("Temporary");
 
     /**
+     * Creates a new instance of KubeletDiskType value.
+     * 
+     * @deprecated Use the {@link #fromString(String)} factory method.
+     */
+    @Deprecated
+    public KubeletDiskType() {
+    }
+
+    /**
      * Creates or finds a KubeletDiskType from its string representation.
-     *
+     * 
      * @param name a name to look for.
      * @return the corresponding KubeletDiskType.
      */
-    @JsonCreator
     public static KubeletDiskType fromString(String name) {
         return fromString(name, KubeletDiskType.class);
     }
 
-    /** @return known KubeletDiskType values. */
+    /**
+     * Gets known KubeletDiskType values.
+     * 
+     * @return known KubeletDiskType values.
+     */
     public static Collection<KubeletDiskType> values() {
         return values(KubeletDiskType.class);
     }

@@ -28,7 +28,6 @@ import com.azure.core.management.exception.ManagementException;
 import com.azure.core.management.polling.PollResult;
 import com.azure.core.util.Context;
 import com.azure.core.util.FluxUtil;
-import com.azure.core.util.logging.ClientLogger;
 import com.azure.core.util.polling.PollerFlux;
 import com.azure.core.util.polling.SyncPoller;
 import com.azure.resourcemanager.labservices.fluent.VirtualMachinesClient;
@@ -39,24 +38,28 @@ import java.nio.ByteBuffer;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-/** An instance of this class provides access to all the operations defined in VirtualMachinesClient. */
+/**
+ * An instance of this class provides access to all the operations defined in VirtualMachinesClient.
+ */
 public final class VirtualMachinesClientImpl implements VirtualMachinesClient {
-    private final ClientLogger logger = new ClientLogger(VirtualMachinesClientImpl.class);
-
-    /** The proxy service used to perform REST calls. */
+    /**
+     * The proxy service used to perform REST calls.
+     */
     private final VirtualMachinesService service;
 
-    /** The service client containing this operation class. */
+    /**
+     * The service client containing this operation class.
+     */
     private final LabServicesClientImpl client;
 
     /**
      * Initializes an instance of VirtualMachinesClientImpl.
-     *
+     * 
      * @param client the instance of the service client containing this operation class.
      */
     VirtualMachinesClientImpl(LabServicesClientImpl client) {
-        this.service =
-            RestProxy.create(VirtualMachinesService.class, client.getHttpPipeline(), client.getSerializerAdapter());
+        this.service
+            = RestProxy.create(VirtualMachinesService.class, client.getHttpPipeline(), client.getSerializerAdapter());
         this.client = client;
     }
 
@@ -66,158 +69,110 @@ public final class VirtualMachinesClientImpl implements VirtualMachinesClient {
      */
     @Host("{$host}")
     @ServiceInterface(name = "LabServicesClientVir")
-    private interface VirtualMachinesService {
-        @Headers({"Content-Type: application/json"})
-        @Get(
-            "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.LabServices/labs"
-                + "/{labName}/virtualMachines")
-        @ExpectedResponses({200})
+    public interface VirtualMachinesService {
+        @Headers({ "Content-Type: application/json" })
+        @Get("/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.LabServices/labs/{labName}/virtualMachines")
+        @ExpectedResponses({ 200 })
         @UnexpectedResponseExceptionType(ManagementException.class)
-        Mono<Response<PagedVirtualMachines>> listByLab(
-            @HostParam("$host") String endpoint,
-            @QueryParam("api-version") String apiVersion,
-            @PathParam("subscriptionId") String subscriptionId,
-            @PathParam("resourceGroupName") String resourceGroupName,
-            @PathParam("labName") String labName,
-            @QueryParam("$filter") String filter,
-            @HeaderParam("Accept") String accept,
+        Mono<Response<PagedVirtualMachines>> listByLab(@HostParam("$host") String endpoint,
+            @QueryParam("api-version") String apiVersion, @PathParam("subscriptionId") String subscriptionId,
+            @PathParam("resourceGroupName") String resourceGroupName, @PathParam("labName") String labName,
+            @QueryParam("$filter") String filter, @HeaderParam("Accept") String accept, Context context);
+
+        @Headers({ "Content-Type: application/json" })
+        @Get("/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.LabServices/labs/{labName}/virtualMachines/{virtualMachineName}")
+        @ExpectedResponses({ 200 })
+        @UnexpectedResponseExceptionType(ManagementException.class)
+        Mono<Response<VirtualMachineInner>> get(@HostParam("$host") String endpoint,
+            @QueryParam("api-version") String apiVersion, @PathParam("subscriptionId") String subscriptionId,
+            @PathParam("resourceGroupName") String resourceGroupName, @PathParam("labName") String labName,
+            @PathParam("virtualMachineName") String virtualMachineName, @HeaderParam("Accept") String accept,
             Context context);
 
-        @Headers({"Content-Type: application/json"})
-        @Get(
-            "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.LabServices/labs"
-                + "/{labName}/virtualMachines/{virtualMachineName}")
-        @ExpectedResponses({200})
+        @Headers({ "Content-Type: application/json" })
+        @Post("/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.LabServices/labs/{labName}/virtualMachines/{virtualMachineName}/start")
+        @ExpectedResponses({ 200, 202 })
         @UnexpectedResponseExceptionType(ManagementException.class)
-        Mono<Response<VirtualMachineInner>> get(
-            @HostParam("$host") String endpoint,
-            @QueryParam("api-version") String apiVersion,
-            @PathParam("subscriptionId") String subscriptionId,
-            @PathParam("resourceGroupName") String resourceGroupName,
-            @PathParam("labName") String labName,
+        Mono<Response<Flux<ByteBuffer>>> start(@HostParam("$host") String endpoint,
+            @QueryParam("api-version") String apiVersion, @PathParam("subscriptionId") String subscriptionId,
+            @PathParam("resourceGroupName") String resourceGroupName, @PathParam("labName") String labName,
+            @PathParam("virtualMachineName") String virtualMachineName, @HeaderParam("Accept") String accept,
+            Context context);
+
+        @Headers({ "Content-Type: application/json" })
+        @Post("/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.LabServices/labs/{labName}/virtualMachines/{virtualMachineName}/stop")
+        @ExpectedResponses({ 200, 202 })
+        @UnexpectedResponseExceptionType(ManagementException.class)
+        Mono<Response<Flux<ByteBuffer>>> stop(@HostParam("$host") String endpoint,
+            @QueryParam("api-version") String apiVersion, @PathParam("subscriptionId") String subscriptionId,
+            @PathParam("resourceGroupName") String resourceGroupName, @PathParam("labName") String labName,
+            @PathParam("virtualMachineName") String virtualMachineName, @HeaderParam("Accept") String accept,
+            Context context);
+
+        @Headers({ "Content-Type: application/json" })
+        @Post("/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.LabServices/labs/{labName}/virtualMachines/{virtualMachineName}/reimage")
+        @ExpectedResponses({ 200, 202 })
+        @UnexpectedResponseExceptionType(ManagementException.class)
+        Mono<Response<Flux<ByteBuffer>>> reimage(@HostParam("$host") String endpoint,
+            @QueryParam("api-version") String apiVersion, @PathParam("subscriptionId") String subscriptionId,
+            @PathParam("resourceGroupName") String resourceGroupName, @PathParam("labName") String labName,
+            @PathParam("virtualMachineName") String virtualMachineName, @HeaderParam("Accept") String accept,
+            Context context);
+
+        @Headers({ "Content-Type: application/json" })
+        @Post("/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.LabServices/labs/{labName}/virtualMachines/{virtualMachineName}/redeploy")
+        @ExpectedResponses({ 200, 202 })
+        @UnexpectedResponseExceptionType(ManagementException.class)
+        Mono<Response<Flux<ByteBuffer>>> redeploy(@HostParam("$host") String endpoint,
+            @QueryParam("api-version") String apiVersion, @PathParam("subscriptionId") String subscriptionId,
+            @PathParam("resourceGroupName") String resourceGroupName, @PathParam("labName") String labName,
+            @PathParam("virtualMachineName") String virtualMachineName, @HeaderParam("Accept") String accept,
+            Context context);
+
+        @Headers({ "Content-Type: application/json" })
+        @Post("/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.LabServices/labs/{labName}/virtualMachines/{virtualMachineName}/resetPassword")
+        @ExpectedResponses({ 200, 202 })
+        @UnexpectedResponseExceptionType(ManagementException.class)
+        Mono<Response<Flux<ByteBuffer>>> resetPassword(@HostParam("$host") String endpoint,
+            @QueryParam("api-version") String apiVersion, @PathParam("subscriptionId") String subscriptionId,
+            @PathParam("resourceGroupName") String resourceGroupName, @PathParam("labName") String labName,
             @PathParam("virtualMachineName") String virtualMachineName,
-            @HeaderParam("Accept") String accept,
+            @BodyParam("application/json") ResetPasswordBody body, @HeaderParam("Accept") String accept,
             Context context);
 
-        @Headers({"Content-Type: application/json"})
-        @Post(
-            "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.LabServices/labs"
-                + "/{labName}/virtualMachines/{virtualMachineName}/start")
-        @ExpectedResponses({200, 202})
-        @UnexpectedResponseExceptionType(ManagementException.class)
-        Mono<Response<Flux<ByteBuffer>>> start(
-            @HostParam("$host") String endpoint,
-            @QueryParam("api-version") String apiVersion,
-            @PathParam("subscriptionId") String subscriptionId,
-            @PathParam("resourceGroupName") String resourceGroupName,
-            @PathParam("labName") String labName,
-            @PathParam("virtualMachineName") String virtualMachineName,
-            @HeaderParam("Accept") String accept,
-            Context context);
-
-        @Headers({"Content-Type: application/json"})
-        @Post(
-            "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.LabServices/labs"
-                + "/{labName}/virtualMachines/{virtualMachineName}/stop")
-        @ExpectedResponses({200, 202})
-        @UnexpectedResponseExceptionType(ManagementException.class)
-        Mono<Response<Flux<ByteBuffer>>> stop(
-            @HostParam("$host") String endpoint,
-            @QueryParam("api-version") String apiVersion,
-            @PathParam("subscriptionId") String subscriptionId,
-            @PathParam("resourceGroupName") String resourceGroupName,
-            @PathParam("labName") String labName,
-            @PathParam("virtualMachineName") String virtualMachineName,
-            @HeaderParam("Accept") String accept,
-            Context context);
-
-        @Headers({"Content-Type: application/json"})
-        @Post(
-            "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.LabServices/labs"
-                + "/{labName}/virtualMachines/{virtualMachineName}/reimage")
-        @ExpectedResponses({200, 202})
-        @UnexpectedResponseExceptionType(ManagementException.class)
-        Mono<Response<Flux<ByteBuffer>>> reimage(
-            @HostParam("$host") String endpoint,
-            @QueryParam("api-version") String apiVersion,
-            @PathParam("subscriptionId") String subscriptionId,
-            @PathParam("resourceGroupName") String resourceGroupName,
-            @PathParam("labName") String labName,
-            @PathParam("virtualMachineName") String virtualMachineName,
-            @HeaderParam("Accept") String accept,
-            Context context);
-
-        @Headers({"Content-Type: application/json"})
-        @Post(
-            "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.LabServices/labs"
-                + "/{labName}/virtualMachines/{virtualMachineName}/redeploy")
-        @ExpectedResponses({200, 202})
-        @UnexpectedResponseExceptionType(ManagementException.class)
-        Mono<Response<Flux<ByteBuffer>>> redeploy(
-            @HostParam("$host") String endpoint,
-            @QueryParam("api-version") String apiVersion,
-            @PathParam("subscriptionId") String subscriptionId,
-            @PathParam("resourceGroupName") String resourceGroupName,
-            @PathParam("labName") String labName,
-            @PathParam("virtualMachineName") String virtualMachineName,
-            @HeaderParam("Accept") String accept,
-            Context context);
-
-        @Headers({"Content-Type: application/json"})
-        @Post(
-            "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.LabServices/labs"
-                + "/{labName}/virtualMachines/{virtualMachineName}/resetPassword")
-        @ExpectedResponses({200, 202})
-        @UnexpectedResponseExceptionType(ManagementException.class)
-        Mono<Response<Flux<ByteBuffer>>> resetPassword(
-            @HostParam("$host") String endpoint,
-            @QueryParam("api-version") String apiVersion,
-            @PathParam("subscriptionId") String subscriptionId,
-            @PathParam("resourceGroupName") String resourceGroupName,
-            @PathParam("labName") String labName,
-            @PathParam("virtualMachineName") String virtualMachineName,
-            @BodyParam("application/json") ResetPasswordBody body,
-            @HeaderParam("Accept") String accept,
-            Context context);
-
-        @Headers({"Content-Type: application/json"})
+        @Headers({ "Content-Type: application/json" })
         @Get("{nextLink}")
-        @ExpectedResponses({200})
+        @ExpectedResponses({ 200 })
         @UnexpectedResponseExceptionType(ManagementException.class)
         Mono<Response<PagedVirtualMachines>> listByLabNext(
-            @PathParam(value = "nextLink", encoded = true) String nextLink,
-            @HostParam("$host") String endpoint,
-            @HeaderParam("Accept") String accept,
-            Context context);
+            @PathParam(value = "nextLink", encoded = true) String nextLink, @HostParam("$host") String endpoint,
+            @HeaderParam("Accept") String accept, Context context);
     }
 
     /**
+     * Get all virtual machines for a lab.
+     * 
      * Returns a list of all virtual machines for a lab.
-     *
+     * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
-     * @param labName The name of the lab that uniquely identifies it within containing lab account. Used in resource
-     *     URIs.
+     * @param labName The name of the lab that uniquely identifies it within containing lab plan. Used in resource URIs.
      * @param filter The filter to apply to the operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
      * @return paged list of lab services virtual machines along with {@link PagedResponse} on successful completion of
-     *     {@link Mono}.
+     * {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    private Mono<PagedResponse<VirtualMachineInner>> listByLabSinglePageAsync(
-        String resourceGroupName, String labName, String filter) {
+    private Mono<PagedResponse<VirtualMachineInner>> listByLabSinglePageAsync(String resourceGroupName, String labName,
+        String filter) {
         if (this.client.getEndpoint() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getEndpoint() is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
         }
         if (this.client.getSubscriptionId() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getSubscriptionId() is required and cannot be null."));
+            return Mono.error(new IllegalArgumentException(
+                "Parameter this.client.getSubscriptionId() is required and cannot be null."));
         }
         if (resourceGroupName == null) {
             return Mono
@@ -228,58 +183,38 @@ public final class VirtualMachinesClientImpl implements VirtualMachinesClient {
         }
         final String accept = "application/json";
         return FluxUtil
-            .withContext(
-                context ->
-                    service
-                        .listByLab(
-                            this.client.getEndpoint(),
-                            this.client.getApiVersion(),
-                            this.client.getSubscriptionId(),
-                            resourceGroupName,
-                            labName,
-                            filter,
-                            accept,
-                            context))
-            .<PagedResponse<VirtualMachineInner>>map(
-                res ->
-                    new PagedResponseBase<>(
-                        res.getRequest(),
-                        res.getStatusCode(),
-                        res.getHeaders(),
-                        res.getValue().value(),
-                        res.getValue().nextLink(),
-                        null))
+            .withContext(context -> service.listByLab(this.client.getEndpoint(), this.client.getApiVersion(),
+                this.client.getSubscriptionId(), resourceGroupName, labName, filter, accept, context))
+            .<PagedResponse<VirtualMachineInner>>map(res -> new PagedResponseBase<>(res.getRequest(),
+                res.getStatusCode(), res.getHeaders(), res.getValue().value(), res.getValue().nextLink(), null))
             .contextWrite(context -> context.putAll(FluxUtil.toReactorContext(this.client.getContext()).readOnly()));
     }
 
     /**
+     * Get all virtual machines for a lab.
+     * 
      * Returns a list of all virtual machines for a lab.
-     *
+     * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
-     * @param labName The name of the lab that uniquely identifies it within containing lab account. Used in resource
-     *     URIs.
+     * @param labName The name of the lab that uniquely identifies it within containing lab plan. Used in resource URIs.
      * @param filter The filter to apply to the operation.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
      * @return paged list of lab services virtual machines along with {@link PagedResponse} on successful completion of
-     *     {@link Mono}.
+     * {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    private Mono<PagedResponse<VirtualMachineInner>> listByLabSinglePageAsync(
-        String resourceGroupName, String labName, String filter, Context context) {
+    private Mono<PagedResponse<VirtualMachineInner>> listByLabSinglePageAsync(String resourceGroupName, String labName,
+        String filter, Context context) {
         if (this.client.getEndpoint() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getEndpoint() is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
         }
         if (this.client.getSubscriptionId() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getSubscriptionId() is required and cannot be null."));
+            return Mono.error(new IllegalArgumentException(
+                "Parameter this.client.getSubscriptionId() is required and cannot be null."));
         }
         if (resourceGroupName == null) {
             return Mono
@@ -291,95 +226,82 @@ public final class VirtualMachinesClientImpl implements VirtualMachinesClient {
         final String accept = "application/json";
         context = this.client.mergeContext(context);
         return service
-            .listByLab(
-                this.client.getEndpoint(),
-                this.client.getApiVersion(),
-                this.client.getSubscriptionId(),
-                resourceGroupName,
-                labName,
-                filter,
-                accept,
-                context)
-            .map(
-                res ->
-                    new PagedResponseBase<>(
-                        res.getRequest(),
-                        res.getStatusCode(),
-                        res.getHeaders(),
-                        res.getValue().value(),
-                        res.getValue().nextLink(),
-                        null));
+            .listByLab(this.client.getEndpoint(), this.client.getApiVersion(), this.client.getSubscriptionId(),
+                resourceGroupName, labName, filter, accept, context)
+            .map(res -> new PagedResponseBase<>(res.getRequest(), res.getStatusCode(), res.getHeaders(),
+                res.getValue().value(), res.getValue().nextLink(), null));
     }
 
     /**
+     * Get all virtual machines for a lab.
+     * 
      * Returns a list of all virtual machines for a lab.
-     *
+     * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
-     * @param labName The name of the lab that uniquely identifies it within containing lab account. Used in resource
-     *     URIs.
+     * @param labName The name of the lab that uniquely identifies it within containing lab plan. Used in resource URIs.
      * @param filter The filter to apply to the operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return paged list of lab services virtual machines.
+     * @return paged list of lab services virtual machines as paginated response with {@link PagedFlux}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
     private PagedFlux<VirtualMachineInner> listByLabAsync(String resourceGroupName, String labName, String filter) {
-        return new PagedFlux<>(
-            () -> listByLabSinglePageAsync(resourceGroupName, labName, filter),
+        return new PagedFlux<>(() -> listByLabSinglePageAsync(resourceGroupName, labName, filter),
             nextLink -> listByLabNextSinglePageAsync(nextLink));
     }
 
     /**
+     * Get all virtual machines for a lab.
+     * 
      * Returns a list of all virtual machines for a lab.
-     *
+     * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
-     * @param labName The name of the lab that uniquely identifies it within containing lab account. Used in resource
-     *     URIs.
+     * @param labName The name of the lab that uniquely identifies it within containing lab plan. Used in resource URIs.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return paged list of lab services virtual machines.
+     * @return paged list of lab services virtual machines as paginated response with {@link PagedFlux}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
     private PagedFlux<VirtualMachineInner> listByLabAsync(String resourceGroupName, String labName) {
         final String filter = null;
-        return new PagedFlux<>(
-            () -> listByLabSinglePageAsync(resourceGroupName, labName, filter),
+        return new PagedFlux<>(() -> listByLabSinglePageAsync(resourceGroupName, labName, filter),
             nextLink -> listByLabNextSinglePageAsync(nextLink));
     }
 
     /**
+     * Get all virtual machines for a lab.
+     * 
      * Returns a list of all virtual machines for a lab.
-     *
+     * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
-     * @param labName The name of the lab that uniquely identifies it within containing lab account. Used in resource
-     *     URIs.
+     * @param labName The name of the lab that uniquely identifies it within containing lab plan. Used in resource URIs.
      * @param filter The filter to apply to the operation.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return paged list of lab services virtual machines.
+     * @return paged list of lab services virtual machines as paginated response with {@link PagedFlux}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
-    private PagedFlux<VirtualMachineInner> listByLabAsync(
-        String resourceGroupName, String labName, String filter, Context context) {
-        return new PagedFlux<>(
-            () -> listByLabSinglePageAsync(resourceGroupName, labName, filter, context),
+    private PagedFlux<VirtualMachineInner> listByLabAsync(String resourceGroupName, String labName, String filter,
+        Context context) {
+        return new PagedFlux<>(() -> listByLabSinglePageAsync(resourceGroupName, labName, filter, context),
             nextLink -> listByLabNextSinglePageAsync(nextLink, context));
     }
 
     /**
+     * Get all virtual machines for a lab.
+     * 
      * Returns a list of all virtual machines for a lab.
-     *
+     * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
-     * @param labName The name of the lab that uniquely identifies it within containing lab account. Used in resource
-     *     URIs.
+     * @param labName The name of the lab that uniquely identifies it within containing lab plan. Used in resource URIs.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return paged list of lab services virtual machines.
+     * @return paged list of lab services virtual machines as paginated response with {@link PagedIterable}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
     public PagedIterable<VirtualMachineInner> listByLab(String resourceGroupName, String labName) {
@@ -388,51 +310,49 @@ public final class VirtualMachinesClientImpl implements VirtualMachinesClient {
     }
 
     /**
+     * Get all virtual machines for a lab.
+     * 
      * Returns a list of all virtual machines for a lab.
-     *
+     * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
-     * @param labName The name of the lab that uniquely identifies it within containing lab account. Used in resource
-     *     URIs.
+     * @param labName The name of the lab that uniquely identifies it within containing lab plan. Used in resource URIs.
      * @param filter The filter to apply to the operation.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return paged list of lab services virtual machines.
+     * @return paged list of lab services virtual machines as paginated response with {@link PagedIterable}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
-    public PagedIterable<VirtualMachineInner> listByLab(
-        String resourceGroupName, String labName, String filter, Context context) {
+    public PagedIterable<VirtualMachineInner> listByLab(String resourceGroupName, String labName, String filter,
+        Context context) {
         return new PagedIterable<>(listByLabAsync(resourceGroupName, labName, filter, context));
     }
 
     /**
+     * Get a lab virtual machine.
+     * 
      * Returns the properties for a lab virtual machine.
-     *
+     * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
-     * @param labName The name of the lab that uniquely identifies it within containing lab account. Used in resource
-     *     URIs.
+     * @param labName The name of the lab that uniquely identifies it within containing lab plan. Used in resource URIs.
      * @param virtualMachineName The ID of the virtual machine that uniquely identifies it within the containing lab.
-     *     Used in resource URIs.
+     * Used in resource URIs.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
      * @return a lab virtual machine resource along with {@link Response} on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    private Mono<Response<VirtualMachineInner>> getWithResponseAsync(
-        String resourceGroupName, String labName, String virtualMachineName) {
+    private Mono<Response<VirtualMachineInner>> getWithResponseAsync(String resourceGroupName, String labName,
+        String virtualMachineName) {
         if (this.client.getEndpoint() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getEndpoint() is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
         }
         if (this.client.getSubscriptionId() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getSubscriptionId() is required and cannot be null."));
+            return Mono.error(new IllegalArgumentException(
+                "Parameter this.client.getSubscriptionId() is required and cannot be null."));
         }
         if (resourceGroupName == null) {
             return Mono
@@ -447,29 +367,20 @@ public final class VirtualMachinesClientImpl implements VirtualMachinesClient {
         }
         final String accept = "application/json";
         return FluxUtil
-            .withContext(
-                context ->
-                    service
-                        .get(
-                            this.client.getEndpoint(),
-                            this.client.getApiVersion(),
-                            this.client.getSubscriptionId(),
-                            resourceGroupName,
-                            labName,
-                            virtualMachineName,
-                            accept,
-                            context))
+            .withContext(context -> service.get(this.client.getEndpoint(), this.client.getApiVersion(),
+                this.client.getSubscriptionId(), resourceGroupName, labName, virtualMachineName, accept, context))
             .contextWrite(context -> context.putAll(FluxUtil.toReactorContext(this.client.getContext()).readOnly()));
     }
 
     /**
+     * Get a lab virtual machine.
+     * 
      * Returns the properties for a lab virtual machine.
-     *
+     * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
-     * @param labName The name of the lab that uniquely identifies it within containing lab account. Used in resource
-     *     URIs.
+     * @param labName The name of the lab that uniquely identifies it within containing lab plan. Used in resource URIs.
      * @param virtualMachineName The ID of the virtual machine that uniquely identifies it within the containing lab.
-     *     Used in resource URIs.
+     * Used in resource URIs.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
@@ -477,19 +388,15 @@ public final class VirtualMachinesClientImpl implements VirtualMachinesClient {
      * @return a lab virtual machine resource along with {@link Response} on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    private Mono<Response<VirtualMachineInner>> getWithResponseAsync(
-        String resourceGroupName, String labName, String virtualMachineName, Context context) {
+    private Mono<Response<VirtualMachineInner>> getWithResponseAsync(String resourceGroupName, String labName,
+        String virtualMachineName, Context context) {
         if (this.client.getEndpoint() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getEndpoint() is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
         }
         if (this.client.getSubscriptionId() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getSubscriptionId() is required and cannot be null."));
+            return Mono.error(new IllegalArgumentException(
+                "Parameter this.client.getSubscriptionId() is required and cannot be null."));
         }
         if (resourceGroupName == null) {
             return Mono
@@ -504,26 +411,19 @@ public final class VirtualMachinesClientImpl implements VirtualMachinesClient {
         }
         final String accept = "application/json";
         context = this.client.mergeContext(context);
-        return service
-            .get(
-                this.client.getEndpoint(),
-                this.client.getApiVersion(),
-                this.client.getSubscriptionId(),
-                resourceGroupName,
-                labName,
-                virtualMachineName,
-                accept,
-                context);
+        return service.get(this.client.getEndpoint(), this.client.getApiVersion(), this.client.getSubscriptionId(),
+            resourceGroupName, labName, virtualMachineName, accept, context);
     }
 
     /**
+     * Get a lab virtual machine.
+     * 
      * Returns the properties for a lab virtual machine.
-     *
+     * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
-     * @param labName The name of the lab that uniquely identifies it within containing lab account. Used in resource
-     *     URIs.
+     * @param labName The name of the lab that uniquely identifies it within containing lab plan. Used in resource URIs.
      * @param virtualMachineName The ID of the virtual machine that uniquely identifies it within the containing lab.
-     *     Used in resource URIs.
+     * Used in resource URIs.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
@@ -532,42 +432,18 @@ public final class VirtualMachinesClientImpl implements VirtualMachinesClient {
     @ServiceMethod(returns = ReturnType.SINGLE)
     private Mono<VirtualMachineInner> getAsync(String resourceGroupName, String labName, String virtualMachineName) {
         return getWithResponseAsync(resourceGroupName, labName, virtualMachineName)
-            .flatMap(
-                (Response<VirtualMachineInner> res) -> {
-                    if (res.getValue() != null) {
-                        return Mono.just(res.getValue());
-                    } else {
-                        return Mono.empty();
-                    }
-                });
+            .flatMap(res -> Mono.justOrEmpty(res.getValue()));
     }
 
     /**
+     * Get a lab virtual machine.
+     * 
      * Returns the properties for a lab virtual machine.
-     *
+     * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
-     * @param labName The name of the lab that uniquely identifies it within containing lab account. Used in resource
-     *     URIs.
+     * @param labName The name of the lab that uniquely identifies it within containing lab plan. Used in resource URIs.
      * @param virtualMachineName The ID of the virtual machine that uniquely identifies it within the containing lab.
-     *     Used in resource URIs.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return a lab virtual machine resource.
-     */
-    @ServiceMethod(returns = ReturnType.SINGLE)
-    public VirtualMachineInner get(String resourceGroupName, String labName, String virtualMachineName) {
-        return getAsync(resourceGroupName, labName, virtualMachineName).block();
-    }
-
-    /**
-     * Returns the properties for a lab virtual machine.
-     *
-     * @param resourceGroupName The name of the resource group. The name is case insensitive.
-     * @param labName The name of the lab that uniquely identifies it within containing lab account. Used in resource
-     *     URIs.
-     * @param virtualMachineName The ID of the virtual machine that uniquely identifies it within the containing lab.
-     *     Used in resource URIs.
+     * Used in resource URIs.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
@@ -575,38 +451,54 @@ public final class VirtualMachinesClientImpl implements VirtualMachinesClient {
      * @return a lab virtual machine resource along with {@link Response}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    public Response<VirtualMachineInner> getWithResponse(
-        String resourceGroupName, String labName, String virtualMachineName, Context context) {
+    public Response<VirtualMachineInner> getWithResponse(String resourceGroupName, String labName,
+        String virtualMachineName, Context context) {
         return getWithResponseAsync(resourceGroupName, labName, virtualMachineName, context).block();
     }
 
     /**
-     * Action to start a lab virtual machine.
-     *
+     * Get a lab virtual machine.
+     * 
+     * Returns the properties for a lab virtual machine.
+     * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
-     * @param labName The name of the lab that uniquely identifies it within containing lab account. Used in resource
-     *     URIs.
+     * @param labName The name of the lab that uniquely identifies it within containing lab plan. Used in resource URIs.
      * @param virtualMachineName The ID of the virtual machine that uniquely identifies it within the containing lab.
-     *     Used in resource URIs.
+     * Used in resource URIs.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return a lab virtual machine resource.
+     */
+    @ServiceMethod(returns = ReturnType.SINGLE)
+    public VirtualMachineInner get(String resourceGroupName, String labName, String virtualMachineName) {
+        return getWithResponse(resourceGroupName, labName, virtualMachineName, Context.NONE).getValue();
+    }
+
+    /**
+     * Start a lab virtual machine.
+     * 
+     * Action to start a lab virtual machine.
+     * 
+     * @param resourceGroupName The name of the resource group. The name is case insensitive.
+     * @param labName The name of the lab that uniquely identifies it within containing lab plan. Used in resource URIs.
+     * @param virtualMachineName The ID of the virtual machine that uniquely identifies it within the containing lab.
+     * Used in resource URIs.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
      * @return the {@link Response} on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    private Mono<Response<Flux<ByteBuffer>>> startWithResponseAsync(
-        String resourceGroupName, String labName, String virtualMachineName) {
+    private Mono<Response<Flux<ByteBuffer>>> startWithResponseAsync(String resourceGroupName, String labName,
+        String virtualMachineName) {
         if (this.client.getEndpoint() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getEndpoint() is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
         }
         if (this.client.getSubscriptionId() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getSubscriptionId() is required and cannot be null."));
+            return Mono.error(new IllegalArgumentException(
+                "Parameter this.client.getSubscriptionId() is required and cannot be null."));
         }
         if (resourceGroupName == null) {
             return Mono
@@ -621,29 +513,20 @@ public final class VirtualMachinesClientImpl implements VirtualMachinesClient {
         }
         final String accept = "application/json";
         return FluxUtil
-            .withContext(
-                context ->
-                    service
-                        .start(
-                            this.client.getEndpoint(),
-                            this.client.getApiVersion(),
-                            this.client.getSubscriptionId(),
-                            resourceGroupName,
-                            labName,
-                            virtualMachineName,
-                            accept,
-                            context))
+            .withContext(context -> service.start(this.client.getEndpoint(), this.client.getApiVersion(),
+                this.client.getSubscriptionId(), resourceGroupName, labName, virtualMachineName, accept, context))
             .contextWrite(context -> context.putAll(FluxUtil.toReactorContext(this.client.getContext()).readOnly()));
     }
 
     /**
+     * Start a lab virtual machine.
+     * 
      * Action to start a lab virtual machine.
-     *
+     * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
-     * @param labName The name of the lab that uniquely identifies it within containing lab account. Used in resource
-     *     URIs.
+     * @param labName The name of the lab that uniquely identifies it within containing lab plan. Used in resource URIs.
      * @param virtualMachineName The ID of the virtual machine that uniquely identifies it within the containing lab.
-     *     Used in resource URIs.
+     * Used in resource URIs.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
@@ -651,19 +534,15 @@ public final class VirtualMachinesClientImpl implements VirtualMachinesClient {
      * @return the {@link Response} on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    private Mono<Response<Flux<ByteBuffer>>> startWithResponseAsync(
-        String resourceGroupName, String labName, String virtualMachineName, Context context) {
+    private Mono<Response<Flux<ByteBuffer>>> startWithResponseAsync(String resourceGroupName, String labName,
+        String virtualMachineName, Context context) {
         if (this.client.getEndpoint() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getEndpoint() is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
         }
         if (this.client.getSubscriptionId() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getSubscriptionId() is required and cannot be null."));
+            return Mono.error(new IllegalArgumentException(
+                "Parameter this.client.getSubscriptionId() is required and cannot be null."));
         }
         if (resourceGroupName == null) {
             return Mono
@@ -678,113 +557,107 @@ public final class VirtualMachinesClientImpl implements VirtualMachinesClient {
         }
         final String accept = "application/json";
         context = this.client.mergeContext(context);
-        return service
-            .start(
-                this.client.getEndpoint(),
-                this.client.getApiVersion(),
-                this.client.getSubscriptionId(),
-                resourceGroupName,
-                labName,
-                virtualMachineName,
-                accept,
-                context);
+        return service.start(this.client.getEndpoint(), this.client.getApiVersion(), this.client.getSubscriptionId(),
+            resourceGroupName, labName, virtualMachineName, accept, context);
     }
 
     /**
+     * Start a lab virtual machine.
+     * 
      * Action to start a lab virtual machine.
-     *
+     * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
-     * @param labName The name of the lab that uniquely identifies it within containing lab account. Used in resource
-     *     URIs.
+     * @param labName The name of the lab that uniquely identifies it within containing lab plan. Used in resource URIs.
      * @param virtualMachineName The ID of the virtual machine that uniquely identifies it within the containing lab.
-     *     Used in resource URIs.
+     * Used in resource URIs.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the {@link Response} on successful completion of {@link Mono}.
+     * @return the {@link PollerFlux} for polling of long-running operation.
      */
     @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
-    private PollerFlux<PollResult<Void>, Void> beginStartAsync(
-        String resourceGroupName, String labName, String virtualMachineName) {
+    private PollerFlux<PollResult<Void>, Void> beginStartAsync(String resourceGroupName, String labName,
+        String virtualMachineName) {
         Mono<Response<Flux<ByteBuffer>>> mono = startWithResponseAsync(resourceGroupName, labName, virtualMachineName);
-        return this
-            .client
-            .<Void, Void>getLroResult(
-                mono, this.client.getHttpPipeline(), Void.class, Void.class, this.client.getContext());
+        return this.client.<Void, Void>getLroResult(mono, this.client.getHttpPipeline(), Void.class, Void.class,
+            this.client.getContext());
     }
 
     /**
+     * Start a lab virtual machine.
+     * 
      * Action to start a lab virtual machine.
-     *
+     * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
-     * @param labName The name of the lab that uniquely identifies it within containing lab account. Used in resource
-     *     URIs.
+     * @param labName The name of the lab that uniquely identifies it within containing lab plan. Used in resource URIs.
      * @param virtualMachineName The ID of the virtual machine that uniquely identifies it within the containing lab.
-     *     Used in resource URIs.
+     * Used in resource URIs.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the {@link Response} on successful completion of {@link Mono}.
+     * @return the {@link PollerFlux} for polling of long-running operation.
      */
     @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
-    private PollerFlux<PollResult<Void>, Void> beginStartAsync(
-        String resourceGroupName, String labName, String virtualMachineName, Context context) {
+    private PollerFlux<PollResult<Void>, Void> beginStartAsync(String resourceGroupName, String labName,
+        String virtualMachineName, Context context) {
         context = this.client.mergeContext(context);
-        Mono<Response<Flux<ByteBuffer>>> mono =
-            startWithResponseAsync(resourceGroupName, labName, virtualMachineName, context);
-        return this
-            .client
-            .<Void, Void>getLroResult(mono, this.client.getHttpPipeline(), Void.class, Void.class, context);
+        Mono<Response<Flux<ByteBuffer>>> mono
+            = startWithResponseAsync(resourceGroupName, labName, virtualMachineName, context);
+        return this.client.<Void, Void>getLroResult(mono, this.client.getHttpPipeline(), Void.class, Void.class,
+            context);
     }
 
     /**
+     * Start a lab virtual machine.
+     * 
      * Action to start a lab virtual machine.
-     *
+     * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
-     * @param labName The name of the lab that uniquely identifies it within containing lab account. Used in resource
-     *     URIs.
+     * @param labName The name of the lab that uniquely identifies it within containing lab plan. Used in resource URIs.
      * @param virtualMachineName The ID of the virtual machine that uniquely identifies it within the containing lab.
-     *     Used in resource URIs.
+     * Used in resource URIs.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the {@link Response} on successful completion of {@link Mono}.
+     * @return the {@link SyncPoller} for polling of long-running operation.
      */
     @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
-    public SyncPoller<PollResult<Void>, Void> beginStart(
-        String resourceGroupName, String labName, String virtualMachineName) {
-        return beginStartAsync(resourceGroupName, labName, virtualMachineName).getSyncPoller();
+    public SyncPoller<PollResult<Void>, Void> beginStart(String resourceGroupName, String labName,
+        String virtualMachineName) {
+        return this.beginStartAsync(resourceGroupName, labName, virtualMachineName).getSyncPoller();
     }
 
     /**
+     * Start a lab virtual machine.
+     * 
      * Action to start a lab virtual machine.
-     *
+     * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
-     * @param labName The name of the lab that uniquely identifies it within containing lab account. Used in resource
-     *     URIs.
+     * @param labName The name of the lab that uniquely identifies it within containing lab plan. Used in resource URIs.
      * @param virtualMachineName The ID of the virtual machine that uniquely identifies it within the containing lab.
-     *     Used in resource URIs.
+     * Used in resource URIs.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the {@link Response} on successful completion of {@link Mono}.
+     * @return the {@link SyncPoller} for polling of long-running operation.
      */
     @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
-    public SyncPoller<PollResult<Void>, Void> beginStart(
-        String resourceGroupName, String labName, String virtualMachineName, Context context) {
-        return beginStartAsync(resourceGroupName, labName, virtualMachineName, context).getSyncPoller();
+    public SyncPoller<PollResult<Void>, Void> beginStart(String resourceGroupName, String labName,
+        String virtualMachineName, Context context) {
+        return this.beginStartAsync(resourceGroupName, labName, virtualMachineName, context).getSyncPoller();
     }
 
     /**
+     * Start a lab virtual machine.
+     * 
      * Action to start a lab virtual machine.
-     *
+     * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
-     * @param labName The name of the lab that uniquely identifies it within containing lab account. Used in resource
-     *     URIs.
+     * @param labName The name of the lab that uniquely identifies it within containing lab plan. Used in resource URIs.
      * @param virtualMachineName The ID of the virtual machine that uniquely identifies it within the containing lab.
-     *     Used in resource URIs.
+     * Used in resource URIs.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
@@ -792,19 +665,19 @@ public final class VirtualMachinesClientImpl implements VirtualMachinesClient {
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
     private Mono<Void> startAsync(String resourceGroupName, String labName, String virtualMachineName) {
-        return beginStartAsync(resourceGroupName, labName, virtualMachineName)
-            .last()
+        return beginStartAsync(resourceGroupName, labName, virtualMachineName).last()
             .flatMap(this.client::getLroFinalResultOrError);
     }
 
     /**
+     * Start a lab virtual machine.
+     * 
      * Action to start a lab virtual machine.
-     *
+     * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
-     * @param labName The name of the lab that uniquely identifies it within containing lab account. Used in resource
-     *     URIs.
+     * @param labName The name of the lab that uniquely identifies it within containing lab plan. Used in resource URIs.
      * @param virtualMachineName The ID of the virtual machine that uniquely identifies it within the containing lab.
-     *     Used in resource URIs.
+     * Used in resource URIs.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
@@ -812,21 +685,21 @@ public final class VirtualMachinesClientImpl implements VirtualMachinesClient {
      * @return A {@link Mono} that completes when a successful response is received.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    private Mono<Void> startAsync(
-        String resourceGroupName, String labName, String virtualMachineName, Context context) {
-        return beginStartAsync(resourceGroupName, labName, virtualMachineName, context)
-            .last()
+    private Mono<Void> startAsync(String resourceGroupName, String labName, String virtualMachineName,
+        Context context) {
+        return beginStartAsync(resourceGroupName, labName, virtualMachineName, context).last()
             .flatMap(this.client::getLroFinalResultOrError);
     }
 
     /**
+     * Start a lab virtual machine.
+     * 
      * Action to start a lab virtual machine.
-     *
+     * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
-     * @param labName The name of the lab that uniquely identifies it within containing lab account. Used in resource
-     *     URIs.
+     * @param labName The name of the lab that uniquely identifies it within containing lab plan. Used in resource URIs.
      * @param virtualMachineName The ID of the virtual machine that uniquely identifies it within the containing lab.
-     *     Used in resource URIs.
+     * Used in resource URIs.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
@@ -837,13 +710,14 @@ public final class VirtualMachinesClientImpl implements VirtualMachinesClient {
     }
 
     /**
+     * Start a lab virtual machine.
+     * 
      * Action to start a lab virtual machine.
-     *
+     * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
-     * @param labName The name of the lab that uniquely identifies it within containing lab account. Used in resource
-     *     URIs.
+     * @param labName The name of the lab that uniquely identifies it within containing lab plan. Used in resource URIs.
      * @param virtualMachineName The ID of the virtual machine that uniquely identifies it within the containing lab.
-     *     Used in resource URIs.
+     * Used in resource URIs.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
@@ -855,32 +729,29 @@ public final class VirtualMachinesClientImpl implements VirtualMachinesClient {
     }
 
     /**
+     * Stop a lab virtual machine.
+     * 
      * Action to stop a lab virtual machine.
-     *
+     * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
-     * @param labName The name of the lab that uniquely identifies it within containing lab account. Used in resource
-     *     URIs.
+     * @param labName The name of the lab that uniquely identifies it within containing lab plan. Used in resource URIs.
      * @param virtualMachineName The ID of the virtual machine that uniquely identifies it within the containing lab.
-     *     Used in resource URIs.
+     * Used in resource URIs.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
      * @return the {@link Response} on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    private Mono<Response<Flux<ByteBuffer>>> stopWithResponseAsync(
-        String resourceGroupName, String labName, String virtualMachineName) {
+    private Mono<Response<Flux<ByteBuffer>>> stopWithResponseAsync(String resourceGroupName, String labName,
+        String virtualMachineName) {
         if (this.client.getEndpoint() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getEndpoint() is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
         }
         if (this.client.getSubscriptionId() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getSubscriptionId() is required and cannot be null."));
+            return Mono.error(new IllegalArgumentException(
+                "Parameter this.client.getSubscriptionId() is required and cannot be null."));
         }
         if (resourceGroupName == null) {
             return Mono
@@ -895,29 +766,20 @@ public final class VirtualMachinesClientImpl implements VirtualMachinesClient {
         }
         final String accept = "application/json";
         return FluxUtil
-            .withContext(
-                context ->
-                    service
-                        .stop(
-                            this.client.getEndpoint(),
-                            this.client.getApiVersion(),
-                            this.client.getSubscriptionId(),
-                            resourceGroupName,
-                            labName,
-                            virtualMachineName,
-                            accept,
-                            context))
+            .withContext(context -> service.stop(this.client.getEndpoint(), this.client.getApiVersion(),
+                this.client.getSubscriptionId(), resourceGroupName, labName, virtualMachineName, accept, context))
             .contextWrite(context -> context.putAll(FluxUtil.toReactorContext(this.client.getContext()).readOnly()));
     }
 
     /**
+     * Stop a lab virtual machine.
+     * 
      * Action to stop a lab virtual machine.
-     *
+     * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
-     * @param labName The name of the lab that uniquely identifies it within containing lab account. Used in resource
-     *     URIs.
+     * @param labName The name of the lab that uniquely identifies it within containing lab plan. Used in resource URIs.
      * @param virtualMachineName The ID of the virtual machine that uniquely identifies it within the containing lab.
-     *     Used in resource URIs.
+     * Used in resource URIs.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
@@ -925,19 +787,15 @@ public final class VirtualMachinesClientImpl implements VirtualMachinesClient {
      * @return the {@link Response} on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    private Mono<Response<Flux<ByteBuffer>>> stopWithResponseAsync(
-        String resourceGroupName, String labName, String virtualMachineName, Context context) {
+    private Mono<Response<Flux<ByteBuffer>>> stopWithResponseAsync(String resourceGroupName, String labName,
+        String virtualMachineName, Context context) {
         if (this.client.getEndpoint() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getEndpoint() is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
         }
         if (this.client.getSubscriptionId() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getSubscriptionId() is required and cannot be null."));
+            return Mono.error(new IllegalArgumentException(
+                "Parameter this.client.getSubscriptionId() is required and cannot be null."));
         }
         if (resourceGroupName == null) {
             return Mono
@@ -952,113 +810,107 @@ public final class VirtualMachinesClientImpl implements VirtualMachinesClient {
         }
         final String accept = "application/json";
         context = this.client.mergeContext(context);
-        return service
-            .stop(
-                this.client.getEndpoint(),
-                this.client.getApiVersion(),
-                this.client.getSubscriptionId(),
-                resourceGroupName,
-                labName,
-                virtualMachineName,
-                accept,
-                context);
+        return service.stop(this.client.getEndpoint(), this.client.getApiVersion(), this.client.getSubscriptionId(),
+            resourceGroupName, labName, virtualMachineName, accept, context);
     }
 
     /**
+     * Stop a lab virtual machine.
+     * 
      * Action to stop a lab virtual machine.
-     *
+     * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
-     * @param labName The name of the lab that uniquely identifies it within containing lab account. Used in resource
-     *     URIs.
+     * @param labName The name of the lab that uniquely identifies it within containing lab plan. Used in resource URIs.
      * @param virtualMachineName The ID of the virtual machine that uniquely identifies it within the containing lab.
-     *     Used in resource URIs.
+     * Used in resource URIs.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the {@link Response} on successful completion of {@link Mono}.
+     * @return the {@link PollerFlux} for polling of long-running operation.
      */
     @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
-    private PollerFlux<PollResult<Void>, Void> beginStopAsync(
-        String resourceGroupName, String labName, String virtualMachineName) {
+    private PollerFlux<PollResult<Void>, Void> beginStopAsync(String resourceGroupName, String labName,
+        String virtualMachineName) {
         Mono<Response<Flux<ByteBuffer>>> mono = stopWithResponseAsync(resourceGroupName, labName, virtualMachineName);
-        return this
-            .client
-            .<Void, Void>getLroResult(
-                mono, this.client.getHttpPipeline(), Void.class, Void.class, this.client.getContext());
+        return this.client.<Void, Void>getLroResult(mono, this.client.getHttpPipeline(), Void.class, Void.class,
+            this.client.getContext());
     }
 
     /**
+     * Stop a lab virtual machine.
+     * 
      * Action to stop a lab virtual machine.
-     *
+     * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
-     * @param labName The name of the lab that uniquely identifies it within containing lab account. Used in resource
-     *     URIs.
+     * @param labName The name of the lab that uniquely identifies it within containing lab plan. Used in resource URIs.
      * @param virtualMachineName The ID of the virtual machine that uniquely identifies it within the containing lab.
-     *     Used in resource URIs.
+     * Used in resource URIs.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the {@link Response} on successful completion of {@link Mono}.
+     * @return the {@link PollerFlux} for polling of long-running operation.
      */
     @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
-    private PollerFlux<PollResult<Void>, Void> beginStopAsync(
-        String resourceGroupName, String labName, String virtualMachineName, Context context) {
+    private PollerFlux<PollResult<Void>, Void> beginStopAsync(String resourceGroupName, String labName,
+        String virtualMachineName, Context context) {
         context = this.client.mergeContext(context);
-        Mono<Response<Flux<ByteBuffer>>> mono =
-            stopWithResponseAsync(resourceGroupName, labName, virtualMachineName, context);
-        return this
-            .client
-            .<Void, Void>getLroResult(mono, this.client.getHttpPipeline(), Void.class, Void.class, context);
+        Mono<Response<Flux<ByteBuffer>>> mono
+            = stopWithResponseAsync(resourceGroupName, labName, virtualMachineName, context);
+        return this.client.<Void, Void>getLroResult(mono, this.client.getHttpPipeline(), Void.class, Void.class,
+            context);
     }
 
     /**
+     * Stop a lab virtual machine.
+     * 
      * Action to stop a lab virtual machine.
-     *
+     * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
-     * @param labName The name of the lab that uniquely identifies it within containing lab account. Used in resource
-     *     URIs.
+     * @param labName The name of the lab that uniquely identifies it within containing lab plan. Used in resource URIs.
      * @param virtualMachineName The ID of the virtual machine that uniquely identifies it within the containing lab.
-     *     Used in resource URIs.
+     * Used in resource URIs.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the {@link Response} on successful completion of {@link Mono}.
+     * @return the {@link SyncPoller} for polling of long-running operation.
      */
     @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
-    public SyncPoller<PollResult<Void>, Void> beginStop(
-        String resourceGroupName, String labName, String virtualMachineName) {
-        return beginStopAsync(resourceGroupName, labName, virtualMachineName).getSyncPoller();
+    public SyncPoller<PollResult<Void>, Void> beginStop(String resourceGroupName, String labName,
+        String virtualMachineName) {
+        return this.beginStopAsync(resourceGroupName, labName, virtualMachineName).getSyncPoller();
     }
 
     /**
+     * Stop a lab virtual machine.
+     * 
      * Action to stop a lab virtual machine.
-     *
+     * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
-     * @param labName The name of the lab that uniquely identifies it within containing lab account. Used in resource
-     *     URIs.
+     * @param labName The name of the lab that uniquely identifies it within containing lab plan. Used in resource URIs.
      * @param virtualMachineName The ID of the virtual machine that uniquely identifies it within the containing lab.
-     *     Used in resource URIs.
+     * Used in resource URIs.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the {@link Response} on successful completion of {@link Mono}.
+     * @return the {@link SyncPoller} for polling of long-running operation.
      */
     @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
-    public SyncPoller<PollResult<Void>, Void> beginStop(
-        String resourceGroupName, String labName, String virtualMachineName, Context context) {
-        return beginStopAsync(resourceGroupName, labName, virtualMachineName, context).getSyncPoller();
+    public SyncPoller<PollResult<Void>, Void> beginStop(String resourceGroupName, String labName,
+        String virtualMachineName, Context context) {
+        return this.beginStopAsync(resourceGroupName, labName, virtualMachineName, context).getSyncPoller();
     }
 
     /**
+     * Stop a lab virtual machine.
+     * 
      * Action to stop a lab virtual machine.
-     *
+     * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
-     * @param labName The name of the lab that uniquely identifies it within containing lab account. Used in resource
-     *     URIs.
+     * @param labName The name of the lab that uniquely identifies it within containing lab plan. Used in resource URIs.
      * @param virtualMachineName The ID of the virtual machine that uniquely identifies it within the containing lab.
-     *     Used in resource URIs.
+     * Used in resource URIs.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
@@ -1066,19 +918,19 @@ public final class VirtualMachinesClientImpl implements VirtualMachinesClient {
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
     private Mono<Void> stopAsync(String resourceGroupName, String labName, String virtualMachineName) {
-        return beginStopAsync(resourceGroupName, labName, virtualMachineName)
-            .last()
+        return beginStopAsync(resourceGroupName, labName, virtualMachineName).last()
             .flatMap(this.client::getLroFinalResultOrError);
     }
 
     /**
+     * Stop a lab virtual machine.
+     * 
      * Action to stop a lab virtual machine.
-     *
+     * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
-     * @param labName The name of the lab that uniquely identifies it within containing lab account. Used in resource
-     *     URIs.
+     * @param labName The name of the lab that uniquely identifies it within containing lab plan. Used in resource URIs.
      * @param virtualMachineName The ID of the virtual machine that uniquely identifies it within the containing lab.
-     *     Used in resource URIs.
+     * Used in resource URIs.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
@@ -1087,19 +939,19 @@ public final class VirtualMachinesClientImpl implements VirtualMachinesClient {
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
     private Mono<Void> stopAsync(String resourceGroupName, String labName, String virtualMachineName, Context context) {
-        return beginStopAsync(resourceGroupName, labName, virtualMachineName, context)
-            .last()
+        return beginStopAsync(resourceGroupName, labName, virtualMachineName, context).last()
             .flatMap(this.client::getLroFinalResultOrError);
     }
 
     /**
+     * Stop a lab virtual machine.
+     * 
      * Action to stop a lab virtual machine.
-     *
+     * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
-     * @param labName The name of the lab that uniquely identifies it within containing lab account. Used in resource
-     *     URIs.
+     * @param labName The name of the lab that uniquely identifies it within containing lab plan. Used in resource URIs.
      * @param virtualMachineName The ID of the virtual machine that uniquely identifies it within the containing lab.
-     *     Used in resource URIs.
+     * Used in resource URIs.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
@@ -1110,13 +962,14 @@ public final class VirtualMachinesClientImpl implements VirtualMachinesClient {
     }
 
     /**
+     * Stop a lab virtual machine.
+     * 
      * Action to stop a lab virtual machine.
-     *
+     * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
-     * @param labName The name of the lab that uniquely identifies it within containing lab account. Used in resource
-     *     URIs.
+     * @param labName The name of the lab that uniquely identifies it within containing lab plan. Used in resource URIs.
      * @param virtualMachineName The ID of the virtual machine that uniquely identifies it within the containing lab.
-     *     Used in resource URIs.
+     * Used in resource URIs.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
@@ -1128,33 +981,30 @@ public final class VirtualMachinesClientImpl implements VirtualMachinesClient {
     }
 
     /**
+     * Re-image a lab virtual machine.
+     * 
      * Re-image a lab virtual machine. The virtual machine will be deleted and recreated using the latest published
      * snapshot of the reference environment of the lab.
-     *
+     * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
-     * @param labName The name of the lab that uniquely identifies it within containing lab account. Used in resource
-     *     URIs.
+     * @param labName The name of the lab that uniquely identifies it within containing lab plan. Used in resource URIs.
      * @param virtualMachineName The ID of the virtual machine that uniquely identifies it within the containing lab.
-     *     Used in resource URIs.
+     * Used in resource URIs.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
      * @return the {@link Response} on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    private Mono<Response<Flux<ByteBuffer>>> reimageWithResponseAsync(
-        String resourceGroupName, String labName, String virtualMachineName) {
+    private Mono<Response<Flux<ByteBuffer>>> reimageWithResponseAsync(String resourceGroupName, String labName,
+        String virtualMachineName) {
         if (this.client.getEndpoint() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getEndpoint() is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
         }
         if (this.client.getSubscriptionId() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getSubscriptionId() is required and cannot be null."));
+            return Mono.error(new IllegalArgumentException(
+                "Parameter this.client.getSubscriptionId() is required and cannot be null."));
         }
         if (resourceGroupName == null) {
             return Mono
@@ -1169,30 +1019,21 @@ public final class VirtualMachinesClientImpl implements VirtualMachinesClient {
         }
         final String accept = "application/json";
         return FluxUtil
-            .withContext(
-                context ->
-                    service
-                        .reimage(
-                            this.client.getEndpoint(),
-                            this.client.getApiVersion(),
-                            this.client.getSubscriptionId(),
-                            resourceGroupName,
-                            labName,
-                            virtualMachineName,
-                            accept,
-                            context))
+            .withContext(context -> service.reimage(this.client.getEndpoint(), this.client.getApiVersion(),
+                this.client.getSubscriptionId(), resourceGroupName, labName, virtualMachineName, accept, context))
             .contextWrite(context -> context.putAll(FluxUtil.toReactorContext(this.client.getContext()).readOnly()));
     }
 
     /**
+     * Re-image a lab virtual machine.
+     * 
      * Re-image a lab virtual machine. The virtual machine will be deleted and recreated using the latest published
      * snapshot of the reference environment of the lab.
-     *
+     * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
-     * @param labName The name of the lab that uniquely identifies it within containing lab account. Used in resource
-     *     URIs.
+     * @param labName The name of the lab that uniquely identifies it within containing lab plan. Used in resource URIs.
      * @param virtualMachineName The ID of the virtual machine that uniquely identifies it within the containing lab.
-     *     Used in resource URIs.
+     * Used in resource URIs.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
@@ -1200,19 +1041,15 @@ public final class VirtualMachinesClientImpl implements VirtualMachinesClient {
      * @return the {@link Response} on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    private Mono<Response<Flux<ByteBuffer>>> reimageWithResponseAsync(
-        String resourceGroupName, String labName, String virtualMachineName, Context context) {
+    private Mono<Response<Flux<ByteBuffer>>> reimageWithResponseAsync(String resourceGroupName, String labName,
+        String virtualMachineName, Context context) {
         if (this.client.getEndpoint() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getEndpoint() is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
         }
         if (this.client.getSubscriptionId() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getSubscriptionId() is required and cannot be null."));
+            return Mono.error(new IllegalArgumentException(
+                "Parameter this.client.getSubscriptionId() is required and cannot be null."));
         }
         if (resourceGroupName == null) {
             return Mono
@@ -1227,119 +1064,113 @@ public final class VirtualMachinesClientImpl implements VirtualMachinesClient {
         }
         final String accept = "application/json";
         context = this.client.mergeContext(context);
-        return service
-            .reimage(
-                this.client.getEndpoint(),
-                this.client.getApiVersion(),
-                this.client.getSubscriptionId(),
-                resourceGroupName,
-                labName,
-                virtualMachineName,
-                accept,
-                context);
+        return service.reimage(this.client.getEndpoint(), this.client.getApiVersion(), this.client.getSubscriptionId(),
+            resourceGroupName, labName, virtualMachineName, accept, context);
     }
 
     /**
+     * Re-image a lab virtual machine.
+     * 
      * Re-image a lab virtual machine. The virtual machine will be deleted and recreated using the latest published
      * snapshot of the reference environment of the lab.
-     *
+     * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
-     * @param labName The name of the lab that uniquely identifies it within containing lab account. Used in resource
-     *     URIs.
+     * @param labName The name of the lab that uniquely identifies it within containing lab plan. Used in resource URIs.
      * @param virtualMachineName The ID of the virtual machine that uniquely identifies it within the containing lab.
-     *     Used in resource URIs.
+     * Used in resource URIs.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the {@link Response} on successful completion of {@link Mono}.
+     * @return the {@link PollerFlux} for polling of long-running operation.
      */
     @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
-    private PollerFlux<PollResult<Void>, Void> beginReimageAsync(
-        String resourceGroupName, String labName, String virtualMachineName) {
-        Mono<Response<Flux<ByteBuffer>>> mono =
-            reimageWithResponseAsync(resourceGroupName, labName, virtualMachineName);
-        return this
-            .client
-            .<Void, Void>getLroResult(
-                mono, this.client.getHttpPipeline(), Void.class, Void.class, this.client.getContext());
+    private PollerFlux<PollResult<Void>, Void> beginReimageAsync(String resourceGroupName, String labName,
+        String virtualMachineName) {
+        Mono<Response<Flux<ByteBuffer>>> mono
+            = reimageWithResponseAsync(resourceGroupName, labName, virtualMachineName);
+        return this.client.<Void, Void>getLroResult(mono, this.client.getHttpPipeline(), Void.class, Void.class,
+            this.client.getContext());
     }
 
     /**
+     * Re-image a lab virtual machine.
+     * 
      * Re-image a lab virtual machine. The virtual machine will be deleted and recreated using the latest published
      * snapshot of the reference environment of the lab.
-     *
+     * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
-     * @param labName The name of the lab that uniquely identifies it within containing lab account. Used in resource
-     *     URIs.
+     * @param labName The name of the lab that uniquely identifies it within containing lab plan. Used in resource URIs.
      * @param virtualMachineName The ID of the virtual machine that uniquely identifies it within the containing lab.
-     *     Used in resource URIs.
+     * Used in resource URIs.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the {@link Response} on successful completion of {@link Mono}.
+     * @return the {@link PollerFlux} for polling of long-running operation.
      */
     @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
-    private PollerFlux<PollResult<Void>, Void> beginReimageAsync(
-        String resourceGroupName, String labName, String virtualMachineName, Context context) {
+    private PollerFlux<PollResult<Void>, Void> beginReimageAsync(String resourceGroupName, String labName,
+        String virtualMachineName, Context context) {
         context = this.client.mergeContext(context);
-        Mono<Response<Flux<ByteBuffer>>> mono =
-            reimageWithResponseAsync(resourceGroupName, labName, virtualMachineName, context);
-        return this
-            .client
-            .<Void, Void>getLroResult(mono, this.client.getHttpPipeline(), Void.class, Void.class, context);
+        Mono<Response<Flux<ByteBuffer>>> mono
+            = reimageWithResponseAsync(resourceGroupName, labName, virtualMachineName, context);
+        return this.client.<Void, Void>getLroResult(mono, this.client.getHttpPipeline(), Void.class, Void.class,
+            context);
     }
 
     /**
+     * Re-image a lab virtual machine.
+     * 
      * Re-image a lab virtual machine. The virtual machine will be deleted and recreated using the latest published
      * snapshot of the reference environment of the lab.
-     *
+     * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
-     * @param labName The name of the lab that uniquely identifies it within containing lab account. Used in resource
-     *     URIs.
+     * @param labName The name of the lab that uniquely identifies it within containing lab plan. Used in resource URIs.
      * @param virtualMachineName The ID of the virtual machine that uniquely identifies it within the containing lab.
-     *     Used in resource URIs.
+     * Used in resource URIs.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the {@link Response} on successful completion of {@link Mono}.
+     * @return the {@link SyncPoller} for polling of long-running operation.
      */
     @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
-    public SyncPoller<PollResult<Void>, Void> beginReimage(
-        String resourceGroupName, String labName, String virtualMachineName) {
-        return beginReimageAsync(resourceGroupName, labName, virtualMachineName).getSyncPoller();
+    public SyncPoller<PollResult<Void>, Void> beginReimage(String resourceGroupName, String labName,
+        String virtualMachineName) {
+        return this.beginReimageAsync(resourceGroupName, labName, virtualMachineName).getSyncPoller();
     }
 
     /**
+     * Re-image a lab virtual machine.
+     * 
      * Re-image a lab virtual machine. The virtual machine will be deleted and recreated using the latest published
      * snapshot of the reference environment of the lab.
-     *
+     * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
-     * @param labName The name of the lab that uniquely identifies it within containing lab account. Used in resource
-     *     URIs.
+     * @param labName The name of the lab that uniquely identifies it within containing lab plan. Used in resource URIs.
      * @param virtualMachineName The ID of the virtual machine that uniquely identifies it within the containing lab.
-     *     Used in resource URIs.
+     * Used in resource URIs.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the {@link Response} on successful completion of {@link Mono}.
+     * @return the {@link SyncPoller} for polling of long-running operation.
      */
     @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
-    public SyncPoller<PollResult<Void>, Void> beginReimage(
-        String resourceGroupName, String labName, String virtualMachineName, Context context) {
-        return beginReimageAsync(resourceGroupName, labName, virtualMachineName, context).getSyncPoller();
+    public SyncPoller<PollResult<Void>, Void> beginReimage(String resourceGroupName, String labName,
+        String virtualMachineName, Context context) {
+        return this.beginReimageAsync(resourceGroupName, labName, virtualMachineName, context).getSyncPoller();
     }
 
     /**
+     * Re-image a lab virtual machine.
+     * 
      * Re-image a lab virtual machine. The virtual machine will be deleted and recreated using the latest published
      * snapshot of the reference environment of the lab.
-     *
+     * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
-     * @param labName The name of the lab that uniquely identifies it within containing lab account. Used in resource
-     *     URIs.
+     * @param labName The name of the lab that uniquely identifies it within containing lab plan. Used in resource URIs.
      * @param virtualMachineName The ID of the virtual machine that uniquely identifies it within the containing lab.
-     *     Used in resource URIs.
+     * Used in resource URIs.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
@@ -1347,20 +1178,20 @@ public final class VirtualMachinesClientImpl implements VirtualMachinesClient {
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
     private Mono<Void> reimageAsync(String resourceGroupName, String labName, String virtualMachineName) {
-        return beginReimageAsync(resourceGroupName, labName, virtualMachineName)
-            .last()
+        return beginReimageAsync(resourceGroupName, labName, virtualMachineName).last()
             .flatMap(this.client::getLroFinalResultOrError);
     }
 
     /**
+     * Re-image a lab virtual machine.
+     * 
      * Re-image a lab virtual machine. The virtual machine will be deleted and recreated using the latest published
      * snapshot of the reference environment of the lab.
-     *
+     * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
-     * @param labName The name of the lab that uniquely identifies it within containing lab account. Used in resource
-     *     URIs.
+     * @param labName The name of the lab that uniquely identifies it within containing lab plan. Used in resource URIs.
      * @param virtualMachineName The ID of the virtual machine that uniquely identifies it within the containing lab.
-     *     Used in resource URIs.
+     * Used in resource URIs.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
@@ -1368,22 +1199,22 @@ public final class VirtualMachinesClientImpl implements VirtualMachinesClient {
      * @return A {@link Mono} that completes when a successful response is received.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    private Mono<Void> reimageAsync(
-        String resourceGroupName, String labName, String virtualMachineName, Context context) {
-        return beginReimageAsync(resourceGroupName, labName, virtualMachineName, context)
-            .last()
+    private Mono<Void> reimageAsync(String resourceGroupName, String labName, String virtualMachineName,
+        Context context) {
+        return beginReimageAsync(resourceGroupName, labName, virtualMachineName, context).last()
             .flatMap(this.client::getLroFinalResultOrError);
     }
 
     /**
+     * Re-image a lab virtual machine.
+     * 
      * Re-image a lab virtual machine. The virtual machine will be deleted and recreated using the latest published
      * snapshot of the reference environment of the lab.
-     *
+     * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
-     * @param labName The name of the lab that uniquely identifies it within containing lab account. Used in resource
-     *     URIs.
+     * @param labName The name of the lab that uniquely identifies it within containing lab plan. Used in resource URIs.
      * @param virtualMachineName The ID of the virtual machine that uniquely identifies it within the containing lab.
-     *     Used in resource URIs.
+     * Used in resource URIs.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
@@ -1394,14 +1225,15 @@ public final class VirtualMachinesClientImpl implements VirtualMachinesClient {
     }
 
     /**
+     * Re-image a lab virtual machine.
+     * 
      * Re-image a lab virtual machine. The virtual machine will be deleted and recreated using the latest published
      * snapshot of the reference environment of the lab.
-     *
+     * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
-     * @param labName The name of the lab that uniquely identifies it within containing lab account. Used in resource
-     *     URIs.
+     * @param labName The name of the lab that uniquely identifies it within containing lab plan. Used in resource URIs.
      * @param virtualMachineName The ID of the virtual machine that uniquely identifies it within the containing lab.
-     *     Used in resource URIs.
+     * Used in resource URIs.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
@@ -1413,32 +1245,29 @@ public final class VirtualMachinesClientImpl implements VirtualMachinesClient {
     }
 
     /**
+     * Redeploy a lab virtual machine to a different compute node. For troubleshooting connectivity.
+     * 
      * Action to redeploy a lab virtual machine to a different compute node. For troubleshooting connectivity.
-     *
+     * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
-     * @param labName The name of the lab that uniquely identifies it within containing lab account. Used in resource
-     *     URIs.
+     * @param labName The name of the lab that uniquely identifies it within containing lab plan. Used in resource URIs.
      * @param virtualMachineName The ID of the virtual machine that uniquely identifies it within the containing lab.
-     *     Used in resource URIs.
+     * Used in resource URIs.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
      * @return the {@link Response} on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    private Mono<Response<Flux<ByteBuffer>>> redeployWithResponseAsync(
-        String resourceGroupName, String labName, String virtualMachineName) {
+    private Mono<Response<Flux<ByteBuffer>>> redeployWithResponseAsync(String resourceGroupName, String labName,
+        String virtualMachineName) {
         if (this.client.getEndpoint() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getEndpoint() is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
         }
         if (this.client.getSubscriptionId() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getSubscriptionId() is required and cannot be null."));
+            return Mono.error(new IllegalArgumentException(
+                "Parameter this.client.getSubscriptionId() is required and cannot be null."));
         }
         if (resourceGroupName == null) {
             return Mono
@@ -1453,29 +1282,20 @@ public final class VirtualMachinesClientImpl implements VirtualMachinesClient {
         }
         final String accept = "application/json";
         return FluxUtil
-            .withContext(
-                context ->
-                    service
-                        .redeploy(
-                            this.client.getEndpoint(),
-                            this.client.getApiVersion(),
-                            this.client.getSubscriptionId(),
-                            resourceGroupName,
-                            labName,
-                            virtualMachineName,
-                            accept,
-                            context))
+            .withContext(context -> service.redeploy(this.client.getEndpoint(), this.client.getApiVersion(),
+                this.client.getSubscriptionId(), resourceGroupName, labName, virtualMachineName, accept, context))
             .contextWrite(context -> context.putAll(FluxUtil.toReactorContext(this.client.getContext()).readOnly()));
     }
 
     /**
+     * Redeploy a lab virtual machine to a different compute node. For troubleshooting connectivity.
+     * 
      * Action to redeploy a lab virtual machine to a different compute node. For troubleshooting connectivity.
-     *
+     * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
-     * @param labName The name of the lab that uniquely identifies it within containing lab account. Used in resource
-     *     URIs.
+     * @param labName The name of the lab that uniquely identifies it within containing lab plan. Used in resource URIs.
      * @param virtualMachineName The ID of the virtual machine that uniquely identifies it within the containing lab.
-     *     Used in resource URIs.
+     * Used in resource URIs.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
@@ -1483,19 +1303,15 @@ public final class VirtualMachinesClientImpl implements VirtualMachinesClient {
      * @return the {@link Response} on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    private Mono<Response<Flux<ByteBuffer>>> redeployWithResponseAsync(
-        String resourceGroupName, String labName, String virtualMachineName, Context context) {
+    private Mono<Response<Flux<ByteBuffer>>> redeployWithResponseAsync(String resourceGroupName, String labName,
+        String virtualMachineName, Context context) {
         if (this.client.getEndpoint() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getEndpoint() is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
         }
         if (this.client.getSubscriptionId() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getSubscriptionId() is required and cannot be null."));
+            return Mono.error(new IllegalArgumentException(
+                "Parameter this.client.getSubscriptionId() is required and cannot be null."));
         }
         if (resourceGroupName == null) {
             return Mono
@@ -1510,114 +1326,108 @@ public final class VirtualMachinesClientImpl implements VirtualMachinesClient {
         }
         final String accept = "application/json";
         context = this.client.mergeContext(context);
-        return service
-            .redeploy(
-                this.client.getEndpoint(),
-                this.client.getApiVersion(),
-                this.client.getSubscriptionId(),
-                resourceGroupName,
-                labName,
-                virtualMachineName,
-                accept,
-                context);
+        return service.redeploy(this.client.getEndpoint(), this.client.getApiVersion(), this.client.getSubscriptionId(),
+            resourceGroupName, labName, virtualMachineName, accept, context);
     }
 
     /**
+     * Redeploy a lab virtual machine to a different compute node. For troubleshooting connectivity.
+     * 
      * Action to redeploy a lab virtual machine to a different compute node. For troubleshooting connectivity.
-     *
+     * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
-     * @param labName The name of the lab that uniquely identifies it within containing lab account. Used in resource
-     *     URIs.
+     * @param labName The name of the lab that uniquely identifies it within containing lab plan. Used in resource URIs.
      * @param virtualMachineName The ID of the virtual machine that uniquely identifies it within the containing lab.
-     *     Used in resource URIs.
+     * Used in resource URIs.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the {@link Response} on successful completion of {@link Mono}.
+     * @return the {@link PollerFlux} for polling of long-running operation.
      */
     @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
-    private PollerFlux<PollResult<Void>, Void> beginRedeployAsync(
-        String resourceGroupName, String labName, String virtualMachineName) {
-        Mono<Response<Flux<ByteBuffer>>> mono =
-            redeployWithResponseAsync(resourceGroupName, labName, virtualMachineName);
-        return this
-            .client
-            .<Void, Void>getLroResult(
-                mono, this.client.getHttpPipeline(), Void.class, Void.class, this.client.getContext());
+    private PollerFlux<PollResult<Void>, Void> beginRedeployAsync(String resourceGroupName, String labName,
+        String virtualMachineName) {
+        Mono<Response<Flux<ByteBuffer>>> mono
+            = redeployWithResponseAsync(resourceGroupName, labName, virtualMachineName);
+        return this.client.<Void, Void>getLroResult(mono, this.client.getHttpPipeline(), Void.class, Void.class,
+            this.client.getContext());
     }
 
     /**
+     * Redeploy a lab virtual machine to a different compute node. For troubleshooting connectivity.
+     * 
      * Action to redeploy a lab virtual machine to a different compute node. For troubleshooting connectivity.
-     *
+     * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
-     * @param labName The name of the lab that uniquely identifies it within containing lab account. Used in resource
-     *     URIs.
+     * @param labName The name of the lab that uniquely identifies it within containing lab plan. Used in resource URIs.
      * @param virtualMachineName The ID of the virtual machine that uniquely identifies it within the containing lab.
-     *     Used in resource URIs.
+     * Used in resource URIs.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the {@link Response} on successful completion of {@link Mono}.
+     * @return the {@link PollerFlux} for polling of long-running operation.
      */
     @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
-    private PollerFlux<PollResult<Void>, Void> beginRedeployAsync(
-        String resourceGroupName, String labName, String virtualMachineName, Context context) {
+    private PollerFlux<PollResult<Void>, Void> beginRedeployAsync(String resourceGroupName, String labName,
+        String virtualMachineName, Context context) {
         context = this.client.mergeContext(context);
-        Mono<Response<Flux<ByteBuffer>>> mono =
-            redeployWithResponseAsync(resourceGroupName, labName, virtualMachineName, context);
-        return this
-            .client
-            .<Void, Void>getLroResult(mono, this.client.getHttpPipeline(), Void.class, Void.class, context);
+        Mono<Response<Flux<ByteBuffer>>> mono
+            = redeployWithResponseAsync(resourceGroupName, labName, virtualMachineName, context);
+        return this.client.<Void, Void>getLroResult(mono, this.client.getHttpPipeline(), Void.class, Void.class,
+            context);
     }
 
     /**
+     * Redeploy a lab virtual machine to a different compute node. For troubleshooting connectivity.
+     * 
      * Action to redeploy a lab virtual machine to a different compute node. For troubleshooting connectivity.
-     *
+     * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
-     * @param labName The name of the lab that uniquely identifies it within containing lab account. Used in resource
-     *     URIs.
+     * @param labName The name of the lab that uniquely identifies it within containing lab plan. Used in resource URIs.
      * @param virtualMachineName The ID of the virtual machine that uniquely identifies it within the containing lab.
-     *     Used in resource URIs.
+     * Used in resource URIs.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the {@link Response} on successful completion of {@link Mono}.
+     * @return the {@link SyncPoller} for polling of long-running operation.
      */
     @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
-    public SyncPoller<PollResult<Void>, Void> beginRedeploy(
-        String resourceGroupName, String labName, String virtualMachineName) {
-        return beginRedeployAsync(resourceGroupName, labName, virtualMachineName).getSyncPoller();
+    public SyncPoller<PollResult<Void>, Void> beginRedeploy(String resourceGroupName, String labName,
+        String virtualMachineName) {
+        return this.beginRedeployAsync(resourceGroupName, labName, virtualMachineName).getSyncPoller();
     }
 
     /**
+     * Redeploy a lab virtual machine to a different compute node. For troubleshooting connectivity.
+     * 
      * Action to redeploy a lab virtual machine to a different compute node. For troubleshooting connectivity.
-     *
+     * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
-     * @param labName The name of the lab that uniquely identifies it within containing lab account. Used in resource
-     *     URIs.
+     * @param labName The name of the lab that uniquely identifies it within containing lab plan. Used in resource URIs.
      * @param virtualMachineName The ID of the virtual machine that uniquely identifies it within the containing lab.
-     *     Used in resource URIs.
+     * Used in resource URIs.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the {@link Response} on successful completion of {@link Mono}.
+     * @return the {@link SyncPoller} for polling of long-running operation.
      */
     @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
-    public SyncPoller<PollResult<Void>, Void> beginRedeploy(
-        String resourceGroupName, String labName, String virtualMachineName, Context context) {
-        return beginRedeployAsync(resourceGroupName, labName, virtualMachineName, context).getSyncPoller();
+    public SyncPoller<PollResult<Void>, Void> beginRedeploy(String resourceGroupName, String labName,
+        String virtualMachineName, Context context) {
+        return this.beginRedeployAsync(resourceGroupName, labName, virtualMachineName, context).getSyncPoller();
     }
 
     /**
+     * Redeploy a lab virtual machine to a different compute node. For troubleshooting connectivity.
+     * 
      * Action to redeploy a lab virtual machine to a different compute node. For troubleshooting connectivity.
-     *
+     * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
-     * @param labName The name of the lab that uniquely identifies it within containing lab account. Used in resource
-     *     URIs.
+     * @param labName The name of the lab that uniquely identifies it within containing lab plan. Used in resource URIs.
      * @param virtualMachineName The ID of the virtual machine that uniquely identifies it within the containing lab.
-     *     Used in resource URIs.
+     * Used in resource URIs.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
@@ -1625,19 +1435,19 @@ public final class VirtualMachinesClientImpl implements VirtualMachinesClient {
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
     private Mono<Void> redeployAsync(String resourceGroupName, String labName, String virtualMachineName) {
-        return beginRedeployAsync(resourceGroupName, labName, virtualMachineName)
-            .last()
+        return beginRedeployAsync(resourceGroupName, labName, virtualMachineName).last()
             .flatMap(this.client::getLroFinalResultOrError);
     }
 
     /**
+     * Redeploy a lab virtual machine to a different compute node. For troubleshooting connectivity.
+     * 
      * Action to redeploy a lab virtual machine to a different compute node. For troubleshooting connectivity.
-     *
+     * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
-     * @param labName The name of the lab that uniquely identifies it within containing lab account. Used in resource
-     *     URIs.
+     * @param labName The name of the lab that uniquely identifies it within containing lab plan. Used in resource URIs.
      * @param virtualMachineName The ID of the virtual machine that uniquely identifies it within the containing lab.
-     *     Used in resource URIs.
+     * Used in resource URIs.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
@@ -1645,21 +1455,21 @@ public final class VirtualMachinesClientImpl implements VirtualMachinesClient {
      * @return A {@link Mono} that completes when a successful response is received.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    private Mono<Void> redeployAsync(
-        String resourceGroupName, String labName, String virtualMachineName, Context context) {
-        return beginRedeployAsync(resourceGroupName, labName, virtualMachineName, context)
-            .last()
+    private Mono<Void> redeployAsync(String resourceGroupName, String labName, String virtualMachineName,
+        Context context) {
+        return beginRedeployAsync(resourceGroupName, labName, virtualMachineName, context).last()
             .flatMap(this.client::getLroFinalResultOrError);
     }
 
     /**
+     * Redeploy a lab virtual machine to a different compute node. For troubleshooting connectivity.
+     * 
      * Action to redeploy a lab virtual machine to a different compute node. For troubleshooting connectivity.
-     *
+     * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
-     * @param labName The name of the lab that uniquely identifies it within containing lab account. Used in resource
-     *     URIs.
+     * @param labName The name of the lab that uniquely identifies it within containing lab plan. Used in resource URIs.
      * @param virtualMachineName The ID of the virtual machine that uniquely identifies it within the containing lab.
-     *     Used in resource URIs.
+     * Used in resource URIs.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
@@ -1670,13 +1480,14 @@ public final class VirtualMachinesClientImpl implements VirtualMachinesClient {
     }
 
     /**
+     * Redeploy a lab virtual machine to a different compute node. For troubleshooting connectivity.
+     * 
      * Action to redeploy a lab virtual machine to a different compute node. For troubleshooting connectivity.
-     *
+     * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
-     * @param labName The name of the lab that uniquely identifies it within containing lab account. Used in resource
-     *     URIs.
+     * @param labName The name of the lab that uniquely identifies it within containing lab plan. Used in resource URIs.
      * @param virtualMachineName The ID of the virtual machine that uniquely identifies it within the containing lab.
-     *     Used in resource URIs.
+     * Used in resource URIs.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
@@ -1688,13 +1499,14 @@ public final class VirtualMachinesClientImpl implements VirtualMachinesClient {
     }
 
     /**
+     * Reset a lab virtual machine password.
+     * 
      * Resets a lab virtual machine password.
-     *
+     * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
-     * @param labName The name of the lab that uniquely identifies it within containing lab account. Used in resource
-     *     URIs.
+     * @param labName The name of the lab that uniquely identifies it within containing lab plan. Used in resource URIs.
      * @param virtualMachineName The ID of the virtual machine that uniquely identifies it within the containing lab.
-     *     Used in resource URIs.
+     * Used in resource URIs.
      * @param body The request body.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
@@ -1702,19 +1514,15 @@ public final class VirtualMachinesClientImpl implements VirtualMachinesClient {
      * @return the {@link Response} on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    private Mono<Response<Flux<ByteBuffer>>> resetPasswordWithResponseAsync(
-        String resourceGroupName, String labName, String virtualMachineName, ResetPasswordBody body) {
+    private Mono<Response<Flux<ByteBuffer>>> resetPasswordWithResponseAsync(String resourceGroupName, String labName,
+        String virtualMachineName, ResetPasswordBody body) {
         if (this.client.getEndpoint() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getEndpoint() is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
         }
         if (this.client.getSubscriptionId() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getSubscriptionId() is required and cannot be null."));
+            return Mono.error(new IllegalArgumentException(
+                "Parameter this.client.getSubscriptionId() is required and cannot be null."));
         }
         if (resourceGroupName == null) {
             return Mono
@@ -1734,30 +1542,20 @@ public final class VirtualMachinesClientImpl implements VirtualMachinesClient {
         }
         final String accept = "application/json";
         return FluxUtil
-            .withContext(
-                context ->
-                    service
-                        .resetPassword(
-                            this.client.getEndpoint(),
-                            this.client.getApiVersion(),
-                            this.client.getSubscriptionId(),
-                            resourceGroupName,
-                            labName,
-                            virtualMachineName,
-                            body,
-                            accept,
-                            context))
+            .withContext(context -> service.resetPassword(this.client.getEndpoint(), this.client.getApiVersion(),
+                this.client.getSubscriptionId(), resourceGroupName, labName, virtualMachineName, body, accept, context))
             .contextWrite(context -> context.putAll(FluxUtil.toReactorContext(this.client.getContext()).readOnly()));
     }
 
     /**
+     * Reset a lab virtual machine password.
+     * 
      * Resets a lab virtual machine password.
-     *
+     * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
-     * @param labName The name of the lab that uniquely identifies it within containing lab account. Used in resource
-     *     URIs.
+     * @param labName The name of the lab that uniquely identifies it within containing lab plan. Used in resource URIs.
      * @param virtualMachineName The ID of the virtual machine that uniquely identifies it within the containing lab.
-     *     Used in resource URIs.
+     * Used in resource URIs.
      * @param body The request body.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
@@ -1766,19 +1564,15 @@ public final class VirtualMachinesClientImpl implements VirtualMachinesClient {
      * @return the {@link Response} on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    private Mono<Response<Flux<ByteBuffer>>> resetPasswordWithResponseAsync(
-        String resourceGroupName, String labName, String virtualMachineName, ResetPasswordBody body, Context context) {
+    private Mono<Response<Flux<ByteBuffer>>> resetPasswordWithResponseAsync(String resourceGroupName, String labName,
+        String virtualMachineName, ResetPasswordBody body, Context context) {
         if (this.client.getEndpoint() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getEndpoint() is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
         }
         if (this.client.getSubscriptionId() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getSubscriptionId() is required and cannot be null."));
+            return Mono.error(new IllegalArgumentException(
+                "Parameter this.client.getSubscriptionId() is required and cannot be null."));
         }
         if (resourceGroupName == null) {
             return Mono
@@ -1798,119 +1592,113 @@ public final class VirtualMachinesClientImpl implements VirtualMachinesClient {
         }
         final String accept = "application/json";
         context = this.client.mergeContext(context);
-        return service
-            .resetPassword(
-                this.client.getEndpoint(),
-                this.client.getApiVersion(),
-                this.client.getSubscriptionId(),
-                resourceGroupName,
-                labName,
-                virtualMachineName,
-                body,
-                accept,
-                context);
+        return service.resetPassword(this.client.getEndpoint(), this.client.getApiVersion(),
+            this.client.getSubscriptionId(), resourceGroupName, labName, virtualMachineName, body, accept, context);
     }
 
     /**
+     * Reset a lab virtual machine password.
+     * 
      * Resets a lab virtual machine password.
-     *
+     * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
-     * @param labName The name of the lab that uniquely identifies it within containing lab account. Used in resource
-     *     URIs.
+     * @param labName The name of the lab that uniquely identifies it within containing lab plan. Used in resource URIs.
      * @param virtualMachineName The ID of the virtual machine that uniquely identifies it within the containing lab.
-     *     Used in resource URIs.
+     * Used in resource URIs.
      * @param body The request body.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the {@link Response} on successful completion of {@link Mono}.
+     * @return the {@link PollerFlux} for polling of long-running operation.
      */
     @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
-    private PollerFlux<PollResult<Void>, Void> beginResetPasswordAsync(
-        String resourceGroupName, String labName, String virtualMachineName, ResetPasswordBody body) {
-        Mono<Response<Flux<ByteBuffer>>> mono =
-            resetPasswordWithResponseAsync(resourceGroupName, labName, virtualMachineName, body);
-        return this
-            .client
-            .<Void, Void>getLroResult(
-                mono, this.client.getHttpPipeline(), Void.class, Void.class, this.client.getContext());
+    private PollerFlux<PollResult<Void>, Void> beginResetPasswordAsync(String resourceGroupName, String labName,
+        String virtualMachineName, ResetPasswordBody body) {
+        Mono<Response<Flux<ByteBuffer>>> mono
+            = resetPasswordWithResponseAsync(resourceGroupName, labName, virtualMachineName, body);
+        return this.client.<Void, Void>getLroResult(mono, this.client.getHttpPipeline(), Void.class, Void.class,
+            this.client.getContext());
     }
 
     /**
+     * Reset a lab virtual machine password.
+     * 
      * Resets a lab virtual machine password.
-     *
+     * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
-     * @param labName The name of the lab that uniquely identifies it within containing lab account. Used in resource
-     *     URIs.
+     * @param labName The name of the lab that uniquely identifies it within containing lab plan. Used in resource URIs.
      * @param virtualMachineName The ID of the virtual machine that uniquely identifies it within the containing lab.
-     *     Used in resource URIs.
+     * Used in resource URIs.
      * @param body The request body.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the {@link Response} on successful completion of {@link Mono}.
+     * @return the {@link PollerFlux} for polling of long-running operation.
      */
     @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
-    private PollerFlux<PollResult<Void>, Void> beginResetPasswordAsync(
-        String resourceGroupName, String labName, String virtualMachineName, ResetPasswordBody body, Context context) {
+    private PollerFlux<PollResult<Void>, Void> beginResetPasswordAsync(String resourceGroupName, String labName,
+        String virtualMachineName, ResetPasswordBody body, Context context) {
         context = this.client.mergeContext(context);
-        Mono<Response<Flux<ByteBuffer>>> mono =
-            resetPasswordWithResponseAsync(resourceGroupName, labName, virtualMachineName, body, context);
-        return this
-            .client
-            .<Void, Void>getLroResult(mono, this.client.getHttpPipeline(), Void.class, Void.class, context);
+        Mono<Response<Flux<ByteBuffer>>> mono
+            = resetPasswordWithResponseAsync(resourceGroupName, labName, virtualMachineName, body, context);
+        return this.client.<Void, Void>getLroResult(mono, this.client.getHttpPipeline(), Void.class, Void.class,
+            context);
     }
 
     /**
+     * Reset a lab virtual machine password.
+     * 
      * Resets a lab virtual machine password.
-     *
+     * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
-     * @param labName The name of the lab that uniquely identifies it within containing lab account. Used in resource
-     *     URIs.
+     * @param labName The name of the lab that uniquely identifies it within containing lab plan. Used in resource URIs.
      * @param virtualMachineName The ID of the virtual machine that uniquely identifies it within the containing lab.
-     *     Used in resource URIs.
+     * Used in resource URIs.
      * @param body The request body.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the {@link Response} on successful completion of {@link Mono}.
+     * @return the {@link SyncPoller} for polling of long-running operation.
      */
     @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
-    public SyncPoller<PollResult<Void>, Void> beginResetPassword(
-        String resourceGroupName, String labName, String virtualMachineName, ResetPasswordBody body) {
-        return beginResetPasswordAsync(resourceGroupName, labName, virtualMachineName, body).getSyncPoller();
+    public SyncPoller<PollResult<Void>, Void> beginResetPassword(String resourceGroupName, String labName,
+        String virtualMachineName, ResetPasswordBody body) {
+        return this.beginResetPasswordAsync(resourceGroupName, labName, virtualMachineName, body).getSyncPoller();
     }
 
     /**
+     * Reset a lab virtual machine password.
+     * 
      * Resets a lab virtual machine password.
-     *
+     * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
-     * @param labName The name of the lab that uniquely identifies it within containing lab account. Used in resource
-     *     URIs.
+     * @param labName The name of the lab that uniquely identifies it within containing lab plan. Used in resource URIs.
      * @param virtualMachineName The ID of the virtual machine that uniquely identifies it within the containing lab.
-     *     Used in resource URIs.
+     * Used in resource URIs.
      * @param body The request body.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the {@link Response} on successful completion of {@link Mono}.
+     * @return the {@link SyncPoller} for polling of long-running operation.
      */
     @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
-    public SyncPoller<PollResult<Void>, Void> beginResetPassword(
-        String resourceGroupName, String labName, String virtualMachineName, ResetPasswordBody body, Context context) {
-        return beginResetPasswordAsync(resourceGroupName, labName, virtualMachineName, body, context).getSyncPoller();
+    public SyncPoller<PollResult<Void>, Void> beginResetPassword(String resourceGroupName, String labName,
+        String virtualMachineName, ResetPasswordBody body, Context context) {
+        return this.beginResetPasswordAsync(resourceGroupName, labName, virtualMachineName, body, context)
+            .getSyncPoller();
     }
 
     /**
+     * Reset a lab virtual machine password.
+     * 
      * Resets a lab virtual machine password.
-     *
+     * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
-     * @param labName The name of the lab that uniquely identifies it within containing lab account. Used in resource
-     *     URIs.
+     * @param labName The name of the lab that uniquely identifies it within containing lab plan. Used in resource URIs.
      * @param virtualMachineName The ID of the virtual machine that uniquely identifies it within the containing lab.
-     *     Used in resource URIs.
+     * Used in resource URIs.
      * @param body The request body.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
@@ -1918,21 +1706,21 @@ public final class VirtualMachinesClientImpl implements VirtualMachinesClient {
      * @return A {@link Mono} that completes when a successful response is received.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    private Mono<Void> resetPasswordAsync(
-        String resourceGroupName, String labName, String virtualMachineName, ResetPasswordBody body) {
-        return beginResetPasswordAsync(resourceGroupName, labName, virtualMachineName, body)
-            .last()
+    private Mono<Void> resetPasswordAsync(String resourceGroupName, String labName, String virtualMachineName,
+        ResetPasswordBody body) {
+        return beginResetPasswordAsync(resourceGroupName, labName, virtualMachineName, body).last()
             .flatMap(this.client::getLroFinalResultOrError);
     }
 
     /**
+     * Reset a lab virtual machine password.
+     * 
      * Resets a lab virtual machine password.
-     *
+     * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
-     * @param labName The name of the lab that uniquely identifies it within containing lab account. Used in resource
-     *     URIs.
+     * @param labName The name of the lab that uniquely identifies it within containing lab plan. Used in resource URIs.
      * @param virtualMachineName The ID of the virtual machine that uniquely identifies it within the containing lab.
-     *     Used in resource URIs.
+     * Used in resource URIs.
      * @param body The request body.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
@@ -1941,40 +1729,41 @@ public final class VirtualMachinesClientImpl implements VirtualMachinesClient {
      * @return A {@link Mono} that completes when a successful response is received.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    private Mono<Void> resetPasswordAsync(
-        String resourceGroupName, String labName, String virtualMachineName, ResetPasswordBody body, Context context) {
-        return beginResetPasswordAsync(resourceGroupName, labName, virtualMachineName, body, context)
-            .last()
+    private Mono<Void> resetPasswordAsync(String resourceGroupName, String labName, String virtualMachineName,
+        ResetPasswordBody body, Context context) {
+        return beginResetPasswordAsync(resourceGroupName, labName, virtualMachineName, body, context).last()
             .flatMap(this.client::getLroFinalResultOrError);
     }
 
     /**
+     * Reset a lab virtual machine password.
+     * 
      * Resets a lab virtual machine password.
-     *
+     * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
-     * @param labName The name of the lab that uniquely identifies it within containing lab account. Used in resource
-     *     URIs.
+     * @param labName The name of the lab that uniquely identifies it within containing lab plan. Used in resource URIs.
      * @param virtualMachineName The ID of the virtual machine that uniquely identifies it within the containing lab.
-     *     Used in resource URIs.
+     * Used in resource URIs.
      * @param body The request body.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    public void resetPassword(
-        String resourceGroupName, String labName, String virtualMachineName, ResetPasswordBody body) {
+    public void resetPassword(String resourceGroupName, String labName, String virtualMachineName,
+        ResetPasswordBody body) {
         resetPasswordAsync(resourceGroupName, labName, virtualMachineName, body).block();
     }
 
     /**
+     * Reset a lab virtual machine password.
+     * 
      * Resets a lab virtual machine password.
-     *
+     * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
-     * @param labName The name of the lab that uniquely identifies it within containing lab account. Used in resource
-     *     URIs.
+     * @param labName The name of the lab that uniquely identifies it within containing lab plan. Used in resource URIs.
      * @param virtualMachineName The ID of the virtual machine that uniquely identifies it within the containing lab.
-     *     Used in resource URIs.
+     * Used in resource URIs.
      * @param body The request body.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
@@ -1982,20 +1771,20 @@ public final class VirtualMachinesClientImpl implements VirtualMachinesClient {
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    public void resetPassword(
-        String resourceGroupName, String labName, String virtualMachineName, ResetPasswordBody body, Context context) {
+    public void resetPassword(String resourceGroupName, String labName, String virtualMachineName,
+        ResetPasswordBody body, Context context) {
         resetPasswordAsync(resourceGroupName, labName, virtualMachineName, body, context).block();
     }
 
     /**
      * Get the next page of items.
-     *
-     * @param nextLink The nextLink parameter.
+     * 
+     * @param nextLink The URL to get the next list of items.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
      * @return paged list of lab services virtual machines along with {@link PagedResponse} on successful completion of
-     *     {@link Mono}.
+     * {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
     private Mono<PagedResponse<VirtualMachineInner>> listByLabNextSinglePageAsync(String nextLink) {
@@ -2003,36 +1792,27 @@ public final class VirtualMachinesClientImpl implements VirtualMachinesClient {
             return Mono.error(new IllegalArgumentException("Parameter nextLink is required and cannot be null."));
         }
         if (this.client.getEndpoint() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getEndpoint() is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
         }
         final String accept = "application/json";
         return FluxUtil
             .withContext(context -> service.listByLabNext(nextLink, this.client.getEndpoint(), accept, context))
-            .<PagedResponse<VirtualMachineInner>>map(
-                res ->
-                    new PagedResponseBase<>(
-                        res.getRequest(),
-                        res.getStatusCode(),
-                        res.getHeaders(),
-                        res.getValue().value(),
-                        res.getValue().nextLink(),
-                        null))
+            .<PagedResponse<VirtualMachineInner>>map(res -> new PagedResponseBase<>(res.getRequest(),
+                res.getStatusCode(), res.getHeaders(), res.getValue().value(), res.getValue().nextLink(), null))
             .contextWrite(context -> context.putAll(FluxUtil.toReactorContext(this.client.getContext()).readOnly()));
     }
 
     /**
      * Get the next page of items.
-     *
-     * @param nextLink The nextLink parameter.
+     * 
+     * @param nextLink The URL to get the next list of items.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
      * @return paged list of lab services virtual machines along with {@link PagedResponse} on successful completion of
-     *     {@link Mono}.
+     * {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
     private Mono<PagedResponse<VirtualMachineInner>> listByLabNextSinglePageAsync(String nextLink, Context context) {
@@ -2040,23 +1820,13 @@ public final class VirtualMachinesClientImpl implements VirtualMachinesClient {
             return Mono.error(new IllegalArgumentException("Parameter nextLink is required and cannot be null."));
         }
         if (this.client.getEndpoint() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getEndpoint() is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
         }
         final String accept = "application/json";
         context = this.client.mergeContext(context);
-        return service
-            .listByLabNext(nextLink, this.client.getEndpoint(), accept, context)
-            .map(
-                res ->
-                    new PagedResponseBase<>(
-                        res.getRequest(),
-                        res.getStatusCode(),
-                        res.getHeaders(),
-                        res.getValue().value(),
-                        res.getValue().nextLink(),
-                        null));
+        return service.listByLabNext(nextLink, this.client.getEndpoint(), accept, context)
+            .map(res -> new PagedResponseBase<>(res.getRequest(), res.getStatusCode(), res.getHeaders(),
+                res.getValue().value(), res.getValue().nextLink(), null));
     }
 }

@@ -13,48 +13,38 @@ import com.azure.resourcemanager.synapse.fluent.models.SqlPoolConnectionPolicyIn
 import com.azure.resourcemanager.synapse.models.ConnectionPolicyName;
 import com.azure.resourcemanager.synapse.models.SqlPoolConnectionPolicies;
 import com.azure.resourcemanager.synapse.models.SqlPoolConnectionPolicy;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 public final class SqlPoolConnectionPoliciesImpl implements SqlPoolConnectionPolicies {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(SqlPoolConnectionPoliciesImpl.class);
+    private static final ClientLogger LOGGER = new ClientLogger(SqlPoolConnectionPoliciesImpl.class);
 
     private final SqlPoolConnectionPoliciesClient innerClient;
 
     private final com.azure.resourcemanager.synapse.SynapseManager serviceManager;
 
-    public SqlPoolConnectionPoliciesImpl(
-        SqlPoolConnectionPoliciesClient innerClient, com.azure.resourcemanager.synapse.SynapseManager serviceManager) {
+    public SqlPoolConnectionPoliciesImpl(SqlPoolConnectionPoliciesClient innerClient,
+        com.azure.resourcemanager.synapse.SynapseManager serviceManager) {
         this.innerClient = innerClient;
         this.serviceManager = serviceManager;
     }
 
-    public SqlPoolConnectionPolicy get(
-        String resourceGroupName, String workspaceName, String sqlPoolName, ConnectionPolicyName connectionPolicyName) {
-        SqlPoolConnectionPolicyInner inner =
-            this.serviceClient().get(resourceGroupName, workspaceName, sqlPoolName, connectionPolicyName);
+    public Response<SqlPoolConnectionPolicy> getWithResponse(String resourceGroupName, String workspaceName,
+        String sqlPoolName, ConnectionPolicyName connectionPolicyName, Context context) {
+        Response<SqlPoolConnectionPolicyInner> inner = this.serviceClient()
+            .getWithResponse(resourceGroupName, workspaceName, sqlPoolName, connectionPolicyName, context);
         if (inner != null) {
-            return new SqlPoolConnectionPolicyImpl(inner, this.manager());
+            return new SimpleResponse<>(inner.getRequest(), inner.getStatusCode(), inner.getHeaders(),
+                new SqlPoolConnectionPolicyImpl(inner.getValue(), this.manager()));
         } else {
             return null;
         }
     }
 
-    public Response<SqlPoolConnectionPolicy> getWithResponse(
-        String resourceGroupName,
-        String workspaceName,
-        String sqlPoolName,
-        ConnectionPolicyName connectionPolicyName,
-        Context context) {
-        Response<SqlPoolConnectionPolicyInner> inner =
-            this
-                .serviceClient()
-                .getWithResponse(resourceGroupName, workspaceName, sqlPoolName, connectionPolicyName, context);
+    public SqlPoolConnectionPolicy get(String resourceGroupName, String workspaceName, String sqlPoolName,
+        ConnectionPolicyName connectionPolicyName) {
+        SqlPoolConnectionPolicyInner inner
+            = this.serviceClient().get(resourceGroupName, workspaceName, sqlPoolName, connectionPolicyName);
         if (inner != null) {
-            return new SimpleResponse<>(
-                inner.getRequest(),
-                inner.getStatusCode(),
-                inner.getHeaders(),
-                new SqlPoolConnectionPolicyImpl(inner.getValue(), this.manager()));
+            return new SqlPoolConnectionPolicyImpl(inner, this.manager());
         } else {
             return null;
         }

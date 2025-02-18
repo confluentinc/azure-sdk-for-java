@@ -13,36 +13,33 @@ import com.azure.core.util.Context;
 import com.azure.resourcemanager.servicebus.fluent.models.RuleInner;
 import reactor.core.publisher.Mono;
 
-/** An instance of this class provides access to all the operations defined in RulesClient. */
+/**
+ * An instance of this class provides access to all the operations defined in RulesClient.
+ */
 public interface RulesClient {
     /**
      * List all the rules within given topic-subscription.
-     *
+     * 
      * @param resourceGroupName Name of the Resource group within the Azure subscription.
      * @param namespaceName The namespace name.
      * @param topicName The topic name.
      * @param subscriptionName The subscription name.
      * @param skip Skip is only used if a previous operation returned a partial result. If a previous response contains
-     *     a nextLink element, the value of the nextLink element will include a skip parameter that specifies a starting
-     *     point to use for subsequent calls.
+     * a nextLink element, the value of the nextLink element will include a skip parameter that specifies a starting
+     * point to use for subsequent calls.
      * @param top May be used to limit the number of results to the most recent N usageDetails.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the response of the List rule operation.
+     * @return the response of the List rule operation as paginated response with {@link PagedFlux}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
-    PagedFlux<RuleInner> listBySubscriptionsAsync(
-        String resourceGroupName,
-        String namespaceName,
-        String topicName,
-        String subscriptionName,
-        Integer skip,
-        Integer top);
+    PagedFlux<RuleInner> listBySubscriptionsAsync(String resourceGroupName, String namespaceName, String topicName,
+        String subscriptionName, Integer skip, Integer top);
 
     /**
      * List all the rules within given topic-subscription.
-     *
+     * 
      * @param resourceGroupName Name of the Resource group within the Azure subscription.
      * @param namespaceName The namespace name.
      * @param topicName The topic name.
@@ -50,15 +47,15 @@ public interface RulesClient {
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the response of the List rule operation.
+     * @return the response of the List rule operation as paginated response with {@link PagedFlux}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
-    PagedFlux<RuleInner> listBySubscriptionsAsync(
-        String resourceGroupName, String namespaceName, String topicName, String subscriptionName);
+    PagedFlux<RuleInner> listBySubscriptionsAsync(String resourceGroupName, String namespaceName, String topicName,
+        String subscriptionName);
 
     /**
      * List all the rules within given topic-subscription.
-     *
+     * 
      * @param resourceGroupName Name of the Resource group within the Azure subscription.
      * @param namespaceName The namespace name.
      * @param topicName The topic name.
@@ -66,42 +63,36 @@ public interface RulesClient {
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the response of the List rule operation.
+     * @return the response of the List rule operation as paginated response with {@link PagedIterable}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
-    PagedIterable<RuleInner> listBySubscriptions(
-        String resourceGroupName, String namespaceName, String topicName, String subscriptionName);
+    PagedIterable<RuleInner> listBySubscriptions(String resourceGroupName, String namespaceName, String topicName,
+        String subscriptionName);
 
     /**
      * List all the rules within given topic-subscription.
-     *
+     * 
      * @param resourceGroupName Name of the Resource group within the Azure subscription.
      * @param namespaceName The namespace name.
      * @param topicName The topic name.
      * @param subscriptionName The subscription name.
      * @param skip Skip is only used if a previous operation returned a partial result. If a previous response contains
-     *     a nextLink element, the value of the nextLink element will include a skip parameter that specifies a starting
-     *     point to use for subsequent calls.
+     * a nextLink element, the value of the nextLink element will include a skip parameter that specifies a starting
+     * point to use for subsequent calls.
      * @param top May be used to limit the number of results to the most recent N usageDetails.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the response of the List rule operation.
+     * @return the response of the List rule operation as paginated response with {@link PagedIterable}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
-    PagedIterable<RuleInner> listBySubscriptions(
-        String resourceGroupName,
-        String namespaceName,
-        String topicName,
-        String subscriptionName,
-        Integer skip,
-        Integer top,
-        Context context);
+    PagedIterable<RuleInner> listBySubscriptions(String resourceGroupName, String namespaceName, String topicName,
+        String subscriptionName, Integer skip, Integer top, Context context);
 
     /**
      * Creates a new rule and updates an existing rule.
-     *
+     * 
      * @param resourceGroupName Name of the Resource group within the Azure subscription.
      * @param namespaceName The namespace name.
      * @param topicName The topic name.
@@ -111,20 +102,15 @@ public interface RulesClient {
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return description of Rule Resource.
+     * @return description of Rule Resource along with {@link Response} on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    Mono<Response<RuleInner>> createOrUpdateWithResponseAsync(
-        String resourceGroupName,
-        String namespaceName,
-        String topicName,
-        String subscriptionName,
-        String ruleName,
-        RuleInner parameters);
+    Mono<Response<RuleInner>> createOrUpdateWithResponseAsync(String resourceGroupName, String namespaceName,
+        String topicName, String subscriptionName, String ruleName, RuleInner parameters);
 
     /**
      * Creates a new rule and updates an existing rule.
-     *
+     * 
      * @param resourceGroupName Name of the Resource group within the Azure subscription.
      * @param namespaceName The namespace name.
      * @param topicName The topic name.
@@ -134,43 +120,15 @@ public interface RulesClient {
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return description of Rule Resource.
+     * @return description of Rule Resource on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    Mono<RuleInner> createOrUpdateAsync(
-        String resourceGroupName,
-        String namespaceName,
-        String topicName,
-        String subscriptionName,
-        String ruleName,
-        RuleInner parameters);
+    Mono<RuleInner> createOrUpdateAsync(String resourceGroupName, String namespaceName, String topicName,
+        String subscriptionName, String ruleName, RuleInner parameters);
 
     /**
      * Creates a new rule and updates an existing rule.
-     *
-     * @param resourceGroupName Name of the Resource group within the Azure subscription.
-     * @param namespaceName The namespace name.
-     * @param topicName The topic name.
-     * @param subscriptionName The subscription name.
-     * @param ruleName The rule name.
-     * @param parameters Parameters supplied to create a rule.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return description of Rule Resource.
-     */
-    @ServiceMethod(returns = ReturnType.SINGLE)
-    RuleInner createOrUpdate(
-        String resourceGroupName,
-        String namespaceName,
-        String topicName,
-        String subscriptionName,
-        String ruleName,
-        RuleInner parameters);
-
-    /**
-     * Creates a new rule and updates an existing rule.
-     *
+     * 
      * @param resourceGroupName Name of the Resource group within the Azure subscription.
      * @param namespaceName The namespace name.
      * @param topicName The topic name.
@@ -181,21 +139,33 @@ public interface RulesClient {
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return description of Rule Resource along with {@link Response}.
+     */
+    @ServiceMethod(returns = ReturnType.SINGLE)
+    Response<RuleInner> createOrUpdateWithResponse(String resourceGroupName, String namespaceName, String topicName,
+        String subscriptionName, String ruleName, RuleInner parameters, Context context);
+
+    /**
+     * Creates a new rule and updates an existing rule.
+     * 
+     * @param resourceGroupName Name of the Resource group within the Azure subscription.
+     * @param namespaceName The namespace name.
+     * @param topicName The topic name.
+     * @param subscriptionName The subscription name.
+     * @param ruleName The rule name.
+     * @param parameters Parameters supplied to create a rule.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
      * @return description of Rule Resource.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    Response<RuleInner> createOrUpdateWithResponse(
-        String resourceGroupName,
-        String namespaceName,
-        String topicName,
-        String subscriptionName,
-        String ruleName,
-        RuleInner parameters,
-        Context context);
+    RuleInner createOrUpdate(String resourceGroupName, String namespaceName, String topicName, String subscriptionName,
+        String ruleName, RuleInner parameters);
 
     /**
      * Deletes an existing rule.
-     *
+     * 
      * @param resourceGroupName Name of the Resource group within the Azure subscription.
      * @param namespaceName The namespace name.
      * @param topicName The topic name.
@@ -204,15 +174,15 @@ public interface RulesClient {
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the completion.
+     * @return the {@link Response} on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    Mono<Response<Void>> deleteWithResponseAsync(
-        String resourceGroupName, String namespaceName, String topicName, String subscriptionName, String ruleName);
+    Mono<Response<Void>> deleteWithResponseAsync(String resourceGroupName, String namespaceName, String topicName,
+        String subscriptionName, String ruleName);
 
     /**
      * Deletes an existing rule.
-     *
+     * 
      * @param resourceGroupName Name of the Resource group within the Azure subscription.
      * @param namespaceName The namespace name.
      * @param topicName The topic name.
@@ -221,31 +191,15 @@ public interface RulesClient {
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the completion.
+     * @return A {@link Mono} that completes when a successful response is received.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    Mono<Void> deleteAsync(
-        String resourceGroupName, String namespaceName, String topicName, String subscriptionName, String ruleName);
+    Mono<Void> deleteAsync(String resourceGroupName, String namespaceName, String topicName, String subscriptionName,
+        String ruleName);
 
     /**
      * Deletes an existing rule.
-     *
-     * @param resourceGroupName Name of the Resource group within the Azure subscription.
-     * @param namespaceName The namespace name.
-     * @param topicName The topic name.
-     * @param subscriptionName The subscription name.
-     * @param ruleName The rule name.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     */
-    @ServiceMethod(returns = ReturnType.SINGLE)
-    void delete(
-        String resourceGroupName, String namespaceName, String topicName, String subscriptionName, String ruleName);
-
-    /**
-     * Deletes an existing rule.
-     *
+     * 
      * @param resourceGroupName Name of the Resource group within the Azure subscription.
      * @param namespaceName The namespace name.
      * @param topicName The topic name.
@@ -255,20 +209,15 @@ public interface RulesClient {
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the response.
+     * @return the {@link Response}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    Response<Void> deleteWithResponse(
-        String resourceGroupName,
-        String namespaceName,
-        String topicName,
-        String subscriptionName,
-        String ruleName,
-        Context context);
+    Response<Void> deleteWithResponse(String resourceGroupName, String namespaceName, String topicName,
+        String subscriptionName, String ruleName, Context context);
 
     /**
-     * Retrieves the description for the specified rule.
-     *
+     * Deletes an existing rule.
+     * 
      * @param resourceGroupName Name of the Resource group within the Azure subscription.
      * @param namespaceName The namespace name.
      * @param topicName The topic name.
@@ -277,15 +226,14 @@ public interface RulesClient {
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return description of Rule Resource.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    Mono<Response<RuleInner>> getWithResponseAsync(
-        String resourceGroupName, String namespaceName, String topicName, String subscriptionName, String ruleName);
+    void delete(String resourceGroupName, String namespaceName, String topicName, String subscriptionName,
+        String ruleName);
 
     /**
      * Retrieves the description for the specified rule.
-     *
+     * 
      * @param resourceGroupName Name of the Resource group within the Azure subscription.
      * @param namespaceName The namespace name.
      * @param topicName The topic name.
@@ -294,15 +242,15 @@ public interface RulesClient {
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return description of Rule Resource.
+     * @return description of Rule Resource along with {@link Response} on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    Mono<RuleInner> getAsync(
-        String resourceGroupName, String namespaceName, String topicName, String subscriptionName, String ruleName);
+    Mono<Response<RuleInner>> getWithResponseAsync(String resourceGroupName, String namespaceName, String topicName,
+        String subscriptionName, String ruleName);
 
     /**
      * Retrieves the description for the specified rule.
-     *
+     * 
      * @param resourceGroupName Name of the Resource group within the Azure subscription.
      * @param namespaceName The namespace name.
      * @param topicName The topic name.
@@ -311,15 +259,15 @@ public interface RulesClient {
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return description of Rule Resource.
+     * @return description of Rule Resource on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    RuleInner get(
-        String resourceGroupName, String namespaceName, String topicName, String subscriptionName, String ruleName);
+    Mono<RuleInner> getAsync(String resourceGroupName, String namespaceName, String topicName, String subscriptionName,
+        String ruleName);
 
     /**
      * Retrieves the description for the specified rule.
-     *
+     * 
      * @param resourceGroupName Name of the Resource group within the Azure subscription.
      * @param namespaceName The namespace name.
      * @param topicName The topic name.
@@ -329,14 +277,26 @@ public interface RulesClient {
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return description of Rule Resource along with {@link Response}.
+     */
+    @ServiceMethod(returns = ReturnType.SINGLE)
+    Response<RuleInner> getWithResponse(String resourceGroupName, String namespaceName, String topicName,
+        String subscriptionName, String ruleName, Context context);
+
+    /**
+     * Retrieves the description for the specified rule.
+     * 
+     * @param resourceGroupName Name of the Resource group within the Azure subscription.
+     * @param namespaceName The namespace name.
+     * @param topicName The topic name.
+     * @param subscriptionName The subscription name.
+     * @param ruleName The rule name.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
      * @return description of Rule Resource.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    Response<RuleInner> getWithResponse(
-        String resourceGroupName,
-        String namespaceName,
-        String topicName,
-        String subscriptionName,
-        String ruleName,
-        Context context);
+    RuleInner get(String resourceGroupName, String namespaceName, String topicName, String subscriptionName,
+        String ruleName);
 }

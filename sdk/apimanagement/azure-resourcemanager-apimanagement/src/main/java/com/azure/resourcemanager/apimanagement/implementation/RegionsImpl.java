@@ -11,30 +11,29 @@ import com.azure.resourcemanager.apimanagement.fluent.RegionsClient;
 import com.azure.resourcemanager.apimanagement.fluent.models.RegionContractInner;
 import com.azure.resourcemanager.apimanagement.models.RegionContract;
 import com.azure.resourcemanager.apimanagement.models.Regions;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 public final class RegionsImpl implements Regions {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(RegionsImpl.class);
+    private static final ClientLogger LOGGER = new ClientLogger(RegionsImpl.class);
 
     private final RegionsClient innerClient;
 
     private final com.azure.resourcemanager.apimanagement.ApiManagementManager serviceManager;
 
-    public RegionsImpl(
-        RegionsClient innerClient, com.azure.resourcemanager.apimanagement.ApiManagementManager serviceManager) {
+    public RegionsImpl(RegionsClient innerClient,
+        com.azure.resourcemanager.apimanagement.ApiManagementManager serviceManager) {
         this.innerClient = innerClient;
         this.serviceManager = serviceManager;
     }
 
     public PagedIterable<RegionContract> listByService(String resourceGroupName, String serviceName) {
         PagedIterable<RegionContractInner> inner = this.serviceClient().listByService(resourceGroupName, serviceName);
-        return Utils.mapPage(inner, inner1 -> new RegionContractImpl(inner1, this.manager()));
+        return ResourceManagerUtils.mapPage(inner, inner1 -> new RegionContractImpl(inner1, this.manager()));
     }
 
     public PagedIterable<RegionContract> listByService(String resourceGroupName, String serviceName, Context context) {
-        PagedIterable<RegionContractInner> inner =
-            this.serviceClient().listByService(resourceGroupName, serviceName, context);
-        return Utils.mapPage(inner, inner1 -> new RegionContractImpl(inner1, this.manager()));
+        PagedIterable<RegionContractInner> inner
+            = this.serviceClient().listByService(resourceGroupName, serviceName, context);
+        return ResourceManagerUtils.mapPage(inner, inner1 -> new RegionContractImpl(inner1, this.manager()));
     }
 
     private RegionsClient serviceClient() {

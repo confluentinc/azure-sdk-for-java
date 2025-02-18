@@ -5,48 +5,107 @@
 package com.azure.resourcemanager.automation.models;
 
 import com.azure.core.annotation.Fluent;
-import com.azure.core.annotation.JsonFlatten;
-import com.azure.core.util.logging.ClientLogger;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.azure.json.JsonReader;
+import com.azure.json.JsonSerializable;
+import com.azure.json.JsonToken;
+import com.azure.json.JsonWriter;
+import com.azure.resourcemanager.automation.fluent.models.DscNodeConfigurationAssociationProperty;
+import java.io.IOException;
 
-/** The DscNodeUpdateParametersProperties model. */
-@JsonFlatten
+/**
+ * The DscNodeUpdateParametersProperties model.
+ */
 @Fluent
-public class DscNodeUpdateParametersProperties {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(DscNodeUpdateParametersProperties.class);
-
+public final class DscNodeUpdateParametersProperties implements JsonSerializable<DscNodeUpdateParametersProperties> {
     /*
-     * Gets or sets the name of the dsc node configuration.
+     * Gets or sets the configuration of the node.
      */
-    @JsonProperty(value = "nodeConfiguration.name")
-    private String name;
+    private DscNodeConfigurationAssociationProperty innerNodeConfiguration;
+
+    /**
+     * Creates an instance of DscNodeUpdateParametersProperties class.
+     */
+    public DscNodeUpdateParametersProperties() {
+    }
+
+    /**
+     * Get the innerNodeConfiguration property: Gets or sets the configuration of the node.
+     * 
+     * @return the innerNodeConfiguration value.
+     */
+    private DscNodeConfigurationAssociationProperty innerNodeConfiguration() {
+        return this.innerNodeConfiguration;
+    }
 
     /**
      * Get the name property: Gets or sets the name of the dsc node configuration.
-     *
+     * 
      * @return the name value.
      */
     public String name() {
-        return this.name;
+        return this.innerNodeConfiguration() == null ? null : this.innerNodeConfiguration().name();
     }
 
     /**
      * Set the name property: Gets or sets the name of the dsc node configuration.
-     *
+     * 
      * @param name the name value to set.
      * @return the DscNodeUpdateParametersProperties object itself.
      */
     public DscNodeUpdateParametersProperties withName(String name) {
-        this.name = name;
+        if (this.innerNodeConfiguration() == null) {
+            this.innerNodeConfiguration = new DscNodeConfigurationAssociationProperty();
+        }
+        this.innerNodeConfiguration().withName(name);
         return this;
     }
 
     /**
      * Validates the instance.
-     *
+     * 
      * @throws IllegalArgumentException thrown if the instance is not valid.
      */
     public void validate() {
+        if (innerNodeConfiguration() != null) {
+            innerNodeConfiguration().validate();
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public JsonWriter toJson(JsonWriter jsonWriter) throws IOException {
+        jsonWriter.writeStartObject();
+        jsonWriter.writeJsonField("nodeConfiguration", this.innerNodeConfiguration);
+        return jsonWriter.writeEndObject();
+    }
+
+    /**
+     * Reads an instance of DscNodeUpdateParametersProperties from the JsonReader.
+     * 
+     * @param jsonReader The JsonReader being read.
+     * @return An instance of DscNodeUpdateParametersProperties if the JsonReader was pointing to an instance of it, or
+     * null if it was pointing to JSON null.
+     * @throws IOException If an error occurs while reading the DscNodeUpdateParametersProperties.
+     */
+    public static DscNodeUpdateParametersProperties fromJson(JsonReader jsonReader) throws IOException {
+        return jsonReader.readObject(reader -> {
+            DscNodeUpdateParametersProperties deserializedDscNodeUpdateParametersProperties
+                = new DscNodeUpdateParametersProperties();
+            while (reader.nextToken() != JsonToken.END_OBJECT) {
+                String fieldName = reader.getFieldName();
+                reader.nextToken();
+
+                if ("nodeConfiguration".equals(fieldName)) {
+                    deserializedDscNodeUpdateParametersProperties.innerNodeConfiguration
+                        = DscNodeConfigurationAssociationProperty.fromJson(reader);
+                } else {
+                    reader.skipChildren();
+                }
+            }
+
+            return deserializedDscNodeUpdateParametersProperties;
+        });
     }
 }

@@ -4,21 +4,23 @@
 
 package com.azure.resourcemanager.imagebuilder.generated;
 
-import com.azure.core.util.Context;
-
-/** Samples for VirtualMachineImageTemplates GetRunOutput. */
+/**
+ * Samples for VirtualMachineImageTemplates GetRunOutput.
+ */
 public final class VirtualMachineImageTemplatesGetRunOutputSamples {
     /*
-     * x-ms-original-file: specification/imagebuilder/resource-manager/Microsoft.VirtualMachineImages/stable/2021-10-01/examples/GetRunOutput.json
+     * x-ms-original-file:
+     * specification/imagebuilder/resource-manager/Microsoft.VirtualMachineImages/stable/2024-02-01/examples/
+     * GetRunOutput.json
      */
     /**
      * Sample code: Retrieve single runOutput.
-     *
+     * 
      * @param manager Entry point to ImageBuilderManager.
      */
     public static void retrieveSingleRunOutput(com.azure.resourcemanager.imagebuilder.ImageBuilderManager manager) {
-        manager
-            .virtualMachineImageTemplates()
-            .getRunOutputWithResponse("myResourceGroup", "myImageTemplate", "myManagedImageOutput", Context.NONE);
+        manager.virtualMachineImageTemplates()
+            .getRunOutputWithResponse("myResourceGroup", "myImageTemplate", "myManagedImageOutput",
+                com.azure.core.util.Context.NONE);
     }
 }

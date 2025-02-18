@@ -13,8 +13,7 @@ public final class DiscoveredSecuritySolutionImpl implements DiscoveredSecurityS
 
     private final com.azure.resourcemanager.security.SecurityManager serviceManager;
 
-    DiscoveredSecuritySolutionImpl(
-        DiscoveredSecuritySolutionInner innerObject,
+    DiscoveredSecuritySolutionImpl(DiscoveredSecuritySolutionInner innerObject,
         com.azure.resourcemanager.security.SecurityManager serviceManager) {
         this.innerObject = innerObject;
         this.serviceManager = serviceManager;
@@ -32,6 +31,10 @@ public final class DiscoveredSecuritySolutionImpl implements DiscoveredSecurityS
         return this.innerModel().type();
     }
 
+    public String location() {
+        return this.innerModel().location();
+    }
+
     public SecurityFamily securityFamily() {
         return this.innerModel().securityFamily();
     }
@@ -46,10 +49,6 @@ public final class DiscoveredSecuritySolutionImpl implements DiscoveredSecurityS
 
     public String sku() {
         return this.innerModel().sku();
-    }
-
-    public String location() {
-        return this.innerModel().location();
     }
 
     public DiscoveredSecuritySolutionInner innerModel() {

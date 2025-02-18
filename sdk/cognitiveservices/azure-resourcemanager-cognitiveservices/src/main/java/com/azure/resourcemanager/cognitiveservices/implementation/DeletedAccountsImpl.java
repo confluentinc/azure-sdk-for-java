@@ -13,41 +13,36 @@ import com.azure.resourcemanager.cognitiveservices.fluent.DeletedAccountsClient;
 import com.azure.resourcemanager.cognitiveservices.fluent.models.AccountInner;
 import com.azure.resourcemanager.cognitiveservices.models.Account;
 import com.azure.resourcemanager.cognitiveservices.models.DeletedAccounts;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 public final class DeletedAccountsImpl implements DeletedAccounts {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(DeletedAccountsImpl.class);
+    private static final ClientLogger LOGGER = new ClientLogger(DeletedAccountsImpl.class);
 
     private final DeletedAccountsClient innerClient;
 
     private final com.azure.resourcemanager.cognitiveservices.CognitiveServicesManager serviceManager;
 
-    public DeletedAccountsImpl(
-        DeletedAccountsClient innerClient,
+    public DeletedAccountsImpl(DeletedAccountsClient innerClient,
         com.azure.resourcemanager.cognitiveservices.CognitiveServicesManager serviceManager) {
         this.innerClient = innerClient;
         this.serviceManager = serviceManager;
+    }
+
+    public Response<Account> getWithResponse(String location, String resourceGroupName, String accountName,
+        Context context) {
+        Response<AccountInner> inner
+            = this.serviceClient().getWithResponse(location, resourceGroupName, accountName, context);
+        if (inner != null) {
+            return new SimpleResponse<>(inner.getRequest(), inner.getStatusCode(), inner.getHeaders(),
+                new AccountImpl(inner.getValue(), this.manager()));
+        } else {
+            return null;
+        }
     }
 
     public Account get(String location, String resourceGroupName, String accountName) {
         AccountInner inner = this.serviceClient().get(location, resourceGroupName, accountName);
         if (inner != null) {
             return new AccountImpl(inner, this.manager());
-        } else {
-            return null;
-        }
-    }
-
-    public Response<Account> getWithResponse(
-        String location, String resourceGroupName, String accountName, Context context) {
-        Response<AccountInner> inner =
-            this.serviceClient().getWithResponse(location, resourceGroupName, accountName, context);
-        if (inner != null) {
-            return new SimpleResponse<>(
-                inner.getRequest(),
-                inner.getStatusCode(),
-                inner.getHeaders(),
-                new AccountImpl(inner.getValue(), this.manager()));
         } else {
             return null;
         }
@@ -63,12 +58,12 @@ public final class DeletedAccountsImpl implements DeletedAccounts {
 
     public PagedIterable<Account> list() {
         PagedIterable<AccountInner> inner = this.serviceClient().list();
-        return Utils.mapPage(inner, inner1 -> new AccountImpl(inner1, this.manager()));
+        return ResourceManagerUtils.mapPage(inner, inner1 -> new AccountImpl(inner1, this.manager()));
     }
 
     public PagedIterable<Account> list(Context context) {
         PagedIterable<AccountInner> inner = this.serviceClient().list(context);
-        return Utils.mapPage(inner, inner1 -> new AccountImpl(inner1, this.manager()));
+        return ResourceManagerUtils.mapPage(inner, inner1 -> new AccountImpl(inner1, this.manager()));
     }
 
     private DeletedAccountsClient serviceClient() {

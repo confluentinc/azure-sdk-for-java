@@ -5,67 +5,65 @@
 package com.azure.resourcemanager.securityinsights.models;
 
 import com.azure.core.annotation.Immutable;
-import com.azure.core.util.logging.ClientLogger;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.azure.json.JsonReader;
+import com.azure.json.JsonSerializable;
+import com.azure.json.JsonToken;
+import com.azure.json.JsonWriter;
+import java.io.IOException;
 
-/** The geo-location context attached to the ip entity. */
+/**
+ * The geo-location context attached to the ip entity.
+ */
 @Immutable
-public final class GeoLocation {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(GeoLocation.class);
-
+public final class GeoLocation implements JsonSerializable<GeoLocation> {
     /*
      * Autonomous System Number
      */
-    @JsonProperty(value = "asn", access = JsonProperty.Access.WRITE_ONLY)
     private Integer asn;
 
     /*
      * City name
      */
-    @JsonProperty(value = "city", access = JsonProperty.Access.WRITE_ONLY)
     private String city;
 
     /*
      * The country code according to ISO 3166 format
      */
-    @JsonProperty(value = "countryCode", access = JsonProperty.Access.WRITE_ONLY)
     private String countryCode;
 
     /*
-     * Country name according to ISO 3166 Alpha 2: the lowercase of the English
-     * Short Name
+     * Country name according to ISO 3166 Alpha 2: the lowercase of the English Short Name
      */
-    @JsonProperty(value = "countryName", access = JsonProperty.Access.WRITE_ONLY)
     private String countryName;
 
     /*
-     * The longitude of the identified location, expressed as a floating point
-     * number with range of -180 to 180, with positive numbers representing
-     * East and negative numbers representing West. Latitude and longitude are
-     * derived from the city or postal code.
+     * The longitude of the identified location, expressed as a floating point number with range of -180 to 180, with
+     * positive numbers representing East and negative numbers representing West. Latitude and longitude are derived
+     * from the city or postal code.
      */
-    @JsonProperty(value = "latitude", access = JsonProperty.Access.WRITE_ONLY)
     private Double latitude;
 
     /*
-     * The latitude of the identified location, expressed as a floating point
-     * number with range of - 90 to 90, with positive numbers representing
-     * North and negative numbers representing South. Latitude and longitude
-     * are derived from the city or postal code.
+     * The latitude of the identified location, expressed as a floating point number with range of - 90 to 90, with
+     * positive numbers representing North and negative numbers representing South. Latitude and longitude are derived
+     * from the city or postal code.
      */
-    @JsonProperty(value = "longitude", access = JsonProperty.Access.WRITE_ONLY)
     private Double longitude;
 
     /*
      * State name
      */
-    @JsonProperty(value = "state", access = JsonProperty.Access.WRITE_ONLY)
     private String state;
 
     /**
+     * Creates an instance of GeoLocation class.
+     */
+    public GeoLocation() {
+    }
+
+    /**
      * Get the asn property: Autonomous System Number.
-     *
+     * 
      * @return the asn value.
      */
     public Integer asn() {
@@ -74,7 +72,7 @@ public final class GeoLocation {
 
     /**
      * Get the city property: City name.
-     *
+     * 
      * @return the city value.
      */
     public String city() {
@@ -83,7 +81,7 @@ public final class GeoLocation {
 
     /**
      * Get the countryCode property: The country code according to ISO 3166 format.
-     *
+     * 
      * @return the countryCode value.
      */
     public String countryCode() {
@@ -93,7 +91,7 @@ public final class GeoLocation {
     /**
      * Get the countryName property: Country name according to ISO 3166 Alpha 2: the lowercase of the English Short
      * Name.
-     *
+     * 
      * @return the countryName value.
      */
     public String countryName() {
@@ -104,7 +102,7 @@ public final class GeoLocation {
      * Get the latitude property: The longitude of the identified location, expressed as a floating point number with
      * range of -180 to 180, with positive numbers representing East and negative numbers representing West. Latitude
      * and longitude are derived from the city or postal code.
-     *
+     * 
      * @return the latitude value.
      */
     public Double latitude() {
@@ -115,7 +113,7 @@ public final class GeoLocation {
      * Get the longitude property: The latitude of the identified location, expressed as a floating point number with
      * range of - 90 to 90, with positive numbers representing North and negative numbers representing South. Latitude
      * and longitude are derived from the city or postal code.
-     *
+     * 
      * @return the longitude value.
      */
     public Double longitude() {
@@ -124,7 +122,7 @@ public final class GeoLocation {
 
     /**
      * Get the state property: State name.
-     *
+     * 
      * @return the state value.
      */
     public String state() {
@@ -133,9 +131,56 @@ public final class GeoLocation {
 
     /**
      * Validates the instance.
-     *
+     * 
      * @throws IllegalArgumentException thrown if the instance is not valid.
      */
     public void validate() {
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public JsonWriter toJson(JsonWriter jsonWriter) throws IOException {
+        jsonWriter.writeStartObject();
+        return jsonWriter.writeEndObject();
+    }
+
+    /**
+     * Reads an instance of GeoLocation from the JsonReader.
+     * 
+     * @param jsonReader The JsonReader being read.
+     * @return An instance of GeoLocation if the JsonReader was pointing to an instance of it, or null if it was
+     * pointing to JSON null.
+     * @throws IOException If an error occurs while reading the GeoLocation.
+     */
+    public static GeoLocation fromJson(JsonReader jsonReader) throws IOException {
+        return jsonReader.readObject(reader -> {
+            GeoLocation deserializedGeoLocation = new GeoLocation();
+            while (reader.nextToken() != JsonToken.END_OBJECT) {
+                String fieldName = reader.getFieldName();
+                reader.nextToken();
+
+                if ("asn".equals(fieldName)) {
+                    deserializedGeoLocation.asn = reader.getNullable(JsonReader::getInt);
+                } else if ("city".equals(fieldName)) {
+                    deserializedGeoLocation.city = reader.getString();
+                } else if ("countryCode".equals(fieldName)) {
+                    deserializedGeoLocation.countryCode = reader.getString();
+                } else if ("countryName".equals(fieldName)) {
+                    deserializedGeoLocation.countryName = reader.getString();
+                } else if ("latitude".equals(fieldName)) {
+                    deserializedGeoLocation.latitude = reader.getNullable(JsonReader::getDouble);
+                } else if ("longitude".equals(fieldName)) {
+                    deserializedGeoLocation.longitude = reader.getNullable(JsonReader::getDouble);
+                } else if ("state".equals(fieldName)) {
+                    deserializedGeoLocation.state = reader.getString();
+                } else {
+                    reader.skipChildren();
+                }
+            }
+
+            return deserializedGeoLocation;
+        });
     }
 }

@@ -3,9 +3,8 @@
 
 package com.azure.storage.blob.perf;
 
-import com.azure.perf.test.core.PerfStressOptions;
 import com.azure.perf.test.core.RepeatingInputStream;
-import com.azure.storage.blob.perf.core.BlobTestBase;
+import com.azure.storage.blob.perf.core.AbstractUploadTest;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -14,11 +13,11 @@ import java.nio.ByteBuffer;
 import static com.azure.perf.test.core.TestDataCreationHelper.createRandomByteBufferFlux;
 import static com.azure.perf.test.core.TestDataCreationHelper.createRandomInputStream;
 
-public class UploadBlockBlobTest extends BlobTestBase<PerfStressOptions> {
+public class UploadBlockBlobTest extends AbstractUploadTest<BlobPerfStressOptions> {
     protected final RepeatingInputStream inputStream;
     protected final Flux<ByteBuffer> byteBufferFlux;
 
-    public UploadBlockBlobTest(PerfStressOptions options) {
+    public UploadBlockBlobTest(BlobPerfStressOptions options) {
         super(options);
         inputStream = (RepeatingInputStream) createRandomInputStream(options.getSize());
         inputStream.mark(Integer.MAX_VALUE);
@@ -33,7 +32,6 @@ public class UploadBlockBlobTest extends BlobTestBase<PerfStressOptions> {
 
     @Override
     public Mono<Void> runAsync() {
-        return blockBlobAsyncClient.upload(byteBufferFlux, options.getSize(), true)
-            .then();
+        return blockBlobAsyncClient.upload(byteBufferFlux, options.getSize(), true).then();
     }
 }

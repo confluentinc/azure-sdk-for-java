@@ -4,24 +4,33 @@
 
 package com.azure.resourcemanager.batch.models;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonValue;
-
-/** Defines values for PrivateLinkServiceConnectionStatus. */
+/**
+ * The status of the Batch private endpoint connection.
+ */
 public enum PrivateLinkServiceConnectionStatus {
-    /** Enum value Approved. */
+    /**
+     * Enum value Approved.
+     */
     APPROVED("Approved"),
 
-    /** Enum value Pending. */
+    /**
+     * Enum value Pending.
+     */
     PENDING("Pending"),
 
-    /** Enum value Rejected. */
+    /**
+     * Enum value Rejected.
+     */
     REJECTED("Rejected"),
 
-    /** Enum value Disconnected. */
+    /**
+     * Enum value Disconnected.
+     */
     DISCONNECTED("Disconnected");
 
-    /** The actual serialized value for a PrivateLinkServiceConnectionStatus instance. */
+    /**
+     * The actual serialized value for a PrivateLinkServiceConnectionStatus instance.
+     */
     private final String value;
 
     PrivateLinkServiceConnectionStatus(String value) {
@@ -30,12 +39,14 @@ public enum PrivateLinkServiceConnectionStatus {
 
     /**
      * Parses a serialized value to a PrivateLinkServiceConnectionStatus instance.
-     *
+     * 
      * @param value the serialized value to parse.
      * @return the parsed PrivateLinkServiceConnectionStatus object, or null if unable to parse.
      */
-    @JsonCreator
     public static PrivateLinkServiceConnectionStatus fromString(String value) {
+        if (value == null) {
+            return null;
+        }
         PrivateLinkServiceConnectionStatus[] items = PrivateLinkServiceConnectionStatus.values();
         for (PrivateLinkServiceConnectionStatus item : items) {
             if (item.toString().equalsIgnoreCase(value)) {
@@ -45,7 +56,9 @@ public enum PrivateLinkServiceConnectionStatus {
         return null;
     }
 
-    @JsonValue
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String toString() {
         return this.value;

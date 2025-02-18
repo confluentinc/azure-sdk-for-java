@@ -13,13 +13,15 @@ import java.util.Objects;
 /**
  * A transaction delivery outcome.
  *
- * @see <a href="http://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-transactions-v1.0-os.html#type-transactional-state">Transactional
- *     state</a>
+ * @see <a href=
+ * "http://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-transactions-v1.0-os.html#type-transactional-state">Transactional
+ * state</a>
  */
 @Fluent
 public final class TransactionalDeliveryOutcome extends DeliveryOutcome {
+    private static final ClientLogger LOGGER = new ClientLogger(TransactionalDeliveryOutcome.class);
+
     private final AmqpTransaction amqpTransaction;
-    private final ClientLogger logger = new ClientLogger(TransactionalDeliveryOutcome.class);
     private DeliveryOutcome outcome;
 
     /**
@@ -63,7 +65,7 @@ public final class TransactionalDeliveryOutcome extends DeliveryOutcome {
      */
     public TransactionalDeliveryOutcome setOutcome(DeliveryOutcome outcome) {
         if (outcome instanceof TransactionalDeliveryOutcome) {
-            throw logger.logExceptionAsError(
+            throw LOGGER.logExceptionAsError(
                 new IllegalArgumentException("Cannot set the outcome as another nested transaction outcome."));
         }
 

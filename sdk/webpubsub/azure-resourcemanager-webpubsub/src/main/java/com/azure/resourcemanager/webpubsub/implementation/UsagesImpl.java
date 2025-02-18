@@ -11,10 +11,9 @@ import com.azure.resourcemanager.webpubsub.fluent.UsagesClient;
 import com.azure.resourcemanager.webpubsub.fluent.models.SignalRServiceUsageInner;
 import com.azure.resourcemanager.webpubsub.models.SignalRServiceUsage;
 import com.azure.resourcemanager.webpubsub.models.Usages;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 public final class UsagesImpl implements Usages {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(UsagesImpl.class);
+    private static final ClientLogger LOGGER = new ClientLogger(UsagesImpl.class);
 
     private final UsagesClient innerClient;
 
@@ -27,12 +26,12 @@ public final class UsagesImpl implements Usages {
 
     public PagedIterable<SignalRServiceUsage> list(String location) {
         PagedIterable<SignalRServiceUsageInner> inner = this.serviceClient().list(location);
-        return Utils.mapPage(inner, inner1 -> new SignalRServiceUsageImpl(inner1, this.manager()));
+        return ResourceManagerUtils.mapPage(inner, inner1 -> new SignalRServiceUsageImpl(inner1, this.manager()));
     }
 
     public PagedIterable<SignalRServiceUsage> list(String location, Context context) {
         PagedIterable<SignalRServiceUsageInner> inner = this.serviceClient().list(location, context);
-        return Utils.mapPage(inner, inner1 -> new SignalRServiceUsageImpl(inner1, this.manager()));
+        return ResourceManagerUtils.mapPage(inner, inner1 -> new SignalRServiceUsageImpl(inner1, this.manager()));
     }
 
     private UsagesClient serviceClient() {

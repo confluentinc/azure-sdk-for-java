@@ -31,7 +31,6 @@ import com.azure.core.management.exception.ManagementException;
 import com.azure.core.management.polling.PollResult;
 import com.azure.core.util.Context;
 import com.azure.core.util.FluxUtil;
-import com.azure.core.util.logging.ClientLogger;
 import com.azure.core.util.polling.PollerFlux;
 import com.azure.core.util.polling.SyncPoller;
 import com.azure.resourcemanager.labservices.fluent.UsersClient;
@@ -43,19 +42,23 @@ import java.nio.ByteBuffer;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-/** An instance of this class provides access to all the operations defined in UsersClient. */
+/**
+ * An instance of this class provides access to all the operations defined in UsersClient.
+ */
 public final class UsersClientImpl implements UsersClient {
-    private final ClientLogger logger = new ClientLogger(UsersClientImpl.class);
-
-    /** The proxy service used to perform REST calls. */
+    /**
+     * The proxy service used to perform REST calls.
+     */
     private final UsersService service;
 
-    /** The service client containing this operation class. */
+    /**
+     * The service client containing this operation class.
+     */
     private final LabServicesClientImpl client;
 
     /**
      * Initializes an instance of UsersClientImpl.
-     *
+     * 
      * @param client the instance of the service client containing this operation class.
      */
     UsersClientImpl(LabServicesClientImpl client) {
@@ -69,123 +72,79 @@ public final class UsersClientImpl implements UsersClient {
      */
     @Host("{$host}")
     @ServiceInterface(name = "LabServicesClientUse")
-    private interface UsersService {
-        @Headers({"Content-Type: application/json"})
-        @Get(
-            "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.LabServices/labs"
-                + "/{labName}/users")
-        @ExpectedResponses({200})
+    public interface UsersService {
+        @Headers({ "Content-Type: application/json" })
+        @Get("/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.LabServices/labs/{labName}/users")
+        @ExpectedResponses({ 200 })
         @UnexpectedResponseExceptionType(ManagementException.class)
-        Mono<Response<PagedUsers>> listByLab(
-            @HostParam("$host") String endpoint,
-            @QueryParam("api-version") String apiVersion,
-            @PathParam("subscriptionId") String subscriptionId,
-            @PathParam("resourceGroupName") String resourceGroupName,
-            @PathParam("labName") String labName,
-            @QueryParam("$filter") String filter,
-            @HeaderParam("Accept") String accept,
-            Context context);
+        Mono<Response<PagedUsers>> listByLab(@HostParam("$host") String endpoint,
+            @QueryParam("api-version") String apiVersion, @PathParam("subscriptionId") String subscriptionId,
+            @PathParam("resourceGroupName") String resourceGroupName, @PathParam("labName") String labName,
+            @QueryParam("$filter") String filter, @HeaderParam("Accept") String accept, Context context);
 
-        @Headers({"Content-Type: application/json"})
-        @Get(
-            "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.LabServices/labs"
-                + "/{labName}/users/{userName}")
-        @ExpectedResponses({200})
+        @Headers({ "Content-Type: application/json" })
+        @Get("/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.LabServices/labs/{labName}/users/{userName}")
+        @ExpectedResponses({ 200 })
         @UnexpectedResponseExceptionType(ManagementException.class)
-        Mono<Response<UserInner>> get(
-            @HostParam("$host") String endpoint,
-            @QueryParam("api-version") String apiVersion,
+        Mono<Response<UserInner>> get(@HostParam("$host") String endpoint, @QueryParam("api-version") String apiVersion,
             @PathParam("subscriptionId") String subscriptionId,
-            @PathParam("resourceGroupName") String resourceGroupName,
-            @PathParam("labName") String labName,
-            @PathParam("userName") String username,
-            @HeaderParam("Accept") String accept,
-            Context context);
+            @PathParam("resourceGroupName") String resourceGroupName, @PathParam("labName") String labName,
+            @PathParam("userName") String username, @HeaderParam("Accept") String accept, Context context);
 
-        @Headers({"Content-Type: application/json"})
-        @Put(
-            "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.LabServices/labs"
-                + "/{labName}/users/{userName}")
-        @ExpectedResponses({200, 201, 202})
+        @Headers({ "Content-Type: application/json" })
+        @Put("/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.LabServices/labs/{labName}/users/{userName}")
+        @ExpectedResponses({ 200, 201, 202 })
         @UnexpectedResponseExceptionType(ManagementException.class)
-        Mono<Response<Flux<ByteBuffer>>> createOrUpdate(
-            @HostParam("$host") String endpoint,
-            @QueryParam("api-version") String apiVersion,
-            @PathParam("subscriptionId") String subscriptionId,
-            @PathParam("resourceGroupName") String resourceGroupName,
-            @PathParam("labName") String labName,
-            @PathParam("userName") String username,
-            @BodyParam("application/json") UserInner body,
-            @HeaderParam("Accept") String accept,
-            Context context);
+        Mono<Response<Flux<ByteBuffer>>> createOrUpdate(@HostParam("$host") String endpoint,
+            @QueryParam("api-version") String apiVersion, @PathParam("subscriptionId") String subscriptionId,
+            @PathParam("resourceGroupName") String resourceGroupName, @PathParam("labName") String labName,
+            @PathParam("userName") String username, @BodyParam("application/json") UserInner body,
+            @HeaderParam("Accept") String accept, Context context);
 
-        @Headers({"Content-Type: application/json"})
-        @Patch(
-            "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.LabServices/labs"
-                + "/{labName}/users/{userName}")
-        @ExpectedResponses({200, 202})
+        @Headers({ "Content-Type: application/json" })
+        @Patch("/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.LabServices/labs/{labName}/users/{userName}")
+        @ExpectedResponses({ 200, 202 })
         @UnexpectedResponseExceptionType(ManagementException.class)
-        Mono<Response<Flux<ByteBuffer>>> update(
-            @HostParam("$host") String endpoint,
-            @QueryParam("api-version") String apiVersion,
-            @PathParam("subscriptionId") String subscriptionId,
-            @PathParam("resourceGroupName") String resourceGroupName,
-            @PathParam("labName") String labName,
-            @PathParam("userName") String username,
-            @BodyParam("application/json") UserUpdate body,
-            @HeaderParam("Accept") String accept,
-            Context context);
+        Mono<Response<Flux<ByteBuffer>>> update(@HostParam("$host") String endpoint,
+            @QueryParam("api-version") String apiVersion, @PathParam("subscriptionId") String subscriptionId,
+            @PathParam("resourceGroupName") String resourceGroupName, @PathParam("labName") String labName,
+            @PathParam("userName") String username, @BodyParam("application/json") UserUpdate body,
+            @HeaderParam("Accept") String accept, Context context);
 
-        @Headers({"Content-Type: application/json"})
-        @Delete(
-            "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.LabServices/labs"
-                + "/{labName}/users/{userName}")
-        @ExpectedResponses({200, 202, 204})
+        @Headers({ "Content-Type: application/json" })
+        @Delete("/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.LabServices/labs/{labName}/users/{userName}")
+        @ExpectedResponses({ 200, 202, 204 })
         @UnexpectedResponseExceptionType(ManagementException.class)
-        Mono<Response<Flux<ByteBuffer>>> delete(
-            @HostParam("$host") String endpoint,
-            @QueryParam("api-version") String apiVersion,
-            @PathParam("subscriptionId") String subscriptionId,
-            @PathParam("resourceGroupName") String resourceGroupName,
-            @PathParam("labName") String labName,
-            @PathParam("userName") String username,
-            @HeaderParam("Accept") String accept,
-            Context context);
+        Mono<Response<Flux<ByteBuffer>>> delete(@HostParam("$host") String endpoint,
+            @QueryParam("api-version") String apiVersion, @PathParam("subscriptionId") String subscriptionId,
+            @PathParam("resourceGroupName") String resourceGroupName, @PathParam("labName") String labName,
+            @PathParam("userName") String username, @HeaderParam("Accept") String accept, Context context);
 
-        @Headers({"Content-Type: application/json"})
-        @Post(
-            "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.LabServices/labs"
-                + "/{labName}/users/{userName}/invite")
-        @ExpectedResponses({200, 202})
+        @Headers({ "Content-Type: application/json" })
+        @Post("/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.LabServices/labs/{labName}/users/{userName}/invite")
+        @ExpectedResponses({ 200, 202 })
         @UnexpectedResponseExceptionType(ManagementException.class)
-        Mono<Response<Flux<ByteBuffer>>> invite(
-            @HostParam("$host") String endpoint,
-            @QueryParam("api-version") String apiVersion,
-            @PathParam("subscriptionId") String subscriptionId,
-            @PathParam("resourceGroupName") String resourceGroupName,
-            @PathParam("labName") String labName,
-            @PathParam("userName") String username,
-            @BodyParam("application/json") InviteBody body,
-            @HeaderParam("Accept") String accept,
-            Context context);
+        Mono<Response<Flux<ByteBuffer>>> invite(@HostParam("$host") String endpoint,
+            @QueryParam("api-version") String apiVersion, @PathParam("subscriptionId") String subscriptionId,
+            @PathParam("resourceGroupName") String resourceGroupName, @PathParam("labName") String labName,
+            @PathParam("userName") String username, @BodyParam("application/json") InviteBody body,
+            @HeaderParam("Accept") String accept, Context context);
 
-        @Headers({"Content-Type: application/json"})
+        @Headers({ "Content-Type: application/json" })
         @Get("{nextLink}")
-        @ExpectedResponses({200})
+        @ExpectedResponses({ 200 })
         @UnexpectedResponseExceptionType(ManagementException.class)
-        Mono<Response<PagedUsers>> listByLabNext(
-            @PathParam(value = "nextLink", encoded = true) String nextLink,
-            @HostParam("$host") String endpoint,
-            @HeaderParam("Accept") String accept,
-            Context context);
+        Mono<Response<PagedUsers>> listByLabNext(@PathParam(value = "nextLink", encoded = true) String nextLink,
+            @HostParam("$host") String endpoint, @HeaderParam("Accept") String accept, Context context);
     }
 
     /**
+     * Get all users for a lab.
+     * 
      * Returns a list of all users for a lab.
-     *
+     * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
-     * @param labName The name of the lab that uniquely identifies it within containing lab account. Used in resource
-     *     URIs.
+     * @param labName The name of the lab that uniquely identifies it within containing lab plan. Used in resource URIs.
      * @param filter The filter to apply to the operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
@@ -193,19 +152,15 @@ public final class UsersClientImpl implements UsersClient {
      * @return paged list of users along with {@link PagedResponse} on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    private Mono<PagedResponse<UserInner>> listByLabSinglePageAsync(
-        String resourceGroupName, String labName, String filter) {
+    private Mono<PagedResponse<UserInner>> listByLabSinglePageAsync(String resourceGroupName, String labName,
+        String filter) {
         if (this.client.getEndpoint() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getEndpoint() is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
         }
         if (this.client.getSubscriptionId() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getSubscriptionId() is required and cannot be null."));
+            return Mono.error(new IllegalArgumentException(
+                "Parameter this.client.getSubscriptionId() is required and cannot be null."));
         }
         if (resourceGroupName == null) {
             return Mono
@@ -216,36 +171,20 @@ public final class UsersClientImpl implements UsersClient {
         }
         final String accept = "application/json";
         return FluxUtil
-            .withContext(
-                context ->
-                    service
-                        .listByLab(
-                            this.client.getEndpoint(),
-                            this.client.getApiVersion(),
-                            this.client.getSubscriptionId(),
-                            resourceGroupName,
-                            labName,
-                            filter,
-                            accept,
-                            context))
-            .<PagedResponse<UserInner>>map(
-                res ->
-                    new PagedResponseBase<>(
-                        res.getRequest(),
-                        res.getStatusCode(),
-                        res.getHeaders(),
-                        res.getValue().value(),
-                        res.getValue().nextLink(),
-                        null))
+            .withContext(context -> service.listByLab(this.client.getEndpoint(), this.client.getApiVersion(),
+                this.client.getSubscriptionId(), resourceGroupName, labName, filter, accept, context))
+            .<PagedResponse<UserInner>>map(res -> new PagedResponseBase<>(res.getRequest(), res.getStatusCode(),
+                res.getHeaders(), res.getValue().value(), res.getValue().nextLink(), null))
             .contextWrite(context -> context.putAll(FluxUtil.toReactorContext(this.client.getContext()).readOnly()));
     }
 
     /**
+     * Get all users for a lab.
+     * 
      * Returns a list of all users for a lab.
-     *
+     * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
-     * @param labName The name of the lab that uniquely identifies it within containing lab account. Used in resource
-     *     URIs.
+     * @param labName The name of the lab that uniquely identifies it within containing lab plan. Used in resource URIs.
      * @param filter The filter to apply to the operation.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
@@ -254,19 +193,15 @@ public final class UsersClientImpl implements UsersClient {
      * @return paged list of users along with {@link PagedResponse} on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    private Mono<PagedResponse<UserInner>> listByLabSinglePageAsync(
-        String resourceGroupName, String labName, String filter, Context context) {
+    private Mono<PagedResponse<UserInner>> listByLabSinglePageAsync(String resourceGroupName, String labName,
+        String filter, Context context) {
         if (this.client.getEndpoint() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getEndpoint() is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
         }
         if (this.client.getSubscriptionId() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getSubscriptionId() is required and cannot be null."));
+            return Mono.error(new IllegalArgumentException(
+                "Parameter this.client.getSubscriptionId() is required and cannot be null."));
         }
         if (resourceGroupName == null) {
             return Mono
@@ -278,95 +213,82 @@ public final class UsersClientImpl implements UsersClient {
         final String accept = "application/json";
         context = this.client.mergeContext(context);
         return service
-            .listByLab(
-                this.client.getEndpoint(),
-                this.client.getApiVersion(),
-                this.client.getSubscriptionId(),
-                resourceGroupName,
-                labName,
-                filter,
-                accept,
-                context)
-            .map(
-                res ->
-                    new PagedResponseBase<>(
-                        res.getRequest(),
-                        res.getStatusCode(),
-                        res.getHeaders(),
-                        res.getValue().value(),
-                        res.getValue().nextLink(),
-                        null));
+            .listByLab(this.client.getEndpoint(), this.client.getApiVersion(), this.client.getSubscriptionId(),
+                resourceGroupName, labName, filter, accept, context)
+            .map(res -> new PagedResponseBase<>(res.getRequest(), res.getStatusCode(), res.getHeaders(),
+                res.getValue().value(), res.getValue().nextLink(), null));
     }
 
     /**
+     * Get all users for a lab.
+     * 
      * Returns a list of all users for a lab.
-     *
+     * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
-     * @param labName The name of the lab that uniquely identifies it within containing lab account. Used in resource
-     *     URIs.
+     * @param labName The name of the lab that uniquely identifies it within containing lab plan. Used in resource URIs.
      * @param filter The filter to apply to the operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return paged list of users.
+     * @return paged list of users as paginated response with {@link PagedFlux}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
     private PagedFlux<UserInner> listByLabAsync(String resourceGroupName, String labName, String filter) {
-        return new PagedFlux<>(
-            () -> listByLabSinglePageAsync(resourceGroupName, labName, filter),
+        return new PagedFlux<>(() -> listByLabSinglePageAsync(resourceGroupName, labName, filter),
             nextLink -> listByLabNextSinglePageAsync(nextLink));
     }
 
     /**
+     * Get all users for a lab.
+     * 
      * Returns a list of all users for a lab.
-     *
+     * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
-     * @param labName The name of the lab that uniquely identifies it within containing lab account. Used in resource
-     *     URIs.
+     * @param labName The name of the lab that uniquely identifies it within containing lab plan. Used in resource URIs.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return paged list of users.
+     * @return paged list of users as paginated response with {@link PagedFlux}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
     private PagedFlux<UserInner> listByLabAsync(String resourceGroupName, String labName) {
         final String filter = null;
-        return new PagedFlux<>(
-            () -> listByLabSinglePageAsync(resourceGroupName, labName, filter),
+        return new PagedFlux<>(() -> listByLabSinglePageAsync(resourceGroupName, labName, filter),
             nextLink -> listByLabNextSinglePageAsync(nextLink));
     }
 
     /**
+     * Get all users for a lab.
+     * 
      * Returns a list of all users for a lab.
-     *
+     * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
-     * @param labName The name of the lab that uniquely identifies it within containing lab account. Used in resource
-     *     URIs.
+     * @param labName The name of the lab that uniquely identifies it within containing lab plan. Used in resource URIs.
      * @param filter The filter to apply to the operation.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return paged list of users.
+     * @return paged list of users as paginated response with {@link PagedFlux}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
-    private PagedFlux<UserInner> listByLabAsync(
-        String resourceGroupName, String labName, String filter, Context context) {
-        return new PagedFlux<>(
-            () -> listByLabSinglePageAsync(resourceGroupName, labName, filter, context),
+    private PagedFlux<UserInner> listByLabAsync(String resourceGroupName, String labName, String filter,
+        Context context) {
+        return new PagedFlux<>(() -> listByLabSinglePageAsync(resourceGroupName, labName, filter, context),
             nextLink -> listByLabNextSinglePageAsync(nextLink, context));
     }
 
     /**
+     * Get all users for a lab.
+     * 
      * Returns a list of all users for a lab.
-     *
+     * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
-     * @param labName The name of the lab that uniquely identifies it within containing lab account. Used in resource
-     *     URIs.
+     * @param labName The name of the lab that uniquely identifies it within containing lab plan. Used in resource URIs.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return paged list of users.
+     * @return paged list of users as paginated response with {@link PagedIterable}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
     public PagedIterable<UserInner> listByLab(String resourceGroupName, String labName) {
@@ -375,50 +297,48 @@ public final class UsersClientImpl implements UsersClient {
     }
 
     /**
+     * Get all users for a lab.
+     * 
      * Returns a list of all users for a lab.
-     *
+     * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
-     * @param labName The name of the lab that uniquely identifies it within containing lab account. Used in resource
-     *     URIs.
+     * @param labName The name of the lab that uniquely identifies it within containing lab plan. Used in resource URIs.
      * @param filter The filter to apply to the operation.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return paged list of users.
+     * @return paged list of users as paginated response with {@link PagedIterable}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
-    public PagedIterable<UserInner> listByLab(
-        String resourceGroupName, String labName, String filter, Context context) {
+    public PagedIterable<UserInner> listByLab(String resourceGroupName, String labName, String filter,
+        Context context) {
         return new PagedIterable<>(listByLabAsync(resourceGroupName, labName, filter, context));
     }
 
     /**
+     * Get a lab user.
+     * 
      * Returns the properties of a lab user.
-     *
+     * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
-     * @param labName The name of the lab that uniquely identifies it within containing lab account. Used in resource
-     *     URIs.
+     * @param labName The name of the lab that uniquely identifies it within containing lab plan. Used in resource URIs.
      * @param username The name of the user that uniquely identifies it within containing lab. Used in resource URIs.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
      * @return user of a lab that can register for and use virtual machines within the lab along with {@link Response}
-     *     on successful completion of {@link Mono}.
+     * on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
     private Mono<Response<UserInner>> getWithResponseAsync(String resourceGroupName, String labName, String username) {
         if (this.client.getEndpoint() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getEndpoint() is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
         }
         if (this.client.getSubscriptionId() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getSubscriptionId() is required and cannot be null."));
+            return Mono.error(new IllegalArgumentException(
+                "Parameter this.client.getSubscriptionId() is required and cannot be null."));
         }
         if (resourceGroupName == null) {
             return Mono
@@ -432,49 +352,36 @@ public final class UsersClientImpl implements UsersClient {
         }
         final String accept = "application/json";
         return FluxUtil
-            .withContext(
-                context ->
-                    service
-                        .get(
-                            this.client.getEndpoint(),
-                            this.client.getApiVersion(),
-                            this.client.getSubscriptionId(),
-                            resourceGroupName,
-                            labName,
-                            username,
-                            accept,
-                            context))
+            .withContext(context -> service.get(this.client.getEndpoint(), this.client.getApiVersion(),
+                this.client.getSubscriptionId(), resourceGroupName, labName, username, accept, context))
             .contextWrite(context -> context.putAll(FluxUtil.toReactorContext(this.client.getContext()).readOnly()));
     }
 
     /**
+     * Get a lab user.
+     * 
      * Returns the properties of a lab user.
-     *
+     * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
-     * @param labName The name of the lab that uniquely identifies it within containing lab account. Used in resource
-     *     URIs.
+     * @param labName The name of the lab that uniquely identifies it within containing lab plan. Used in resource URIs.
      * @param username The name of the user that uniquely identifies it within containing lab. Used in resource URIs.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
      * @return user of a lab that can register for and use virtual machines within the lab along with {@link Response}
-     *     on successful completion of {@link Mono}.
+     * on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    private Mono<Response<UserInner>> getWithResponseAsync(
-        String resourceGroupName, String labName, String username, Context context) {
+    private Mono<Response<UserInner>> getWithResponseAsync(String resourceGroupName, String labName, String username,
+        Context context) {
         if (this.client.getEndpoint() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getEndpoint() is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
         }
         if (this.client.getSubscriptionId() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getSubscriptionId() is required and cannot be null."));
+            return Mono.error(new IllegalArgumentException(
+                "Parameter this.client.getSubscriptionId() is required and cannot be null."));
         }
         if (resourceGroupName == null) {
             return Mono
@@ -488,67 +395,37 @@ public final class UsersClientImpl implements UsersClient {
         }
         final String accept = "application/json";
         context = this.client.mergeContext(context);
-        return service
-            .get(
-                this.client.getEndpoint(),
-                this.client.getApiVersion(),
-                this.client.getSubscriptionId(),
-                resourceGroupName,
-                labName,
-                username,
-                accept,
-                context);
+        return service.get(this.client.getEndpoint(), this.client.getApiVersion(), this.client.getSubscriptionId(),
+            resourceGroupName, labName, username, accept, context);
     }
 
     /**
+     * Get a lab user.
+     * 
      * Returns the properties of a lab user.
-     *
+     * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
-     * @param labName The name of the lab that uniquely identifies it within containing lab account. Used in resource
-     *     URIs.
+     * @param labName The name of the lab that uniquely identifies it within containing lab plan. Used in resource URIs.
      * @param username The name of the user that uniquely identifies it within containing lab. Used in resource URIs.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
      * @return user of a lab that can register for and use virtual machines within the lab on successful completion of
-     *     {@link Mono}.
+     * {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
     private Mono<UserInner> getAsync(String resourceGroupName, String labName, String username) {
         return getWithResponseAsync(resourceGroupName, labName, username)
-            .flatMap(
-                (Response<UserInner> res) -> {
-                    if (res.getValue() != null) {
-                        return Mono.just(res.getValue());
-                    } else {
-                        return Mono.empty();
-                    }
-                });
+            .flatMap(res -> Mono.justOrEmpty(res.getValue()));
     }
 
     /**
+     * Get a lab user.
+     * 
      * Returns the properties of a lab user.
-     *
+     * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
-     * @param labName The name of the lab that uniquely identifies it within containing lab account. Used in resource
-     *     URIs.
-     * @param username The name of the user that uniquely identifies it within containing lab. Used in resource URIs.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return user of a lab that can register for and use virtual machines within the lab.
-     */
-    @ServiceMethod(returns = ReturnType.SINGLE)
-    public UserInner get(String resourceGroupName, String labName, String username) {
-        return getAsync(resourceGroupName, labName, username).block();
-    }
-
-    /**
-     * Returns the properties of a lab user.
-     *
-     * @param resourceGroupName The name of the resource group. The name is case insensitive.
-     * @param labName The name of the lab that uniquely identifies it within containing lab account. Used in resource
-     *     URIs.
+     * @param labName The name of the lab that uniquely identifies it within containing lab plan. Used in resource URIs.
      * @param username The name of the user that uniquely identifies it within containing lab. Used in resource URIs.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
@@ -557,39 +434,54 @@ public final class UsersClientImpl implements UsersClient {
      * @return user of a lab that can register for and use virtual machines within the lab along with {@link Response}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    public Response<UserInner> getWithResponse(
-        String resourceGroupName, String labName, String username, Context context) {
+    public Response<UserInner> getWithResponse(String resourceGroupName, String labName, String username,
+        Context context) {
         return getWithResponseAsync(resourceGroupName, labName, username, context).block();
     }
 
     /**
-     * Operation to create or update a lab user.
-     *
+     * Get a lab user.
+     * 
+     * Returns the properties of a lab user.
+     * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
-     * @param labName The name of the lab that uniquely identifies it within containing lab account. Used in resource
-     *     URIs.
+     * @param labName The name of the lab that uniquely identifies it within containing lab plan. Used in resource URIs.
+     * @param username The name of the user that uniquely identifies it within containing lab. Used in resource URIs.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return user of a lab that can register for and use virtual machines within the lab.
+     */
+    @ServiceMethod(returns = ReturnType.SINGLE)
+    public UserInner get(String resourceGroupName, String labName, String username) {
+        return getWithResponse(resourceGroupName, labName, username, Context.NONE).getValue();
+    }
+
+    /**
+     * Create or update a lab user.
+     * 
+     * Operation to create or update a lab user.
+     * 
+     * @param resourceGroupName The name of the resource group. The name is case insensitive.
+     * @param labName The name of the lab that uniquely identifies it within containing lab plan. Used in resource URIs.
      * @param username The name of the user that uniquely identifies it within containing lab. Used in resource URIs.
      * @param body The request body.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
      * @return user of a lab that can register for and use virtual machines within the lab along with {@link Response}
-     *     on successful completion of {@link Mono}.
+     * on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    private Mono<Response<Flux<ByteBuffer>>> createOrUpdateWithResponseAsync(
-        String resourceGroupName, String labName, String username, UserInner body) {
+    private Mono<Response<Flux<ByteBuffer>>> createOrUpdateWithResponseAsync(String resourceGroupName, String labName,
+        String username, UserInner body) {
         if (this.client.getEndpoint() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getEndpoint() is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
         }
         if (this.client.getSubscriptionId() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getSubscriptionId() is required and cannot be null."));
+            return Mono.error(new IllegalArgumentException(
+                "Parameter this.client.getSubscriptionId() is required and cannot be null."));
         }
         if (resourceGroupName == null) {
             return Mono
@@ -608,28 +500,18 @@ public final class UsersClientImpl implements UsersClient {
         }
         final String accept = "application/json";
         return FluxUtil
-            .withContext(
-                context ->
-                    service
-                        .createOrUpdate(
-                            this.client.getEndpoint(),
-                            this.client.getApiVersion(),
-                            this.client.getSubscriptionId(),
-                            resourceGroupName,
-                            labName,
-                            username,
-                            body,
-                            accept,
-                            context))
+            .withContext(context -> service.createOrUpdate(this.client.getEndpoint(), this.client.getApiVersion(),
+                this.client.getSubscriptionId(), resourceGroupName, labName, username, body, accept, context))
             .contextWrite(context -> context.putAll(FluxUtil.toReactorContext(this.client.getContext()).readOnly()));
     }
 
     /**
+     * Create or update a lab user.
+     * 
      * Operation to create or update a lab user.
-     *
+     * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
-     * @param labName The name of the lab that uniquely identifies it within containing lab account. Used in resource
-     *     URIs.
+     * @param labName The name of the lab that uniquely identifies it within containing lab plan. Used in resource URIs.
      * @param username The name of the user that uniquely identifies it within containing lab. Used in resource URIs.
      * @param body The request body.
      * @param context The context to associate with this operation.
@@ -637,22 +519,18 @@ public final class UsersClientImpl implements UsersClient {
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
      * @return user of a lab that can register for and use virtual machines within the lab along with {@link Response}
-     *     on successful completion of {@link Mono}.
+     * on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    private Mono<Response<Flux<ByteBuffer>>> createOrUpdateWithResponseAsync(
-        String resourceGroupName, String labName, String username, UserInner body, Context context) {
+    private Mono<Response<Flux<ByteBuffer>>> createOrUpdateWithResponseAsync(String resourceGroupName, String labName,
+        String username, UserInner body, Context context) {
         if (this.client.getEndpoint() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getEndpoint() is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
         }
         if (this.client.getSubscriptionId() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getSubscriptionId() is required and cannot be null."));
+            return Mono.error(new IllegalArgumentException(
+                "Parameter this.client.getSubscriptionId() is required and cannot be null."));
         }
         if (resourceGroupName == null) {
             return Mono
@@ -671,140 +549,132 @@ public final class UsersClientImpl implements UsersClient {
         }
         final String accept = "application/json";
         context = this.client.mergeContext(context);
-        return service
-            .createOrUpdate(
-                this.client.getEndpoint(),
-                this.client.getApiVersion(),
-                this.client.getSubscriptionId(),
-                resourceGroupName,
-                labName,
-                username,
-                body,
-                accept,
-                context);
+        return service.createOrUpdate(this.client.getEndpoint(), this.client.getApiVersion(),
+            this.client.getSubscriptionId(), resourceGroupName, labName, username, body, accept, context);
     }
 
     /**
+     * Create or update a lab user.
+     * 
      * Operation to create or update a lab user.
-     *
+     * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
-     * @param labName The name of the lab that uniquely identifies it within containing lab account. Used in resource
-     *     URIs.
+     * @param labName The name of the lab that uniquely identifies it within containing lab plan. Used in resource URIs.
      * @param username The name of the user that uniquely identifies it within containing lab. Used in resource URIs.
      * @param body The request body.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return user of a lab that can register for and use virtual machines within the lab along with {@link Response}
-     *     on successful completion of {@link Mono}.
+     * @return the {@link PollerFlux} for polling of user of a lab that can register for and use virtual machines within
+     * the lab.
      */
     @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
-    private PollerFlux<PollResult<UserInner>, UserInner> beginCreateOrUpdateAsync(
-        String resourceGroupName, String labName, String username, UserInner body) {
-        Mono<Response<Flux<ByteBuffer>>> mono =
-            createOrUpdateWithResponseAsync(resourceGroupName, labName, username, body);
-        return this
-            .client
-            .<UserInner, UserInner>getLroResult(
-                mono, this.client.getHttpPipeline(), UserInner.class, UserInner.class, this.client.getContext());
+    private PollerFlux<PollResult<UserInner>, UserInner> beginCreateOrUpdateAsync(String resourceGroupName,
+        String labName, String username, UserInner body) {
+        Mono<Response<Flux<ByteBuffer>>> mono
+            = createOrUpdateWithResponseAsync(resourceGroupName, labName, username, body);
+        return this.client.<UserInner, UserInner>getLroResult(mono, this.client.getHttpPipeline(), UserInner.class,
+            UserInner.class, this.client.getContext());
     }
 
     /**
+     * Create or update a lab user.
+     * 
      * Operation to create or update a lab user.
-     *
+     * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
-     * @param labName The name of the lab that uniquely identifies it within containing lab account. Used in resource
-     *     URIs.
+     * @param labName The name of the lab that uniquely identifies it within containing lab plan. Used in resource URIs.
      * @param username The name of the user that uniquely identifies it within containing lab. Used in resource URIs.
      * @param body The request body.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return user of a lab that can register for and use virtual machines within the lab along with {@link Response}
-     *     on successful completion of {@link Mono}.
+     * @return the {@link PollerFlux} for polling of user of a lab that can register for and use virtual machines within
+     * the lab.
      */
     @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
-    private PollerFlux<PollResult<UserInner>, UserInner> beginCreateOrUpdateAsync(
-        String resourceGroupName, String labName, String username, UserInner body, Context context) {
+    private PollerFlux<PollResult<UserInner>, UserInner> beginCreateOrUpdateAsync(String resourceGroupName,
+        String labName, String username, UserInner body, Context context) {
         context = this.client.mergeContext(context);
-        Mono<Response<Flux<ByteBuffer>>> mono =
-            createOrUpdateWithResponseAsync(resourceGroupName, labName, username, body, context);
-        return this
-            .client
-            .<UserInner, UserInner>getLroResult(
-                mono, this.client.getHttpPipeline(), UserInner.class, UserInner.class, context);
+        Mono<Response<Flux<ByteBuffer>>> mono
+            = createOrUpdateWithResponseAsync(resourceGroupName, labName, username, body, context);
+        return this.client.<UserInner, UserInner>getLroResult(mono, this.client.getHttpPipeline(), UserInner.class,
+            UserInner.class, context);
     }
 
     /**
+     * Create or update a lab user.
+     * 
      * Operation to create or update a lab user.
-     *
+     * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
-     * @param labName The name of the lab that uniquely identifies it within containing lab account. Used in resource
-     *     URIs.
+     * @param labName The name of the lab that uniquely identifies it within containing lab plan. Used in resource URIs.
      * @param username The name of the user that uniquely identifies it within containing lab. Used in resource URIs.
      * @param body The request body.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return user of a lab that can register for and use virtual machines within the lab along with {@link Response}
-     *     on successful completion of {@link Mono}.
+     * @return the {@link SyncPoller} for polling of user of a lab that can register for and use virtual machines within
+     * the lab.
      */
     @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
-    public SyncPoller<PollResult<UserInner>, UserInner> beginCreateOrUpdate(
-        String resourceGroupName, String labName, String username, UserInner body) {
-        return beginCreateOrUpdateAsync(resourceGroupName, labName, username, body).getSyncPoller();
+    public SyncPoller<PollResult<UserInner>, UserInner> beginCreateOrUpdate(String resourceGroupName, String labName,
+        String username, UserInner body) {
+        return this.beginCreateOrUpdateAsync(resourceGroupName, labName, username, body).getSyncPoller();
     }
 
     /**
+     * Create or update a lab user.
+     * 
      * Operation to create or update a lab user.
-     *
+     * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
-     * @param labName The name of the lab that uniquely identifies it within containing lab account. Used in resource
-     *     URIs.
+     * @param labName The name of the lab that uniquely identifies it within containing lab plan. Used in resource URIs.
      * @param username The name of the user that uniquely identifies it within containing lab. Used in resource URIs.
      * @param body The request body.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return user of a lab that can register for and use virtual machines within the lab along with {@link Response}
-     *     on successful completion of {@link Mono}.
+     * @return the {@link SyncPoller} for polling of user of a lab that can register for and use virtual machines within
+     * the lab.
      */
     @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
-    public SyncPoller<PollResult<UserInner>, UserInner> beginCreateOrUpdate(
-        String resourceGroupName, String labName, String username, UserInner body, Context context) {
-        return beginCreateOrUpdateAsync(resourceGroupName, labName, username, body, context).getSyncPoller();
+    public SyncPoller<PollResult<UserInner>, UserInner> beginCreateOrUpdate(String resourceGroupName, String labName,
+        String username, UserInner body, Context context) {
+        return this.beginCreateOrUpdateAsync(resourceGroupName, labName, username, body, context).getSyncPoller();
     }
 
     /**
+     * Create or update a lab user.
+     * 
      * Operation to create or update a lab user.
-     *
+     * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
-     * @param labName The name of the lab that uniquely identifies it within containing lab account. Used in resource
-     *     URIs.
+     * @param labName The name of the lab that uniquely identifies it within containing lab plan. Used in resource URIs.
      * @param username The name of the user that uniquely identifies it within containing lab. Used in resource URIs.
      * @param body The request body.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
      * @return user of a lab that can register for and use virtual machines within the lab on successful completion of
-     *     {@link Mono}.
+     * {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    private Mono<UserInner> createOrUpdateAsync(
-        String resourceGroupName, String labName, String username, UserInner body) {
-        return beginCreateOrUpdateAsync(resourceGroupName, labName, username, body)
-            .last()
+    private Mono<UserInner> createOrUpdateAsync(String resourceGroupName, String labName, String username,
+        UserInner body) {
+        return beginCreateOrUpdateAsync(resourceGroupName, labName, username, body).last()
             .flatMap(this.client::getLroFinalResultOrError);
     }
 
     /**
+     * Create or update a lab user.
+     * 
      * Operation to create or update a lab user.
-     *
+     * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
-     * @param labName The name of the lab that uniquely identifies it within containing lab account. Used in resource
-     *     URIs.
+     * @param labName The name of the lab that uniquely identifies it within containing lab plan. Used in resource URIs.
      * @param username The name of the user that uniquely identifies it within containing lab. Used in resource URIs.
      * @param body The request body.
      * @param context The context to associate with this operation.
@@ -812,22 +682,22 @@ public final class UsersClientImpl implements UsersClient {
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
      * @return user of a lab that can register for and use virtual machines within the lab on successful completion of
-     *     {@link Mono}.
+     * {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    private Mono<UserInner> createOrUpdateAsync(
-        String resourceGroupName, String labName, String username, UserInner body, Context context) {
-        return beginCreateOrUpdateAsync(resourceGroupName, labName, username, body, context)
-            .last()
+    private Mono<UserInner> createOrUpdateAsync(String resourceGroupName, String labName, String username,
+        UserInner body, Context context) {
+        return beginCreateOrUpdateAsync(resourceGroupName, labName, username, body, context).last()
             .flatMap(this.client::getLroFinalResultOrError);
     }
 
     /**
+     * Create or update a lab user.
+     * 
      * Operation to create or update a lab user.
-     *
+     * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
-     * @param labName The name of the lab that uniquely identifies it within containing lab account. Used in resource
-     *     URIs.
+     * @param labName The name of the lab that uniquely identifies it within containing lab plan. Used in resource URIs.
      * @param username The name of the user that uniquely identifies it within containing lab. Used in resource URIs.
      * @param body The request body.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
@@ -841,11 +711,12 @@ public final class UsersClientImpl implements UsersClient {
     }
 
     /**
+     * Create or update a lab user.
+     * 
      * Operation to create or update a lab user.
-     *
+     * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
-     * @param labName The name of the lab that uniquely identifies it within containing lab account. Used in resource
-     *     URIs.
+     * @param labName The name of the lab that uniquely identifies it within containing lab plan. Used in resource URIs.
      * @param username The name of the user that uniquely identifies it within containing lab. Used in resource URIs.
      * @param body The request body.
      * @param context The context to associate with this operation.
@@ -855,39 +726,36 @@ public final class UsersClientImpl implements UsersClient {
      * @return user of a lab that can register for and use virtual machines within the lab.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    public UserInner createOrUpdate(
-        String resourceGroupName, String labName, String username, UserInner body, Context context) {
+    public UserInner createOrUpdate(String resourceGroupName, String labName, String username, UserInner body,
+        Context context) {
         return createOrUpdateAsync(resourceGroupName, labName, username, body, context).block();
     }
 
     /**
+     * Update a lab user.
+     * 
      * Operation to update a lab user.
-     *
+     * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
-     * @param labName The name of the lab that uniquely identifies it within containing lab account. Used in resource
-     *     URIs.
+     * @param labName The name of the lab that uniquely identifies it within containing lab plan. Used in resource URIs.
      * @param username The name of the user that uniquely identifies it within containing lab. Used in resource URIs.
      * @param body The request body.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
      * @return user of a lab that can register for and use virtual machines within the lab along with {@link Response}
-     *     on successful completion of {@link Mono}.
+     * on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    private Mono<Response<Flux<ByteBuffer>>> updateWithResponseAsync(
-        String resourceGroupName, String labName, String username, UserUpdate body) {
+    private Mono<Response<Flux<ByteBuffer>>> updateWithResponseAsync(String resourceGroupName, String labName,
+        String username, UserUpdate body) {
         if (this.client.getEndpoint() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getEndpoint() is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
         }
         if (this.client.getSubscriptionId() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getSubscriptionId() is required and cannot be null."));
+            return Mono.error(new IllegalArgumentException(
+                "Parameter this.client.getSubscriptionId() is required and cannot be null."));
         }
         if (resourceGroupName == null) {
             return Mono
@@ -906,28 +774,18 @@ public final class UsersClientImpl implements UsersClient {
         }
         final String accept = "application/json";
         return FluxUtil
-            .withContext(
-                context ->
-                    service
-                        .update(
-                            this.client.getEndpoint(),
-                            this.client.getApiVersion(),
-                            this.client.getSubscriptionId(),
-                            resourceGroupName,
-                            labName,
-                            username,
-                            body,
-                            accept,
-                            context))
+            .withContext(context -> service.update(this.client.getEndpoint(), this.client.getApiVersion(),
+                this.client.getSubscriptionId(), resourceGroupName, labName, username, body, accept, context))
             .contextWrite(context -> context.putAll(FluxUtil.toReactorContext(this.client.getContext()).readOnly()));
     }
 
     /**
+     * Update a lab user.
+     * 
      * Operation to update a lab user.
-     *
+     * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
-     * @param labName The name of the lab that uniquely identifies it within containing lab account. Used in resource
-     *     URIs.
+     * @param labName The name of the lab that uniquely identifies it within containing lab plan. Used in resource URIs.
      * @param username The name of the user that uniquely identifies it within containing lab. Used in resource URIs.
      * @param body The request body.
      * @param context The context to associate with this operation.
@@ -935,22 +793,18 @@ public final class UsersClientImpl implements UsersClient {
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
      * @return user of a lab that can register for and use virtual machines within the lab along with {@link Response}
-     *     on successful completion of {@link Mono}.
+     * on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    private Mono<Response<Flux<ByteBuffer>>> updateWithResponseAsync(
-        String resourceGroupName, String labName, String username, UserUpdate body, Context context) {
+    private Mono<Response<Flux<ByteBuffer>>> updateWithResponseAsync(String resourceGroupName, String labName,
+        String username, UserUpdate body, Context context) {
         if (this.client.getEndpoint() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getEndpoint() is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
         }
         if (this.client.getSubscriptionId() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getSubscriptionId() is required and cannot be null."));
+            return Mono.error(new IllegalArgumentException(
+                "Parameter this.client.getSubscriptionId() is required and cannot be null."));
         }
         if (resourceGroupName == null) {
             return Mono
@@ -969,138 +823,130 @@ public final class UsersClientImpl implements UsersClient {
         }
         final String accept = "application/json";
         context = this.client.mergeContext(context);
-        return service
-            .update(
-                this.client.getEndpoint(),
-                this.client.getApiVersion(),
-                this.client.getSubscriptionId(),
-                resourceGroupName,
-                labName,
-                username,
-                body,
-                accept,
-                context);
+        return service.update(this.client.getEndpoint(), this.client.getApiVersion(), this.client.getSubscriptionId(),
+            resourceGroupName, labName, username, body, accept, context);
     }
 
     /**
+     * Update a lab user.
+     * 
      * Operation to update a lab user.
-     *
+     * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
-     * @param labName The name of the lab that uniquely identifies it within containing lab account. Used in resource
-     *     URIs.
+     * @param labName The name of the lab that uniquely identifies it within containing lab plan. Used in resource URIs.
      * @param username The name of the user that uniquely identifies it within containing lab. Used in resource URIs.
      * @param body The request body.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return user of a lab that can register for and use virtual machines within the lab along with {@link Response}
-     *     on successful completion of {@link Mono}.
+     * @return the {@link PollerFlux} for polling of user of a lab that can register for and use virtual machines within
+     * the lab.
      */
     @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
-    private PollerFlux<PollResult<UserInner>, UserInner> beginUpdateAsync(
-        String resourceGroupName, String labName, String username, UserUpdate body) {
+    private PollerFlux<PollResult<UserInner>, UserInner> beginUpdateAsync(String resourceGroupName, String labName,
+        String username, UserUpdate body) {
         Mono<Response<Flux<ByteBuffer>>> mono = updateWithResponseAsync(resourceGroupName, labName, username, body);
-        return this
-            .client
-            .<UserInner, UserInner>getLroResult(
-                mono, this.client.getHttpPipeline(), UserInner.class, UserInner.class, this.client.getContext());
+        return this.client.<UserInner, UserInner>getLroResult(mono, this.client.getHttpPipeline(), UserInner.class,
+            UserInner.class, this.client.getContext());
     }
 
     /**
+     * Update a lab user.
+     * 
      * Operation to update a lab user.
-     *
+     * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
-     * @param labName The name of the lab that uniquely identifies it within containing lab account. Used in resource
-     *     URIs.
+     * @param labName The name of the lab that uniquely identifies it within containing lab plan. Used in resource URIs.
      * @param username The name of the user that uniquely identifies it within containing lab. Used in resource URIs.
      * @param body The request body.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return user of a lab that can register for and use virtual machines within the lab along with {@link Response}
-     *     on successful completion of {@link Mono}.
+     * @return the {@link PollerFlux} for polling of user of a lab that can register for and use virtual machines within
+     * the lab.
      */
     @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
-    private PollerFlux<PollResult<UserInner>, UserInner> beginUpdateAsync(
-        String resourceGroupName, String labName, String username, UserUpdate body, Context context) {
+    private PollerFlux<PollResult<UserInner>, UserInner> beginUpdateAsync(String resourceGroupName, String labName,
+        String username, UserUpdate body, Context context) {
         context = this.client.mergeContext(context);
-        Mono<Response<Flux<ByteBuffer>>> mono =
-            updateWithResponseAsync(resourceGroupName, labName, username, body, context);
-        return this
-            .client
-            .<UserInner, UserInner>getLroResult(
-                mono, this.client.getHttpPipeline(), UserInner.class, UserInner.class, context);
+        Mono<Response<Flux<ByteBuffer>>> mono
+            = updateWithResponseAsync(resourceGroupName, labName, username, body, context);
+        return this.client.<UserInner, UserInner>getLroResult(mono, this.client.getHttpPipeline(), UserInner.class,
+            UserInner.class, context);
     }
 
     /**
+     * Update a lab user.
+     * 
      * Operation to update a lab user.
-     *
+     * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
-     * @param labName The name of the lab that uniquely identifies it within containing lab account. Used in resource
-     *     URIs.
+     * @param labName The name of the lab that uniquely identifies it within containing lab plan. Used in resource URIs.
      * @param username The name of the user that uniquely identifies it within containing lab. Used in resource URIs.
      * @param body The request body.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return user of a lab that can register for and use virtual machines within the lab along with {@link Response}
-     *     on successful completion of {@link Mono}.
+     * @return the {@link SyncPoller} for polling of user of a lab that can register for and use virtual machines within
+     * the lab.
      */
     @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
-    public SyncPoller<PollResult<UserInner>, UserInner> beginUpdate(
-        String resourceGroupName, String labName, String username, UserUpdate body) {
-        return beginUpdateAsync(resourceGroupName, labName, username, body).getSyncPoller();
+    public SyncPoller<PollResult<UserInner>, UserInner> beginUpdate(String resourceGroupName, String labName,
+        String username, UserUpdate body) {
+        return this.beginUpdateAsync(resourceGroupName, labName, username, body).getSyncPoller();
     }
 
     /**
+     * Update a lab user.
+     * 
      * Operation to update a lab user.
-     *
+     * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
-     * @param labName The name of the lab that uniquely identifies it within containing lab account. Used in resource
-     *     URIs.
+     * @param labName The name of the lab that uniquely identifies it within containing lab plan. Used in resource URIs.
      * @param username The name of the user that uniquely identifies it within containing lab. Used in resource URIs.
      * @param body The request body.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return user of a lab that can register for and use virtual machines within the lab along with {@link Response}
-     *     on successful completion of {@link Mono}.
+     * @return the {@link SyncPoller} for polling of user of a lab that can register for and use virtual machines within
+     * the lab.
      */
     @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
-    public SyncPoller<PollResult<UserInner>, UserInner> beginUpdate(
-        String resourceGroupName, String labName, String username, UserUpdate body, Context context) {
-        return beginUpdateAsync(resourceGroupName, labName, username, body, context).getSyncPoller();
+    public SyncPoller<PollResult<UserInner>, UserInner> beginUpdate(String resourceGroupName, String labName,
+        String username, UserUpdate body, Context context) {
+        return this.beginUpdateAsync(resourceGroupName, labName, username, body, context).getSyncPoller();
     }
 
     /**
+     * Update a lab user.
+     * 
      * Operation to update a lab user.
-     *
+     * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
-     * @param labName The name of the lab that uniquely identifies it within containing lab account. Used in resource
-     *     URIs.
+     * @param labName The name of the lab that uniquely identifies it within containing lab plan. Used in resource URIs.
      * @param username The name of the user that uniquely identifies it within containing lab. Used in resource URIs.
      * @param body The request body.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
      * @return user of a lab that can register for and use virtual machines within the lab on successful completion of
-     *     {@link Mono}.
+     * {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
     private Mono<UserInner> updateAsync(String resourceGroupName, String labName, String username, UserUpdate body) {
-        return beginUpdateAsync(resourceGroupName, labName, username, body)
-            .last()
+        return beginUpdateAsync(resourceGroupName, labName, username, body).last()
             .flatMap(this.client::getLroFinalResultOrError);
     }
 
     /**
+     * Update a lab user.
+     * 
      * Operation to update a lab user.
-     *
+     * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
-     * @param labName The name of the lab that uniquely identifies it within containing lab account. Used in resource
-     *     URIs.
+     * @param labName The name of the lab that uniquely identifies it within containing lab plan. Used in resource URIs.
      * @param username The name of the user that uniquely identifies it within containing lab. Used in resource URIs.
      * @param body The request body.
      * @param context The context to associate with this operation.
@@ -1108,22 +954,22 @@ public final class UsersClientImpl implements UsersClient {
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
      * @return user of a lab that can register for and use virtual machines within the lab on successful completion of
-     *     {@link Mono}.
+     * {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    private Mono<UserInner> updateAsync(
-        String resourceGroupName, String labName, String username, UserUpdate body, Context context) {
-        return beginUpdateAsync(resourceGroupName, labName, username, body, context)
-            .last()
+    private Mono<UserInner> updateAsync(String resourceGroupName, String labName, String username, UserUpdate body,
+        Context context) {
+        return beginUpdateAsync(resourceGroupName, labName, username, body, context).last()
             .flatMap(this.client::getLroFinalResultOrError);
     }
 
     /**
+     * Update a lab user.
+     * 
      * Operation to update a lab user.
-     *
+     * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
-     * @param labName The name of the lab that uniquely identifies it within containing lab account. Used in resource
-     *     URIs.
+     * @param labName The name of the lab that uniquely identifies it within containing lab plan. Used in resource URIs.
      * @param username The name of the user that uniquely identifies it within containing lab. Used in resource URIs.
      * @param body The request body.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
@@ -1137,11 +983,12 @@ public final class UsersClientImpl implements UsersClient {
     }
 
     /**
+     * Update a lab user.
+     * 
      * Operation to update a lab user.
-     *
+     * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
-     * @param labName The name of the lab that uniquely identifies it within containing lab account. Used in resource
-     *     URIs.
+     * @param labName The name of the lab that uniquely identifies it within containing lab plan. Used in resource URIs.
      * @param username The name of the user that uniquely identifies it within containing lab. Used in resource URIs.
      * @param body The request body.
      * @param context The context to associate with this operation.
@@ -1151,17 +998,18 @@ public final class UsersClientImpl implements UsersClient {
      * @return user of a lab that can register for and use virtual machines within the lab.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    public UserInner update(
-        String resourceGroupName, String labName, String username, UserUpdate body, Context context) {
+    public UserInner update(String resourceGroupName, String labName, String username, UserUpdate body,
+        Context context) {
         return updateAsync(resourceGroupName, labName, username, body, context).block();
     }
 
     /**
+     * Deletes a user resource.
+     * 
      * Operation to delete a user resource.
-     *
+     * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
-     * @param labName The name of the lab that uniquely identifies it within containing lab account. Used in resource
-     *     URIs.
+     * @param labName The name of the lab that uniquely identifies it within containing lab plan. Used in resource URIs.
      * @param username The name of the user that uniquely identifies it within containing lab. Used in resource URIs.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
@@ -1169,19 +1017,15 @@ public final class UsersClientImpl implements UsersClient {
      * @return the {@link Response} on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    private Mono<Response<Flux<ByteBuffer>>> deleteWithResponseAsync(
-        String resourceGroupName, String labName, String username) {
+    private Mono<Response<Flux<ByteBuffer>>> deleteWithResponseAsync(String resourceGroupName, String labName,
+        String username) {
         if (this.client.getEndpoint() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getEndpoint() is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
         }
         if (this.client.getSubscriptionId() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getSubscriptionId() is required and cannot be null."));
+            return Mono.error(new IllegalArgumentException(
+                "Parameter this.client.getSubscriptionId() is required and cannot be null."));
         }
         if (resourceGroupName == null) {
             return Mono
@@ -1195,27 +1039,18 @@ public final class UsersClientImpl implements UsersClient {
         }
         final String accept = "application/json";
         return FluxUtil
-            .withContext(
-                context ->
-                    service
-                        .delete(
-                            this.client.getEndpoint(),
-                            this.client.getApiVersion(),
-                            this.client.getSubscriptionId(),
-                            resourceGroupName,
-                            labName,
-                            username,
-                            accept,
-                            context))
+            .withContext(context -> service.delete(this.client.getEndpoint(), this.client.getApiVersion(),
+                this.client.getSubscriptionId(), resourceGroupName, labName, username, accept, context))
             .contextWrite(context -> context.putAll(FluxUtil.toReactorContext(this.client.getContext()).readOnly()));
     }
 
     /**
+     * Deletes a user resource.
+     * 
      * Operation to delete a user resource.
-     *
+     * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
-     * @param labName The name of the lab that uniquely identifies it within containing lab account. Used in resource
-     *     URIs.
+     * @param labName The name of the lab that uniquely identifies it within containing lab plan. Used in resource URIs.
      * @param username The name of the user that uniquely identifies it within containing lab. Used in resource URIs.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
@@ -1224,19 +1059,15 @@ public final class UsersClientImpl implements UsersClient {
      * @return the {@link Response} on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    private Mono<Response<Flux<ByteBuffer>>> deleteWithResponseAsync(
-        String resourceGroupName, String labName, String username, Context context) {
+    private Mono<Response<Flux<ByteBuffer>>> deleteWithResponseAsync(String resourceGroupName, String labName,
+        String username, Context context) {
         if (this.client.getEndpoint() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getEndpoint() is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
         }
         if (this.client.getSubscriptionId() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getSubscriptionId() is required and cannot be null."));
+            return Mono.error(new IllegalArgumentException(
+                "Parameter this.client.getSubscriptionId() is required and cannot be null."));
         }
         if (resourceGroupName == null) {
             return Mono
@@ -1250,105 +1081,99 @@ public final class UsersClientImpl implements UsersClient {
         }
         final String accept = "application/json";
         context = this.client.mergeContext(context);
-        return service
-            .delete(
-                this.client.getEndpoint(),
-                this.client.getApiVersion(),
-                this.client.getSubscriptionId(),
-                resourceGroupName,
-                labName,
-                username,
-                accept,
-                context);
+        return service.delete(this.client.getEndpoint(), this.client.getApiVersion(), this.client.getSubscriptionId(),
+            resourceGroupName, labName, username, accept, context);
     }
 
     /**
+     * Deletes a user resource.
+     * 
      * Operation to delete a user resource.
-     *
+     * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
-     * @param labName The name of the lab that uniquely identifies it within containing lab account. Used in resource
-     *     URIs.
+     * @param labName The name of the lab that uniquely identifies it within containing lab plan. Used in resource URIs.
      * @param username The name of the user that uniquely identifies it within containing lab. Used in resource URIs.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the {@link Response} on successful completion of {@link Mono}.
+     * @return the {@link PollerFlux} for polling of long-running operation.
      */
     @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
-    private PollerFlux<PollResult<Void>, Void> beginDeleteAsync(
-        String resourceGroupName, String labName, String username) {
+    private PollerFlux<PollResult<Void>, Void> beginDeleteAsync(String resourceGroupName, String labName,
+        String username) {
         Mono<Response<Flux<ByteBuffer>>> mono = deleteWithResponseAsync(resourceGroupName, labName, username);
-        return this
-            .client
-            .<Void, Void>getLroResult(
-                mono, this.client.getHttpPipeline(), Void.class, Void.class, this.client.getContext());
+        return this.client.<Void, Void>getLroResult(mono, this.client.getHttpPipeline(), Void.class, Void.class,
+            this.client.getContext());
     }
 
     /**
+     * Deletes a user resource.
+     * 
      * Operation to delete a user resource.
-     *
+     * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
-     * @param labName The name of the lab that uniquely identifies it within containing lab account. Used in resource
-     *     URIs.
+     * @param labName The name of the lab that uniquely identifies it within containing lab plan. Used in resource URIs.
      * @param username The name of the user that uniquely identifies it within containing lab. Used in resource URIs.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the {@link Response} on successful completion of {@link Mono}.
+     * @return the {@link PollerFlux} for polling of long-running operation.
      */
     @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
-    private PollerFlux<PollResult<Void>, Void> beginDeleteAsync(
-        String resourceGroupName, String labName, String username, Context context) {
+    private PollerFlux<PollResult<Void>, Void> beginDeleteAsync(String resourceGroupName, String labName,
+        String username, Context context) {
         context = this.client.mergeContext(context);
         Mono<Response<Flux<ByteBuffer>>> mono = deleteWithResponseAsync(resourceGroupName, labName, username, context);
-        return this
-            .client
-            .<Void, Void>getLroResult(mono, this.client.getHttpPipeline(), Void.class, Void.class, context);
+        return this.client.<Void, Void>getLroResult(mono, this.client.getHttpPipeline(), Void.class, Void.class,
+            context);
     }
 
     /**
+     * Deletes a user resource.
+     * 
      * Operation to delete a user resource.
-     *
+     * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
-     * @param labName The name of the lab that uniquely identifies it within containing lab account. Used in resource
-     *     URIs.
+     * @param labName The name of the lab that uniquely identifies it within containing lab plan. Used in resource URIs.
      * @param username The name of the user that uniquely identifies it within containing lab. Used in resource URIs.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the {@link Response} on successful completion of {@link Mono}.
+     * @return the {@link SyncPoller} for polling of long-running operation.
      */
     @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
     public SyncPoller<PollResult<Void>, Void> beginDelete(String resourceGroupName, String labName, String username) {
-        return beginDeleteAsync(resourceGroupName, labName, username).getSyncPoller();
+        return this.beginDeleteAsync(resourceGroupName, labName, username).getSyncPoller();
     }
 
     /**
+     * Deletes a user resource.
+     * 
      * Operation to delete a user resource.
-     *
+     * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
-     * @param labName The name of the lab that uniquely identifies it within containing lab account. Used in resource
-     *     URIs.
+     * @param labName The name of the lab that uniquely identifies it within containing lab plan. Used in resource URIs.
      * @param username The name of the user that uniquely identifies it within containing lab. Used in resource URIs.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the {@link Response} on successful completion of {@link Mono}.
+     * @return the {@link SyncPoller} for polling of long-running operation.
      */
     @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
-    public SyncPoller<PollResult<Void>, Void> beginDelete(
-        String resourceGroupName, String labName, String username, Context context) {
-        return beginDeleteAsync(resourceGroupName, labName, username, context).getSyncPoller();
+    public SyncPoller<PollResult<Void>, Void> beginDelete(String resourceGroupName, String labName, String username,
+        Context context) {
+        return this.beginDeleteAsync(resourceGroupName, labName, username, context).getSyncPoller();
     }
 
     /**
+     * Deletes a user resource.
+     * 
      * Operation to delete a user resource.
-     *
+     * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
-     * @param labName The name of the lab that uniquely identifies it within containing lab account. Used in resource
-     *     URIs.
+     * @param labName The name of the lab that uniquely identifies it within containing lab plan. Used in resource URIs.
      * @param username The name of the user that uniquely identifies it within containing lab. Used in resource URIs.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
@@ -1357,17 +1182,17 @@ public final class UsersClientImpl implements UsersClient {
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
     private Mono<Void> deleteAsync(String resourceGroupName, String labName, String username) {
-        return beginDeleteAsync(resourceGroupName, labName, username)
-            .last()
+        return beginDeleteAsync(resourceGroupName, labName, username).last()
             .flatMap(this.client::getLroFinalResultOrError);
     }
 
     /**
+     * Deletes a user resource.
+     * 
      * Operation to delete a user resource.
-     *
+     * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
-     * @param labName The name of the lab that uniquely identifies it within containing lab account. Used in resource
-     *     URIs.
+     * @param labName The name of the lab that uniquely identifies it within containing lab plan. Used in resource URIs.
      * @param username The name of the user that uniquely identifies it within containing lab. Used in resource URIs.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
@@ -1377,17 +1202,17 @@ public final class UsersClientImpl implements UsersClient {
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
     private Mono<Void> deleteAsync(String resourceGroupName, String labName, String username, Context context) {
-        return beginDeleteAsync(resourceGroupName, labName, username, context)
-            .last()
+        return beginDeleteAsync(resourceGroupName, labName, username, context).last()
             .flatMap(this.client::getLroFinalResultOrError);
     }
 
     /**
+     * Deletes a user resource.
+     * 
      * Operation to delete a user resource.
-     *
+     * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
-     * @param labName The name of the lab that uniquely identifies it within containing lab account. Used in resource
-     *     URIs.
+     * @param labName The name of the lab that uniquely identifies it within containing lab plan. Used in resource URIs.
      * @param username The name of the user that uniquely identifies it within containing lab. Used in resource URIs.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
@@ -1399,11 +1224,12 @@ public final class UsersClientImpl implements UsersClient {
     }
 
     /**
+     * Deletes a user resource.
+     * 
      * Operation to delete a user resource.
-     *
+     * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
-     * @param labName The name of the lab that uniquely identifies it within containing lab account. Used in resource
-     *     URIs.
+     * @param labName The name of the lab that uniquely identifies it within containing lab plan. Used in resource URIs.
      * @param username The name of the user that uniquely identifies it within containing lab. Used in resource URIs.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
@@ -1416,11 +1242,12 @@ public final class UsersClientImpl implements UsersClient {
     }
 
     /**
+     * Invite a user to a lab.
+     * 
      * Operation to invite a user to a lab.
-     *
+     * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
-     * @param labName The name of the lab that uniquely identifies it within containing lab account. Used in resource
-     *     URIs.
+     * @param labName The name of the lab that uniquely identifies it within containing lab plan. Used in resource URIs.
      * @param username The name of the user that uniquely identifies it within containing lab. Used in resource URIs.
      * @param body The request body.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
@@ -1429,19 +1256,15 @@ public final class UsersClientImpl implements UsersClient {
      * @return the {@link Response} on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    private Mono<Response<Flux<ByteBuffer>>> inviteWithResponseAsync(
-        String resourceGroupName, String labName, String username, InviteBody body) {
+    private Mono<Response<Flux<ByteBuffer>>> inviteWithResponseAsync(String resourceGroupName, String labName,
+        String username, InviteBody body) {
         if (this.client.getEndpoint() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getEndpoint() is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
         }
         if (this.client.getSubscriptionId() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getSubscriptionId() is required and cannot be null."));
+            return Mono.error(new IllegalArgumentException(
+                "Parameter this.client.getSubscriptionId() is required and cannot be null."));
         }
         if (resourceGroupName == null) {
             return Mono
@@ -1460,28 +1283,18 @@ public final class UsersClientImpl implements UsersClient {
         }
         final String accept = "application/json";
         return FluxUtil
-            .withContext(
-                context ->
-                    service
-                        .invite(
-                            this.client.getEndpoint(),
-                            this.client.getApiVersion(),
-                            this.client.getSubscriptionId(),
-                            resourceGroupName,
-                            labName,
-                            username,
-                            body,
-                            accept,
-                            context))
+            .withContext(context -> service.invite(this.client.getEndpoint(), this.client.getApiVersion(),
+                this.client.getSubscriptionId(), resourceGroupName, labName, username, body, accept, context))
             .contextWrite(context -> context.putAll(FluxUtil.toReactorContext(this.client.getContext()).readOnly()));
     }
 
     /**
+     * Invite a user to a lab.
+     * 
      * Operation to invite a user to a lab.
-     *
+     * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
-     * @param labName The name of the lab that uniquely identifies it within containing lab account. Used in resource
-     *     URIs.
+     * @param labName The name of the lab that uniquely identifies it within containing lab plan. Used in resource URIs.
      * @param username The name of the user that uniquely identifies it within containing lab. Used in resource URIs.
      * @param body The request body.
      * @param context The context to associate with this operation.
@@ -1491,19 +1304,15 @@ public final class UsersClientImpl implements UsersClient {
      * @return the {@link Response} on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    private Mono<Response<Flux<ByteBuffer>>> inviteWithResponseAsync(
-        String resourceGroupName, String labName, String username, InviteBody body, Context context) {
+    private Mono<Response<Flux<ByteBuffer>>> inviteWithResponseAsync(String resourceGroupName, String labName,
+        String username, InviteBody body, Context context) {
         if (this.client.getEndpoint() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getEndpoint() is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
         }
         if (this.client.getSubscriptionId() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getSubscriptionId() is required and cannot be null."));
+            return Mono.error(new IllegalArgumentException(
+                "Parameter this.client.getSubscriptionId() is required and cannot be null."));
         }
         if (resourceGroupName == null) {
             return Mono
@@ -1522,112 +1331,105 @@ public final class UsersClientImpl implements UsersClient {
         }
         final String accept = "application/json";
         context = this.client.mergeContext(context);
-        return service
-            .invite(
-                this.client.getEndpoint(),
-                this.client.getApiVersion(),
-                this.client.getSubscriptionId(),
-                resourceGroupName,
-                labName,
-                username,
-                body,
-                accept,
-                context);
+        return service.invite(this.client.getEndpoint(), this.client.getApiVersion(), this.client.getSubscriptionId(),
+            resourceGroupName, labName, username, body, accept, context);
     }
 
     /**
+     * Invite a user to a lab.
+     * 
      * Operation to invite a user to a lab.
-     *
+     * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
-     * @param labName The name of the lab that uniquely identifies it within containing lab account. Used in resource
-     *     URIs.
+     * @param labName The name of the lab that uniquely identifies it within containing lab plan. Used in resource URIs.
      * @param username The name of the user that uniquely identifies it within containing lab. Used in resource URIs.
      * @param body The request body.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the {@link Response} on successful completion of {@link Mono}.
+     * @return the {@link PollerFlux} for polling of long-running operation.
      */
     @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
-    private PollerFlux<PollResult<Void>, Void> beginInviteAsync(
-        String resourceGroupName, String labName, String username, InviteBody body) {
+    private PollerFlux<PollResult<Void>, Void> beginInviteAsync(String resourceGroupName, String labName,
+        String username, InviteBody body) {
         Mono<Response<Flux<ByteBuffer>>> mono = inviteWithResponseAsync(resourceGroupName, labName, username, body);
-        return this
-            .client
-            .<Void, Void>getLroResult(
-                mono, this.client.getHttpPipeline(), Void.class, Void.class, this.client.getContext());
+        return this.client.<Void, Void>getLroResult(mono, this.client.getHttpPipeline(), Void.class, Void.class,
+            this.client.getContext());
     }
 
     /**
+     * Invite a user to a lab.
+     * 
      * Operation to invite a user to a lab.
-     *
+     * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
-     * @param labName The name of the lab that uniquely identifies it within containing lab account. Used in resource
-     *     URIs.
+     * @param labName The name of the lab that uniquely identifies it within containing lab plan. Used in resource URIs.
      * @param username The name of the user that uniquely identifies it within containing lab. Used in resource URIs.
      * @param body The request body.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the {@link Response} on successful completion of {@link Mono}.
+     * @return the {@link PollerFlux} for polling of long-running operation.
      */
     @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
-    private PollerFlux<PollResult<Void>, Void> beginInviteAsync(
-        String resourceGroupName, String labName, String username, InviteBody body, Context context) {
+    private PollerFlux<PollResult<Void>, Void> beginInviteAsync(String resourceGroupName, String labName,
+        String username, InviteBody body, Context context) {
         context = this.client.mergeContext(context);
-        Mono<Response<Flux<ByteBuffer>>> mono =
-            inviteWithResponseAsync(resourceGroupName, labName, username, body, context);
-        return this
-            .client
-            .<Void, Void>getLroResult(mono, this.client.getHttpPipeline(), Void.class, Void.class, context);
+        Mono<Response<Flux<ByteBuffer>>> mono
+            = inviteWithResponseAsync(resourceGroupName, labName, username, body, context);
+        return this.client.<Void, Void>getLroResult(mono, this.client.getHttpPipeline(), Void.class, Void.class,
+            context);
     }
 
     /**
+     * Invite a user to a lab.
+     * 
      * Operation to invite a user to a lab.
-     *
+     * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
-     * @param labName The name of the lab that uniquely identifies it within containing lab account. Used in resource
-     *     URIs.
+     * @param labName The name of the lab that uniquely identifies it within containing lab plan. Used in resource URIs.
      * @param username The name of the user that uniquely identifies it within containing lab. Used in resource URIs.
      * @param body The request body.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the {@link Response} on successful completion of {@link Mono}.
+     * @return the {@link SyncPoller} for polling of long-running operation.
      */
     @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
-    public SyncPoller<PollResult<Void>, Void> beginInvite(
-        String resourceGroupName, String labName, String username, InviteBody body) {
-        return beginInviteAsync(resourceGroupName, labName, username, body).getSyncPoller();
+    public SyncPoller<PollResult<Void>, Void> beginInvite(String resourceGroupName, String labName, String username,
+        InviteBody body) {
+        return this.beginInviteAsync(resourceGroupName, labName, username, body).getSyncPoller();
     }
 
     /**
+     * Invite a user to a lab.
+     * 
      * Operation to invite a user to a lab.
-     *
+     * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
-     * @param labName The name of the lab that uniquely identifies it within containing lab account. Used in resource
-     *     URIs.
+     * @param labName The name of the lab that uniquely identifies it within containing lab plan. Used in resource URIs.
      * @param username The name of the user that uniquely identifies it within containing lab. Used in resource URIs.
      * @param body The request body.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the {@link Response} on successful completion of {@link Mono}.
+     * @return the {@link SyncPoller} for polling of long-running operation.
      */
     @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
-    public SyncPoller<PollResult<Void>, Void> beginInvite(
-        String resourceGroupName, String labName, String username, InviteBody body, Context context) {
-        return beginInviteAsync(resourceGroupName, labName, username, body, context).getSyncPoller();
+    public SyncPoller<PollResult<Void>, Void> beginInvite(String resourceGroupName, String labName, String username,
+        InviteBody body, Context context) {
+        return this.beginInviteAsync(resourceGroupName, labName, username, body, context).getSyncPoller();
     }
 
     /**
+     * Invite a user to a lab.
+     * 
      * Operation to invite a user to a lab.
-     *
+     * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
-     * @param labName The name of the lab that uniquely identifies it within containing lab account. Used in resource
-     *     URIs.
+     * @param labName The name of the lab that uniquely identifies it within containing lab plan. Used in resource URIs.
      * @param username The name of the user that uniquely identifies it within containing lab. Used in resource URIs.
      * @param body The request body.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
@@ -1637,17 +1439,17 @@ public final class UsersClientImpl implements UsersClient {
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
     private Mono<Void> inviteAsync(String resourceGroupName, String labName, String username, InviteBody body) {
-        return beginInviteAsync(resourceGroupName, labName, username, body)
-            .last()
+        return beginInviteAsync(resourceGroupName, labName, username, body).last()
             .flatMap(this.client::getLroFinalResultOrError);
     }
 
     /**
+     * Invite a user to a lab.
+     * 
      * Operation to invite a user to a lab.
-     *
+     * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
-     * @param labName The name of the lab that uniquely identifies it within containing lab account. Used in resource
-     *     URIs.
+     * @param labName The name of the lab that uniquely identifies it within containing lab plan. Used in resource URIs.
      * @param username The name of the user that uniquely identifies it within containing lab. Used in resource URIs.
      * @param body The request body.
      * @param context The context to associate with this operation.
@@ -1657,19 +1459,19 @@ public final class UsersClientImpl implements UsersClient {
      * @return A {@link Mono} that completes when a successful response is received.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    private Mono<Void> inviteAsync(
-        String resourceGroupName, String labName, String username, InviteBody body, Context context) {
-        return beginInviteAsync(resourceGroupName, labName, username, body, context)
-            .last()
+    private Mono<Void> inviteAsync(String resourceGroupName, String labName, String username, InviteBody body,
+        Context context) {
+        return beginInviteAsync(resourceGroupName, labName, username, body, context).last()
             .flatMap(this.client::getLroFinalResultOrError);
     }
 
     /**
+     * Invite a user to a lab.
+     * 
      * Operation to invite a user to a lab.
-     *
+     * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
-     * @param labName The name of the lab that uniquely identifies it within containing lab account. Used in resource
-     *     URIs.
+     * @param labName The name of the lab that uniquely identifies it within containing lab plan. Used in resource URIs.
      * @param username The name of the user that uniquely identifies it within containing lab. Used in resource URIs.
      * @param body The request body.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
@@ -1682,11 +1484,12 @@ public final class UsersClientImpl implements UsersClient {
     }
 
     /**
+     * Invite a user to a lab.
+     * 
      * Operation to invite a user to a lab.
-     *
+     * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
-     * @param labName The name of the lab that uniquely identifies it within containing lab account. Used in resource
-     *     URIs.
+     * @param labName The name of the lab that uniquely identifies it within containing lab plan. Used in resource URIs.
      * @param username The name of the user that uniquely identifies it within containing lab. Used in resource URIs.
      * @param body The request body.
      * @param context The context to associate with this operation.
@@ -1701,8 +1504,8 @@ public final class UsersClientImpl implements UsersClient {
 
     /**
      * Get the next page of items.
-     *
-     * @param nextLink The nextLink parameter.
+     * 
+     * @param nextLink The URL to get the next list of items.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
@@ -1714,30 +1517,21 @@ public final class UsersClientImpl implements UsersClient {
             return Mono.error(new IllegalArgumentException("Parameter nextLink is required and cannot be null."));
         }
         if (this.client.getEndpoint() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getEndpoint() is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
         }
         final String accept = "application/json";
         return FluxUtil
             .withContext(context -> service.listByLabNext(nextLink, this.client.getEndpoint(), accept, context))
-            .<PagedResponse<UserInner>>map(
-                res ->
-                    new PagedResponseBase<>(
-                        res.getRequest(),
-                        res.getStatusCode(),
-                        res.getHeaders(),
-                        res.getValue().value(),
-                        res.getValue().nextLink(),
-                        null))
+            .<PagedResponse<UserInner>>map(res -> new PagedResponseBase<>(res.getRequest(), res.getStatusCode(),
+                res.getHeaders(), res.getValue().value(), res.getValue().nextLink(), null))
             .contextWrite(context -> context.putAll(FluxUtil.toReactorContext(this.client.getContext()).readOnly()));
     }
 
     /**
      * Get the next page of items.
-     *
-     * @param nextLink The nextLink parameter.
+     * 
+     * @param nextLink The URL to get the next list of items.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
@@ -1750,23 +1544,13 @@ public final class UsersClientImpl implements UsersClient {
             return Mono.error(new IllegalArgumentException("Parameter nextLink is required and cannot be null."));
         }
         if (this.client.getEndpoint() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getEndpoint() is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
         }
         final String accept = "application/json";
         context = this.client.mergeContext(context);
-        return service
-            .listByLabNext(nextLink, this.client.getEndpoint(), accept, context)
-            .map(
-                res ->
-                    new PagedResponseBase<>(
-                        res.getRequest(),
-                        res.getStatusCode(),
-                        res.getHeaders(),
-                        res.getValue().value(),
-                        res.getValue().nextLink(),
-                        null));
+        return service.listByLabNext(nextLink, this.client.getEndpoint(), accept, context)
+            .map(res -> new PagedResponseBase<>(res.getRequest(), res.getStatusCode(), res.getHeaders(),
+                res.getValue().value(), res.getValue().nextLink(), null));
     }
 }

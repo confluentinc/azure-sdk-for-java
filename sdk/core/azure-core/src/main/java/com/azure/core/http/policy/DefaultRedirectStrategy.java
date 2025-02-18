@@ -3,36 +3,63 @@
 
 package com.azure.core.http.policy;
 
-import com.azure.core.http.HttpHeaders;
+import com.azure.core.http.HttpHeaderName;
 import com.azure.core.http.HttpMethod;
 import com.azure.core.http.HttpPipelineCallContext;
 import com.azure.core.http.HttpRequest;
 import com.azure.core.http.HttpResponse;
+import com.azure.core.implementation.logging.LoggingKeys;
 import com.azure.core.util.CoreUtils;
 import com.azure.core.util.logging.ClientLogger;
+import com.azure.core.util.logging.LogLevel;
 
 import java.net.HttpURLConnection;
-import java.util.Arrays;
-import java.util.HashSet;
+import java.util.EnumSet;
 import java.util.Set;
 
 /**
- * A default implementation of {@link RedirectStrategy} that uses the provided maximum retry attempts,
- * header name to look up redirect url value for, http methods and a known set of
- * redirect status response codes (301, 302, 307, 308) to determine if request should be redirected.
+ * The {@code DefaultRedirectStrategy} class is an implementation of the {@link RedirectStrategy} interface. This
+ * strategy uses the provided maximum retry attempts, header name to look up redirect URL value for, HTTP methods and
+ * a known set of redirect status response codes (301, 302, 307, 308) to determine if a request should be redirected.
+ *
+ * <p>This class is useful when you need to handle HTTP redirects. It ensures that the requests are redirected
+ * correctly based on the response status code and the maximum number of redirect attempts.</p>
+ *
+ * <p><strong>Code sample:</strong></p>
+ *
+ * <p>In this example, a {@code DefaultRedirectStrategy} is created with a maximum of 3 redirect attempts,
+ * "Location" as the header name to locate the redirect URL, and GET and HEAD as the allowed methods for performing
+ * the redirect. The strategy is then used in a {@code RedirectPolicy} which can be added to the pipeline. For a request
+ * sent by the pipeline, if the server responds with a redirect status code and provides a "Location" header,
+ * the request will be redirected up to 3 times as needed.</p>
+ *
+ * <!-- src_embed com.azure.core.http.policy.DefaultRedirectStrategy.constructor -->
+ * <pre>
+ * DefaultRedirectStrategy redirectStrategy = new DefaultRedirectStrategy&#40;3, &quot;Location&quot;,
+ *     EnumSet.of&#40;HttpMethod.GET, HttpMethod.HEAD&#41;&#41;;
+ * RedirectPolicy redirectPolicy = new RedirectPolicy&#40;redirectStrategy&#41;;
+ * </pre>
+ * <!-- end com.azure.core.http.policy.DefaultRedirectStrategy.constructor -->
+ *
+ * @see com.azure.core.http.policy
+ * @see com.azure.core.http.policy.RedirectStrategy
+ * @see com.azure.core.http.policy.RedirectPolicy
+ * @see com.azure.core.http.HttpPipeline
+ * @see com.azure.core.http.HttpRequest
+ * @see com.azure.core.http.HttpResponse
  */
 public final class DefaultRedirectStrategy implements RedirectStrategy {
-    private final ClientLogger logger = new ClientLogger(DefaultRedirectStrategy.class);
+    private static final ClientLogger LOGGER = new ClientLogger(DefaultRedirectStrategy.class);
 
     private static final int DEFAULT_MAX_REDIRECT_ATTEMPTS = 3;
-    private static final String DEFAULT_REDIRECT_LOCATION_HEADER_NAME = "Location";
     private static final int PERMANENT_REDIRECT_STATUS_CODE = 308;
     private static final int TEMPORARY_REDIRECT_STATUS_CODE = 307;
-    private static final Set<HttpMethod> DEFAULT_REDIRECT_ALLOWED_METHODS =
-        new HashSet<>(Arrays.asList(HttpMethod.GET, HttpMethod.HEAD));
+    private static final Set<HttpMethod> DEFAULT_REDIRECT_ALLOWED_METHODS = EnumSet.of(HttpMethod.GET, HttpMethod.HEAD);
+
+    private static final String REDIRECT_URLS_KEY = "redirectUrls";
 
     private final int maxAttempts;
-    private final String locationHeader;
+    private final HttpHeaderName locationHeader;
     private final Set<HttpMethod> allowedRedirectHttpMethods;
 
     /**
@@ -41,7 +68,7 @@ public final class DefaultRedirectStrategy implements RedirectStrategy {
      * and {@link HttpMethod#HEAD} as allowed methods for performing the redirect.
      */
     public DefaultRedirectStrategy() {
-        this(DEFAULT_MAX_REDIRECT_ATTEMPTS, DEFAULT_REDIRECT_LOCATION_HEADER_NAME, DEFAULT_REDIRECT_ALLOWED_METHODS);
+        this(DEFAULT_MAX_REDIRECT_ATTEMPTS, HttpHeaderName.LOCATION, DEFAULT_REDIRECT_ALLOWED_METHODS);
     }
 
     /**
@@ -53,7 +80,7 @@ public final class DefaultRedirectStrategy implements RedirectStrategy {
      * @throws IllegalArgumentException if {@code maxAttempts} is less than 0.
      */
     public DefaultRedirectStrategy(int maxAttempts) {
-        this(maxAttempts, DEFAULT_REDIRECT_LOCATION_HEADER_NAME, DEFAULT_REDIRECT_ALLOWED_METHODS);
+        this(maxAttempts, HttpHeaderName.LOCATION, DEFAULT_REDIRECT_ALLOWED_METHODS);
     }
 
     /**
@@ -65,37 +92,51 @@ public final class DefaultRedirectStrategy implements RedirectStrategy {
      * @throws IllegalArgumentException if {@code maxAttempts} is less than 0.
      */
     public DefaultRedirectStrategy(int maxAttempts, String locationHeader, Set<HttpMethod> allowedMethods) {
+        this(maxAttempts, validateLocationHeader(locationHeader), validateAllowedMethods(allowedMethods));
+    }
+
+    private DefaultRedirectStrategy(int maxAttempts, HttpHeaderName locationHeader, Set<HttpMethod> allowedMethods) {
         if (maxAttempts < 0) {
-            throw logger.logExceptionAsError(new IllegalArgumentException("Max attempts cannot be less than 0."));
+            throw LOGGER.logExceptionAsError(new IllegalArgumentException("Max attempts cannot be less than 0."));
         }
         this.maxAttempts = maxAttempts;
+        this.locationHeader = locationHeader;
+        this.allowedRedirectHttpMethods = allowedMethods;
+    }
+
+    private static HttpHeaderName validateLocationHeader(String locationHeader) {
         if (CoreUtils.isNullOrEmpty(locationHeader)) {
-            logger.error("'locationHeader' provided as null will be defaulted to {}",
-                DEFAULT_REDIRECT_LOCATION_HEADER_NAME);
-            this.locationHeader = DEFAULT_REDIRECT_LOCATION_HEADER_NAME;
+            LOGGER.log(LogLevel.INFORMATIONAL,
+                () -> "'locationHeader' provided as null will be defaulted to " + HttpHeaderName.LOCATION);
+            return HttpHeaderName.LOCATION;
         } else {
-            this.locationHeader = locationHeader;
+            return HttpHeaderName.fromString(locationHeader);
         }
+    }
+
+    private static Set<HttpMethod> validateAllowedMethods(Set<HttpMethod> allowedMethods) {
         if (CoreUtils.isNullOrEmpty(allowedMethods)) {
-            logger.error("'allowedMethods' provided as null will be defaulted to {}", DEFAULT_REDIRECT_ALLOWED_METHODS);
-            this.allowedRedirectHttpMethods = DEFAULT_REDIRECT_ALLOWED_METHODS;
+            LOGGER.log(LogLevel.INFORMATIONAL,
+                () -> "'allowedMethods' provided as null will be defaulted to " + DEFAULT_REDIRECT_ALLOWED_METHODS);
+            return DEFAULT_REDIRECT_ALLOWED_METHODS;
         } else {
-            this.allowedRedirectHttpMethods = allowedMethods;
+            return EnumSet.copyOf(allowedMethods);
         }
     }
 
     @Override
-    public boolean shouldAttemptRedirect(HttpPipelineCallContext context,
-                                         HttpResponse httpResponse, int tryCount,
-                                         Set<String> attemptedRedirectUrls) {
+    public boolean shouldAttemptRedirect(HttpPipelineCallContext context, HttpResponse httpResponse, int tryCount,
+        Set<String> attemptedRedirectUrls) {
 
         if (isValidRedirectStatusCode(httpResponse.getStatusCode())
             && isValidRedirectCount(tryCount)
             && isAllowedRedirectMethod(httpResponse.getRequest().getHttpMethod())) {
-            String redirectUrl = tryGetRedirectHeader(httpResponse.getHeaders(), getLocationHeader());
+            String redirectUrl = httpResponse.getHeaderValue(locationHeader);
             if (redirectUrl != null && !alreadyAttemptedRedirectUrl(redirectUrl, attemptedRedirectUrls)) {
-                logger.verbose("[Redirecting] Try count: {}, Attempted Redirect URLs: {}", tryCount,
-                    attemptedRedirectUrls.toString());
+                LOGGER.atVerbose()
+                    .addKeyValue(LoggingKeys.TRY_COUNT_KEY, tryCount)
+                    .addKeyValue(REDIRECT_URLS_KEY, attemptedRedirectUrls::toString)
+                    .log("Redirecting.");
                 attemptedRedirectUrls.add(redirectUrl);
                 return true;
             } else {
@@ -108,31 +149,12 @@ public final class DefaultRedirectStrategy implements RedirectStrategy {
 
     @Override
     public HttpRequest createRedirectRequest(HttpResponse httpResponse) {
-        String responseLocation = tryGetRedirectHeader(httpResponse.getHeaders(), getLocationHeader());
-        return httpResponse.getRequest().setUrl(responseLocation);
+        return httpResponse.getRequest().setUrl(httpResponse.getHeaderValue(locationHeader));
     }
 
     @Override
     public int getMaxAttempts() {
         return maxAttempts;
-    }
-
-    /*
-     * The header name to look up the value for the redirect url in response headers.
-     *
-     * @return the value of the header, or null if the header doesn't exist in the response.
-     */
-    String getLocationHeader() {
-        return locationHeader;
-    }
-
-    /*
-     * The {@link HttpMethod http methods} that are allowed to be redirected.
-     *
-     * @return the set of allowed redirect http methods.
-     */
-    Set<HttpMethod> getAllowedRedirectHttpMethods() {
-        return allowedRedirectHttpMethods;
     }
 
     /**
@@ -143,10 +165,12 @@ public final class DefaultRedirectStrategy implements RedirectStrategy {
      * @return {@code true} if the redirectUrl provided in the response header is already being attempted for redirect
      * , {@code false} otherwise.
      */
-    private boolean alreadyAttemptedRedirectUrl(String redirectUrl,
-                                                Set<String> attemptedRedirectUrls) {
+    private boolean alreadyAttemptedRedirectUrl(String redirectUrl, Set<String> attemptedRedirectUrls) {
         if (attemptedRedirectUrls.contains(redirectUrl)) {
-            logger.error("Request was redirected more than once to: {}", redirectUrl);
+            LOGGER.atError()
+                .addKeyValue(LoggingKeys.REDIRECT_URL_KEY, redirectUrl)
+                .log("Request was redirected more than once to the same URL.");
+
             return true;
         }
         return false;
@@ -160,7 +184,8 @@ public final class DefaultRedirectStrategy implements RedirectStrategy {
      */
     private boolean isValidRedirectCount(int tryCount) {
         if (tryCount >= getMaxAttempts()) {
-            logger.error("Request has been redirected more than {} times.", getMaxAttempts());
+            LOGGER.atError().addKeyValue("maxAttempts", getMaxAttempts()).log("Redirect attempts have been exhausted.");
+
             return false;
         }
         return true;
@@ -173,10 +198,13 @@ public final class DefaultRedirectStrategy implements RedirectStrategy {
      * @return {@code true} if the request {@code httpMethod} is a valid http redirect method, {@code false} otherwise.
      */
     private boolean isAllowedRedirectMethod(HttpMethod httpMethod) {
-        if (getAllowedRedirectHttpMethods().contains(httpMethod)) {
+        if (allowedRedirectHttpMethods.contains(httpMethod)) {
             return true;
         } else {
-            logger.error("Request was redirected from an invalid redirect allowed method: {}", httpMethod);
+            LOGGER.atError()
+                .addKeyValue(LoggingKeys.HTTP_METHOD_KEY, httpMethod)
+                .log("Request was redirected from an invalid redirect allowed method.");
+
             return false;
         }
     }
@@ -192,22 +220,5 @@ public final class DefaultRedirectStrategy implements RedirectStrategy {
             || statusCode == HttpURLConnection.HTTP_MOVED_PERM
             || statusCode == PERMANENT_REDIRECT_STATUS_CODE
             || statusCode == TEMPORARY_REDIRECT_STATUS_CODE;
-    }
-
-    /**
-     * Gets the redirect url from the response headers.
-     *
-     * @param headers the http response headers.
-     * @param headerName the header name to look up value for.
-     * @return the header value for the provided header name, {@code null} otherwise.
-     */
-    String tryGetRedirectHeader(HttpHeaders headers, String headerName) {
-        String headerValue = headers.getValue(headerName);
-        if (CoreUtils.isNullOrEmpty(headerValue)) {
-            logger.error("Redirect url was null for header name: {}, request redirect was terminated.", headerName);
-            return null;
-        } else {
-            return headerValue;
-        }
     }
 }

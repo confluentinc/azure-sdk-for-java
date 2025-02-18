@@ -12,15 +12,14 @@ import com.azure.resourcemanager.netapp.models.VolumeGroupMetadata;
 import com.azure.resourcemanager.netapp.models.VolumeGroupVolumeProperties;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
 public final class VolumeGroupDetailsImpl implements VolumeGroupDetails, VolumeGroupDetails.Definition {
     private VolumeGroupDetailsInner innerObject;
 
     private final com.azure.resourcemanager.netapp.NetAppFilesManager serviceManager;
 
-    VolumeGroupDetailsImpl(
-        VolumeGroupDetailsInner innerObject, com.azure.resourcemanager.netapp.NetAppFilesManager serviceManager) {
+    VolumeGroupDetailsImpl(VolumeGroupDetailsInner innerObject,
+        com.azure.resourcemanager.netapp.NetAppFilesManager serviceManager) {
         this.innerObject = innerObject;
         this.serviceManager = serviceManager;
     }
@@ -39,15 +38,6 @@ public final class VolumeGroupDetailsImpl implements VolumeGroupDetails, VolumeG
 
     public String type() {
         return this.innerModel().type();
-    }
-
-    public Map<String, String> tags() {
-        Map<String, String> inner = this.innerModel().tags();
-        if (inner != null) {
-            return Collections.unmodifiableMap(inner);
-        } else {
-            return Collections.emptyMap();
-        }
     }
 
     public String provisioningState() {
@@ -96,20 +86,16 @@ public final class VolumeGroupDetailsImpl implements VolumeGroupDetails, VolumeG
     }
 
     public VolumeGroupDetails create() {
-        this.innerObject =
-            serviceManager
-                .serviceClient()
-                .getVolumeGroups()
-                .create(resourceGroupName, accountName, volumeGroupName, this.innerModel(), Context.NONE);
+        this.innerObject = serviceManager.serviceClient()
+            .getVolumeGroups()
+            .create(resourceGroupName, accountName, volumeGroupName, this.innerModel(), Context.NONE);
         return this;
     }
 
     public VolumeGroupDetails create(Context context) {
-        this.innerObject =
-            serviceManager
-                .serviceClient()
-                .getVolumeGroups()
-                .create(resourceGroupName, accountName, volumeGroupName, this.innerModel(), context);
+        this.innerObject = serviceManager.serviceClient()
+            .getVolumeGroups()
+            .create(resourceGroupName, accountName, volumeGroupName, this.innerModel(), context);
         return this;
     }
 
@@ -120,22 +106,18 @@ public final class VolumeGroupDetailsImpl implements VolumeGroupDetails, VolumeG
     }
 
     public VolumeGroupDetails refresh() {
-        this.innerObject =
-            serviceManager
-                .serviceClient()
-                .getVolumeGroups()
-                .getWithResponse(resourceGroupName, accountName, volumeGroupName, Context.NONE)
-                .getValue();
+        this.innerObject = serviceManager.serviceClient()
+            .getVolumeGroups()
+            .getWithResponse(resourceGroupName, accountName, volumeGroupName, Context.NONE)
+            .getValue();
         return this;
     }
 
     public VolumeGroupDetails refresh(Context context) {
-        this.innerObject =
-            serviceManager
-                .serviceClient()
-                .getVolumeGroups()
-                .getWithResponse(resourceGroupName, accountName, volumeGroupName, context)
-                .getValue();
+        this.innerObject = serviceManager.serviceClient()
+            .getVolumeGroups()
+            .getWithResponse(resourceGroupName, accountName, volumeGroupName, context)
+            .getValue();
         return this;
     }
 
@@ -146,11 +128,6 @@ public final class VolumeGroupDetailsImpl implements VolumeGroupDetails, VolumeG
 
     public VolumeGroupDetailsImpl withRegion(String location) {
         this.innerModel().withLocation(location);
-        return this;
-    }
-
-    public VolumeGroupDetailsImpl withTags(Map<String, String> tags) {
-        this.innerModel().withTags(tags);
         return this;
     }
 

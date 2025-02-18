@@ -18,7 +18,38 @@ the lifetime of remote rendering sessions.
 - [Azure Subscription][azure_subscription]
 - [Azure Remote Rendering account][remote_rendering_account] to use this package.
 
-### Install the package
+### Include the package
+
+#### Include the BOM file
+
+Please include the azure-sdk-bom to your project to take dependency on the General Availability (GA) version of the library. In the following snippet, replace the {bom_version_to_target} placeholder with the version number.
+To learn more about the BOM, see the [AZURE SDK BOM README](https://github.com/Azure/azure-sdk-for-java/blob/main/sdk/boms/azure-sdk-bom/README.md).
+
+```xml
+<dependencyManagement>
+    <dependencies>
+        <dependency>
+            <groupId>com.azure</groupId>
+            <artifactId>azure-sdk-bom</artifactId>
+            <version>{bom_version_to_target}</version>
+            <type>pom</type>
+            <scope>import</scope>
+        </dependency>
+    </dependencies>
+</dependencyManagement>
+```
+and then include the direct dependency in the dependencies section without the version tag as shown below.
+
+```xml
+<dependencies>
+  <dependency>
+    <groupId>com.azure</groupId>
+    <artifactId>azure-mixedreality-remoterendering</artifactId>
+  </dependency>
+</dependencies>
+```
+
+#### Include direct dependency
 
 **Note:** This version targets Azure Remote Rendering service API version v2021-01-01.
 
@@ -29,7 +60,7 @@ Add the following Maven dependency:
 <dependency>
     <groupId>com.azure</groupId>
     <artifactId>azure-mixedreality-remoterendering</artifactId>
-    <version>1.1.1</version>
+    <version>1.1.20</version>
 </dependency>
 ```
 [//]: # ({x-version-update-end})
@@ -105,7 +136,9 @@ Use the `DeviceCodeCredential` object to perform device code authentication.
 
 ```java readme-sample-createClientWithDeviceCode
 DeviceCodeCredential credential = new DeviceCodeCredentialBuilder()
-    .challengeConsumer((DeviceCodeInfo deviceCodeInfo) -> { logger.info(deviceCodeInfo.getMessage()); })
+    .challengeConsumer((DeviceCodeInfo deviceCodeInfo) -> {
+        logger.info(deviceCodeInfo.getMessage());
+    })
     .clientId(environment.getClientId())
     .tenantId(environment.getTenantId())
     .authorityHost("https://login.microsoftonline.com/" + environment.getTenantId())
@@ -319,7 +352,7 @@ client.endSession(sessionId);
 
 ## Troubleshooting
 
-For general troubleshooting advice concerning Azure Remote Rendering, see [the Troubleshoot page][troubleshoot] for remote rendering at docs.microsoft.com.
+For general troubleshooting advice concerning Azure Remote Rendering, see [the Troubleshoot page][troubleshoot] for remote rendering at learn.microsoft.com.
 
 The client methods will throw exceptions if the request cannot be made.
 However, in the case of both conversions and sessions, the requests can succeed but the requested operation may not be successful.
@@ -336,10 +369,10 @@ RemoteRenderingServiceError with details.
 
 ## Next steps
 
-- Read the [Product documentation](https://docs.microsoft.com/azure/remote-rendering/)
+- Read the [Product documentation](https://learn.microsoft.com/azure/remote-rendering/)
 - Learn about the runtime SDKs:
-  - .NET: https://docs.microsoft.com/dotnet/api/microsoft.azure.remoterendering
-  - C++: https://docs.microsoft.com/cpp/api/remote-rendering/
+  - .NET: https://learn.microsoft.com/dotnet/api/microsoft.azure.remoterendering
+  - C++: https://learn.microsoft.com/cpp/api/remote-rendering/
 
 ## Contributing
 
@@ -357,17 +390,17 @@ For more information see the [Code of Conduct FAQ](https://opensource.microsoft.
 
 <!-- LINKS -->
 [azure_subscription]: https://azure.microsoft.com/free
-[jdk_link]: https://docs.microsoft.com/java/azure/jdk/?view=azure-java-stable
+[jdk_link]: https://learn.microsoft.com/java/azure/jdk/?view=azure-java-stable
 [performance_tuning]: https://github.com/Azure/azure-sdk-for-java/wiki/Performance-Tuning
 [source_code]: https://github.com/Azure/azure-sdk-for-java/tree/main/sdk/remoterendering/azure-mixedreality-remoterendering/src
-[remote_rendering_account]: https://docs.microsoft.com/azure/remote-rendering/how-tos/create-an-account
+[remote_rendering_account]: https://learn.microsoft.com/azure/remote-rendering/how-tos/create-an-account
 [LogLevels]: https://github.com/Azure/azure-sdk-for-java/blob/main/sdk/core/azure-core/src/main/java/com/azure/core/util/logging/ClientLogger.java
-[product_documentation]: https://docs.microsoft.com/azure/remote-rendering/
-[cpp_api]: https://docs.microsoft.com/cpp/api/remote-rendering/
-[dotnet_api]: https://docs.microsoft.com/dotnet/api/microsoft.azure.remoterendering
-[how_to_authenticate]: https://docs.microsoft.com/azure/remote-rendering/how-tos/authentication
+[product_documentation]: https://learn.microsoft.com/azure/remote-rendering/
+[cpp_api]: https://learn.microsoft.com/cpp/api/remote-rendering/
+[dotnet_api]: https://learn.microsoft.com/dotnet/api/microsoft.azure.remoterendering
+[how_to_authenticate]: https://learn.microsoft.com/azure/remote-rendering/how-tos/authentication
 [sts_sdk]: https://github.com/Azure/azure-sdk-for-java/tree/main/sdk/mixedreality/azure-mixedreality-authentication
-[troubleshoot]: https://docs.microsoft.com/azure/remote-rendering/resources/troubleshoot
-[api_reference_doc]: https://docs.microsoft.com/rest/api/mixedreality/
+[troubleshoot]: https://learn.microsoft.com/azure/remote-rendering/resources/troubleshoot
+[api_reference_doc]: https://learn.microsoft.com/rest/api/mixedreality/
 
-![Impressions](https://azure-sdk-impressions.azurewebsites.net/api/impressions/azure-sdk-for-java%2Fsdk%2Fmixedreality%2Fazure-mixedreality-remoterendering%2FREADME.png)
+

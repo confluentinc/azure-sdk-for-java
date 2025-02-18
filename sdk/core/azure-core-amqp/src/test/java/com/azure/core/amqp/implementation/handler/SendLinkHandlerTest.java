@@ -44,7 +44,7 @@ public class SendLinkHandlerTest {
     @Mock
     private Target target;
 
-    private final SendLinkHandler handler = new SendLinkHandler(CONNECTION_ID, HOSTNAME, LINK_NAME, ENTITY_PATH);
+    private final SendLinkHandler handler = new SendLinkHandler(CONNECTION_ID, HOSTNAME, LINK_NAME, ENTITY_PATH, null);
 
     private AutoCloseable mocksCloseable;
 
@@ -73,13 +73,13 @@ public class SendLinkHandlerTest {
     public void constructor() {
         // Act
         assertThrows(NullPointerException.class,
-            () -> new SendLinkHandler(null, HOSTNAME, LINK_NAME, ENTITY_PATH));
+            () -> new SendLinkHandler(null, HOSTNAME, LINK_NAME, ENTITY_PATH, null));
         assertThrows(NullPointerException.class,
-            () -> new SendLinkHandler(CONNECTION_ID, null, LINK_NAME, ENTITY_PATH));
+            () -> new SendLinkHandler(CONNECTION_ID, null, LINK_NAME, ENTITY_PATH, null));
         assertThrows(NullPointerException.class,
-            () -> new SendLinkHandler(CONNECTION_ID, HOSTNAME, null, ENTITY_PATH));
+            () -> new SendLinkHandler(CONNECTION_ID, HOSTNAME, null, ENTITY_PATH, null));
         assertThrows(NullPointerException.class,
-            () -> new SendLinkHandler(CONNECTION_ID, HOSTNAME, LINK_NAME, null));
+            () -> new SendLinkHandler(CONNECTION_ID, HOSTNAME, LINK_NAME, null, null));
     }
 
     /**
@@ -93,9 +93,7 @@ public class SendLinkHandlerTest {
             .expectComplete()
             .verify(VERIFY_TIMEOUT);
 
-        StepVerifier.create(handler.getDeliveredMessages())
-            .expectComplete()
-            .verify(VERIFY_TIMEOUT);
+        StepVerifier.create(handler.getDeliveredMessages()).expectComplete().verify(VERIFY_TIMEOUT);
 
         // The only thing we should be doing here is emitting a close state. We are waiting for
         // the remote close event.

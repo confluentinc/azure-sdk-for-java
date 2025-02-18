@@ -6,54 +6,57 @@ package com.azure.resourcemanager.apimanagement.models;
 
 import com.azure.core.annotation.Fluent;
 import com.azure.core.util.logging.ClientLogger;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.azure.json.JsonReader;
+import com.azure.json.JsonSerializable;
+import com.azure.json.JsonToken;
+import com.azure.json.JsonWriter;
+import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
-/** Operation request/response representation details. */
+/**
+ * Operation request/response representation details.
+ */
 @Fluent
-public final class RepresentationContract {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(RepresentationContract.class);
-
+public final class RepresentationContract implements JsonSerializable<RepresentationContract> {
     /*
-     * Specifies a registered or custom content type for this representation,
-     * e.g. application/xml.
+     * Specifies a registered or custom content type for this representation, e.g. application/xml.
      */
-    @JsonProperty(value = "contentType", required = true)
     private String contentType;
 
     /*
-     * An example of the representation.
+     * Schema identifier. Applicable only if 'contentType' value is neither 'application/x-www-form-urlencoded' nor
+     * 'multipart/form-data'.
      */
-    @JsonProperty(value = "sample")
-    private String sample;
-
-    /*
-     * Schema identifier. Applicable only if 'contentType' value is neither
-     * 'application/x-www-form-urlencoded' nor 'multipart/form-data'.
-     */
-    @JsonProperty(value = "schemaId")
     private String schemaId;
 
     /*
-     * Type name defined by the schema. Applicable only if 'contentType' value
-     * is neither 'application/x-www-form-urlencoded' nor
-     * 'multipart/form-data'.
+     * Type name defined by the schema. Applicable only if 'contentType' value is neither
+     * 'application/x-www-form-urlencoded' nor 'multipart/form-data'.
      */
-    @JsonProperty(value = "typeName")
     private String typeName;
 
     /*
-     * Collection of form parameters. Required if 'contentType' value is either
-     * 'application/x-www-form-urlencoded' or 'multipart/form-data'..
+     * Collection of form parameters. Required if 'contentType' value is either 'application/x-www-form-urlencoded' or
+     * 'multipart/form-data'..
      */
-    @JsonProperty(value = "formParameters")
     private List<ParameterContract> formParameters;
+
+    /*
+     * Exampled defined for the representation.
+     */
+    private Map<String, ParameterExampleContract> examples;
+
+    /**
+     * Creates an instance of RepresentationContract class.
+     */
+    public RepresentationContract() {
+    }
 
     /**
      * Get the contentType property: Specifies a registered or custom content type for this representation, e.g.
      * application/xml.
-     *
+     * 
      * @return the contentType value.
      */
     public String contentType() {
@@ -63,7 +66,7 @@ public final class RepresentationContract {
     /**
      * Set the contentType property: Specifies a registered or custom content type for this representation, e.g.
      * application/xml.
-     *
+     * 
      * @param contentType the contentType value to set.
      * @return the RepresentationContract object itself.
      */
@@ -73,29 +76,9 @@ public final class RepresentationContract {
     }
 
     /**
-     * Get the sample property: An example of the representation.
-     *
-     * @return the sample value.
-     */
-    public String sample() {
-        return this.sample;
-    }
-
-    /**
-     * Set the sample property: An example of the representation.
-     *
-     * @param sample the sample value to set.
-     * @return the RepresentationContract object itself.
-     */
-    public RepresentationContract withSample(String sample) {
-        this.sample = sample;
-        return this;
-    }
-
-    /**
      * Get the schemaId property: Schema identifier. Applicable only if 'contentType' value is neither
      * 'application/x-www-form-urlencoded' nor 'multipart/form-data'.
-     *
+     * 
      * @return the schemaId value.
      */
     public String schemaId() {
@@ -105,7 +88,7 @@ public final class RepresentationContract {
     /**
      * Set the schemaId property: Schema identifier. Applicable only if 'contentType' value is neither
      * 'application/x-www-form-urlencoded' nor 'multipart/form-data'.
-     *
+     * 
      * @param schemaId the schemaId value to set.
      * @return the RepresentationContract object itself.
      */
@@ -117,7 +100,7 @@ public final class RepresentationContract {
     /**
      * Get the typeName property: Type name defined by the schema. Applicable only if 'contentType' value is neither
      * 'application/x-www-form-urlencoded' nor 'multipart/form-data'.
-     *
+     * 
      * @return the typeName value.
      */
     public String typeName() {
@@ -127,7 +110,7 @@ public final class RepresentationContract {
     /**
      * Set the typeName property: Type name defined by the schema. Applicable only if 'contentType' value is neither
      * 'application/x-www-form-urlencoded' nor 'multipart/form-data'.
-     *
+     * 
      * @param typeName the typeName value to set.
      * @return the RepresentationContract object itself.
      */
@@ -139,7 +122,7 @@ public final class RepresentationContract {
     /**
      * Get the formParameters property: Collection of form parameters. Required if 'contentType' value is either
      * 'application/x-www-form-urlencoded' or 'multipart/form-data'..
-     *
+     * 
      * @return the formParameters value.
      */
     public List<ParameterContract> formParameters() {
@@ -149,7 +132,7 @@ public final class RepresentationContract {
     /**
      * Set the formParameters property: Collection of form parameters. Required if 'contentType' value is either
      * 'application/x-www-form-urlencoded' or 'multipart/form-data'..
-     *
+     * 
      * @param formParameters the formParameters value to set.
      * @return the RepresentationContract object itself.
      */
@@ -159,19 +142,101 @@ public final class RepresentationContract {
     }
 
     /**
+     * Get the examples property: Exampled defined for the representation.
+     * 
+     * @return the examples value.
+     */
+    public Map<String, ParameterExampleContract> examples() {
+        return this.examples;
+    }
+
+    /**
+     * Set the examples property: Exampled defined for the representation.
+     * 
+     * @param examples the examples value to set.
+     * @return the RepresentationContract object itself.
+     */
+    public RepresentationContract withExamples(Map<String, ParameterExampleContract> examples) {
+        this.examples = examples;
+        return this;
+    }
+
+    /**
      * Validates the instance.
-     *
+     * 
      * @throws IllegalArgumentException thrown if the instance is not valid.
      */
     public void validate() {
         if (contentType() == null) {
-            throw logger
-                .logExceptionAsError(
-                    new IllegalArgumentException(
-                        "Missing required property contentType in model RepresentationContract"));
+            throw LOGGER.atError()
+                .log(new IllegalArgumentException(
+                    "Missing required property contentType in model RepresentationContract"));
         }
         if (formParameters() != null) {
             formParameters().forEach(e -> e.validate());
         }
+        if (examples() != null) {
+            examples().values().forEach(e -> {
+                if (e != null) {
+                    e.validate();
+                }
+            });
+        }
+    }
+
+    private static final ClientLogger LOGGER = new ClientLogger(RepresentationContract.class);
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public JsonWriter toJson(JsonWriter jsonWriter) throws IOException {
+        jsonWriter.writeStartObject();
+        jsonWriter.writeStringField("contentType", this.contentType);
+        jsonWriter.writeStringField("schemaId", this.schemaId);
+        jsonWriter.writeStringField("typeName", this.typeName);
+        jsonWriter.writeArrayField("formParameters", this.formParameters,
+            (writer, element) -> writer.writeJson(element));
+        jsonWriter.writeMapField("examples", this.examples, (writer, element) -> writer.writeJson(element));
+        return jsonWriter.writeEndObject();
+    }
+
+    /**
+     * Reads an instance of RepresentationContract from the JsonReader.
+     * 
+     * @param jsonReader The JsonReader being read.
+     * @return An instance of RepresentationContract if the JsonReader was pointing to an instance of it, or null if it
+     * was pointing to JSON null.
+     * @throws IllegalStateException If the deserialized JSON object was missing any required properties.
+     * @throws IOException If an error occurs while reading the RepresentationContract.
+     */
+    public static RepresentationContract fromJson(JsonReader jsonReader) throws IOException {
+        return jsonReader.readObject(reader -> {
+            RepresentationContract deserializedRepresentationContract = new RepresentationContract();
+            while (reader.nextToken() != JsonToken.END_OBJECT) {
+                String fieldName = reader.getFieldName();
+                reader.nextToken();
+
+                if ("contentType".equals(fieldName)) {
+                    deserializedRepresentationContract.contentType = reader.getString();
+                } else if ("schemaId".equals(fieldName)) {
+                    deserializedRepresentationContract.schemaId = reader.getString();
+                } else if ("typeName".equals(fieldName)) {
+                    deserializedRepresentationContract.typeName = reader.getString();
+                } else if ("formParameters".equals(fieldName)) {
+                    List<ParameterContract> formParameters
+                        = reader.readArray(reader1 -> ParameterContract.fromJson(reader1));
+                    deserializedRepresentationContract.formParameters = formParameters;
+                } else if ("examples".equals(fieldName)) {
+                    Map<String, ParameterExampleContract> examples
+                        = reader.readMap(reader1 -> ParameterExampleContract.fromJson(reader1));
+                    deserializedRepresentationContract.examples = examples;
+                } else {
+                    reader.skipChildren();
+                }
+            }
+
+            return deserializedRepresentationContract;
+        });
     }
 }

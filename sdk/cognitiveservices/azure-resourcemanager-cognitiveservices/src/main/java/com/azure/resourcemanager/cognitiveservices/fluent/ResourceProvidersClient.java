@@ -8,16 +8,35 @@ import com.azure.core.annotation.ReturnType;
 import com.azure.core.annotation.ServiceMethod;
 import com.azure.core.http.rest.Response;
 import com.azure.core.util.Context;
+import com.azure.resourcemanager.cognitiveservices.fluent.models.CalculateModelCapacityResultInner;
 import com.azure.resourcemanager.cognitiveservices.fluent.models.DomainAvailabilityInner;
 import com.azure.resourcemanager.cognitiveservices.fluent.models.SkuAvailabilityListResultInner;
+import com.azure.resourcemanager.cognitiveservices.models.CalculateModelCapacityParameter;
 import com.azure.resourcemanager.cognitiveservices.models.CheckDomainAvailabilityParameter;
 import com.azure.resourcemanager.cognitiveservices.models.CheckSkuAvailabilityParameter;
 
-/** An instance of this class provides access to all the operations defined in ResourceProvidersClient. */
+/**
+ * An instance of this class provides access to all the operations defined in ResourceProvidersClient.
+ */
 public interface ResourceProvidersClient {
     /**
      * Check available SKUs.
-     *
+     * 
+     * @param location Resource location.
+     * @param parameters Check SKU Availability POST body.
+     * @param context The context to associate with this operation.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return check SKU availability result list along with {@link Response}.
+     */
+    @ServiceMethod(returns = ReturnType.SINGLE)
+    Response<SkuAvailabilityListResultInner> checkSkuAvailabilityWithResponse(String location,
+        CheckSkuAvailabilityParameter parameters, Context context);
+
+    /**
+     * Check available SKUs.
+     * 
      * @param location Resource location.
      * @param parameters Check SKU Availability POST body.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
@@ -29,23 +48,22 @@ public interface ResourceProvidersClient {
     SkuAvailabilityListResultInner checkSkuAvailability(String location, CheckSkuAvailabilityParameter parameters);
 
     /**
-     * Check available SKUs.
-     *
-     * @param location Resource location.
-     * @param parameters Check SKU Availability POST body.
+     * Check whether a domain is available.
+     * 
+     * @param parameters Check Domain Availability parameter.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return check SKU availability result list.
+     * @return domain availability along with {@link Response}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    Response<SkuAvailabilityListResultInner> checkSkuAvailabilityWithResponse(
-        String location, CheckSkuAvailabilityParameter parameters, Context context);
+    Response<DomainAvailabilityInner> checkDomainAvailabilityWithResponse(CheckDomainAvailabilityParameter parameters,
+        Context context);
 
     /**
      * Check whether a domain is available.
-     *
+     * 
      * @param parameters Check Domain Availability parameter.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
@@ -56,16 +74,28 @@ public interface ResourceProvidersClient {
     DomainAvailabilityInner checkDomainAvailability(CheckDomainAvailabilityParameter parameters);
 
     /**
-     * Check whether a domain is available.
-     *
+     * Model capacity calculator.
+     * 
      * @param parameters Check Domain Availability parameter.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return domain availability.
+     * @return calculate Model Capacity result along with {@link Response}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    Response<DomainAvailabilityInner> checkDomainAvailabilityWithResponse(
-        CheckDomainAvailabilityParameter parameters, Context context);
+    Response<CalculateModelCapacityResultInner>
+        calculateModelCapacityWithResponse(CalculateModelCapacityParameter parameters, Context context);
+
+    /**
+     * Model capacity calculator.
+     * 
+     * @param parameters Check Domain Availability parameter.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return calculate Model Capacity result.
+     */
+    @ServiceMethod(returns = ReturnType.SINGLE)
+    CalculateModelCapacityResultInner calculateModelCapacity(CalculateModelCapacityParameter parameters);
 }

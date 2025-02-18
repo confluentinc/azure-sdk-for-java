@@ -12,38 +12,34 @@ import com.azure.resourcemanager.botservice.fluent.HostSettingsClient;
 import com.azure.resourcemanager.botservice.fluent.models.HostSettingsResponseInner;
 import com.azure.resourcemanager.botservice.models.HostSettings;
 import com.azure.resourcemanager.botservice.models.HostSettingsResponse;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 public final class HostSettingsImpl implements HostSettings {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(HostSettingsImpl.class);
+    private static final ClientLogger LOGGER = new ClientLogger(HostSettingsImpl.class);
 
     private final HostSettingsClient innerClient;
 
     private final com.azure.resourcemanager.botservice.BotServiceManager serviceManager;
 
-    public HostSettingsImpl(
-        HostSettingsClient innerClient, com.azure.resourcemanager.botservice.BotServiceManager serviceManager) {
+    public HostSettingsImpl(HostSettingsClient innerClient,
+        com.azure.resourcemanager.botservice.BotServiceManager serviceManager) {
         this.innerClient = innerClient;
         this.serviceManager = serviceManager;
+    }
+
+    public Response<HostSettingsResponse> getWithResponse(Context context) {
+        Response<HostSettingsResponseInner> inner = this.serviceClient().getWithResponse(context);
+        if (inner != null) {
+            return new SimpleResponse<>(inner.getRequest(), inner.getStatusCode(), inner.getHeaders(),
+                new HostSettingsResponseImpl(inner.getValue(), this.manager()));
+        } else {
+            return null;
+        }
     }
 
     public HostSettingsResponse get() {
         HostSettingsResponseInner inner = this.serviceClient().get();
         if (inner != null) {
             return new HostSettingsResponseImpl(inner, this.manager());
-        } else {
-            return null;
-        }
-    }
-
-    public Response<HostSettingsResponse> getWithResponse(Context context) {
-        Response<HostSettingsResponseInner> inner = this.serviceClient().getWithResponse(context);
-        if (inner != null) {
-            return new SimpleResponse<>(
-                inner.getRequest(),
-                inner.getStatusCode(),
-                inner.getHeaders(),
-                new HostSettingsResponseImpl(inner.getValue(), this.manager()));
         } else {
             return null;
         }

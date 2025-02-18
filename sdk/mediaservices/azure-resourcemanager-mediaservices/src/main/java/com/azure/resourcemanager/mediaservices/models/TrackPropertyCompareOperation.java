@@ -5,29 +5,46 @@
 package com.azure.resourcemanager.mediaservices.models;
 
 import com.azure.core.util.ExpandableStringEnum;
-import com.fasterxml.jackson.annotation.JsonCreator;
 import java.util.Collection;
 
-/** Defines values for TrackPropertyCompareOperation. */
+/**
+ * Track property condition operation.
+ */
 public final class TrackPropertyCompareOperation extends ExpandableStringEnum<TrackPropertyCompareOperation> {
-    /** Static value Unknown for TrackPropertyCompareOperation. */
+    /**
+     * Static value Unknown for TrackPropertyCompareOperation.
+     */
     public static final TrackPropertyCompareOperation UNKNOWN = fromString("Unknown");
 
-    /** Static value Equal for TrackPropertyCompareOperation. */
+    /**
+     * Static value Equal for TrackPropertyCompareOperation.
+     */
     public static final TrackPropertyCompareOperation EQUAL = fromString("Equal");
 
     /**
+     * Creates a new instance of TrackPropertyCompareOperation value.
+     * 
+     * @deprecated Use the {@link #fromString(String)} factory method.
+     */
+    @Deprecated
+    public TrackPropertyCompareOperation() {
+    }
+
+    /**
      * Creates or finds a TrackPropertyCompareOperation from its string representation.
-     *
+     * 
      * @param name a name to look for.
      * @return the corresponding TrackPropertyCompareOperation.
      */
-    @JsonCreator
     public static TrackPropertyCompareOperation fromString(String name) {
         return fromString(name, TrackPropertyCompareOperation.class);
     }
 
-    /** @return known TrackPropertyCompareOperation values. */
+    /**
+     * Gets known TrackPropertyCompareOperation values.
+     * 
+     * @return known TrackPropertyCompareOperation values.
+     */
     public static Collection<TrackPropertyCompareOperation> values() {
         return values(TrackPropertyCompareOperation.class);
     }

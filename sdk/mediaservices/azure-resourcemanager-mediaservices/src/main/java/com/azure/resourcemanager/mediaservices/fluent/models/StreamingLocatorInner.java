@@ -5,98 +5,65 @@
 package com.azure.resourcemanager.mediaservices.fluent.models;
 
 import com.azure.core.annotation.Fluent;
-import com.azure.core.annotation.JsonFlatten;
 import com.azure.core.management.ProxyResource;
 import com.azure.core.management.SystemData;
-import com.azure.core.util.logging.ClientLogger;
+import com.azure.json.JsonReader;
+import com.azure.json.JsonToken;
+import com.azure.json.JsonWriter;
 import com.azure.resourcemanager.mediaservices.models.StreamingLocatorContentKey;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import java.io.IOException;
 import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.UUID;
 
-/** A Streaming Locator resource. */
-@JsonFlatten
+/**
+ * A Streaming Locator resource.
+ */
 @Fluent
-public class StreamingLocatorInner extends ProxyResource {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(StreamingLocatorInner.class);
+public final class StreamingLocatorInner extends ProxyResource {
+    /*
+     * Properties of the Streaming Locator.
+     */
+    private StreamingLocatorProperties innerProperties;
 
     /*
      * The system metadata relating to this resource.
      */
-    @JsonProperty(value = "systemData", access = JsonProperty.Access.WRITE_ONLY)
     private SystemData systemData;
 
     /*
-     * Asset Name
+     * The type of the resource.
      */
-    @JsonProperty(value = "properties.assetName")
-    private String assetName;
+    private String type;
 
     /*
-     * The creation time of the Streaming Locator.
+     * The name of the resource.
      */
-    @JsonProperty(value = "properties.created", access = JsonProperty.Access.WRITE_ONLY)
-    private OffsetDateTime created;
+    private String name;
 
     /*
-     * The start time of the Streaming Locator.
+     * Fully qualified resource Id for the resource.
      */
-    @JsonProperty(value = "properties.startTime")
-    private OffsetDateTime startTime;
+    private String id;
 
-    /*
-     * The end time of the Streaming Locator.
+    /**
+     * Creates an instance of StreamingLocatorInner class.
      */
-    @JsonProperty(value = "properties.endTime")
-    private OffsetDateTime endTime;
+    public StreamingLocatorInner() {
+    }
 
-    /*
-     * The StreamingLocatorId of the Streaming Locator.
+    /**
+     * Get the innerProperties property: Properties of the Streaming Locator.
+     * 
+     * @return the innerProperties value.
      */
-    @JsonProperty(value = "properties.streamingLocatorId")
-    private UUID streamingLocatorId;
-
-    /*
-     * Name of the Streaming Policy used by this Streaming Locator. Either
-     * specify the name of Streaming Policy you created or use one of the
-     * predefined Streaming Policies. The predefined Streaming Policies
-     * available are: 'Predefined_DownloadOnly',
-     * 'Predefined_ClearStreamingOnly', 'Predefined_DownloadAndClearStreaming',
-     * 'Predefined_ClearKey', 'Predefined_MultiDrmCencStreaming' and
-     * 'Predefined_MultiDrmStreaming'
-     */
-    @JsonProperty(value = "properties.streamingPolicyName")
-    private String streamingPolicyName;
-
-    /*
-     * Name of the default ContentKeyPolicy used by this Streaming Locator.
-     */
-    @JsonProperty(value = "properties.defaultContentKeyPolicyName")
-    private String defaultContentKeyPolicyName;
-
-    /*
-     * The ContentKeys used by this Streaming Locator.
-     */
-    @JsonProperty(value = "properties.contentKeys")
-    private List<StreamingLocatorContentKey> contentKeys;
-
-    /*
-     * Alternative Media ID of this Streaming Locator
-     */
-    @JsonProperty(value = "properties.alternativeMediaId")
-    private String alternativeMediaId;
-
-    /*
-     * A list of asset or account filters which apply to this streaming locator
-     */
-    @JsonProperty(value = "properties.filters")
-    private List<String> filters;
+    private StreamingLocatorProperties innerProperties() {
+        return this.innerProperties;
+    }
 
     /**
      * Get the systemData property: The system metadata relating to this resource.
-     *
+     * 
      * @return the systemData value.
      */
     public SystemData systemData() {
@@ -104,91 +71,133 @@ public class StreamingLocatorInner extends ProxyResource {
     }
 
     /**
+     * Get the type property: The type of the resource.
+     * 
+     * @return the type value.
+     */
+    @Override
+    public String type() {
+        return this.type;
+    }
+
+    /**
+     * Get the name property: The name of the resource.
+     * 
+     * @return the name value.
+     */
+    @Override
+    public String name() {
+        return this.name;
+    }
+
+    /**
+     * Get the id property: Fully qualified resource Id for the resource.
+     * 
+     * @return the id value.
+     */
+    @Override
+    public String id() {
+        return this.id;
+    }
+
+    /**
      * Get the assetName property: Asset Name.
-     *
+     * 
      * @return the assetName value.
      */
     public String assetName() {
-        return this.assetName;
+        return this.innerProperties() == null ? null : this.innerProperties().assetName();
     }
 
     /**
      * Set the assetName property: Asset Name.
-     *
+     * 
      * @param assetName the assetName value to set.
      * @return the StreamingLocatorInner object itself.
      */
     public StreamingLocatorInner withAssetName(String assetName) {
-        this.assetName = assetName;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new StreamingLocatorProperties();
+        }
+        this.innerProperties().withAssetName(assetName);
         return this;
     }
 
     /**
      * Get the created property: The creation time of the Streaming Locator.
-     *
+     * 
      * @return the created value.
      */
     public OffsetDateTime created() {
-        return this.created;
+        return this.innerProperties() == null ? null : this.innerProperties().created();
     }
 
     /**
      * Get the startTime property: The start time of the Streaming Locator.
-     *
+     * 
      * @return the startTime value.
      */
     public OffsetDateTime startTime() {
-        return this.startTime;
+        return this.innerProperties() == null ? null : this.innerProperties().startTime();
     }
 
     /**
      * Set the startTime property: The start time of the Streaming Locator.
-     *
+     * 
      * @param startTime the startTime value to set.
      * @return the StreamingLocatorInner object itself.
      */
     public StreamingLocatorInner withStartTime(OffsetDateTime startTime) {
-        this.startTime = startTime;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new StreamingLocatorProperties();
+        }
+        this.innerProperties().withStartTime(startTime);
         return this;
     }
 
     /**
      * Get the endTime property: The end time of the Streaming Locator.
-     *
+     * 
      * @return the endTime value.
      */
     public OffsetDateTime endTime() {
-        return this.endTime;
+        return this.innerProperties() == null ? null : this.innerProperties().endTime();
     }
 
     /**
      * Set the endTime property: The end time of the Streaming Locator.
-     *
+     * 
      * @param endTime the endTime value to set.
      * @return the StreamingLocatorInner object itself.
      */
     public StreamingLocatorInner withEndTime(OffsetDateTime endTime) {
-        this.endTime = endTime;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new StreamingLocatorProperties();
+        }
+        this.innerProperties().withEndTime(endTime);
         return this;
     }
 
     /**
      * Get the streamingLocatorId property: The StreamingLocatorId of the Streaming Locator.
-     *
+     * 
      * @return the streamingLocatorId value.
      */
     public UUID streamingLocatorId() {
-        return this.streamingLocatorId;
+        return this.innerProperties() == null ? null : this.innerProperties().streamingLocatorId();
     }
 
     /**
      * Set the streamingLocatorId property: The StreamingLocatorId of the Streaming Locator.
-     *
+     * 
      * @param streamingLocatorId the streamingLocatorId value to set.
      * @return the StreamingLocatorInner object itself.
      */
     public StreamingLocatorInner withStreamingLocatorId(UUID streamingLocatorId) {
-        this.streamingLocatorId = streamingLocatorId;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new StreamingLocatorProperties();
+        }
+        this.innerProperties().withStreamingLocatorId(streamingLocatorId);
         return this;
     }
 
@@ -198,11 +207,11 @@ public class StreamingLocatorInner extends ProxyResource {
      * Streaming Policies available are: 'Predefined_DownloadOnly', 'Predefined_ClearStreamingOnly',
      * 'Predefined_DownloadAndClearStreaming', 'Predefined_ClearKey', 'Predefined_MultiDrmCencStreaming' and
      * 'Predefined_MultiDrmStreaming'.
-     *
+     * 
      * @return the streamingPolicyName value.
      */
     public String streamingPolicyName() {
-        return this.streamingPolicyName;
+        return this.innerProperties() == null ? null : this.innerProperties().streamingPolicyName();
     }
 
     /**
@@ -211,105 +220,165 @@ public class StreamingLocatorInner extends ProxyResource {
      * Streaming Policies available are: 'Predefined_DownloadOnly', 'Predefined_ClearStreamingOnly',
      * 'Predefined_DownloadAndClearStreaming', 'Predefined_ClearKey', 'Predefined_MultiDrmCencStreaming' and
      * 'Predefined_MultiDrmStreaming'.
-     *
+     * 
      * @param streamingPolicyName the streamingPolicyName value to set.
      * @return the StreamingLocatorInner object itself.
      */
     public StreamingLocatorInner withStreamingPolicyName(String streamingPolicyName) {
-        this.streamingPolicyName = streamingPolicyName;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new StreamingLocatorProperties();
+        }
+        this.innerProperties().withStreamingPolicyName(streamingPolicyName);
         return this;
     }
 
     /**
      * Get the defaultContentKeyPolicyName property: Name of the default ContentKeyPolicy used by this Streaming
      * Locator.
-     *
+     * 
      * @return the defaultContentKeyPolicyName value.
      */
     public String defaultContentKeyPolicyName() {
-        return this.defaultContentKeyPolicyName;
+        return this.innerProperties() == null ? null : this.innerProperties().defaultContentKeyPolicyName();
     }
 
     /**
      * Set the defaultContentKeyPolicyName property: Name of the default ContentKeyPolicy used by this Streaming
      * Locator.
-     *
+     * 
      * @param defaultContentKeyPolicyName the defaultContentKeyPolicyName value to set.
      * @return the StreamingLocatorInner object itself.
      */
     public StreamingLocatorInner withDefaultContentKeyPolicyName(String defaultContentKeyPolicyName) {
-        this.defaultContentKeyPolicyName = defaultContentKeyPolicyName;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new StreamingLocatorProperties();
+        }
+        this.innerProperties().withDefaultContentKeyPolicyName(defaultContentKeyPolicyName);
         return this;
     }
 
     /**
      * Get the contentKeys property: The ContentKeys used by this Streaming Locator.
-     *
+     * 
      * @return the contentKeys value.
      */
     public List<StreamingLocatorContentKey> contentKeys() {
-        return this.contentKeys;
+        return this.innerProperties() == null ? null : this.innerProperties().contentKeys();
     }
 
     /**
      * Set the contentKeys property: The ContentKeys used by this Streaming Locator.
-     *
+     * 
      * @param contentKeys the contentKeys value to set.
      * @return the StreamingLocatorInner object itself.
      */
     public StreamingLocatorInner withContentKeys(List<StreamingLocatorContentKey> contentKeys) {
-        this.contentKeys = contentKeys;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new StreamingLocatorProperties();
+        }
+        this.innerProperties().withContentKeys(contentKeys);
         return this;
     }
 
     /**
      * Get the alternativeMediaId property: Alternative Media ID of this Streaming Locator.
-     *
+     * 
      * @return the alternativeMediaId value.
      */
     public String alternativeMediaId() {
-        return this.alternativeMediaId;
+        return this.innerProperties() == null ? null : this.innerProperties().alternativeMediaId();
     }
 
     /**
      * Set the alternativeMediaId property: Alternative Media ID of this Streaming Locator.
-     *
+     * 
      * @param alternativeMediaId the alternativeMediaId value to set.
      * @return the StreamingLocatorInner object itself.
      */
     public StreamingLocatorInner withAlternativeMediaId(String alternativeMediaId) {
-        this.alternativeMediaId = alternativeMediaId;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new StreamingLocatorProperties();
+        }
+        this.innerProperties().withAlternativeMediaId(alternativeMediaId);
         return this;
     }
 
     /**
      * Get the filters property: A list of asset or account filters which apply to this streaming locator.
-     *
+     * 
      * @return the filters value.
      */
     public List<String> filters() {
-        return this.filters;
+        return this.innerProperties() == null ? null : this.innerProperties().filters();
     }
 
     /**
      * Set the filters property: A list of asset or account filters which apply to this streaming locator.
-     *
+     * 
      * @param filters the filters value to set.
      * @return the StreamingLocatorInner object itself.
      */
     public StreamingLocatorInner withFilters(List<String> filters) {
-        this.filters = filters;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new StreamingLocatorProperties();
+        }
+        this.innerProperties().withFilters(filters);
         return this;
     }
 
     /**
      * Validates the instance.
-     *
+     * 
      * @throws IllegalArgumentException thrown if the instance is not valid.
      */
     public void validate() {
-        if (contentKeys() != null) {
-            contentKeys().forEach(e -> e.validate());
+        if (innerProperties() != null) {
+            innerProperties().validate();
         }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public JsonWriter toJson(JsonWriter jsonWriter) throws IOException {
+        jsonWriter.writeStartObject();
+        jsonWriter.writeJsonField("properties", this.innerProperties);
+        return jsonWriter.writeEndObject();
+    }
+
+    /**
+     * Reads an instance of StreamingLocatorInner from the JsonReader.
+     * 
+     * @param jsonReader The JsonReader being read.
+     * @return An instance of StreamingLocatorInner if the JsonReader was pointing to an instance of it, or null if it
+     * was pointing to JSON null.
+     * @throws IllegalStateException If the deserialized JSON object was missing any required properties.
+     * @throws IOException If an error occurs while reading the StreamingLocatorInner.
+     */
+    public static StreamingLocatorInner fromJson(JsonReader jsonReader) throws IOException {
+        return jsonReader.readObject(reader -> {
+            StreamingLocatorInner deserializedStreamingLocatorInner = new StreamingLocatorInner();
+            while (reader.nextToken() != JsonToken.END_OBJECT) {
+                String fieldName = reader.getFieldName();
+                reader.nextToken();
+
+                if ("id".equals(fieldName)) {
+                    deserializedStreamingLocatorInner.id = reader.getString();
+                } else if ("name".equals(fieldName)) {
+                    deserializedStreamingLocatorInner.name = reader.getString();
+                } else if ("type".equals(fieldName)) {
+                    deserializedStreamingLocatorInner.type = reader.getString();
+                } else if ("properties".equals(fieldName)) {
+                    deserializedStreamingLocatorInner.innerProperties = StreamingLocatorProperties.fromJson(reader);
+                } else if ("systemData".equals(fieldName)) {
+                    deserializedStreamingLocatorInner.systemData = SystemData.fromJson(reader);
+                } else {
+                    reader.skipChildren();
+                }
+            }
+
+            return deserializedStreamingLocatorInner;
+        });
     }
 }

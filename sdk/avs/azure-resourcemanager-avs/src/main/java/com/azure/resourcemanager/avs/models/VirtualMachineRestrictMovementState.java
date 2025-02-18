@@ -5,30 +5,47 @@
 package com.azure.resourcemanager.avs.models;
 
 import com.azure.core.util.ExpandableStringEnum;
-import com.fasterxml.jackson.annotation.JsonCreator;
 import java.util.Collection;
 
-/** Defines values for VirtualMachineRestrictMovementState. */
+/**
+ * Virtual Machine Restrict Movement state.
+ */
 public final class VirtualMachineRestrictMovementState
     extends ExpandableStringEnum<VirtualMachineRestrictMovementState> {
-    /** Static value Enabled for VirtualMachineRestrictMovementState. */
+    /**
+     * Static value Enabled for VirtualMachineRestrictMovementState.
+     */
     public static final VirtualMachineRestrictMovementState ENABLED = fromString("Enabled");
 
-    /** Static value Disabled for VirtualMachineRestrictMovementState. */
+    /**
+     * Static value Disabled for VirtualMachineRestrictMovementState.
+     */
     public static final VirtualMachineRestrictMovementState DISABLED = fromString("Disabled");
 
     /**
+     * Creates a new instance of VirtualMachineRestrictMovementState value.
+     * 
+     * @deprecated Use the {@link #fromString(String)} factory method.
+     */
+    @Deprecated
+    public VirtualMachineRestrictMovementState() {
+    }
+
+    /**
      * Creates or finds a VirtualMachineRestrictMovementState from its string representation.
-     *
+     * 
      * @param name a name to look for.
      * @return the corresponding VirtualMachineRestrictMovementState.
      */
-    @JsonCreator
     public static VirtualMachineRestrictMovementState fromString(String name) {
         return fromString(name, VirtualMachineRestrictMovementState.class);
     }
 
-    /** @return known VirtualMachineRestrictMovementState values. */
+    /**
+     * Gets known VirtualMachineRestrictMovementState values.
+     * 
+     * @return known VirtualMachineRestrictMovementState values.
+     */
     public static Collection<VirtualMachineRestrictMovementState> values() {
         return values(VirtualMachineRestrictMovementState.class);
     }

@@ -26,7 +26,7 @@ import static com.azure.core.amqp.implementation.ClientConstants.INTERVAL_KEY;
  * Manages the re-authorization of the client to the token audience against the CBS node.
  */
 public class ActiveClientTokenManager implements TokenManager {
-    private final ClientLogger logger = new ClientLogger(ActiveClientTokenManager.class);
+    private static final ClientLogger LOGGER = new ClientLogger(ActiveClientTokenManager.class);
     private final AtomicBoolean hasScheduled = new AtomicBoolean();
     private final AtomicBoolean hasDisposed = new AtomicBoolean();
     private final Mono<ClaimsBasedSecurityNode> cbsNode;
@@ -38,6 +38,13 @@ public class ActiveClientTokenManager implements TokenManager {
 
     private volatile Disposable subscription;
 
+    /**
+     * Creates an instance of {@link ActiveClientTokenManager}.
+     *
+     * @param cbsNode The {@link Mono} that supplies the claims based security node to authorize with.
+     * @param tokenAudience The token audience to authorize with.
+     * @param scopes The scopes to authorize with.
+     */
     public ActiveClientTokenManager(Mono<ClaimsBasedSecurityNode> cbsNode, String tokenAudience, String scopes) {
         this.cbsNode = cbsNode;
         this.tokenAudience = tokenAudience;
@@ -63,38 +70,35 @@ public class ActiveClientTokenManager implements TokenManager {
     @Override
     public Mono<Long> authorize() {
         if (hasDisposed.get()) {
-            return Mono.error(new AzureException(
-                "Cannot authorize with CBS node when this token manager has been disposed of."));
+            return Mono.error(
+                new AzureException("Cannot authorize with CBS node when this token manager has been disposed of."));
         }
 
-        return cbsNode.flatMap(cbsNode -> cbsNode.authorize(tokenAudience, scopes))
-            .map(expiresOn -> {
-                final Duration between = Duration.between(OffsetDateTime.now(ZoneOffset.UTC), expiresOn);
+        return cbsNode.flatMap(cbsNode -> cbsNode.authorize(tokenAudience, scopes)).map(expiresOn -> {
+            final Duration between = Duration.between(OffsetDateTime.now(ZoneOffset.UTC), expiresOn);
 
-                // We want to refresh the token when 90% of the time before expiry has elapsed.
-                final long refreshSeconds = (long) Math.floor(between.getSeconds() * 0.9);
+            // We want to refresh the token when 90% of the time before expiry has elapsed.
+            final long refreshSeconds = (long) Math.floor(between.getSeconds() * 0.9);
 
-                // This converts it to milliseconds
-                final long refreshIntervalMS = refreshSeconds * 1000;
+            // This converts it to milliseconds
+            final long refreshIntervalMS = refreshSeconds * 1000;
 
-                // If this is the first time authorize is called, the task will not have been scheduled yet.
-                if (!hasScheduled.getAndSet(true)) {
-                    logger.atInfo()
-                        .addKeyValue("scopes", scopes)
-                        .log("Scheduling refresh token task.");
+            // If this is the first time authorize is called, the task will not have been scheduled yet.
+            if (!hasScheduled.getAndSet(true)) {
+                LOGGER.atInfo().addKeyValue("scopes", scopes).log("Scheduling refresh token task.");
 
-                    final Duration firstInterval = Duration.ofMillis(refreshIntervalMS);
-                    lastRefreshInterval.set(firstInterval);
-                    authorizationResults.emitNext(AmqpResponseCode.ACCEPTED, (signalType, emitResult) -> {
-                        addSignalTypeAndResult(logger.atVerbose(), signalType, emitResult).log("Could not emit ACCEPTED.");
-                        return false;
-                    });
+                final Duration firstInterval = Duration.ofMillis(refreshIntervalMS);
+                lastRefreshInterval.set(firstInterval);
+                authorizationResults.emitNext(AmqpResponseCode.ACCEPTED, (signalType, emitResult) -> {
+                    addSignalTypeAndResult(LOGGER.atVerbose(), signalType, emitResult).log("Could not emit ACCEPTED.");
+                    return false;
+                });
 
-                    subscription = scheduleRefreshTokenTask(firstInterval);
-                }
+                subscription = scheduleRefreshTokenTask(firstInterval);
+            }
 
-                return refreshIntervalMS;
-            });
+            return refreshIntervalMS;
+        });
     }
 
     @Override
@@ -104,12 +108,13 @@ public class ActiveClientTokenManager implements TokenManager {
         }
 
         authorizationResults.emitComplete((signalType, emitResult) -> {
-            addSignalTypeAndResult(logger.atVerbose(), signalType, emitResult).log("Could not close authorizationResults.");
+            addSignalTypeAndResult(LOGGER.atVerbose(), signalType, emitResult)
+                .log("Could not close authorizationResults.");
 
             return false;
         });
         durationSource.emitComplete((signalType, emitResult) -> {
-            addSignalTypeAndResult(logger.atVerbose(), signalType, emitResult).log("Could not close durationSource.");
+            addSignalTypeAndResult(LOGGER.atVerbose(), signalType, emitResult).log("Could not close durationSource.");
 
             return false;
         });
@@ -120,9 +125,10 @@ public class ActiveClientTokenManager implements TokenManager {
     }
 
     private Disposable scheduleRefreshTokenTask(Duration initialRefresh) {
-        // EmitterProcessor can queue up an initial refresh interval before any subscribers are received.
+        // durationSource is multicast hence allows queuing an initial refresh interval before any subscribers are received.
         durationSource.emitNext(initialRefresh, (signalType, emitResult) -> {
-            addSignalTypeAndResult(logger.atVerbose(), signalType, emitResult).log("Could not emit initial refresh interval.");
+            addSignalTypeAndResult(LOGGER.atVerbose(), signalType, emitResult)
+                .log("Could not emit initial refresh interval.");
 
             return false;
         });
@@ -131,24 +137,21 @@ public class ActiveClientTokenManager implements TokenManager {
             .takeUntil(duration -> hasDisposed.get())
             .flatMap(delay -> {
 
-                logger.atInfo()
-                    .addKeyValue("scopes", scopes)
-                    .log("Refreshing token.");
+                LOGGER.atInfo().addKeyValue("scopes", scopes).log("Refreshing token.");
 
                 return authorize();
             })
-            .onErrorContinue(
-                error -> (error instanceof AmqpException) && ((AmqpException) error).isTransient(),
+            .onErrorContinue(error -> (error instanceof AmqpException) && ((AmqpException) error).isTransient(),
                 (amqpException, interval) -> {
                     final Duration lastRefresh = lastRefreshInterval.get();
 
-                    logger.atError()
+                    LOGGER.atWarning()
                         .addKeyValue("scopes", scopes)
                         .addKeyValue(INTERVAL_KEY, interval)
                         .log("Error is transient. Rescheduling authorization task.", amqpException);
 
                     durationSource.emitNext(lastRefresh, (signalType, emitResult) -> {
-                        addSignalTypeAndResult(logger.atVerbose(), signalType, emitResult)
+                        addSignalTypeAndResult(LOGGER.atVerbose(), signalType, emitResult)
                             .addKeyValue("lastRefresh", lastRefresh)
                             .log("Could not emit lastRefresh.");
 
@@ -156,13 +159,13 @@ public class ActiveClientTokenManager implements TokenManager {
                     });
                 })
             .subscribe(interval -> {
-                logger.atVerbose()
+                LOGGER.atVerbose()
                     .addKeyValue("scopes", scopes)
                     .addKeyValue(INTERVAL_KEY, interval)
                     .log("Authorization successful. Refreshing token.");
 
                 authorizationResults.emitNext(AmqpResponseCode.ACCEPTED, (signalType, emitResult) -> {
-                    addSignalTypeAndResult(logger.atVerbose(), signalType, emitResult)
+                    addSignalTypeAndResult(LOGGER.atVerbose(), signalType, emitResult)
                         .log("Could not emit ACCEPTED after refresh.");
                     return false;
                 });
@@ -171,14 +174,14 @@ public class ActiveClientTokenManager implements TokenManager {
                 lastRefreshInterval.set(nextRefresh);
 
                 durationSource.emitNext(nextRefresh, (signalType, emitResult) -> {
-                    addSignalTypeAndResult(logger.atVerbose(), signalType, emitResult)
+                    addSignalTypeAndResult(LOGGER.atVerbose(), signalType, emitResult)
                         .addKeyValue("nextRefresh", nextRefresh)
                         .log("Could not emit nextRefresh.");
 
                     return false;
                 });
             }, error -> {
-                logger.atError()
+                LOGGER.atError()
                     .addKeyValue("scopes", scopes)
                     .addKeyValue("audience", tokenAudience)
                     .log("Error occurred while refreshing token that is not retriable. Not scheduling"
@@ -188,14 +191,14 @@ public class ActiveClientTokenManager implements TokenManager {
                 if (!hasDisposed.getAndSet(true)) {
                     hasScheduled.set(false);
                     durationSource.emitComplete((signalType, emitResult) -> {
-                        addSignalTypeAndResult(logger.atVerbose(), signalType, emitResult)
+                        addSignalTypeAndResult(LOGGER.atVerbose(), signalType, emitResult)
                             .log("Could not close durationSource.");
 
                         return false;
                     });
 
                     authorizationResults.emitError(error, (signalType, emitResult) -> {
-                        addSignalTypeAndResult(logger.atVerbose(), signalType, emitResult)
+                        addSignalTypeAndResult(LOGGER.atVerbose(), signalType, emitResult)
                             .log("Could not emit authorization error.", error);
 
                         return false;

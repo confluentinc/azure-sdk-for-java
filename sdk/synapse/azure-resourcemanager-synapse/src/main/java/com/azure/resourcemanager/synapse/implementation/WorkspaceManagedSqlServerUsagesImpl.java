@@ -11,17 +11,15 @@ import com.azure.resourcemanager.synapse.fluent.WorkspaceManagedSqlServerUsagesC
 import com.azure.resourcemanager.synapse.fluent.models.ServerUsageInner;
 import com.azure.resourcemanager.synapse.models.ServerUsage;
 import com.azure.resourcemanager.synapse.models.WorkspaceManagedSqlServerUsages;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 public final class WorkspaceManagedSqlServerUsagesImpl implements WorkspaceManagedSqlServerUsages {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(WorkspaceManagedSqlServerUsagesImpl.class);
+    private static final ClientLogger LOGGER = new ClientLogger(WorkspaceManagedSqlServerUsagesImpl.class);
 
     private final WorkspaceManagedSqlServerUsagesClient innerClient;
 
     private final com.azure.resourcemanager.synapse.SynapseManager serviceManager;
 
-    public WorkspaceManagedSqlServerUsagesImpl(
-        WorkspaceManagedSqlServerUsagesClient innerClient,
+    public WorkspaceManagedSqlServerUsagesImpl(WorkspaceManagedSqlServerUsagesClient innerClient,
         com.azure.resourcemanager.synapse.SynapseManager serviceManager) {
         this.innerClient = innerClient;
         this.serviceManager = serviceManager;
@@ -29,12 +27,12 @@ public final class WorkspaceManagedSqlServerUsagesImpl implements WorkspaceManag
 
     public PagedIterable<ServerUsage> list(String resourceGroupName, String workspaceName) {
         PagedIterable<ServerUsageInner> inner = this.serviceClient().list(resourceGroupName, workspaceName);
-        return Utils.mapPage(inner, inner1 -> new ServerUsageImpl(inner1, this.manager()));
+        return ResourceManagerUtils.mapPage(inner, inner1 -> new ServerUsageImpl(inner1, this.manager()));
     }
 
     public PagedIterable<ServerUsage> list(String resourceGroupName, String workspaceName, Context context) {
         PagedIterable<ServerUsageInner> inner = this.serviceClient().list(resourceGroupName, workspaceName, context);
-        return Utils.mapPage(inner, inner1 -> new ServerUsageImpl(inner1, this.manager()));
+        return ResourceManagerUtils.mapPage(inner, inner1 -> new ServerUsageImpl(inner1, this.manager()));
     }
 
     private WorkspaceManagedSqlServerUsagesClient serviceClient() {

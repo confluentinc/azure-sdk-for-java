@@ -6,54 +6,56 @@ package com.azure.resourcemanager.cdn.models;
 
 import com.azure.core.annotation.Fluent;
 import com.azure.core.util.logging.ClientLogger;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.azure.json.JsonReader;
+import com.azure.json.JsonSerializable;
+import com.azure.json.JsonToken;
+import com.azure.json.JsonWriter;
+import java.io.IOException;
 
-/** Defines the parameters for using CDN managed certificate for securing custom domain. */
+/**
+ * Defines the parameters for using CDN managed certificate for securing custom domain.
+ */
 @Fluent
-public final class CdnCertificateSourceParameters {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(CdnCertificateSourceParameters.class);
-
+public final class CdnCertificateSourceParameters implements JsonSerializable<CdnCertificateSourceParameters> {
     /*
-     * The @odata.type property.
+     * The typeName property.
      */
-    @JsonProperty(value = "@odata.type", required = true)
-    private String odataType;
+    private String typeName = "CdnCertificateSourceParameters";
 
     /*
      * Type of certificate used
      */
-    @JsonProperty(value = "certificateType", required = true)
     private CertificateType certificateType;
 
-    /** Creates an instance of CdnCertificateSourceParameters class. */
-    public CdnCertificateSourceParameters() {
-        odataType = "#Microsoft.Azure.Cdn.Models.CdnCertificateSourceParameters";
-    }
-
     /**
-     * Get the odataType property: The @odata.type property.
-     *
-     * @return the odataType value.
+     * Creates an instance of CdnCertificateSourceParameters class.
      */
-    public String odataType() {
-        return this.odataType;
+    public CdnCertificateSourceParameters() {
     }
 
     /**
-     * Set the odataType property: The @odata.type property.
-     *
-     * @param odataType the odataType value to set.
+     * Get the typeName property: The typeName property.
+     * 
+     * @return the typeName value.
+     */
+    public String typeName() {
+        return this.typeName;
+    }
+
+    /**
+     * Set the typeName property: The typeName property.
+     * 
+     * @param typeName the typeName value to set.
      * @return the CdnCertificateSourceParameters object itself.
      */
-    public CdnCertificateSourceParameters withOdataType(String odataType) {
-        this.odataType = odataType;
+    public CdnCertificateSourceParameters withTypeName(String typeName) {
+        this.typeName = typeName;
         return this;
     }
 
     /**
      * Get the certificateType property: Type of certificate used.
-     *
+     * 
      * @return the certificateType value.
      */
     public CertificateType certificateType() {
@@ -62,7 +64,7 @@ public final class CdnCertificateSourceParameters {
 
     /**
      * Set the certificateType property: Type of certificate used.
-     *
+     * 
      * @param certificateType the certificateType value to set.
      * @return the CdnCertificateSourceParameters object itself.
      */
@@ -73,15 +75,57 @@ public final class CdnCertificateSourceParameters {
 
     /**
      * Validates the instance.
-     *
+     * 
      * @throws IllegalArgumentException thrown if the instance is not valid.
      */
     public void validate() {
         if (certificateType() == null) {
-            throw logger
-                .logExceptionAsError(
-                    new IllegalArgumentException(
-                        "Missing required property certificateType in model CdnCertificateSourceParameters"));
+            throw LOGGER.atError()
+                .log(new IllegalArgumentException(
+                    "Missing required property certificateType in model CdnCertificateSourceParameters"));
         }
+    }
+
+    private static final ClientLogger LOGGER = new ClientLogger(CdnCertificateSourceParameters.class);
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public JsonWriter toJson(JsonWriter jsonWriter) throws IOException {
+        jsonWriter.writeStartObject();
+        jsonWriter.writeStringField("typeName", this.typeName);
+        jsonWriter.writeStringField("certificateType",
+            this.certificateType == null ? null : this.certificateType.toString());
+        return jsonWriter.writeEndObject();
+    }
+
+    /**
+     * Reads an instance of CdnCertificateSourceParameters from the JsonReader.
+     * 
+     * @param jsonReader The JsonReader being read.
+     * @return An instance of CdnCertificateSourceParameters if the JsonReader was pointing to an instance of it, or
+     * null if it was pointing to JSON null.
+     * @throws IllegalStateException If the deserialized JSON object was missing any required properties.
+     * @throws IOException If an error occurs while reading the CdnCertificateSourceParameters.
+     */
+    public static CdnCertificateSourceParameters fromJson(JsonReader jsonReader) throws IOException {
+        return jsonReader.readObject(reader -> {
+            CdnCertificateSourceParameters deserializedCdnCertificateSourceParameters
+                = new CdnCertificateSourceParameters();
+            while (reader.nextToken() != JsonToken.END_OBJECT) {
+                String fieldName = reader.getFieldName();
+                reader.nextToken();
+
+                if ("certificateType".equals(fieldName)) {
+                    deserializedCdnCertificateSourceParameters.certificateType
+                        = CertificateType.fromString(reader.getString());
+                } else {
+                    reader.skipChildren();
+                }
+            }
+
+            return deserializedCdnCertificateSourceParameters;
+        });
     }
 }

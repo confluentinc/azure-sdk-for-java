@@ -5,7 +5,6 @@
 package com.azure.communication.callingserver.models;
 
 import com.azure.core.util.ExpandableStringEnum;
-import com.fasterxml.jackson.annotation.JsonCreator;
 import java.util.Collection;
 
 /** Defines values for RecordingFormat. */
@@ -20,17 +19,28 @@ public final class RecordingFormat extends ExpandableStringEnum<RecordingFormat>
     public static final RecordingFormat MP4 = fromString("mp4");
 
     /**
+     * Creates an instance of {@link RecordingFormat} with no string value.
+     *
+     * @deprecated Please use {@link #fromString(String)} to create an instance of RecordingFormat.
+     */
+    @Deprecated
+    public RecordingFormat() {
+    }
+
+    /**
      * Creates or finds a RecordingFormat from its string representation.
      *
      * @param name a name to look for.
      * @return the corresponding RecordingFormat.
      */
-    @JsonCreator
     public static RecordingFormat fromString(String name) {
         return fromString(name, RecordingFormat.class);
     }
 
-    /** @return known RecordingFormat values. */
+    /**
+     * Get the collection of RecordingFormat values.
+     * @return known RecordingFormat values.
+     */
     public static Collection<RecordingFormat> values() {
         return values(RecordingFormat.class);
     }

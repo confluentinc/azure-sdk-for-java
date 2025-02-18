@@ -11,34 +11,34 @@ import com.azure.resourcemanager.datafactory.fluent.PrivateEndPointConnectionsCl
 import com.azure.resourcemanager.datafactory.fluent.models.PrivateEndpointConnectionResourceInner;
 import com.azure.resourcemanager.datafactory.models.PrivateEndPointConnections;
 import com.azure.resourcemanager.datafactory.models.PrivateEndpointConnectionResource;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 public final class PrivateEndPointConnectionsImpl implements PrivateEndPointConnections {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(PrivateEndPointConnectionsImpl.class);
+    private static final ClientLogger LOGGER = new ClientLogger(PrivateEndPointConnectionsImpl.class);
 
     private final PrivateEndPointConnectionsClient innerClient;
 
     private final com.azure.resourcemanager.datafactory.DataFactoryManager serviceManager;
 
-    public PrivateEndPointConnectionsImpl(
-        PrivateEndPointConnectionsClient innerClient,
+    public PrivateEndPointConnectionsImpl(PrivateEndPointConnectionsClient innerClient,
         com.azure.resourcemanager.datafactory.DataFactoryManager serviceManager) {
         this.innerClient = innerClient;
         this.serviceManager = serviceManager;
     }
 
-    public PagedIterable<PrivateEndpointConnectionResource> listByFactory(
-        String resourceGroupName, String factoryName) {
-        PagedIterable<PrivateEndpointConnectionResourceInner> inner =
-            this.serviceClient().listByFactory(resourceGroupName, factoryName);
-        return Utils.mapPage(inner, inner1 -> new PrivateEndpointConnectionResourceImpl(inner1, this.manager()));
+    public PagedIterable<PrivateEndpointConnectionResource> listByFactory(String resourceGroupName,
+        String factoryName) {
+        PagedIterable<PrivateEndpointConnectionResourceInner> inner
+            = this.serviceClient().listByFactory(resourceGroupName, factoryName);
+        return ResourceManagerUtils.mapPage(inner,
+            inner1 -> new PrivateEndpointConnectionResourceImpl(inner1, this.manager()));
     }
 
-    public PagedIterable<PrivateEndpointConnectionResource> listByFactory(
-        String resourceGroupName, String factoryName, Context context) {
-        PagedIterable<PrivateEndpointConnectionResourceInner> inner =
-            this.serviceClient().listByFactory(resourceGroupName, factoryName, context);
-        return Utils.mapPage(inner, inner1 -> new PrivateEndpointConnectionResourceImpl(inner1, this.manager()));
+    public PagedIterable<PrivateEndpointConnectionResource> listByFactory(String resourceGroupName, String factoryName,
+        Context context) {
+        PagedIterable<PrivateEndpointConnectionResourceInner> inner
+            = this.serviceClient().listByFactory(resourceGroupName, factoryName, context);
+        return ResourceManagerUtils.mapPage(inner,
+            inner1 -> new PrivateEndpointConnectionResourceImpl(inner1, this.manager()));
     }
 
     private PrivateEndPointConnectionsClient serviceClient() {

@@ -12,12 +12,11 @@ import com.azure.core.util.logging.ClientLogger;
 import com.azure.resourcemanager.security.fluent.SettingsClient;
 import com.azure.resourcemanager.security.fluent.models.SettingInner;
 import com.azure.resourcemanager.security.models.Setting;
+import com.azure.resourcemanager.security.models.SettingName;
 import com.azure.resourcemanager.security.models.Settings;
-import com.azure.resourcemanager.security.models.SettingsSettingName;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 public final class SettingsImpl implements Settings {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(SettingsImpl.class);
+    private static final ClientLogger LOGGER = new ClientLogger(SettingsImpl.class);
 
     private final SettingsClient innerClient;
 
@@ -30,15 +29,25 @@ public final class SettingsImpl implements Settings {
 
     public PagedIterable<Setting> list() {
         PagedIterable<SettingInner> inner = this.serviceClient().list();
-        return Utils.mapPage(inner, inner1 -> new SettingImpl(inner1, this.manager()));
+        return ResourceManagerUtils.mapPage(inner, inner1 -> new SettingImpl(inner1, this.manager()));
     }
 
     public PagedIterable<Setting> list(Context context) {
         PagedIterable<SettingInner> inner = this.serviceClient().list(context);
-        return Utils.mapPage(inner, inner1 -> new SettingImpl(inner1, this.manager()));
+        return ResourceManagerUtils.mapPage(inner, inner1 -> new SettingImpl(inner1, this.manager()));
     }
 
-    public Setting get(SettingsSettingName settingName) {
+    public Response<Setting> getWithResponse(SettingName settingName, Context context) {
+        Response<SettingInner> inner = this.serviceClient().getWithResponse(settingName, context);
+        if (inner != null) {
+            return new SimpleResponse<>(inner.getRequest(), inner.getStatusCode(), inner.getHeaders(),
+                new SettingImpl(inner.getValue(), this.manager()));
+        } else {
+            return null;
+        }
+    }
+
+    public Setting get(SettingName settingName) {
         SettingInner inner = this.serviceClient().get(settingName);
         if (inner != null) {
             return new SettingImpl(inner, this.manager());
@@ -47,37 +56,20 @@ public final class SettingsImpl implements Settings {
         }
     }
 
-    public Response<Setting> getWithResponse(SettingsSettingName settingName, Context context) {
-        Response<SettingInner> inner = this.serviceClient().getWithResponse(settingName, context);
+    public Response<Setting> updateWithResponse(SettingName settingName, SettingInner setting, Context context) {
+        Response<SettingInner> inner = this.serviceClient().updateWithResponse(settingName, setting, context);
         if (inner != null) {
-            return new SimpleResponse<>(
-                inner.getRequest(),
-                inner.getStatusCode(),
-                inner.getHeaders(),
+            return new SimpleResponse<>(inner.getRequest(), inner.getStatusCode(), inner.getHeaders(),
                 new SettingImpl(inner.getValue(), this.manager()));
         } else {
             return null;
         }
     }
 
-    public Setting update(SettingsSettingName settingName, SettingInner setting) {
+    public Setting update(SettingName settingName, SettingInner setting) {
         SettingInner inner = this.serviceClient().update(settingName, setting);
         if (inner != null) {
             return new SettingImpl(inner, this.manager());
-        } else {
-            return null;
-        }
-    }
-
-    public Response<Setting> updateWithResponse(
-        SettingsSettingName settingName, SettingInner setting, Context context) {
-        Response<SettingInner> inner = this.serviceClient().updateWithResponse(settingName, setting, context);
-        if (inner != null) {
-            return new SimpleResponse<>(
-                inner.getRequest(),
-                inner.getStatusCode(),
-                inner.getHeaders(),
-                new SettingImpl(inner.getValue(), this.manager()));
         } else {
             return null;
         }

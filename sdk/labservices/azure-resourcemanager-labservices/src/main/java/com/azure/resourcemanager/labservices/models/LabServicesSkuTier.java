@@ -5,29 +5,46 @@
 package com.azure.resourcemanager.labservices.models;
 
 import com.azure.core.util.ExpandableStringEnum;
-import com.fasterxml.jackson.annotation.JsonCreator;
 import java.util.Collection;
 
-/** Defines values for LabServicesSkuTier. */
+/**
+ * The tier of the SKU.
+ */
 public final class LabServicesSkuTier extends ExpandableStringEnum<LabServicesSkuTier> {
-    /** Static value Standard for LabServicesSkuTier. */
+    /**
+     * Static value Standard for LabServicesSkuTier.
+     */
     public static final LabServicesSkuTier STANDARD = fromString("Standard");
 
-    /** Static value Premium for LabServicesSkuTier. */
+    /**
+     * Static value Premium for LabServicesSkuTier.
+     */
     public static final LabServicesSkuTier PREMIUM = fromString("Premium");
 
     /**
+     * Creates a new instance of LabServicesSkuTier value.
+     * 
+     * @deprecated Use the {@link #fromString(String)} factory method.
+     */
+    @Deprecated
+    public LabServicesSkuTier() {
+    }
+
+    /**
      * Creates or finds a LabServicesSkuTier from its string representation.
-     *
+     * 
      * @param name a name to look for.
      * @return the corresponding LabServicesSkuTier.
      */
-    @JsonCreator
     public static LabServicesSkuTier fromString(String name) {
         return fromString(name, LabServicesSkuTier.class);
     }
 
-    /** @return known LabServicesSkuTier values. */
+    /**
+     * Gets known LabServicesSkuTier values.
+     * 
+     * @return known LabServicesSkuTier values.
+     */
     public static Collection<LabServicesSkuTier> values() {
         return values(LabServicesSkuTier.class);
     }

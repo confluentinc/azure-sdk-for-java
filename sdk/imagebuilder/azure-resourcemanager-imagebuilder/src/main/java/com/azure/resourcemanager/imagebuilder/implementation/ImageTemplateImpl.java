@@ -9,12 +9,17 @@ import com.azure.core.management.SystemData;
 import com.azure.core.util.Context;
 import com.azure.resourcemanager.imagebuilder.fluent.models.ImageTemplateInner;
 import com.azure.resourcemanager.imagebuilder.models.ImageTemplate;
+import com.azure.resourcemanager.imagebuilder.models.ImageTemplateAutoRun;
 import com.azure.resourcemanager.imagebuilder.models.ImageTemplateCustomizer;
 import com.azure.resourcemanager.imagebuilder.models.ImageTemplateDistributor;
 import com.azure.resourcemanager.imagebuilder.models.ImageTemplateIdentity;
 import com.azure.resourcemanager.imagebuilder.models.ImageTemplateLastRunStatus;
+import com.azure.resourcemanager.imagebuilder.models.ImageTemplatePropertiesErrorHandling;
+import com.azure.resourcemanager.imagebuilder.models.ImageTemplatePropertiesOptimize;
+import com.azure.resourcemanager.imagebuilder.models.ImageTemplatePropertiesValidate;
 import com.azure.resourcemanager.imagebuilder.models.ImageTemplateSource;
 import com.azure.resourcemanager.imagebuilder.models.ImageTemplateUpdateParameters;
+import com.azure.resourcemanager.imagebuilder.models.ImageTemplateUpdateParametersProperties;
 import com.azure.resourcemanager.imagebuilder.models.ImageTemplateVmProfile;
 import com.azure.resourcemanager.imagebuilder.models.ProvisioningError;
 import com.azure.resourcemanager.imagebuilder.models.ProvisioningState;
@@ -73,6 +78,14 @@ public final class ImageTemplateImpl implements ImageTemplate, ImageTemplate.Def
         }
     }
 
+    public ImageTemplatePropertiesOptimize optimize() {
+        return this.innerModel().optimize();
+    }
+
+    public ImageTemplatePropertiesValidate validation() {
+        return this.innerModel().validation();
+    }
+
     public List<ImageTemplateDistributor> distribute() {
         List<ImageTemplateDistributor> inner = this.innerModel().distribute();
         if (inner != null) {
@@ -80,6 +93,10 @@ public final class ImageTemplateImpl implements ImageTemplate, ImageTemplate.Def
         } else {
             return Collections.emptyList();
         }
+    }
+
+    public ImageTemplatePropertiesErrorHandling errorHandling() {
+        return this.innerModel().errorHandling();
     }
 
     public ProvisioningState provisioningState() {
@@ -102,12 +119,37 @@ public final class ImageTemplateImpl implements ImageTemplate, ImageTemplate.Def
         return this.innerModel().vmProfile();
     }
 
+    public String stagingResourceGroup() {
+        return this.innerModel().stagingResourceGroup();
+    }
+
+    public String exactStagingResourceGroup() {
+        return this.innerModel().exactStagingResourceGroup();
+    }
+
+    public ImageTemplateAutoRun autoRun() {
+        return this.innerModel().autoRun();
+    }
+
+    public Map<String, String> managedResourceTags() {
+        Map<String, String> inner = this.innerModel().managedResourceTags();
+        if (inner != null) {
+            return Collections.unmodifiableMap(inner);
+        } else {
+            return Collections.emptyMap();
+        }
+    }
+
     public Region region() {
         return Region.fromName(this.regionName());
     }
 
     public String regionName() {
         return this.location();
+    }
+
+    public String resourceGroupName() {
+        return resourceGroupName;
     }
 
     public ImageTemplateInner innerModel() {
@@ -130,20 +172,16 @@ public final class ImageTemplateImpl implements ImageTemplate, ImageTemplate.Def
     }
 
     public ImageTemplate create() {
-        this.innerObject =
-            serviceManager
-                .serviceClient()
-                .getVirtualMachineImageTemplates()
-                .createOrUpdate(resourceGroupName, imageTemplateName, this.innerModel(), Context.NONE);
+        this.innerObject = serviceManager.serviceClient()
+            .getVirtualMachineImageTemplates()
+            .createOrUpdate(resourceGroupName, imageTemplateName, this.innerModel(), Context.NONE);
         return this;
     }
 
     public ImageTemplate create(Context context) {
-        this.innerObject =
-            serviceManager
-                .serviceClient()
-                .getVirtualMachineImageTemplates()
-                .createOrUpdate(resourceGroupName, imageTemplateName, this.innerModel(), context);
+        this.innerObject = serviceManager.serviceClient()
+            .getVirtualMachineImageTemplates()
+            .createOrUpdate(resourceGroupName, imageTemplateName, this.innerModel(), context);
         return this;
     }
 
@@ -159,48 +197,40 @@ public final class ImageTemplateImpl implements ImageTemplate, ImageTemplate.Def
     }
 
     public ImageTemplate apply() {
-        this.innerObject =
-            serviceManager
-                .serviceClient()
-                .getVirtualMachineImageTemplates()
-                .update(resourceGroupName, imageTemplateName, updateParameters, Context.NONE);
+        this.innerObject = serviceManager.serviceClient()
+            .getVirtualMachineImageTemplates()
+            .update(resourceGroupName, imageTemplateName, updateParameters, Context.NONE);
         return this;
     }
 
     public ImageTemplate apply(Context context) {
-        this.innerObject =
-            serviceManager
-                .serviceClient()
-                .getVirtualMachineImageTemplates()
-                .update(resourceGroupName, imageTemplateName, updateParameters, context);
+        this.innerObject = serviceManager.serviceClient()
+            .getVirtualMachineImageTemplates()
+            .update(resourceGroupName, imageTemplateName, updateParameters, context);
         return this;
     }
 
-    ImageTemplateImpl(
-        ImageTemplateInner innerObject, com.azure.resourcemanager.imagebuilder.ImageBuilderManager serviceManager) {
+    ImageTemplateImpl(ImageTemplateInner innerObject,
+        com.azure.resourcemanager.imagebuilder.ImageBuilderManager serviceManager) {
         this.innerObject = innerObject;
         this.serviceManager = serviceManager;
-        this.resourceGroupName = Utils.getValueFromIdByName(innerObject.id(), "resourceGroups");
-        this.imageTemplateName = Utils.getValueFromIdByName(innerObject.id(), "imageTemplates");
+        this.resourceGroupName = ResourceManagerUtils.getValueFromIdByName(innerObject.id(), "resourceGroups");
+        this.imageTemplateName = ResourceManagerUtils.getValueFromIdByName(innerObject.id(), "imageTemplates");
     }
 
     public ImageTemplate refresh() {
-        this.innerObject =
-            serviceManager
-                .serviceClient()
-                .getVirtualMachineImageTemplates()
-                .getByResourceGroupWithResponse(resourceGroupName, imageTemplateName, Context.NONE)
-                .getValue();
+        this.innerObject = serviceManager.serviceClient()
+            .getVirtualMachineImageTemplates()
+            .getByResourceGroupWithResponse(resourceGroupName, imageTemplateName, Context.NONE)
+            .getValue();
         return this;
     }
 
     public ImageTemplate refresh(Context context) {
-        this.innerObject =
-            serviceManager
-                .serviceClient()
-                .getVirtualMachineImageTemplates()
-                .getByResourceGroupWithResponse(resourceGroupName, imageTemplateName, context)
-                .getValue();
+        this.innerObject = serviceManager.serviceClient()
+            .getVirtualMachineImageTemplates()
+            .getByResourceGroupWithResponse(resourceGroupName, imageTemplateName, context)
+            .getValue();
         return this;
     }
 
@@ -260,8 +290,23 @@ public final class ImageTemplateImpl implements ImageTemplate, ImageTemplate.Def
         return this;
     }
 
+    public ImageTemplateImpl withOptimize(ImageTemplatePropertiesOptimize optimize) {
+        this.innerModel().withOptimize(optimize);
+        return this;
+    }
+
+    public ImageTemplateImpl withValidation(ImageTemplatePropertiesValidate validation) {
+        this.innerModel().withValidation(validation);
+        return this;
+    }
+
     public ImageTemplateImpl withDistribute(List<ImageTemplateDistributor> distribute) {
         this.innerModel().withDistribute(distribute);
+        return this;
+    }
+
+    public ImageTemplateImpl withErrorHandling(ImageTemplatePropertiesErrorHandling errorHandling) {
+        this.innerModel().withErrorHandling(errorHandling);
         return this;
     }
 
@@ -272,6 +317,26 @@ public final class ImageTemplateImpl implements ImageTemplate, ImageTemplate.Def
 
     public ImageTemplateImpl withVmProfile(ImageTemplateVmProfile vmProfile) {
         this.innerModel().withVmProfile(vmProfile);
+        return this;
+    }
+
+    public ImageTemplateImpl withStagingResourceGroup(String stagingResourceGroup) {
+        this.innerModel().withStagingResourceGroup(stagingResourceGroup);
+        return this;
+    }
+
+    public ImageTemplateImpl withAutoRun(ImageTemplateAutoRun autoRun) {
+        this.innerModel().withAutoRun(autoRun);
+        return this;
+    }
+
+    public ImageTemplateImpl withManagedResourceTags(Map<String, String> managedResourceTags) {
+        this.innerModel().withManagedResourceTags(managedResourceTags);
+        return this;
+    }
+
+    public ImageTemplateImpl withProperties(ImageTemplateUpdateParametersProperties properties) {
+        this.updateParameters.withProperties(properties);
         return this;
     }
 

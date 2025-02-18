@@ -8,88 +8,110 @@ import com.azure.core.credential.TokenCredential;
 import com.azure.core.http.HttpClient;
 import com.azure.core.http.HttpPipeline;
 import com.azure.core.http.HttpPipelineBuilder;
+import com.azure.core.http.HttpPipelinePosition;
 import com.azure.core.http.policy.AddDatePolicy;
+import com.azure.core.http.policy.AddHeadersFromContextPolicy;
+import com.azure.core.http.policy.BearerTokenAuthenticationPolicy;
 import com.azure.core.http.policy.HttpLogOptions;
 import com.azure.core.http.policy.HttpLoggingPolicy;
 import com.azure.core.http.policy.HttpPipelinePolicy;
 import com.azure.core.http.policy.HttpPolicyProviders;
 import com.azure.core.http.policy.RequestIdPolicy;
+import com.azure.core.http.policy.RetryOptions;
 import com.azure.core.http.policy.RetryPolicy;
 import com.azure.core.http.policy.UserAgentPolicy;
-import com.azure.core.management.http.policy.ArmChallengeAuthenticationPolicy;
 import com.azure.core.management.profile.AzureProfile;
 import com.azure.core.util.Configuration;
 import com.azure.core.util.logging.ClientLogger;
 import com.azure.resourcemanager.hybridnetwork.fluent.HybridNetworkManagementClient;
-import com.azure.resourcemanager.hybridnetwork.implementation.DevicesImpl;
+import com.azure.resourcemanager.hybridnetwork.implementation.ArtifactManifestsImpl;
+import com.azure.resourcemanager.hybridnetwork.implementation.ArtifactStoresImpl;
+import com.azure.resourcemanager.hybridnetwork.implementation.ComponentsImpl;
+import com.azure.resourcemanager.hybridnetwork.implementation.ConfigurationGroupSchemasImpl;
+import com.azure.resourcemanager.hybridnetwork.implementation.ConfigurationGroupValuesImpl;
 import com.azure.resourcemanager.hybridnetwork.implementation.HybridNetworkManagementClientBuilder;
-import com.azure.resourcemanager.hybridnetwork.implementation.NetworkFunctionVendorSkusImpl;
-import com.azure.resourcemanager.hybridnetwork.implementation.NetworkFunctionVendorsImpl;
+import com.azure.resourcemanager.hybridnetwork.implementation.NetworkFunctionDefinitionGroupsImpl;
+import com.azure.resourcemanager.hybridnetwork.implementation.NetworkFunctionDefinitionVersionsImpl;
 import com.azure.resourcemanager.hybridnetwork.implementation.NetworkFunctionsImpl;
+import com.azure.resourcemanager.hybridnetwork.implementation.NetworkServiceDesignGroupsImpl;
+import com.azure.resourcemanager.hybridnetwork.implementation.NetworkServiceDesignVersionsImpl;
 import com.azure.resourcemanager.hybridnetwork.implementation.OperationsImpl;
-import com.azure.resourcemanager.hybridnetwork.implementation.RoleInstancesImpl;
-import com.azure.resourcemanager.hybridnetwork.implementation.VendorNetworkFunctionsImpl;
-import com.azure.resourcemanager.hybridnetwork.implementation.VendorSkuPreviewsImpl;
-import com.azure.resourcemanager.hybridnetwork.implementation.VendorSkusImpl;
-import com.azure.resourcemanager.hybridnetwork.implementation.VendorsImpl;
-import com.azure.resourcemanager.hybridnetwork.models.Devices;
-import com.azure.resourcemanager.hybridnetwork.models.NetworkFunctionVendorSkus;
-import com.azure.resourcemanager.hybridnetwork.models.NetworkFunctionVendors;
+import com.azure.resourcemanager.hybridnetwork.implementation.ProxyArtifactsImpl;
+import com.azure.resourcemanager.hybridnetwork.implementation.PublishersImpl;
+import com.azure.resourcemanager.hybridnetwork.implementation.SiteNetworkServicesImpl;
+import com.azure.resourcemanager.hybridnetwork.implementation.SitesImpl;
+import com.azure.resourcemanager.hybridnetwork.models.ArtifactManifests;
+import com.azure.resourcemanager.hybridnetwork.models.ArtifactStores;
+import com.azure.resourcemanager.hybridnetwork.models.Components;
+import com.azure.resourcemanager.hybridnetwork.models.ConfigurationGroupSchemas;
+import com.azure.resourcemanager.hybridnetwork.models.ConfigurationGroupValues;
+import com.azure.resourcemanager.hybridnetwork.models.NetworkFunctionDefinitionGroups;
+import com.azure.resourcemanager.hybridnetwork.models.NetworkFunctionDefinitionVersions;
 import com.azure.resourcemanager.hybridnetwork.models.NetworkFunctions;
+import com.azure.resourcemanager.hybridnetwork.models.NetworkServiceDesignGroups;
+import com.azure.resourcemanager.hybridnetwork.models.NetworkServiceDesignVersions;
 import com.azure.resourcemanager.hybridnetwork.models.Operations;
-import com.azure.resourcemanager.hybridnetwork.models.RoleInstances;
-import com.azure.resourcemanager.hybridnetwork.models.VendorNetworkFunctions;
-import com.azure.resourcemanager.hybridnetwork.models.VendorSkuPreviews;
-import com.azure.resourcemanager.hybridnetwork.models.VendorSkus;
-import com.azure.resourcemanager.hybridnetwork.models.Vendors;
+import com.azure.resourcemanager.hybridnetwork.models.ProxyArtifacts;
+import com.azure.resourcemanager.hybridnetwork.models.Publishers;
+import com.azure.resourcemanager.hybridnetwork.models.SiteNetworkServices;
+import com.azure.resourcemanager.hybridnetwork.models.Sites;
 import java.time.Duration;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
- * Entry point to HybridNetworkManager. The definitions in this swagger specification will be used to manage the Hybrid
- * Network resources.
+ * Entry point to HybridNetworkManager.
+ * The definitions in this swagger specification will be used to manage the Hybrid Network resources.
  */
 public final class HybridNetworkManager {
+    private ConfigurationGroupSchemas configurationGroupSchemas;
+
+    private ConfigurationGroupValues configurationGroupValues;
+
     private NetworkFunctions networkFunctions;
 
-    private Devices devices;
+    private Components components;
+
+    private NetworkFunctionDefinitionGroups networkFunctionDefinitionGroups;
+
+    private NetworkFunctionDefinitionVersions networkFunctionDefinitionVersions;
+
+    private NetworkServiceDesignGroups networkServiceDesignGroups;
+
+    private NetworkServiceDesignVersions networkServiceDesignVersions;
 
     private Operations operations;
 
-    private Vendors vendors;
+    private Publishers publishers;
 
-    private VendorSkus vendorSkus;
+    private ArtifactStores artifactStores;
 
-    private VendorSkuPreviews vendorSkuPreviews;
+    private ArtifactManifests artifactManifests;
 
-    private NetworkFunctionVendors networkFunctionVendors;
+    private ProxyArtifacts proxyArtifacts;
 
-    private NetworkFunctionVendorSkus networkFunctionVendorSkus;
+    private Sites sites;
 
-    private VendorNetworkFunctions vendorNetworkFunctions;
-
-    private RoleInstances roleInstances;
+    private SiteNetworkServices siteNetworkServices;
 
     private final HybridNetworkManagementClient clientObject;
 
     private HybridNetworkManager(HttpPipeline httpPipeline, AzureProfile profile, Duration defaultPollInterval) {
         Objects.requireNonNull(httpPipeline, "'httpPipeline' cannot be null.");
         Objects.requireNonNull(profile, "'profile' cannot be null.");
-        this.clientObject =
-            new HybridNetworkManagementClientBuilder()
-                .pipeline(httpPipeline)
-                .endpoint(profile.getEnvironment().getResourceManagerEndpoint())
-                .subscriptionId(profile.getSubscriptionId())
-                .defaultPollInterval(defaultPollInterval)
-                .buildClient();
+        this.clientObject = new HybridNetworkManagementClientBuilder().pipeline(httpPipeline)
+            .endpoint(profile.getEnvironment().getResourceManagerEndpoint())
+            .subscriptionId(profile.getSubscriptionId())
+            .defaultPollInterval(defaultPollInterval)
+            .buildClient();
     }
 
     /**
      * Creates an instance of HybridNetwork service API entry point.
-     *
+     * 
      * @param credential the credential to use.
      * @param profile the Azure profile for client.
      * @return the HybridNetwork service API instance.
@@ -101,23 +123,39 @@ public final class HybridNetworkManager {
     }
 
     /**
+     * Creates an instance of HybridNetwork service API entry point.
+     * 
+     * @param httpPipeline the {@link HttpPipeline} configured with Azure authentication credential.
+     * @param profile the Azure profile for client.
+     * @return the HybridNetwork service API instance.
+     */
+    public static HybridNetworkManager authenticate(HttpPipeline httpPipeline, AzureProfile profile) {
+        Objects.requireNonNull(httpPipeline, "'httpPipeline' cannot be null.");
+        Objects.requireNonNull(profile, "'profile' cannot be null.");
+        return new HybridNetworkManager(httpPipeline, profile, null);
+    }
+
+    /**
      * Gets a Configurable instance that can be used to create HybridNetworkManager with optional configuration.
-     *
+     * 
      * @return the Configurable instance allowing configurations.
      */
     public static Configurable configure() {
         return new HybridNetworkManager.Configurable();
     }
 
-    /** The Configurable allowing configurations to be set. */
+    /**
+     * The Configurable allowing configurations to be set.
+     */
     public static final class Configurable {
-        private final ClientLogger logger = new ClientLogger(Configurable.class);
+        private static final ClientLogger LOGGER = new ClientLogger(Configurable.class);
 
         private HttpClient httpClient;
         private HttpLogOptions httpLogOptions;
         private final List<HttpPipelinePolicy> policies = new ArrayList<>();
         private final List<String> scopes = new ArrayList<>();
         private RetryPolicy retryPolicy;
+        private RetryOptions retryOptions;
         private Duration defaultPollInterval;
 
         private Configurable() {
@@ -179,15 +217,30 @@ public final class HybridNetworkManager {
         }
 
         /**
+         * Sets the retry options for the HTTP pipeline retry policy.
+         * <p>
+         * This setting has no effect, if retry policy is set via {@link #withRetryPolicy(RetryPolicy)}.
+         *
+         * @param retryOptions the retry options for the HTTP pipeline retry policy.
+         * @return the configurable object itself.
+         */
+        public Configurable withRetryOptions(RetryOptions retryOptions) {
+            this.retryOptions = Objects.requireNonNull(retryOptions, "'retryOptions' cannot be null.");
+            return this;
+        }
+
+        /**
          * Sets the default poll interval, used when service does not provide "Retry-After" header.
          *
          * @param defaultPollInterval the default poll interval.
          * @return the configurable object itself.
          */
         public Configurable withDefaultPollInterval(Duration defaultPollInterval) {
-            this.defaultPollInterval = Objects.requireNonNull(defaultPollInterval, "'retryPolicy' cannot be null.");
+            this.defaultPollInterval
+                = Objects.requireNonNull(defaultPollInterval, "'defaultPollInterval' cannot be null.");
             if (this.defaultPollInterval.isNegative()) {
-                throw logger.logExceptionAsError(new IllegalArgumentException("'httpPipeline' cannot be negative"));
+                throw LOGGER
+                    .logExceptionAsError(new IllegalArgumentException("'defaultPollInterval' cannot be negative"));
             }
             return this;
         }
@@ -204,15 +257,13 @@ public final class HybridNetworkManager {
             Objects.requireNonNull(profile, "'profile' cannot be null.");
 
             StringBuilder userAgentBuilder = new StringBuilder();
-            userAgentBuilder
-                .append("azsdk-java")
+            userAgentBuilder.append("azsdk-java")
                 .append("-")
                 .append("com.azure.resourcemanager.hybridnetwork")
                 .append("/")
-                .append("1.0.0-beta.1");
+                .append("1.1.0");
             if (!Configuration.getGlobalConfiguration().get("AZURE_TELEMETRY_DISABLED", false)) {
-                userAgentBuilder
-                    .append(" (")
+                userAgentBuilder.append(" (")
                     .append(Configuration.getGlobalConfiguration().get("java.version"))
                     .append("; ")
                     .append(Configuration.getGlobalConfiguration().get("os.name"))
@@ -227,28 +278,66 @@ public final class HybridNetworkManager {
                 scopes.add(profile.getEnvironment().getManagementEndpoint() + "/.default");
             }
             if (retryPolicy == null) {
-                retryPolicy = new RetryPolicy("Retry-After", ChronoUnit.SECONDS);
+                if (retryOptions != null) {
+                    retryPolicy = new RetryPolicy(retryOptions);
+                } else {
+                    retryPolicy = new RetryPolicy("Retry-After", ChronoUnit.SECONDS);
+                }
             }
             List<HttpPipelinePolicy> policies = new ArrayList<>();
             policies.add(new UserAgentPolicy(userAgentBuilder.toString()));
+            policies.add(new AddHeadersFromContextPolicy());
             policies.add(new RequestIdPolicy());
+            policies.addAll(this.policies.stream()
+                .filter(p -> p.getPipelinePosition() == HttpPipelinePosition.PER_CALL)
+                .collect(Collectors.toList()));
             HttpPolicyProviders.addBeforeRetryPolicies(policies);
             policies.add(retryPolicy);
             policies.add(new AddDatePolicy());
-            policies.add(new ArmChallengeAuthenticationPolicy(credential, scopes.toArray(new String[0])));
-            policies.addAll(this.policies);
+            policies.add(new BearerTokenAuthenticationPolicy(credential, scopes.toArray(new String[0])));
+            policies.addAll(this.policies.stream()
+                .filter(p -> p.getPipelinePosition() == HttpPipelinePosition.PER_RETRY)
+                .collect(Collectors.toList()));
             HttpPolicyProviders.addAfterRetryPolicies(policies);
             policies.add(new HttpLoggingPolicy(httpLogOptions));
-            HttpPipeline httpPipeline =
-                new HttpPipelineBuilder()
-                    .httpClient(httpClient)
-                    .policies(policies.toArray(new HttpPipelinePolicy[0]))
-                    .build();
+            HttpPipeline httpPipeline = new HttpPipelineBuilder().httpClient(httpClient)
+                .policies(policies.toArray(new HttpPipelinePolicy[0]))
+                .build();
             return new HybridNetworkManager(httpPipeline, profile, defaultPollInterval);
         }
     }
 
-    /** @return Resource collection API of NetworkFunctions. */
+    /**
+     * Gets the resource collection API of ConfigurationGroupSchemas. It manages ConfigurationGroupSchema.
+     * 
+     * @return Resource collection API of ConfigurationGroupSchemas.
+     */
+    public ConfigurationGroupSchemas configurationGroupSchemas() {
+        if (this.configurationGroupSchemas == null) {
+            this.configurationGroupSchemas
+                = new ConfigurationGroupSchemasImpl(clientObject.getConfigurationGroupSchemas(), this);
+        }
+        return configurationGroupSchemas;
+    }
+
+    /**
+     * Gets the resource collection API of ConfigurationGroupValues. It manages ConfigurationGroupValue.
+     * 
+     * @return Resource collection API of ConfigurationGroupValues.
+     */
+    public ConfigurationGroupValues configurationGroupValues() {
+        if (this.configurationGroupValues == null) {
+            this.configurationGroupValues
+                = new ConfigurationGroupValuesImpl(clientObject.getConfigurationGroupValues(), this);
+        }
+        return configurationGroupValues;
+    }
+
+    /**
+     * Gets the resource collection API of NetworkFunctions. It manages NetworkFunction.
+     * 
+     * @return Resource collection API of NetworkFunctions.
+     */
     public NetworkFunctions networkFunctions() {
         if (this.networkFunctions == null) {
             this.networkFunctions = new NetworkFunctionsImpl(clientObject.getNetworkFunctions(), this);
@@ -256,15 +345,76 @@ public final class HybridNetworkManager {
         return networkFunctions;
     }
 
-    /** @return Resource collection API of Devices. */
-    public Devices devices() {
-        if (this.devices == null) {
-            this.devices = new DevicesImpl(clientObject.getDevices(), this);
+    /**
+     * Gets the resource collection API of Components.
+     * 
+     * @return Resource collection API of Components.
+     */
+    public Components components() {
+        if (this.components == null) {
+            this.components = new ComponentsImpl(clientObject.getComponents(), this);
         }
-        return devices;
+        return components;
     }
 
-    /** @return Resource collection API of Operations. */
+    /**
+     * Gets the resource collection API of NetworkFunctionDefinitionGroups. It manages NetworkFunctionDefinitionGroup.
+     * 
+     * @return Resource collection API of NetworkFunctionDefinitionGroups.
+     */
+    public NetworkFunctionDefinitionGroups networkFunctionDefinitionGroups() {
+        if (this.networkFunctionDefinitionGroups == null) {
+            this.networkFunctionDefinitionGroups
+                = new NetworkFunctionDefinitionGroupsImpl(clientObject.getNetworkFunctionDefinitionGroups(), this);
+        }
+        return networkFunctionDefinitionGroups;
+    }
+
+    /**
+     * Gets the resource collection API of NetworkFunctionDefinitionVersions. It manages
+     * NetworkFunctionDefinitionVersion.
+     * 
+     * @return Resource collection API of NetworkFunctionDefinitionVersions.
+     */
+    public NetworkFunctionDefinitionVersions networkFunctionDefinitionVersions() {
+        if (this.networkFunctionDefinitionVersions == null) {
+            this.networkFunctionDefinitionVersions
+                = new NetworkFunctionDefinitionVersionsImpl(clientObject.getNetworkFunctionDefinitionVersions(), this);
+        }
+        return networkFunctionDefinitionVersions;
+    }
+
+    /**
+     * Gets the resource collection API of NetworkServiceDesignGroups. It manages NetworkServiceDesignGroup.
+     * 
+     * @return Resource collection API of NetworkServiceDesignGroups.
+     */
+    public NetworkServiceDesignGroups networkServiceDesignGroups() {
+        if (this.networkServiceDesignGroups == null) {
+            this.networkServiceDesignGroups
+                = new NetworkServiceDesignGroupsImpl(clientObject.getNetworkServiceDesignGroups(), this);
+        }
+        return networkServiceDesignGroups;
+    }
+
+    /**
+     * Gets the resource collection API of NetworkServiceDesignVersions. It manages NetworkServiceDesignVersion.
+     * 
+     * @return Resource collection API of NetworkServiceDesignVersions.
+     */
+    public NetworkServiceDesignVersions networkServiceDesignVersions() {
+        if (this.networkServiceDesignVersions == null) {
+            this.networkServiceDesignVersions
+                = new NetworkServiceDesignVersionsImpl(clientObject.getNetworkServiceDesignVersions(), this);
+        }
+        return networkServiceDesignVersions;
+    }
+
+    /**
+     * Gets the resource collection API of Operations.
+     * 
+     * @return Resource collection API of Operations.
+     */
     public Operations operations() {
         if (this.operations == null) {
             this.operations = new OperationsImpl(clientObject.getOperations(), this);
@@ -272,68 +422,83 @@ public final class HybridNetworkManager {
         return operations;
     }
 
-    /** @return Resource collection API of Vendors. */
-    public Vendors vendors() {
-        if (this.vendors == null) {
-            this.vendors = new VendorsImpl(clientObject.getVendors(), this);
+    /**
+     * Gets the resource collection API of Publishers. It manages Publisher.
+     * 
+     * @return Resource collection API of Publishers.
+     */
+    public Publishers publishers() {
+        if (this.publishers == null) {
+            this.publishers = new PublishersImpl(clientObject.getPublishers(), this);
         }
-        return vendors;
-    }
-
-    /** @return Resource collection API of VendorSkus. */
-    public VendorSkus vendorSkus() {
-        if (this.vendorSkus == null) {
-            this.vendorSkus = new VendorSkusImpl(clientObject.getVendorSkus(), this);
-        }
-        return vendorSkus;
-    }
-
-    /** @return Resource collection API of VendorSkuPreviews. */
-    public VendorSkuPreviews vendorSkuPreviews() {
-        if (this.vendorSkuPreviews == null) {
-            this.vendorSkuPreviews = new VendorSkuPreviewsImpl(clientObject.getVendorSkuPreviews(), this);
-        }
-        return vendorSkuPreviews;
-    }
-
-    /** @return Resource collection API of NetworkFunctionVendors. */
-    public NetworkFunctionVendors networkFunctionVendors() {
-        if (this.networkFunctionVendors == null) {
-            this.networkFunctionVendors =
-                new NetworkFunctionVendorsImpl(clientObject.getNetworkFunctionVendors(), this);
-        }
-        return networkFunctionVendors;
-    }
-
-    /** @return Resource collection API of NetworkFunctionVendorSkus. */
-    public NetworkFunctionVendorSkus networkFunctionVendorSkus() {
-        if (this.networkFunctionVendorSkus == null) {
-            this.networkFunctionVendorSkus =
-                new NetworkFunctionVendorSkusImpl(clientObject.getNetworkFunctionVendorSkus(), this);
-        }
-        return networkFunctionVendorSkus;
-    }
-
-    /** @return Resource collection API of VendorNetworkFunctions. */
-    public VendorNetworkFunctions vendorNetworkFunctions() {
-        if (this.vendorNetworkFunctions == null) {
-            this.vendorNetworkFunctions =
-                new VendorNetworkFunctionsImpl(clientObject.getVendorNetworkFunctions(), this);
-        }
-        return vendorNetworkFunctions;
-    }
-
-    /** @return Resource collection API of RoleInstances. */
-    public RoleInstances roleInstances() {
-        if (this.roleInstances == null) {
-            this.roleInstances = new RoleInstancesImpl(clientObject.getRoleInstances(), this);
-        }
-        return roleInstances;
+        return publishers;
     }
 
     /**
-     * @return Wrapped service client HybridNetworkManagementClient providing direct access to the underlying
-     *     auto-generated API implementation, based on Azure REST API.
+     * Gets the resource collection API of ArtifactStores. It manages ArtifactStore.
+     * 
+     * @return Resource collection API of ArtifactStores.
+     */
+    public ArtifactStores artifactStores() {
+        if (this.artifactStores == null) {
+            this.artifactStores = new ArtifactStoresImpl(clientObject.getArtifactStores(), this);
+        }
+        return artifactStores;
+    }
+
+    /**
+     * Gets the resource collection API of ArtifactManifests. It manages ArtifactManifest.
+     * 
+     * @return Resource collection API of ArtifactManifests.
+     */
+    public ArtifactManifests artifactManifests() {
+        if (this.artifactManifests == null) {
+            this.artifactManifests = new ArtifactManifestsImpl(clientObject.getArtifactManifests(), this);
+        }
+        return artifactManifests;
+    }
+
+    /**
+     * Gets the resource collection API of ProxyArtifacts.
+     * 
+     * @return Resource collection API of ProxyArtifacts.
+     */
+    public ProxyArtifacts proxyArtifacts() {
+        if (this.proxyArtifacts == null) {
+            this.proxyArtifacts = new ProxyArtifactsImpl(clientObject.getProxyArtifacts(), this);
+        }
+        return proxyArtifacts;
+    }
+
+    /**
+     * Gets the resource collection API of Sites. It manages Site.
+     * 
+     * @return Resource collection API of Sites.
+     */
+    public Sites sites() {
+        if (this.sites == null) {
+            this.sites = new SitesImpl(clientObject.getSites(), this);
+        }
+        return sites;
+    }
+
+    /**
+     * Gets the resource collection API of SiteNetworkServices. It manages SiteNetworkService.
+     * 
+     * @return Resource collection API of SiteNetworkServices.
+     */
+    public SiteNetworkServices siteNetworkServices() {
+        if (this.siteNetworkServices == null) {
+            this.siteNetworkServices = new SiteNetworkServicesImpl(clientObject.getSiteNetworkServices(), this);
+        }
+        return siteNetworkServices;
+    }
+
+    /**
+     * Gets wrapped service client HybridNetworkManagementClient providing direct access to the underlying
+     * auto-generated API implementation, based on Azure REST API.
+     * 
+     * @return Wrapped service client HybridNetworkManagementClient.
      */
     public HybridNetworkManagementClient serviceClient() {
         return this.clientObject;

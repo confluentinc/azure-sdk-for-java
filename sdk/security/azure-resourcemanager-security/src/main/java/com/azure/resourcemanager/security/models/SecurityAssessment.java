@@ -4,277 +4,270 @@
 
 package com.azure.resourcemanager.security.models;
 
-import com.azure.core.util.Context;
-import com.azure.resourcemanager.security.fluent.models.SecurityAssessmentInner;
+import com.azure.core.annotation.Fluent;
+import com.azure.core.management.ProxyResource;
+import com.azure.json.JsonReader;
+import com.azure.json.JsonToken;
+import com.azure.json.JsonWriter;
+import com.azure.resourcemanager.security.fluent.models.SecurityAssessmentMetadataProperties;
+import com.azure.resourcemanager.security.fluent.models.SecurityAssessmentProperties;
+import java.io.IOException;
 import java.util.Map;
 
-/** An immutable client-side representation of SecurityAssessment. */
-public interface SecurityAssessment {
-    /**
-     * Gets the id property: Fully qualified resource Id for the resource.
-     *
-     * @return the id value.
+/**
+ * Security assessment on a resource.
+ */
+@Fluent
+public final class SecurityAssessment extends ProxyResource {
+    /*
+     * Describes properties of an assessment.
      */
-    String id();
+    private SecurityAssessmentProperties innerProperties;
+
+    /*
+     * The type of the resource.
+     */
+    private String type;
+
+    /*
+     * The name of the resource.
+     */
+    private String name;
+
+    /*
+     * Fully qualified resource Id for the resource.
+     */
+    private String id;
 
     /**
-     * Gets the name property: The name of the resource.
-     *
-     * @return the name value.
+     * Creates an instance of SecurityAssessment class.
      */
-    String name();
+    public SecurityAssessment() {
+    }
 
     /**
-     * Gets the type property: The type of the resource.
-     *
+     * Get the innerProperties property: Describes properties of an assessment.
+     * 
+     * @return the innerProperties value.
+     */
+    private SecurityAssessmentProperties innerProperties() {
+        return this.innerProperties;
+    }
+
+    /**
+     * Get the type property: The type of the resource.
+     * 
      * @return the type value.
      */
-    String type();
+    @Override
+    public String type() {
+        return this.type;
+    }
 
     /**
-     * Gets the resourceDetails property: Details of the resource that was assessed.
-     *
-     * @return the resourceDetails value.
+     * Get the name property: The name of the resource.
+     * 
+     * @return the name value.
      */
-    ResourceDetails resourceDetails();
+    @Override
+    public String name() {
+        return this.name;
+    }
 
     /**
-     * Gets the displayName property: User friendly display name of the assessment.
-     *
-     * @return the displayName value.
+     * Get the id property: Fully qualified resource Id for the resource.
+     * 
+     * @return the id value.
      */
-    String displayName();
+    @Override
+    public String id() {
+        return this.id;
+    }
 
     /**
-     * Gets the status property: The result of the assessment.
-     *
+     * Get the status property: The result of the assessment.
+     * 
      * @return the status value.
      */
-    AssessmentStatus status();
+    public AssessmentStatus status() {
+        return this.innerProperties() == null ? null : this.innerProperties().status();
+    }
 
     /**
-     * Gets the additionalData property: Additional data regarding the assessment.
-     *
+     * Set the status property: The result of the assessment.
+     * 
+     * @param status the status value to set.
+     * @return the SecurityAssessment object itself.
+     */
+    public SecurityAssessment withStatus(AssessmentStatus status) {
+        if (this.innerProperties() == null) {
+            this.innerProperties = new SecurityAssessmentProperties();
+        }
+        this.innerProperties().withStatus(status);
+        return this;
+    }
+
+    /**
+     * Get the resourceDetails property: Details of the resource that was assessed.
+     * 
+     * @return the resourceDetails value.
+     */
+    public ResourceDetails resourceDetails() {
+        return this.innerProperties() == null ? null : this.innerProperties().resourceDetails();
+    }
+
+    /**
+     * Set the resourceDetails property: Details of the resource that was assessed.
+     * 
+     * @param resourceDetails the resourceDetails value to set.
+     * @return the SecurityAssessment object itself.
+     */
+    public SecurityAssessment withResourceDetails(ResourceDetails resourceDetails) {
+        if (this.innerProperties() == null) {
+            this.innerProperties = new SecurityAssessmentProperties();
+        }
+        this.innerProperties().withResourceDetails(resourceDetails);
+        return this;
+    }
+
+    /**
+     * Get the displayName property: User friendly display name of the assessment.
+     * 
+     * @return the displayName value.
+     */
+    public String displayName() {
+        return this.innerProperties() == null ? null : this.innerProperties().displayName();
+    }
+
+    /**
+     * Get the additionalData property: Additional data regarding the assessment.
+     * 
      * @return the additionalData value.
      */
-    Map<String, String> additionalData();
+    public Map<String, String> additionalData() {
+        return this.innerProperties() == null ? null : this.innerProperties().additionalData();
+    }
 
     /**
-     * Gets the links property: Links relevant to the assessment.
-     *
+     * Set the additionalData property: Additional data regarding the assessment.
+     * 
+     * @param additionalData the additionalData value to set.
+     * @return the SecurityAssessment object itself.
+     */
+    public SecurityAssessment withAdditionalData(Map<String, String> additionalData) {
+        if (this.innerProperties() == null) {
+            this.innerProperties = new SecurityAssessmentProperties();
+        }
+        this.innerProperties().withAdditionalData(additionalData);
+        return this;
+    }
+
+    /**
+     * Get the links property: Links relevant to the assessment.
+     * 
      * @return the links value.
      */
-    AssessmentLinks links();
+    public AssessmentLinks links() {
+        return this.innerProperties() == null ? null : this.innerProperties().links();
+    }
 
     /**
-     * Gets the metadata property: Describes properties of an assessment metadata.
-     *
+     * Get the metadata property: Describes properties of an assessment metadata.
+     * 
      * @return the metadata value.
      */
-    SecurityAssessmentMetadataProperties metadata();
+    public SecurityAssessmentMetadataProperties metadata() {
+        return this.innerProperties() == null ? null : this.innerProperties().metadata();
+    }
 
     /**
-     * Gets the partnersData property: Data regarding 3rd party partner integration.
-     *
+     * Set the metadata property: Describes properties of an assessment metadata.
+     * 
+     * @param metadata the metadata value to set.
+     * @return the SecurityAssessment object itself.
+     */
+    public SecurityAssessment withMetadata(SecurityAssessmentMetadataProperties metadata) {
+        if (this.innerProperties() == null) {
+            this.innerProperties = new SecurityAssessmentProperties();
+        }
+        this.innerProperties().withMetadata(metadata);
+        return this;
+    }
+
+    /**
+     * Get the partnersData property: Data regarding 3rd party partner integration.
+     * 
      * @return the partnersData value.
      */
-    SecurityAssessmentPartnerData partnersData();
+    public SecurityAssessmentPartnerData partnersData() {
+        return this.innerProperties() == null ? null : this.innerProperties().partnersData();
+    }
 
     /**
-     * Gets the inner com.azure.resourcemanager.security.fluent.models.SecurityAssessmentInner object.
-     *
-     * @return the inner object.
+     * Set the partnersData property: Data regarding 3rd party partner integration.
+     * 
+     * @param partnersData the partnersData value to set.
+     * @return the SecurityAssessment object itself.
      */
-    SecurityAssessmentInner innerModel();
-
-    /** The entirety of the SecurityAssessment definition. */
-    interface Definition extends DefinitionStages.Blank, DefinitionStages.WithScope, DefinitionStages.WithCreate {
+    public SecurityAssessment withPartnersData(SecurityAssessmentPartnerData partnersData) {
+        if (this.innerProperties() == null) {
+            this.innerProperties = new SecurityAssessmentProperties();
+        }
+        this.innerProperties().withPartnersData(partnersData);
+        return this;
     }
-    /** The SecurityAssessment definition stages. */
-    interface DefinitionStages {
-        /** The first stage of the SecurityAssessment definition. */
-        interface Blank extends WithScope {
-        }
-        /** The stage of the SecurityAssessment definition allowing to specify parent resource. */
-        interface WithScope {
-            /**
-             * Specifies resourceId.
-             *
-             * @param resourceId The identifier of the resource.
-             * @return the next definition stage.
-             */
-            WithCreate withExistingResourceId(String resourceId);
-        }
-        /**
-         * The stage of the SecurityAssessment definition which contains all the minimum required properties for the
-         * resource to be created, but also allows for any other optional properties to be specified.
-         */
-        interface WithCreate
-            extends DefinitionStages.WithResourceDetails,
-                DefinitionStages.WithStatus,
-                DefinitionStages.WithAdditionalData,
-                DefinitionStages.WithMetadata,
-                DefinitionStages.WithPartnersData {
-            /**
-             * Executes the create request.
-             *
-             * @return the created resource.
-             */
-            SecurityAssessment create();
-
-            /**
-             * Executes the create request.
-             *
-             * @param context The context to associate with this operation.
-             * @return the created resource.
-             */
-            SecurityAssessment create(Context context);
-        }
-        /** The stage of the SecurityAssessment definition allowing to specify resourceDetails. */
-        interface WithResourceDetails {
-            /**
-             * Specifies the resourceDetails property: Details of the resource that was assessed.
-             *
-             * @param resourceDetails Details of the resource that was assessed.
-             * @return the next definition stage.
-             */
-            WithCreate withResourceDetails(ResourceDetails resourceDetails);
-        }
-        /** The stage of the SecurityAssessment definition allowing to specify status. */
-        interface WithStatus {
-            /**
-             * Specifies the status property: The result of the assessment.
-             *
-             * @param status The result of the assessment.
-             * @return the next definition stage.
-             */
-            WithCreate withStatus(AssessmentStatus status);
-        }
-        /** The stage of the SecurityAssessment definition allowing to specify additionalData. */
-        interface WithAdditionalData {
-            /**
-             * Specifies the additionalData property: Additional data regarding the assessment.
-             *
-             * @param additionalData Additional data regarding the assessment.
-             * @return the next definition stage.
-             */
-            WithCreate withAdditionalData(Map<String, String> additionalData);
-        }
-        /** The stage of the SecurityAssessment definition allowing to specify metadata. */
-        interface WithMetadata {
-            /**
-             * Specifies the metadata property: Describes properties of an assessment metadata..
-             *
-             * @param metadata Describes properties of an assessment metadata.
-             * @return the next definition stage.
-             */
-            WithCreate withMetadata(SecurityAssessmentMetadataProperties metadata);
-        }
-        /** The stage of the SecurityAssessment definition allowing to specify partnersData. */
-        interface WithPartnersData {
-            /**
-             * Specifies the partnersData property: Data regarding 3rd party partner integration.
-             *
-             * @param partnersData Data regarding 3rd party partner integration.
-             * @return the next definition stage.
-             */
-            WithCreate withPartnersData(SecurityAssessmentPartnerData partnersData);
-        }
-    }
-    /**
-     * Begins update for the SecurityAssessment resource.
-     *
-     * @return the stage of resource update.
-     */
-    SecurityAssessment.Update update();
-
-    /** The template for SecurityAssessment update. */
-    interface Update
-        extends UpdateStages.WithResourceDetails,
-            UpdateStages.WithStatus,
-            UpdateStages.WithAdditionalData,
-            UpdateStages.WithMetadata,
-            UpdateStages.WithPartnersData {
-        /**
-         * Executes the update request.
-         *
-         * @return the updated resource.
-         */
-        SecurityAssessment apply();
-
-        /**
-         * Executes the update request.
-         *
-         * @param context The context to associate with this operation.
-         * @return the updated resource.
-         */
-        SecurityAssessment apply(Context context);
-    }
-    /** The SecurityAssessment update stages. */
-    interface UpdateStages {
-        /** The stage of the SecurityAssessment update allowing to specify resourceDetails. */
-        interface WithResourceDetails {
-            /**
-             * Specifies the resourceDetails property: Details of the resource that was assessed.
-             *
-             * @param resourceDetails Details of the resource that was assessed.
-             * @return the next definition stage.
-             */
-            Update withResourceDetails(ResourceDetails resourceDetails);
-        }
-        /** The stage of the SecurityAssessment update allowing to specify status. */
-        interface WithStatus {
-            /**
-             * Specifies the status property: The result of the assessment.
-             *
-             * @param status The result of the assessment.
-             * @return the next definition stage.
-             */
-            Update withStatus(AssessmentStatus status);
-        }
-        /** The stage of the SecurityAssessment update allowing to specify additionalData. */
-        interface WithAdditionalData {
-            /**
-             * Specifies the additionalData property: Additional data regarding the assessment.
-             *
-             * @param additionalData Additional data regarding the assessment.
-             * @return the next definition stage.
-             */
-            Update withAdditionalData(Map<String, String> additionalData);
-        }
-        /** The stage of the SecurityAssessment update allowing to specify metadata. */
-        interface WithMetadata {
-            /**
-             * Specifies the metadata property: Describes properties of an assessment metadata..
-             *
-             * @param metadata Describes properties of an assessment metadata.
-             * @return the next definition stage.
-             */
-            Update withMetadata(SecurityAssessmentMetadataProperties metadata);
-        }
-        /** The stage of the SecurityAssessment update allowing to specify partnersData. */
-        interface WithPartnersData {
-            /**
-             * Specifies the partnersData property: Data regarding 3rd party partner integration.
-             *
-             * @param partnersData Data regarding 3rd party partner integration.
-             * @return the next definition stage.
-             */
-            Update withPartnersData(SecurityAssessmentPartnerData partnersData);
-        }
-    }
-    /**
-     * Refreshes the resource to sync with Azure.
-     *
-     * @return the refreshed resource.
-     */
-    SecurityAssessment refresh();
 
     /**
-     * Refreshes the resource to sync with Azure.
-     *
-     * @param context The context to associate with this operation.
-     * @return the refreshed resource.
+     * Validates the instance.
+     * 
+     * @throws IllegalArgumentException thrown if the instance is not valid.
      */
-    SecurityAssessment refresh(Context context);
+    public void validate() {
+        if (innerProperties() != null) {
+            innerProperties().validate();
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public JsonWriter toJson(JsonWriter jsonWriter) throws IOException {
+        jsonWriter.writeStartObject();
+        jsonWriter.writeJsonField("properties", this.innerProperties);
+        return jsonWriter.writeEndObject();
+    }
+
+    /**
+     * Reads an instance of SecurityAssessment from the JsonReader.
+     * 
+     * @param jsonReader The JsonReader being read.
+     * @return An instance of SecurityAssessment if the JsonReader was pointing to an instance of it, or null if it was
+     * pointing to JSON null.
+     * @throws IllegalStateException If the deserialized JSON object was missing any required properties.
+     * @throws IOException If an error occurs while reading the SecurityAssessment.
+     */
+    public static SecurityAssessment fromJson(JsonReader jsonReader) throws IOException {
+        return jsonReader.readObject(reader -> {
+            SecurityAssessment deserializedSecurityAssessment = new SecurityAssessment();
+            while (reader.nextToken() != JsonToken.END_OBJECT) {
+                String fieldName = reader.getFieldName();
+                reader.nextToken();
+
+                if ("id".equals(fieldName)) {
+                    deserializedSecurityAssessment.id = reader.getString();
+                } else if ("name".equals(fieldName)) {
+                    deserializedSecurityAssessment.name = reader.getString();
+                } else if ("type".equals(fieldName)) {
+                    deserializedSecurityAssessment.type = reader.getString();
+                } else if ("properties".equals(fieldName)) {
+                    deserializedSecurityAssessment.innerProperties = SecurityAssessmentProperties.fromJson(reader);
+                } else {
+                    reader.skipChildren();
+                }
+            }
+
+            return deserializedSecurityAssessment;
+        });
+    }
 }

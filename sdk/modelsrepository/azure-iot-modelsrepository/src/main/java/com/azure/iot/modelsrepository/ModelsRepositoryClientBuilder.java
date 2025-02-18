@@ -4,12 +4,16 @@
 package com.azure.iot.modelsrepository;
 
 import com.azure.core.annotation.ServiceClientBuilder;
+import com.azure.core.client.traits.ConfigurationTrait;
+import com.azure.core.client.traits.HttpTrait;
 import com.azure.core.http.HttpClient;
 import com.azure.core.http.HttpHeader;
 import com.azure.core.http.HttpHeaders;
 import com.azure.core.http.HttpPipeline;
+import com.azure.core.http.policy.HttpLogDetailLevel;
 import com.azure.core.http.policy.HttpLogOptions;
 import com.azure.core.http.policy.HttpPipelinePolicy;
+import com.azure.core.http.policy.RetryOptions;
 import com.azure.core.http.policy.RetryPolicy;
 import com.azure.core.http.policy.UserAgentPolicy;
 import com.azure.core.http.policy.RequestIdPolicy;
@@ -21,6 +25,12 @@ import com.azure.core.http.HttpPipelineBuilder;
 import com.azure.core.util.ClientOptions;
 import com.azure.core.util.Configuration;
 import com.azure.core.util.CoreUtils;
+import com.azure.core.util.TracingOptions;
+import com.azure.core.util.HttpClientOptions;
+import com.azure.core.util.builder.ClientBuilderUtil;
+import com.azure.core.util.tracing.Tracer;
+import com.azure.core.util.tracing.TracerProvider;
+
 import com.azure.iot.modelsrepository.implementation.ModelsRepositoryConstants;
 
 import java.net.URI;
@@ -35,14 +45,16 @@ import java.util.Objects;
  * and {@link ModelsRepositoryAsyncClient}, call {@link #buildClient() buildClient} and {@link
  * #buildAsyncClient() buildAsyncClient} respectively to construct an instance of the desired client.
  */
-@ServiceClientBuilder(serviceClients = {ModelsRepositoryClient.class, ModelsRepositoryAsyncClient.class})
-public final class ModelsRepositoryClientBuilder {
+@ServiceClientBuilder(serviceClients = { ModelsRepositoryClient.class, ModelsRepositoryAsyncClient.class })
+public final class ModelsRepositoryClientBuilder
+    implements ConfigurationTrait<ModelsRepositoryClientBuilder>, HttpTrait<ModelsRepositoryClientBuilder> {
     // This is the name of the properties file in this repo that contains the default properties
     private static final String MODELS_REPOSITORY_PROPERTIES = "azure-iot-modelsrepository.properties";
 
     // These are the keys to the above properties file that define the client library's name and version for use in the user agent string
     private static final String SDK_NAME = "name";
     private static final String SDK_VERSION = "version";
+    private static final String MODELS_REPOSITORY_TRACING_NAMESPACE_VALUE = "Azure.IoT.ModelsRepository";
     private static URI globalRepositoryUri;
 
     static {
@@ -67,6 +79,7 @@ public final class ModelsRepositoryClientBuilder {
     private HttpClient httpClient;
     private HttpLogOptions httpLogOptions;
     private RetryPolicy retryPolicy;
+    private RetryOptions retryOptions;
 
     // Right now, Azure Models Repository does not send a retry-after header on its throttling messages. If it adds support later, then
     // these values should match the header name (for instance, "x-ms-retry-after-ms" or "Retry-After") and the time unit
@@ -89,14 +102,9 @@ public final class ModelsRepositoryClientBuilder {
         this.repositoryEndpoint = globalRepositoryUri;
     }
 
-    private static HttpPipeline constructPipeline(
-        HttpLogOptions httpLogOptions,
-        ClientOptions clientOptions,
-        HttpClient httpClient,
-        List<HttpPipelinePolicy> additionalPolicies,
-        RetryPolicy retryPolicy,
-        Configuration configuration,
-        Map<String, String> properties) {
+    private static HttpPipeline constructPipeline(HttpLogOptions httpLogOptions, ClientOptions clientOptions,
+        HttpClient httpClient, List<HttpPipelinePolicy> additionalPolicies, HttpPipelinePolicy retryPolicy,
+        Configuration configuration, Map<String, String> properties) {
         // Closest to API goes first, closest to wire goes last.
         List<HttpPipelinePolicy> policies = new ArrayList<>();
 
@@ -105,9 +113,8 @@ public final class ModelsRepositoryClientBuilder {
 
         // Give precedence to applicationId configured in clientOptions over the one configured in httpLogOptions.
         // Azure.Core deprecated setting the applicationId in httpLogOptions, but we should still support it.
-        String applicationId = clientOptions == null
-            ? httpLogOptions.getApplicationId()
-            : clientOptions.getApplicationId();
+        String applicationId
+            = clientOptions == null ? httpLogOptions.getApplicationId() : clientOptions.getApplicationId();
 
         policies.add(new UserAgentPolicy(applicationId, clientName, clientVersion, configuration));
 
@@ -128,8 +135,8 @@ public final class ModelsRepositoryClientBuilder {
         // If client options has headers configured, add a policy for each
         if (clientOptions != null) {
             List<HttpHeader> httpHeaderList = new ArrayList<>();
-            clientOptions.getHeaders().forEach(header ->
-                httpHeaderList.add(new HttpHeader(header.getName(), header.getValue())));
+            clientOptions.getHeaders()
+                .forEach(header -> httpHeaderList.add(new HttpHeader(header.getName(), header.getValue())));
             policies.add(new AddHeadersPolicy(new HttpHeaders(httpHeaderList)));
         }
 
@@ -143,9 +150,17 @@ public final class ModelsRepositoryClientBuilder {
 
         policies.add(new HttpLoggingPolicy(httpLogOptions));
 
-        return new HttpPipelineBuilder()
-            .policies(policies.toArray(new HttpPipelinePolicy[0]))
+        TracingOptions tracingOptions = null;
+        if (clientOptions != null) {
+            tracingOptions = clientOptions.getTracingOptions();
+        }
+
+        Tracer tracer = TracerProvider.getDefaultProvider()
+            .createTracer(clientName, clientVersion, MODELS_REPOSITORY_TRACING_NAMESPACE_VALUE, tracingOptions);
+
+        return new HttpPipelineBuilder().policies(policies.toArray(new HttpPipelinePolicy[0]))
             .httpClient(httpClient)
+            .tracer(tracer)
             .build();
     }
 
@@ -153,6 +168,8 @@ public final class ModelsRepositoryClientBuilder {
      * Create a {@link ModelsRepositoryClient} based on the builder settings.
      *
      * @return the created synchronous ModelsRepositoryClient
+     * @throws IllegalStateException If both {@link #retryOptions(RetryOptions)}
+     *      and {@link #retryPolicy(RetryPolicy)} have been set.
      */
     public ModelsRepositoryClient buildClient() {
         return new ModelsRepositoryClient(buildAsyncClient());
@@ -162,6 +179,8 @@ public final class ModelsRepositoryClientBuilder {
      * Create a {@link ModelsRepositoryAsyncClient} based on the builder settings.
      *
      * @return the created asynchronous ModelsRepositoryAsyncClient
+     * @throws IllegalStateException If both {@link #retryOptions(RetryOptions)}
+     *      and {@link #retryPolicy(RetryPolicy)} have been set.
      */
     public ModelsRepositoryAsyncClient buildAsyncClient() {
         Configuration buildConfiguration = this.configuration;
@@ -176,26 +195,15 @@ public final class ModelsRepositoryClientBuilder {
         }
 
         // Default is exponential backoff
-        RetryPolicy retryPolicy = this.retryPolicy;
-        if (retryPolicy == null) {
-            retryPolicy = DEFAULT_RETRY_POLICY;
-        }
+        HttpPipelinePolicy retryPolicy
+            = ClientBuilderUtil.validateAndGetRetryPolicy(this.retryPolicy, retryOptions, DEFAULT_RETRY_POLICY);
 
         if (this.httpPipeline == null) {
-            this.httpPipeline = constructPipeline(
-                this.httpLogOptions,
-                this.clientOptions,
-                this.httpClient,
-                this.additionalPolicies,
-                retryPolicy,
-                buildConfiguration,
-                this.properties);
+            this.httpPipeline = constructPipeline(this.httpLogOptions, this.clientOptions, this.httpClient,
+                this.additionalPolicies, retryPolicy, buildConfiguration, this.properties);
         }
 
-        return new ModelsRepositoryAsyncClient(
-            this.repositoryEndpoint,
-            this.httpPipeline,
-            serviceVersion,
+        return new ModelsRepositoryAsyncClient(this.repositoryEndpoint, this.httpPipeline, serviceVersion,
             this.modelDependencyResolution);
     }
 
@@ -205,7 +213,8 @@ public final class ModelsRepositoryClientBuilder {
      * @param modelDependencyResolution A DependencyResolutionOption value to force model resolution behavior.
      * @return the updated ModelsRepositoryClientBuilder instance for fluent building.
      */
-    public ModelsRepositoryClientBuilder modelDependencyResolution(ModelDependencyResolution modelDependencyResolution) {
+    public ModelsRepositoryClientBuilder
+        modelDependencyResolution(ModelDependencyResolution modelDependencyResolution) {
         this.modelDependencyResolution = modelDependencyResolution;
         return this;
     }
@@ -239,36 +248,60 @@ public final class ModelsRepositoryClientBuilder {
     }
 
     /**
-     * Sets the {@link HttpClient} to use for sending a receiving requests to and from the service.
+     * Sets the {@link HttpClient} to use for sending and receiving requests to and from the service.
      *
-     * @param httpClient HttpClient to use for requests.
+     * <p><strong>Note:</strong> It is important to understand the precedence order of the HttpTrait APIs. In
+     * particular, if a {@link HttpPipeline} is specified, this takes precedence over all other APIs in the trait, and
+     * they will be ignored. If no {@link HttpPipeline} is specified, a HTTP pipeline will be constructed internally
+     * based on the settings provided to this trait. Additionally, there may be other APIs in types that implement this
+     * trait that are also ignored if an {@link HttpPipeline} is specified, so please be sure to refer to the
+     * documentation of types that implement this trait to understand the full set of implications.</p>
+     *
+     * @param httpClient The {@link HttpClient} to use for requests.
      * @return the updated ModelsRepositoryClientBuilder instance for fluent building.
      */
+    @Override
     public ModelsRepositoryClientBuilder httpClient(HttpClient httpClient) {
         this.httpClient = httpClient;
         return this;
     }
 
     /**
-     * Sets the {@link HttpLogOptions} for service requests.
+     * Sets the {@link HttpLogOptions logging configuration} to use when sending and receiving requests to and from
+     * the service. If a {@code logLevel} is not provided, default value of {@link HttpLogDetailLevel#NONE} is set.
      *
-     * @param logOptions The logging configuration to use when sending and receiving HTTP requests/responses.
+     * <p><strong>Note:</strong> It is important to understand the precedence order of the HttpTrait APIs. In
+     * particular, if a {@link HttpPipeline} is specified, this takes precedence over all other APIs in the trait, and
+     * they will be ignored. If no {@link HttpPipeline} is specified, a HTTP pipeline will be constructed internally
+     * based on the settings provided to this trait. Additionally, there may be other APIs in types that implement this
+     * trait that are also ignored if an {@link HttpPipeline} is specified, so please be sure to refer to the
+     * documentation of types that implement this trait to understand the full set of implications.</p>
+     *
+     * @param logOptions The {@link HttpLogOptions logging configuration} to use when sending and receiving requests to
+     * and from the service.
      * @return the updated ModelsRepositoryClientBuilder instance for fluent building.
-     * @throws NullPointerException If {@code httpLogOptions} is {@code null}.
      */
+    @Override
     public ModelsRepositoryClientBuilder httpLogOptions(HttpLogOptions logOptions) {
         this.httpLogOptions = logOptions;
         return this;
     }
 
     /**
-     * Adds a pipeline policy to apply on each request sent. The policy will be added after the retry policy. If
-     * the method is called multiple times, all policies will be added and their order preserved.
+     * Adds a {@link HttpPipelinePolicy pipeline policy} to apply on each request sent.
      *
-     * @param pipelinePolicy a pipeline policy
+     * <p><strong>Note:</strong> It is important to understand the precedence order of the HttpTrait APIs. In
+     * particular, if a {@link HttpPipeline} is specified, this takes precedence over all other APIs in the trait, and
+     * they will be ignored. If no {@link HttpPipeline} is specified, a HTTP pipeline will be constructed internally
+     * based on the settings provided to this trait. Additionally, there may be other APIs in types that implement this
+     * trait that are also ignored if an {@link HttpPipeline} is specified, so please be sure to refer to the
+     * documentation of types that implement this trait to understand the full set of implications.</p>
+     *
+     * @param pipelinePolicy A {@link HttpPipelinePolicy pipeline policy}.
      * @return the updated ModelsRepositoryClientBuilder instance for fluent building.
      * @throws NullPointerException If {@code pipelinePolicy} is {@code null}.
      */
+    @Override
     public ModelsRepositoryClientBuilder addPolicy(HttpPipelinePolicy pipelinePolicy) {
         this.additionalPolicies.add(Objects.requireNonNull(pipelinePolicy, "'pipelinePolicy' cannot be null"));
         return this;
@@ -279,9 +312,11 @@ public final class ModelsRepositoryClientBuilder {
      * <p>
      * The default retry policy will be used if not provided. The default retry policy is {@link RetryPolicy#RetryPolicy()}.
      * For implementing custom retry logic, see {@link RetryPolicy} as an example.
+     * <p>
+     * Setting this is mutually exclusive with using {@link #retryOptions(RetryOptions)}.
      *
      * @param retryPolicy the retry policy applied to each request.
-     * @return The updated ConfigurationClientBuilder object.
+     * @return the updated ModelsRepositoryClientBuilder instance for fluent building.
      */
     public ModelsRepositoryClientBuilder retryPolicy(RetryPolicy retryPolicy) {
         this.retryPolicy = retryPolicy;
@@ -289,13 +324,42 @@ public final class ModelsRepositoryClientBuilder {
     }
 
     /**
+     * Sets the {@link RetryOptions} for all the requests made through the client.
+     *
+     * <p><strong>Note:</strong> It is important to understand the precedence order of the HttpTrait APIs. In
+     * particular, if a {@link HttpPipeline} is specified, this takes precedence over all other APIs in the trait, and
+     * they will be ignored. If no {@link HttpPipeline} is specified, a HTTP pipeline will be constructed internally
+     * based on the settings provided to this trait. Additionally, there may be other APIs in types that implement this
+     * trait that are also ignored if an {@link HttpPipeline} is specified, so please be sure to refer to the
+     * documentation of types that implement this trait to understand the full set of implications.</p>
+     * <p>
+     * Setting this is mutually exclusive with using {@link #retryPolicy(RetryPolicy)}.
+     *
+     * @param retryOptions The {@link RetryOptions} to use for all the requests made through the client.
+     * @return The updated ModelsRepositoryClientBuilder object for fluent building.
+     */
+    @Override
+    public ModelsRepositoryClientBuilder retryOptions(RetryOptions retryOptions) {
+        this.retryOptions = retryOptions;
+        return this;
+    }
+
+    /**
      * Sets the {@link HttpPipeline} to use for the service client.
+     *
+     * <p><strong>Note:</strong> It is important to understand the precedence order of the HttpTrait APIs. In
+     * particular, if a {@link HttpPipeline} is specified, this takes precedence over all other APIs in the trait, and
+     * they will be ignored. If no {@link HttpPipeline} is specified, a HTTP pipeline will be constructed internally
+     * based on the settings provided to this trait. Additionally, there may be other APIs in types that implement this
+     * trait that are also ignored if an {@link HttpPipeline} is specified, so please be sure to refer to the
+     * documentation of types that implement this trait to understand the full set of implications.</p>
      * <p>
      * If {@code pipeline} is set, all other settings are ignored, aside from {@link #repositoryEndpoint(String) endpoint}.
      *
-     * @param httpPipeline HttpPipeline to use for sending service requests and receiving responses.
-     * @return the updated ModelsRepositoryClientBuilder instance for fluent building.
+     * @param httpPipeline {@link HttpPipeline} to use for sending service requests and receiving responses.
+     * @return The updated ModelsRepositoryClientBuilder object for fluent building.
      */
+    @Override
     public ModelsRepositoryClientBuilder pipeline(HttpPipeline httpPipeline) {
         this.httpPipeline = httpPipeline;
         return this;
@@ -310,21 +374,31 @@ public final class ModelsRepositoryClientBuilder {
      * @param configuration The configuration store used to
      * @return The updated ModelsRepositoryClientBuilder object for fluent building.
      */
+    @Override
     public ModelsRepositoryClientBuilder configuration(Configuration configuration) {
         this.configuration = configuration;
         return this;
     }
 
     /**
-     * Sets the {@link ClientOptions} which enables various options to be set on the client. For example setting an
-     * {@code applicationId} using {@link ClientOptions#setApplicationId(String)} to configure
-     * the {@link UserAgentPolicy} for telemetry/monitoring purposes.
+     * Allows for setting common properties such as application ID, headers, proxy configuration, etc. Note that it is
+     * recommended that this method be called with an instance of the {@link HttpClientOptions}
+     * class (a subclass of the {@link ClientOptions} base class). The HttpClientOptions subclass provides more
+     * configuration options suitable for HTTP clients, which is applicable for any class that implements this HttpTrait
+     * interface.
      *
-     * <p>More About <a href="https://azure.github.io/azure-sdk/general_azurecore.html#telemetry-policy">Azure Core: Telemetry policy</a>
+     * <p><strong>Note:</strong> It is important to understand the precedence order of the HttpTrait APIs. In
+     * particular, if a {@link HttpPipeline} is specified, this takes precedence over all other APIs in the trait, and
+     * they will be ignored. If no {@link HttpPipeline} is specified, a HTTP pipeline will be constructed internally
+     * based on the settings provided to this trait. Additionally, there may be other APIs in types that implement this
+     * trait that are also ignored if an {@link HttpPipeline} is specified, so please be sure to refer to the
+     * documentation of types that implement this trait to understand the full set of implications.</p>
      *
-     * @param clientOptions the {@link ClientOptions} to be set on the client.
-     * @return The updated KeyClientBuilder object.
+     * @param clientOptions A configured instance of {@link HttpClientOptions}.
+     * @return The updated ModelsRepositoryClientBuilder object for fluent building.
+     * @see HttpClientOptions
      */
+    @Override
     public ModelsRepositoryClientBuilder clientOptions(ClientOptions clientOptions) {
         this.clientOptions = clientOptions;
         return this;

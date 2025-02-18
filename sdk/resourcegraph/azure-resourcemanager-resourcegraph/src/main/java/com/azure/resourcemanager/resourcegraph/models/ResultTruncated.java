@@ -4,18 +4,23 @@
 
 package com.azure.resourcemanager.resourcegraph.models;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonValue;
-
-/** Defines values for ResultTruncated. */
+/**
+ * Indicates whether the query results are truncated.
+ */
 public enum ResultTruncated {
-    /** Enum value true. */
+    /**
+     * Enum value true.
+     */
     TRUE("true"),
 
-    /** Enum value false. */
+    /**
+     * Enum value false.
+     */
     FALSE("false");
 
-    /** The actual serialized value for a ResultTruncated instance. */
+    /**
+     * The actual serialized value for a ResultTruncated instance.
+     */
     private final String value;
 
     ResultTruncated(String value) {
@@ -24,12 +29,14 @@ public enum ResultTruncated {
 
     /**
      * Parses a serialized value to a ResultTruncated instance.
-     *
+     * 
      * @param value the serialized value to parse.
      * @return the parsed ResultTruncated object, or null if unable to parse.
      */
-    @JsonCreator
     public static ResultTruncated fromString(String value) {
+        if (value == null) {
+            return null;
+        }
         ResultTruncated[] items = ResultTruncated.values();
         for (ResultTruncated item : items) {
             if (item.toString().equalsIgnoreCase(value)) {
@@ -39,7 +46,9 @@ public enum ResultTruncated {
         return null;
     }
 
-    @JsonValue
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String toString() {
         return this.value;

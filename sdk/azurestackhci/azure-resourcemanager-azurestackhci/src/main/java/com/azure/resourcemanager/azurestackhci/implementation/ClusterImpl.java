@@ -5,17 +5,31 @@
 package com.azure.resourcemanager.azurestackhci.implementation;
 
 import com.azure.core.management.Region;
+import com.azure.core.management.SystemData;
 import com.azure.core.util.Context;
 import com.azure.resourcemanager.azurestackhci.fluent.models.ClusterInner;
 import com.azure.resourcemanager.azurestackhci.models.Cluster;
+import com.azure.resourcemanager.azurestackhci.models.ClusterDesiredProperties;
+import com.azure.resourcemanager.azurestackhci.models.ClusterIdentityResponse;
+import com.azure.resourcemanager.azurestackhci.models.ClusterPatch;
 import com.azure.resourcemanager.azurestackhci.models.ClusterReportedProperties;
-import com.azure.resourcemanager.azurestackhci.models.ClusterUpdate;
-import com.azure.resourcemanager.azurestackhci.models.CreatedByType;
+import com.azure.resourcemanager.azurestackhci.models.ConnectivityStatus;
+import com.azure.resourcemanager.azurestackhci.models.IsolatedVmAttestationConfiguration;
+import com.azure.resourcemanager.azurestackhci.models.LogCollectionProperties;
+import com.azure.resourcemanager.azurestackhci.models.LogCollectionRequest;
+import com.azure.resourcemanager.azurestackhci.models.ManagedServiceIdentityType;
 import com.azure.resourcemanager.azurestackhci.models.ProvisioningState;
+import com.azure.resourcemanager.azurestackhci.models.RemoteSupportProperties;
+import com.azure.resourcemanager.azurestackhci.models.RemoteSupportRequest;
+import com.azure.resourcemanager.azurestackhci.models.SoftwareAssuranceChangeRequest;
+import com.azure.resourcemanager.azurestackhci.models.SoftwareAssuranceProperties;
 import com.azure.resourcemanager.azurestackhci.models.Status;
+import com.azure.resourcemanager.azurestackhci.models.UploadCertificateRequest;
+import com.azure.resourcemanager.azurestackhci.models.UserAssignedIdentity;
 import java.time.OffsetDateTime;
 import java.util.Collections;
 import java.util.Map;
+import java.util.UUID;
 
 public final class ClusterImpl implements Cluster, Cluster.Definition, Cluster.Update {
     private ClusterInner innerObject;
@@ -47,6 +61,31 @@ public final class ClusterImpl implements Cluster, Cluster.Definition, Cluster.U
         }
     }
 
+    public SystemData systemData() {
+        return this.innerModel().systemData();
+    }
+
+    public UUID principalId() {
+        return this.innerModel().principalId();
+    }
+
+    public UUID tenantId() {
+        return this.innerModel().tenantId();
+    }
+
+    public ManagedServiceIdentityType typeIdentityType() {
+        return this.innerModel().typeIdentityType();
+    }
+
+    public Map<String, UserAssignedIdentity> userAssignedIdentities() {
+        Map<String, UserAssignedIdentity> inner = this.innerModel().userAssignedIdentities();
+        if (inner != null) {
+            return Collections.unmodifiableMap(inner);
+        } else {
+            return Collections.emptyMap();
+        }
+    }
+
     public ProvisioningState provisioningState() {
         return this.innerModel().provisioningState();
     }
@@ -55,8 +94,16 @@ public final class ClusterImpl implements Cluster, Cluster.Definition, Cluster.U
         return this.innerModel().status();
     }
 
+    public ConnectivityStatus connectivityStatus() {
+        return this.innerModel().connectivityStatus();
+    }
+
     public String cloudId() {
         return this.innerModel().cloudId();
+    }
+
+    public String cloudManagementEndpoint() {
+        return this.innerModel().cloudManagementEndpoint();
     }
 
     public String aadClientId() {
@@ -67,8 +114,36 @@ public final class ClusterImpl implements Cluster, Cluster.Definition, Cluster.U
         return this.innerModel().aadTenantId();
     }
 
+    public String aadApplicationObjectId() {
+        return this.innerModel().aadApplicationObjectId();
+    }
+
+    public String aadServicePrincipalObjectId() {
+        return this.innerModel().aadServicePrincipalObjectId();
+    }
+
+    public SoftwareAssuranceProperties softwareAssuranceProperties() {
+        return this.innerModel().softwareAssuranceProperties();
+    }
+
+    public LogCollectionProperties logCollectionProperties() {
+        return this.innerModel().logCollectionProperties();
+    }
+
+    public RemoteSupportProperties remoteSupportProperties() {
+        return this.innerModel().remoteSupportProperties();
+    }
+
+    public ClusterDesiredProperties desiredProperties() {
+        return this.innerModel().desiredProperties();
+    }
+
     public ClusterReportedProperties reportedProperties() {
         return this.innerModel().reportedProperties();
+    }
+
+    public IsolatedVmAttestationConfiguration isolatedVmAttestationConfiguration() {
+        return this.innerModel().isolatedVmAttestationConfiguration();
     }
 
     public Float trialDaysRemaining() {
@@ -91,28 +166,12 @@ public final class ClusterImpl implements Cluster, Cluster.Definition, Cluster.U
         return this.innerModel().lastBillingTimestamp();
     }
 
-    public String createdBy() {
-        return this.innerModel().createdBy();
+    public String serviceEndpoint() {
+        return this.innerModel().serviceEndpoint();
     }
 
-    public CreatedByType createdByType() {
-        return this.innerModel().createdByType();
-    }
-
-    public OffsetDateTime createdAt() {
-        return this.innerModel().createdAt();
-    }
-
-    public String lastModifiedBy() {
-        return this.innerModel().lastModifiedBy();
-    }
-
-    public CreatedByType lastModifiedByType() {
-        return this.innerModel().lastModifiedByType();
-    }
-
-    public OffsetDateTime lastModifiedAt() {
-        return this.innerModel().lastModifiedAt();
+    public String resourceProviderObjectId() {
+        return this.innerModel().resourceProviderObjectId();
     }
 
     public Region region() {
@@ -121,6 +180,10 @@ public final class ClusterImpl implements Cluster, Cluster.Definition, Cluster.U
 
     public String regionName() {
         return this.location();
+    }
+
+    public String resourceGroupName() {
+        return resourceGroupName;
     }
 
     public ClusterInner innerModel() {
@@ -135,7 +198,7 @@ public final class ClusterImpl implements Cluster, Cluster.Definition, Cluster.U
 
     private String clusterName;
 
-    private ClusterUpdate updateCluster;
+    private ClusterPatch updateCluster;
 
     public ClusterImpl withExistingResourceGroup(String resourceGroupName) {
         this.resourceGroupName = resourceGroupName;
@@ -143,22 +206,18 @@ public final class ClusterImpl implements Cluster, Cluster.Definition, Cluster.U
     }
 
     public Cluster create() {
-        this.innerObject =
-            serviceManager
-                .serviceClient()
-                .getClusters()
-                .createWithResponse(resourceGroupName, clusterName, this.innerModel(), Context.NONE)
-                .getValue();
+        this.innerObject = serviceManager.serviceClient()
+            .getClusters()
+            .createWithResponse(resourceGroupName, clusterName, this.innerModel(), Context.NONE)
+            .getValue();
         return this;
     }
 
     public Cluster create(Context context) {
-        this.innerObject =
-            serviceManager
-                .serviceClient()
-                .getClusters()
-                .createWithResponse(resourceGroupName, clusterName, this.innerModel(), context)
-                .getValue();
+        this.innerObject = serviceManager.serviceClient()
+            .getClusters()
+            .createWithResponse(resourceGroupName, clusterName, this.innerModel(), context)
+            .getValue();
         return this;
     }
 
@@ -169,55 +228,92 @@ public final class ClusterImpl implements Cluster, Cluster.Definition, Cluster.U
     }
 
     public ClusterImpl update() {
-        this.updateCluster = new ClusterUpdate();
+        this.updateCluster = new ClusterPatch();
         return this;
     }
 
     public Cluster apply() {
-        this.innerObject =
-            serviceManager
-                .serviceClient()
-                .getClusters()
-                .updateWithResponse(resourceGroupName, clusterName, updateCluster, Context.NONE)
-                .getValue();
+        this.innerObject = serviceManager.serviceClient()
+            .getClusters()
+            .updateWithResponse(resourceGroupName, clusterName, updateCluster, Context.NONE)
+            .getValue();
         return this;
     }
 
     public Cluster apply(Context context) {
-        this.innerObject =
-            serviceManager
-                .serviceClient()
-                .getClusters()
-                .updateWithResponse(resourceGroupName, clusterName, updateCluster, context)
-                .getValue();
+        this.innerObject = serviceManager.serviceClient()
+            .getClusters()
+            .updateWithResponse(resourceGroupName, clusterName, updateCluster, context)
+            .getValue();
         return this;
     }
 
     ClusterImpl(ClusterInner innerObject, com.azure.resourcemanager.azurestackhci.AzureStackHciManager serviceManager) {
         this.innerObject = innerObject;
         this.serviceManager = serviceManager;
-        this.resourceGroupName = Utils.getValueFromIdByName(innerObject.id(), "resourceGroups");
-        this.clusterName = Utils.getValueFromIdByName(innerObject.id(), "clusters");
+        this.resourceGroupName = ResourceManagerUtils.getValueFromIdByName(innerObject.id(), "resourceGroups");
+        this.clusterName = ResourceManagerUtils.getValueFromIdByName(innerObject.id(), "clusters");
     }
 
     public Cluster refresh() {
-        this.innerObject =
-            serviceManager
-                .serviceClient()
-                .getClusters()
-                .getByResourceGroupWithResponse(resourceGroupName, clusterName, Context.NONE)
-                .getValue();
+        this.innerObject = serviceManager.serviceClient()
+            .getClusters()
+            .getByResourceGroupWithResponse(resourceGroupName, clusterName, Context.NONE)
+            .getValue();
         return this;
     }
 
     public Cluster refresh(Context context) {
-        this.innerObject =
-            serviceManager
-                .serviceClient()
-                .getClusters()
-                .getByResourceGroupWithResponse(resourceGroupName, clusterName, context)
-                .getValue();
+        this.innerObject = serviceManager.serviceClient()
+            .getClusters()
+            .getByResourceGroupWithResponse(resourceGroupName, clusterName, context)
+            .getValue();
         return this;
+    }
+
+    public void uploadCertificate(UploadCertificateRequest uploadCertificateRequest) {
+        serviceManager.clusters().uploadCertificate(resourceGroupName, clusterName, uploadCertificateRequest);
+    }
+
+    public void uploadCertificate(UploadCertificateRequest uploadCertificateRequest, Context context) {
+        serviceManager.clusters().uploadCertificate(resourceGroupName, clusterName, uploadCertificateRequest, context);
+    }
+
+    public ClusterIdentityResponse createIdentity() {
+        return serviceManager.clusters().createIdentity(resourceGroupName, clusterName);
+    }
+
+    public ClusterIdentityResponse createIdentity(Context context) {
+        return serviceManager.clusters().createIdentity(resourceGroupName, clusterName, context);
+    }
+
+    public Cluster extendSoftwareAssuranceBenefit(SoftwareAssuranceChangeRequest softwareAssuranceChangeRequest) {
+        return serviceManager.clusters()
+            .extendSoftwareAssuranceBenefit(resourceGroupName, clusterName, softwareAssuranceChangeRequest);
+    }
+
+    public Cluster extendSoftwareAssuranceBenefit(SoftwareAssuranceChangeRequest softwareAssuranceChangeRequest,
+        Context context) {
+        return serviceManager.clusters()
+            .extendSoftwareAssuranceBenefit(resourceGroupName, clusterName, softwareAssuranceChangeRequest, context);
+    }
+
+    public Cluster triggerLogCollection(LogCollectionRequest logCollectionRequest) {
+        return serviceManager.clusters().triggerLogCollection(resourceGroupName, clusterName, logCollectionRequest);
+    }
+
+    public Cluster triggerLogCollection(LogCollectionRequest logCollectionRequest, Context context) {
+        return serviceManager.clusters()
+            .triggerLogCollection(resourceGroupName, clusterName, logCollectionRequest, context);
+    }
+
+    public Cluster configureRemoteSupport(RemoteSupportRequest remoteSupportRequest) {
+        return serviceManager.clusters().configureRemoteSupport(resourceGroupName, clusterName, remoteSupportRequest);
+    }
+
+    public Cluster configureRemoteSupport(RemoteSupportRequest remoteSupportRequest, Context context) {
+        return serviceManager.clusters()
+            .configureRemoteSupport(resourceGroupName, clusterName, remoteSupportRequest, context);
     }
 
     public ClusterImpl withRegion(Region location) {
@@ -240,48 +336,88 @@ public final class ClusterImpl implements Cluster, Cluster.Definition, Cluster.U
         }
     }
 
-    public ClusterImpl withAadClientId(String aadClientId) {
-        this.innerModel().withAadClientId(aadClientId);
+    public ClusterImpl withTypeIdentityType(ManagedServiceIdentityType typeIdentityType) {
+        this.innerModel().withTypeIdentityType(typeIdentityType);
         return this;
+    }
+
+    public ClusterImpl withUserAssignedIdentities(Map<String, UserAssignedIdentity> userAssignedIdentities) {
+        if (isInCreateMode()) {
+            this.innerModel().withUserAssignedIdentities(userAssignedIdentities);
+            return this;
+        } else {
+            this.updateCluster.withUserAssignedIdentities(userAssignedIdentities);
+            return this;
+        }
+    }
+
+    public ClusterImpl withCloudManagementEndpoint(String cloudManagementEndpoint) {
+        if (isInCreateMode()) {
+            this.innerModel().withCloudManagementEndpoint(cloudManagementEndpoint);
+            return this;
+        } else {
+            this.updateCluster.withCloudManagementEndpoint(cloudManagementEndpoint);
+            return this;
+        }
+    }
+
+    public ClusterImpl withAadClientId(String aadClientId) {
+        if (isInCreateMode()) {
+            this.innerModel().withAadClientId(aadClientId);
+            return this;
+        } else {
+            this.updateCluster.withAadClientId(aadClientId);
+            return this;
+        }
     }
 
     public ClusterImpl withAadTenantId(String aadTenantId) {
-        this.innerModel().withAadTenantId(aadTenantId);
+        if (isInCreateMode()) {
+            this.innerModel().withAadTenantId(aadTenantId);
+            return this;
+        } else {
+            this.updateCluster.withAadTenantId(aadTenantId);
+            return this;
+        }
+    }
+
+    public ClusterImpl withAadApplicationObjectId(String aadApplicationObjectId) {
+        this.innerModel().withAadApplicationObjectId(aadApplicationObjectId);
         return this;
     }
 
-    public ClusterImpl withReportedProperties(ClusterReportedProperties reportedProperties) {
-        this.innerModel().withReportedProperties(reportedProperties);
+    public ClusterImpl withAadServicePrincipalObjectId(String aadServicePrincipalObjectId) {
+        this.innerModel().withAadServicePrincipalObjectId(aadServicePrincipalObjectId);
         return this;
     }
 
-    public ClusterImpl withCreatedBy(String createdBy) {
-        this.innerModel().withCreatedBy(createdBy);
+    public ClusterImpl withSoftwareAssuranceProperties(SoftwareAssuranceProperties softwareAssuranceProperties) {
+        this.innerModel().withSoftwareAssuranceProperties(softwareAssuranceProperties);
         return this;
     }
 
-    public ClusterImpl withCreatedByType(CreatedByType createdByType) {
-        this.innerModel().withCreatedByType(createdByType);
+    public ClusterImpl withLogCollectionProperties(LogCollectionProperties logCollectionProperties) {
+        this.innerModel().withLogCollectionProperties(logCollectionProperties);
         return this;
     }
 
-    public ClusterImpl withCreatedAt(OffsetDateTime createdAt) {
-        this.innerModel().withCreatedAt(createdAt);
+    public ClusterImpl withRemoteSupportProperties(RemoteSupportProperties remoteSupportProperties) {
+        this.innerModel().withRemoteSupportProperties(remoteSupportProperties);
         return this;
     }
 
-    public ClusterImpl withLastModifiedBy(String lastModifiedBy) {
-        this.innerModel().withLastModifiedBy(lastModifiedBy);
-        return this;
+    public ClusterImpl withDesiredProperties(ClusterDesiredProperties desiredProperties) {
+        if (isInCreateMode()) {
+            this.innerModel().withDesiredProperties(desiredProperties);
+            return this;
+        } else {
+            this.updateCluster.withDesiredProperties(desiredProperties);
+            return this;
+        }
     }
 
-    public ClusterImpl withLastModifiedByType(CreatedByType lastModifiedByType) {
-        this.innerModel().withLastModifiedByType(lastModifiedByType);
-        return this;
-    }
-
-    public ClusterImpl withLastModifiedAt(OffsetDateTime lastModifiedAt) {
-        this.innerModel().withLastModifiedAt(lastModifiedAt);
+    public ClusterImpl withType(ManagedServiceIdentityType type) {
+        this.updateCluster.withType(type);
         return this;
     }
 

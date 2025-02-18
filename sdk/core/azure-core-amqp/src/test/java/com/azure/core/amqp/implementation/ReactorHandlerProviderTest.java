@@ -12,8 +12,10 @@ import com.azure.core.amqp.implementation.handler.WebSocketsConnectionHandler;
 import com.azure.core.amqp.implementation.handler.WebSocketsProxyConnectionHandler;
 import com.azure.core.amqp.models.CbsAuthorizationType;
 import com.azure.core.credential.TokenCredential;
+import com.azure.core.test.utils.metrics.TestMeter;
 import com.azure.core.util.ClientOptions;
 import com.azure.core.util.Header;
+import com.azure.core.util.UrlBuilder;
 import org.apache.qpid.proton.engine.Connection;
 import org.apache.qpid.proton.engine.EndpointState;
 import org.apache.qpid.proton.engine.Event;
@@ -47,7 +49,10 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.stream.Stream;
 
+import static org.junit.jupiter.api.Assertions.assertNotSame;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.argThat;
@@ -65,6 +70,7 @@ public class ReactorHandlerProviderTest {
     private static final String CONNECTION_ID = "test-connection-id";
     private static final String FULLY_QUALIFIED_DOMAIN_NAME = "my-hostname.windows.com";
     private static final String HOSTNAME = "my.fake.hostname.com";
+    private static final String ENTITY_PATH = "name/and/partition";
     private static final int PORT = 1003;
     private static final InetSocketAddress PROXY_ADDRESS = InetSocketAddress.createUnresolved("foo.proxy.com", 3138);
     private static final Proxy PROXY = new Proxy(Proxy.Type.HTTP, PROXY_ADDRESS);
@@ -73,10 +79,8 @@ public class ReactorHandlerProviderTest {
     private static final String PRODUCT = "test";
     private static final String CLIENT_VERSION = "1.0.0-test";
     private static final SslDomain.VerifyMode VERIFY_MODE = SslDomain.VerifyMode.VERIFY_PEER;
-
-    private static final ClientOptions CLIENT_OPTIONS = new ClientOptions().setHeaders(
-        Arrays.asList(new Header("name", PRODUCT), new Header("version", CLIENT_VERSION)));
-
+    private static final ClientOptions CLIENT_OPTIONS = new ClientOptions()
+        .setHeaders(Arrays.asList(new Header("name", PRODUCT), new Header("version", CLIENT_VERSION)));
 
     @Mock
     private Reactor reactor;
@@ -95,9 +99,7 @@ public class ReactorHandlerProviderTest {
 
     public static Stream<ProxyOptions> getProxyConfigurations() {
         return Stream.of(ProxyOptions.SYSTEM_DEFAULTS,
-            new ProxyOptions(ProxyAuthenticationType.BASIC, null, "some username", "some password"),
-            null
-        );
+            new ProxyOptions(ProxyAuthenticationType.BASIC, null, "some username", "some password"), null);
     }
 
     @BeforeEach
@@ -107,7 +109,7 @@ public class ReactorHandlerProviderTest {
         when(reactorProvider.createReactor(eq(CONNECTION_ID), anyInt())).thenReturn(reactor);
         when(reactorProvider.getReactor()).thenReturn(reactor);
 
-        provider = new ReactorHandlerProvider(reactorProvider);
+        provider = new ReactorHandlerProvider(reactorProvider, null);
 
         originalProxySelector = ProxySelector.getDefault();
 
@@ -126,31 +128,28 @@ public class ReactorHandlerProviderTest {
     }
 
     @Test
+    @SuppressWarnings("deprecation")
     public void constructorNull() {
         // Act
-        assertThrows(NullPointerException.class, () -> new ReactorHandlerProvider(null));
+        assertThrows(NullPointerException.class, () -> new ReactorHandlerProvider(null, null));
     }
 
     @Test
     public void connectionHandlerNull() {
         // Arrange
         final ConnectionOptions connectionOptions = new ConnectionOptions("fqdn", tokenCredential,
-            CbsAuthorizationType.SHARED_ACCESS_SIGNATURE, "scope",
-            AmqpTransportType.AMQP_WEB_SOCKETS, new AmqpRetryOptions(), null, scheduler, CLIENT_OPTIONS,
-            VERIFY_MODE, PRODUCT, CLIENT_VERSION);
+            CbsAuthorizationType.SHARED_ACCESS_SIGNATURE, "scope", AmqpTransportType.AMQP_WEB_SOCKETS,
+            new AmqpRetryOptions(), null, scheduler, CLIENT_OPTIONS, VERIFY_MODE, PRODUCT, CLIENT_VERSION);
 
         // Act
-        assertThrows(NullPointerException.class,
-            () -> provider.createConnectionHandler(null, connectionOptions));
-        assertThrows(NullPointerException.class,
-            () -> provider.createConnectionHandler(CONNECTION_ID, null));
+        assertThrows(NullPointerException.class, () -> provider.createConnectionHandler(null, connectionOptions));
+        assertThrows(NullPointerException.class, () -> provider.createConnectionHandler(CONNECTION_ID, null));
     }
 
     public static Stream<Arguments> getHostnameAndPorts() {
         return Stream.of(
             Arguments.of(FULLY_QUALIFIED_DOMAIN_NAME, -1, FULLY_QUALIFIED_DOMAIN_NAME, ConnectionHandler.AMQPS_PORT),
-            Arguments.of(HOSTNAME, PORT, HOSTNAME, PORT)
-        );
+            Arguments.of(HOSTNAME, PORT, HOSTNAME, PORT));
     }
 
     @MethodSource("getHostnameAndPorts")
@@ -158,9 +157,9 @@ public class ReactorHandlerProviderTest {
     public void getsConnectionHandlerAMQP(String hostname, int port, String expectedHostname, int expectedPort) {
         // Act
         final ConnectionOptions connectionOptions = new ConnectionOptions(FULLY_QUALIFIED_DOMAIN_NAME, tokenCredential,
-            CbsAuthorizationType.SHARED_ACCESS_SIGNATURE, "scope", AmqpTransportType.AMQP,
-            new AmqpRetryOptions(), ProxyOptions.SYSTEM_DEFAULTS, scheduler, CLIENT_OPTIONS, VERIFY_MODE, PRODUCT,
-            CLIENT_VERSION, hostname, port);
+            CbsAuthorizationType.SHARED_ACCESS_SIGNATURE, "scope", AmqpTransportType.AMQP, new AmqpRetryOptions(),
+            ProxyOptions.SYSTEM_DEFAULTS, scheduler, CLIENT_OPTIONS, VERIFY_MODE, PRODUCT, CLIENT_VERSION, hostname,
+            port, true);
 
         final ConnectionHandler handler = provider.createConnectionHandler(CONNECTION_ID, connectionOptions);
 
@@ -197,8 +196,8 @@ public class ReactorHandlerProviderTest {
         // Arrange
         final InetSocketAddress address = InetSocketAddress.createUnresolved("my-new.proxy.com", 8888);
         final Proxy newProxy = new Proxy(Proxy.Type.HTTP, address);
-        final ProxyOptions configuration = new ProxyOptions(ProxyAuthenticationType.BASIC, newProxy, USERNAME,
-            PASSWORD);
+        final ProxyOptions configuration
+            = new ProxyOptions(ProxyAuthenticationType.BASIC, newProxy, USERNAME, PASSWORD);
         final String hostname = "foo.eventhubs.azure.com";
         final ConnectionOptions connectionOptions = new ConnectionOptions(hostname, tokenCredential,
             CbsAuthorizationType.SHARED_ACCESS_SIGNATURE, "scope", AmqpTransportType.AMQP_WEB_SOCKETS,
@@ -218,8 +217,7 @@ public class ReactorHandlerProviderTest {
         return Stream.of(
             Arguments.of("foo.eventhubs.azure.com", WebSocketsProxyConnectionHandler.HTTPS_PORT,
                 PROXY_ADDRESS.getHostName(), PROXY_ADDRESS.getPort()),
-            Arguments.of("foo.eventhubs.azure.com", 8882, "my-new2.proxy.com", 8888)
-        );
+            Arguments.of("foo.eventhubs.azure.com", 8882, "my-new2.proxy.com", 8888));
     }
 
     /**
@@ -236,12 +234,13 @@ public class ReactorHandlerProviderTest {
         final String fullyQualifiedDomainName = "foo.eventhubs.azure.com";
         final ConnectionOptions connectionOptions = new ConnectionOptions(fullyQualifiedDomainName, tokenCredential,
             CbsAuthorizationType.SHARED_ACCESS_SIGNATURE, "scope", AmqpTransportType.AMQP_WEB_SOCKETS,
-            new AmqpRetryOptions(), null, scheduler, CLIENT_OPTIONS, VERIFY_MODE, PRODUCT, CLIENT_VERSION,
-            hostname, port);
+            new AmqpRetryOptions(), null, scheduler, CLIENT_OPTIONS, VERIFY_MODE, PRODUCT, CLIENT_VERSION, hostname,
+            port, true);
 
         when(proxySelector.select(any())).thenAnswer(invocation -> {
             final URI uri = invocation.getArgument(0);
-            if (fullyQualifiedDomainName.equals(uri.getHost()) && uri.getPort() == WebSocketsConnectionHandler.HTTPS_PORT) {
+            if (fullyQualifiedDomainName.equals(uri.getHost())
+                && uri.getPort() == WebSocketsConnectionHandler.HTTPS_PORT) {
                 return Collections.singletonList(PROXY);
             }
 
@@ -272,9 +271,9 @@ public class ReactorHandlerProviderTest {
         final String hostname = "foo.eventhubs.azure.com";
 
         // The default port used for the first ConnectionOptions constructor is the default HTTPS_PORT.
-        when(proxySelector.select(argThat(u -> u.getHost().equals(hostname)
-            && u.getPort() == WebSocketsConnectionHandler.HTTPS_PORT)))
-            .thenReturn(Collections.singletonList(PROXY));
+        when(proxySelector.select(
+            argThat(u -> u.getHost().equals(hostname) && u.getPort() == WebSocketsConnectionHandler.HTTPS_PORT)))
+                .thenReturn(Collections.singletonList(PROXY));
 
         final ConnectionOptions connectionOptions = new ConnectionOptions(hostname, tokenCredential,
             CbsAuthorizationType.SHARED_ACCESS_SIGNATURE, "scope", AmqpTransportType.AMQP_WEB_SOCKETS,
@@ -329,10 +328,10 @@ public class ReactorHandlerProviderTest {
         // Arrange
         final String anotherFakeHostname = "hostname.fake";
         final ProxyOptions proxyOptions = new ProxyOptions(ProxyAuthenticationType.BASIC, PROXY, USERNAME, PASSWORD);
-        final ConnectionOptions connectionOptions = new ConnectionOptions(HOSTNAME, tokenCredential,
-            CbsAuthorizationType.SHARED_ACCESS_SIGNATURE, "scope", AmqpTransportType.AMQP_WEB_SOCKETS,
-            new AmqpRetryOptions(), proxyOptions, scheduler, CLIENT_OPTIONS, SslDomain.VerifyMode.VERIFY_PEER_NAME,
-            PRODUCT, CLIENT_VERSION);
+        final ConnectionOptions connectionOptions
+            = new ConnectionOptions(HOSTNAME, tokenCredential, CbsAuthorizationType.SHARED_ACCESS_SIGNATURE, "scope",
+                AmqpTransportType.AMQP_WEB_SOCKETS, new AmqpRetryOptions(), proxyOptions, scheduler, CLIENT_OPTIONS,
+                SslDomain.VerifyMode.VERIFY_PEER_NAME, PRODUCT, CLIENT_VERSION);
 
         final Connection connection = mock(Connection.class);
         when(connection.getRemoteState()).thenReturn(EndpointState.UNINITIALIZED);
@@ -350,8 +349,7 @@ public class ReactorHandlerProviderTest {
         connectionHandler.onConnectionBound(event);
 
         // Assert
-        verify(transport).ssl(
-            argThat(sslDomain -> sslDomain.getMode() == SslDomain.Mode.CLIENT),
+        verify(transport).ssl(argThat(sslDomain -> sslDomain.getMode() == SslDomain.Mode.CLIENT),
             argThat(peerDetails -> HOSTNAME.equals(peerDetails.getHostname())
                 && WebSocketsConnectionHandler.HTTPS_PORT == peerDetails.getPort()));
     }
@@ -362,13 +360,13 @@ public class ReactorHandlerProviderTest {
     @Test
     public void correctPeerDetailsCustomEndpoint() throws MalformedURLException {
         // Arrange
-        final URL customEndpoint = new URL("https://myappservice.windows.net");
+        final URL customEndpoint = UrlBuilder.parse("https://myappservice.windows.net").toUrl();
         final String anotherFakeHostname = "hostname.fake";
-        final ConnectionOptions connectionOptions = new ConnectionOptions(HOSTNAME, tokenCredential,
-            CbsAuthorizationType.SHARED_ACCESS_SIGNATURE, "scope", AmqpTransportType.AMQP_WEB_SOCKETS,
-            new AmqpRetryOptions(), ProxyOptions.SYSTEM_DEFAULTS, scheduler, CLIENT_OPTIONS,
-            SslDomain.VerifyMode.VERIFY_PEER_NAME, PRODUCT, CLIENT_VERSION, customEndpoint.getHost(),
-            customEndpoint.getDefaultPort());
+        final ConnectionOptions connectionOptions
+            = new ConnectionOptions(HOSTNAME, tokenCredential, CbsAuthorizationType.SHARED_ACCESS_SIGNATURE, "scope",
+                AmqpTransportType.AMQP_WEB_SOCKETS, new AmqpRetryOptions(), ProxyOptions.SYSTEM_DEFAULTS, scheduler,
+                CLIENT_OPTIONS, SslDomain.VerifyMode.VERIFY_PEER_NAME, PRODUCT, CLIENT_VERSION,
+                customEndpoint.getHost(), customEndpoint.getDefaultPort(), true);
 
         final Connection connection = mock(Connection.class);
         when(connection.getRemoteState()).thenReturn(EndpointState.UNINITIALIZED);
@@ -386,8 +384,7 @@ public class ReactorHandlerProviderTest {
         connectionHandler.onConnectionBound(event);
 
         // Assert
-        verify(transport).ssl(
-            any(SslDomain.class),
+        verify(transport).ssl(any(SslDomain.class),
             argThat(peerDetails -> customEndpoint.getHost().equals(peerDetails.getHostname())
                 && customEndpoint.getDefaultPort() == peerDetails.getPort()));
     }
@@ -400,10 +397,10 @@ public class ReactorHandlerProviderTest {
     public void correctPeerDetails(AmqpTransportType transportType) {
         // Arrange
         final String anotherFakeHostname = "hostname.fake";
-        final ConnectionOptions connectionOptions = new ConnectionOptions(HOSTNAME, tokenCredential,
-            CbsAuthorizationType.SHARED_ACCESS_SIGNATURE, "scope", transportType, new AmqpRetryOptions(),
-            ProxyOptions.SYSTEM_DEFAULTS, scheduler, CLIENT_OPTIONS, SslDomain.VerifyMode.VERIFY_PEER_NAME, PRODUCT,
-            CLIENT_VERSION);
+        final ConnectionOptions connectionOptions
+            = new ConnectionOptions(HOSTNAME, tokenCredential, CbsAuthorizationType.SHARED_ACCESS_SIGNATURE, "scope",
+                transportType, new AmqpRetryOptions(), ProxyOptions.SYSTEM_DEFAULTS, scheduler, CLIENT_OPTIONS,
+                SslDomain.VerifyMode.VERIFY_PEER_NAME, PRODUCT, CLIENT_VERSION);
 
         final Connection connection = mock(Connection.class);
         when(connection.getRemoteState()).thenReturn(EndpointState.UNINITIALIZED);
@@ -421,18 +418,40 @@ public class ReactorHandlerProviderTest {
         connectionHandler.onConnectionBound(event);
 
         // Assert
-        verify(transport).ssl(
-            any(SslDomain.class),
-            argThat(peerDetails -> {
-                if (!HOSTNAME.equals(peerDetails.getHostname())) {
-                    return false;
-                }
+        verify(transport).ssl(any(SslDomain.class), argThat(peerDetails -> {
+            if (!HOSTNAME.equals(peerDetails.getHostname())) {
+                return false;
+            }
 
-                if (transportType == AmqpTransportType.AMQP) {
-                    return peerDetails.getPort() == ConnectionHandler.AMQPS_PORT;
-                } else {
-                    return peerDetails.getPort() == WebSocketsConnectionHandler.HTTPS_PORT;
-                }
-            }));
+            if (transportType == AmqpTransportType.AMQP) {
+                return peerDetails.getPort() == ConnectionHandler.AMQPS_PORT;
+            } else {
+                return peerDetails.getPort() == WebSocketsConnectionHandler.HTTPS_PORT;
+            }
+        }));
+    }
+
+    @Test
+    public void noopMeter() {
+        TestMeter meter = new TestMeter(false);
+        ReactorHandlerProvider providerWithMetrics = new ReactorHandlerProvider(reactorProvider, meter);
+
+        AmqpMetricsProvider metricsProvider = providerWithMetrics.getMetricProvider(HOSTNAME, null);
+        metricsProvider.recordConnectionClosed(null);
+        assertTrue(meter.getUpDownCounters().isEmpty());
+        assertTrue(meter.getCounters().isEmpty());
+        assertTrue(meter.getHistograms().isEmpty());
+    }
+
+    @Test
+    public void cachesMetrics() {
+        ReactorHandlerProvider providerWithMetrics = new ReactorHandlerProvider(reactorProvider, new TestMeter());
+
+        AmqpMetricsProvider metricsProvider1 = providerWithMetrics.getMetricProvider(HOSTNAME, ENTITY_PATH);
+        AmqpMetricsProvider metricsProvider2 = providerWithMetrics.getMetricProvider(HOSTNAME, null);
+
+        assertNotSame(metricsProvider1, metricsProvider2);
+        assertSame(metricsProvider1, providerWithMetrics.getMetricProvider(HOSTNAME, ENTITY_PATH));
+        assertSame(metricsProvider2, providerWithMetrics.getMetricProvider(HOSTNAME, null));
     }
 }

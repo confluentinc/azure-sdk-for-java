@@ -3,16 +3,23 @@
 
 package com.azure.cosmos.benchmark;
 
-import com.azure.cosmos.BridgeInternal;
 import com.azure.cosmos.ConnectionMode;
 import com.azure.cosmos.CosmosAsyncClient;
 import com.azure.cosmos.CosmosAsyncContainer;
 import com.azure.cosmos.CosmosAsyncDatabase;
+import com.azure.cosmos.CosmosClient;
 import com.azure.cosmos.CosmosClientBuilder;
+import com.azure.cosmos.CosmosDiagnosticsHandler;
+import com.azure.cosmos.CosmosDiagnosticsThresholds;
+import com.azure.cosmos.CosmosContainerProactiveInitConfigBuilder;
 import com.azure.cosmos.CosmosException;
 import com.azure.cosmos.DirectConnectionConfig;
 import com.azure.cosmos.GatewayConnectionConfig;
 import com.azure.cosmos.implementation.HttpConstants;
+import com.azure.cosmos.implementation.ImplementationBridgeHelpers;
+import com.azure.cosmos.models.CosmosClientTelemetryConfig;
+import com.azure.cosmos.models.CosmosContainerIdentity;
+import com.azure.cosmos.models.CosmosMicrometerMetricsOptions;
 import com.azure.cosmos.models.PartitionKey;
 import com.azure.cosmos.models.ThroughputProperties;
 import com.codahale.metrics.ConsoleReporter;
@@ -29,6 +36,7 @@ import com.codahale.metrics.jvm.GarbageCollectorMetricSet;
 import com.codahale.metrics.jvm.MemoryUsageGaugeSet;
 import io.micrometer.core.instrument.MeterRegistry;
 import org.apache.commons.lang3.RandomStringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.mpierce.metrics.reservoir.hdrhistogram.HdrHistogramResetOnSnapshotReservoir;
 import org.reactivestreams.Subscription;
 import org.slf4j.Logger;
@@ -50,8 +58,14 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
 
 abstract class AsyncBenchmark<T> {
+
+    private static final ImplementationBridgeHelpers.CosmosClientBuilderHelper.CosmosClientBuilderAccessor clientBuilderAccessor
+        = ImplementationBridgeHelpers.CosmosClientBuilderHelper.getCosmosClientBuilderAccessor();
+
     private final MetricRegistry metricsRegistry = new MetricRegistry();
-    private ScheduledReporter reporter;
+    private final ScheduledReporter reporter;
+
+    private final ScheduledReporter resultReporter;
 
     private volatile Meter successMeter;
     private volatile Meter failureMeter;
@@ -62,26 +76,71 @@ abstract class AsyncBenchmark<T> {
     final CosmosAsyncClient cosmosClient;
     CosmosAsyncContainer cosmosAsyncContainer;
     CosmosAsyncDatabase cosmosAsyncDatabase;
-
     final String partitionKey;
     final Configuration configuration;
     final List<PojoizedJson> docsToRead;
     final Semaphore concurrencyControlSemaphore;
     Timer latency;
 
-    private static final String SUCCESS_COUNTER_METER_NAME = "#Successful Operations";
-    private static final String FAILURE_COUNTER_METER_NAME = "#Unsuccessful Operations";
-    private static final String LATENCY_METER_NAME = "latency";
-
     private AtomicBoolean warmupMode = new AtomicBoolean(false);
 
     AsyncBenchmark(Configuration cfg) {
+
+        logger = LoggerFactory.getLogger(this.getClass());
+        configuration = cfg;
+
+        if (configuration.isPartitionLevelCircuitBreakerEnabled()) {
+            System.setProperty(
+                "COSMOS.PARTITION_LEVEL_CIRCUIT_BREAKER_CONFIG",
+                "{\"isPartitionLevelCircuitBreakerEnabled\": true, "
+                    + "\"circuitBreakerType\": \"CONSECUTIVE_EXCEPTION_COUNT_BASED\","
+                    + "\"consecutiveExceptionCountToleratedForReads\": 10,"
+                    + "\"consecutiveExceptionCountToleratedForWrites\": 5,"
+                    + "}");
+        }
+
         CosmosClientBuilder cosmosClientBuilder = new CosmosClientBuilder()
             .endpoint(cfg.getServiceEndpoint())
             .key(cfg.getMasterKey())
             .preferredRegions(cfg.getPreferredRegionsList())
             .consistencyLevel(cfg.getConsistencyLevel())
-            .contentResponseOnWriteEnabled(Boolean.parseBoolean(cfg.isContentResponseOnWriteEnabled()));
+            .userAgentSuffix(configuration.getApplicationName())
+            .contentResponseOnWriteEnabled(cfg.isContentResponseOnWriteEnabled());
+
+        clientBuilderAccessor
+            .setRegionScopedSessionCapturingEnabled(cosmosClientBuilder, cfg.isRegionScopedSessionContainerEnabled());
+
+        CosmosClientTelemetryConfig telemetryConfig = new CosmosClientTelemetryConfig()
+            .sendClientTelemetryToService(cfg.isClientTelemetryEnabled())
+            .diagnosticsThresholds(
+                new CosmosDiagnosticsThresholds()
+                    .setPointOperationLatencyThreshold(cfg.getPointOperationThreshold())
+                    .setNonPointOperationLatencyThreshold(cfg.getNonPointOperationThreshold())
+            );
+
+        if (configuration.isDefaultLog4jLoggerEnabled()) {
+            telemetryConfig.diagnosticsHandler(CosmosDiagnosticsHandler.DEFAULT_LOGGING_HANDLER);
+        }
+
+        MeterRegistry registry = configuration.getAzureMonitorMeterRegistry();
+        if (registry != null) {
+            logger.info("USING AZURE METRIC REGISTRY - isClientTelemetryEnabled {}", cfg.isClientTelemetryEnabled());
+            telemetryConfig.metricsOptions(new CosmosMicrometerMetricsOptions().meterRegistry(registry));
+        } else {
+            registry = configuration.getGraphiteMeterRegistry();
+
+            if (registry != null) {
+                logger.info("USING GRAPHITE METRIC REGISTRY - isClientTelemetryEnabled {}", cfg.isClientTelemetryEnabled());
+                telemetryConfig.metricsOptions(new CosmosMicrometerMetricsOptions().meterRegistry(registry));
+            } else {
+                logger.info("USING DEFAULT/GLOBAL METRIC REGISTRY - isClientTelemetryEnabled {}", cfg.isClientTelemetryEnabled());
+                telemetryConfig.metricsOptions(
+                    new CosmosMicrometerMetricsOptions().meterRegistry(null));
+            }
+        }
+
+        cosmosClientBuilder.clientTelemetryConfig(telemetryConfig);
+
         if (cfg.getConnectionMode().equals(ConnectionMode.DIRECT)) {
             cosmosClientBuilder = cosmosClientBuilder.directMode(DirectConnectionConfig.getDefaultConfig());
         } else {
@@ -89,9 +148,12 @@ abstract class AsyncBenchmark<T> {
             gatewayConnectionConfig.setMaxConnectionPoolSize(cfg.getMaxConnectionPoolSize());
             cosmosClientBuilder = cosmosClientBuilder.gatewayMode(gatewayConnectionConfig);
         }
+
         cosmosClient = cosmosClientBuilder.buildAsyncClient();
-        configuration = cfg;
-        logger = LoggerFactory.getLogger(this.getClass());
+        CosmosClient syncClient = cosmosClientBuilder
+            .endpoint(StringUtils.isNotEmpty(configuration.getServiceEndpointForRunResultsUploadAccount()) ? configuration.getServiceEndpointForRunResultsUploadAccount() : configuration.getServiceEndpoint())
+            .key(StringUtils.isNotEmpty(configuration.getMasterKeyForRunResultsUploadAccount()) ? configuration.getMasterKeyForRunResultsUploadAccount() : configuration.getMasterKey())
+            .buildClient();
 
         try {
             cosmosAsyncDatabase = cosmosClient.getDatabase(this.configuration.getDatabaseId());
@@ -109,7 +171,6 @@ abstract class AsyncBenchmark<T> {
 
         try {
             cosmosAsyncContainer = cosmosAsyncDatabase.getContainer(this.configuration.getCollectionId());
-
             cosmosAsyncContainer.read().block();
 
         } catch (CosmosException e) {
@@ -121,6 +182,17 @@ abstract class AsyncBenchmark<T> {
                 ).block();
 
                 cosmosAsyncContainer = cosmosAsyncDatabase.getContainer(this.configuration.getCollectionId());
+
+                // add some delay to allow container to be created across multiple regions
+                // container creation across regions is an async operation
+                // without the delay a container may not be available to process reads / writes
+
+                try {
+                    Thread.sleep(30_000);
+                } catch (Exception exception) {
+                    throw new RuntimeException(exception);
+                }
+
                 logger.info("Collection {} is created for this test", this.configuration.getCollectionId());
                 collectionCreated = true;
             } else {
@@ -220,16 +292,86 @@ abstract class AsyncBenchmark<T> {
                 .build();
         }
 
-        MeterRegistry registry = configuration.getAzureMonitorMeterRegistry();
-
-        if (registry != null) {
-            BridgeInternal.monitorTelemetry(registry);
+        if (configuration.getResultUploadDatabase() != null && configuration.getResultUploadContainer() != null) {
+            resultReporter = CosmosTotalResultReporter
+                .forRegistry(
+                    metricsRegistry,
+                    syncClient.getDatabase(configuration.getResultUploadDatabase()).getContainer(configuration.getResultUploadContainer()),
+                    configuration)
+                .convertRatesTo(TimeUnit.SECONDS)
+                .convertDurationsTo(TimeUnit.MILLISECONDS).build();
+        } else {
+            resultReporter = null;
         }
 
-        registry = configuration.getGraphiteMeterRegistry();
+        boolean shouldOpenConnectionsAndInitCaches = configuration.getConnectionMode() == ConnectionMode.DIRECT
+                && configuration.isProactiveConnectionManagementEnabled()
+                && !configuration.isUseUnWarmedUpContainer();
 
-        if (registry != null) {
-            BridgeInternal.monitorTelemetry(registry);
+        CosmosClientBuilder cosmosClientBuilderForOpeningConnections = new CosmosClientBuilder()
+                .endpoint(configuration.getServiceEndpoint())
+                .key(configuration.getMasterKey())
+                .preferredRegions(configuration.getPreferredRegionsList())
+                .directMode();
+
+        if (shouldOpenConnectionsAndInitCaches) {
+
+            logger.info("Proactively establishing connections...");
+
+            List<CosmosContainerIdentity> cosmosContainerIdentities = new ArrayList<>();
+            CosmosContainerIdentity cosmosContainerIdentity = new CosmosContainerIdentity(
+                    configuration.getDatabaseId(),
+                    configuration.getCollectionId()
+            );
+            cosmosContainerIdentities.add(cosmosContainerIdentity);
+            CosmosContainerProactiveInitConfigBuilder cosmosContainerProactiveInitConfigBuilder = new
+                    CosmosContainerProactiveInitConfigBuilder(cosmosContainerIdentities)
+                    .setProactiveConnectionRegionsCount(configuration.getProactiveConnectionRegionsCount());
+
+            if (configuration.getAggressiveWarmupDuration() == Duration.ZERO) {
+
+                cosmosClientBuilder = cosmosClientBuilderForOpeningConnections
+                        .openConnectionsAndInitCaches(cosmosContainerProactiveInitConfigBuilder.build())
+                        .endpointDiscoveryEnabled(true);
+            } else {
+
+                logger.info("Setting an aggressive proactive connection establishment duration of {}", configuration.getAggressiveWarmupDuration());
+
+                cosmosContainerProactiveInitConfigBuilder = cosmosContainerProactiveInitConfigBuilder
+                        .setAggressiveWarmupDuration(configuration.getAggressiveWarmupDuration());
+
+                cosmosClientBuilder = cosmosClientBuilder
+                        .openConnectionsAndInitCaches(cosmosContainerProactiveInitConfigBuilder.build())
+                        .endpointDiscoveryEnabled(true);
+            }
+
+            if (configuration.getMinConnectionPoolSizePerEndpoint() >= 1) {
+                System.setProperty("COSMOS.MIN_CONNECTION_POOL_SIZE_PER_ENDPOINT", configuration.getMinConnectionPoolSizePerEndpoint().toString());
+                logger.info("Min connection pool size per endpoint : {}", System.getProperty("COSMOS.MIN_CONNECTION_POOL_SIZE_PER_ENDPOINT"));
+            }
+
+            CosmosAsyncClient openConnectionsAsyncClient = cosmosClientBuilder.buildAsyncClient();
+            openConnectionsAsyncClient.createDatabaseIfNotExists(cosmosAsyncDatabase.getId()).block();
+            CosmosAsyncDatabase databaseForProactiveConnectionManagement = openConnectionsAsyncClient.getDatabase(cosmosAsyncDatabase.getId());
+            databaseForProactiveConnectionManagement.createContainerIfNotExists(configuration.getCollectionId(), "/id").block();
+            cosmosAsyncContainer = databaseForProactiveConnectionManagement.getContainer(configuration.getCollectionId());
+        }
+
+        if (!configuration.isProactiveConnectionManagementEnabled() && configuration.isUseUnWarmedUpContainer()) {
+
+            logger.info("Creating unwarmed container");
+
+            CosmosAsyncClient clientForUnwarmedContainer = new CosmosClientBuilder()
+                    .endpoint(configuration.getServiceEndpoint())
+                    .key(configuration.getMasterKey())
+                    .preferredRegions(configuration.getPreferredRegionsList())
+                    .directMode()
+                    .buildAsyncClient();
+
+            clientForUnwarmedContainer.createDatabaseIfNotExists(configuration.getDatabaseId()).block();
+            CosmosAsyncDatabase databaseForUnwarmedContainer = clientForUnwarmedContainer.getDatabase(configuration.getDatabaseId());
+            databaseForUnwarmedContainer.createContainerIfNotExists(configuration.getCollectionId(), "/id").block();
+            cosmosAsyncContainer = databaseForUnwarmedContainer.getContainer(configuration.getCollectionId());
         }
     }
 
@@ -261,6 +403,9 @@ abstract class AsyncBenchmark<T> {
                             resetMeters();
                             initializeMeter();
                             reporter.start(configuration.getPrintingInterval(), TimeUnit.SECONDS);
+                            if (resultReporter != null) {
+                                resultReporter.start(configuration.getPrintingInterval(), TimeUnit.SECONDS);
+                            }
                             warmupMode.set(false);
                         }
                     }
@@ -275,18 +420,18 @@ abstract class AsyncBenchmark<T> {
     protected abstract void performWorkload(BaseSubscriber<T> baseSubscriber, long i) throws Exception;
 
     private void resetMeters() {
-        metricsRegistry.remove(SUCCESS_COUNTER_METER_NAME);
-        metricsRegistry.remove(FAILURE_COUNTER_METER_NAME);
+        metricsRegistry.remove(Configuration.SUCCESS_COUNTER_METER_NAME);
+        metricsRegistry.remove(Configuration.FAILURE_COUNTER_METER_NAME);
         if (latencyAwareOperations(configuration.getOperationType())) {
-            metricsRegistry.remove(LATENCY_METER_NAME);
+            metricsRegistry.remove(Configuration.LATENCY_METER_NAME);
         }
     }
 
     private void initializeMeter() {
-        successMeter = metricsRegistry.meter(SUCCESS_COUNTER_METER_NAME);
-        failureMeter = metricsRegistry.meter(FAILURE_COUNTER_METER_NAME);
+        successMeter = metricsRegistry.meter(Configuration.SUCCESS_COUNTER_METER_NAME);
+        failureMeter = metricsRegistry.meter(Configuration.FAILURE_COUNTER_METER_NAME);
         if (latencyAwareOperations(configuration.getOperationType())) {
-            latency = metricsRegistry.register(LATENCY_METER_NAME, new Timer(new HdrHistogramResetOnSnapshotReservoir()));
+            latency = metricsRegistry.register(Configuration.LATENCY_METER_NAME, new Timer(new HdrHistogramResetOnSnapshotReservoir()));
         }
     }
 
@@ -305,6 +450,7 @@ abstract class AsyncBenchmark<T> {
             case QueryTopOrderby:
             case Mixed:
             case ReadAllItemsOfLogicalPartition:
+            case ReadManyLatency:
                 return true;
             default:
                 return false;
@@ -318,6 +464,9 @@ abstract class AsyncBenchmark<T> {
             warmupMode.set(true);
         } else {
             reporter.start(configuration.getPrintingInterval(), TimeUnit.SECONDS);
+            if (resultReporter != null) {
+                resultReporter.start(configuration.getPrintingInterval(), TimeUnit.SECONDS);
+            }
         }
 
         long startTime = System.currentTimeMillis();
@@ -388,6 +537,11 @@ abstract class AsyncBenchmark<T> {
 
         reporter.report();
         reporter.close();
+
+        if (resultReporter != null) {
+            resultReporter.report();
+            resultReporter.close();
+        }
     }
 
     protected Mono sparsityMono(long i) {

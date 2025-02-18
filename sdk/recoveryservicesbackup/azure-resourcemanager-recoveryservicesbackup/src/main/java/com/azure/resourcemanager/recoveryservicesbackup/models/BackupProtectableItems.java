@@ -7,25 +7,27 @@ package com.azure.resourcemanager.recoveryservicesbackup.models;
 import com.azure.core.http.rest.PagedIterable;
 import com.azure.core.util.Context;
 
-/** Resource collection API of BackupProtectableItems. */
+/**
+ * Resource collection API of BackupProtectableItems.
+ */
 public interface BackupProtectableItems {
     /**
      * Provides a pageable list of protectable objects within your subscription according to the query filter and the
      * pagination parameters.
-     *
+     * 
      * @param vaultName The name of the recovery services vault.
      * @param resourceGroupName The name of the resource group where the recovery services vault is present.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return list of WorkloadProtectableItem resources.
+     * @return list of WorkloadProtectableItem resources as paginated response with {@link PagedIterable}.
      */
     PagedIterable<WorkloadProtectableItemResource> list(String vaultName, String resourceGroupName);
 
     /**
      * Provides a pageable list of protectable objects within your subscription according to the query filter and the
      * pagination parameters.
-     *
+     * 
      * @param vaultName The name of the recovery services vault.
      * @param resourceGroupName The name of the resource group where the recovery services vault is present.
      * @param filter OData filter options.
@@ -34,8 +36,8 @@ public interface BackupProtectableItems {
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return list of WorkloadProtectableItem resources.
+     * @return list of WorkloadProtectableItem resources as paginated response with {@link PagedIterable}.
      */
-    PagedIterable<WorkloadProtectableItemResource> list(
-        String vaultName, String resourceGroupName, String filter, String skipToken, Context context);
+    PagedIterable<WorkloadProtectableItemResource> list(String vaultName, String resourceGroupName, String filter,
+        String skipToken, Context context);
 }

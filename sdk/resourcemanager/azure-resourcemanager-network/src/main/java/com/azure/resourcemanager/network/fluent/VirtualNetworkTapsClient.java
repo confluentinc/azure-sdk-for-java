@@ -22,80 +22,80 @@ import java.nio.ByteBuffer;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-/** An instance of this class provides access to all the operations defined in VirtualNetworkTapsClient. */
-public interface VirtualNetworkTapsClient
-    extends InnerSupportsGet<VirtualNetworkTapInner>,
-        InnerSupportsListing<VirtualNetworkTapInner>,
-        InnerSupportsDelete<Void> {
+/**
+ * An instance of this class provides access to all the operations defined in VirtualNetworkTapsClient.
+ */
+public interface VirtualNetworkTapsClient extends InnerSupportsGet<VirtualNetworkTapInner>,
+    InnerSupportsListing<VirtualNetworkTapInner>, InnerSupportsDelete<Void> {
     /**
      * Deletes the specified virtual network tap.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param tapName The name of the virtual network tap.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the completion.
+     * @return the {@link Response} on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
     Mono<Response<Flux<ByteBuffer>>> deleteWithResponseAsync(String resourceGroupName, String tapName);
 
     /**
      * Deletes the specified virtual network tap.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param tapName The name of the virtual network tap.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the completion.
+     * @return the {@link PollerFlux} for polling of long-running operation.
      */
     @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
     PollerFlux<PollResult<Void>, Void> beginDeleteAsync(String resourceGroupName, String tapName);
 
     /**
      * Deletes the specified virtual network tap.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param tapName The name of the virtual network tap.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the completion.
+     * @return the {@link SyncPoller} for polling of long-running operation.
      */
     @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
     SyncPoller<PollResult<Void>, Void> beginDelete(String resourceGroupName, String tapName);
 
     /**
      * Deletes the specified virtual network tap.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param tapName The name of the virtual network tap.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the completion.
+     * @return the {@link SyncPoller} for polling of long-running operation.
      */
     @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
     SyncPoller<PollResult<Void>, Void> beginDelete(String resourceGroupName, String tapName, Context context);
 
     /**
      * Deletes the specified virtual network tap.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param tapName The name of the virtual network tap.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the completion.
+     * @return A {@link Mono} that completes when a successful response is received.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
     Mono<Void> deleteAsync(String resourceGroupName, String tapName);
 
     /**
      * Deletes the specified virtual network tap.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param tapName The name of the virtual network tap.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
@@ -107,7 +107,7 @@ public interface VirtualNetworkTapsClient
 
     /**
      * Deletes the specified virtual network tap.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param tapName The name of the virtual network tap.
      * @param context The context to associate with this operation.
@@ -120,34 +120,50 @@ public interface VirtualNetworkTapsClient
 
     /**
      * Gets information about the specified virtual network tap.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param tapName The name of virtual network tap.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return information about the specified virtual network tap.
+     * @return information about the specified virtual network tap along with {@link Response} on successful completion
+     * of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    Mono<Response<VirtualNetworkTapInner>> getByResourceGroupWithResponseAsync(
-        String resourceGroupName, String tapName);
+    Mono<Response<VirtualNetworkTapInner>> getByResourceGroupWithResponseAsync(String resourceGroupName,
+        String tapName);
 
     /**
      * Gets information about the specified virtual network tap.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param tapName The name of virtual network tap.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return information about the specified virtual network tap.
+     * @return information about the specified virtual network tap on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
     Mono<VirtualNetworkTapInner> getByResourceGroupAsync(String resourceGroupName, String tapName);
 
     /**
      * Gets information about the specified virtual network tap.
-     *
+     * 
+     * @param resourceGroupName The name of the resource group.
+     * @param tapName The name of virtual network tap.
+     * @param context The context to associate with this operation.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return information about the specified virtual network tap along with {@link Response}.
+     */
+    @ServiceMethod(returns = ReturnType.SINGLE)
+    Response<VirtualNetworkTapInner> getByResourceGroupWithResponse(String resourceGroupName, String tapName,
+        Context context);
+
+    /**
+     * Gets information about the specified virtual network tap.
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param tapName The name of virtual network tap.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
@@ -159,68 +175,53 @@ public interface VirtualNetworkTapsClient
     VirtualNetworkTapInner getByResourceGroup(String resourceGroupName, String tapName);
 
     /**
-     * Gets information about the specified virtual network tap.
-     *
+     * Creates or updates a Virtual Network Tap.
+     * 
      * @param resourceGroupName The name of the resource group.
-     * @param tapName The name of virtual network tap.
-     * @param context The context to associate with this operation.
+     * @param tapName The name of the virtual network tap.
+     * @param parameters Parameters supplied to the create or update virtual network tap operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return information about the specified virtual network tap.
+     * @return virtual Network Tap resource along with {@link Response} on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    Response<VirtualNetworkTapInner> getByResourceGroupWithResponse(
-        String resourceGroupName, String tapName, Context context);
+    Mono<Response<Flux<ByteBuffer>>> createOrUpdateWithResponseAsync(String resourceGroupName, String tapName,
+        VirtualNetworkTapInner parameters);
 
     /**
      * Creates or updates a Virtual Network Tap.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param tapName The name of the virtual network tap.
      * @param parameters Parameters supplied to the create or update virtual network tap operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return virtual Network Tap resource.
-     */
-    @ServiceMethod(returns = ReturnType.SINGLE)
-    Mono<Response<Flux<ByteBuffer>>> createOrUpdateWithResponseAsync(
-        String resourceGroupName, String tapName, VirtualNetworkTapInner parameters);
-
-    /**
-     * Creates or updates a Virtual Network Tap.
-     *
-     * @param resourceGroupName The name of the resource group.
-     * @param tapName The name of the virtual network tap.
-     * @param parameters Parameters supplied to the create or update virtual network tap operation.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return virtual Network Tap resource.
+     * @return the {@link PollerFlux} for polling of virtual Network Tap resource.
      */
     @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
-    PollerFlux<PollResult<VirtualNetworkTapInner>, VirtualNetworkTapInner> beginCreateOrUpdateAsync(
-        String resourceGroupName, String tapName, VirtualNetworkTapInner parameters);
+    PollerFlux<PollResult<VirtualNetworkTapInner>, VirtualNetworkTapInner>
+        beginCreateOrUpdateAsync(String resourceGroupName, String tapName, VirtualNetworkTapInner parameters);
 
     /**
      * Creates or updates a Virtual Network Tap.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param tapName The name of the virtual network tap.
      * @param parameters Parameters supplied to the create or update virtual network tap operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return virtual Network Tap resource.
+     * @return the {@link SyncPoller} for polling of virtual Network Tap resource.
      */
     @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
-    SyncPoller<PollResult<VirtualNetworkTapInner>, VirtualNetworkTapInner> beginCreateOrUpdate(
-        String resourceGroupName, String tapName, VirtualNetworkTapInner parameters);
+    SyncPoller<PollResult<VirtualNetworkTapInner>, VirtualNetworkTapInner> beginCreateOrUpdate(String resourceGroupName,
+        String tapName, VirtualNetworkTapInner parameters);
 
     /**
      * Creates or updates a Virtual Network Tap.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param tapName The name of the virtual network tap.
      * @param parameters Parameters supplied to the create or update virtual network tap operation.
@@ -228,30 +229,30 @@ public interface VirtualNetworkTapsClient
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return virtual Network Tap resource.
+     * @return the {@link SyncPoller} for polling of virtual Network Tap resource.
      */
     @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
-    SyncPoller<PollResult<VirtualNetworkTapInner>, VirtualNetworkTapInner> beginCreateOrUpdate(
-        String resourceGroupName, String tapName, VirtualNetworkTapInner parameters, Context context);
+    SyncPoller<PollResult<VirtualNetworkTapInner>, VirtualNetworkTapInner> beginCreateOrUpdate(String resourceGroupName,
+        String tapName, VirtualNetworkTapInner parameters, Context context);
 
     /**
      * Creates or updates a Virtual Network Tap.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param tapName The name of the virtual network tap.
      * @param parameters Parameters supplied to the create or update virtual network tap operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return virtual Network Tap resource.
+     * @return virtual Network Tap resource on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    Mono<VirtualNetworkTapInner> createOrUpdateAsync(
-        String resourceGroupName, String tapName, VirtualNetworkTapInner parameters);
+    Mono<VirtualNetworkTapInner> createOrUpdateAsync(String resourceGroupName, String tapName,
+        VirtualNetworkTapInner parameters);
 
     /**
      * Creates or updates a Virtual Network Tap.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param tapName The name of the virtual network tap.
      * @param parameters Parameters supplied to the create or update virtual network tap operation.
@@ -265,7 +266,7 @@ public interface VirtualNetworkTapsClient
 
     /**
      * Creates or updates a Virtual Network Tap.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param tapName The name of the virtual network tap.
      * @param parameters Parameters supplied to the create or update virtual network tap operation.
@@ -276,41 +277,57 @@ public interface VirtualNetworkTapsClient
      * @return virtual Network Tap resource.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    VirtualNetworkTapInner createOrUpdate(
-        String resourceGroupName, String tapName, VirtualNetworkTapInner parameters, Context context);
+    VirtualNetworkTapInner createOrUpdate(String resourceGroupName, String tapName, VirtualNetworkTapInner parameters,
+        Context context);
 
     /**
      * Updates an VirtualNetworkTap tags.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param tapName The name of the tap.
      * @param tapParameters Parameters supplied to update VirtualNetworkTap tags.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return virtual Network Tap resource.
+     * @return virtual Network Tap resource along with {@link Response} on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    Mono<Response<VirtualNetworkTapInner>> updateTagsWithResponseAsync(
-        String resourceGroupName, String tapName, TagsObject tapParameters);
+    Mono<Response<VirtualNetworkTapInner>> updateTagsWithResponseAsync(String resourceGroupName, String tapName,
+        TagsObject tapParameters);
 
     /**
      * Updates an VirtualNetworkTap tags.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param tapName The name of the tap.
      * @param tapParameters Parameters supplied to update VirtualNetworkTap tags.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return virtual Network Tap resource.
+     * @return virtual Network Tap resource on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
     Mono<VirtualNetworkTapInner> updateTagsAsync(String resourceGroupName, String tapName, TagsObject tapParameters);
 
     /**
      * Updates an VirtualNetworkTap tags.
-     *
+     * 
+     * @param resourceGroupName The name of the resource group.
+     * @param tapName The name of the tap.
+     * @param tapParameters Parameters supplied to update VirtualNetworkTap tags.
+     * @param context The context to associate with this operation.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return virtual Network Tap resource along with {@link Response}.
+     */
+    @ServiceMethod(returns = ReturnType.SINGLE)
+    Response<VirtualNetworkTapInner> updateTagsWithResponse(String resourceGroupName, String tapName,
+        TagsObject tapParameters, Context context);
+
+    /**
+     * Updates an VirtualNetworkTap tags.
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param tapName The name of the tap.
      * @param tapParameters Parameters supplied to update VirtualNetworkTap tags.
@@ -323,86 +340,70 @@ public interface VirtualNetworkTapsClient
     VirtualNetworkTapInner updateTags(String resourceGroupName, String tapName, TagsObject tapParameters);
 
     /**
-     * Updates an VirtualNetworkTap tags.
-     *
-     * @param resourceGroupName The name of the resource group.
-     * @param tapName The name of the tap.
-     * @param tapParameters Parameters supplied to update VirtualNetworkTap tags.
-     * @param context The context to associate with this operation.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return virtual Network Tap resource.
-     */
-    @ServiceMethod(returns = ReturnType.SINGLE)
-    Response<VirtualNetworkTapInner> updateTagsWithResponse(
-        String resourceGroupName, String tapName, TagsObject tapParameters, Context context);
-
-    /**
      * Gets all the VirtualNetworkTaps in a subscription.
-     *
+     * 
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return all the VirtualNetworkTaps in a subscription.
+     * @return all the VirtualNetworkTaps in a subscription as paginated response with {@link PagedFlux}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
     PagedFlux<VirtualNetworkTapInner> listAsync();
 
     /**
      * Gets all the VirtualNetworkTaps in a subscription.
-     *
+     * 
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return all the VirtualNetworkTaps in a subscription.
+     * @return all the VirtualNetworkTaps in a subscription as paginated response with {@link PagedIterable}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
     PagedIterable<VirtualNetworkTapInner> list();
 
     /**
      * Gets all the VirtualNetworkTaps in a subscription.
-     *
+     * 
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return all the VirtualNetworkTaps in a subscription.
+     * @return all the VirtualNetworkTaps in a subscription as paginated response with {@link PagedIterable}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
     PagedIterable<VirtualNetworkTapInner> list(Context context);
 
     /**
      * Gets all the VirtualNetworkTaps in a subscription.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return all the VirtualNetworkTaps in a subscription.
+     * @return all the VirtualNetworkTaps in a subscription as paginated response with {@link PagedFlux}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
     PagedFlux<VirtualNetworkTapInner> listByResourceGroupAsync(String resourceGroupName);
 
     /**
      * Gets all the VirtualNetworkTaps in a subscription.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return all the VirtualNetworkTaps in a subscription.
+     * @return all the VirtualNetworkTaps in a subscription as paginated response with {@link PagedIterable}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
     PagedIterable<VirtualNetworkTapInner> listByResourceGroup(String resourceGroupName);
 
     /**
      * Gets all the VirtualNetworkTaps in a subscription.
-     *
+     * 
      * @param resourceGroupName The name of the resource group.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return all the VirtualNetworkTaps in a subscription.
+     * @return all the VirtualNetworkTaps in a subscription as paginated response with {@link PagedIterable}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
     PagedIterable<VirtualNetworkTapInner> listByResourceGroup(String resourceGroupName, Context context);

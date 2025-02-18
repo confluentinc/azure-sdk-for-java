@@ -4,21 +4,28 @@
 
 package com.azure.resourcemanager.cdn.models;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonValue;
-
-/** Defines values for HealthProbeRequestType. */
+/**
+ * The type of health probe request that is made.
+ */
 public enum HealthProbeRequestType {
-    /** Enum value NotSet. */
+    /**
+     * Enum value NotSet.
+     */
     NOT_SET("NotSet"),
 
-    /** Enum value GET. */
+    /**
+     * Enum value GET.
+     */
     GET("GET"),
 
-    /** Enum value HEAD. */
+    /**
+     * Enum value HEAD.
+     */
     HEAD("HEAD");
 
-    /** The actual serialized value for a HealthProbeRequestType instance. */
+    /**
+     * The actual serialized value for a HealthProbeRequestType instance.
+     */
     private final String value;
 
     HealthProbeRequestType(String value) {
@@ -27,12 +34,14 @@ public enum HealthProbeRequestType {
 
     /**
      * Parses a serialized value to a HealthProbeRequestType instance.
-     *
+     * 
      * @param value the serialized value to parse.
      * @return the parsed HealthProbeRequestType object, or null if unable to parse.
      */
-    @JsonCreator
     public static HealthProbeRequestType fromString(String value) {
+        if (value == null) {
+            return null;
+        }
         HealthProbeRequestType[] items = HealthProbeRequestType.values();
         for (HealthProbeRequestType item : items) {
             if (item.toString().equalsIgnoreCase(value)) {
@@ -42,7 +51,9 @@ public enum HealthProbeRequestType {
         return null;
     }
 
-    @JsonValue
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String toString() {
         return this.value;

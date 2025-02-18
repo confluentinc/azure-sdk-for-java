@@ -4,17 +4,19 @@
 package com.azure.resourcemanager.storage.implementation;
 
 import com.azure.resourcemanager.resources.fluentcore.model.implementation.CreatableUpdatableImpl;
+import com.azure.resourcemanager.resources.fluentcore.utils.ResourceManagerUtils;
 import com.azure.resourcemanager.storage.StorageManager;
 import com.azure.resourcemanager.storage.fluent.BlobServicesClient;
+import com.azure.resourcemanager.storage.fluent.models.BlobServicePropertiesInner;
 import com.azure.resourcemanager.storage.models.BlobServiceProperties;
 import com.azure.resourcemanager.storage.models.CorsRule;
 import com.azure.resourcemanager.storage.models.CorsRules;
 import com.azure.resourcemanager.storage.models.DeleteRetentionPolicy;
-import com.azure.resourcemanager.storage.fluent.models.BlobServicePropertiesInner;
+import com.azure.resourcemanager.storage.models.LastAccessTimeTrackingPolicy;
+import reactor.core.publisher.Mono;
 
 import java.util.ArrayList;
 import java.util.List;
-import reactor.core.publisher.Mono;
 
 class BlobServicePropertiesImpl
     extends CreatableUpdatableImpl<BlobServiceProperties, BlobServicePropertiesInner, BlobServicePropertiesImpl>
@@ -50,16 +52,14 @@ class BlobServicePropertiesImpl
     @Override
     public Mono<BlobServiceProperties> createResourceAsync() {
         BlobServicesClient client = this.manager().serviceClient().getBlobServices();
-        return client
-            .setServicePropertiesAsync(this.resourceGroupName, this.accountName, this.innerModel())
+        return client.setServicePropertiesAsync(this.resourceGroupName, this.accountName, this.innerModel())
             .map(innerToFluentMap(this));
     }
 
     @Override
     public Mono<BlobServiceProperties> updateResourceAsync() {
         BlobServicesClient client = this.manager().serviceClient().getBlobServices();
-        return client
-            .setServicePropertiesAsync(this.resourceGroupName, this.accountName, this.innerModel())
+        return client.setServicePropertiesAsync(this.resourceGroupName, this.accountName, this.innerModel())
             .map(innerToFluentMap(this));
     }
 
@@ -90,6 +90,11 @@ class BlobServicePropertiesImpl
     }
 
     @Override
+    public DeleteRetentionPolicy containerDeleteRetentionPolicy() {
+        return this.innerModel().containerDeleteRetentionPolicy();
+    }
+
+    @Override
     public String id() {
         return this.innerModel().id();
     }
@@ -102,6 +107,22 @@ class BlobServicePropertiesImpl
     @Override
     public String type() {
         return this.innerModel().type();
+    }
+
+    @Override
+    public Boolean isBlobVersioningEnabled() {
+        return this.innerModel().isVersioningEnabled();
+    }
+
+    @Override
+    public boolean isLastAccessTimeTrackingPolicyEnabled() {
+        return this.innerModel().lastAccessTimeTrackingPolicy() != null
+            && ResourceManagerUtils.toPrimitiveBoolean(this.innerModel().lastAccessTimeTrackingPolicy().enable());
+    }
+
+    @Override
+    public LastAccessTimeTrackingPolicy lastAccessTimeTrackingPolicy() {
+        return this.innerModel().lastAccessTimeTrackingPolicy();
     }
 
     @Override
@@ -146,13 +167,68 @@ class BlobServicePropertiesImpl
 
     @Override
     public BlobServicePropertiesImpl withDeleteRetentionPolicyEnabled(int numDaysEnabled) {
-        this.innerModel().withDeleteRetentionPolicy(new DeleteRetentionPolicy().withEnabled(true).withDays(numDaysEnabled));
+        this.innerModel()
+            .withDeleteRetentionPolicy(new DeleteRetentionPolicy().withEnabled(true).withDays(numDaysEnabled));
         return this;
     }
 
     @Override
     public BlobServicePropertiesImpl withDeleteRetentionPolicyDisabled() {
         this.innerModel().withDeleteRetentionPolicy(new DeleteRetentionPolicy().withEnabled(false));
+        return this;
+    }
+
+    @Override
+    public BlobServicePropertiesImpl withBlobVersioningEnabled() {
+        this.innerModel().withIsVersioningEnabled(true);
+        return this;
+    }
+
+    @Override
+    public BlobServicePropertiesImpl withBlobVersioningDisabled() {
+        this.innerModel().withIsVersioningEnabled(false);
+        return this;
+    }
+
+    @Override
+    public BlobServicePropertiesImpl withContainerDeleteRetentionPolicy(DeleteRetentionPolicy deleteRetentionPolicy) {
+        this.innerModel().withContainerDeleteRetentionPolicy(deleteRetentionPolicy);
+        return this;
+    }
+
+    @Override
+    public BlobServicePropertiesImpl withContainerDeleteRetentionPolicyEnabled(int numDaysEnabled) {
+        this.innerModel()
+            .withContainerDeleteRetentionPolicy(new DeleteRetentionPolicy().withEnabled(true).withDays(numDaysEnabled));
+        return this;
+    }
+
+    @Override
+    public BlobServicePropertiesImpl withContainerDeleteRetentionPolicyDisabled() {
+        this.innerModel().withContainerDeleteRetentionPolicy(new DeleteRetentionPolicy().withEnabled(false));
+        return this;
+    }
+
+    @Override
+    public BlobServicePropertiesImpl withLastAccessTimeTrackingPolicyEnabled() {
+        if (this.innerModel().lastAccessTimeTrackingPolicy() == null) {
+            this.innerModel().withLastAccessTimeTrackingPolicy(new LastAccessTimeTrackingPolicy());
+        }
+        this.innerModel().lastAccessTimeTrackingPolicy().withEnable(true);
+        return this;
+    }
+
+    @Override
+    public BlobServicePropertiesImpl withLastAccessTimeTrackingPolicy(LastAccessTimeTrackingPolicy policy) {
+        this.innerModel().withLastAccessTimeTrackingPolicy(policy);
+        return this;
+    }
+
+    @Override
+    public BlobServicePropertiesImpl withLastAccessTimeTrackingPolicyDisabled() {
+        if (this.innerModel().lastAccessTimeTrackingPolicy() != null) {
+            this.innerModel().lastAccessTimeTrackingPolicy().withEnable(false);
+        }
         return this;
     }
 }

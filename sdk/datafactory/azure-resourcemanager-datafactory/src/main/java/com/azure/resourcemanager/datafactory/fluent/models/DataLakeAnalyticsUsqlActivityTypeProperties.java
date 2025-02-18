@@ -6,72 +6,69 @@ package com.azure.resourcemanager.datafactory.fluent.models;
 
 import com.azure.core.annotation.Fluent;
 import com.azure.core.util.logging.ClientLogger;
+import com.azure.json.JsonReader;
+import com.azure.json.JsonSerializable;
+import com.azure.json.JsonToken;
+import com.azure.json.JsonWriter;
 import com.azure.resourcemanager.datafactory.models.LinkedServiceReference;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import java.io.IOException;
 import java.util.Map;
 
-/** DataLakeAnalyticsU-SQL activity properties. */
+/**
+ * DataLakeAnalyticsU-SQL activity properties.
+ */
 @Fluent
-public final class DataLakeAnalyticsUsqlActivityTypeProperties {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(DataLakeAnalyticsUsqlActivityTypeProperties.class);
-
+public final class DataLakeAnalyticsUsqlActivityTypeProperties
+    implements JsonSerializable<DataLakeAnalyticsUsqlActivityTypeProperties> {
     /*
-     * Case-sensitive path to folder that contains the U-SQL script. Type:
-     * string (or Expression with resultType string).
+     * Case-sensitive path to folder that contains the U-SQL script. Type: string (or Expression with resultType
+     * string).
      */
-    @JsonProperty(value = "scriptPath", required = true)
     private Object scriptPath;
 
     /*
      * Script linked service reference.
      */
-    @JsonProperty(value = "scriptLinkedService", required = true)
     private LinkedServiceReference scriptLinkedService;
 
     /*
-     * The maximum number of nodes simultaneously used to run the job. Default
-     * value is 1. Type: integer (or Expression with resultType integer),
-     * minimum: 1.
+     * The maximum number of nodes simultaneously used to run the job. Default value is 1. Type: integer (or Expression
+     * with resultType integer), minimum: 1.
      */
-    @JsonProperty(value = "degreeOfParallelism")
     private Object degreeOfParallelism;
 
     /*
-     * Determines which jobs out of all that are queued should be selected to
-     * run first. The lower the number, the higher the priority. Default value
-     * is 1000. Type: integer (or Expression with resultType integer), minimum:
-     * 1.
+     * Determines which jobs out of all that are queued should be selected to run first. The lower the number, the
+     * higher the priority. Default value is 1000. Type: integer (or Expression with resultType integer), minimum: 1.
      */
-    @JsonProperty(value = "priority")
     private Object priority;
 
     /*
      * Parameters for U-SQL job request.
      */
-    @JsonProperty(value = "parameters")
-    @JsonInclude(value = JsonInclude.Include.NON_NULL, content = JsonInclude.Include.ALWAYS)
     private Map<String, Object> parameters;
 
     /*
-     * Runtime version of the U-SQL engine to use. Type: string (or Expression
-     * with resultType string).
+     * Runtime version of the U-SQL engine to use. Type: string (or Expression with resultType string).
      */
-    @JsonProperty(value = "runtimeVersion")
     private Object runtimeVersion;
 
     /*
-     * Compilation mode of U-SQL. Must be one of these values : Semantic, Full
-     * and SingleBox. Type: string (or Expression with resultType string).
+     * Compilation mode of U-SQL. Must be one of these values : Semantic, Full and SingleBox. Type: string (or
+     * Expression with resultType string).
      */
-    @JsonProperty(value = "compilationMode")
     private Object compilationMode;
+
+    /**
+     * Creates an instance of DataLakeAnalyticsUsqlActivityTypeProperties class.
+     */
+    public DataLakeAnalyticsUsqlActivityTypeProperties() {
+    }
 
     /**
      * Get the scriptPath property: Case-sensitive path to folder that contains the U-SQL script. Type: string (or
      * Expression with resultType string).
-     *
+     * 
      * @return the scriptPath value.
      */
     public Object scriptPath() {
@@ -81,7 +78,7 @@ public final class DataLakeAnalyticsUsqlActivityTypeProperties {
     /**
      * Set the scriptPath property: Case-sensitive path to folder that contains the U-SQL script. Type: string (or
      * Expression with resultType string).
-     *
+     * 
      * @param scriptPath the scriptPath value to set.
      * @return the DataLakeAnalyticsUsqlActivityTypeProperties object itself.
      */
@@ -92,7 +89,7 @@ public final class DataLakeAnalyticsUsqlActivityTypeProperties {
 
     /**
      * Get the scriptLinkedService property: Script linked service reference.
-     *
+     * 
      * @return the scriptLinkedService value.
      */
     public LinkedServiceReference scriptLinkedService() {
@@ -101,12 +98,12 @@ public final class DataLakeAnalyticsUsqlActivityTypeProperties {
 
     /**
      * Set the scriptLinkedService property: Script linked service reference.
-     *
+     * 
      * @param scriptLinkedService the scriptLinkedService value to set.
      * @return the DataLakeAnalyticsUsqlActivityTypeProperties object itself.
      */
-    public DataLakeAnalyticsUsqlActivityTypeProperties withScriptLinkedService(
-        LinkedServiceReference scriptLinkedService) {
+    public DataLakeAnalyticsUsqlActivityTypeProperties
+        withScriptLinkedService(LinkedServiceReference scriptLinkedService) {
         this.scriptLinkedService = scriptLinkedService;
         return this;
     }
@@ -114,7 +111,7 @@ public final class DataLakeAnalyticsUsqlActivityTypeProperties {
     /**
      * Get the degreeOfParallelism property: The maximum number of nodes simultaneously used to run the job. Default
      * value is 1. Type: integer (or Expression with resultType integer), minimum: 1.
-     *
+     * 
      * @return the degreeOfParallelism value.
      */
     public Object degreeOfParallelism() {
@@ -124,7 +121,7 @@ public final class DataLakeAnalyticsUsqlActivityTypeProperties {
     /**
      * Set the degreeOfParallelism property: The maximum number of nodes simultaneously used to run the job. Default
      * value is 1. Type: integer (or Expression with resultType integer), minimum: 1.
-     *
+     * 
      * @param degreeOfParallelism the degreeOfParallelism value to set.
      * @return the DataLakeAnalyticsUsqlActivityTypeProperties object itself.
      */
@@ -137,7 +134,7 @@ public final class DataLakeAnalyticsUsqlActivityTypeProperties {
      * Get the priority property: Determines which jobs out of all that are queued should be selected to run first. The
      * lower the number, the higher the priority. Default value is 1000. Type: integer (or Expression with resultType
      * integer), minimum: 1.
-     *
+     * 
      * @return the priority value.
      */
     public Object priority() {
@@ -148,7 +145,7 @@ public final class DataLakeAnalyticsUsqlActivityTypeProperties {
      * Set the priority property: Determines which jobs out of all that are queued should be selected to run first. The
      * lower the number, the higher the priority. Default value is 1000. Type: integer (or Expression with resultType
      * integer), minimum: 1.
-     *
+     * 
      * @param priority the priority value to set.
      * @return the DataLakeAnalyticsUsqlActivityTypeProperties object itself.
      */
@@ -159,7 +156,7 @@ public final class DataLakeAnalyticsUsqlActivityTypeProperties {
 
     /**
      * Get the parameters property: Parameters for U-SQL job request.
-     *
+     * 
      * @return the parameters value.
      */
     public Map<String, Object> parameters() {
@@ -168,7 +165,7 @@ public final class DataLakeAnalyticsUsqlActivityTypeProperties {
 
     /**
      * Set the parameters property: Parameters for U-SQL job request.
-     *
+     * 
      * @param parameters the parameters value to set.
      * @return the DataLakeAnalyticsUsqlActivityTypeProperties object itself.
      */
@@ -180,7 +177,7 @@ public final class DataLakeAnalyticsUsqlActivityTypeProperties {
     /**
      * Get the runtimeVersion property: Runtime version of the U-SQL engine to use. Type: string (or Expression with
      * resultType string).
-     *
+     * 
      * @return the runtimeVersion value.
      */
     public Object runtimeVersion() {
@@ -190,7 +187,7 @@ public final class DataLakeAnalyticsUsqlActivityTypeProperties {
     /**
      * Set the runtimeVersion property: Runtime version of the U-SQL engine to use. Type: string (or Expression with
      * resultType string).
-     *
+     * 
      * @param runtimeVersion the runtimeVersion value to set.
      * @return the DataLakeAnalyticsUsqlActivityTypeProperties object itself.
      */
@@ -202,7 +199,7 @@ public final class DataLakeAnalyticsUsqlActivityTypeProperties {
     /**
      * Get the compilationMode property: Compilation mode of U-SQL. Must be one of these values : Semantic, Full and
      * SingleBox. Type: string (or Expression with resultType string).
-     *
+     * 
      * @return the compilationMode value.
      */
     public Object compilationMode() {
@@ -212,7 +209,7 @@ public final class DataLakeAnalyticsUsqlActivityTypeProperties {
     /**
      * Set the compilationMode property: Compilation mode of U-SQL. Must be one of these values : Semantic, Full and
      * SingleBox. Type: string (or Expression with resultType string).
-     *
+     * 
      * @param compilationMode the compilationMode value to set.
      * @return the DataLakeAnalyticsUsqlActivityTypeProperties object itself.
      */
@@ -223,24 +220,81 @@ public final class DataLakeAnalyticsUsqlActivityTypeProperties {
 
     /**
      * Validates the instance.
-     *
+     * 
      * @throws IllegalArgumentException thrown if the instance is not valid.
      */
     public void validate() {
         if (scriptPath() == null) {
-            throw logger
-                .logExceptionAsError(
-                    new IllegalArgumentException(
-                        "Missing required property scriptPath in model DataLakeAnalyticsUsqlActivityTypeProperties"));
+            throw LOGGER.atError()
+                .log(new IllegalArgumentException(
+                    "Missing required property scriptPath in model DataLakeAnalyticsUsqlActivityTypeProperties"));
         }
         if (scriptLinkedService() == null) {
-            throw logger
-                .logExceptionAsError(
-                    new IllegalArgumentException(
-                        "Missing required property scriptLinkedService in model"
-                            + " DataLakeAnalyticsUsqlActivityTypeProperties"));
+            throw LOGGER.atError()
+                .log(new IllegalArgumentException(
+                    "Missing required property scriptLinkedService in model DataLakeAnalyticsUsqlActivityTypeProperties"));
         } else {
             scriptLinkedService().validate();
         }
+    }
+
+    private static final ClientLogger LOGGER = new ClientLogger(DataLakeAnalyticsUsqlActivityTypeProperties.class);
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public JsonWriter toJson(JsonWriter jsonWriter) throws IOException {
+        jsonWriter.writeStartObject();
+        jsonWriter.writeUntypedField("scriptPath", this.scriptPath);
+        jsonWriter.writeJsonField("scriptLinkedService", this.scriptLinkedService);
+        jsonWriter.writeUntypedField("degreeOfParallelism", this.degreeOfParallelism);
+        jsonWriter.writeUntypedField("priority", this.priority);
+        jsonWriter.writeMapField("parameters", this.parameters, (writer, element) -> writer.writeUntyped(element));
+        jsonWriter.writeUntypedField("runtimeVersion", this.runtimeVersion);
+        jsonWriter.writeUntypedField("compilationMode", this.compilationMode);
+        return jsonWriter.writeEndObject();
+    }
+
+    /**
+     * Reads an instance of DataLakeAnalyticsUsqlActivityTypeProperties from the JsonReader.
+     * 
+     * @param jsonReader The JsonReader being read.
+     * @return An instance of DataLakeAnalyticsUsqlActivityTypeProperties if the JsonReader was pointing to an instance
+     * of it, or null if it was pointing to JSON null.
+     * @throws IllegalStateException If the deserialized JSON object was missing any required properties.
+     * @throws IOException If an error occurs while reading the DataLakeAnalyticsUsqlActivityTypeProperties.
+     */
+    public static DataLakeAnalyticsUsqlActivityTypeProperties fromJson(JsonReader jsonReader) throws IOException {
+        return jsonReader.readObject(reader -> {
+            DataLakeAnalyticsUsqlActivityTypeProperties deserializedDataLakeAnalyticsUsqlActivityTypeProperties
+                = new DataLakeAnalyticsUsqlActivityTypeProperties();
+            while (reader.nextToken() != JsonToken.END_OBJECT) {
+                String fieldName = reader.getFieldName();
+                reader.nextToken();
+
+                if ("scriptPath".equals(fieldName)) {
+                    deserializedDataLakeAnalyticsUsqlActivityTypeProperties.scriptPath = reader.readUntyped();
+                } else if ("scriptLinkedService".equals(fieldName)) {
+                    deserializedDataLakeAnalyticsUsqlActivityTypeProperties.scriptLinkedService
+                        = LinkedServiceReference.fromJson(reader);
+                } else if ("degreeOfParallelism".equals(fieldName)) {
+                    deserializedDataLakeAnalyticsUsqlActivityTypeProperties.degreeOfParallelism = reader.readUntyped();
+                } else if ("priority".equals(fieldName)) {
+                    deserializedDataLakeAnalyticsUsqlActivityTypeProperties.priority = reader.readUntyped();
+                } else if ("parameters".equals(fieldName)) {
+                    Map<String, Object> parameters = reader.readMap(reader1 -> reader1.readUntyped());
+                    deserializedDataLakeAnalyticsUsqlActivityTypeProperties.parameters = parameters;
+                } else if ("runtimeVersion".equals(fieldName)) {
+                    deserializedDataLakeAnalyticsUsqlActivityTypeProperties.runtimeVersion = reader.readUntyped();
+                } else if ("compilationMode".equals(fieldName)) {
+                    deserializedDataLakeAnalyticsUsqlActivityTypeProperties.compilationMode = reader.readUntyped();
+                } else {
+                    reader.skipChildren();
+                }
+            }
+
+            return deserializedDataLakeAnalyticsUsqlActivityTypeProperties;
+        });
     }
 }

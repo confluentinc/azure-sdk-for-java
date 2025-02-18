@@ -5,19 +5,23 @@
 package com.azure.communication.callingserver.implementation.models;
 
 import com.azure.core.annotation.Fluent;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.azure.json.JsonReader;
+import com.azure.json.JsonSerializable;
+import com.azure.json.JsonToken;
+import com.azure.json.JsonWriter;
 
-/** A user that got created with an Azure Communication Services resource. */
+import java.io.IOException;
+
+/** The CommunicationUserIdentifierModel model. */
 @Fluent
-public final class CommunicationUserIdentifierModel {
+public final class CommunicationUserIdentifierModel implements JsonSerializable<CommunicationUserIdentifierModel> {
     /*
-     * The Id of the communication user.
+     * The id property.
      */
-    @JsonProperty(value = "id", required = true)
     private String id;
 
     /**
-     * Get the id property: The Id of the communication user.
+     * Get the id property: The id property.
      *
      * @return the id value.
      */
@@ -26,7 +30,7 @@ public final class CommunicationUserIdentifierModel {
     }
 
     /**
-     * Set the id property: The Id of the communication user.
+     * Set the id property: The id property.
      *
      * @param id the id value to set.
      * @return the CommunicationUserIdentifierModel object itself.
@@ -34,5 +38,37 @@ public final class CommunicationUserIdentifierModel {
     public CommunicationUserIdentifierModel setId(String id) {
         this.id = id;
         return this;
+    }
+
+    @Override
+    public JsonWriter toJson(JsonWriter jsonWriter) throws IOException {
+        return jsonWriter.writeStartObject().writeStringField("id", id).writeEndObject();
+    }
+
+    /**
+     * Reads an instance of {@link CommunicationUserIdentifierModel} from the {@link JsonReader}.
+     *
+     * @param jsonReader The {@link JsonReader} to read from.
+     * @return An instance of {@link CommunicationUserIdentifierModel}, or null if the {@link JsonReader} was pointing
+     * to {@link JsonToken#NULL}.
+     * @throws IOException If an error occurs while reading the {@link JsonReader}.
+     */
+    public static CommunicationUserIdentifierModel fromJson(JsonReader jsonReader) throws IOException {
+        return jsonReader.readObject(reader -> {
+            CommunicationUserIdentifierModel model = new CommunicationUserIdentifierModel();
+
+            while (jsonReader.nextToken() != JsonToken.END_OBJECT) {
+                String fieldName = reader.getFieldName();
+                reader.nextToken();
+
+                if ("id".equals(fieldName)) {
+                    model.id = reader.getString();
+                } else {
+                    reader.skipChildren();
+                }
+            }
+
+            return model;
+        });
     }
 }

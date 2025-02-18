@@ -12,19 +12,30 @@ import com.azure.resourcemanager.synapse.fluent.WorkspaceSqlAadAdminsClient;
 import com.azure.resourcemanager.synapse.fluent.models.WorkspaceAadAdminInfoInner;
 import com.azure.resourcemanager.synapse.models.WorkspaceAadAdminInfo;
 import com.azure.resourcemanager.synapse.models.WorkspaceSqlAadAdmins;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 public final class WorkspaceSqlAadAdminsImpl implements WorkspaceSqlAadAdmins {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(WorkspaceSqlAadAdminsImpl.class);
+    private static final ClientLogger LOGGER = new ClientLogger(WorkspaceSqlAadAdminsImpl.class);
 
     private final WorkspaceSqlAadAdminsClient innerClient;
 
     private final com.azure.resourcemanager.synapse.SynapseManager serviceManager;
 
-    public WorkspaceSqlAadAdminsImpl(
-        WorkspaceSqlAadAdminsClient innerClient, com.azure.resourcemanager.synapse.SynapseManager serviceManager) {
+    public WorkspaceSqlAadAdminsImpl(WorkspaceSqlAadAdminsClient innerClient,
+        com.azure.resourcemanager.synapse.SynapseManager serviceManager) {
         this.innerClient = innerClient;
         this.serviceManager = serviceManager;
+    }
+
+    public Response<WorkspaceAadAdminInfo> getWithResponse(String resourceGroupName, String workspaceName,
+        Context context) {
+        Response<WorkspaceAadAdminInfoInner> inner
+            = this.serviceClient().getWithResponse(resourceGroupName, workspaceName, context);
+        if (inner != null) {
+            return new SimpleResponse<>(inner.getRequest(), inner.getStatusCode(), inner.getHeaders(),
+                new WorkspaceAadAdminInfoImpl(inner.getValue(), this.manager()));
+        } else {
+            return null;
+        }
     }
 
     public WorkspaceAadAdminInfo get(String resourceGroupName, String workspaceName) {
@@ -36,25 +47,10 @@ public final class WorkspaceSqlAadAdminsImpl implements WorkspaceSqlAadAdmins {
         }
     }
 
-    public Response<WorkspaceAadAdminInfo> getWithResponse(
-        String resourceGroupName, String workspaceName, Context context) {
-        Response<WorkspaceAadAdminInfoInner> inner =
-            this.serviceClient().getWithResponse(resourceGroupName, workspaceName, context);
-        if (inner != null) {
-            return new SimpleResponse<>(
-                inner.getRequest(),
-                inner.getStatusCode(),
-                inner.getHeaders(),
-                new WorkspaceAadAdminInfoImpl(inner.getValue(), this.manager()));
-        } else {
-            return null;
-        }
-    }
-
-    public WorkspaceAadAdminInfo createOrUpdate(
-        String resourceGroupName, String workspaceName, WorkspaceAadAdminInfoInner aadAdminInfo) {
-        WorkspaceAadAdminInfoInner inner =
-            this.serviceClient().createOrUpdate(resourceGroupName, workspaceName, aadAdminInfo);
+    public WorkspaceAadAdminInfo createOrUpdate(String resourceGroupName, String workspaceName,
+        WorkspaceAadAdminInfoInner aadAdminInfo) {
+        WorkspaceAadAdminInfoInner inner
+            = this.serviceClient().createOrUpdate(resourceGroupName, workspaceName, aadAdminInfo);
         if (inner != null) {
             return new WorkspaceAadAdminInfoImpl(inner, this.manager());
         } else {
@@ -62,10 +58,10 @@ public final class WorkspaceSqlAadAdminsImpl implements WorkspaceSqlAadAdmins {
         }
     }
 
-    public WorkspaceAadAdminInfo createOrUpdate(
-        String resourceGroupName, String workspaceName, WorkspaceAadAdminInfoInner aadAdminInfo, Context context) {
-        WorkspaceAadAdminInfoInner inner =
-            this.serviceClient().createOrUpdate(resourceGroupName, workspaceName, aadAdminInfo, context);
+    public WorkspaceAadAdminInfo createOrUpdate(String resourceGroupName, String workspaceName,
+        WorkspaceAadAdminInfoInner aadAdminInfo, Context context) {
+        WorkspaceAadAdminInfoInner inner
+            = this.serviceClient().createOrUpdate(resourceGroupName, workspaceName, aadAdminInfo, context);
         if (inner != null) {
             return new WorkspaceAadAdminInfoImpl(inner, this.manager());
         } else {

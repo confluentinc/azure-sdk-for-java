@@ -5,172 +5,191 @@
 package com.azure.resourcemanager.relay.fluent.models;
 
 import com.azure.core.annotation.Fluent;
-import com.azure.core.annotation.JsonFlatten;
 import com.azure.core.management.ProxyResource;
-import com.azure.core.util.logging.ClientLogger;
+import com.azure.json.JsonReader;
+import com.azure.json.JsonToken;
+import com.azure.json.JsonWriter;
 import com.azure.resourcemanager.relay.models.Relaytype;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import java.io.IOException;
 import java.time.OffsetDateTime;
 
-/** Description of the WCF relay resource. */
-@JsonFlatten
+/**
+ * Description of the WCF relay resource.
+ */
 @Fluent
-public class WcfRelayInner extends ProxyResource {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(WcfRelayInner.class);
+public final class WcfRelayInner extends ProxyResource {
+    /*
+     * Properties of the WCF relay.
+     */
+    private WcfRelayProperties innerProperties;
 
     /*
-     * Returns true if the relay is dynamic; otherwise, false.
+     * The type of the resource.
      */
-    @JsonProperty(value = "properties.isDynamic", access = JsonProperty.Access.WRITE_ONLY)
-    private Boolean isDynamic;
+    private String type;
 
     /*
-     * The time the WCF relay was created.
+     * The name of the resource.
      */
-    @JsonProperty(value = "properties.createdAt", access = JsonProperty.Access.WRITE_ONLY)
-    private OffsetDateTime createdAt;
+    private String name;
 
     /*
-     * The time the namespace was updated.
+     * Fully qualified resource Id for the resource.
      */
-    @JsonProperty(value = "properties.updatedAt", access = JsonProperty.Access.WRITE_ONLY)
-    private OffsetDateTime updatedAt;
+    private String id;
 
-    /*
-     * The number of listeners for this relay. Note that min :1 and max:25 are
-     * supported.
+    /**
+     * Creates an instance of WcfRelayInner class.
      */
-    @JsonProperty(value = "properties.listenerCount", access = JsonProperty.Access.WRITE_ONLY)
-    private Integer listenerCount;
+    public WcfRelayInner() {
+    }
 
-    /*
-     * WCF relay type.
+    /**
+     * Get the innerProperties property: Properties of the WCF relay.
+     * 
+     * @return the innerProperties value.
      */
-    @JsonProperty(value = "properties.relayType")
-    private Relaytype relayType;
+    private WcfRelayProperties innerProperties() {
+        return this.innerProperties;
+    }
 
-    /*
-     * Returns true if client authorization is needed for this relay;
-     * otherwise, false.
+    /**
+     * Get the type property: The type of the resource.
+     * 
+     * @return the type value.
      */
-    @JsonProperty(value = "properties.requiresClientAuthorization")
-    private Boolean requiresClientAuthorization;
+    @Override
+    public String type() {
+        return this.type;
+    }
 
-    /*
-     * Returns true if transport security is needed for this relay; otherwise,
-     * false.
+    /**
+     * Get the name property: The name of the resource.
+     * 
+     * @return the name value.
      */
-    @JsonProperty(value = "properties.requiresTransportSecurity")
-    private Boolean requiresTransportSecurity;
+    @Override
+    public String name() {
+        return this.name;
+    }
 
-    /*
-     * The usermetadata is a placeholder to store user-defined string data for
-     * the WCF Relay endpoint. For example, it can be used to store descriptive
-     * data, such as list of teams and their contact information. Also,
-     * user-defined configuration settings can be stored.
+    /**
+     * Get the id property: Fully qualified resource Id for the resource.
+     * 
+     * @return the id value.
      */
-    @JsonProperty(value = "properties.userMetadata")
-    private String userMetadata;
+    @Override
+    public String id() {
+        return this.id;
+    }
 
     /**
      * Get the isDynamic property: Returns true if the relay is dynamic; otherwise, false.
-     *
+     * 
      * @return the isDynamic value.
      */
     public Boolean isDynamic() {
-        return this.isDynamic;
+        return this.innerProperties() == null ? null : this.innerProperties().isDynamic();
     }
 
     /**
      * Get the createdAt property: The time the WCF relay was created.
-     *
+     * 
      * @return the createdAt value.
      */
     public OffsetDateTime createdAt() {
-        return this.createdAt;
+        return this.innerProperties() == null ? null : this.innerProperties().createdAt();
     }
 
     /**
      * Get the updatedAt property: The time the namespace was updated.
-     *
+     * 
      * @return the updatedAt value.
      */
     public OffsetDateTime updatedAt() {
-        return this.updatedAt;
+        return this.innerProperties() == null ? null : this.innerProperties().updatedAt();
     }
 
     /**
      * Get the listenerCount property: The number of listeners for this relay. Note that min :1 and max:25 are
      * supported.
-     *
+     * 
      * @return the listenerCount value.
      */
     public Integer listenerCount() {
-        return this.listenerCount;
+        return this.innerProperties() == null ? null : this.innerProperties().listenerCount();
     }
 
     /**
      * Get the relayType property: WCF relay type.
-     *
+     * 
      * @return the relayType value.
      */
     public Relaytype relayType() {
-        return this.relayType;
+        return this.innerProperties() == null ? null : this.innerProperties().relayType();
     }
 
     /**
      * Set the relayType property: WCF relay type.
-     *
+     * 
      * @param relayType the relayType value to set.
      * @return the WcfRelayInner object itself.
      */
     public WcfRelayInner withRelayType(Relaytype relayType) {
-        this.relayType = relayType;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new WcfRelayProperties();
+        }
+        this.innerProperties().withRelayType(relayType);
         return this;
     }
 
     /**
      * Get the requiresClientAuthorization property: Returns true if client authorization is needed for this relay;
      * otherwise, false.
-     *
+     * 
      * @return the requiresClientAuthorization value.
      */
     public Boolean requiresClientAuthorization() {
-        return this.requiresClientAuthorization;
+        return this.innerProperties() == null ? null : this.innerProperties().requiresClientAuthorization();
     }
 
     /**
      * Set the requiresClientAuthorization property: Returns true if client authorization is needed for this relay;
      * otherwise, false.
-     *
+     * 
      * @param requiresClientAuthorization the requiresClientAuthorization value to set.
      * @return the WcfRelayInner object itself.
      */
     public WcfRelayInner withRequiresClientAuthorization(Boolean requiresClientAuthorization) {
-        this.requiresClientAuthorization = requiresClientAuthorization;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new WcfRelayProperties();
+        }
+        this.innerProperties().withRequiresClientAuthorization(requiresClientAuthorization);
         return this;
     }
 
     /**
      * Get the requiresTransportSecurity property: Returns true if transport security is needed for this relay;
      * otherwise, false.
-     *
+     * 
      * @return the requiresTransportSecurity value.
      */
     public Boolean requiresTransportSecurity() {
-        return this.requiresTransportSecurity;
+        return this.innerProperties() == null ? null : this.innerProperties().requiresTransportSecurity();
     }
 
     /**
      * Set the requiresTransportSecurity property: Returns true if transport security is needed for this relay;
      * otherwise, false.
-     *
+     * 
      * @param requiresTransportSecurity the requiresTransportSecurity value to set.
      * @return the WcfRelayInner object itself.
      */
     public WcfRelayInner withRequiresTransportSecurity(Boolean requiresTransportSecurity) {
-        this.requiresTransportSecurity = requiresTransportSecurity;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new WcfRelayProperties();
+        }
+        this.innerProperties().withRequiresTransportSecurity(requiresTransportSecurity);
         return this;
     }
 
@@ -178,31 +197,80 @@ public class WcfRelayInner extends ProxyResource {
      * Get the userMetadata property: The usermetadata is a placeholder to store user-defined string data for the WCF
      * Relay endpoint. For example, it can be used to store descriptive data, such as list of teams and their contact
      * information. Also, user-defined configuration settings can be stored.
-     *
+     * 
      * @return the userMetadata value.
      */
     public String userMetadata() {
-        return this.userMetadata;
+        return this.innerProperties() == null ? null : this.innerProperties().userMetadata();
     }
 
     /**
      * Set the userMetadata property: The usermetadata is a placeholder to store user-defined string data for the WCF
      * Relay endpoint. For example, it can be used to store descriptive data, such as list of teams and their contact
      * information. Also, user-defined configuration settings can be stored.
-     *
+     * 
      * @param userMetadata the userMetadata value to set.
      * @return the WcfRelayInner object itself.
      */
     public WcfRelayInner withUserMetadata(String userMetadata) {
-        this.userMetadata = userMetadata;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new WcfRelayProperties();
+        }
+        this.innerProperties().withUserMetadata(userMetadata);
         return this;
     }
 
     /**
      * Validates the instance.
-     *
+     * 
      * @throws IllegalArgumentException thrown if the instance is not valid.
      */
     public void validate() {
+        if (innerProperties() != null) {
+            innerProperties().validate();
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public JsonWriter toJson(JsonWriter jsonWriter) throws IOException {
+        jsonWriter.writeStartObject();
+        jsonWriter.writeJsonField("properties", this.innerProperties);
+        return jsonWriter.writeEndObject();
+    }
+
+    /**
+     * Reads an instance of WcfRelayInner from the JsonReader.
+     * 
+     * @param jsonReader The JsonReader being read.
+     * @return An instance of WcfRelayInner if the JsonReader was pointing to an instance of it, or null if it was
+     * pointing to JSON null.
+     * @throws IllegalStateException If the deserialized JSON object was missing any required properties.
+     * @throws IOException If an error occurs while reading the WcfRelayInner.
+     */
+    public static WcfRelayInner fromJson(JsonReader jsonReader) throws IOException {
+        return jsonReader.readObject(reader -> {
+            WcfRelayInner deserializedWcfRelayInner = new WcfRelayInner();
+            while (reader.nextToken() != JsonToken.END_OBJECT) {
+                String fieldName = reader.getFieldName();
+                reader.nextToken();
+
+                if ("id".equals(fieldName)) {
+                    deserializedWcfRelayInner.id = reader.getString();
+                } else if ("name".equals(fieldName)) {
+                    deserializedWcfRelayInner.name = reader.getString();
+                } else if ("type".equals(fieldName)) {
+                    deserializedWcfRelayInner.type = reader.getString();
+                } else if ("properties".equals(fieldName)) {
+                    deserializedWcfRelayInner.innerProperties = WcfRelayProperties.fromJson(reader);
+                } else {
+                    reader.skipChildren();
+                }
+            }
+
+            return deserializedWcfRelayInner;
+        });
     }
 }

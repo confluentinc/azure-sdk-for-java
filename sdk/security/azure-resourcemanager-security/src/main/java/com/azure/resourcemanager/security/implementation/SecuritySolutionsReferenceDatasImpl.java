@@ -12,20 +12,28 @@ import com.azure.resourcemanager.security.fluent.SecuritySolutionsReferenceDatas
 import com.azure.resourcemanager.security.fluent.models.SecuritySolutionsReferenceDataListInner;
 import com.azure.resourcemanager.security.models.SecuritySolutionsReferenceDataList;
 import com.azure.resourcemanager.security.models.SecuritySolutionsReferenceDatas;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 public final class SecuritySolutionsReferenceDatasImpl implements SecuritySolutionsReferenceDatas {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(SecuritySolutionsReferenceDatasImpl.class);
+    private static final ClientLogger LOGGER = new ClientLogger(SecuritySolutionsReferenceDatasImpl.class);
 
     private final SecuritySolutionsReferenceDatasClient innerClient;
 
     private final com.azure.resourcemanager.security.SecurityManager serviceManager;
 
-    public SecuritySolutionsReferenceDatasImpl(
-        SecuritySolutionsReferenceDatasClient innerClient,
+    public SecuritySolutionsReferenceDatasImpl(SecuritySolutionsReferenceDatasClient innerClient,
         com.azure.resourcemanager.security.SecurityManager serviceManager) {
         this.innerClient = innerClient;
         this.serviceManager = serviceManager;
+    }
+
+    public Response<SecuritySolutionsReferenceDataList> listWithResponse(Context context) {
+        Response<SecuritySolutionsReferenceDataListInner> inner = this.serviceClient().listWithResponse(context);
+        if (inner != null) {
+            return new SimpleResponse<>(inner.getRequest(), inner.getStatusCode(), inner.getHeaders(),
+                new SecuritySolutionsReferenceDataListImpl(inner.getValue(), this.manager()));
+        } else {
+            return null;
+        }
     }
 
     public SecuritySolutionsReferenceDataList list() {
@@ -37,13 +45,12 @@ public final class SecuritySolutionsReferenceDatasImpl implements SecuritySoluti
         }
     }
 
-    public Response<SecuritySolutionsReferenceDataList> listWithResponse(Context context) {
-        Response<SecuritySolutionsReferenceDataListInner> inner = this.serviceClient().listWithResponse(context);
+    public Response<SecuritySolutionsReferenceDataList> listByHomeRegionWithResponse(String ascLocation,
+        Context context) {
+        Response<SecuritySolutionsReferenceDataListInner> inner
+            = this.serviceClient().listByHomeRegionWithResponse(ascLocation, context);
         if (inner != null) {
-            return new SimpleResponse<>(
-                inner.getRequest(),
-                inner.getStatusCode(),
-                inner.getHeaders(),
+            return new SimpleResponse<>(inner.getRequest(), inner.getStatusCode(), inner.getHeaders(),
                 new SecuritySolutionsReferenceDataListImpl(inner.getValue(), this.manager()));
         } else {
             return null;
@@ -54,21 +61,6 @@ public final class SecuritySolutionsReferenceDatasImpl implements SecuritySoluti
         SecuritySolutionsReferenceDataListInner inner = this.serviceClient().listByHomeRegion(ascLocation);
         if (inner != null) {
             return new SecuritySolutionsReferenceDataListImpl(inner, this.manager());
-        } else {
-            return null;
-        }
-    }
-
-    public Response<SecuritySolutionsReferenceDataList> listByHomeRegionWithResponse(
-        String ascLocation, Context context) {
-        Response<SecuritySolutionsReferenceDataListInner> inner =
-            this.serviceClient().listByHomeRegionWithResponse(ascLocation, context);
-        if (inner != null) {
-            return new SimpleResponse<>(
-                inner.getRequest(),
-                inner.getStatusCode(),
-                inner.getHeaders(),
-                new SecuritySolutionsReferenceDataListImpl(inner.getValue(), this.manager()));
         } else {
             return null;
         }

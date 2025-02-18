@@ -25,32 +25,33 @@ import com.azure.core.http.rest.RestProxy;
 import com.azure.core.management.exception.ManagementException;
 import com.azure.core.util.Context;
 import com.azure.core.util.FluxUtil;
-import com.azure.core.util.logging.ClientLogger;
 import com.azure.resourcemanager.cosmos.fluent.RestorableMongodbResourcesClient;
-import com.azure.resourcemanager.cosmos.fluent.models.DatabaseRestoreResourceInner;
+import com.azure.resourcemanager.cosmos.fluent.models.RestorableMongodbResourcesGetResultInner;
 import com.azure.resourcemanager.cosmos.models.RestorableMongodbResourcesListResult;
 import reactor.core.publisher.Mono;
 
-/** An instance of this class provides access to all the operations defined in RestorableMongodbResourcesClient. */
+/**
+ * An instance of this class provides access to all the operations defined in RestorableMongodbResourcesClient.
+ */
 public final class RestorableMongodbResourcesClientImpl implements RestorableMongodbResourcesClient {
-    private final ClientLogger logger = new ClientLogger(RestorableMongodbResourcesClientImpl.class);
-
-    /** The proxy service used to perform REST calls. */
+    /**
+     * The proxy service used to perform REST calls.
+     */
     private final RestorableMongodbResourcesService service;
 
-    /** The service client containing this operation class. */
+    /**
+     * The service client containing this operation class.
+     */
     private final CosmosDBManagementClientImpl client;
 
     /**
      * Initializes an instance of RestorableMongodbResourcesClientImpl.
-     *
+     * 
      * @param client the instance of the service client containing this operation class.
      */
     RestorableMongodbResourcesClientImpl(CosmosDBManagementClientImpl client) {
-        this.service =
-            RestProxy
-                .create(
-                    RestorableMongodbResourcesService.class, client.getHttpPipeline(), client.getSerializerAdapter());
+        this.service = RestProxy.create(RestorableMongodbResourcesService.class, client.getHttpPipeline(),
+            client.getSerializerAdapter());
         this.client = client;
     }
 
@@ -60,22 +61,16 @@ public final class RestorableMongodbResourcesClientImpl implements RestorableMon
      */
     @Host("{$host}")
     @ServiceInterface(name = "CosmosDBManagementCl")
-    private interface RestorableMongodbResourcesService {
-        @Headers({"Content-Type: application/json"})
-        @Get(
-            "/subscriptions/{subscriptionId}/providers/Microsoft.DocumentDB/locations/{location}"
-                + "/restorableDatabaseAccounts/{instanceId}/restorableMongodbResources")
-        @ExpectedResponses({200})
+    public interface RestorableMongodbResourcesService {
+        @Headers({ "Content-Type: application/json" })
+        @Get("/subscriptions/{subscriptionId}/providers/Microsoft.DocumentDB/locations/{location}/restorableDatabaseAccounts/{instanceId}/restorableMongodbResources")
+        @ExpectedResponses({ 200 })
         @UnexpectedResponseExceptionType(ManagementException.class)
-        Mono<Response<RestorableMongodbResourcesListResult>> list(
-            @HostParam("$host") String endpoint,
-            @QueryParam("api-version") String apiVersion,
-            @PathParam("subscriptionId") String subscriptionId,
-            @PathParam("location") String location,
-            @PathParam("instanceId") String instanceId,
+        Mono<Response<RestorableMongodbResourcesListResult>> list(@HostParam("$host") String endpoint,
+            @QueryParam("api-version") String apiVersion, @PathParam("subscriptionId") String subscriptionId,
+            @PathParam("location") String location, @PathParam("instanceId") String instanceId,
             @QueryParam("restoreLocation") String restoreLocation,
-            @QueryParam("restoreTimestampInUtc") String restoreTimestampInUtc,
-            @HeaderParam("Accept") String accept,
+            @QueryParam("restoreTimestampInUtc") String restoreTimestampInUtc, @HeaderParam("Accept") String accept,
             Context context);
     }
 
@@ -83,7 +78,7 @@ public final class RestorableMongodbResourcesClientImpl implements RestorableMon
      * Return a list of database and collection combo that exist on the account at the given timestamp and location.
      * This helps in scenarios to validate what resources exist at given timestamp and location. This API requires
      * 'Microsoft.DocumentDB/locations/restorableDatabaseAccounts/.../read' permission.
-     *
+     * 
      * @param location Cosmos DB region, with spaces between words and each word capitalized.
      * @param instanceId The instanceId GUID of a restorable database account.
      * @param restoreLocation The location where the restorable resources are located.
@@ -91,22 +86,19 @@ public final class RestorableMongodbResourcesClientImpl implements RestorableMon
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the List operation response, that contains the restorable MongoDB resources.
+     * @return the List operation response, that contains the restorable MongoDB resources along with
+     * {@link PagedResponse} on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    private Mono<PagedResponse<DatabaseRestoreResourceInner>> listSinglePageAsync(
-        String location, String instanceId, String restoreLocation, String restoreTimestampInUtc) {
+    private Mono<PagedResponse<RestorableMongodbResourcesGetResultInner>> listSinglePageAsync(String location,
+        String instanceId, String restoreLocation, String restoreTimestampInUtc) {
         if (this.client.getEndpoint() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getEndpoint() is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
         }
         if (this.client.getSubscriptionId() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getSubscriptionId() is required and cannot be null."));
+            return Mono.error(new IllegalArgumentException(
+                "Parameter this.client.getSubscriptionId() is required and cannot be null."));
         }
         if (location == null) {
             return Mono.error(new IllegalArgumentException("Parameter location is required and cannot be null."));
@@ -116,23 +108,11 @@ public final class RestorableMongodbResourcesClientImpl implements RestorableMon
         }
         final String accept = "application/json";
         return FluxUtil
-            .withContext(
-                context ->
-                    service
-                        .list(
-                            this.client.getEndpoint(),
-                            this.client.getApiVersion(),
-                            this.client.getSubscriptionId(),
-                            location,
-                            instanceId,
-                            restoreLocation,
-                            restoreTimestampInUtc,
-                            accept,
-                            context))
-            .<PagedResponse<DatabaseRestoreResourceInner>>map(
-                res ->
-                    new PagedResponseBase<>(
-                        res.getRequest(), res.getStatusCode(), res.getHeaders(), res.getValue().value(), null, null))
+            .withContext(context -> service.list(this.client.getEndpoint(), this.client.getApiVersion(),
+                this.client.getSubscriptionId(), location, instanceId, restoreLocation, restoreTimestampInUtc, accept,
+                context))
+            .<PagedResponse<RestorableMongodbResourcesGetResultInner>>map(res -> new PagedResponseBase<>(
+                res.getRequest(), res.getStatusCode(), res.getHeaders(), res.getValue().value(), null, null))
             .contextWrite(context -> context.putAll(FluxUtil.toReactorContext(this.client.getContext()).readOnly()));
     }
 
@@ -140,7 +120,7 @@ public final class RestorableMongodbResourcesClientImpl implements RestorableMon
      * Return a list of database and collection combo that exist on the account at the given timestamp and location.
      * This helps in scenarios to validate what resources exist at given timestamp and location. This API requires
      * 'Microsoft.DocumentDB/locations/restorableDatabaseAccounts/.../read' permission.
-     *
+     * 
      * @param location Cosmos DB region, with spaces between words and each word capitalized.
      * @param instanceId The instanceId GUID of a restorable database account.
      * @param restoreLocation The location where the restorable resources are located.
@@ -149,22 +129,19 @@ public final class RestorableMongodbResourcesClientImpl implements RestorableMon
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the List operation response, that contains the restorable MongoDB resources.
+     * @return the List operation response, that contains the restorable MongoDB resources along with
+     * {@link PagedResponse} on successful completion of {@link Mono}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    private Mono<PagedResponse<DatabaseRestoreResourceInner>> listSinglePageAsync(
-        String location, String instanceId, String restoreLocation, String restoreTimestampInUtc, Context context) {
+    private Mono<PagedResponse<RestorableMongodbResourcesGetResultInner>> listSinglePageAsync(String location,
+        String instanceId, String restoreLocation, String restoreTimestampInUtc, Context context) {
         if (this.client.getEndpoint() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getEndpoint() is required and cannot be null."));
+            return Mono.error(
+                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
         }
         if (this.client.getSubscriptionId() == null) {
-            return Mono
-                .error(
-                    new IllegalArgumentException(
-                        "Parameter this.client.getSubscriptionId() is required and cannot be null."));
+            return Mono.error(new IllegalArgumentException(
+                "Parameter this.client.getSubscriptionId() is required and cannot be null."));
         }
         if (location == null) {
             return Mono.error(new IllegalArgumentException("Parameter location is required and cannot be null."));
@@ -175,27 +152,17 @@ public final class RestorableMongodbResourcesClientImpl implements RestorableMon
         final String accept = "application/json";
         context = this.client.mergeContext(context);
         return service
-            .list(
-                this.client.getEndpoint(),
-                this.client.getApiVersion(),
-                this.client.getSubscriptionId(),
-                location,
-                instanceId,
-                restoreLocation,
-                restoreTimestampInUtc,
-                accept,
-                context)
-            .map(
-                res ->
-                    new PagedResponseBase<>(
-                        res.getRequest(), res.getStatusCode(), res.getHeaders(), res.getValue().value(), null, null));
+            .list(this.client.getEndpoint(), this.client.getApiVersion(), this.client.getSubscriptionId(), location,
+                instanceId, restoreLocation, restoreTimestampInUtc, accept, context)
+            .map(res -> new PagedResponseBase<>(res.getRequest(), res.getStatusCode(), res.getHeaders(),
+                res.getValue().value(), null, null));
     }
 
     /**
      * Return a list of database and collection combo that exist on the account at the given timestamp and location.
      * This helps in scenarios to validate what resources exist at given timestamp and location. This API requires
      * 'Microsoft.DocumentDB/locations/restorableDatabaseAccounts/.../read' permission.
-     *
+     * 
      * @param location Cosmos DB region, with spaces between words and each word capitalized.
      * @param instanceId The instanceId GUID of a restorable database account.
      * @param restoreLocation The location where the restorable resources are located.
@@ -203,11 +170,12 @@ public final class RestorableMongodbResourcesClientImpl implements RestorableMon
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the List operation response, that contains the restorable MongoDB resources.
+     * @return the List operation response, that contains the restorable MongoDB resources as paginated response with
+     * {@link PagedFlux}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
-    public PagedFlux<DatabaseRestoreResourceInner> listAsync(
-        String location, String instanceId, String restoreLocation, String restoreTimestampInUtc) {
+    public PagedFlux<RestorableMongodbResourcesGetResultInner> listAsync(String location, String instanceId,
+        String restoreLocation, String restoreTimestampInUtc) {
         return new PagedFlux<>(() -> listSinglePageAsync(location, instanceId, restoreLocation, restoreTimestampInUtc));
     }
 
@@ -215,16 +183,17 @@ public final class RestorableMongodbResourcesClientImpl implements RestorableMon
      * Return a list of database and collection combo that exist on the account at the given timestamp and location.
      * This helps in scenarios to validate what resources exist at given timestamp and location. This API requires
      * 'Microsoft.DocumentDB/locations/restorableDatabaseAccounts/.../read' permission.
-     *
+     * 
      * @param location Cosmos DB region, with spaces between words and each word capitalized.
      * @param instanceId The instanceId GUID of a restorable database account.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the List operation response, that contains the restorable MongoDB resources.
+     * @return the List operation response, that contains the restorable MongoDB resources as paginated response with
+     * {@link PagedFlux}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
-    public PagedFlux<DatabaseRestoreResourceInner> listAsync(String location, String instanceId) {
+    public PagedFlux<RestorableMongodbResourcesGetResultInner> listAsync(String location, String instanceId) {
         final String restoreLocation = null;
         final String restoreTimestampInUtc = null;
         return new PagedFlux<>(() -> listSinglePageAsync(location, instanceId, restoreLocation, restoreTimestampInUtc));
@@ -234,7 +203,7 @@ public final class RestorableMongodbResourcesClientImpl implements RestorableMon
      * Return a list of database and collection combo that exist on the account at the given timestamp and location.
      * This helps in scenarios to validate what resources exist at given timestamp and location. This API requires
      * 'Microsoft.DocumentDB/locations/restorableDatabaseAccounts/.../read' permission.
-     *
+     * 
      * @param location Cosmos DB region, with spaces between words and each word capitalized.
      * @param instanceId The instanceId GUID of a restorable database account.
      * @param restoreLocation The location where the restorable resources are located.
@@ -243,11 +212,12 @@ public final class RestorableMongodbResourcesClientImpl implements RestorableMon
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the List operation response, that contains the restorable MongoDB resources.
+     * @return the List operation response, that contains the restorable MongoDB resources as paginated response with
+     * {@link PagedFlux}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
-    private PagedFlux<DatabaseRestoreResourceInner> listAsync(
-        String location, String instanceId, String restoreLocation, String restoreTimestampInUtc, Context context) {
+    private PagedFlux<RestorableMongodbResourcesGetResultInner> listAsync(String location, String instanceId,
+        String restoreLocation, String restoreTimestampInUtc, Context context) {
         return new PagedFlux<>(
             () -> listSinglePageAsync(location, instanceId, restoreLocation, restoreTimestampInUtc, context));
     }
@@ -256,16 +226,17 @@ public final class RestorableMongodbResourcesClientImpl implements RestorableMon
      * Return a list of database and collection combo that exist on the account at the given timestamp and location.
      * This helps in scenarios to validate what resources exist at given timestamp and location. This API requires
      * 'Microsoft.DocumentDB/locations/restorableDatabaseAccounts/.../read' permission.
-     *
+     * 
      * @param location Cosmos DB region, with spaces between words and each word capitalized.
      * @param instanceId The instanceId GUID of a restorable database account.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the List operation response, that contains the restorable MongoDB resources.
+     * @return the List operation response, that contains the restorable MongoDB resources as paginated response with
+     * {@link PagedIterable}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
-    public PagedIterable<DatabaseRestoreResourceInner> list(String location, String instanceId) {
+    public PagedIterable<RestorableMongodbResourcesGetResultInner> list(String location, String instanceId) {
         final String restoreLocation = null;
         final String restoreTimestampInUtc = null;
         return new PagedIterable<>(listAsync(location, instanceId, restoreLocation, restoreTimestampInUtc));
@@ -275,7 +246,7 @@ public final class RestorableMongodbResourcesClientImpl implements RestorableMon
      * Return a list of database and collection combo that exist on the account at the given timestamp and location.
      * This helps in scenarios to validate what resources exist at given timestamp and location. This API requires
      * 'Microsoft.DocumentDB/locations/restorableDatabaseAccounts/.../read' permission.
-     *
+     * 
      * @param location Cosmos DB region, with spaces between words and each word capitalized.
      * @param instanceId The instanceId GUID of a restorable database account.
      * @param restoreLocation The location where the restorable resources are located.
@@ -284,11 +255,12 @@ public final class RestorableMongodbResourcesClientImpl implements RestorableMon
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the List operation response, that contains the restorable MongoDB resources.
+     * @return the List operation response, that contains the restorable MongoDB resources as paginated response with
+     * {@link PagedIterable}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
-    public PagedIterable<DatabaseRestoreResourceInner> list(
-        String location, String instanceId, String restoreLocation, String restoreTimestampInUtc, Context context) {
+    public PagedIterable<RestorableMongodbResourcesGetResultInner> list(String location, String instanceId,
+        String restoreLocation, String restoreTimestampInUtc, Context context) {
         return new PagedIterable<>(listAsync(location, instanceId, restoreLocation, restoreTimestampInUtc, context));
     }
 }

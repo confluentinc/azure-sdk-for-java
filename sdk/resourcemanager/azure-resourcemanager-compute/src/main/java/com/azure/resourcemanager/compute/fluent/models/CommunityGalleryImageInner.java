@@ -5,53 +5,135 @@
 package com.azure.resourcemanager.compute.fluent.models;
 
 import com.azure.core.annotation.Fluent;
-import com.azure.core.util.logging.ClientLogger;
+import com.azure.json.JsonReader;
+import com.azure.json.JsonToken;
+import com.azure.json.JsonWriter;
+import com.azure.resourcemanager.compute.models.Architecture;
+import com.azure.resourcemanager.compute.models.CommunityGalleryImageIdentifier;
 import com.azure.resourcemanager.compute.models.Disallowed;
 import com.azure.resourcemanager.compute.models.GalleryImageFeature;
-import com.azure.resourcemanager.compute.models.GalleryImageIdentifier;
 import com.azure.resourcemanager.compute.models.HyperVGeneration;
 import com.azure.resourcemanager.compute.models.ImagePurchasePlan;
 import com.azure.resourcemanager.compute.models.OperatingSystemStateTypes;
 import com.azure.resourcemanager.compute.models.OperatingSystemTypes;
 import com.azure.resourcemanager.compute.models.PirCommunityGalleryResource;
 import com.azure.resourcemanager.compute.models.RecommendedMachineConfiguration;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import java.io.IOException;
 import java.time.OffsetDateTime;
 import java.util.List;
+import java.util.Map;
 
-/** Specifies information about the gallery image definition that you want to create or update. */
+/**
+ * Specifies information about the gallery image definition that you want to create or update.
+ */
 @Fluent
 public final class CommunityGalleryImageInner extends PirCommunityGalleryResource {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(CommunityGalleryImageInner.class);
-
     /*
      * Describes the properties of a gallery image definition.
      */
-    @JsonProperty(value = "properties")
     private CommunityGalleryImageProperties innerProperties;
+
+    /*
+     * The identifier information of community gallery.
+     */
+    private CommunityGalleryIdentifier innerIdentifier;
+
+    /*
+     * Resource type
+     */
+    private String type;
+
+    /*
+     * Resource location
+     */
+    private String location;
+
+    /*
+     * Resource name
+     */
+    private String name;
+
+    /**
+     * Creates an instance of CommunityGalleryImageInner class.
+     */
+    public CommunityGalleryImageInner() {
+    }
 
     /**
      * Get the innerProperties property: Describes the properties of a gallery image definition.
-     *
+     * 
      * @return the innerProperties value.
      */
     private CommunityGalleryImageProperties innerProperties() {
         return this.innerProperties;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * Get the innerIdentifier property: The identifier information of community gallery.
+     * 
+     * @return the innerIdentifier value.
+     */
+    private CommunityGalleryIdentifier innerIdentifier() {
+        return this.innerIdentifier;
+    }
+
+    /**
+     * Get the type property: Resource type.
+     * 
+     * @return the type value.
+     */
     @Override
+    public String type() {
+        return this.type;
+    }
+
+    /**
+     * Get the location property: Resource location.
+     * 
+     * @return the location value.
+     */
+    @Override
+    public String location() {
+        return this.location;
+    }
+
+    /**
+     * Get the name property: Resource name.
+     * 
+     * @return the name value.
+     */
+    @Override
+    public String name() {
+        return this.name;
+    }
+
+    /**
+     * Get the uniqueId property: The unique id of this community gallery.
+     * 
+     * @return the uniqueId value.
+     */
+    public String uniqueId() {
+        return this.innerIdentifier() == null ? null : this.innerIdentifier().uniqueId();
+    }
+
+    /**
+     * Set the uniqueId property: The unique id of this community gallery.
+     * 
+     * @param uniqueId the uniqueId value to set.
+     * @return the CommunityGalleryImageInner object itself.
+     */
     public CommunityGalleryImageInner withUniqueId(String uniqueId) {
-        super.withUniqueId(uniqueId);
+        if (this.innerIdentifier() == null) {
+            this.innerIdentifier = new CommunityGalleryIdentifier();
+        }
+        this.innerIdentifier().withUniqueId(uniqueId);
         return this;
     }
 
     /**
      * Get the osType property: This property allows you to specify the type of the OS that is included in the disk when
-     * creating a VM from a managed image. &lt;br&gt;&lt;br&gt; Possible values are: &lt;br&gt;&lt;br&gt; **Windows**
-     * &lt;br&gt;&lt;br&gt; **Linux**.
-     *
+     * creating a VM from a managed image. Possible values are: **Windows,** **Linux.**.
+     * 
      * @return the osType value.
      */
     public OperatingSystemTypes osType() {
@@ -60,9 +142,8 @@ public final class CommunityGalleryImageInner extends PirCommunityGalleryResourc
 
     /**
      * Set the osType property: This property allows you to specify the type of the OS that is included in the disk when
-     * creating a VM from a managed image. &lt;br&gt;&lt;br&gt; Possible values are: &lt;br&gt;&lt;br&gt; **Windows**
-     * &lt;br&gt;&lt;br&gt; **Linux**.
-     *
+     * creating a VM from a managed image. Possible values are: **Windows,** **Linux.**.
+     * 
      * @param osType the osType value to set.
      * @return the CommunityGalleryImageInner object itself.
      */
@@ -77,7 +158,7 @@ public final class CommunityGalleryImageInner extends PirCommunityGalleryResourc
     /**
      * Get the osState property: This property allows the user to specify whether the virtual machines created under
      * this image are 'Generalized' or 'Specialized'.
-     *
+     * 
      * @return the osState value.
      */
     public OperatingSystemStateTypes osState() {
@@ -87,7 +168,7 @@ public final class CommunityGalleryImageInner extends PirCommunityGalleryResourc
     /**
      * Set the osState property: This property allows the user to specify whether the virtual machines created under
      * this image are 'Generalized' or 'Specialized'.
-     *
+     * 
      * @param osState the osState value to set.
      * @return the CommunityGalleryImageInner object itself.
      */
@@ -102,7 +183,7 @@ public final class CommunityGalleryImageInner extends PirCommunityGalleryResourc
     /**
      * Get the endOfLifeDate property: The end of life date of the gallery image definition. This property can be used
      * for decommissioning purposes. This property is updatable.
-     *
+     * 
      * @return the endOfLifeDate value.
      */
     public OffsetDateTime endOfLifeDate() {
@@ -112,7 +193,7 @@ public final class CommunityGalleryImageInner extends PirCommunityGalleryResourc
     /**
      * Set the endOfLifeDate property: The end of life date of the gallery image definition. This property can be used
      * for decommissioning purposes. This property is updatable.
-     *
+     * 
      * @param endOfLifeDate the endOfLifeDate value to set.
      * @return the CommunityGalleryImageInner object itself.
      */
@@ -125,21 +206,21 @@ public final class CommunityGalleryImageInner extends PirCommunityGalleryResourc
     }
 
     /**
-     * Get the identifier property: This is the gallery image definition identifier.
-     *
+     * Get the identifier property: This is the community gallery image definition identifier.
+     * 
      * @return the identifier value.
      */
-    public GalleryImageIdentifier identifier() {
+    public CommunityGalleryImageIdentifier identifier() {
         return this.innerProperties() == null ? null : this.innerProperties().identifier();
     }
 
     /**
-     * Set the identifier property: This is the gallery image definition identifier.
-     *
+     * Set the identifier property: This is the community gallery image definition identifier.
+     * 
      * @param identifier the identifier value to set.
      * @return the CommunityGalleryImageInner object itself.
      */
-    public CommunityGalleryImageInner withIdentifier(GalleryImageIdentifier identifier) {
+    public CommunityGalleryImageInner withIdentifier(CommunityGalleryImageIdentifier identifier) {
         if (this.innerProperties() == null) {
             this.innerProperties = new CommunityGalleryImageProperties();
         }
@@ -150,7 +231,7 @@ public final class CommunityGalleryImageInner extends PirCommunityGalleryResourc
     /**
      * Get the recommended property: The properties describe the recommended machine configuration for this Image
      * Definition. These properties are updatable.
-     *
+     * 
      * @return the recommended value.
      */
     public RecommendedMachineConfiguration recommended() {
@@ -160,7 +241,7 @@ public final class CommunityGalleryImageInner extends PirCommunityGalleryResourc
     /**
      * Set the recommended property: The properties describe the recommended machine configuration for this Image
      * Definition. These properties are updatable.
-     *
+     * 
      * @param recommended the recommended value to set.
      * @return the CommunityGalleryImageInner object itself.
      */
@@ -174,7 +255,7 @@ public final class CommunityGalleryImageInner extends PirCommunityGalleryResourc
 
     /**
      * Get the disallowed property: Describes the disallowed disk types.
-     *
+     * 
      * @return the disallowed value.
      */
     public Disallowed disallowed() {
@@ -183,7 +264,7 @@ public final class CommunityGalleryImageInner extends PirCommunityGalleryResourc
 
     /**
      * Set the disallowed property: Describes the disallowed disk types.
-     *
+     * 
      * @param disallowed the disallowed value to set.
      * @return the CommunityGalleryImageInner object itself.
      */
@@ -197,7 +278,7 @@ public final class CommunityGalleryImageInner extends PirCommunityGalleryResourc
 
     /**
      * Get the hyperVGeneration property: The hypervisor generation of the Virtual Machine. Applicable to OS disks only.
-     *
+     * 
      * @return the hyperVGeneration value.
      */
     public HyperVGeneration hyperVGeneration() {
@@ -206,7 +287,7 @@ public final class CommunityGalleryImageInner extends PirCommunityGalleryResourc
 
     /**
      * Set the hyperVGeneration property: The hypervisor generation of the Virtual Machine. Applicable to OS disks only.
-     *
+     * 
      * @param hyperVGeneration the hyperVGeneration value to set.
      * @return the CommunityGalleryImageInner object itself.
      */
@@ -220,7 +301,7 @@ public final class CommunityGalleryImageInner extends PirCommunityGalleryResourc
 
     /**
      * Get the features property: A list of gallery image features.
-     *
+     * 
      * @return the features value.
      */
     public List<GalleryImageFeature> features() {
@@ -229,7 +310,7 @@ public final class CommunityGalleryImageInner extends PirCommunityGalleryResourc
 
     /**
      * Set the features property: A list of gallery image features.
-     *
+     * 
      * @param features the features value to set.
      * @return the CommunityGalleryImageInner object itself.
      */
@@ -244,7 +325,7 @@ public final class CommunityGalleryImageInner extends PirCommunityGalleryResourc
     /**
      * Get the purchasePlan property: Describes the gallery image definition purchase plan. This is used by marketplace
      * images.
-     *
+     * 
      * @return the purchasePlan value.
      */
     public ImagePurchasePlan purchasePlan() {
@@ -254,7 +335,7 @@ public final class CommunityGalleryImageInner extends PirCommunityGalleryResourc
     /**
      * Set the purchasePlan property: Describes the gallery image definition purchase plan. This is used by marketplace
      * images.
-     *
+     * 
      * @param purchasePlan the purchasePlan value to set.
      * @return the CommunityGalleryImageInner object itself.
      */
@@ -267,15 +348,179 @@ public final class CommunityGalleryImageInner extends PirCommunityGalleryResourc
     }
 
     /**
+     * Get the architecture property: CPU architecture supported by an OS disk.
+     * 
+     * @return the architecture value.
+     */
+    public Architecture architecture() {
+        return this.innerProperties() == null ? null : this.innerProperties().architecture();
+    }
+
+    /**
+     * Set the architecture property: CPU architecture supported by an OS disk.
+     * 
+     * @param architecture the architecture value to set.
+     * @return the CommunityGalleryImageInner object itself.
+     */
+    public CommunityGalleryImageInner withArchitecture(Architecture architecture) {
+        if (this.innerProperties() == null) {
+            this.innerProperties = new CommunityGalleryImageProperties();
+        }
+        this.innerProperties().withArchitecture(architecture);
+        return this;
+    }
+
+    /**
+     * Get the privacyStatementUri property: Privacy statement URI for the current community gallery image.
+     * 
+     * @return the privacyStatementUri value.
+     */
+    public String privacyStatementUri() {
+        return this.innerProperties() == null ? null : this.innerProperties().privacyStatementUri();
+    }
+
+    /**
+     * Set the privacyStatementUri property: Privacy statement URI for the current community gallery image.
+     * 
+     * @param privacyStatementUri the privacyStatementUri value to set.
+     * @return the CommunityGalleryImageInner object itself.
+     */
+    public CommunityGalleryImageInner withPrivacyStatementUri(String privacyStatementUri) {
+        if (this.innerProperties() == null) {
+            this.innerProperties = new CommunityGalleryImageProperties();
+        }
+        this.innerProperties().withPrivacyStatementUri(privacyStatementUri);
+        return this;
+    }
+
+    /**
+     * Get the eula property: The end-user license agreement for the current community gallery image.
+     * 
+     * @return the eula value.
+     */
+    public String eula() {
+        return this.innerProperties() == null ? null : this.innerProperties().eula();
+    }
+
+    /**
+     * Set the eula property: The end-user license agreement for the current community gallery image.
+     * 
+     * @param eula the eula value to set.
+     * @return the CommunityGalleryImageInner object itself.
+     */
+    public CommunityGalleryImageInner withEula(String eula) {
+        if (this.innerProperties() == null) {
+            this.innerProperties = new CommunityGalleryImageProperties();
+        }
+        this.innerProperties().withEula(eula);
+        return this;
+    }
+
+    /**
+     * Get the disclaimer property: The disclaimer for a community gallery resource.
+     * 
+     * @return the disclaimer value.
+     */
+    public String disclaimer() {
+        return this.innerProperties() == null ? null : this.innerProperties().disclaimer();
+    }
+
+    /**
+     * Set the disclaimer property: The disclaimer for a community gallery resource.
+     * 
+     * @param disclaimer the disclaimer value to set.
+     * @return the CommunityGalleryImageInner object itself.
+     */
+    public CommunityGalleryImageInner withDisclaimer(String disclaimer) {
+        if (this.innerProperties() == null) {
+            this.innerProperties = new CommunityGalleryImageProperties();
+        }
+        this.innerProperties().withDisclaimer(disclaimer);
+        return this;
+    }
+
+    /**
+     * Get the artifactTags property: The artifact tags of a community gallery resource.
+     * 
+     * @return the artifactTags value.
+     */
+    public Map<String, String> artifactTags() {
+        return this.innerProperties() == null ? null : this.innerProperties().artifactTags();
+    }
+
+    /**
+     * Set the artifactTags property: The artifact tags of a community gallery resource.
+     * 
+     * @param artifactTags the artifactTags value to set.
+     * @return the CommunityGalleryImageInner object itself.
+     */
+    public CommunityGalleryImageInner withArtifactTags(Map<String, String> artifactTags) {
+        if (this.innerProperties() == null) {
+            this.innerProperties = new CommunityGalleryImageProperties();
+        }
+        this.innerProperties().withArtifactTags(artifactTags);
+        return this;
+    }
+
+    /**
      * Validates the instance.
-     *
+     * 
      * @throws IllegalArgumentException thrown if the instance is not valid.
      */
     @Override
     public void validate() {
-        super.validate();
         if (innerProperties() != null) {
             innerProperties().validate();
         }
+        if (innerIdentifier() != null) {
+            innerIdentifier().validate();
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public JsonWriter toJson(JsonWriter jsonWriter) throws IOException {
+        jsonWriter.writeStartObject();
+        jsonWriter.writeJsonField("identifier", innerIdentifier());
+        jsonWriter.writeJsonField("properties", this.innerProperties);
+        return jsonWriter.writeEndObject();
+    }
+
+    /**
+     * Reads an instance of CommunityGalleryImageInner from the JsonReader.
+     * 
+     * @param jsonReader The JsonReader being read.
+     * @return An instance of CommunityGalleryImageInner if the JsonReader was pointing to an instance of it, or null if
+     * it was pointing to JSON null.
+     * @throws IOException If an error occurs while reading the CommunityGalleryImageInner.
+     */
+    public static CommunityGalleryImageInner fromJson(JsonReader jsonReader) throws IOException {
+        return jsonReader.readObject(reader -> {
+            CommunityGalleryImageInner deserializedCommunityGalleryImageInner = new CommunityGalleryImageInner();
+            while (reader.nextToken() != JsonToken.END_OBJECT) {
+                String fieldName = reader.getFieldName();
+                reader.nextToken();
+
+                if ("name".equals(fieldName)) {
+                    deserializedCommunityGalleryImageInner.name = reader.getString();
+                } else if ("location".equals(fieldName)) {
+                    deserializedCommunityGalleryImageInner.location = reader.getString();
+                } else if ("type".equals(fieldName)) {
+                    deserializedCommunityGalleryImageInner.type = reader.getString();
+                } else if ("identifier".equals(fieldName)) {
+                    deserializedCommunityGalleryImageInner.innerIdentifier
+                        = CommunityGalleryIdentifier.fromJson(reader);
+                } else if ("properties".equals(fieldName)) {
+                    deserializedCommunityGalleryImageInner.innerProperties
+                        = CommunityGalleryImageProperties.fromJson(reader);
+                } else {
+                    reader.skipChildren();
+                }
+            }
+
+            return deserializedCommunityGalleryImageInner;
+        });
     }
 }

@@ -5,80 +5,81 @@
 package com.azure.resourcemanager.securityinsights.fluent.models;
 
 import com.azure.core.annotation.Fluent;
+import com.azure.core.util.CoreUtils;
 import com.azure.core.util.logging.ClientLogger;
+import com.azure.json.JsonReader;
+import com.azure.json.JsonSerializable;
+import com.azure.json.JsonToken;
+import com.azure.json.JsonWriter;
 import com.azure.resourcemanager.securityinsights.models.UserInfo;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import java.io.IOException;
 import java.time.OffsetDateTime;
+import java.time.format.DateTimeFormatter;
 
-/** Describes watchlist item properties. */
+/**
+ * Describes watchlist item properties.
+ */
 @Fluent
-public final class WatchlistItemProperties {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(WatchlistItemProperties.class);
-
+public final class WatchlistItemProperties implements JsonSerializable<WatchlistItemProperties> {
     /*
      * The type of the watchlist item
      */
-    @JsonProperty(value = "watchlistItemType")
     private String watchlistItemType;
 
     /*
      * The id (a Guid) of the watchlist item
      */
-    @JsonProperty(value = "watchlistItemId")
     private String watchlistItemId;
 
     /*
      * The tenantId to which the watchlist item belongs to
      */
-    @JsonProperty(value = "tenantId")
     private String tenantId;
 
     /*
      * A flag that indicates if the watchlist item is deleted or not
      */
-    @JsonProperty(value = "isDeleted")
     private Boolean isDeleted;
 
     /*
      * The time the watchlist item was created
      */
-    @JsonProperty(value = "created")
     private OffsetDateTime created;
 
     /*
      * The last time the watchlist item was updated
      */
-    @JsonProperty(value = "updated")
     private OffsetDateTime updated;
 
     /*
      * Describes a user that created the watchlist item
      */
-    @JsonProperty(value = "createdBy")
     private UserInfo createdBy;
 
     /*
      * Describes a user that updated the watchlist item
      */
-    @JsonProperty(value = "updatedBy")
     private UserInfo updatedBy;
 
     /*
      * key-value pairs for a watchlist item
      */
-    @JsonProperty(value = "itemsKeyValue", required = true)
     private Object itemsKeyValue;
 
     /*
      * key-value pairs for a watchlist item entity mapping
      */
-    @JsonProperty(value = "entityMapping")
     private Object entityMapping;
 
     /**
+     * Creates an instance of WatchlistItemProperties class.
+     */
+    public WatchlistItemProperties() {
+    }
+
+    /**
      * Get the watchlistItemType property: The type of the watchlist item.
-     *
+     * 
      * @return the watchlistItemType value.
      */
     public String watchlistItemType() {
@@ -87,7 +88,7 @@ public final class WatchlistItemProperties {
 
     /**
      * Set the watchlistItemType property: The type of the watchlist item.
-     *
+     * 
      * @param watchlistItemType the watchlistItemType value to set.
      * @return the WatchlistItemProperties object itself.
      */
@@ -98,7 +99,7 @@ public final class WatchlistItemProperties {
 
     /**
      * Get the watchlistItemId property: The id (a Guid) of the watchlist item.
-     *
+     * 
      * @return the watchlistItemId value.
      */
     public String watchlistItemId() {
@@ -107,7 +108,7 @@ public final class WatchlistItemProperties {
 
     /**
      * Set the watchlistItemId property: The id (a Guid) of the watchlist item.
-     *
+     * 
      * @param watchlistItemId the watchlistItemId value to set.
      * @return the WatchlistItemProperties object itself.
      */
@@ -118,7 +119,7 @@ public final class WatchlistItemProperties {
 
     /**
      * Get the tenantId property: The tenantId to which the watchlist item belongs to.
-     *
+     * 
      * @return the tenantId value.
      */
     public String tenantId() {
@@ -127,7 +128,7 @@ public final class WatchlistItemProperties {
 
     /**
      * Set the tenantId property: The tenantId to which the watchlist item belongs to.
-     *
+     * 
      * @param tenantId the tenantId value to set.
      * @return the WatchlistItemProperties object itself.
      */
@@ -138,7 +139,7 @@ public final class WatchlistItemProperties {
 
     /**
      * Get the isDeleted property: A flag that indicates if the watchlist item is deleted or not.
-     *
+     * 
      * @return the isDeleted value.
      */
     public Boolean isDeleted() {
@@ -147,7 +148,7 @@ public final class WatchlistItemProperties {
 
     /**
      * Set the isDeleted property: A flag that indicates if the watchlist item is deleted or not.
-     *
+     * 
      * @param isDeleted the isDeleted value to set.
      * @return the WatchlistItemProperties object itself.
      */
@@ -158,7 +159,7 @@ public final class WatchlistItemProperties {
 
     /**
      * Get the created property: The time the watchlist item was created.
-     *
+     * 
      * @return the created value.
      */
     public OffsetDateTime created() {
@@ -167,7 +168,7 @@ public final class WatchlistItemProperties {
 
     /**
      * Set the created property: The time the watchlist item was created.
-     *
+     * 
      * @param created the created value to set.
      * @return the WatchlistItemProperties object itself.
      */
@@ -178,7 +179,7 @@ public final class WatchlistItemProperties {
 
     /**
      * Get the updated property: The last time the watchlist item was updated.
-     *
+     * 
      * @return the updated value.
      */
     public OffsetDateTime updated() {
@@ -187,7 +188,7 @@ public final class WatchlistItemProperties {
 
     /**
      * Set the updated property: The last time the watchlist item was updated.
-     *
+     * 
      * @param updated the updated value to set.
      * @return the WatchlistItemProperties object itself.
      */
@@ -198,7 +199,7 @@ public final class WatchlistItemProperties {
 
     /**
      * Get the createdBy property: Describes a user that created the watchlist item.
-     *
+     * 
      * @return the createdBy value.
      */
     public UserInfo createdBy() {
@@ -207,7 +208,7 @@ public final class WatchlistItemProperties {
 
     /**
      * Set the createdBy property: Describes a user that created the watchlist item.
-     *
+     * 
      * @param createdBy the createdBy value to set.
      * @return the WatchlistItemProperties object itself.
      */
@@ -218,7 +219,7 @@ public final class WatchlistItemProperties {
 
     /**
      * Get the updatedBy property: Describes a user that updated the watchlist item.
-     *
+     * 
      * @return the updatedBy value.
      */
     public UserInfo updatedBy() {
@@ -227,7 +228,7 @@ public final class WatchlistItemProperties {
 
     /**
      * Set the updatedBy property: Describes a user that updated the watchlist item.
-     *
+     * 
      * @param updatedBy the updatedBy value to set.
      * @return the WatchlistItemProperties object itself.
      */
@@ -238,7 +239,7 @@ public final class WatchlistItemProperties {
 
     /**
      * Get the itemsKeyValue property: key-value pairs for a watchlist item.
-     *
+     * 
      * @return the itemsKeyValue value.
      */
     public Object itemsKeyValue() {
@@ -247,7 +248,7 @@ public final class WatchlistItemProperties {
 
     /**
      * Set the itemsKeyValue property: key-value pairs for a watchlist item.
-     *
+     * 
      * @param itemsKeyValue the itemsKeyValue value to set.
      * @return the WatchlistItemProperties object itself.
      */
@@ -258,7 +259,7 @@ public final class WatchlistItemProperties {
 
     /**
      * Get the entityMapping property: key-value pairs for a watchlist item entity mapping.
-     *
+     * 
      * @return the entityMapping value.
      */
     public Object entityMapping() {
@@ -267,7 +268,7 @@ public final class WatchlistItemProperties {
 
     /**
      * Set the entityMapping property: key-value pairs for a watchlist item entity mapping.
-     *
+     * 
      * @param entityMapping the entityMapping value to set.
      * @return the WatchlistItemProperties object itself.
      */
@@ -278,7 +279,7 @@ public final class WatchlistItemProperties {
 
     /**
      * Validates the instance.
-     *
+     * 
      * @throws IllegalArgumentException thrown if the instance is not valid.
      */
     public void validate() {
@@ -289,10 +290,79 @@ public final class WatchlistItemProperties {
             updatedBy().validate();
         }
         if (itemsKeyValue() == null) {
-            throw logger
-                .logExceptionAsError(
-                    new IllegalArgumentException(
-                        "Missing required property itemsKeyValue in model WatchlistItemProperties"));
+            throw LOGGER.atError()
+                .log(new IllegalArgumentException(
+                    "Missing required property itemsKeyValue in model WatchlistItemProperties"));
         }
+    }
+
+    private static final ClientLogger LOGGER = new ClientLogger(WatchlistItemProperties.class);
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public JsonWriter toJson(JsonWriter jsonWriter) throws IOException {
+        jsonWriter.writeStartObject();
+        jsonWriter.writeUntypedField("itemsKeyValue", this.itemsKeyValue);
+        jsonWriter.writeStringField("watchlistItemType", this.watchlistItemType);
+        jsonWriter.writeStringField("watchlistItemId", this.watchlistItemId);
+        jsonWriter.writeStringField("tenantId", this.tenantId);
+        jsonWriter.writeBooleanField("isDeleted", this.isDeleted);
+        jsonWriter.writeStringField("created",
+            this.created == null ? null : DateTimeFormatter.ISO_OFFSET_DATE_TIME.format(this.created));
+        jsonWriter.writeStringField("updated",
+            this.updated == null ? null : DateTimeFormatter.ISO_OFFSET_DATE_TIME.format(this.updated));
+        jsonWriter.writeJsonField("createdBy", this.createdBy);
+        jsonWriter.writeJsonField("updatedBy", this.updatedBy);
+        jsonWriter.writeUntypedField("entityMapping", this.entityMapping);
+        return jsonWriter.writeEndObject();
+    }
+
+    /**
+     * Reads an instance of WatchlistItemProperties from the JsonReader.
+     * 
+     * @param jsonReader The JsonReader being read.
+     * @return An instance of WatchlistItemProperties if the JsonReader was pointing to an instance of it, or null if it
+     * was pointing to JSON null.
+     * @throws IllegalStateException If the deserialized JSON object was missing any required properties.
+     * @throws IOException If an error occurs while reading the WatchlistItemProperties.
+     */
+    public static WatchlistItemProperties fromJson(JsonReader jsonReader) throws IOException {
+        return jsonReader.readObject(reader -> {
+            WatchlistItemProperties deserializedWatchlistItemProperties = new WatchlistItemProperties();
+            while (reader.nextToken() != JsonToken.END_OBJECT) {
+                String fieldName = reader.getFieldName();
+                reader.nextToken();
+
+                if ("itemsKeyValue".equals(fieldName)) {
+                    deserializedWatchlistItemProperties.itemsKeyValue = reader.readUntyped();
+                } else if ("watchlistItemType".equals(fieldName)) {
+                    deserializedWatchlistItemProperties.watchlistItemType = reader.getString();
+                } else if ("watchlistItemId".equals(fieldName)) {
+                    deserializedWatchlistItemProperties.watchlistItemId = reader.getString();
+                } else if ("tenantId".equals(fieldName)) {
+                    deserializedWatchlistItemProperties.tenantId = reader.getString();
+                } else if ("isDeleted".equals(fieldName)) {
+                    deserializedWatchlistItemProperties.isDeleted = reader.getNullable(JsonReader::getBoolean);
+                } else if ("created".equals(fieldName)) {
+                    deserializedWatchlistItemProperties.created = reader
+                        .getNullable(nonNullReader -> CoreUtils.parseBestOffsetDateTime(nonNullReader.getString()));
+                } else if ("updated".equals(fieldName)) {
+                    deserializedWatchlistItemProperties.updated = reader
+                        .getNullable(nonNullReader -> CoreUtils.parseBestOffsetDateTime(nonNullReader.getString()));
+                } else if ("createdBy".equals(fieldName)) {
+                    deserializedWatchlistItemProperties.createdBy = UserInfo.fromJson(reader);
+                } else if ("updatedBy".equals(fieldName)) {
+                    deserializedWatchlistItemProperties.updatedBy = UserInfo.fromJson(reader);
+                } else if ("entityMapping".equals(fieldName)) {
+                    deserializedWatchlistItemProperties.entityMapping = reader.readUntyped();
+                } else {
+                    reader.skipChildren();
+                }
+            }
+
+            return deserializedWatchlistItemProperties;
+        });
     }
 }

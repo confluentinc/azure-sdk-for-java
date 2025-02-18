@@ -18,6 +18,7 @@
 
   <properties>
     <perf.test.mainClass>com.azure.ai.formrecognizer.perf.App</perf.test.mainClass>
+    <perf.test.imageName>azure-ai-formrecognizer-perf</perf.test.imageName>
   </properties>
 
   <dependencies>
@@ -29,7 +30,18 @@
     <dependency>
       <groupId>com.azure</groupId>
       <artifactId>azure-ai-formrecognizer</artifactId>
-      <version>4.0.0-beta.4</version> <!-- {x-version-update;com.azure:azure-ai-formrecognizer;current} -->
+      <version>4.2.0-beta.1</version> <!-- {x-version-update;com.azure:azure-ai-formrecognizer;current} -->
+    </dependency>
+
+    <dependency>
+      <groupId>com.azure</groupId>
+      <artifactId>azure-core</artifactId>
+      <version>1.55.1</version> <!-- {x-version-update;com.azure:azure-core;dependency} -->
+    </dependency>
+    <dependency>
+      <groupId>com.azure</groupId>
+      <artifactId>azure-core-http-netty</artifactId>
+      <version>1.15.9</version> <!-- {x-version-update;com.azure:azure-core-http-netty;dependency} -->
     </dependency>
   </dependencies>
 </project>

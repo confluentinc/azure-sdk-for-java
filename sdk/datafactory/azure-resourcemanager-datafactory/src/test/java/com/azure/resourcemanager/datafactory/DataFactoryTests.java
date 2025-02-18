@@ -3,15 +3,18 @@
 
 package com.azure.resourcemanager.datafactory;
 
+import com.azure.core.credential.TokenCredential;
 import com.azure.core.http.policy.HttpLogDetailLevel;
 import com.azure.core.http.policy.HttpLogOptions;
 import com.azure.core.management.AzureEnvironment;
 import com.azure.core.management.Region;
 import com.azure.core.management.profile.AzureProfile;
-import com.azure.core.test.TestBase;
-import com.azure.core.test.annotation.DoNotRecord;
+import com.azure.core.test.TestProxyTestBase;
+import com.azure.core.test.annotation.LiveOnly;
 import com.azure.core.util.BinaryData;
-import com.azure.identity.DefaultAzureCredentialBuilder;
+import com.azure.core.util.Configuration;
+import com.azure.core.util.CoreUtils;
+import com.azure.identity.AzurePowerShellCredentialBuilder;
 import com.azure.resourcemanager.datafactory.models.AzureBlobDataset;
 import com.azure.resourcemanager.datafactory.models.AzureStorageLinkedService;
 import com.azure.resourcemanager.datafactory.models.BlobSink;
@@ -19,10 +22,13 @@ import com.azure.resourcemanager.datafactory.models.BlobSource;
 import com.azure.resourcemanager.datafactory.models.CopyActivity;
 import com.azure.resourcemanager.datafactory.models.CreateRunResponse;
 import com.azure.resourcemanager.datafactory.models.DatasetReference;
+import com.azure.resourcemanager.datafactory.models.Factory;
 import com.azure.resourcemanager.datafactory.models.LinkedServiceReference;
 import com.azure.resourcemanager.datafactory.models.PipelineResource;
 import com.azure.resourcemanager.datafactory.models.PipelineRun;
 import com.azure.resourcemanager.datafactory.models.TextFormat;
+import com.azure.resourcemanager.resources.ResourceManager;
+import com.azure.resourcemanager.resources.fluentcore.policy.ProviderRegistrationPolicy;
 import com.azure.resourcemanager.storage.StorageManager;
 import com.azure.resourcemanager.storage.models.PublicAccess;
 import com.azure.resourcemanager.storage.models.StorageAccount;
@@ -35,59 +41,76 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 
-public class DataFactoryTests extends TestBase {
+public class DataFactoryTests extends TestProxyTestBase {
 
     private static final Random RANDOM = new Random();
 
     private static final Region REGION = Region.US_WEST2;
-    private static final String RESOURCE_GROUP = "rg" + randomPadding();
-    private static final String STORAGE_ACCOUNT = "sa" + randomPadding();
     private static final String DATA_FACTORY = "df" + randomPadding();
 
+    private static String resourceGroup = "rg" + randomPadding();
+
     @Test
-    @DoNotRecord(skipInPlayback = true)
+    @LiveOnly
     public void dataFactoryTest() {
-        StorageManager storageManager = StorageManager
-            .configure().withLogOptions(new HttpLogOptions().setLogLevel(HttpLogDetailLevel.BODY_AND_HEADERS))
-            .authenticate(new DefaultAzureCredentialBuilder().build(), new AzureProfile(AzureEnvironment.AZURE));
+        TokenCredential credential = new AzurePowerShellCredentialBuilder().build();
+        AzureProfile profile = new AzureProfile(AzureEnvironment.AZURE);
 
-        DataFactoryManager manager = DataFactoryManager
-            .configure().withLogOptions(new HttpLogOptions().setLogLevel(HttpLogDetailLevel.BODY_AND_HEADERS))
-            .authenticate(new DefaultAzureCredentialBuilder().build(), new AzureProfile(AzureEnvironment.AZURE));
+        ResourceManager resourceManager = ResourceManager.configure()
+            .withLogOptions(new HttpLogOptions().setLogLevel(HttpLogDetailLevel.BASIC))
+            .authenticate(credential, profile)
+            .withDefaultSubscription();
 
-        storageManager.resourceManager().resourceGroups().define(RESOURCE_GROUP)
-            .withRegion(REGION)
-            .create();
+        StorageManager storageManager = StorageManager.configure()
+            .withPolicy(new ProviderRegistrationPolicy(resourceManager))
+            .authenticate(credential, profile);
+
+        DataFactoryManager manager = DataFactoryManager.configure()
+            .withPolicy(new ProviderRegistrationPolicy(resourceManager))
+            .withLogOptions(new HttpLogOptions().setLogLevel(HttpLogDetailLevel.BASIC))
+            .authenticate(credential, profile);
+
+        String testResourceGroup = Configuration.getGlobalConfiguration().get("AZURE_RESOURCE_GROUP_NAME");
+        boolean testEnv = !CoreUtils.isNullOrEmpty(testResourceGroup);
+        if (testEnv) {
+            resourceGroup = testResourceGroup;
+        } else {
+            resourceManager.resourceGroups().define(resourceGroup).withRegion(REGION).create();
+        }
 
         try {
+            final String storageAccountName = testResourceNamer.randomName("sa", 22);
             // @embedmeStart
             // storage account
-            StorageAccount storageAccount = storageManager.storageAccounts().define(STORAGE_ACCOUNT)
+            StorageAccount storageAccount = storageManager.storageAccounts()
+                .define(storageAccountName)
                 .withRegion(REGION)
-                .withExistingResourceGroup(RESOURCE_GROUP)
+                .withExistingResourceGroup(resourceGroup)
                 .create();
             final String storageAccountKey = storageAccount.getKeys().iterator().next().value();
-            final String connectionString = getStorageConnectionString(STORAGE_ACCOUNT, storageAccountKey, storageManager.environment());
+            final String connectionString
+                = getStorageConnectionString(storageAccountName, storageAccountKey, storageManager.environment());
 
             // container
             final String containerName = "adf";
-            storageManager.blobContainers().defineContainer(containerName)
-                .withExistingBlobService(RESOURCE_GROUP, STORAGE_ACCOUNT)
+            storageManager.blobContainers()
+                .defineContainer(containerName)
+                .withExistingStorageAccount(resourceGroup, storageAccountName)
                 .withPublicAccess(PublicAccess.NONE)
                 .create();
 
             // blob as input
-            BlobClient blobClient = new BlobClientBuilder()
-                .connectionString(connectionString)
+            BlobClient blobClient = new BlobClientBuilder().connectionString(connectionString)
                 .containerName(containerName)
                 .blobName("input/data.txt")
                 .buildClient();
             blobClient.upload(BinaryData.fromString("data"));
 
             // data factory
-            manager.factories().define(DATA_FACTORY)
+            Factory dataFactory = manager.factories()
+                .define(DATA_FACTORY)
                 .withRegion(REGION)
-                .withExistingResourceGroup(RESOURCE_GROUP)
+                .withExistingResourceGroup(resourceGroup)
                 .create();
 
             // linked service
@@ -96,16 +119,17 @@ public class DataFactoryTests extends TestBase {
             connectionStringProperty.put("value", connectionString);
 
             final String linkedServiceName = "LinkedService";
-            manager.linkedServices().define(linkedServiceName)
-                .withExistingFactory(RESOURCE_GROUP, DATA_FACTORY)
-                .withProperties(new AzureStorageLinkedService()
-                    .withConnectionString(connectionStringProperty))
+            manager.linkedServices()
+                .define(linkedServiceName)
+                .withExistingFactory(resourceGroup, DATA_FACTORY)
+                .withProperties(new AzureStorageLinkedService().withConnectionString(connectionStringProperty))
                 .create();
 
             // input dataset
             final String inputDatasetName = "InputDataset";
-            manager.datasets().define(inputDatasetName)
-                .withExistingFactory(RESOURCE_GROUP, DATA_FACTORY)
+            manager.datasets()
+                .define(inputDatasetName)
+                .withExistingFactory(resourceGroup, DATA_FACTORY)
                 .withProperties(new AzureBlobDataset()
                     .withLinkedServiceName(new LinkedServiceReference().withReferenceName(linkedServiceName))
                     .withFolderPath(containerName)
@@ -115,8 +139,9 @@ public class DataFactoryTests extends TestBase {
 
             // output dataset
             final String outputDatasetName = "OutputDataset";
-            manager.datasets().define(outputDatasetName)
-                .withExistingFactory(RESOURCE_GROUP, DATA_FACTORY)
+            manager.datasets()
+                .define(outputDatasetName)
+                .withExistingFactory(resourceGroup, DATA_FACTORY)
                 .withProperties(new AzureBlobDataset()
                     .withLinkedServiceName(new LinkedServiceReference().withReferenceName(linkedServiceName))
                     .withFolderPath(containerName)
@@ -125,34 +150,40 @@ public class DataFactoryTests extends TestBase {
                 .create();
 
             // pipeline
-            PipelineResource pipeline = manager.pipelines().define("CopyBlobPipeline")
-                .withExistingFactory(RESOURCE_GROUP, DATA_FACTORY)
-                .withActivities(Collections.singletonList(new CopyActivity()
-                    .withName("CopyBlob")
+            PipelineResource pipeline = manager.pipelines()
+                .define("CopyBlobPipeline")
+                .withExistingFactory(resourceGroup, DATA_FACTORY)
+                .withActivities(Collections.singletonList(new CopyActivity().withName("CopyBlob")
                     .withSource(new BlobSource())
                     .withSink(new BlobSink())
                     .withInputs(Collections.singletonList(new DatasetReference().withReferenceName(inputDatasetName)))
-                    .withOutputs(Collections.singletonList(new DatasetReference().withReferenceName(outputDatasetName)))))
+                    .withOutputs(
+                        Collections.singletonList(new DatasetReference().withReferenceName(outputDatasetName)))))
                 .create();
 
             // run pipeline
             CreateRunResponse createRun = pipeline.createRun();
 
             // wait for completion
-            PipelineRun pipelineRun = manager.pipelineRuns().get(RESOURCE_GROUP, DATA_FACTORY, createRun.runId());
+            PipelineRun pipelineRun = manager.pipelineRuns().get(resourceGroup, DATA_FACTORY, createRun.runId());
             String runStatus = pipelineRun.status();
             while ("InProgress".equals(runStatus)) {
                 sleepIfRunningAgainstService(10 * 1000);    // wait 10 seconds
-                pipelineRun = manager.pipelineRuns().get(RESOURCE_GROUP, DATA_FACTORY, createRun.runId());
+                pipelineRun = manager.pipelineRuns().get(resourceGroup, DATA_FACTORY, createRun.runId());
                 runStatus = pipelineRun.status();
             }
             // @embedmeEnd
 
-            manager.linkedServices().listByFactory(RESOURCE_GROUP, DATA_FACTORY).stream().count();
-            manager.datasets().listByFactory(RESOURCE_GROUP, DATA_FACTORY).stream().count();
-            manager.pipelines().listByFactory(RESOURCE_GROUP, DATA_FACTORY).stream().count();
+            manager.linkedServices().listByFactory(resourceGroup, DATA_FACTORY).stream().count();
+            manager.datasets().listByFactory(resourceGroup, DATA_FACTORY).stream().count();
+            manager.pipelines().listByFactory(resourceGroup, DATA_FACTORY).stream().count();
+
+            manager.factories().deleteById(dataFactory.id());
+            storageManager.storageAccounts().deleteById(storageAccount.id());
         } finally {
-            storageManager.resourceManager().resourceGroups().beginDeleteByName(RESOURCE_GROUP);
+            if (!testEnv) {
+                resourceManager.resourceGroups().beginDeleteByName(resourceGroup);
+            }
         }
     }
 
@@ -161,7 +192,7 @@ public class DataFactoryTests extends TestBase {
     }
 
     private static String getStorageConnectionString(String accountName, String accountKey,
-                                                     AzureEnvironment environment) {
+        AzureEnvironment environment) {
         if (environment == null || environment.getStorageEndpointSuffix() == null) {
             environment = AzureEnvironment.AZURE;
         }

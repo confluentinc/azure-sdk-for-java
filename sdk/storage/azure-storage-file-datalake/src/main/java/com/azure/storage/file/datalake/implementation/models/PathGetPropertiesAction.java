@@ -4,18 +4,23 @@
 
 package com.azure.storage.file.datalake.implementation.models;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonValue;
-
-/** Defines values for PathGetPropertiesAction. */
+/**
+ * Defines values for PathGetPropertiesAction.
+ */
 public enum PathGetPropertiesAction {
-    /** Enum value getAccessControl. */
+    /**
+     * Enum value getAccessControl.
+     */
     GET_ACCESS_CONTROL("getAccessControl"),
 
-    /** Enum value getStatus. */
+    /**
+     * Enum value getStatus.
+     */
     GET_STATUS("getStatus");
 
-    /** The actual serialized value for a PathGetPropertiesAction instance. */
+    /**
+     * The actual serialized value for a PathGetPropertiesAction instance.
+     */
     private final String value;
 
     PathGetPropertiesAction(String value) {
@@ -24,12 +29,14 @@ public enum PathGetPropertiesAction {
 
     /**
      * Parses a serialized value to a PathGetPropertiesAction instance.
-     *
+     * 
      * @param value the serialized value to parse.
      * @return the parsed PathGetPropertiesAction object, or null if unable to parse.
      */
-    @JsonCreator
     public static PathGetPropertiesAction fromString(String value) {
+        if (value == null) {
+            return null;
+        }
         PathGetPropertiesAction[] items = PathGetPropertiesAction.values();
         for (PathGetPropertiesAction item : items) {
             if (item.toString().equalsIgnoreCase(value)) {
@@ -39,7 +46,9 @@ public enum PathGetPropertiesAction {
         return null;
     }
 
-    @JsonValue
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String toString() {
         return this.value;

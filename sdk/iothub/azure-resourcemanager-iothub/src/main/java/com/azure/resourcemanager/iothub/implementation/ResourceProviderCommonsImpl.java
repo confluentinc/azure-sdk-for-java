@@ -12,39 +12,35 @@ import com.azure.resourcemanager.iothub.fluent.ResourceProviderCommonsClient;
 import com.azure.resourcemanager.iothub.fluent.models.UserSubscriptionQuotaListResultInner;
 import com.azure.resourcemanager.iothub.models.ResourceProviderCommons;
 import com.azure.resourcemanager.iothub.models.UserSubscriptionQuotaListResult;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 public final class ResourceProviderCommonsImpl implements ResourceProviderCommons {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(ResourceProviderCommonsImpl.class);
+    private static final ClientLogger LOGGER = new ClientLogger(ResourceProviderCommonsImpl.class);
 
     private final ResourceProviderCommonsClient innerClient;
 
     private final com.azure.resourcemanager.iothub.IotHubManager serviceManager;
 
-    public ResourceProviderCommonsImpl(
-        ResourceProviderCommonsClient innerClient, com.azure.resourcemanager.iothub.IotHubManager serviceManager) {
+    public ResourceProviderCommonsImpl(ResourceProviderCommonsClient innerClient,
+        com.azure.resourcemanager.iothub.IotHubManager serviceManager) {
         this.innerClient = innerClient;
         this.serviceManager = serviceManager;
+    }
+
+    public Response<UserSubscriptionQuotaListResult> getSubscriptionQuotaWithResponse(Context context) {
+        Response<UserSubscriptionQuotaListResultInner> inner
+            = this.serviceClient().getSubscriptionQuotaWithResponse(context);
+        if (inner != null) {
+            return new SimpleResponse<>(inner.getRequest(), inner.getStatusCode(), inner.getHeaders(),
+                new UserSubscriptionQuotaListResultImpl(inner.getValue(), this.manager()));
+        } else {
+            return null;
+        }
     }
 
     public UserSubscriptionQuotaListResult getSubscriptionQuota() {
         UserSubscriptionQuotaListResultInner inner = this.serviceClient().getSubscriptionQuota();
         if (inner != null) {
             return new UserSubscriptionQuotaListResultImpl(inner, this.manager());
-        } else {
-            return null;
-        }
-    }
-
-    public Response<UserSubscriptionQuotaListResult> getSubscriptionQuotaWithResponse(Context context) {
-        Response<UserSubscriptionQuotaListResultInner> inner =
-            this.serviceClient().getSubscriptionQuotaWithResponse(context);
-        if (inner != null) {
-            return new SimpleResponse<>(
-                inner.getRequest(),
-                inner.getStatusCode(),
-                inner.getHeaders(),
-                new UserSubscriptionQuotaListResultImpl(inner.getValue(), this.manager()));
         } else {
             return null;
         }

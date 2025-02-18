@@ -4,21 +4,28 @@
 
 package com.azure.resourcemanager.compute.models;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonValue;
-
-/** Defines values for StatusLevelTypes. */
+/**
+ * The level code.
+ */
 public enum StatusLevelTypes {
-    /** Enum value Info. */
+    /**
+     * Enum value Info.
+     */
     INFO("Info"),
 
-    /** Enum value Warning. */
+    /**
+     * Enum value Warning.
+     */
     WARNING("Warning"),
 
-    /** Enum value Error. */
+    /**
+     * Enum value Error.
+     */
     ERROR("Error");
 
-    /** The actual serialized value for a StatusLevelTypes instance. */
+    /**
+     * The actual serialized value for a StatusLevelTypes instance.
+     */
     private final String value;
 
     StatusLevelTypes(String value) {
@@ -27,12 +34,14 @@ public enum StatusLevelTypes {
 
     /**
      * Parses a serialized value to a StatusLevelTypes instance.
-     *
+     * 
      * @param value the serialized value to parse.
      * @return the parsed StatusLevelTypes object, or null if unable to parse.
      */
-    @JsonCreator
     public static StatusLevelTypes fromString(String value) {
+        if (value == null) {
+            return null;
+        }
         StatusLevelTypes[] items = StatusLevelTypes.values();
         for (StatusLevelTypes item : items) {
             if (item.toString().equalsIgnoreCase(value)) {
@@ -42,7 +51,9 @@ public enum StatusLevelTypes {
         return null;
     }
 
-    @JsonValue
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String toString() {
         return this.value;

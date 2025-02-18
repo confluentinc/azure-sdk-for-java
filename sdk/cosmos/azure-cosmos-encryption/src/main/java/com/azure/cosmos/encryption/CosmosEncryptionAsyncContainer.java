@@ -3,81 +3,103 @@
 
 package com.azure.cosmos.encryption;
 
-import com.azure.cosmos.BridgeInternal;
 import com.azure.cosmos.CosmosAsyncContainer;
 import com.azure.cosmos.CosmosBridgeInternal;
 import com.azure.cosmos.CosmosException;
+import com.azure.cosmos.CosmosItemSerializer;
 import com.azure.cosmos.encryption.implementation.Constants;
+import com.azure.cosmos.encryption.implementation.CosmosEncryptionQueryTransformer;
 import com.azure.cosmos.encryption.implementation.CosmosResponseFactory;
+import com.azure.cosmos.encryption.implementation.EncryptionImplementationBridgeHelpers;
 import com.azure.cosmos.encryption.implementation.EncryptionProcessor;
+import com.azure.cosmos.encryption.implementation.EncryptionSettings;
 import com.azure.cosmos.encryption.implementation.EncryptionUtils;
-import com.azure.cosmos.encryption.models.EncryptionModelBridgeInternal;
+import com.azure.cosmos.encryption.implementation.mdesrc.cryptography.MicrosoftDataEncryptionException;
 import com.azure.cosmos.encryption.models.SqlQuerySpecWithEncryption;
-import com.azure.cosmos.encryption.util.Beta;
+import com.azure.cosmos.implementation.CosmosBulkExecutionOptionsImpl;
 import com.azure.cosmos.implementation.CosmosPagedFluxOptions;
 import com.azure.cosmos.implementation.HttpConstants;
 import com.azure.cosmos.implementation.ImplementationBridgeHelpers;
-import com.azure.cosmos.implementation.ItemDeserializer;
+import com.azure.cosmos.implementation.JsonSerializable;
+import com.azure.cosmos.implementation.ObjectNodeMap;
+import com.azure.cosmos.implementation.Strings;
+import com.azure.cosmos.implementation.apachecommons.lang.tuple.Pair;
 import com.azure.cosmos.implementation.batch.ItemBatchOperation;
+import com.azure.cosmos.implementation.batch.ItemBulkOperation;
 import com.azure.cosmos.implementation.guava25.base.Preconditions;
+import com.azure.cosmos.implementation.patch.PatchOperation;
+import com.azure.cosmos.implementation.patch.PatchOperationCore;
+import com.azure.cosmos.implementation.patch.PatchOperationType;
 import com.azure.cosmos.implementation.query.Transformer;
 import com.azure.cosmos.models.CosmosBatch;
 import com.azure.cosmos.models.CosmosBatchOperationResult;
 import com.azure.cosmos.models.CosmosBatchRequestOptions;
 import com.azure.cosmos.models.CosmosBatchResponse;
+import com.azure.cosmos.models.CosmosBulkExecutionOptions;
+import com.azure.cosmos.models.CosmosBulkItemResponse;
+import com.azure.cosmos.models.CosmosBulkOperationResponse;
 import com.azure.cosmos.models.CosmosChangeFeedRequestOptions;
+import com.azure.cosmos.models.CosmosItemOperation;
 import com.azure.cosmos.models.CosmosItemRequestOptions;
 import com.azure.cosmos.models.CosmosItemResponse;
+import com.azure.cosmos.models.CosmosPatchItemRequestOptions;
+import com.azure.cosmos.models.CosmosPatchOperations;
 import com.azure.cosmos.models.CosmosQueryRequestOptions;
 import com.azure.cosmos.models.FeedResponse;
 import com.azure.cosmos.models.ModelBridgeInternal;
 import com.azure.cosmos.models.PartitionKey;
+import com.azure.cosmos.models.PartitionKeyBuilder;
 import com.azure.cosmos.models.SqlParameter;
 import com.azure.cosmos.models.SqlQuerySpec;
-import com.azure.cosmos.models.CosmosPatchOperations;
-import com.azure.cosmos.implementation.patch.PatchOperation;
-import com.azure.cosmos.implementation.patch.PatchOperationCore;
-import com.azure.cosmos.implementation.patch.PatchOperationType;
-import com.azure.cosmos.models.CosmosPatchItemRequestOptions;
 import com.azure.cosmos.util.CosmosPagedFlux;
 import com.azure.cosmos.util.UtilBridgeInternal;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Scheduler;
 import reactor.core.scheduler.Schedulers;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 
 import static com.azure.cosmos.implementation.Utils.getEffectiveCosmosChangeFeedRequestOptions;
-import static com.azure.cosmos.implementation.Utils.setContinuationTokenAndMaxItemCount;
 import static com.azure.cosmos.implementation.guava25.base.Preconditions.checkNotNull;
 
 /**
  * CosmosAsyncContainer with encryption capabilities.
  */
-public class CosmosEncryptionAsyncContainer {
+public final class CosmosEncryptionAsyncContainer {
     private final Scheduler encryptionScheduler;
     private final CosmosResponseFactory responseFactory = new CosmosResponseFactory();
     private final CosmosAsyncContainer container;
     private final EncryptionProcessor encryptionProcessor;
 
     private final CosmosEncryptionAsyncClient cosmosEncryptionAsyncClient;
-    ImplementationBridgeHelpers.CosmosItemResponseHelper.CosmosItemResponseBuilderAccessor cosmosItemResponseBuilderAccessor;
-    ImplementationBridgeHelpers.CosmosItemRequestOptionsHelper.CosmosItemRequestOptionsAccessor cosmosItemRequestOptionsAccessor;
-    ImplementationBridgeHelpers.CosmosQueryRequestOptionsHelper.CosmosQueryRequestOptionsAccessor cosmosQueryRequestOptionsAccessor;
-    ImplementationBridgeHelpers.CosmosChangeFeedRequestOptionsHelper.CosmosChangeFeedRequestOptionsAccessor cosmosChangeFeedRequestOptionsAccessor;
-    ImplementationBridgeHelpers.CosmosAsyncContainerHelper.CosmosAsyncContainerAccessor cosmosAsyncContainerAccessor;
-    ImplementationBridgeHelpers.CosmosBatchHelper.CosmosBatchAccessor cosmosBatchAccessor;
-    ImplementationBridgeHelpers.CosmosBatchResponseHelper.CosmosBatchResponseAccessor cosmosBatchResponseAccessor;
-    ImplementationBridgeHelpers.CosmosBatchOperationResultHelper.CosmosBatchOperationResultAccessor cosmosBatchOperationResultAccessor;
-    ImplementationBridgeHelpers.CosmosBatchRequestOptionsHelper.CosmosBatchRequestOptionsAccessor cosmosBatchRequestOptionsAccessor;
-    ImplementationBridgeHelpers.CosmosPatchOperationsHelper.CosmosPatchOperationsAccessor cosmosPatchOperationsAccessor;
+
+    private final static ImplementationBridgeHelpers.CosmosItemSerializerHelper.CosmosItemSerializerAccessor itemSerializerAccessor =
+        ImplementationBridgeHelpers.CosmosItemSerializerHelper.getCosmosItemSerializerAccessor();
+    private final static ImplementationBridgeHelpers.CosmosItemResponseHelper.CosmosItemResponseBuilderAccessor cosmosItemResponseBuilderAccessor = ImplementationBridgeHelpers.CosmosItemResponseHelper.getCosmosItemResponseBuilderAccessor();
+    private final static ImplementationBridgeHelpers.CosmosItemRequestOptionsHelper.CosmosItemRequestOptionsAccessor cosmosItemRequestOptionsAccessor = ImplementationBridgeHelpers.CosmosItemRequestOptionsHelper.getCosmosItemRequestOptionsAccessor();
+    private final static ImplementationBridgeHelpers.CosmosQueryRequestOptionsHelper.CosmosQueryRequestOptionsAccessor cosmosQueryRequestOptionsAccessor = ImplementationBridgeHelpers.CosmosQueryRequestOptionsHelper.getCosmosQueryRequestOptionsAccessor();
+    private final static ImplementationBridgeHelpers.CosmosChangeFeedRequestOptionsHelper.CosmosChangeFeedRequestOptionsAccessor cosmosChangeFeedRequestOptionsAccessor = ImplementationBridgeHelpers.CosmosChangeFeedRequestOptionsHelper.getCosmosChangeFeedRequestOptionsAccessor();
+    private final static ImplementationBridgeHelpers.CosmosAsyncContainerHelper.CosmosAsyncContainerAccessor cosmosAsyncContainerAccessor = ImplementationBridgeHelpers.CosmosAsyncContainerHelper.getCosmosAsyncContainerAccessor();
+    private final static ImplementationBridgeHelpers.CosmosBatchHelper.CosmosBatchAccessor cosmosBatchAccessor = ImplementationBridgeHelpers.CosmosBatchHelper.getCosmosBatchAccessor();
+    private final static ImplementationBridgeHelpers.CosmosBatchResponseHelper.CosmosBatchResponseAccessor cosmosBatchResponseAccessor = ImplementationBridgeHelpers.CosmosBatchResponseHelper.getCosmosBatchResponseAccessor();
+    private final static ImplementationBridgeHelpers.CosmosBatchOperationResultHelper.CosmosBatchOperationResultAccessor cosmosBatchOperationResultAccessor = ImplementationBridgeHelpers.CosmosBatchOperationResultHelper.getCosmosBatchOperationResultAccessor();
+    private final static ImplementationBridgeHelpers.CosmosBatchRequestOptionsHelper.CosmosBatchRequestOptionsAccessor cosmosBatchRequestOptionsAccessor = ImplementationBridgeHelpers.CosmosBatchRequestOptionsHelper.getCosmosBatchRequestOptionsAccessor();
+    private final static ImplementationBridgeHelpers.CosmosPatchOperationsHelper.CosmosPatchOperationsAccessor cosmosPatchOperationsAccessor = ImplementationBridgeHelpers.CosmosPatchOperationsHelper.getCosmosPatchOperationsAccessor();
+    private final static ImplementationBridgeHelpers.CosmosBulkExecutionOptionsHelper.CosmosBulkExecutionOptionsAccessor cosmosBulkExecutionOptionsAccessor = ImplementationBridgeHelpers.CosmosBulkExecutionOptionsHelper.getCosmosBulkExecutionOptionsAccessor();
+    private final static ImplementationBridgeHelpers.CosmosBulkItemResponseHelper.CosmosBulkItemResponseAccessor cosmosBulkItemResponseAccessor = ImplementationBridgeHelpers.CosmosBulkItemResponseHelper.getCosmosBulkItemResponseAccessor();
+    private final static EncryptionImplementationBridgeHelpers.SqlQuerySpecWithEncryptionHelper.SqlQuerySpecWithEncryptionAccessor specWithEncryptionAccessor = EncryptionImplementationBridgeHelpers.SqlQuerySpecWithEncryptionHelper.getSqlQuerySpecWithEncryptionAccessor();
 
     CosmosEncryptionAsyncContainer(CosmosAsyncContainer container,
                                    CosmosEncryptionAsyncClient cosmosEncryptionAsyncClient) {
@@ -85,21 +107,6 @@ public class CosmosEncryptionAsyncContainer {
         this.cosmosEncryptionAsyncClient = cosmosEncryptionAsyncClient;
         this.encryptionProcessor = new EncryptionProcessor(this.container, cosmosEncryptionAsyncClient);
         this.encryptionScheduler = Schedulers.parallel();
-        this.cosmosItemResponseBuilderAccessor =
-            ImplementationBridgeHelpers.CosmosItemResponseHelper.getCosmosItemResponseBuilderAccessor();
-        this.cosmosItemRequestOptionsAccessor =
-            ImplementationBridgeHelpers.CosmosItemRequestOptionsHelper.getCosmosItemRequestOptionsAccessor();
-        this.cosmosQueryRequestOptionsAccessor =
-            ImplementationBridgeHelpers.CosmosQueryRequestOptionsHelper.getCosmosQueryRequestOptionsAccessor();
-        this.cosmosChangeFeedRequestOptionsAccessor =
-            ImplementationBridgeHelpers.CosmosChangeFeedRequestOptionsHelper.getCosmosChangeFeedRequestOptionsAccessor();
-        this.cosmosAsyncContainerAccessor =
-            ImplementationBridgeHelpers.CosmosAsyncContainerHelper.getCosmosAsyncContainerAccessor();
-        this.cosmosBatchAccessor = ImplementationBridgeHelpers.CosmosBatchHelper.getCosmosBatchAccessor();
-        this.cosmosBatchResponseAccessor = ImplementationBridgeHelpers.CosmosBatchResponseHelper.getCosmosBatchResponseAccessor();
-        this.cosmosBatchOperationResultAccessor = ImplementationBridgeHelpers.CosmosBatchOperationResultHelper.getCosmosBatchOperationResultAccessor();
-        this.cosmosBatchRequestOptionsAccessor = ImplementationBridgeHelpers.CosmosBatchRequestOptionsHelper.getCosmosBatchRequestOptionsAccessor();
-        this.cosmosPatchOperationsAccessor = ImplementationBridgeHelpers.CosmosPatchOperationsHelper.getCosmosPatchOperationsAccessor();
     }
 
     EncryptionProcessor getEncryptionProcessor() {
@@ -138,8 +145,8 @@ public class CosmosEncryptionAsyncContainer {
         if (requestOptions == null) {
             requestOptions = new CosmosItemRequestOptions();
         }
-        byte[] streamPayload = cosmosSerializerToStream(item);
-        return createItemHelper(streamPayload, null, requestOptions,(Class<T>) item.getClass(), false );
+        byte[] streamPayload = cosmosSerializerToStream(item, getEffectiveItemSerializer(requestOptions));
+        return createItemHelper(streamPayload, requestOptions,(Class<T>) item.getClass(), false );
 
     }
 
@@ -168,7 +175,8 @@ public class CosmosEncryptionAsyncContainer {
         Preconditions.checkArgument(partitionKey != null, "partitionKey cannot be null for operations using "
             + "EncryptionContainer.");
 
-        byte[] streamPayload = cosmosSerializerToStream(item);
+        byte[] streamPayload = cosmosSerializerToStream(item, getEffectiveItemSerializer(requestOptions));
+
         return  createItemHelper(streamPayload, partitionKey, requestOptions, (Class<T>) item.getClass(), false);
     }
 
@@ -201,7 +209,93 @@ public class CosmosEncryptionAsyncContainer {
                                                        PartitionKey partitionKey,
                                                        CosmosItemRequestOptions requestOptions) {
 
-        return container.deleteItem(itemId, partitionKey, requestOptions);
+        return deleteItemInternal(itemId, partitionKey, requestOptions);
+    }
+
+    private Mono<CosmosItemResponse<Object>> deleteItemInternal(String itemId, PartitionKey partitionKey, CosmosItemRequestOptions requestOptions) {
+        this.encryptionProcessor.initEncryptionSettingsIfNotInitializedAsync();
+        return Mono.just(this.encryptionProcessor.getEncryptionSettings())
+            .flatMap(settings -> {
+                try {
+                    return Mono.zip(
+                        checkAndGetEncryptedId(itemId, settings),
+                        checkAndGetEncryptedPartitionKey(partitionKey, settings)
+                    ).flatMap(encryptedIdPartitionTuple -> container.deleteItem(encryptedIdPartitionTuple.getT1(), encryptedIdPartitionTuple.getT2(), requestOptions));
+                } catch (Exception ex) {
+                    return Mono.error(ex);
+                }
+            });
+    }
+
+    private Mono<String> checkAndGetEncryptedId(String itemId, EncryptionSettings encryptionSettings)
+    {
+        if (this.encryptionProcessor.getClientEncryptionPolicy().getIncludedPaths().stream().
+            anyMatch(includedPath -> includedPath.getPath().substring(1).equals(Constants.PROPERTY_NAME_ID))) {
+            return this.getEncryptedItem(encryptionSettings, Constants.PROPERTY_NAME_ID, itemId);
+        }
+        return Mono.just(itemId);
+    }
+
+    private Mono<PartitionKey> checkAndGetEncryptedPartitionKey(PartitionKey partitionKey, EncryptionSettings encryptionSettings) {
+        if (encryptionSettings.getPartitionKeyPaths().isEmpty()) {
+            return Mono.just(partitionKey);
+        }
+
+        JsonNode partitionKeyNode;
+        try {
+            partitionKeyNode = EncryptionUtils.getSimpleObjectMapper().readTree(partitionKey.toString());
+        } catch (JsonProcessingException ex) {
+            return Mono.error(ex);
+        }
+
+        if (partitionKeyNode.isArray() && partitionKeyNode.size() > 1) {
+            ArrayNode arrayNode = (ArrayNode) partitionKeyNode;
+
+            return Mono.just(new PartitionKeyBuilder())
+                .flatMap(partitionKeyBuilder -> Flux.fromIterable(encryptionSettings.getPartitionKeyPaths())
+                    .flatMap(path -> {
+                        // case: partition key path is /a/b/c and the client encryption policy has /a in path.
+                        // hence encrypt the partition key value with using its top level path /a since
+                        // /c would have been encrypted in the document using /a's policy.
+                        String partitionKeyPath = path.split("/")[1];
+
+                        String childPartitionKey = arrayNode.elements().next().textValue();
+                        if (this.encryptionProcessor.getClientEncryptionPolicy().getIncludedPaths().stream().
+                            anyMatch(includedPath -> includedPath.getPath().substring(1).equals(partitionKeyPath))) {
+                            partitionKeyBuilder.add(childPartitionKey);
+                            return Mono.empty();
+                        }
+                        return getEncryptedItem(encryptionSettings, partitionKeyPath, childPartitionKey);
+                    })
+                    .collectList()
+                    .flatMapMany(Flux::fromIterable)
+                    .doOnNext(partitionKeyBuilder::add)
+                    .then(Mono.just(partitionKeyBuilder.build())));
+        } else {
+            return Mono.just(encryptionSettings.getPartitionKeyPaths().get(0))
+                .flatMap(path -> {
+                    String partitionKeyPath = path.split("/")[1];
+                    if (this.encryptionProcessor.getClientEncryptionPolicy().getIncludedPaths().stream().
+                        noneMatch(includedPath -> includedPath.getPath().substring(1).equals(partitionKeyPath))) {
+                        return Mono.just(partitionKeyNode.elements().next().textValue());
+                    }
+                    return getEncryptedItem(encryptionSettings, partitionKeyPath, partitionKeyNode.elements().next().textValue());
+                })
+                .flatMap(encryptedPartitionKey -> Mono.just(new PartitionKey(encryptedPartitionKey)));
+        }
+    }
+
+    private Mono<String> getEncryptedItem(EncryptionSettings encryptionSettings, String propertyName, String propertyValue) {
+        return encryptionSettings
+            .getEncryptionSettingForPropertyAsync(propertyName, this.encryptionProcessor)
+            .flatMap(settings -> {
+                try {
+                    return Mono.just(
+                        this.encryptionProcessor.encryptAndSerializeValue(settings, propertyValue, propertyName));
+                } catch (MicrosoftDataEncryptionException ex) {
+                    return Mono.error(ex);
+                }
+            });
     }
 
     /**
@@ -223,7 +317,6 @@ public class CosmosEncryptionAsyncContainer {
      * Deletes all items in the Container with the specified partitionKey value.
      * Starts an asynchronous Cosmos DB background operation which deletes all items in the Container with the specified value.
      * The asynchronous Cosmos DB background operation runs using a percentage of user RUs.
-     *
      * After subscription the operation will be performed.
      * The {@link Mono} upon successful completion will contain a single Cosmos item response for all the deleted items.
      *
@@ -231,12 +324,19 @@ public class CosmosEncryptionAsyncContainer {
      * @param requestOptions the request options.
      * @return an {@link Mono} containing the Cosmos item resource response.
      */
-    @Beta(value = Beta.SinceVersion.V1, warningText = Beta.PREVIEW_SUBJECT_TO_CHANGE_WARNING)
-    public Mono<CosmosItemResponse<Object>> deleteAllItemsByPartitionKey(PartitionKey partitionKey, CosmosItemRequestOptions requestOptions) {
-        if (requestOptions == null) {
-            requestOptions = new CosmosItemRequestOptions();
-        }
-        return container.deleteAllItemsByPartitionKey(partitionKey, requestOptions);
+    // TODO Make this api public once it is GA in cosmos core library
+    Mono<CosmosItemResponse<Object>> deleteAllItemsByPartitionKey(PartitionKey partitionKey, CosmosItemRequestOptions requestOptions) {
+        final CosmosItemRequestOptions options = Optional.ofNullable(requestOptions)
+            .orElse(new CosmosItemRequestOptions());
+
+        return deleteAllItemsByPartitionKeyInternal(partitionKey, options);
+    }
+
+    private Mono<CosmosItemResponse<Object>> deleteAllItemsByPartitionKeyInternal(PartitionKey partitionKey, CosmosItemRequestOptions requestOptions) {
+        return this.encryptionProcessor.initEncryptionSettingsIfNotInitializedAsync()
+            .thenReturn(this.encryptionProcessor.getEncryptionSettings())
+            .flatMap(encryptedSettings -> checkAndGetEncryptedPartitionKey(partitionKey, encryptedSettings))
+            .flatMap(encryptedPartitionKey -> container.deleteAllItemsByPartitionKey(encryptedPartitionKey, requestOptions));
     }
 
     /**
@@ -274,8 +374,8 @@ public class CosmosEncryptionAsyncContainer {
             requestOptions = new CosmosItemRequestOptions();
         }
 
-        byte[] streamPayload = cosmosSerializerToStream(item);
-        return upsertItemHelper(streamPayload, null, requestOptions, (Class<T>) item.getClass(), false);
+        byte[] streamPayload = cosmosSerializerToStream(item, getEffectiveItemSerializer(requestOptions));
+        return upsertItemHelper(streamPayload, requestOptions, (Class<T>) item.getClass(), false);
     }
 
     /**
@@ -304,7 +404,7 @@ public class CosmosEncryptionAsyncContainer {
             + "EncryptionContainer.");
 
 
-        byte[] streamPayload = cosmosSerializerToStream(item);
+        byte[] streamPayload = cosmosSerializerToStream(item, getEffectiveItemSerializer(requestOptions));
         return upsertItemHelper(streamPayload, partitionKey, requestOptions, (Class<T>) item.getClass(), false);
     }
 
@@ -350,8 +450,7 @@ public class CosmosEncryptionAsyncContainer {
         Preconditions.checkArgument(partitionKey != null, "partitionKey cannot be null for operations using "
             + "EncryptionContainer.");
 
-
-        byte[] streamPayload = cosmosSerializerToStream(item);
+        byte[] streamPayload = cosmosSerializerToStream(item, getEffectiveItemSerializer(requestOptions));
         return replaceItemHelper(streamPayload, itemId, partitionKey, requestOptions, (Class<T>) item.getClass(), false);
     }
 
@@ -388,15 +487,18 @@ public class CosmosEncryptionAsyncContainer {
                                                     PartitionKey partitionKey,
                                                     CosmosItemRequestOptions requestOptions,
                                                     Class<T> classType) {
-        if (requestOptions == null) {
-            requestOptions = new CosmosItemRequestOptions();
-        }
+        final CosmosItemRequestOptions options = Optional.ofNullable(requestOptions)
+            .orElse(new CosmosItemRequestOptions());
 
-        Mono<CosmosItemResponse<byte[]>> responseMessageMono = this.readItemHelper(id, partitionKey, requestOptions, false);
+        Mono<CosmosItemResponse<byte[]>> responseMessageMono = this.readItemHelper(id, partitionKey, options, false);
+        CosmosItemSerializer effectiveItemSerializer =
+            cosmosEncryptionAsyncClient.getEffectiveItemSerializer(options.getCustomItemSerializer());
 
         return responseMessageMono.publishOn(encryptionScheduler).flatMap(cosmosItemResponse -> setByteArrayContent(cosmosItemResponse,
-            this.encryptionProcessor.decrypt(this.cosmosItemResponseBuilderAccessor.getByteArrayContent(cosmosItemResponse)))
-            .map(bytes -> this.responseFactory.createItemResponse(cosmosItemResponse, classType)));
+            this.encryptionProcessor.decrypt(
+                cosmosItemResponseBuilderAccessor.getByteArrayContent(cosmosItemResponse),
+                CosmosItemSerializer.DEFAULT_SERIALIZER))
+            .map(bytes -> this.responseFactory.createItemResponse(cosmosItemResponse, classType, effectiveItemSerializer)));
     }
 
     /**
@@ -499,18 +601,18 @@ public class CosmosEncryptionAsyncContainer {
             options = new CosmosQueryRequestOptions();
         }
 
-        if (EncryptionModelBridgeInternal.getEncryptionParamMap(sqlQuerySpecWithEncryption).size() > 0) {
+        if (specWithEncryptionAccessor.getEncryptionParamMap(sqlQuerySpecWithEncryption).size() > 0) {
             List<Mono<Void>> encryptionSqlParameterMonoList = new ArrayList<>();
             for (Map.Entry<String, SqlParameter> entry :
-                EncryptionModelBridgeInternal.getEncryptionParamMap(sqlQuerySpecWithEncryption).entrySet()) {
-                encryptionSqlParameterMonoList.add(EncryptionModelBridgeInternal.addEncryptionParameterAsync(sqlQuerySpecWithEncryption, entry.getKey(), entry.getValue(), this));
+                specWithEncryptionAccessor.getEncryptionParamMap(sqlQuerySpecWithEncryption).entrySet()) {
+                encryptionSqlParameterMonoList.add(specWithEncryptionAccessor.addEncryptionParameterAsync(sqlQuerySpecWithEncryption, entry.getKey(), entry.getValue(), this));
             }
             Mono<List<Void>> listMono = Flux.mergeSequential(encryptionSqlParameterMonoList).collectList();
             Mono<SqlQuerySpec> sqlQuerySpecMono =
-                listMono.flatMap(ignoreVoids -> Mono.just(EncryptionModelBridgeInternal.getSqlQuerySpec(sqlQuerySpecWithEncryption)));
+                listMono.flatMap(ignoreVoids -> Mono.just(specWithEncryptionAccessor.getSqlQuerySpec(sqlQuerySpecWithEncryption)));
             return queryItemsHelperWithMonoSqlQuerySpec(sqlQuerySpecMono, sqlQuerySpecWithEncryption, options, classType, false);
         } else {
-            return queryItemsHelper(EncryptionModelBridgeInternal.getSqlQuerySpec(sqlQuerySpecWithEncryption),
+            return queryItemsHelper(specWithEncryptionAccessor.getSqlQuerySpec(sqlQuerySpecWithEncryption),
                 options, classType, false);
         }
     }
@@ -528,9 +630,8 @@ public class CosmosEncryptionAsyncContainer {
      * @return a {@link CosmosPagedFlux} containing one or several feed response pages of the obtained
      * items or an error.
      */
-    @Beta(value = Beta.SinceVersion.V1, warningText =
-        Beta.PREVIEW_SUBJECT_TO_CHANGE_WARNING)
-    public <T> CosmosPagedFlux<T> queryChangeFeed(CosmosChangeFeedRequestOptions options, Class<T> classType) {
+    // TODO Make this api public once it is GA in cosmos core library
+    <T> CosmosPagedFlux<T> queryChangeFeed(CosmosChangeFeedRequestOptions options, Class<T> classType) {
         checkNotNull(options, "Argument 'options' must not be null.");
         checkNotNull(classType, "Argument 'classType' must not be null.");
 
@@ -563,11 +664,10 @@ public class CosmosEncryptionAsyncContainer {
         checkNotNull(partitionKey, "expected non-null partitionKey for patchItem");
         checkNotNull(cosmosPatchOperations, "expected non-null cosmosPatchOperations");
 
-        if (options == null) {
-            options = new CosmosPatchItemRequestOptions();
-        }
+        final CosmosPatchItemRequestOptions patchOptions = Optional.ofNullable(options)
+            .orElse(new CosmosPatchItemRequestOptions());
 
-        return patchItemHelper(itemId, partitionKey, cosmosPatchOperations, options, itemType);
+        return patchItemHelper(itemId, partitionKey, cosmosPatchOperations, patchOptions, itemType);
     }
 
     private <T> Mono<CosmosItemResponse<T>> patchItemHelper(String itemId,
@@ -577,7 +677,13 @@ public class CosmosEncryptionAsyncContainer {
                                                            Class<T> itemType) {
         this.setRequestHeaders(options);
         List<Mono<PatchOperation>> monoList = new ArrayList<>();
-        for (PatchOperation patchOperation : this.cosmosPatchOperationsAccessor.getPatchOperations(cosmosPatchOperations)) {
+        List<PatchOperation> operations = cosmosPatchOperationsAccessor.getPatchOperations(cosmosPatchOperations);
+        List<PatchOperation> operationsSnapshot;
+        synchronized (operations) {
+            operationsSnapshot = new ArrayList<>(operations);
+        }
+
+        for (PatchOperation patchOperation : operationsSnapshot) {
             Mono<PatchOperation> itemPatchOperationMono = null;
             if (patchOperation.getOperationType() == PatchOperationType.REMOVE) {
                 itemPatchOperationMono = Mono.just(patchOperation);
@@ -605,8 +711,15 @@ public class CosmosEncryptionAsyncContainer {
         CosmosPatchOperations encryptedCosmosPatchOperations = CosmosPatchOperations.create();
 
         return encryptedPatchOperationsListMono.flatMap(patchOperations -> {
-            this.cosmosPatchOperationsAccessor.getPatchOperations(encryptedCosmosPatchOperations).addAll(patchOperations);
-            return patchItemInternalHelper(itemId, partitionKey, encryptedCosmosPatchOperations, finalRequestOptions,itemType, false);
+            List<PatchOperation> snapshot =
+                cosmosPatchOperationsAccessor.getPatchOperations(encryptedCosmosPatchOperations);
+
+            synchronized(snapshot) {
+                snapshot.addAll(patchOperations);
+            }
+
+            return patchItemInternalHelper(
+                itemId, partitionKey, encryptedCosmosPatchOperations, finalRequestOptions,itemType, false);
         });
     }
 
@@ -619,11 +732,26 @@ public class CosmosEncryptionAsyncContainer {
                                                                     boolean isRetry) {
 
         setRequestHeaders(requestOptions);
-        return this.container.patchItem(itemId, partitionKey, encryptedCosmosPatchOperations, requestOptions, itemType).publishOn(encryptionScheduler).
-            flatMap(cosmosItemResponse -> setByteArrayContent((CosmosItemResponse<byte[]>) cosmosItemResponse,
-                this.encryptionProcessor.decrypt(this.cosmosItemResponseBuilderAccessor.getByteArrayContent((CosmosItemResponse<byte[]>) cosmosItemResponse)))
-                .map(bytes -> this.responseFactory.createItemResponse((CosmosItemResponse<byte[]>) cosmosItemResponse,
-                    itemType))).onErrorResume(exception -> {
+        CosmosItemSerializer effectiveItemSerializer =
+            cosmosEncryptionAsyncClient.getEffectiveItemSerializer(requestOptions.getCustomItemSerializer());
+        CosmosPatchItemRequestOptions requestOptionsWithDefaultSerializer = requestOptions != null
+            ? (CosmosPatchItemRequestOptions)cosmosItemRequestOptionsAccessor
+                .clonePatchItemRequestOptions(requestOptions)
+                .setCustomItemSerializer(CosmosItemSerializer.DEFAULT_SERIALIZER)
+            : new CosmosPatchItemRequestOptions();
+        return this.encryptionProcessor.initEncryptionSettingsIfNotInitializedAsync()
+            .thenReturn(this.encryptionProcessor.getEncryptionSettings())
+            .flatMap(encryptionSettings -> Mono.zip(
+                checkAndGetEncryptedId(itemId, encryptionSettings),
+                checkAndGetEncryptedPartitionKey(partitionKey, encryptionSettings))
+            .flatMap(encryptedIdPartitionKeyTuple ->
+                this.container.patchItem(encryptedIdPartitionKeyTuple.getT1(), encryptedIdPartitionKeyTuple.getT2(), encryptedCosmosPatchOperations, requestOptionsWithDefaultSerializer, itemType).publishOn(encryptionScheduler).
+                flatMap(cosmosItemResponse -> setByteArrayContent((CosmosItemResponse<byte[]>) cosmosItemResponse,
+                    this.encryptionProcessor.decrypt(
+                        cosmosItemResponseBuilderAccessor.getByteArrayContent((CosmosItemResponse<byte[]>) cosmosItemResponse),
+                        CosmosItemSerializer.DEFAULT_SERIALIZER))
+                    .map(bytes -> this.responseFactory.createItemResponse((CosmosItemResponse<byte[]>) cosmosItemResponse,
+                        itemType, effectiveItemSerializer))).onErrorResume(exception -> {
                 if (!isRetry && exception instanceof CosmosException) {
                     final CosmosException cosmosException = (CosmosException) exception;
                     if (isIncorrectContainerRid(cosmosException)) {
@@ -633,7 +761,7 @@ public class CosmosEncryptionAsyncContainer {
                     }
                 }
                 return Mono.error(exception);
-            });
+            })));
     }
 
     /**
@@ -654,12 +782,19 @@ public class CosmosEncryptionAsyncContainer {
         return container;
     }
 
-    <T> byte[] cosmosSerializerToStream(T item) {
-        return EncryptionUtils.serializeJsonToByteArray(EncryptionUtils.getSimpleObjectMapper(), item);
+    <T> byte[] cosmosSerializerToStream(T item, CosmosItemSerializer effectiveSerializer) {
+        return EncryptionUtils.serializeJsonToByteArray(effectiveSerializer, item);
     }
 
-    ItemDeserializer getItemDeserializer() {
-        return CosmosBridgeInternal.getAsyncDocumentClient(container.getDatabase()).getItemDeserializer();
+    CosmosItemSerializer getEffectiveItemSerializer(CosmosItemRequestOptions requestOptions) {
+        return getEffectiveItemSerializer(
+            requestOptions != null ? requestOptions.getCustomItemSerializer() : null);
+    }
+
+    CosmosItemSerializer getEffectiveItemSerializer(CosmosItemSerializer requestLevelItemSerializer) {
+        return CosmosBridgeInternal
+            .getAsyncDocumentClient(container.getDatabase())
+            .getEffectiveItemSerializer(requestLevelItemSerializer);
     }
 
     Mono<JsonNode> decryptResponseNode(
@@ -674,41 +809,13 @@ public class CosmosEncryptionAsyncContainer {
     }
 
     private Mono<CosmosItemResponse<byte[]>> setByteArrayContent(CosmosItemResponse<byte[]> rsp,
-                                                                 Mono<byte[]> bytesMono) {
+                                                                 Mono<Pair<byte[], JsonNode>> bytesMono) {
         return bytesMono.flatMap(
             bytes -> {
-                this.cosmosItemResponseBuilderAccessor.setByteArrayContent(rsp, bytes);
+                cosmosItemResponseBuilderAccessor.setByteArrayContent(rsp, bytes);
                 return Mono.just(rsp);
             }
         ).defaultIfEmpty(rsp);
-    }
-
-    private <T> Function<CosmosPagedFluxOptions, Flux<FeedResponse<T>>> queryDecryptionTransformer(Class<T> classType,
-                                                                                                   boolean isChangeFeed,
-                                                                                                   Function<CosmosPagedFluxOptions, Flux<FeedResponse<JsonNode>>> func) {
-        return func.andThen(flux ->
-            flux.publishOn(encryptionScheduler)
-                .flatMap(
-                    page -> {
-                        boolean useEtagAsContinuation = isChangeFeed;
-                        boolean isNoChangesResponse = isChangeFeed ?
-                            ModelBridgeInternal.getNoCHangesFromFeedResponse(page)
-                            : false;
-                        List<Mono<JsonNode>> jsonNodeArrayMonoList =
-                            page.getResults().stream().map(jsonNode -> decryptResponseNode(jsonNode)).collect(Collectors.toList());
-                        return Flux.concat(jsonNodeArrayMonoList).map(
-                            item -> getItemDeserializer().convert(classType, item)
-                        ).collectList().map(itemList -> BridgeInternal.createFeedResponseWithQueryMetrics(itemList,
-                            page.getResponseHeaders(),
-                            BridgeInternal.queryMetricsFromFeedResponse(page),
-                            ModelBridgeInternal.getQueryPlanDiagnosticsContext(page),
-                            useEtagAsContinuation,
-                            isNoChangesResponse,
-                            page.getCosmosDiagnostics())
-                        );
-                    }
-                )
-        );
     }
 
     private Mono<CosmosItemResponse<byte[]>> readItemHelper(String id,
@@ -716,10 +823,16 @@ public class CosmosEncryptionAsyncContainer {
                                                             CosmosItemRequestOptions requestOptions,
                                                             boolean isRetry) {
         this.setRequestHeaders(requestOptions);
-        Mono<CosmosItemResponse<byte[]>> responseMessageMono = this.container.readItem(
-            id,
-            partitionKey,
-            requestOptions, byte[].class);
+        Mono<CosmosItemResponse<byte[]>> responseMessageMono = this.encryptionProcessor.initEncryptionSettingsIfNotInitializedAsync()
+        .thenReturn(this.encryptionProcessor.getEncryptionSettings())
+        .flatMap(encryptionSettings -> Mono.zip(
+            checkAndGetEncryptedId(id, encryptionSettings),
+            checkAndGetEncryptedPartitionKey(partitionKey, encryptionSettings))
+        .flatMap(encryptedIdPartitionKeyTuple ->
+            this.container.readItem(
+                encryptedIdPartitionKeyTuple.getT1(),
+                encryptedIdPartitionKeyTuple.getT2(),
+                requestOptions, byte[].class)));
         return responseMessageMono.onErrorResume(exception -> {
             if (!isRetry && exception instanceof CosmosException) {
                 final CosmosException cosmosException = (CosmosException) exception;
@@ -734,21 +847,80 @@ public class CosmosEncryptionAsyncContainer {
     }
 
     private <T> Mono<CosmosItemResponse<T>> createItemHelper(byte[] streamPayload,
+                                                             CosmosItemRequestOptions requestOptions,
+                                                             Class<T> itemClass,
+                                                             boolean isRetry) {
+        this.setRequestHeaders(requestOptions);
+        CosmosItemSerializer effectiveItemSerializer =
+            cosmosEncryptionAsyncClient.getEffectiveItemSerializer(requestOptions.getCustomItemSerializer());
+
+        // The actual replace happens on the already encrypted document
+        // so any custom serialization/deserialization happens here in the encryption wrapper
+        CosmosItemRequestOptions requestOptionsWithDefaultSerializer = ModelBridgeInternal
+            .clone(requestOptions)
+            .setCustomItemSerializer(CosmosItemSerializer.DEFAULT_SERIALIZER);
+
+        return this.encryptionProcessor.encrypt(streamPayload)
+            .flatMap(encryptedPayload -> this.container.createItem(
+                encryptedPayload,
+                requestOptionsWithDefaultSerializer)
+                .publishOn(encryptionScheduler)
+                .flatMap(cosmosItemResponse -> setByteArrayContent(cosmosItemResponse,
+                    this.encryptionProcessor.decrypt(
+                        cosmosItemResponseBuilderAccessor.getByteArrayContent(cosmosItemResponse),
+                        CosmosItemSerializer.DEFAULT_SERIALIZER))
+                    .map(bytes -> this.responseFactory.createItemResponse(cosmosItemResponse,
+                        itemClass, effectiveItemSerializer))).onErrorResume(exception -> {
+                    if (!isRetry && exception instanceof CosmosException) {
+                        final CosmosException cosmosException = (CosmosException) exception;
+                        if (isIncorrectContainerRid(cosmosException)) {
+                            this.encryptionProcessor.getIsEncryptionSettingsInitDone().set(false);
+                            return this.encryptionProcessor.initializeEncryptionSettingsAsync(true).then
+                                (Mono.defer(() -> createItemHelper(streamPayload, requestOptions,
+                                    itemClass, true)));
+                        }
+                    }
+                    return Mono.error(exception);
+                }));
+    }
+
+    private <T> Mono<CosmosItemResponse<T>> createItemHelper(byte[] streamPayload,
                                                              PartitionKey partitionKey,
                                                              CosmosItemRequestOptions requestOptions,
                                                              Class<T> itemClass,
                                                              boolean isRetry) {
         this.setRequestHeaders(requestOptions);
-        return this.encryptionProcessor.encrypt(streamPayload)
-            .flatMap(encryptedPayload -> createItemHelper(
+        CosmosItemSerializer effectiveItemSerializer =
+            cosmosEncryptionAsyncClient.getEffectiveItemSerializer(requestOptions.getCustomItemSerializer());
+
+        // The actual replace happens on the already encrypted document
+        // so any custom serialization/deserialization happens here in the encryption wrapper
+        CosmosItemRequestOptions requestOptionsWithDefaultSerializer = ModelBridgeInternal
+            .clone(requestOptions)
+            .setCustomItemSerializer(CosmosItemSerializer.DEFAULT_SERIALIZER);
+
+        AtomicReference<PartitionKey> encryptedPK = new AtomicReference<>();
+        Mono<byte[]> encryptedPayloadMono =
+            this.encryptionProcessor.initEncryptionSettingsIfNotInitializedAsync()
+            .thenReturn(this.encryptionProcessor.getEncryptionSettings())
+            .flatMap(encryptionSettings -> checkAndGetEncryptedPartitionKey(partitionKey, encryptionSettings))
+            .flatMap(encryptedPartitionKey -> {
+                encryptedPK.set(encryptedPartitionKey);
+                return this.encryptionProcessor.encrypt(streamPayload);
+            });
+
+        return encryptedPayloadMono
+        .flatMap(encryptedPayload -> this.container.createItem(
                 encryptedPayload,
-                partitionKey,
-                requestOptions)
+                encryptedPK.get(),
+                requestOptionsWithDefaultSerializer)
                 .publishOn(encryptionScheduler)
                 .flatMap(cosmosItemResponse -> setByteArrayContent(cosmosItemResponse,
-                    this.encryptionProcessor.decrypt(this.cosmosItemResponseBuilderAccessor.getByteArrayContent(cosmosItemResponse)))
+                    this.encryptionProcessor.decrypt(
+                        cosmosItemResponseBuilderAccessor.getByteArrayContent(cosmosItemResponse),
+                        CosmosItemSerializer.DEFAULT_SERIALIZER))
                     .map(bytes -> this.responseFactory.createItemResponse(cosmosItemResponse,
-                        itemClass))).onErrorResume(exception -> {
+                        itemClass, effectiveItemSerializer))).onErrorResume(exception -> {
                     if (!isRetry && exception instanceof CosmosException) {
                         final CosmosException cosmosException = (CosmosException) exception;
                         if (isIncorrectContainerRid(cosmosException)) {
@@ -762,12 +934,43 @@ public class CosmosEncryptionAsyncContainer {
                 }));
     }
 
-    private <T> Mono<CosmosItemResponse<byte[]>> createItemHelper(byte[] encryptedPayload,
-                                                                  PartitionKey partitionKey,
-                                                                  CosmosItemRequestOptions requestOptions) {
-        return partitionKey != null
-            ? this.container.createItem(encryptedPayload, partitionKey, requestOptions)
-            : this.container.createItem(encryptedPayload, requestOptions);
+    private <T> Mono<CosmosItemResponse<T>> upsertItemHelper(byte[] streamPayload,
+                                                             CosmosItemRequestOptions requestOptions,
+                                                             Class<T> itemClass,
+                                                             boolean isRetry) {
+        this.setRequestHeaders(requestOptions);
+
+        CosmosItemSerializer effectiveItemSerializer =
+            cosmosEncryptionAsyncClient.getEffectiveItemSerializer(requestOptions.getCustomItemSerializer());
+
+        // The actual replace happens on the already encrypted document
+        // so any custom serialization/deserialization happens her in the encryption wrapper
+        CosmosItemRequestOptions requestOptionsWithDefaultSerializer = ModelBridgeInternal
+            .clone(requestOptions)
+            .setCustomItemSerializer(CosmosItemSerializer.DEFAULT_SERIALIZER);
+
+        return this.encryptionProcessor.encrypt(streamPayload)
+            .flatMap(encryptedPayload -> this.container.upsertItem(
+                encryptedPayload,
+                requestOptionsWithDefaultSerializer)
+                .publishOn(encryptionScheduler)
+                .flatMap(cosmosItemResponse -> setByteArrayContent(cosmosItemResponse,
+                    this.encryptionProcessor.decrypt(
+                        cosmosItemResponseBuilderAccessor.getByteArrayContent(cosmosItemResponse),
+                        CosmosItemSerializer.DEFAULT_SERIALIZER))
+                    .map(bytes -> this.responseFactory.createItemResponse(cosmosItemResponse, itemClass, effectiveItemSerializer)))
+                .onErrorResume(exception -> {
+                    if (!isRetry && exception instanceof CosmosException) {
+                        final CosmosException cosmosException = (CosmosException) exception;
+                        if (isIncorrectContainerRid(cosmosException)) {
+                            this.encryptionProcessor.getIsEncryptionSettingsInitDone().set(false);
+                            return this.encryptionProcessor.initializeEncryptionSettingsAsync(true).then
+                                (Mono.defer(() -> upsertItemHelper(streamPayload, requestOptions,
+                                    itemClass, true)));
+                        }
+                    }
+                    return Mono.error(exception);
+                }));
     }
 
     private <T> Mono<CosmosItemResponse<T>> upsertItemHelper(byte[] streamPayload,
@@ -776,15 +979,36 @@ public class CosmosEncryptionAsyncContainer {
                                                              Class<T> itemClass,
                                                              boolean isRetry) {
         this.setRequestHeaders(requestOptions);
-        return this.encryptionProcessor.encrypt(streamPayload)
-            .flatMap(encryptedPayload -> upsertItemHelper(
+
+        CosmosItemSerializer effectiveItemSerializer =
+            cosmosEncryptionAsyncClient.getEffectiveItemSerializer(requestOptions.getCustomItemSerializer());
+
+        // The actual replace happens on the already encrypted document
+        // so any custom serialization/deserialization happens her in the encryption wrapper
+        CosmosItemRequestOptions requestOptionsWithDefaultSerializer = ModelBridgeInternal
+            .clone(requestOptions)
+            .setCustomItemSerializer(CosmosItemSerializer.DEFAULT_SERIALIZER);
+
+        AtomicReference<PartitionKey> encryptedPK = new AtomicReference<>();
+        Mono<byte[]> encryptedPayloadMono = this.encryptionProcessor.initEncryptionSettingsIfNotInitializedAsync()
+            .thenReturn(this.encryptionProcessor.getEncryptionSettings())
+            .flatMap(encryptionSettings -> checkAndGetEncryptedPartitionKey(partitionKey, encryptionSettings))
+            .flatMap(encryptedPartitionKey -> {
+                encryptedPK.set(encryptedPartitionKey);
+                return this.encryptionProcessor.encrypt(streamPayload);
+            });
+
+        return encryptedPayloadMono
+            .flatMap(encryptedPayload -> this.container.upsertItem(
                 encryptedPayload,
-                partitionKey,
-                requestOptions)
+                encryptedPK.get(),
+                requestOptionsWithDefaultSerializer)
                 .publishOn(encryptionScheduler)
                 .flatMap(cosmosItemResponse -> setByteArrayContent(cosmosItemResponse,
-                    this.encryptionProcessor.decrypt(this.cosmosItemResponseBuilderAccessor.getByteArrayContent(cosmosItemResponse)))
-                    .map(bytes -> this.responseFactory.createItemResponse(cosmosItemResponse, itemClass)))
+                    this.encryptionProcessor.decrypt(
+                        cosmosItemResponseBuilderAccessor.getByteArrayContent(cosmosItemResponse),
+                        CosmosItemSerializer.DEFAULT_SERIALIZER))
+                    .map(bytes -> this.responseFactory.createItemResponse(cosmosItemResponse, itemClass, effectiveItemSerializer)))
                 .onErrorResume(exception -> {
                     if (!isRetry && exception instanceof CosmosException) {
                         final CosmosException cosmosException = (CosmosException) exception;
@@ -799,14 +1023,6 @@ public class CosmosEncryptionAsyncContainer {
                 }));
     }
 
-    private <T> Mono<CosmosItemResponse<byte[]>> upsertItemHelper(byte[] encryptedPayload,
-                                                             PartitionKey partitionKey,
-                                                             CosmosItemRequestOptions requestOptions) {
-        return partitionKey != null
-            ? this.container.upsertItem(encryptedPayload, partitionKey, requestOptions)
-            : this.container.upsertItem(encryptedPayload, requestOptions);
-    }
-
     private <T> Mono<CosmosItemResponse<T>> replaceItemHelper(byte[] streamPayload,
                                                               String itemId,
                                                              PartitionKey partitionKey,
@@ -814,16 +1030,39 @@ public class CosmosEncryptionAsyncContainer {
                                                              Class<T> itemClass,
                                                              boolean isRetry) {
         this.setRequestHeaders(requestOptions);
-        return this.encryptionProcessor.encrypt(streamPayload)
+        CosmosItemSerializer effectiveItemSerializer =
+            cosmosEncryptionAsyncClient.getEffectiveItemSerializer(requestOptions.getCustomItemSerializer());
+        AtomicReference<PartitionKey> encryptedPK = new AtomicReference<>();
+        AtomicReference<String> encryptedId = new AtomicReference<>();
+        Mono<byte[]> encryptedPayloadMono = this.encryptionProcessor.initEncryptionSettingsIfNotInitializedAsync()
+            .thenReturn(this.encryptionProcessor.getEncryptionSettings())
+            .flatMap(encryptionSettings -> Mono.zip(
+                checkAndGetEncryptedId(itemId, encryptionSettings),
+                checkAndGetEncryptedPartitionKey(partitionKey, encryptionSettings)))
+            .flatMap(encryptedIdPartitionKeyTuple -> {
+                encryptedId.set(encryptedIdPartitionKeyTuple.getT1());
+                encryptedPK.set(encryptedIdPartitionKeyTuple.getT2());
+                return this.encryptionProcessor.encrypt(streamPayload);
+            });
+
+        // The actual replace happens on the already encrypted document
+        // so any custom serialization/deserialization happens her in the encryption wrapper
+        CosmosItemRequestOptions requestOptionsWithDefaultSerializer = ModelBridgeInternal
+            .clone(requestOptions)
+            .setCustomItemSerializer(CosmosItemSerializer.DEFAULT_SERIALIZER);
+
+        return encryptedPayloadMono
             .flatMap(encryptedPayload -> this.container.replaceItem(
                 encryptedPayload,
-                itemId,
-                partitionKey,
-                requestOptions)
+                encryptedId.get(),
+                encryptedPK.get(),
+                requestOptionsWithDefaultSerializer)
                 .publishOn(encryptionScheduler)
                 .flatMap(cosmosItemResponse -> setByteArrayContent(cosmosItemResponse,
-                    this.encryptionProcessor.decrypt(this.cosmosItemResponseBuilderAccessor.getByteArrayContent(cosmosItemResponse)))
-                    .map(bytes -> this.responseFactory.createItemResponse(cosmosItemResponse, itemClass)))
+                    this.encryptionProcessor.decrypt(
+                        cosmosItemResponseBuilderAccessor.getByteArrayContent(cosmosItemResponse),
+                        CosmosItemSerializer.DEFAULT_SERIALIZER))
+                    .map(bytes -> this.responseFactory.createItemResponse(cosmosItemResponse, itemClass, effectiveItemSerializer)))
                 .onErrorResume(exception -> {
                     if (!isRetry && exception instanceof CosmosException) {
                         final CosmosException cosmosException = (CosmosException) exception;
@@ -842,61 +1081,165 @@ public class CosmosEncryptionAsyncContainer {
                                                     CosmosQueryRequestOptions options,
                                                     Class<T> classType,
                                                     boolean isRetry) {
-        setRequestHeaders(options);
-        CosmosQueryRequestOptions finalOptions = options;
-        Flux<FeedResponse<T>>  tFlux = CosmosBridgeInternal.queryItemsInternal(container, sqlQuerySpec, options,
-            new Transformer<T>() {
-                @Override
-                public Function<CosmosPagedFluxOptions, Flux<FeedResponse<T>>> transform(Function<CosmosPagedFluxOptions, Flux<FeedResponse<JsonNode>>> func) {
-                    return queryDecryptionTransformer(classType, false, func);
-                }
-            }).byPage().onErrorResume(exception -> {
-            if (exception instanceof CosmosException) {
-                final CosmosException cosmosException = (CosmosException) exception;
-                if (!isRetry && isIncorrectContainerRid(cosmosException)) {
-                    this.encryptionProcessor.getIsEncryptionSettingsInitDone().set(false);
-                    return this.encryptionProcessor.initializeEncryptionSettingsAsync(true).thenMany(
-                        (CosmosPagedFlux.defer(() -> queryItemsHelper(sqlQuerySpec,finalOptions, classType, true).byPage())));
-                }
-            }
-            return Mono.error(exception);
-        });
 
-
+        CosmosItemSerializer effectiveSerializer = this
+            .getCosmosEncryptionAsyncClient()
+            .getEffectiveItemSerializer(options != null ? options.getCustomItemSerializer(): null);
         return UtilBridgeInternal.createCosmosPagedFlux(pagedFluxOptions -> {
-            setContinuationTokenAndMaxItemCount(pagedFluxOptions, finalOptions);
-            return tFlux;
+            AtomicBoolean shouldRetry = new AtomicBoolean(!isRetry);
+            Transformer<T> transformer = new CosmosEncryptionQueryTransformer<T>(
+                this.encryptionScheduler,
+                this.getEncryptionProcessor(),
+                classType,
+                false);
+
+            Flux<FeedResponse<T>> result = this.transformQueryItemsInternal(
+                transformer,
+                sqlQuerySpec,
+                options,
+                effectiveSerializer
+            ).apply(pagedFluxOptions);
+
+            return result
+                .onErrorResume(exception -> {
+                    if (exception instanceof CosmosException) {
+                        final CosmosException cosmosException = (CosmosException) exception;
+                        if (shouldRetry.get() && isIncorrectContainerRid(cosmosException)) {
+                            // stale cache, refresh caches and then retry
+                            this.encryptionProcessor.getIsEncryptionSettingsInitDone().set(false);
+                            shouldRetry.set(false);
+
+                            return this.encryptionProcessor
+                                .initializeEncryptionSettingsAsync(true)
+                                .thenMany(
+                                    Flux.defer(() -> {
+                                        return this.transformQueryItemsInternal(
+                                            transformer,
+                                            sqlQuerySpec,
+                                            options,
+                                            effectiveSerializer
+                                        ).apply(pagedFluxOptions);
+                                    })
+                                );
+                        }
+                    }
+                    return Mono.error(exception);
+                });
         });
+    }
+
+    private <T> Function<CosmosPagedFluxOptions, Flux<FeedResponse<T>>> transformQueryItemsInternal(
+        Transformer<T> transformer,
+        SqlQuerySpec sqlQuerySpec,
+        CosmosQueryRequestOptions queryRequestOptions,
+        CosmosItemSerializer effectiveSerializer) {
+
+        CosmosQueryRequestOptions finalOptions = setRequestHeaders(cosmosQueryRequestOptionsAccessor
+            .clone(queryRequestOptions)
+            .setCustomItemSerializer(CosmosItemSerializer.DEFAULT_SERIALIZER));
+
+        return transformer.transform(
+            cosmosAsyncContainerAccessor.queryItemsInternalFunc(
+                this.container,
+                sqlQuerySpec,
+                finalOptions,
+                JsonNode.class),
+            effectiveSerializer
+        );
+    }
+
+    private <T> Function<CosmosPagedFluxOptions, Flux<FeedResponse<T>>> transformQueryChangeFeedInternal(
+        Transformer<T> transformer,
+        CosmosChangeFeedRequestOptions changeFeedRequestOptions,
+        CosmosPagedFluxOptions pagedFluxOptions,
+        CosmosItemSerializer effectiveSerializer) {
+
+        CosmosChangeFeedRequestOptions finalOptions = setRequestHeaders(
+            cosmosChangeFeedRequestOptionsAccessor.clone(changeFeedRequestOptions)
+                .setCustomItemSerializer(CosmosItemSerializer.DEFAULT_SERIALIZER));
+        getEffectiveCosmosChangeFeedRequestOptions(pagedFluxOptions, finalOptions);
+
+        return transformer.transform(
+            cosmosAsyncContainerAccessor
+                .queryChangeFeedInternalFunc(
+                    this.container,
+                    finalOptions,
+                    JsonNode.class),
+            effectiveSerializer
+        );
+    }
+
+    private <T> Function<CosmosPagedFluxOptions, Flux<FeedResponse<T>>> transformQueryItemsWithMonoSqlQuerySpec(
+        Transformer<T> transformer,
+        Mono<SqlQuerySpec> sqlQuerySpecMono,
+        CosmosQueryRequestOptions options,
+        CosmosItemSerializer effectiveSerializer) {
+
+        CosmosQueryRequestOptions finalOptions = setRequestHeaders(cosmosQueryRequestOptionsAccessor
+            .clone(options)
+            .setCustomItemSerializer(CosmosItemSerializer.DEFAULT_SERIALIZER));
+
+        return transformer.transform(
+            cosmosAsyncContainerAccessor.queryItemsInternalFuncWithMonoSqlQuerySpec(
+                this.container,
+                sqlQuerySpecMono,
+                finalOptions,
+                JsonNode.class
+            ),
+            effectiveSerializer
+        );
     }
 
     private <T> CosmosPagedFlux<T> queryChangeFeedHelper(CosmosChangeFeedRequestOptions options,
                                                          Class<T> classType,
                                                          boolean isRetry) {
-        setRequestHeaders(options);
-        CosmosChangeFeedRequestOptions finalOptions = options;
-        Flux<FeedResponse<T>> tFlux =
-            UtilBridgeInternal.createCosmosPagedFlux(((Transformer<T>) func -> queryDecryptionTransformer(classType,
-                true,
-                func)).transform(cosmosAsyncContainerAccessor.queryChangeFeedInternalFunc(this.container, options,
-                JsonNode.class))).byPage().onErrorResume(exception -> {
-                if (exception instanceof CosmosException) {
-                    final CosmosException cosmosException = (CosmosException) exception;
-                    if (!isRetry && isIncorrectContainerRid(cosmosException)) {
-                        this.encryptionProcessor.getIsEncryptionSettingsInitDone().set(false);
-                        return this.encryptionProcessor.initializeEncryptionSettingsAsync(true).thenMany(
-                            (CosmosPagedFlux.defer(() -> queryChangeFeedHelper(finalOptions, classType, true).byPage())));
-                    }
-                }
-                return Mono.error(exception);
-            });
 
-
+        CosmosItemSerializer effectiveSerializer = this
+            .getCosmosEncryptionAsyncClient()
+            .getEffectiveItemSerializer(options != null ? options.getCustomItemSerializer() : null);
         return UtilBridgeInternal.createCosmosPagedFlux(pagedFluxOptions -> {
-            getEffectiveCosmosChangeFeedRequestOptions(pagedFluxOptions, finalOptions);
-            return tFlux;
+            AtomicBoolean shouldRetry = new AtomicBoolean(!isRetry);
+
+            Transformer<T> transformer = new CosmosEncryptionQueryTransformer<T>(
+                this.encryptionScheduler,
+                this.getEncryptionProcessor(),
+                classType,
+                true);
+
+            Flux<FeedResponse<T>> result = this.transformQueryChangeFeedInternal(
+                transformer,
+                options,
+                pagedFluxOptions,
+                effectiveSerializer
+            ).apply(pagedFluxOptions);
+
+            return result
+                .onErrorResume(exception -> {
+                    if (exception instanceof CosmosException) {
+                        final CosmosException cosmosException = (CosmosException) exception;
+                        if (shouldRetry.get() && isIncorrectContainerRid(cosmosException)) {
+                            // stale cache, refresh caches and then retry
+                            this.encryptionProcessor.getIsEncryptionSettingsInitDone().set(false);
+                            shouldRetry.set(false);
+
+                            return this.encryptionProcessor
+                                .initializeEncryptionSettingsAsync(true)
+                                .thenMany(
+                                    Flux.defer(() -> {
+                                        return this.transformQueryChangeFeedInternal(
+                                            transformer,
+                                            options,
+                                            pagedFluxOptions,
+                                            effectiveSerializer
+                                        ).apply(pagedFluxOptions);
+                                    })
+                                );
+                        }
+                    }
+                    return Mono.error(exception);
+                });
         });
     }
-
 
     private <T> CosmosPagedFlux<T> queryItemsHelperWithMonoSqlQuerySpec(Mono<SqlQuerySpec> sqlQuerySpecMono,
                                                                         SqlQuerySpecWithEncryption sqlQuerySpecWithEncryption,
@@ -904,30 +1247,50 @@ public class CosmosEncryptionAsyncContainer {
                                                                         Class<T> classType,
                                                                         boolean isRetry) {
 
-        setRequestHeaders(options);
-        CosmosQueryRequestOptions finalOptions = options;
-
-        Flux<FeedResponse<T>>  tFlux = CosmosBridgeInternal.queryItemsInternal(container, sqlQuerySpecMono, options,
-            new Transformer<T>() {
-                @Override
-                public Function<CosmosPagedFluxOptions, Flux<FeedResponse<T>>> transform(Function<CosmosPagedFluxOptions, Flux<FeedResponse<JsonNode>>> func) {
-                    return queryDecryptionTransformer(classType, false, func);
-                }
-            }).byPage().onErrorResume(exception -> {
-            if (exception instanceof CosmosException) {
-                final CosmosException cosmosException = (CosmosException) exception;
-                if (!isRetry && isIncorrectContainerRid(cosmosException)) {
-                    this.encryptionProcessor.getIsEncryptionSettingsInitDone().set(false);
-                    return this.encryptionProcessor.initializeEncryptionSettingsAsync(true).thenMany(
-                        (CosmosPagedFlux.defer(() -> queryItemsHelper(EncryptionModelBridgeInternal.getSqlQuerySpec(sqlQuerySpecWithEncryption), finalOptions, classType, true).byPage())));
-                }
-            }
-            return Mono.error(exception);
-        });
+        CosmosItemSerializer effectiveSerializer = this
+            .getCosmosEncryptionAsyncClient()
+            .getEffectiveItemSerializer(options != null ? options.getCustomItemSerializer(): null);
 
         return UtilBridgeInternal.createCosmosPagedFlux(pagedFluxOptions -> {
-            setContinuationTokenAndMaxItemCount(pagedFluxOptions, finalOptions);
-            return tFlux;
+            AtomicBoolean shouldRetry = new AtomicBoolean(!isRetry);
+
+            Transformer<T> transformer = new CosmosEncryptionQueryTransformer<T>(
+                this.encryptionScheduler,
+                this.getEncryptionProcessor(),
+                classType,
+                false);
+
+            Flux<FeedResponse<T>> result = this.transformQueryItemsWithMonoSqlQuerySpec(
+                transformer,
+                sqlQuerySpecMono,
+                options,
+                effectiveSerializer
+            ).apply(pagedFluxOptions);
+
+            return result
+                .onErrorResume(exception -> {
+                    if (exception instanceof CosmosException) {
+                        final CosmosException cosmosException = (CosmosException) exception;
+                        if (shouldRetry.get() && isIncorrectContainerRid(cosmosException)) {
+                            // stale cache, refresh caches and then retry
+                            this.encryptionProcessor.getIsEncryptionSettingsInitDone().set(false);
+                            shouldRetry.set(false);
+
+                            return this.encryptionProcessor
+                                .initializeEncryptionSettingsAsync(true)
+                                .thenMany(
+                                    Flux.defer(() -> this.transformQueryItemsInternal(
+                                            transformer,
+                                            specWithEncryptionAccessor.getSqlQuerySpec(sqlQuerySpecWithEncryption),
+                                            options,
+                                            effectiveSerializer
+                                        ).apply(pagedFluxOptions)
+                                    )
+                                );
+                        }
+                    }
+                    return Mono.error(exception);
+                });
         });
     }
 
@@ -960,8 +1323,6 @@ public class CosmosEncryptionAsyncContainer {
      * Use {@link CosmosBatchResponse#isSuccessStatusCode} on the response returned to ensure that the
      * transactional batch succeeded.
      */
-    @Beta(value = Beta.SinceVersion.V1, warningText =
-        Beta.PREVIEW_SUBJECT_TO_CHANGE_WARNING)
     public Mono<CosmosBatchResponse> executeCosmosBatch(CosmosBatch cosmosBatch) {
         return this.executeCosmosBatch(cosmosBatch, new CosmosBatchRequestOptions());
     }
@@ -996,57 +1357,88 @@ public class CosmosEncryptionAsyncContainer {
      * Use {@link CosmosBatchResponse#isSuccessStatusCode} on the response returned to ensure that the
      * transactional batch succeeded.
      */
-    @Beta(value = Beta.SinceVersion.V1, warningText =
-        Beta.PREVIEW_SUBJECT_TO_CHANGE_WARNING)
     public Mono<CosmosBatchResponse> executeCosmosBatch(CosmosBatch cosmosBatch, CosmosBatchRequestOptions requestOptions) {
-        if (requestOptions == null) {
-            requestOptions = new CosmosBatchRequestOptions();
-        }
+        final CosmosBatchRequestOptions cosmosBatchRequestOptions = Optional.ofNullable(requestOptions)
+            .orElse(new CosmosBatchRequestOptions());
+
+        final CosmosItemSerializer effectiveItemSerializer = this
+            .getEffectiveItemSerializer(cosmosBatchRequestOptions.getCustomItemSerializer());
 
         List<Mono<ItemBatchOperation<?>>> monoList = new ArrayList<>();
-        for (ItemBatchOperation<?> itemBatchOperation : this.cosmosBatchAccessor.getOperationsInternal(cosmosBatch)) {
+        for (ItemBatchOperation<?> itemBatchOperation : cosmosBatchAccessor.getOperationsInternal(cosmosBatch)) {
             Mono<ItemBatchOperation<?>> itemBatchOperationMono = null;
             if (itemBatchOperation.getItem() != null) {
-                ObjectNode objectNode =
-                    EncryptionUtils.getSimpleObjectMapper().valueToTree(itemBatchOperation.getItem());
-                itemBatchOperationMono =
-                    encryptionProcessor.encryptObjectNode(objectNode).map(encryptedItem -> {
-                        return new ItemBatchOperation<>(
+                itemBatchOperationMono = this.encryptionProcessor.initEncryptionSettingsIfNotInitializedAsync()
+                    .thenReturn(this.encryptionProcessor.getEncryptionSettings())
+                    .flatMap(encryptionSettings -> {
+                        try {
+                            String idValue = getIdValue(itemBatchOperation);
+                            return Mono.zip(
+                                checkAndGetEncryptedId(idValue, encryptionSettings),
+                                checkAndGetEncryptedPartitionKey(itemBatchOperation.getPartitionKeyValue(), encryptionSettings));
+                        } catch (IllegalAccessException | NoSuchFieldException e) {
+                            return Mono.error(e);
+                        }
+                    })
+                    .flatMap(encryptedIdPartitionKeyTuple -> {
+
+
+                        Map<String, Object> jsonTree = itemSerializerAccessor.serializeSafe(
+                            effectiveItemSerializer,
+                            itemBatchOperation.getItem());
+
+                        ObjectNode objectNode = jsonTree instanceof ObjectNodeMap
+                            ? ((ObjectNodeMap)jsonTree).getObjectNode().deepCopy()
+                            : EncryptionUtils.getSimpleObjectMapper().valueToTree(jsonTree);
+
+                        return encryptionProcessor.encryptObjectNode(objectNode).map(encryptedItem -> new ItemBatchOperation<>(
                             itemBatchOperation.getOperationType(),
-                            itemBatchOperation.getId(),
-                            itemBatchOperation.getPartitionKeyValue(),
+                            encryptedIdPartitionKeyTuple.getT1(),
+                            encryptedIdPartitionKeyTuple.getT2(),
                             itemBatchOperation.getRequestOptions(),
                             encryptedItem
-                        );
+                        ));
                     });
+
             } else {
-                itemBatchOperationMono =
-                    Mono.just(
+                itemBatchOperationMono = this.encryptionProcessor.initEncryptionSettingsIfNotInitializedAsync()
+                    .thenReturn(this.encryptionProcessor.getEncryptionSettings())
+                    .flatMap(encryptionSettings -> {
+                        return Mono.zip(
+                            checkAndGetEncryptedId(itemBatchOperation.getId(), encryptionSettings),
+                            checkAndGetEncryptedPartitionKey(itemBatchOperation.getPartitionKeyValue(), encryptionSettings));
+                    })
+                    .flatMap(encryptedIdPartitionKeyTuple -> Mono.just(
                         new ItemBatchOperation<>(
                             itemBatchOperation.getOperationType(),
-                            itemBatchOperation.getId(),
-                            itemBatchOperation.getPartitionKeyValue(),
+                            encryptedIdPartitionKeyTuple.getT1(),
+                            encryptedIdPartitionKeyTuple.getT2(),
                             itemBatchOperation.getRequestOptions(),
                             null
-                        )
-                    );
+                        )));
             }
             monoList.add(itemBatchOperationMono);
+
         }
         Mono<List<ItemBatchOperation<?>>> encryptedOperationListMono =
             Flux.mergeSequential(monoList).collectList();
-        CosmosBatchRequestOptions finalRequestOptions = requestOptions;
 
         CosmosBatch encryptedCosmosBatch = CosmosBatch.createCosmosBatch(cosmosBatch.getPartitionKeyValue());
 
+        CosmosBatchRequestOptions batchRequestOptionsWithDefaultSerializer = cosmosBatchRequestOptionsAccessor
+            .clone(cosmosBatchRequestOptions)
+            .setCustomItemSerializer(CosmosItemSerializer.DEFAULT_SERIALIZER);
+
         return encryptedOperationListMono.flatMap(itemBatchOperations -> {
-            this.cosmosBatchAccessor.getOperationsInternal(encryptedCosmosBatch).addAll(itemBatchOperations);
-            return executeCosmosBatchHelper(encryptedCosmosBatch, finalRequestOptions, false);
+            cosmosBatchAccessor.getOperationsInternal(encryptedCosmosBatch).addAll(itemBatchOperations);
+            return executeCosmosBatchHelper(
+                encryptedCosmosBatch, batchRequestOptionsWithDefaultSerializer, effectiveItemSerializer, false);
         });
     }
 
     private Mono<CosmosBatchResponse> executeCosmosBatchHelper(CosmosBatch encryptedCosmosBatch,
                                                                CosmosBatchRequestOptions requestOptions,
+                                                               CosmosItemSerializer effectiveItemSerializer,
                                                                boolean isRetry) {
         setRequestHeaders(requestOptions);
         return this.container.executeCosmosBatch(encryptedCosmosBatch, requestOptions).flatMap(cosmosBatchResponse -> {
@@ -1056,17 +1448,22 @@ public class CosmosEncryptionAsyncContainer {
             if (!isRetry && cosmosBatchResponse.getSubStatusCode() == 1024) {
                 this.encryptionProcessor.getIsEncryptionSettingsInitDone().set(false);
                 return this.encryptionProcessor.initializeEncryptionSettingsAsync(true).then
-                    (Mono.defer(() -> executeCosmosBatchHelper(encryptedCosmosBatch, requestOptions, true)));
+                    (Mono.defer(() -> executeCosmosBatchHelper(
+                        encryptedCosmosBatch, requestOptions, effectiveItemSerializer, true)));
             }
 
             List<Mono<Void>> decryptMonoList = new ArrayList<>();
             for (CosmosBatchOperationResult cosmosBatchOperationResult :
-                this.cosmosBatchResponseAccessor.getResults(cosmosBatchResponse)) {
+                cosmosBatchResponseAccessor.getResults(cosmosBatchResponse)) {
                 ObjectNode objectNode =
-                    this.cosmosBatchOperationResultAccessor.getResourceObject(cosmosBatchOperationResult);
+                    cosmosBatchOperationResultAccessor.getResourceObject(cosmosBatchOperationResult);
                 if (objectNode != null) {
                     decryptMonoList.add(encryptionProcessor.decryptJsonNode(objectNode).flatMap(jsonNode -> {
-                        this.cosmosBatchOperationResultAccessor.setResourceObject(cosmosBatchOperationResult, (ObjectNode) jsonNode);
+                        cosmosBatchOperationResultAccessor.setResourceObject(cosmosBatchOperationResult, (ObjectNode) jsonNode);
+                        cosmosBatchOperationResultAccessor.setEffectiveItemSerializer(
+                            cosmosBatchOperationResult,
+                            effectiveItemSerializer
+                        );
                         return Mono.empty();
                     }));
                 }
@@ -1080,36 +1477,231 @@ public class CosmosEncryptionAsyncContainer {
                 if (isIncorrectContainerRid(cosmosException)) {
                     this.encryptionProcessor.getIsEncryptionSettingsInitDone().set(false);
                     return this.encryptionProcessor.initializeEncryptionSettingsAsync(true).then
-                        (Mono.defer(() -> executeCosmosBatchHelper(encryptedCosmosBatch, requestOptions, true)));
+                        (Mono.defer(() -> executeCosmosBatchHelper(
+                            encryptedCosmosBatch, requestOptions, effectiveItemSerializer, true)));
                 }
             }
             return Mono.error(exception);
         });
     }
 
+    /**
+     * Executes flux of operations in Bulk.
+     *
+     * @param <TContext> The context for the bulk processing.
+     * @param operations Flux of operation which will be executed by this container.
+     *
+     * @return A Flux of {@link CosmosBulkOperationResponse} which contains operation and it's response or exception.
+     * <p>
+     *     To create a operation which can be executed here, use {@link com.azure.cosmos.models.CosmosBulkOperations}. For eg.
+     *     for a upsert operation use {@link com.azure.cosmos.models.CosmosBulkOperations#getUpsertItemOperation(Object, PartitionKey)}
+     * </p>
+     * <p>
+     *     We can get the corresponding operation using {@link CosmosBulkOperationResponse#getOperation()} and
+     *     it's response using {@link CosmosBulkOperationResponse#getResponse()}. If the operation was executed
+     *     successfully, the value returned by {@link com.azure.cosmos.models.CosmosBulkItemResponse#isSuccessStatusCode()} will be true. To get
+     *     actual status use {@link com.azure.cosmos.models.CosmosBulkItemResponse#getStatusCode()}.
+     * </p>
+     * To check if the operation had any exception, use {@link CosmosBulkOperationResponse#getException()} to
+     * get the exception.
+     */
+    public <TContext> Flux<CosmosBulkOperationResponse<TContext>> executeBulkOperations(
+        Flux<CosmosItemOperation> operations) {
+
+        return this.executeBulkOperations(operations, new CosmosBulkExecutionOptions());
+    }
+
+    private static String getIdValue(CosmosItemOperation itemOperation)
+        throws IllegalArgumentException, IllegalAccessException, NoSuchFieldException {
+
+        String idSnapshot = itemOperation.getId();
+        if (!Strings.isNullOrEmpty(idSnapshot)) {
+            return idSnapshot;
+        }
+
+        Class<?> itemClass = itemOperation.getItem().getClass();
+        if (ObjectNode.class.isAssignableFrom(itemClass)) {
+            return ((ObjectNode)itemOperation.getItem()).get("id").textValue();
+        }
+
+        if (JsonSerializable.class.isAssignableFrom(itemClass)) {
+            return ((JsonSerializable)itemOperation.getItem()).get(Constants.PROPERTY_NAME_ID).toString();
+        }
+
+        Field id = itemClass.getDeclaredField(Constants.PROPERTY_NAME_ID);
+        id.setAccessible(true);
+
+        return (String) id.get(itemOperation.getItem());
+    }
+
+    /**
+     * Executes flux of operations in Bulk.
+     *
+     * @param <TContext> The context for the bulk processing.
+     *
+     * @param operations Flux of operation which will be executed by this container.
+     * @param bulkOptions Options that apply for this Bulk request which specifies options regarding execution like
+     *                    concurrency, batching size, interval and context.
+     *
+     * @return A Flux of {@link CosmosBulkOperationResponse} which contains operation and it's response or exception.
+     * <p>
+     *     To create a operation which can be executed here, use {@link com.azure.cosmos.models.CosmosBulkOperations}. For eg.
+     *     for a upsert operation use {@link com.azure.cosmos.models.CosmosBulkOperations#getUpsertItemOperation(Object, PartitionKey)}
+     * </p>
+     * <p>
+     *     We can get the corresponding operation using {@link CosmosBulkOperationResponse#getOperation()} and
+     *     it's response using {@link CosmosBulkOperationResponse#getResponse()}. If the operation was executed
+     *     successfully, the value returned by {@link com.azure.cosmos.models.CosmosBulkItemResponse#isSuccessStatusCode()} will be true. To get
+     *     actual status use {@link com.azure.cosmos.models.CosmosBulkItemResponse#getStatusCode()}.
+     * </p>
+     * To check if the operation had any exception, use {@link CosmosBulkOperationResponse#getException()} to
+     * get the exception.
+     */
+    @SuppressWarnings("unchecked")
+    public <TContext> Flux<CosmosBulkOperationResponse<TContext>> executeBulkOperations(
+        Flux<CosmosItemOperation> operations,
+        CosmosBulkExecutionOptions bulkOptions) {
+        final CosmosBulkExecutionOptions cosmosBulkExecutionOptions = Optional.ofNullable(bulkOptions)
+            .orElse(new CosmosBulkExecutionOptions());
+
+        CosmosItemSerializer effectiveItemSerializer =
+            this.getEffectiveItemSerializer(cosmosBulkExecutionOptions.getCustomItemSerializer());
+        Flux<CosmosItemOperation> operationFlux = operations.flatMap(cosmosItemOperation -> {
+            Mono<CosmosItemOperation> cosmosItemOperationMono = null;
+            if (cosmosItemOperation.getItem() != null) {
+                cosmosItemOperationMono = this.encryptionProcessor.initEncryptionSettingsIfNotInitializedAsync()
+                    .thenReturn(this.encryptionProcessor.getEncryptionSettings())
+                    .flatMap( encryptionSettings -> {
+                        try {
+                            String idValue = getIdValue(cosmosItemOperation);
+                            return Mono.zip(
+                                checkAndGetEncryptedId(idValue, encryptionSettings),
+                                checkAndGetEncryptedPartitionKey(cosmosItemOperation.getPartitionKeyValue(), encryptionSettings));
+                        } catch (IllegalAccessException | NoSuchFieldException e) {
+                            return Mono.error(e);
+                        }
+                    })
+                    .flatMap(encryptedIdPartitionKeyTuple -> {
+                        Map<String, Object> jsonTree = itemSerializerAccessor.serializeSafe(
+                            effectiveItemSerializer,
+                            cosmosItemOperation.getItem());
+
+                        ObjectNode objectNode = jsonTree instanceof ObjectNodeMap
+                            ? ((ObjectNodeMap)jsonTree).getObjectNode().deepCopy()
+                            : EncryptionUtils.getSimpleObjectMapper().valueToTree(jsonTree);
+
+                        assert cosmosItemOperation instanceof ItemBulkOperation;
+                        return this.encryptionProcessor.encryptObjectNode(objectNode).map(encryptedItem -> new ItemBulkOperation<>(
+                            cosmosItemOperation.getOperationType(),
+                            encryptedIdPartitionKeyTuple.getT1(),
+                            encryptedIdPartitionKeyTuple.getT2(),
+                            ((ItemBulkOperation<JsonNode, TContext>) cosmosItemOperation).getRequestOptions(),
+                            encryptedItem,
+                            cosmosItemOperation.getContext()
+                        ));
+                    });
+            } else {
+                cosmosItemOperationMono = this.encryptionProcessor.initEncryptionSettingsIfNotInitializedAsync()
+                    .thenReturn(this.encryptionProcessor.getEncryptionSettings())
+                    .flatMap( encryptionSettings -> Mono.zip(
+                        checkAndGetEncryptedId(cosmosItemOperation.getId() , encryptionSettings),
+                        checkAndGetEncryptedPartitionKey(cosmosItemOperation.getPartitionKeyValue(), encryptionSettings)))
+                    .flatMap(encryptedIdPartitionKeyTuple -> Mono.just(
+                        new ItemBulkOperation<>(
+                            cosmosItemOperation.getOperationType(),
+                            encryptedIdPartitionKeyTuple.getT1(),
+                            encryptedIdPartitionKeyTuple.getT2(),
+                            ((ItemBulkOperation<JsonNode, TContext>) cosmosItemOperation).getRequestOptions(),
+                            null,
+                            cosmosItemOperation.getContext()
+                        )));
+            }
+            return cosmosItemOperationMono;
+        });
+
+        Mono<List<CosmosItemOperation>> listMono = operationFlux.collectList();
+        setRequestHeaders(cosmosBulkExecutionOptions);
+        operationFlux = listMono.flatMapMany(Flux::fromIterable);
+
+        CosmosBulkExecutionOptions executionOptionsWithDefaultSerializer = cosmosBulkExecutionOptionsAccessor
+            .clone(cosmosBulkExecutionOptions)
+            .setCustomItemSerializer(CosmosItemSerializer.DEFAULT_SERIALIZER);
+
+        return executeBulkOperationsHelper(
+            operationFlux, executionOptionsWithDefaultSerializer,  effectiveItemSerializer);
+    }
+
+    @SuppressWarnings("unchecked")
+    private <TContext> Flux<CosmosBulkOperationResponse<TContext>> executeBulkOperationsHelper(Flux<CosmosItemOperation> operations,
+                                                                                               CosmosBulkExecutionOptions bulkOptions,
+                                                                                               CosmosItemSerializer effectiveItemSerializer) {
+        return this.container.executeBulkOperations(operations, bulkOptions).flatMap(cosmosBulkOperationResponse -> {
+
+            CosmosBulkItemResponse cosmosBulkItemResponse = cosmosBulkOperationResponse.getResponse();
+            ObjectNode objectNode = cosmosBulkItemResponseAccessor.getResourceObject(cosmosBulkItemResponse);
+
+            if(objectNode != null) {
+                Mono<JsonNode> jsonNodeMono = encryptionProcessor.decryptJsonNode(objectNode).flatMap(jsonNode -> {
+                    cosmosBulkItemResponseAccessor.setResourceObject(cosmosBulkItemResponse,
+                        (ObjectNode) jsonNode);
+                    cosmosBulkItemResponseAccessor.setEffectiveItemSerializer(cosmosBulkItemResponse, effectiveItemSerializer);
+                    return Mono.just(jsonNode);
+                });
+                return jsonNodeMono.flux().flatMap(jsonNode -> Flux.just((CosmosBulkOperationResponse<TContext>) cosmosBulkOperationResponse));
+            }
+            return Mono.just((CosmosBulkOperationResponse<TContext>) cosmosBulkOperationResponse);
+        });
+    }
+
     private void setRequestHeaders(CosmosItemRequestOptions requestOptions) {
-        this.cosmosItemRequestOptionsAccessor.setHeader(requestOptions, Constants.IS_CLIENT_ENCRYPTED_HEADER, "true");
-        this.cosmosItemRequestOptionsAccessor.setHeader(requestOptions, Constants.INTENDED_COLLECTION_RID_HEADER, this.encryptionProcessor.getContainerRid());
+        cosmosItemRequestOptionsAccessor.setHeader(requestOptions, Constants.IS_CLIENT_ENCRYPTED_HEADER, "true");
+        cosmosItemRequestOptionsAccessor.setHeader(requestOptions, Constants.INTENDED_COLLECTION_RID_HEADER, this.encryptionProcessor.getContainerRid());
     }
 
-    private void setRequestHeaders(CosmosQueryRequestOptions requestOptions) {
-        this.cosmosQueryRequestOptionsAccessor.setHeader(requestOptions, Constants.IS_CLIENT_ENCRYPTED_HEADER, "true");
-        this.cosmosQueryRequestOptionsAccessor.setHeader(requestOptions, Constants.INTENDED_COLLECTION_RID_HEADER, this.encryptionProcessor.getContainerRid());
+    private CosmosQueryRequestOptions setRequestHeaders(CosmosQueryRequestOptions requestOptions) {
+        cosmosQueryRequestOptionsAccessor
+            .getImpl(requestOptions)
+            .setHeader(
+                Constants.IS_CLIENT_ENCRYPTED_HEADER,
+                "true");
+        cosmosQueryRequestOptionsAccessor
+            .getImpl(requestOptions)
+            .setHeader(
+                Constants.INTENDED_COLLECTION_RID_HEADER,
+                this.encryptionProcessor.getContainerRid());
+        return requestOptions;
     }
 
-    private void setRequestHeaders(CosmosChangeFeedRequestOptions requestOptions) {
-        this.cosmosChangeFeedRequestOptionsAccessor.setHeader(requestOptions, Constants.IS_CLIENT_ENCRYPTED_HEADER, "true");
-        this.cosmosChangeFeedRequestOptionsAccessor.setHeader(requestOptions, Constants.INTENDED_COLLECTION_RID_HEADER, this.encryptionProcessor.getContainerRid());
+    private CosmosChangeFeedRequestOptions setRequestHeaders(CosmosChangeFeedRequestOptions requestOptions) {
+        cosmosChangeFeedRequestOptionsAccessor.setHeader(requestOptions, Constants.IS_CLIENT_ENCRYPTED_HEADER, "true");
+        cosmosChangeFeedRequestOptionsAccessor.setHeader(requestOptions, Constants.INTENDED_COLLECTION_RID_HEADER, this.encryptionProcessor.getContainerRid());
+        return requestOptions;
     }
 
     private void setRequestHeaders(CosmosBatchRequestOptions requestOptions) {
-        this.cosmosBatchRequestOptionsAccessor.setHeader(requestOptions, Constants.IS_CLIENT_ENCRYPTED_HEADER, "true");
-        this.cosmosBatchRequestOptionsAccessor.setHeader(requestOptions, Constants.INTENDED_COLLECTION_RID_HEADER, this.encryptionProcessor.getContainerRid());
+        cosmosBatchRequestOptionsAccessor.setHeader(requestOptions, Constants.IS_CLIENT_ENCRYPTED_HEADER, "true");
+        cosmosBatchRequestOptionsAccessor.setHeader(requestOptions, Constants.INTENDED_COLLECTION_RID_HEADER, this.encryptionProcessor.getContainerRid());
+    }
+
+    private void setRequestHeaders(CosmosBulkExecutionOptions requestOptions) {
+        CosmosBulkExecutionOptionsImpl requestOptionsImpl = cosmosBulkExecutionOptionsAccessor.getImpl(requestOptions);
+        requestOptionsImpl.setHeader(Constants.IS_CLIENT_ENCRYPTED_HEADER, "true");
+        requestOptionsImpl.setHeader(Constants.INTENDED_COLLECTION_RID_HEADER, this.encryptionProcessor.getContainerRid());
     }
 
     boolean isIncorrectContainerRid(CosmosException cosmosException) {
         return cosmosException.getStatusCode() == HttpConstants.StatusCodes.BADREQUEST &&
+            cosmosException.getResponseHeaders().get(HttpConstants.HttpHeaders.SUB_STATUS) != null &&
             cosmosException.getResponseHeaders().get(HttpConstants.HttpHeaders.SUB_STATUS)
                 .equals(Constants.INCORRECT_CONTAINER_RID_SUB_STATUS);
+    }
+
+    static {
+        EncryptionImplementationBridgeHelpers.CosmosEncryptionAsyncContainerHelper.setCosmosEncryptionAsyncContainerAccessor(new EncryptionImplementationBridgeHelpers.CosmosEncryptionAsyncContainerHelper.CosmosEncryptionAsyncContainerAccessor() {
+            @Override
+            public EncryptionProcessor getEncryptionProcessor(CosmosEncryptionAsyncContainer cosmosEncryptionAsyncContainer) {
+                return cosmosEncryptionAsyncContainer.getEncryptionProcessor();
+            }
+        });
     }
 }

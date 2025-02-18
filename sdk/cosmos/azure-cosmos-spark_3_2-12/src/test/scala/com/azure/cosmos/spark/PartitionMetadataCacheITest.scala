@@ -22,7 +22,8 @@ class PartitionMetadataCacheITest
     "spark.cosmos.database" -> cosmosDatabase,
     "spark.cosmos.container" -> cosmosContainer
   )
-  private[this] val clientConfig = CosmosClientConfiguration(userConfig, useEventualConsistency = true)
+  private[this] val clientConfig = CosmosClientConfiguration(
+    userConfig, useEventualConsistency = true, sparkEnvironmentInfo = "")
   private[this] val containerConfig = CosmosContainerConfig.parseCosmosContainerConfig(userConfig)
   private[this] var feedRange: NormalizedRange = NormalizedRange("", "FF")
 
@@ -170,8 +171,9 @@ class PartitionMetadataCacheITest
       feedRange,
       docCount,
       docSize,
+      firstLsn = None,
       lastLsn,
-      0,
+      startLsn = 0,
       None,
       new AtomicLong(startEpochMs),
       new AtomicLong(startEpochMs))

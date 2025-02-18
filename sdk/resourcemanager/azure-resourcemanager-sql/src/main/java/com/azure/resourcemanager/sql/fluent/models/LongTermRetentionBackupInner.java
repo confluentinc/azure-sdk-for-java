@@ -4,115 +4,224 @@
 
 package com.azure.resourcemanager.sql.fluent.models;
 
-import com.azure.core.annotation.Immutable;
-import com.azure.core.annotation.JsonFlatten;
+import com.azure.core.annotation.Fluent;
 import com.azure.core.management.ProxyResource;
-import com.azure.core.util.logging.ClientLogger;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.azure.json.JsonReader;
+import com.azure.json.JsonToken;
+import com.azure.json.JsonWriter;
+import com.azure.resourcemanager.sql.models.BackupStorageRedundancy;
+import java.io.IOException;
 import java.time.OffsetDateTime;
 
-/** A long term retention backup. */
-@JsonFlatten
-@Immutable
-public class LongTermRetentionBackupInner extends ProxyResource {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(LongTermRetentionBackupInner.class);
+/**
+ * A long term retention backup.
+ */
+@Fluent
+public final class LongTermRetentionBackupInner extends ProxyResource {
+    /*
+     * Resource properties.
+     */
+    private LongTermRetentionBackupProperties innerProperties;
 
     /*
-     * The server name that the backup database belong to.
+     * The type of the resource.
      */
-    @JsonProperty(value = "properties.serverName", access = JsonProperty.Access.WRITE_ONLY)
-    private String serverName;
+    private String type;
 
     /*
-     * The create time of the server.
+     * The name of the resource.
      */
-    @JsonProperty(value = "properties.serverCreateTime", access = JsonProperty.Access.WRITE_ONLY)
-    private OffsetDateTime serverCreateTime;
+    private String name;
 
     /*
-     * The name of the database the backup belong to
+     * Fully qualified resource Id for the resource.
      */
-    @JsonProperty(value = "properties.databaseName", access = JsonProperty.Access.WRITE_ONLY)
-    private String databaseName;
+    private String id;
 
-    /*
-     * The delete time of the database
+    /**
+     * Creates an instance of LongTermRetentionBackupInner class.
      */
-    @JsonProperty(value = "properties.databaseDeletionTime", access = JsonProperty.Access.WRITE_ONLY)
-    private OffsetDateTime databaseDeletionTime;
+    public LongTermRetentionBackupInner() {
+    }
 
-    /*
-     * The time the backup was taken
+    /**
+     * Get the innerProperties property: Resource properties.
+     * 
+     * @return the innerProperties value.
      */
-    @JsonProperty(value = "properties.backupTime", access = JsonProperty.Access.WRITE_ONLY)
-    private OffsetDateTime backupTime;
+    private LongTermRetentionBackupProperties innerProperties() {
+        return this.innerProperties;
+    }
 
-    /*
-     * The time the long term retention backup will expire.
+    /**
+     * Get the type property: The type of the resource.
+     * 
+     * @return the type value.
      */
-    @JsonProperty(value = "properties.backupExpirationTime", access = JsonProperty.Access.WRITE_ONLY)
-    private OffsetDateTime backupExpirationTime;
+    @Override
+    public String type() {
+        return this.type;
+    }
+
+    /**
+     * Get the name property: The name of the resource.
+     * 
+     * @return the name value.
+     */
+    @Override
+    public String name() {
+        return this.name;
+    }
+
+    /**
+     * Get the id property: Fully qualified resource Id for the resource.
+     * 
+     * @return the id value.
+     */
+    @Override
+    public String id() {
+        return this.id;
+    }
 
     /**
      * Get the serverName property: The server name that the backup database belong to.
-     *
+     * 
      * @return the serverName value.
      */
     public String serverName() {
-        return this.serverName;
+        return this.innerProperties() == null ? null : this.innerProperties().serverName();
     }
 
     /**
      * Get the serverCreateTime property: The create time of the server.
-     *
+     * 
      * @return the serverCreateTime value.
      */
     public OffsetDateTime serverCreateTime() {
-        return this.serverCreateTime;
+        return this.innerProperties() == null ? null : this.innerProperties().serverCreateTime();
     }
 
     /**
      * Get the databaseName property: The name of the database the backup belong to.
-     *
+     * 
      * @return the databaseName value.
      */
     public String databaseName() {
-        return this.databaseName;
+        return this.innerProperties() == null ? null : this.innerProperties().databaseName();
     }
 
     /**
      * Get the databaseDeletionTime property: The delete time of the database.
-     *
+     * 
      * @return the databaseDeletionTime value.
      */
     public OffsetDateTime databaseDeletionTime() {
-        return this.databaseDeletionTime;
+        return this.innerProperties() == null ? null : this.innerProperties().databaseDeletionTime();
     }
 
     /**
      * Get the backupTime property: The time the backup was taken.
-     *
+     * 
      * @return the backupTime value.
      */
     public OffsetDateTime backupTime() {
-        return this.backupTime;
+        return this.innerProperties() == null ? null : this.innerProperties().backupTime();
     }
 
     /**
      * Get the backupExpirationTime property: The time the long term retention backup will expire.
-     *
+     * 
      * @return the backupExpirationTime value.
      */
     public OffsetDateTime backupExpirationTime() {
-        return this.backupExpirationTime;
+        return this.innerProperties() == null ? null : this.innerProperties().backupExpirationTime();
+    }
+
+    /**
+     * Get the backupStorageRedundancy property: The storage redundancy type of the backup.
+     * 
+     * @return the backupStorageRedundancy value.
+     */
+    public BackupStorageRedundancy backupStorageRedundancy() {
+        return this.innerProperties() == null ? null : this.innerProperties().backupStorageRedundancy();
+    }
+
+    /**
+     * Get the requestedBackupStorageRedundancy property: The storage redundancy type of the backup.
+     * 
+     * @return the requestedBackupStorageRedundancy value.
+     */
+    public BackupStorageRedundancy requestedBackupStorageRedundancy() {
+        return this.innerProperties() == null ? null : this.innerProperties().requestedBackupStorageRedundancy();
+    }
+
+    /**
+     * Set the requestedBackupStorageRedundancy property: The storage redundancy type of the backup.
+     * 
+     * @param requestedBackupStorageRedundancy the requestedBackupStorageRedundancy value to set.
+     * @return the LongTermRetentionBackupInner object itself.
+     */
+    public LongTermRetentionBackupInner
+        withRequestedBackupStorageRedundancy(BackupStorageRedundancy requestedBackupStorageRedundancy) {
+        if (this.innerProperties() == null) {
+            this.innerProperties = new LongTermRetentionBackupProperties();
+        }
+        this.innerProperties().withRequestedBackupStorageRedundancy(requestedBackupStorageRedundancy);
+        return this;
     }
 
     /**
      * Validates the instance.
-     *
+     * 
      * @throws IllegalArgumentException thrown if the instance is not valid.
      */
     public void validate() {
+        if (innerProperties() != null) {
+            innerProperties().validate();
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public JsonWriter toJson(JsonWriter jsonWriter) throws IOException {
+        jsonWriter.writeStartObject();
+        jsonWriter.writeJsonField("properties", this.innerProperties);
+        return jsonWriter.writeEndObject();
+    }
+
+    /**
+     * Reads an instance of LongTermRetentionBackupInner from the JsonReader.
+     * 
+     * @param jsonReader The JsonReader being read.
+     * @return An instance of LongTermRetentionBackupInner if the JsonReader was pointing to an instance of it, or null
+     * if it was pointing to JSON null.
+     * @throws IllegalStateException If the deserialized JSON object was missing any required properties.
+     * @throws IOException If an error occurs while reading the LongTermRetentionBackupInner.
+     */
+    public static LongTermRetentionBackupInner fromJson(JsonReader jsonReader) throws IOException {
+        return jsonReader.readObject(reader -> {
+            LongTermRetentionBackupInner deserializedLongTermRetentionBackupInner = new LongTermRetentionBackupInner();
+            while (reader.nextToken() != JsonToken.END_OBJECT) {
+                String fieldName = reader.getFieldName();
+                reader.nextToken();
+
+                if ("id".equals(fieldName)) {
+                    deserializedLongTermRetentionBackupInner.id = reader.getString();
+                } else if ("name".equals(fieldName)) {
+                    deserializedLongTermRetentionBackupInner.name = reader.getString();
+                } else if ("type".equals(fieldName)) {
+                    deserializedLongTermRetentionBackupInner.type = reader.getString();
+                } else if ("properties".equals(fieldName)) {
+                    deserializedLongTermRetentionBackupInner.innerProperties
+                        = LongTermRetentionBackupProperties.fromJson(reader);
+                } else {
+                    reader.skipChildren();
+                }
+            }
+
+            return deserializedLongTermRetentionBackupInner;
+        });
     }
 }

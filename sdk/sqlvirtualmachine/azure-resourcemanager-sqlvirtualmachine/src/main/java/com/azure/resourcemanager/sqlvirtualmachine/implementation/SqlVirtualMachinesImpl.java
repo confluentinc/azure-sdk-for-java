@@ -9,71 +9,65 @@ import com.azure.core.http.rest.Response;
 import com.azure.core.http.rest.SimpleResponse;
 import com.azure.core.util.Context;
 import com.azure.core.util.logging.ClientLogger;
-import com.azure.resourcemanager.sqlvirtualmachine.SqlVirtualMachineManager;
 import com.azure.resourcemanager.sqlvirtualmachine.fluent.SqlVirtualMachinesClient;
 import com.azure.resourcemanager.sqlvirtualmachine.fluent.models.SqlVirtualMachineInner;
 import com.azure.resourcemanager.sqlvirtualmachine.models.SqlVirtualMachine;
 import com.azure.resourcemanager.sqlvirtualmachine.models.SqlVirtualMachines;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 public final class SqlVirtualMachinesImpl implements SqlVirtualMachines {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(SqlVirtualMachinesImpl.class);
+    private static final ClientLogger LOGGER = new ClientLogger(SqlVirtualMachinesImpl.class);
 
     private final SqlVirtualMachinesClient innerClient;
 
-    private final SqlVirtualMachineManager serviceManager;
+    private final com.azure.resourcemanager.sqlvirtualmachine.SqlVirtualMachineManager serviceManager;
 
-    public SqlVirtualMachinesImpl(SqlVirtualMachinesClient innerClient, SqlVirtualMachineManager serviceManager) {
+    public SqlVirtualMachinesImpl(SqlVirtualMachinesClient innerClient,
+        com.azure.resourcemanager.sqlvirtualmachine.SqlVirtualMachineManager serviceManager) {
         this.innerClient = innerClient;
         this.serviceManager = serviceManager;
     }
 
-    public PagedIterable<SqlVirtualMachine> listBySqlVmGroup(
-        String resourceGroupName, String sqlVirtualMachineGroupName) {
-        PagedIterable<SqlVirtualMachineInner> inner =
-            this.serviceClient().listBySqlVmGroup(resourceGroupName, sqlVirtualMachineGroupName);
-        return inner.mapPage(inner1 -> new SqlVirtualMachineImpl(inner1, this.manager()));
+    public PagedIterable<SqlVirtualMachine> listBySqlVmGroup(String resourceGroupName,
+        String sqlVirtualMachineGroupName) {
+        PagedIterable<SqlVirtualMachineInner> inner
+            = this.serviceClient().listBySqlVmGroup(resourceGroupName, sqlVirtualMachineGroupName);
+        return ResourceManagerUtils.mapPage(inner, inner1 -> new SqlVirtualMachineImpl(inner1, this.manager()));
     }
 
-    public PagedIterable<SqlVirtualMachine> listBySqlVmGroup(
-        String resourceGroupName, String sqlVirtualMachineGroupName, Context context) {
-        PagedIterable<SqlVirtualMachineInner> inner =
-            this.serviceClient().listBySqlVmGroup(resourceGroupName, sqlVirtualMachineGroupName, context);
-        return inner.mapPage(inner1 -> new SqlVirtualMachineImpl(inner1, this.manager()));
+    public PagedIterable<SqlVirtualMachine> listBySqlVmGroup(String resourceGroupName,
+        String sqlVirtualMachineGroupName, Context context) {
+        PagedIterable<SqlVirtualMachineInner> inner
+            = this.serviceClient().listBySqlVmGroup(resourceGroupName, sqlVirtualMachineGroupName, context);
+        return ResourceManagerUtils.mapPage(inner, inner1 -> new SqlVirtualMachineImpl(inner1, this.manager()));
     }
 
     public PagedIterable<SqlVirtualMachine> list() {
         PagedIterable<SqlVirtualMachineInner> inner = this.serviceClient().list();
-        return inner.mapPage(inner1 -> new SqlVirtualMachineImpl(inner1, this.manager()));
+        return ResourceManagerUtils.mapPage(inner, inner1 -> new SqlVirtualMachineImpl(inner1, this.manager()));
     }
 
     public PagedIterable<SqlVirtualMachine> list(Context context) {
         PagedIterable<SqlVirtualMachineInner> inner = this.serviceClient().list(context);
-        return inner.mapPage(inner1 -> new SqlVirtualMachineImpl(inner1, this.manager()));
+        return ResourceManagerUtils.mapPage(inner, inner1 -> new SqlVirtualMachineImpl(inner1, this.manager()));
     }
 
-    public SqlVirtualMachine getByResourceGroup(String resourceGroupName, String sqlVirtualMachineName) {
-        SqlVirtualMachineInner inner =
-            this.serviceClient().getByResourceGroup(resourceGroupName, sqlVirtualMachineName);
+    public Response<SqlVirtualMachine> getByResourceGroupWithResponse(String resourceGroupName,
+        String sqlVirtualMachineName, String expand, Context context) {
+        Response<SqlVirtualMachineInner> inner = this.serviceClient()
+            .getByResourceGroupWithResponse(resourceGroupName, sqlVirtualMachineName, expand, context);
         if (inner != null) {
-            return new SqlVirtualMachineImpl(inner, this.manager());
+            return new SimpleResponse<>(inner.getRequest(), inner.getStatusCode(), inner.getHeaders(),
+                new SqlVirtualMachineImpl(inner.getValue(), this.manager()));
         } else {
             return null;
         }
     }
 
-    public Response<SqlVirtualMachine> getByResourceGroupWithResponse(
-        String resourceGroupName, String sqlVirtualMachineName, String expand, Context context) {
-        Response<SqlVirtualMachineInner> inner =
-            this
-                .serviceClient()
-                .getByResourceGroupWithResponse(resourceGroupName, sqlVirtualMachineName, expand, context);
+    public SqlVirtualMachine getByResourceGroup(String resourceGroupName, String sqlVirtualMachineName) {
+        SqlVirtualMachineInner inner
+            = this.serviceClient().getByResourceGroup(resourceGroupName, sqlVirtualMachineName);
         if (inner != null) {
-            return new SimpleResponse<>(
-                inner.getRequest(),
-                inner.getStatusCode(),
-                inner.getHeaders(),
-                new SqlVirtualMachineImpl(inner.getValue(), this.manager()));
+            return new SqlVirtualMachineImpl(inner, this.manager());
         } else {
             return null;
         }
@@ -89,98 +83,85 @@ public final class SqlVirtualMachinesImpl implements SqlVirtualMachines {
 
     public PagedIterable<SqlVirtualMachine> listByResourceGroup(String resourceGroupName) {
         PagedIterable<SqlVirtualMachineInner> inner = this.serviceClient().listByResourceGroup(resourceGroupName);
-        return inner.mapPage(inner1 -> new SqlVirtualMachineImpl(inner1, this.manager()));
+        return ResourceManagerUtils.mapPage(inner, inner1 -> new SqlVirtualMachineImpl(inner1, this.manager()));
     }
 
     public PagedIterable<SqlVirtualMachine> listByResourceGroup(String resourceGroupName, Context context) {
-        PagedIterable<SqlVirtualMachineInner> inner =
-            this.serviceClient().listByResourceGroup(resourceGroupName, context);
-        return inner.mapPage(inner1 -> new SqlVirtualMachineImpl(inner1, this.manager()));
+        PagedIterable<SqlVirtualMachineInner> inner
+            = this.serviceClient().listByResourceGroup(resourceGroupName, context);
+        return ResourceManagerUtils.mapPage(inner, inner1 -> new SqlVirtualMachineImpl(inner1, this.manager()));
+    }
+
+    public void startAssessment(String resourceGroupName, String sqlVirtualMachineName) {
+        this.serviceClient().startAssessment(resourceGroupName, sqlVirtualMachineName);
+    }
+
+    public void startAssessment(String resourceGroupName, String sqlVirtualMachineName, Context context) {
+        this.serviceClient().startAssessment(resourceGroupName, sqlVirtualMachineName, context);
+    }
+
+    public void redeploy(String resourceGroupName, String sqlVirtualMachineName) {
+        this.serviceClient().redeploy(resourceGroupName, sqlVirtualMachineName);
+    }
+
+    public void redeploy(String resourceGroupName, String sqlVirtualMachineName, Context context) {
+        this.serviceClient().redeploy(resourceGroupName, sqlVirtualMachineName, context);
     }
 
     public SqlVirtualMachine getById(String id) {
-        String resourceGroupName = Utils.getValueFromIdByName(id, "resourceGroups");
+        String resourceGroupName = ResourceManagerUtils.getValueFromIdByName(id, "resourceGroups");
         if (resourceGroupName == null) {
-            throw logger
-                .logExceptionAsError(
-                    new IllegalArgumentException(
-                        String
-                            .format("The resource ID '%s' is not valid. Missing path segment 'resourceGroups'.", id)));
+            throw LOGGER.logExceptionAsError(new IllegalArgumentException(
+                String.format("The resource ID '%s' is not valid. Missing path segment 'resourceGroups'.", id)));
         }
-        String sqlVirtualMachineName = Utils.getValueFromIdByName(id, "sqlVirtualMachines");
+        String sqlVirtualMachineName = ResourceManagerUtils.getValueFromIdByName(id, "sqlVirtualMachines");
         if (sqlVirtualMachineName == null) {
-            throw logger
-                .logExceptionAsError(
-                    new IllegalArgumentException(
-                        String
-                            .format(
-                                "The resource ID '%s' is not valid. Missing path segment 'sqlVirtualMachines'.", id)));
+            throw LOGGER.logExceptionAsError(new IllegalArgumentException(
+                String.format("The resource ID '%s' is not valid. Missing path segment 'sqlVirtualMachines'.", id)));
         }
         String localExpand = null;
-        return this
-            .getByResourceGroupWithResponse(resourceGroupName, sqlVirtualMachineName, localExpand, Context.NONE)
+        return this.getByResourceGroupWithResponse(resourceGroupName, sqlVirtualMachineName, localExpand, Context.NONE)
             .getValue();
     }
 
     public Response<SqlVirtualMachine> getByIdWithResponse(String id, String expand, Context context) {
-        String resourceGroupName = Utils.getValueFromIdByName(id, "resourceGroups");
+        String resourceGroupName = ResourceManagerUtils.getValueFromIdByName(id, "resourceGroups");
         if (resourceGroupName == null) {
-            throw logger
-                .logExceptionAsError(
-                    new IllegalArgumentException(
-                        String
-                            .format("The resource ID '%s' is not valid. Missing path segment 'resourceGroups'.", id)));
+            throw LOGGER.logExceptionAsError(new IllegalArgumentException(
+                String.format("The resource ID '%s' is not valid. Missing path segment 'resourceGroups'.", id)));
         }
-        String sqlVirtualMachineName = Utils.getValueFromIdByName(id, "sqlVirtualMachines");
+        String sqlVirtualMachineName = ResourceManagerUtils.getValueFromIdByName(id, "sqlVirtualMachines");
         if (sqlVirtualMachineName == null) {
-            throw logger
-                .logExceptionAsError(
-                    new IllegalArgumentException(
-                        String
-                            .format(
-                                "The resource ID '%s' is not valid. Missing path segment 'sqlVirtualMachines'.", id)));
+            throw LOGGER.logExceptionAsError(new IllegalArgumentException(
+                String.format("The resource ID '%s' is not valid. Missing path segment 'sqlVirtualMachines'.", id)));
         }
         return this.getByResourceGroupWithResponse(resourceGroupName, sqlVirtualMachineName, expand, context);
     }
 
     public void deleteById(String id) {
-        String resourceGroupName = Utils.getValueFromIdByName(id, "resourceGroups");
+        String resourceGroupName = ResourceManagerUtils.getValueFromIdByName(id, "resourceGroups");
         if (resourceGroupName == null) {
-            throw logger
-                .logExceptionAsError(
-                    new IllegalArgumentException(
-                        String
-                            .format("The resource ID '%s' is not valid. Missing path segment 'resourceGroups'.", id)));
+            throw LOGGER.logExceptionAsError(new IllegalArgumentException(
+                String.format("The resource ID '%s' is not valid. Missing path segment 'resourceGroups'.", id)));
         }
-        String sqlVirtualMachineName = Utils.getValueFromIdByName(id, "sqlVirtualMachines");
+        String sqlVirtualMachineName = ResourceManagerUtils.getValueFromIdByName(id, "sqlVirtualMachines");
         if (sqlVirtualMachineName == null) {
-            throw logger
-                .logExceptionAsError(
-                    new IllegalArgumentException(
-                        String
-                            .format(
-                                "The resource ID '%s' is not valid. Missing path segment 'sqlVirtualMachines'.", id)));
+            throw LOGGER.logExceptionAsError(new IllegalArgumentException(
+                String.format("The resource ID '%s' is not valid. Missing path segment 'sqlVirtualMachines'.", id)));
         }
         this.delete(resourceGroupName, sqlVirtualMachineName, Context.NONE);
     }
 
     public void deleteByIdWithResponse(String id, Context context) {
-        String resourceGroupName = Utils.getValueFromIdByName(id, "resourceGroups");
+        String resourceGroupName = ResourceManagerUtils.getValueFromIdByName(id, "resourceGroups");
         if (resourceGroupName == null) {
-            throw logger
-                .logExceptionAsError(
-                    new IllegalArgumentException(
-                        String
-                            .format("The resource ID '%s' is not valid. Missing path segment 'resourceGroups'.", id)));
+            throw LOGGER.logExceptionAsError(new IllegalArgumentException(
+                String.format("The resource ID '%s' is not valid. Missing path segment 'resourceGroups'.", id)));
         }
-        String sqlVirtualMachineName = Utils.getValueFromIdByName(id, "sqlVirtualMachines");
+        String sqlVirtualMachineName = ResourceManagerUtils.getValueFromIdByName(id, "sqlVirtualMachines");
         if (sqlVirtualMachineName == null) {
-            throw logger
-                .logExceptionAsError(
-                    new IllegalArgumentException(
-                        String
-                            .format(
-                                "The resource ID '%s' is not valid. Missing path segment 'sqlVirtualMachines'.", id)));
+            throw LOGGER.logExceptionAsError(new IllegalArgumentException(
+                String.format("The resource ID '%s' is not valid. Missing path segment 'sqlVirtualMachines'.", id)));
         }
         this.delete(resourceGroupName, sqlVirtualMachineName, context);
     }
@@ -189,7 +170,7 @@ public final class SqlVirtualMachinesImpl implements SqlVirtualMachines {
         return this.innerClient;
     }
 
-    private SqlVirtualMachineManager manager() {
+    private com.azure.resourcemanager.sqlvirtualmachine.SqlVirtualMachineManager manager() {
         return this.serviceManager;
     }
 

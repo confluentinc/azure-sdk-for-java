@@ -10,7 +10,9 @@ import com.azure.core.util.Context;
 import com.azure.resourcemanager.mysqlflexibleserver.fluent.models.ServerInner;
 import com.azure.resourcemanager.mysqlflexibleserver.models.Backup;
 import com.azure.resourcemanager.mysqlflexibleserver.models.CreateMode;
+import com.azure.resourcemanager.mysqlflexibleserver.models.DataEncryption;
 import com.azure.resourcemanager.mysqlflexibleserver.models.HighAvailability;
+import com.azure.resourcemanager.mysqlflexibleserver.models.Identity;
 import com.azure.resourcemanager.mysqlflexibleserver.models.MaintenanceWindow;
 import com.azure.resourcemanager.mysqlflexibleserver.models.Network;
 import com.azure.resourcemanager.mysqlflexibleserver.models.ReplicationRole;
@@ -53,6 +55,10 @@ public final class ServerImpl implements Server, Server.Definition, Server.Updat
         } else {
             return Collections.emptyMap();
         }
+    }
+
+    public Identity identity() {
+        return this.innerModel().identity();
     }
 
     public Sku sku() {
@@ -99,6 +105,10 @@ public final class ServerImpl implements Server, Server.Definition, Server.Updat
         return this.innerModel().replicaCapacity();
     }
 
+    public DataEncryption dataEncryption() {
+        return this.innerModel().dataEncryption();
+    }
+
     public ServerState state() {
         return this.innerModel().state();
     }
@@ -135,6 +145,10 @@ public final class ServerImpl implements Server, Server.Definition, Server.Updat
         return this.location();
     }
 
+    public String resourceGroupName() {
+        return resourceGroupName;
+    }
+
     public ServerInner innerModel() {
         return this.innerObject;
     }
@@ -155,20 +169,16 @@ public final class ServerImpl implements Server, Server.Definition, Server.Updat
     }
 
     public Server create() {
-        this.innerObject =
-            serviceManager
-                .serviceClient()
-                .getServers()
-                .create(resourceGroupName, serverName, this.innerModel(), Context.NONE);
+        this.innerObject = serviceManager.serviceClient()
+            .getServers()
+            .create(resourceGroupName, serverName, this.innerModel(), Context.NONE);
         return this;
     }
 
     public Server create(Context context) {
-        this.innerObject =
-            serviceManager
-                .serviceClient()
-                .getServers()
-                .create(resourceGroupName, serverName, this.innerModel(), context);
+        this.innerObject = serviceManager.serviceClient()
+            .getServers()
+            .create(resourceGroupName, serverName, this.innerModel(), context);
         return this;
     }
 
@@ -184,47 +194,39 @@ public final class ServerImpl implements Server, Server.Definition, Server.Updat
     }
 
     public Server apply() {
-        this.innerObject =
-            serviceManager
-                .serviceClient()
-                .getServers()
-                .update(resourceGroupName, serverName, updateParameters, Context.NONE);
+        this.innerObject = serviceManager.serviceClient()
+            .getServers()
+            .update(resourceGroupName, serverName, updateParameters, Context.NONE);
         return this;
     }
 
     public Server apply(Context context) {
-        this.innerObject =
-            serviceManager
-                .serviceClient()
-                .getServers()
-                .update(resourceGroupName, serverName, updateParameters, context);
+        this.innerObject = serviceManager.serviceClient()
+            .getServers()
+            .update(resourceGroupName, serverName, updateParameters, context);
         return this;
     }
 
     ServerImpl(ServerInner innerObject, com.azure.resourcemanager.mysqlflexibleserver.MySqlManager serviceManager) {
         this.innerObject = innerObject;
         this.serviceManager = serviceManager;
-        this.resourceGroupName = Utils.getValueFromIdByName(innerObject.id(), "resourceGroups");
-        this.serverName = Utils.getValueFromIdByName(innerObject.id(), "flexibleServers");
+        this.resourceGroupName = ResourceManagerUtils.getValueFromIdByName(innerObject.id(), "resourceGroups");
+        this.serverName = ResourceManagerUtils.getValueFromIdByName(innerObject.id(), "flexibleServers");
     }
 
     public Server refresh() {
-        this.innerObject =
-            serviceManager
-                .serviceClient()
-                .getServers()
-                .getByResourceGroupWithResponse(resourceGroupName, serverName, Context.NONE)
-                .getValue();
+        this.innerObject = serviceManager.serviceClient()
+            .getServers()
+            .getByResourceGroupWithResponse(resourceGroupName, serverName, Context.NONE)
+            .getValue();
         return this;
     }
 
     public Server refresh(Context context) {
-        this.innerObject =
-            serviceManager
-                .serviceClient()
-                .getServers()
-                .getByResourceGroupWithResponse(resourceGroupName, serverName, context)
-                .getValue();
+        this.innerObject = serviceManager.serviceClient()
+            .getServers()
+            .getByResourceGroupWithResponse(resourceGroupName, serverName, context)
+            .getValue();
         return this;
     }
 
@@ -276,6 +278,16 @@ public final class ServerImpl implements Server, Server.Definition, Server.Updat
             return this;
         } else {
             this.updateParameters.withTags(tags);
+            return this;
+        }
+    }
+
+    public ServerImpl withIdentity(Identity identity) {
+        if (isInCreateMode()) {
+            this.innerModel().withIdentity(identity);
+            return this;
+        } else {
+            this.updateParameters.withIdentity(identity);
             return this;
         }
     }
@@ -336,6 +348,16 @@ public final class ServerImpl implements Server, Server.Definition, Server.Updat
             return this;
         } else {
             this.updateParameters.withReplicationRole(replicationRole);
+            return this;
+        }
+    }
+
+    public ServerImpl withDataEncryption(DataEncryption dataEncryption) {
+        if (isInCreateMode()) {
+            this.innerModel().withDataEncryption(dataEncryption);
+            return this;
+        } else {
+            this.updateParameters.withDataEncryption(dataEncryption);
             return this;
         }
     }

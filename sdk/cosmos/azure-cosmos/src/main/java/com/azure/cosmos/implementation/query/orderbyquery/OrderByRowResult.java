@@ -5,11 +5,8 @@ package com.azure.cosmos.implementation.query.orderbyquery;
 
 import com.azure.cosmos.implementation.Constants;
 import com.azure.cosmos.implementation.Document;
-import com.azure.cosmos.implementation.PartitionKeyRange;
 import com.azure.cosmos.implementation.feedranges.FeedRangeEpkImpl;
 import com.azure.cosmos.implementation.query.QueryItem;
-import com.azure.cosmos.models.FeedRange;
-import com.azure.cosmos.models.ModelBridgeInternal;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import java.util.List;
@@ -18,19 +15,16 @@ import java.util.List;
  * Represents the result of a query in the Azure Cosmos DB database service.
  */
 public final class OrderByRowResult<T> extends Document {
-    private final Class<T> klass;
     private volatile List<QueryItem> orderByItems;
-    private volatile T payload;
+    private volatile Document payload;
     private final FeedRangeEpkImpl targetRange;
     private final String backendContinuationToken;
 
     public OrderByRowResult(
-            Class<T> klass,
             String jsonString,
             FeedRangeEpkImpl targetRange,
             String backendContinuationToken) {
         super(jsonString);
-        this.klass = klass;
         this.targetRange = targetRange;
         this.backendContinuationToken = backendContinuationToken;
     }
@@ -41,17 +35,17 @@ public final class OrderByRowResult<T> extends Document {
     }
 
     @SuppressWarnings("unchecked")
-    public T getPayload() {
+    public Document getPayload() {
         if (this.payload != null) {
             return this.payload;
         }
         final Object object = super.get("payload");
-        if (klass == Document.class && !ObjectNode.class.isAssignableFrom(object.getClass())) {
+        if  (!ObjectNode.class.isAssignableFrom(object.getClass())) {
             Document document = new Document();
-            ModelBridgeInternal.setProperty(document, Constants.Properties.VALUE, object);
-            payload = (T) document;
+            document.set(Constants.Properties.VALUE, object);
+            payload = document;
         } else {
-            this.payload = super.getObject("payload", klass);
+            this.payload = super.getObject("payload", Document.class);
         }
         return payload;
     }

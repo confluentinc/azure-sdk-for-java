@@ -28,7 +28,7 @@ public enum SasProtocol {
     }
 
     /**
-     * Parses a {@code String} into a {@code SASProtocl} value if possible.
+     * Parses a {@code String} into a {@code SASProtocol} value if possible.
      *
      * @param str The value to try to parse.
      *
@@ -41,8 +41,8 @@ public enum SasProtocol {
         } else if (str.equals(Constants.HTTPS_HTTP)) {
             return SasProtocol.HTTPS_HTTP;
         }
-        throw new IllegalArgumentException(String.format(Locale.ROOT,
-            "%s could not be parsed into a SasProtocol value.", str));
+        throw new IllegalArgumentException(
+            String.format(Locale.ROOT, "%s could not be parsed into a SasProtocol value.", str));
     }
 
     @Override

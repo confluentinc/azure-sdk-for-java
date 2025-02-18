@@ -5,75 +5,62 @@
 package com.azure.resourcemanager.sql.fluent.models;
 
 import com.azure.core.annotation.Fluent;
-import com.azure.core.annotation.JsonFlatten;
 import com.azure.core.management.ProxyResource;
-import com.azure.core.util.logging.ClientLogger;
+import com.azure.json.JsonReader;
+import com.azure.json.JsonToken;
+import com.azure.json.JsonWriter;
 import com.azure.resourcemanager.sql.models.FailoverGroupReadOnlyEndpoint;
 import com.azure.resourcemanager.sql.models.FailoverGroupReadWriteEndpoint;
 import com.azure.resourcemanager.sql.models.FailoverGroupReplicationRole;
 import com.azure.resourcemanager.sql.models.PartnerInfo;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
-/** A failover group. */
-@JsonFlatten
+/**
+ * A failover group.
+ */
 @Fluent
-public class FailoverGroupInner extends ProxyResource {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(FailoverGroupInner.class);
-
+public final class FailoverGroupInner extends ProxyResource {
     /*
      * Resource location.
      */
-    @JsonProperty(value = "location", access = JsonProperty.Access.WRITE_ONLY)
     private String location;
 
     /*
      * Resource tags.
      */
-    @JsonProperty(value = "tags")
     private Map<String, String> tags;
 
     /*
-     * Read-write endpoint of the failover group instance.
+     * Resource properties.
      */
-    @JsonProperty(value = "properties.readWriteEndpoint")
-    private FailoverGroupReadWriteEndpoint readWriteEndpoint;
+    private FailoverGroupProperties innerProperties;
 
     /*
-     * Read-only endpoint of the failover group instance.
+     * The type of the resource.
      */
-    @JsonProperty(value = "properties.readOnlyEndpoint")
-    private FailoverGroupReadOnlyEndpoint readOnlyEndpoint;
+    private String type;
 
     /*
-     * Local replication role of the failover group instance.
+     * The name of the resource.
      */
-    @JsonProperty(value = "properties.replicationRole", access = JsonProperty.Access.WRITE_ONLY)
-    private FailoverGroupReplicationRole replicationRole;
+    private String name;
 
     /*
-     * Replication state of the failover group instance.
+     * Fully qualified resource Id for the resource.
      */
-    @JsonProperty(value = "properties.replicationState", access = JsonProperty.Access.WRITE_ONLY)
-    private String replicationState;
+    private String id;
 
-    /*
-     * List of partner server information for the failover group.
+    /**
+     * Creates an instance of FailoverGroupInner class.
      */
-    @JsonProperty(value = "properties.partnerServers")
-    private List<PartnerInfo> partnerServers;
-
-    /*
-     * List of databases in the failover group.
-     */
-    @JsonProperty(value = "properties.databases")
-    private List<String> databases;
+    public FailoverGroupInner() {
+    }
 
     /**
      * Get the location property: Resource location.
-     *
+     * 
      * @return the location value.
      */
     public String location() {
@@ -82,7 +69,7 @@ public class FailoverGroupInner extends ProxyResource {
 
     /**
      * Get the tags property: Resource tags.
-     *
+     * 
      * @return the tags value.
      */
     public Map<String, String> tags() {
@@ -91,7 +78,7 @@ public class FailoverGroupInner extends ProxyResource {
 
     /**
      * Set the tags property: Resource tags.
-     *
+     * 
      * @param tags the tags value to set.
      * @return the FailoverGroupInner object itself.
      */
@@ -101,117 +88,211 @@ public class FailoverGroupInner extends ProxyResource {
     }
 
     /**
+     * Get the innerProperties property: Resource properties.
+     * 
+     * @return the innerProperties value.
+     */
+    private FailoverGroupProperties innerProperties() {
+        return this.innerProperties;
+    }
+
+    /**
+     * Get the type property: The type of the resource.
+     * 
+     * @return the type value.
+     */
+    @Override
+    public String type() {
+        return this.type;
+    }
+
+    /**
+     * Get the name property: The name of the resource.
+     * 
+     * @return the name value.
+     */
+    @Override
+    public String name() {
+        return this.name;
+    }
+
+    /**
+     * Get the id property: Fully qualified resource Id for the resource.
+     * 
+     * @return the id value.
+     */
+    @Override
+    public String id() {
+        return this.id;
+    }
+
+    /**
      * Get the readWriteEndpoint property: Read-write endpoint of the failover group instance.
-     *
+     * 
      * @return the readWriteEndpoint value.
      */
     public FailoverGroupReadWriteEndpoint readWriteEndpoint() {
-        return this.readWriteEndpoint;
+        return this.innerProperties() == null ? null : this.innerProperties().readWriteEndpoint();
     }
 
     /**
      * Set the readWriteEndpoint property: Read-write endpoint of the failover group instance.
-     *
+     * 
      * @param readWriteEndpoint the readWriteEndpoint value to set.
      * @return the FailoverGroupInner object itself.
      */
     public FailoverGroupInner withReadWriteEndpoint(FailoverGroupReadWriteEndpoint readWriteEndpoint) {
-        this.readWriteEndpoint = readWriteEndpoint;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new FailoverGroupProperties();
+        }
+        this.innerProperties().withReadWriteEndpoint(readWriteEndpoint);
         return this;
     }
 
     /**
      * Get the readOnlyEndpoint property: Read-only endpoint of the failover group instance.
-     *
+     * 
      * @return the readOnlyEndpoint value.
      */
     public FailoverGroupReadOnlyEndpoint readOnlyEndpoint() {
-        return this.readOnlyEndpoint;
+        return this.innerProperties() == null ? null : this.innerProperties().readOnlyEndpoint();
     }
 
     /**
      * Set the readOnlyEndpoint property: Read-only endpoint of the failover group instance.
-     *
+     * 
      * @param readOnlyEndpoint the readOnlyEndpoint value to set.
      * @return the FailoverGroupInner object itself.
      */
     public FailoverGroupInner withReadOnlyEndpoint(FailoverGroupReadOnlyEndpoint readOnlyEndpoint) {
-        this.readOnlyEndpoint = readOnlyEndpoint;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new FailoverGroupProperties();
+        }
+        this.innerProperties().withReadOnlyEndpoint(readOnlyEndpoint);
         return this;
     }
 
     /**
      * Get the replicationRole property: Local replication role of the failover group instance.
-     *
+     * 
      * @return the replicationRole value.
      */
     public FailoverGroupReplicationRole replicationRole() {
-        return this.replicationRole;
+        return this.innerProperties() == null ? null : this.innerProperties().replicationRole();
     }
 
     /**
      * Get the replicationState property: Replication state of the failover group instance.
-     *
+     * 
      * @return the replicationState value.
      */
     public String replicationState() {
-        return this.replicationState;
+        return this.innerProperties() == null ? null : this.innerProperties().replicationState();
     }
 
     /**
      * Get the partnerServers property: List of partner server information for the failover group.
-     *
+     * 
      * @return the partnerServers value.
      */
     public List<PartnerInfo> partnerServers() {
-        return this.partnerServers;
+        return this.innerProperties() == null ? null : this.innerProperties().partnerServers();
     }
 
     /**
      * Set the partnerServers property: List of partner server information for the failover group.
-     *
+     * 
      * @param partnerServers the partnerServers value to set.
      * @return the FailoverGroupInner object itself.
      */
     public FailoverGroupInner withPartnerServers(List<PartnerInfo> partnerServers) {
-        this.partnerServers = partnerServers;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new FailoverGroupProperties();
+        }
+        this.innerProperties().withPartnerServers(partnerServers);
         return this;
     }
 
     /**
      * Get the databases property: List of databases in the failover group.
-     *
+     * 
      * @return the databases value.
      */
     public List<String> databases() {
-        return this.databases;
+        return this.innerProperties() == null ? null : this.innerProperties().databases();
     }
 
     /**
      * Set the databases property: List of databases in the failover group.
-     *
+     * 
      * @param databases the databases value to set.
      * @return the FailoverGroupInner object itself.
      */
     public FailoverGroupInner withDatabases(List<String> databases) {
-        this.databases = databases;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new FailoverGroupProperties();
+        }
+        this.innerProperties().withDatabases(databases);
         return this;
     }
 
     /**
      * Validates the instance.
-     *
+     * 
      * @throws IllegalArgumentException thrown if the instance is not valid.
      */
     public void validate() {
-        if (readWriteEndpoint() != null) {
-            readWriteEndpoint().validate();
+        if (innerProperties() != null) {
+            innerProperties().validate();
         }
-        if (readOnlyEndpoint() != null) {
-            readOnlyEndpoint().validate();
-        }
-        if (partnerServers() != null) {
-            partnerServers().forEach(e -> e.validate());
-        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public JsonWriter toJson(JsonWriter jsonWriter) throws IOException {
+        jsonWriter.writeStartObject();
+        jsonWriter.writeMapField("tags", this.tags, (writer, element) -> writer.writeString(element));
+        jsonWriter.writeJsonField("properties", this.innerProperties);
+        return jsonWriter.writeEndObject();
+    }
+
+    /**
+     * Reads an instance of FailoverGroupInner from the JsonReader.
+     * 
+     * @param jsonReader The JsonReader being read.
+     * @return An instance of FailoverGroupInner if the JsonReader was pointing to an instance of it, or null if it was
+     * pointing to JSON null.
+     * @throws IllegalStateException If the deserialized JSON object was missing any required properties.
+     * @throws IOException If an error occurs while reading the FailoverGroupInner.
+     */
+    public static FailoverGroupInner fromJson(JsonReader jsonReader) throws IOException {
+        return jsonReader.readObject(reader -> {
+            FailoverGroupInner deserializedFailoverGroupInner = new FailoverGroupInner();
+            while (reader.nextToken() != JsonToken.END_OBJECT) {
+                String fieldName = reader.getFieldName();
+                reader.nextToken();
+
+                if ("id".equals(fieldName)) {
+                    deserializedFailoverGroupInner.id = reader.getString();
+                } else if ("name".equals(fieldName)) {
+                    deserializedFailoverGroupInner.name = reader.getString();
+                } else if ("type".equals(fieldName)) {
+                    deserializedFailoverGroupInner.type = reader.getString();
+                } else if ("location".equals(fieldName)) {
+                    deserializedFailoverGroupInner.location = reader.getString();
+                } else if ("tags".equals(fieldName)) {
+                    Map<String, String> tags = reader.readMap(reader1 -> reader1.getString());
+                    deserializedFailoverGroupInner.tags = tags;
+                } else if ("properties".equals(fieldName)) {
+                    deserializedFailoverGroupInner.innerProperties = FailoverGroupProperties.fromJson(reader);
+                } else {
+                    reader.skipChildren();
+                }
+            }
+
+            return deserializedFailoverGroupInner;
+        });
     }
 }

@@ -23,6 +23,9 @@ public class RuntimeStack {
     /** JAVA JAVA 11. */
     public static final RuntimeStack JAVA_11_JAVA11 = COLLECTION.addValue(new RuntimeStack("JAVA", "11-java11"));
 
+    /** JAVA JAVA 17. */
+    public static final RuntimeStack JAVA_17_JAVA17 = COLLECTION.addValue(new RuntimeStack("JAVA", "17-java17"));
+
     /** Node.JS 10.1. */
     public static final RuntimeStack NODEJS_10_1 = COLLECTION.addValue(new RuntimeStack("NODE", "10.1"));
 
@@ -77,17 +80,35 @@ public class RuntimeStack {
     /** Tomcat 9.0-jre8 image with catalina root set to Azure wwwroot. */
     public static final RuntimeStack TOMCAT_9_0_JRE8 = COLLECTION.addValue(new RuntimeStack("TOMCAT", "9.0-jre8"));
 
+    /** Tomcat 10.0-java17 image with catalina root set to Azure wwwroot. */
+    public static final RuntimeStack TOMCAT_10_0_JAVA17
+        = COLLECTION.addValue(new RuntimeStack("TOMCAT", "10.0-java17"));
+
+    /** Tomcat 10.0-java11 image with catalina root set to Azure wwwroot. */
+    public static final RuntimeStack TOMCAT_10_0_JAVA11
+        = COLLECTION.addValue(new RuntimeStack("TOMCAT", "10.0-java11"));
+
+    /**
+     * Tomcat 10.0-jre11 image with catalina root set to Azure wwwroot.
+     *
+     * @deprecated Use {@link #TOMCAT_10_0_JAVA11}.
+     */
+    @Deprecated
+    // Do not add to COLLECTION
+    public static final RuntimeStack TOMCAT_10_0_JRE11 = new RuntimeStack("TOMCAT", "10.0-jre11");
+
+    /** Tomcat 10.0-jre8 image with catalina root set to Azure wwwroot. */
+    public static final RuntimeStack TOMCAT_10_0_JRE8 = COLLECTION.addValue(new RuntimeStack("TOMCAT", "10.0-jre8"));
+
     /** JBOSS EAP 7.2-java8. */
-    public static final RuntimeStack JBOSS_EAP_7_2_JAVA8 =
-        COLLECTION.addValue(new RuntimeStack("JBOSSEAP", "7.2-java8"));
+    public static final RuntimeStack JBOSS_EAP_7_2_JAVA8
+        = COLLECTION.addValue(new RuntimeStack("JBOSSEAP", "7.2-java8"));
 
     /** JBOSS EAP 7-java8. */
-    public static final RuntimeStack JBOSS_EAP_7_JAVA8 =
-        COLLECTION.addValue(new RuntimeStack("JBOSSEAP", "7-java8"));
+    public static final RuntimeStack JBOSS_EAP_7_JAVA8 = COLLECTION.addValue(new RuntimeStack("JBOSSEAP", "7-java8"));
 
     /** JBOSS EAP 7-java11. */
-    public static final RuntimeStack JBOSS_EAP_7_JAVA11 =
-        COLLECTION.addValue(new RuntimeStack("JBOSSEAP", "7-java11"));
+    public static final RuntimeStack JBOSS_EAP_7_JAVA11 = COLLECTION.addValue(new RuntimeStack("JBOSSEAP", "7-java11"));
 
     /** The name of the language runtime stack. */
     private final String stack;
@@ -105,12 +126,20 @@ public class RuntimeStack {
         this.version = version;
     }
 
-    /** @return the name of the language runtime stack */
+    /**
+     * Gets the name of the language runtime stack.
+     *
+     * @return the name of the language runtime stack
+     */
     public String stack() {
         return stack;
     }
 
-    /** @return the version of the runtime stack */
+    /**
+     * Gets the version of the runtime stack.
+     *
+     * @return the version of the runtime stack
+     */
     public String version() {
         return version;
     }

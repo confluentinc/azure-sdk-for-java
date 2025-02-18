@@ -5,69 +5,66 @@
 package com.azure.resourcemanager.mediaservices.fluent.models;
 
 import com.azure.core.annotation.Fluent;
-import com.azure.core.annotation.JsonFlatten;
 import com.azure.core.management.ProxyResource;
 import com.azure.core.management.SystemData;
-import com.azure.core.util.logging.ClientLogger;
+import com.azure.json.JsonReader;
+import com.azure.json.JsonToken;
+import com.azure.json.JsonWriter;
 import com.azure.resourcemanager.mediaservices.models.CommonEncryptionCbcs;
 import com.azure.resourcemanager.mediaservices.models.CommonEncryptionCenc;
 import com.azure.resourcemanager.mediaservices.models.EnvelopeEncryption;
 import com.azure.resourcemanager.mediaservices.models.NoEncryption;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import java.io.IOException;
 import java.time.OffsetDateTime;
 
-/** A Streaming Policy resource. */
-@JsonFlatten
+/**
+ * A Streaming Policy resource.
+ */
 @Fluent
-public class StreamingPolicyInner extends ProxyResource {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(StreamingPolicyInner.class);
+public final class StreamingPolicyInner extends ProxyResource {
+    /*
+     * Class to specify properties of Streaming Policy
+     */
+    private StreamingPolicyProperties innerProperties;
 
     /*
      * The system metadata relating to this resource.
      */
-    @JsonProperty(value = "systemData", access = JsonProperty.Access.WRITE_ONLY)
     private SystemData systemData;
 
     /*
-     * Creation time of Streaming Policy
+     * The type of the resource.
      */
-    @JsonProperty(value = "properties.created", access = JsonProperty.Access.WRITE_ONLY)
-    private OffsetDateTime created;
+    private String type;
 
     /*
-     * Default ContentKey used by current Streaming Policy
+     * The name of the resource.
      */
-    @JsonProperty(value = "properties.defaultContentKeyPolicyName")
-    private String defaultContentKeyPolicyName;
+    private String name;
 
     /*
-     * Configuration of EnvelopeEncryption
+     * Fully qualified resource Id for the resource.
      */
-    @JsonProperty(value = "properties.envelopeEncryption")
-    private EnvelopeEncryption envelopeEncryption;
+    private String id;
 
-    /*
-     * Configuration of CommonEncryptionCenc
+    /**
+     * Creates an instance of StreamingPolicyInner class.
      */
-    @JsonProperty(value = "properties.commonEncryptionCenc")
-    private CommonEncryptionCenc commonEncryptionCenc;
+    public StreamingPolicyInner() {
+    }
 
-    /*
-     * Configuration of CommonEncryptionCbcs
+    /**
+     * Get the innerProperties property: Class to specify properties of Streaming Policy.
+     * 
+     * @return the innerProperties value.
      */
-    @JsonProperty(value = "properties.commonEncryptionCbcs")
-    private CommonEncryptionCbcs commonEncryptionCbcs;
-
-    /*
-     * Configurations of NoEncryption
-     */
-    @JsonProperty(value = "properties.noEncryption")
-    private NoEncryption noEncryption;
+    private StreamingPolicyProperties innerProperties() {
+        return this.innerProperties;
+    }
 
     /**
      * Get the systemData property: The system metadata relating to this resource.
-     *
+     * 
      * @return the systemData value.
      */
     public SystemData systemData() {
@@ -75,131 +72,212 @@ public class StreamingPolicyInner extends ProxyResource {
     }
 
     /**
+     * Get the type property: The type of the resource.
+     * 
+     * @return the type value.
+     */
+    @Override
+    public String type() {
+        return this.type;
+    }
+
+    /**
+     * Get the name property: The name of the resource.
+     * 
+     * @return the name value.
+     */
+    @Override
+    public String name() {
+        return this.name;
+    }
+
+    /**
+     * Get the id property: Fully qualified resource Id for the resource.
+     * 
+     * @return the id value.
+     */
+    @Override
+    public String id() {
+        return this.id;
+    }
+
+    /**
      * Get the created property: Creation time of Streaming Policy.
-     *
+     * 
      * @return the created value.
      */
     public OffsetDateTime created() {
-        return this.created;
+        return this.innerProperties() == null ? null : this.innerProperties().created();
     }
 
     /**
      * Get the defaultContentKeyPolicyName property: Default ContentKey used by current Streaming Policy.
-     *
+     * 
      * @return the defaultContentKeyPolicyName value.
      */
     public String defaultContentKeyPolicyName() {
-        return this.defaultContentKeyPolicyName;
+        return this.innerProperties() == null ? null : this.innerProperties().defaultContentKeyPolicyName();
     }
 
     /**
      * Set the defaultContentKeyPolicyName property: Default ContentKey used by current Streaming Policy.
-     *
+     * 
      * @param defaultContentKeyPolicyName the defaultContentKeyPolicyName value to set.
      * @return the StreamingPolicyInner object itself.
      */
     public StreamingPolicyInner withDefaultContentKeyPolicyName(String defaultContentKeyPolicyName) {
-        this.defaultContentKeyPolicyName = defaultContentKeyPolicyName;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new StreamingPolicyProperties();
+        }
+        this.innerProperties().withDefaultContentKeyPolicyName(defaultContentKeyPolicyName);
         return this;
     }
 
     /**
      * Get the envelopeEncryption property: Configuration of EnvelopeEncryption.
-     *
+     * 
      * @return the envelopeEncryption value.
      */
     public EnvelopeEncryption envelopeEncryption() {
-        return this.envelopeEncryption;
+        return this.innerProperties() == null ? null : this.innerProperties().envelopeEncryption();
     }
 
     /**
      * Set the envelopeEncryption property: Configuration of EnvelopeEncryption.
-     *
+     * 
      * @param envelopeEncryption the envelopeEncryption value to set.
      * @return the StreamingPolicyInner object itself.
      */
     public StreamingPolicyInner withEnvelopeEncryption(EnvelopeEncryption envelopeEncryption) {
-        this.envelopeEncryption = envelopeEncryption;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new StreamingPolicyProperties();
+        }
+        this.innerProperties().withEnvelopeEncryption(envelopeEncryption);
         return this;
     }
 
     /**
      * Get the commonEncryptionCenc property: Configuration of CommonEncryptionCenc.
-     *
+     * 
      * @return the commonEncryptionCenc value.
      */
     public CommonEncryptionCenc commonEncryptionCenc() {
-        return this.commonEncryptionCenc;
+        return this.innerProperties() == null ? null : this.innerProperties().commonEncryptionCenc();
     }
 
     /**
      * Set the commonEncryptionCenc property: Configuration of CommonEncryptionCenc.
-     *
+     * 
      * @param commonEncryptionCenc the commonEncryptionCenc value to set.
      * @return the StreamingPolicyInner object itself.
      */
     public StreamingPolicyInner withCommonEncryptionCenc(CommonEncryptionCenc commonEncryptionCenc) {
-        this.commonEncryptionCenc = commonEncryptionCenc;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new StreamingPolicyProperties();
+        }
+        this.innerProperties().withCommonEncryptionCenc(commonEncryptionCenc);
         return this;
     }
 
     /**
      * Get the commonEncryptionCbcs property: Configuration of CommonEncryptionCbcs.
-     *
+     * 
      * @return the commonEncryptionCbcs value.
      */
     public CommonEncryptionCbcs commonEncryptionCbcs() {
-        return this.commonEncryptionCbcs;
+        return this.innerProperties() == null ? null : this.innerProperties().commonEncryptionCbcs();
     }
 
     /**
      * Set the commonEncryptionCbcs property: Configuration of CommonEncryptionCbcs.
-     *
+     * 
      * @param commonEncryptionCbcs the commonEncryptionCbcs value to set.
      * @return the StreamingPolicyInner object itself.
      */
     public StreamingPolicyInner withCommonEncryptionCbcs(CommonEncryptionCbcs commonEncryptionCbcs) {
-        this.commonEncryptionCbcs = commonEncryptionCbcs;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new StreamingPolicyProperties();
+        }
+        this.innerProperties().withCommonEncryptionCbcs(commonEncryptionCbcs);
         return this;
     }
 
     /**
      * Get the noEncryption property: Configurations of NoEncryption.
-     *
+     * 
      * @return the noEncryption value.
      */
     public NoEncryption noEncryption() {
-        return this.noEncryption;
+        return this.innerProperties() == null ? null : this.innerProperties().noEncryption();
     }
 
     /**
      * Set the noEncryption property: Configurations of NoEncryption.
-     *
+     * 
      * @param noEncryption the noEncryption value to set.
      * @return the StreamingPolicyInner object itself.
      */
     public StreamingPolicyInner withNoEncryption(NoEncryption noEncryption) {
-        this.noEncryption = noEncryption;
+        if (this.innerProperties() == null) {
+            this.innerProperties = new StreamingPolicyProperties();
+        }
+        this.innerProperties().withNoEncryption(noEncryption);
         return this;
     }
 
     /**
      * Validates the instance.
-     *
+     * 
      * @throws IllegalArgumentException thrown if the instance is not valid.
      */
     public void validate() {
-        if (envelopeEncryption() != null) {
-            envelopeEncryption().validate();
+        if (innerProperties() != null) {
+            innerProperties().validate();
         }
-        if (commonEncryptionCenc() != null) {
-            commonEncryptionCenc().validate();
-        }
-        if (commonEncryptionCbcs() != null) {
-            commonEncryptionCbcs().validate();
-        }
-        if (noEncryption() != null) {
-            noEncryption().validate();
-        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public JsonWriter toJson(JsonWriter jsonWriter) throws IOException {
+        jsonWriter.writeStartObject();
+        jsonWriter.writeJsonField("properties", this.innerProperties);
+        return jsonWriter.writeEndObject();
+    }
+
+    /**
+     * Reads an instance of StreamingPolicyInner from the JsonReader.
+     * 
+     * @param jsonReader The JsonReader being read.
+     * @return An instance of StreamingPolicyInner if the JsonReader was pointing to an instance of it, or null if it
+     * was pointing to JSON null.
+     * @throws IllegalStateException If the deserialized JSON object was missing any required properties.
+     * @throws IOException If an error occurs while reading the StreamingPolicyInner.
+     */
+    public static StreamingPolicyInner fromJson(JsonReader jsonReader) throws IOException {
+        return jsonReader.readObject(reader -> {
+            StreamingPolicyInner deserializedStreamingPolicyInner = new StreamingPolicyInner();
+            while (reader.nextToken() != JsonToken.END_OBJECT) {
+                String fieldName = reader.getFieldName();
+                reader.nextToken();
+
+                if ("id".equals(fieldName)) {
+                    deserializedStreamingPolicyInner.id = reader.getString();
+                } else if ("name".equals(fieldName)) {
+                    deserializedStreamingPolicyInner.name = reader.getString();
+                } else if ("type".equals(fieldName)) {
+                    deserializedStreamingPolicyInner.type = reader.getString();
+                } else if ("properties".equals(fieldName)) {
+                    deserializedStreamingPolicyInner.innerProperties = StreamingPolicyProperties.fromJson(reader);
+                } else if ("systemData".equals(fieldName)) {
+                    deserializedStreamingPolicyInner.systemData = SystemData.fromJson(reader);
+                } else {
+                    reader.skipChildren();
+                }
+            }
+
+            return deserializedStreamingPolicyInner;
+        });
     }
 }

@@ -3,6 +3,13 @@
 package com.azure.data.tables;
 
 import com.azure.core.annotation.ServiceClientBuilder;
+import com.azure.core.client.traits.AzureNamedKeyCredentialTrait;
+import com.azure.core.client.traits.AzureSasCredentialTrait;
+import com.azure.core.client.traits.ConfigurationTrait;
+import com.azure.core.client.traits.ConnectionStringTrait;
+import com.azure.core.client.traits.EndpointTrait;
+import com.azure.core.client.traits.HttpTrait;
+import com.azure.core.client.traits.TokenCredentialTrait;
 import com.azure.core.credential.AzureNamedKeyCredential;
 import com.azure.core.credential.AzureSasCredential;
 import com.azure.core.credential.TokenCredential;
@@ -12,9 +19,11 @@ import com.azure.core.http.HttpPipelinePosition;
 import com.azure.core.http.policy.HttpLogDetailLevel;
 import com.azure.core.http.policy.HttpLogOptions;
 import com.azure.core.http.policy.HttpPipelinePolicy;
+import com.azure.core.http.policy.RetryOptions;
 import com.azure.core.http.policy.RetryPolicy;
 import com.azure.core.util.ClientOptions;
 import com.azure.core.util.Configuration;
+import com.azure.core.util.HttpClientOptions;
 import com.azure.core.util.logging.ClientLogger;
 import com.azure.core.util.serializer.SerializerAdapter;
 import com.azure.data.tables.implementation.StorageAuthenticationSettings;
@@ -31,42 +40,138 @@ import java.util.List;
 import static com.azure.data.tables.BuilderHelper.validateCredentials;
 
 /**
- * This class provides a fluent builder API to help aid the configuration and instantiation of {@link TableClient} and
- * {@link TableAsyncClient} objects. Call {@link #buildClient()} or {@link #buildAsyncClient()}, respectively, to
- * construct an instance of the desired client.
+ * Provides a fluent builder API to help aid the configuration and instantiation of a {@link TableClient} and {@link TableAsyncClient}.
+ *
+ * <h2>Overview</h2>
+ *
+ * <p>This class provides a fluent builder API to help aid the configuration and instantiation of {@link TableClient} and
+ * {@link TableAsyncClient} objects. After properly authenticating the client, call {@link #buildClient()} or {@link #buildAsyncClient()}, respectively, to
+ * construct an instance of the desired client.</p>
+ *
+ * <h2>Getting Started</h2>
  *
  * <p>The minimal configuration options required by {@link TableClientBuilder} to build a {@link TableClient} or
  * {@link TableAsyncClient} are a {@link String tableName} and {@link String endpoint} and a form of authentication,
  * which can be set via: {@link TableClientBuilder#connectionString(String)},
- * {@link TableClientBuilder#credential(AzureSasCredential)},
- * {@link TableClientBuilder#credential(AzureNamedKeyCredential)} or {@link TableClientBuilder#sasToken(String)}</p>
+ * {@link TableClientBuilder#credential(AzureNamedKeyCredential)}, {@link TableClientBuilder#credential(TokenCredential)}, {@link TableClientBuilder#credential(AzureSasCredential)},
+ *  or {@link TableClientBuilder#sasToken(String)}</p>
  *
- * <p><strong>Samples to construct a sync client</strong></p>
- * <!-- src_embed com.azure.data.tables.tableClient.instantiation -->
+ * <p>To build an instance of {@link TableClient} or {@link TableAsyncClient} call {@link TableClientBuilder#buildClient()} or {@link TableClientBuilder#buildAsyncClient()}, respectively.</p>
+ *
+ * <p>The following example shows how to build a {@link TableClient} instance.</p>
+ *
+ * <!-- src_embed com.azure.data.tables.tableClientBuilder.buildClient -->
  * <pre>
  * TableClient tableClient = new TableClientBuilder&#40;&#41;
- *     .endpoint&#40;&quot;https:&#47;&#47;myaccount.core.windows.net&#47;&quot;&#41;
- *     .credential&#40;new AzureNamedKeyCredential&#40;&quot;name&quot;, &quot;key&quot;&#41;&#41;
- *     .tableName&#40;&quot;myTable&quot;&#41;
+ *     .connectionString&#40;&quot;connectionString&quot;&#41;
+ *     .tableName&#40;&quot;tableName&quot;&#41;
  *     .buildClient&#40;&#41;;
  * </pre>
- * <!-- end com.azure.data.tables.tableClient.instantiation -->
- * <p><strong>Samples to construct an async client</strong></p>
- * <!-- src_embed com.azure.data.tables.tableAsyncClient.instantiation -->
+ * <!-- end com.azure.data.tables.tableClientBuilder.buildClient -->
+ *
+ * <p>The following example shows how to build a {@link TableAsyncClient} instance.</p>
+ *
+ * <!-- src_embed com.azure.data.tables.tableClientBuilder.buildAsyncClient -->
  * <pre>
- * TableAsyncClient tableAsyncClient = new TableClientBuilder&#40;&#41;
- *     .endpoint&#40;&quot;https:&#47;&#47;myaccount.core.windows.net&#47;&quot;&#41;
- *     .credential&#40;new AzureNamedKeyCredential&#40;&quot;name&quot;, &quot;key&quot;&#41;&#41;
- *     .tableName&#40;&quot;myTable&quot;&#41;
+ * TableAsyncClient tableClient = new TableClientBuilder&#40;&#41;
+ *     .connectionString&#40;&quot;connectionString&quot;&#41;
+ *     .tableName&#40;&quot;tableName&quot;&#41;
  *     .buildAsyncClient&#40;&#41;;
  * </pre>
- * <!-- end com.azure.data.tables.tableAsyncClient.instantiation -->
+ * <!-- end com.azure.data.tables.tableClientBuilder.buildAsyncClient -->
+ *
+ * <hr/>
+ *
+ * <h3>Authenticating via <a href="https://learn.microsoft.com/java/api/overview/azure/data-tables-readme?view=azure-java-stable#connection-string">Connection String</a></h3>
+ *
+ * <p>To use a connection string to authorize the client, call the builder's {@link TableClientBuilder#connectionString(String)} method with your connection string. When authenticating via a
+ *  connection string, providing an endpoint is not required.</p>
+ *
+ * <!-- src_embed com.azure.data.tables.tableClientBuilder.connectionString#string -->
+ * <pre>
+ * TableClient tableClient = new TableClientBuilder&#40;&#41;
+ *     .connectionString&#40;&quot;connectionString&quot;&#41;
+ *     .tableName&#40;&quot;tableName&quot;&#41;
+ *     .buildClient&#40;&#41;;
+ * </pre>
+ * <!-- end com.azure.data.tables.tableClientBuilder.connectionString#string -->
+ *
+ * <hr/>
+ *
+ * <h3>Authentication via <a href="https://learn.microsoft.com/java/api/com.azure.core.credential.azurenamedkeycredential?view=azure-java-stable">Shared Key</a></h3>
+ *
+ * <p>To use shared key authentication, create an instance of AzureNamedKeyCredential and pass it to the builder's
+ *  {@link TableClientBuilder#credential(AzureNamedKeyCredential)} method. Pass the account URL to the builder's {@link TableClientBuilder#endpoint(String)} method.</p>
+ *
+ * <!-- src_embed com.azure.data.tables.tableClientBuilder.credential#sharedKeyCredential -->
+ * <pre>
+ * TableClient tableClient = new TableClientBuilder&#40;&#41;
+ *     .credential&#40;new AzureNamedKeyCredential&#40;&quot;name&quot;, &quot;key&quot;&#41;&#41;
+ *     .tableName&#40;&quot;tableName&quot;&#41;
+ *     .endpoint&#40;&quot;endpoint&quot;&#41;
+ *     .buildClient&#40;&#41;;
+ * </pre>
+ * <!-- end com.azure.data.tables.tableClientBuilder.credential#sharedKeyCredential -->
+ *
+ * <hr/>
+ *
+ * <h3>Authentication via <a href="https://learn.microsoft.com/java/api/overview/azure/data-tables-readme?view=azure-java-stable#shared-access-signature-sas">Shared Access Signature (SAS)</a></h3>
+ *
+ * <p>when authorizing a client utilizing a Shared Access Signature (SAS), you have the option of using <a href="https://learn.microsoft.com/java/api/com.azure.core.credential.azuresascredential?view=azure-java-stable">AzureSasCredential</a> or
+ *  the SAS token directly. To use an AzureSasCredential, pass it to the builder's {@link TableClientBuilder#credential(AzureSasCredential)} method. When authenticating with a SAS token, pass it to the
+ *  builder's {@link TableClientBuilder#sasToken(String)} method. Pass the account URL to the builder's {@link TableClientBuilder#endpoint(String)} method.</p>
+ *
+ * <p>Using AzureSasCredential:</p>
+ *
+ * <!-- src_embed com.azure.data.tables.tableClientBuilder.credential#azureSasCredential -->
+ * <pre>
+ * TableClient tableClient = new TableClientBuilder&#40;&#41;
+ *     .credential&#40;new AzureSasCredential&#40;&quot;sasToken&quot;&#41;&#41;
+ *     .endpoint&#40;&quot;endpoint&quot;&#41;
+ *     .tableName&#40;&quot;tableName&quot;&#41;
+ *     .buildClient&#40;&#41;;
+ * </pre>
+ * <!-- end com.azure.data.tables.tableClientBuilder.credential#azureSasCredential -->
+ *
+ * <p>Using SAS token:</p>
+ *
+ * <!-- src_embed com.azure.data.tables.tableClientBuilder.sasToken#string -->
+ * <pre>
+ * TableClient tableClient = new TableClientBuilder&#40;&#41;
+ *     .sasToken&#40;&quot;sasToken&quot;&#41;
+ *     .endpoint&#40;&quot;endpoint&quot;&#41;
+ *     .tableName&#40;&quot;tableName&quot;&#41;
+ *     .buildClient&#40;&#41;;
+ * </pre>
+ * <!-- end com.azure.data.tables.tableClientBuilder.sasToken#string -->
+ *
+ * <hr/>
+ *
+ * <h3>Authentication via <a href="https://learn.microsoft.com/java/api/com.azure.core.credential.tokencredential?view=azure-java-stable">Token Credential</a></h3>
+ *
+ * <p>To use token credential authentication, create an instance of a credential class that implements {@link com.azure.core.credential.TokenCredential TokenCredential} and pass it to the
+ *  builder's {@link TableClientBuilder#credential(TokenCredential)} method. Pass the account URL to the builder's {@link TableClientBuilder#endpoint(String)} method.</p>
+ *
+ * <!-- src_embed com.azure.data.tables.tableClientBuilder.tokenCredential#tokenCredential -->
+ * <pre>
+ * TableClient tableClient = new TableClientBuilder&#40;&#41;
+ *     .endpoint&#40;&quot;endpoint&quot;&#41;
+ *     .credential&#40;new DefaultAzureCredentialBuilder&#40;&#41;.build&#40;&#41;&#41;
+ *     .tableName&#40;&quot;tableName&quot;&#41;
+ *     .buildClient&#40;&#41;;
+ * </pre>
+ * <!-- end com.azure.data.tables.tableClientBuilder.tokenCredential#tokenCredential -->
+ *
  *
  * @see TableAsyncClient
  * @see TableClient
+ * @see com.azure.data.tables
  */
-@ServiceClientBuilder(serviceClients = {TableClient.class, TableAsyncClient.class})
-public final class TableClientBuilder {
+@ServiceClientBuilder(serviceClients = { TableClient.class, TableAsyncClient.class })
+public final class TableClientBuilder
+    implements TokenCredentialTrait<TableClientBuilder>, AzureNamedKeyCredentialTrait<TableClientBuilder>,
+    ConnectionStringTrait<TableClientBuilder>, AzureSasCredentialTrait<TableClientBuilder>,
+    HttpTrait<TableClientBuilder>, ConfigurationTrait<TableClientBuilder>, EndpointTrait<TableClientBuilder> {
     private static final SerializerAdapter TABLES_SERIALIZER = new TablesJacksonSerializer();
     private static final TablesMultipartSerializer TRANSACTIONAL_BATCH_SERIALIZER = new TablesMultipartSerializer();
 
@@ -87,6 +192,8 @@ public final class TableClientBuilder {
     private String sasToken;
     private TableServiceVersion version;
     private RetryPolicy retryPolicy;
+    private RetryOptions retryOptions;
+    private boolean enableTenantDiscovery;
 
     /**
      * Creates a builder instance that is able to configure and construct {@link TableClient} and
@@ -109,7 +216,67 @@ public final class TableClientBuilder {
      * respectively.
      */
     public TableClient buildClient() {
-        return new TableClient(buildAsyncClient());
+        TableServiceVersion serviceVersion = version != null ? version : TableServiceVersion.getLatest();
+
+        validateCredentials(azureNamedKeyCredential, azureSasCredential, tokenCredential, sasToken, connectionString,
+            logger);
+
+        AzureNamedKeyCredential namedKeyCredential = null;
+
+        // If 'connectionString' was provided, extract the endpoint and sasToken.
+        if (connectionString != null) {
+            StorageConnectionString storageConnectionString = StorageConnectionString.create(connectionString, logger);
+            StorageEndpoint storageConnectionStringTableEndpoint = storageConnectionString.getTableEndpoint();
+
+            if (storageConnectionStringTableEndpoint == null
+                || storageConnectionStringTableEndpoint.getPrimaryUri() == null) {
+
+                throw logger.logExceptionAsError(new IllegalArgumentException(
+                    "'connectionString' is missing the required settings to derive a Tables endpoint."));
+            }
+
+            String connectionStringEndpoint = storageConnectionStringTableEndpoint.getPrimaryUri();
+
+            // If no 'endpoint' was provided, use the one in the 'connectionString'. Else, verify they are the same.
+            if (endpoint == null) {
+                endpoint = connectionStringEndpoint;
+            } else {
+                if (endpoint.endsWith("/")) {
+                    endpoint = endpoint.substring(0, endpoint.length() - 1);
+                }
+
+                if (connectionStringEndpoint.endsWith("/")) {
+                    connectionStringEndpoint
+                        = connectionStringEndpoint.substring(0, connectionStringEndpoint.length() - 1);
+                }
+
+                if (!endpoint.equals(connectionStringEndpoint)) {
+                    throw logger.logExceptionAsError(new IllegalStateException(
+                        "'endpoint' points to a different tables endpoint than 'connectionString'."));
+                }
+            }
+
+            StorageAuthenticationSettings authSettings = storageConnectionString.getStorageAuthSettings();
+
+            if (authSettings.getType() == StorageAuthenticationSettings.Type.ACCOUNT_NAME_KEY) {
+                namedKeyCredential = (azureNamedKeyCredential != null)
+                    ? azureNamedKeyCredential
+                    : new AzureNamedKeyCredential(authSettings.getAccount().getName(),
+                        authSettings.getAccount().getAccessKey());
+            } else if (authSettings.getType() == StorageAuthenticationSettings.Type.SAS_TOKEN) {
+                sasToken = (sasToken != null) ? sasToken : authSettings.getSasToken();
+            }
+        }
+
+        HttpPipeline pipeline = (httpPipeline != null)
+            ? httpPipeline
+            : BuilderHelper.buildPipeline(namedKeyCredential != null ? namedKeyCredential : azureNamedKeyCredential,
+                azureSasCredential, tokenCredential, sasToken, endpoint, retryPolicy, retryOptions, httpLogOptions,
+                clientOptions, httpClient, perCallPolicies, perRetryPolicies, configuration, logger,
+                enableTenantDiscovery);
+
+        return new TableClient(tableName, pipeline, endpoint, serviceVersion, TABLES_SERIALIZER,
+            TRANSACTIONAL_BATCH_SERIALIZER);
     }
 
     /**
@@ -156,8 +323,8 @@ public final class TableClientBuilder {
                 }
 
                 if (connectionStringEndpoint.endsWith("/")) {
-                    connectionStringEndpoint =
-                        connectionStringEndpoint.substring(0, connectionStringEndpoint.length() - 1);
+                    connectionStringEndpoint
+                        = connectionStringEndpoint.substring(0, connectionStringEndpoint.length() - 1);
                 }
 
                 if (!endpoint.equals(connectionStringEndpoint)) {
@@ -169,18 +336,21 @@ public final class TableClientBuilder {
             StorageAuthenticationSettings authSettings = storageConnectionString.getStorageAuthSettings();
 
             if (authSettings.getType() == StorageAuthenticationSettings.Type.ACCOUNT_NAME_KEY) {
-                namedKeyCredential = (azureNamedKeyCredential != null) ? azureNamedKeyCredential
+                namedKeyCredential = (azureNamedKeyCredential != null)
+                    ? azureNamedKeyCredential
                     : new AzureNamedKeyCredential(authSettings.getAccount().getName(),
-                    authSettings.getAccount().getAccessKey());
+                        authSettings.getAccount().getAccessKey());
             } else if (authSettings.getType() == StorageAuthenticationSettings.Type.SAS_TOKEN) {
                 sasToken = (sasToken != null) ? sasToken : authSettings.getSasToken();
             }
         }
 
-        HttpPipeline pipeline = (httpPipeline != null) ? httpPipeline : BuilderHelper.buildPipeline(
-            namedKeyCredential != null ? namedKeyCredential : azureNamedKeyCredential, azureSasCredential,
-            tokenCredential, sasToken, endpoint, retryPolicy, httpLogOptions, clientOptions, httpClient,
-            perCallPolicies, perRetryPolicies, configuration, logger);
+        HttpPipeline pipeline = (httpPipeline != null)
+            ? httpPipeline
+            : BuilderHelper.buildPipeline(namedKeyCredential != null ? namedKeyCredential : azureNamedKeyCredential,
+                azureSasCredential, tokenCredential, sasToken, endpoint, retryPolicy, retryOptions, httpLogOptions,
+                clientOptions, httpClient, perCallPolicies, perRetryPolicies, configuration, logger,
+                enableTenantDiscovery);
 
         return new TableAsyncClient(tableName, pipeline, endpoint, serviceVersion, TABLES_SERIALIZER,
             TRANSACTIONAL_BATCH_SERIALIZER);
@@ -196,6 +366,7 @@ public final class TableClientBuilder {
      * @throws NullPointerException If {@code connectionString} is {@code null}.
      * @throws IllegalArgumentException If {@code connectionString} isn't a valid connection string.
      */
+    @Override
     public TableClientBuilder connectionString(String connectionString) {
         if (connectionString == null) {
             throw logger.logExceptionAsError(new NullPointerException("'connectionString' cannot be null."));
@@ -218,6 +389,7 @@ public final class TableClientBuilder {
      * @throws NullPointerException If {@code endpoint} is {@code null}.
      * @throws IllegalArgumentException If {@code endpoint} isn't a valid URL.
      */
+    @Override
     public TableClientBuilder endpoint(String endpoint) {
         if (endpoint == null) {
             throw logger.logExceptionAsError(new NullPointerException("'endpoint' cannot be null."));
@@ -226,7 +398,7 @@ public final class TableClientBuilder {
         try {
             new URL(endpoint);
         } catch (MalformedURLException ex) {
-            throw logger.logExceptionAsWarning(new IllegalArgumentException("'endpoint' must be a valid URL."));
+            throw logger.logExceptionAsWarning(new IllegalArgumentException("'endpoint' must be a valid URL.", ex));
         }
 
         this.endpoint = endpoint;
@@ -235,13 +407,21 @@ public final class TableClientBuilder {
     }
 
     /**
-     * Sets the {@link HttpPipeline} to use for the service client. If {@code pipeline} is set, all other settings are
-     * ignored, aside from {@code endpoint}.
+     * Sets the {@link HttpPipeline} to use for the service client.
+     *
+     * <p><strong>Note:</strong> It is important to understand the precedence order of the HttpTrait APIs. In
+     * particular, if a {@link HttpPipeline} is specified, this takes precedence over all other APIs in the trait, and
+     * they will be ignored. If no {@link HttpPipeline} is specified, a HTTP pipeline will be constructed internally
+     * based on the settings provided to this trait. Additionally, there may be other APIs in types that implement this
+     * trait that are also ignored if an {@link HttpPipeline} is specified, so please be sure to refer to the
+     * documentation of types that implement this trait to understand the full set of implications.</p>
+     * <p>
+     * The {@link #endpoint(String) endpoint} is not ignored when {@code pipeline} is set.
      *
      * @param pipeline {@link HttpPipeline} to use for sending service requests and receiving responses.
-     *
      * @return The updated {@link TableClientBuilder}.
      */
+    @Override
     public TableClientBuilder pipeline(HttpPipeline pipeline) {
         this.httpPipeline = pipeline;
 
@@ -260,6 +440,7 @@ public final class TableClientBuilder {
      *
      * @return The updated {@link TableClientBuilder}.
      */
+    @Override
     public TableClientBuilder configuration(Configuration configuration) {
         this.configuration = configuration;
 
@@ -305,6 +486,7 @@ public final class TableClientBuilder {
      *
      * @throws NullPointerException If {@code credential} is {@code null}.
      */
+    @Override
     public TableClientBuilder credential(AzureSasCredential credential) {
         if (credential == null) {
             throw logger.logExceptionAsError(new NullPointerException("'credential' cannot be null."));
@@ -327,6 +509,7 @@ public final class TableClientBuilder {
      *
      * @throws NullPointerException If {@code credential} is {@code null}.
      */
+    @Override
     public TableClientBuilder credential(AzureNamedKeyCredential credential) {
         if (credential == null) {
             throw logger.logExceptionAsError(new NullPointerException("'credential' cannot be null."));
@@ -338,10 +521,12 @@ public final class TableClientBuilder {
     }
 
     /**
-     * Sets the {@link TokenCredential} used to authorize requests sent to the service. Setting this is mutually
-     * exclusive with using {@link TableClientBuilder#credential(AzureNamedKeyCredential)},
-     * {@link TableClientBuilder#credential(AzureSasCredential)} or
-     * {@link TableClientBuilder#sasToken(String)}.
+     * Sets the {@link TokenCredential} used to authorize requests sent to the service. Refer to the Azure SDK for Java
+     * <a href="https://aka.ms/azsdk/java/docs/identity">identity and authentication</a>
+     * documentation for more details on proper usage of the {@link TokenCredential} type.
+     *
+     * Setting this is mutually exclusive with using {@link #credential(AzureNamedKeyCredential)},
+     * {@link #credential(AzureSasCredential)} or {@link #sasToken(String)}.
      *
      * @param credential {@link TokenCredential} used to authorize requests sent to the service.
      *
@@ -349,6 +534,7 @@ public final class TableClientBuilder {
      *
      * @throws NullPointerException If {@code credential} is {@code null}.
      */
+    @Override
     public TableClientBuilder credential(TokenCredential credential) {
         if (credential == null) {
             throw logger.logExceptionAsError(new NullPointerException("'credential' cannot be null."));
@@ -362,10 +548,17 @@ public final class TableClientBuilder {
     /**
      * Sets the {@link HttpClient} to use for sending and receiving requests to and from the service.
      *
-     * @param httpClient The {@link HttpClient} to use for requests.
+     * <p><strong>Note:</strong> It is important to understand the precedence order of the HttpTrait APIs. In
+     * particular, if a {@link HttpPipeline} is specified, this takes precedence over all other APIs in the trait, and
+     * they will be ignored. If no {@link HttpPipeline} is specified, a HTTP pipeline will be constructed internally
+     * based on the settings provided to this trait. Additionally, there may be other APIs in types that implement this
+     * trait that are also ignored if an {@link HttpPipeline} is specified, so please be sure to refer to the
+     * documentation of types that implement this trait to understand the full set of implications.</p>
      *
+     * @param httpClient The {@link HttpClient} to use for requests.
      * @return The updated {@link TableClientBuilder}.
      */
+    @Override
     public TableClientBuilder httpClient(HttpClient httpClient) {
         if (this.httpClient != null && httpClient == null) {
             logger.warning("'httpClient' is being set to 'null' when it was previously configured.");
@@ -380,11 +573,18 @@ public final class TableClientBuilder {
      * Sets the {@link HttpLogOptions logging configuration} to use when sending and receiving requests to and from
      * the service. If a {@code logLevel} is not provided, default value of {@link HttpLogDetailLevel#NONE} is set.
      *
+     * <p><strong>Note:</strong> It is important to understand the precedence order of the HttpTrait APIs. In
+     * particular, if a {@link HttpPipeline} is specified, this takes precedence over all other APIs in the trait, and
+     * they will be ignored. If no {@link HttpPipeline} is specified, a HTTP pipeline will be constructed internally
+     * based on the settings provided to this trait. Additionally, there may be other APIs in types that implement this
+     * trait that are also ignored if an {@link HttpPipeline} is specified, so please be sure to refer to the
+     * documentation of types that implement this trait to understand the full set of implications.</p>
+     *
      * @param logOptions The {@link HttpLogOptions logging configuration} to use when sending and receiving requests to
      * and from the service.
-     *
      * @return The updated {@link TableClientBuilder}.
      */
+    @Override
     public TableClientBuilder httpLogOptions(HttpLogOptions logOptions) {
         this.httpLogOptions = logOptions;
 
@@ -392,16 +592,21 @@ public final class TableClientBuilder {
     }
 
     /**
-     * Adds a {@link HttpPipelinePolicy pipeline policy} to apply on each request sent. The policy will be added
-     * after the {@link RetryPolicy retry policy}. If the method is called multiple times, all
-     * {@link HttpPipelinePolicy policies} will be added and their order preserved.
+     * Adds a {@link HttpPipelinePolicy pipeline policy} to apply on each request sent.
+     *
+     * <p><strong>Note:</strong> It is important to understand the precedence order of the HttpTrait APIs. In
+     * particular, if a {@link HttpPipeline} is specified, this takes precedence over all other APIs in the trait, and
+     * they will be ignored. If no {@link HttpPipeline} is specified, a HTTP pipeline will be constructed internally
+     * based on the settings provided to this trait. Additionally, there may be other APIs in types that implement this
+     * trait that are also ignored if an {@link HttpPipeline} is specified, so please be sure to refer to the
+     * documentation of types that implement this trait to understand the full set of implications.</p>
      *
      * @param pipelinePolicy A {@link HttpPipelinePolicy pipeline policy}.
-     *
      * @return The updated {@link TableClientBuilder}.
      *
      * @throws NullPointerException If {@code pipelinePolicy} is {@code null}.
      */
+    @Override
     public TableClientBuilder addPolicy(HttpPipelinePolicy pipelinePolicy) {
         if (pipelinePolicy == null) {
             throw logger.logExceptionAsError(new NullPointerException("'pipelinePolicy' cannot be null."));
@@ -441,6 +646,7 @@ public final class TableClientBuilder {
     /**
      * Sets the request {@link RetryPolicy} for all the requests made through the client. The default
      * {@link RetryPolicy} will be used in the pipeline, if not provided.
+     * Setting this is mutually exclusive with using {@link #retryOptions(RetryOptions)}.
      *
      * @param retryPolicy {@link RetryPolicy}.
      *
@@ -453,12 +659,45 @@ public final class TableClientBuilder {
     }
 
     /**
-     * Sets the {@link ClientOptions} such as application ID and custom headers to set on a request.
+     * Sets the {@link RetryOptions} for all the requests made through the client.
      *
-     * @param clientOptions The {@link ClientOptions}.
+     * <p><strong>Note:</strong> It is important to understand the precedence order of the HttpTrait APIs. In
+     * particular, if a {@link HttpPipeline} is specified, this takes precedence over all other APIs in the trait, and
+     * they will be ignored. If no {@link HttpPipeline} is specified, a HTTP pipeline will be constructed internally
+     * based on the settings provided to this trait. Additionally, there may be other APIs in types that implement this
+     * trait that are also ignored if an {@link HttpPipeline} is specified, so please be sure to refer to the
+     * documentation of types that implement this trait to understand the full set of implications.</p>
+     * <p>
+     * Setting this is mutually exclusive with using {@link #retryPolicy(RetryPolicy)}.
      *
+     * @param retryOptions The {@link RetryOptions} to use for all the requests made through the client.
+     * @return The updated {@link TableClientBuilder} object.
+     */
+    @Override
+    public TableClientBuilder retryOptions(RetryOptions retryOptions) {
+        this.retryOptions = retryOptions;
+        return this;
+    }
+
+    /**
+     * Allows for setting common properties such as application ID, headers, proxy configuration, etc. Note that it is
+     * recommended that this method be called with an instance of the {@link HttpClientOptions}
+     * class (a subclass of the {@link ClientOptions} base class). The HttpClientOptions subclass provides more
+     * configuration options suitable for HTTP clients, which is applicable for any class that implements this HttpTrait
+     * interface.
+     *
+     * <p><strong>Note:</strong> It is important to understand the precedence order of the HttpTrait APIs. In
+     * particular, if a {@link HttpPipeline} is specified, this takes precedence over all other APIs in the trait, and
+     * they will be ignored. If no {@link HttpPipeline} is specified, a HTTP pipeline will be constructed internally
+     * based on the settings provided to this trait. Additionally, there may be other APIs in types that implement this
+     * trait that are also ignored if an {@link HttpPipeline} is specified, so please be sure to refer to the
+     * documentation of types that implement this trait to understand the full set of implications.</p>
+     *
+     * @param clientOptions A configured instance of {@link HttpClientOptions}.
+     * @see HttpClientOptions
      * @return The updated {@link TableClientBuilder}.
      */
+    @Override
     public TableClientBuilder clientOptions(ClientOptions clientOptions) {
         this.clientOptions = clientOptions;
 
@@ -484,6 +723,24 @@ public final class TableClientBuilder {
         }
 
         this.tableName = tableName;
+
+        return this;
+    }
+
+    /**
+     * Enable tenant discovery when authenticating with the Table Service. <strong>This functionality is disabled by
+     * default and only available for Storage endpoints using service version
+     * {@link TableServiceVersion#V2020_12_06 2020_12_06}.</strong>
+     * <p>
+     * Enable this if there is a chance for your application and the Storage account it communicates with to reside in
+     * different tenants. If this is enabled, clients created using this builder will make an unauthorized initial
+     * service request that will be met with a {@code 401} response containing an authentication challenge, which
+     * will be subsequently used to retrieve an access token to authorize all further requests with.
+     *
+     * @return The updated {@link TableClientBuilder}.
+     */
+    public TableClientBuilder enableTenantDiscovery() {
+        this.enableTenantDiscovery = true;
 
         return this;
     }

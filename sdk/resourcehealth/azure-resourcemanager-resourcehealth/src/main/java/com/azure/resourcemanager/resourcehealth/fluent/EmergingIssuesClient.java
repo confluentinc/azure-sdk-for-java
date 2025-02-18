@@ -10,50 +10,56 @@ import com.azure.core.http.rest.PagedIterable;
 import com.azure.core.http.rest.Response;
 import com.azure.core.util.Context;
 import com.azure.resourcemanager.resourcehealth.fluent.models.EmergingIssuesGetResultInner;
+import com.azure.resourcemanager.resourcehealth.models.IssueNameParameter;
 
-/** An instance of this class provides access to all the operations defined in EmergingIssuesClient. */
+/**
+ * An instance of this class provides access to all the operations defined in EmergingIssuesClient.
+ */
 public interface EmergingIssuesClient {
     /**
-     * Gets Azure services' emerging issues.
-     *
-     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return azure services' emerging issues.
-     */
-    @ServiceMethod(returns = ReturnType.SINGLE)
-    EmergingIssuesGetResultInner get();
-
-    /**
-     * Gets Azure services' emerging issues.
-     *
-     * @param context The context to associate with this operation.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return azure services' emerging issues.
-     */
-    @ServiceMethod(returns = ReturnType.SINGLE)
-    Response<EmergingIssuesGetResultInner> getWithResponse(Context context);
-
-    /**
      * Lists Azure services' emerging issues.
-     *
+     * 
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the list of emerging issues.
+     * @return the list of emerging issues as paginated response with {@link PagedIterable}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
     PagedIterable<EmergingIssuesGetResultInner> list();
 
     /**
      * Lists Azure services' emerging issues.
-     *
+     * 
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the list of emerging issues.
+     * @return the list of emerging issues as paginated response with {@link PagedIterable}.
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
     PagedIterable<EmergingIssuesGetResultInner> list(Context context);
+
+    /**
+     * Gets Azure services' emerging issues.
+     * 
+     * @param issueName The name of the emerging issue.
+     * @param context The context to associate with this operation.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return azure services' emerging issues along with {@link Response}.
+     */
+    @ServiceMethod(returns = ReturnType.SINGLE)
+    Response<EmergingIssuesGetResultInner> getWithResponse(IssueNameParameter issueName, Context context);
+
+    /**
+     * Gets Azure services' emerging issues.
+     * 
+     * @param issueName The name of the emerging issue.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return azure services' emerging issues.
+     */
+    @ServiceMethod(returns = ReturnType.SINGLE)
+    EmergingIssuesGetResultInner get(IssueNameParameter issueName);
 }

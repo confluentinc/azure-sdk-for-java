@@ -13,52 +13,38 @@ import com.azure.resourcemanager.synapse.fluent.models.DataWarehouseUserActiviti
 import com.azure.resourcemanager.synapse.models.DataWarehouseUserActivities;
 import com.azure.resourcemanager.synapse.models.DataWarehouseUserActivityName;
 import com.azure.resourcemanager.synapse.models.SqlPoolDataWarehouseUserActivities;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 public final class SqlPoolDataWarehouseUserActivitiesImpl implements SqlPoolDataWarehouseUserActivities {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(SqlPoolDataWarehouseUserActivitiesImpl.class);
+    private static final ClientLogger LOGGER = new ClientLogger(SqlPoolDataWarehouseUserActivitiesImpl.class);
 
     private final SqlPoolDataWarehouseUserActivitiesClient innerClient;
 
     private final com.azure.resourcemanager.synapse.SynapseManager serviceManager;
 
-    public SqlPoolDataWarehouseUserActivitiesImpl(
-        SqlPoolDataWarehouseUserActivitiesClient innerClient,
+    public SqlPoolDataWarehouseUserActivitiesImpl(SqlPoolDataWarehouseUserActivitiesClient innerClient,
         com.azure.resourcemanager.synapse.SynapseManager serviceManager) {
         this.innerClient = innerClient;
         this.serviceManager = serviceManager;
     }
 
-    public DataWarehouseUserActivities get(
-        String resourceGroupName,
-        String workspaceName,
-        String sqlPoolName,
-        DataWarehouseUserActivityName dataWarehouseUserActivityName) {
-        DataWarehouseUserActivitiesInner inner =
-            this.serviceClient().get(resourceGroupName, workspaceName, sqlPoolName, dataWarehouseUserActivityName);
+    public Response<DataWarehouseUserActivities> getWithResponse(String resourceGroupName, String workspaceName,
+        String sqlPoolName, DataWarehouseUserActivityName dataWarehouseUserActivityName, Context context) {
+        Response<DataWarehouseUserActivitiesInner> inner = this.serviceClient()
+            .getWithResponse(resourceGroupName, workspaceName, sqlPoolName, dataWarehouseUserActivityName, context);
         if (inner != null) {
-            return new DataWarehouseUserActivitiesImpl(inner, this.manager());
+            return new SimpleResponse<>(inner.getRequest(), inner.getStatusCode(), inner.getHeaders(),
+                new DataWarehouseUserActivitiesImpl(inner.getValue(), this.manager()));
         } else {
             return null;
         }
     }
 
-    public Response<DataWarehouseUserActivities> getWithResponse(
-        String resourceGroupName,
-        String workspaceName,
-        String sqlPoolName,
-        DataWarehouseUserActivityName dataWarehouseUserActivityName,
-        Context context) {
-        Response<DataWarehouseUserActivitiesInner> inner =
-            this
-                .serviceClient()
-                .getWithResponse(resourceGroupName, workspaceName, sqlPoolName, dataWarehouseUserActivityName, context);
+    public DataWarehouseUserActivities get(String resourceGroupName, String workspaceName, String sqlPoolName,
+        DataWarehouseUserActivityName dataWarehouseUserActivityName) {
+        DataWarehouseUserActivitiesInner inner
+            = this.serviceClient().get(resourceGroupName, workspaceName, sqlPoolName, dataWarehouseUserActivityName);
         if (inner != null) {
-            return new SimpleResponse<>(
-                inner.getRequest(),
-                inner.getStatusCode(),
-                inner.getHeaders(),
-                new DataWarehouseUserActivitiesImpl(inner.getValue(), this.manager()));
+            return new DataWarehouseUserActivitiesImpl(inner, this.manager());
         } else {
             return null;
         }

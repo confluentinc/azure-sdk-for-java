@@ -5,29 +5,33 @@
 package com.azure.resourcemanager.compute.models;
 
 import com.azure.core.annotation.Fluent;
-import com.azure.core.util.logging.ClientLogger;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.azure.json.JsonReader;
+import com.azure.json.JsonToken;
+import com.azure.json.JsonWriter;
+import java.io.IOException;
 
-/** Contains encryption settings for a data disk image. */
+/**
+ * Contains encryption settings for a data disk image.
+ */
 @Fluent
 public final class DataDiskImageEncryption extends DiskImageEncryption {
-    @JsonIgnore private final ClientLogger logger = new ClientLogger(DataDiskImageEncryption.class);
-
     /*
-     * This property specifies the logical unit number of the data disk. This
-     * value is used to identify data disks within the Virtual Machine and
-     * therefore must be unique for each data disk attached to the Virtual
-     * Machine.
+     * This property specifies the logical unit number of the data disk. This value is used to identify data disks
+     * within the Virtual Machine and therefore must be unique for each data disk attached to the Virtual Machine.
      */
-    @JsonProperty(value = "lun", required = true)
     private int lun;
+
+    /**
+     * Creates an instance of DataDiskImageEncryption class.
+     */
+    public DataDiskImageEncryption() {
+    }
 
     /**
      * Get the lun property: This property specifies the logical unit number of the data disk. This value is used to
      * identify data disks within the Virtual Machine and therefore must be unique for each data disk attached to the
      * Virtual Machine.
-     *
+     * 
      * @return the lun value.
      */
     public int lun() {
@@ -38,7 +42,7 @@ public final class DataDiskImageEncryption extends DiskImageEncryption {
      * Set the lun property: This property specifies the logical unit number of the data disk. This value is used to
      * identify data disks within the Virtual Machine and therefore must be unique for each data disk attached to the
      * Virtual Machine.
-     *
+     * 
      * @param lun the lun value to set.
      * @return the DataDiskImageEncryption object itself.
      */
@@ -47,7 +51,9 @@ public final class DataDiskImageEncryption extends DiskImageEncryption {
         return this;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public DataDiskImageEncryption withDiskEncryptionSetId(String diskEncryptionSetId) {
         super.withDiskEncryptionSetId(diskEncryptionSetId);
@@ -56,11 +62,50 @@ public final class DataDiskImageEncryption extends DiskImageEncryption {
 
     /**
      * Validates the instance.
-     *
+     * 
      * @throws IllegalArgumentException thrown if the instance is not valid.
      */
     @Override
     public void validate() {
-        super.validate();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public JsonWriter toJson(JsonWriter jsonWriter) throws IOException {
+        jsonWriter.writeStartObject();
+        jsonWriter.writeStringField("diskEncryptionSetId", diskEncryptionSetId());
+        jsonWriter.writeIntField("lun", this.lun);
+        return jsonWriter.writeEndObject();
+    }
+
+    /**
+     * Reads an instance of DataDiskImageEncryption from the JsonReader.
+     * 
+     * @param jsonReader The JsonReader being read.
+     * @return An instance of DataDiskImageEncryption if the JsonReader was pointing to an instance of it, or null if it
+     * was pointing to JSON null.
+     * @throws IllegalStateException If the deserialized JSON object was missing any required properties.
+     * @throws IOException If an error occurs while reading the DataDiskImageEncryption.
+     */
+    public static DataDiskImageEncryption fromJson(JsonReader jsonReader) throws IOException {
+        return jsonReader.readObject(reader -> {
+            DataDiskImageEncryption deserializedDataDiskImageEncryption = new DataDiskImageEncryption();
+            while (reader.nextToken() != JsonToken.END_OBJECT) {
+                String fieldName = reader.getFieldName();
+                reader.nextToken();
+
+                if ("diskEncryptionSetId".equals(fieldName)) {
+                    deserializedDataDiskImageEncryption.withDiskEncryptionSetId(reader.getString());
+                } else if ("lun".equals(fieldName)) {
+                    deserializedDataDiskImageEncryption.lun = reader.getInt();
+                } else {
+                    reader.skipChildren();
+                }
+            }
+
+            return deserializedDataDiskImageEncryption;
+        });
     }
 }

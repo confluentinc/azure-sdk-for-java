@@ -20,14 +20,12 @@ import java.util.Set;
 
 /**
  * A type for iterating over the contents of a directory.
- *
+ * <p>
  * This type is asynchronously closeable, i.e. closing the stream from any thread will cause the stream to stop
  * returning elements at that point.
- *
- * {@inheritDoc}
  */
 public final class AzureDirectoryStream implements DirectoryStream<Path> {
-    private final ClientLogger logger = new ClientLogger(AzureDirectoryStream.class);
+    private static final ClientLogger LOGGER = new ClientLogger(AzureDirectoryStream.class);
 
     private final AzurePath path;
     private final DirectoryStream.Filter<? super Path> filter;
@@ -44,7 +42,7 @@ public final class AzureDirectoryStream implements DirectoryStream<Path> {
     @Override
     public Iterator<Path> iterator() {
         if (this.iteratorRequested) {
-            throw LoggingUtility.logError(logger,
+            throw LoggingUtility.logError(LOGGER,
                 new IllegalStateException("Only one iterator may be requested from a given directory stream"));
         }
         this.iteratorRequested = true;
@@ -57,7 +55,7 @@ public final class AzureDirectoryStream implements DirectoryStream<Path> {
     }
 
     private static class AzureDirectoryIterator implements Iterator<Path> {
-        private final ClientLogger logger = new ClientLogger(AzureDirectoryIterator.class);
+        private static final ClientLogger LOGGER = new ClientLogger(AzureDirectoryIterator.class);
 
         private final AzureDirectoryStream parentStream;
         private final DirectoryStream.Filter<? super Path> filter;
@@ -83,8 +81,8 @@ public final class AzureDirectoryStream implements DirectoryStream<Path> {
             directoryPaths = new HashSet<>();
 
             BlobContainerClient containerClient;
-            ListBlobsOptions listOptions = new ListBlobsOptions()
-                .setDetails(new BlobListDetails().setRetrieveMetadata(true));
+            ListBlobsOptions listOptions
+                = new ListBlobsOptions().setDetails(new BlobListDetails().setRetrieveMetadata(true));
             if (path.isRoot()) {
                 String containerName = path.toString().substring(0, path.toString().length() - 1);
                 AzureFileSystem afs = ((AzureFileSystem) path.getFileSystem());
@@ -94,8 +92,8 @@ public final class AzureDirectoryStream implements DirectoryStream<Path> {
                 listOptions.setPrefix(azureResource.getBlobClient().getBlobName() + AzureFileSystem.PATH_SEPARATOR);
                 containerClient = azureResource.getContainerClient();
             }
-            this.blobIterator = containerClient
-                .listBlobsByHierarchy(AzureFileSystem.PATH_SEPARATOR, listOptions, null).iterator();
+            this.blobIterator
+                = containerClient.listBlobsByHierarchy(AzureFileSystem.PATH_SEPARATOR, listOptions, null).iterator();
         }
 
         @Override
@@ -125,7 +123,7 @@ public final class AzureDirectoryStream implements DirectoryStream<Path> {
                         return true;
                     }
                 } catch (IOException e) {
-                    throw LoggingUtility.logError(logger, new DirectoryIteratorException(e));
+                    throw LoggingUtility.logError(LOGGER, new DirectoryIteratorException(e));
                 }
             }
             return false;
@@ -135,7 +133,7 @@ public final class AzureDirectoryStream implements DirectoryStream<Path> {
         public Path next() {
             if (this.bufferedNext == null) {
                 if (!this.hasNext()) { // This will populate bufferedNext in the process.
-                    throw LoggingUtility.logError(logger, new NoSuchElementException());
+                    throw LoggingUtility.logError(LOGGER, new NoSuchElementException());
                 }
             }
             Path next = this.bufferedNext; // bufferedNext will have been populated by hasNext()
@@ -145,7 +143,7 @@ public final class AzureDirectoryStream implements DirectoryStream<Path> {
 
         @Override
         public void remove() {
-            throw LoggingUtility.logError(logger, new UnsupportedOperationException());
+            throw LoggingUtility.logError(LOGGER, new UnsupportedOperationException());
         }
 
         private Path getNextListResult(BlobItem blobItem) {
@@ -154,8 +152,7 @@ public final class AzureDirectoryStream implements DirectoryStream<Path> {
             we relativize to remove it.
              */
             String blobName = blobItem.getName();
-            Path relativeResult = this.withoutRoot.relativize(
-                this.path.getFileSystem().getPath(blobName));
+            Path relativeResult = this.withoutRoot.relativize(this.path.getFileSystem().getPath(blobName));
 
             // Resolve the cleaned list result against the original path for the final result.
             return this.path.resolve(relativeResult);
