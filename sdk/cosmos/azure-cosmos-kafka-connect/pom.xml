@@ -249,6 +249,12 @@ Licensed under the MIT License.
       <version>1.11.3</version><!-- {x-version-update;cosmos_org.apache.avro:avro;external_dependency} -->
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>com.azure</groupId>
+      <artifactId>azure-cosmos</artifactId>
+      <version>4.67.0</version>
+      <scope>compile</scope>
+    </dependency>
   </dependencies>
 
   <build>

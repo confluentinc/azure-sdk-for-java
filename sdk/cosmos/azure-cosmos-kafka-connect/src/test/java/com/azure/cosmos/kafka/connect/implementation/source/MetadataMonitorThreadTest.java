@@ -97,7 +97,7 @@ public class MetadataMonitorThreadTest extends KafkaCosmosTestSuiteBase {
             ContainersMetadataTopicPartition containersMetadataTopicPartition =
                 new ContainersMetadataTopicPartition(databaseName, connectorName);
             ContainersMetadataTopicOffset containersMetadataTopicOffset =
-                new ContainersMetadataTopicOffset(Arrays.asList(singlePartitionContainer.getResourceId()));
+                new ContainersMetadataTopicOffset(Arrays.asList(singlePartitionContainer.getResourceId()), null);
 
             this.populateContainersMetadata(metadataStorageType, metadataReader, containersMetadataTopicPartition, containersMetadataTopicOffset);
 
@@ -135,7 +135,7 @@ public class MetadataMonitorThreadTest extends KafkaCosmosTestSuiteBase {
             ContainersMetadataTopicPartition containersMetadataTopicPartition =
                 new ContainersMetadataTopicPartition(databaseName, connectorName);
             ContainersMetadataTopicOffset containersMetadataTopicOffset =
-                new ContainersMetadataTopicOffset(Arrays.asList(multiPartitionContainer.getResourceId()));
+                new ContainersMetadataTopicOffset(Arrays.asList(multiPartitionContainer.getResourceId()), null);
 
             this.populateContainersMetadata(metadataStorageType, metadataReader, containersMetadataTopicPartition, containersMetadataTopicOffset);
 
@@ -204,7 +204,7 @@ public class MetadataMonitorThreadTest extends KafkaCosmosTestSuiteBase {
             ContainersMetadataTopicPartition containersMetadataTopicPartition =
                 new ContainersMetadataTopicPartition(connectorName, "requestTaskReconfigurationOnMerged");
             ContainersMetadataTopicOffset containersMetadataTopicOffset =
-                new ContainersMetadataTopicOffset(Arrays.asList(singlePartitionContainer.getResourceId()));
+                new ContainersMetadataTopicOffset(Arrays.asList(singlePartitionContainer.getResourceId()), null);
 
             this.populateContainersMetadata(metadataStorageType, metadataReader, containersMetadataTopicPartition, containersMetadataTopicOffset);
 

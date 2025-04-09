@@ -29,16 +29,19 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 import reactor.core.publisher.Mono;
-
-import java.time.Duration;
+import com.azure.cosmos.models.CosmosContainerProperties;
+import org.apache.kafka.connect.source.SourceRecord;
+import org.apache.kafka.connect.data.Schema;
+import java.util.UUID;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-import java.util.UUID;
+import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
+import java.time.Duration;
 import java.util.stream.Collectors;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
@@ -438,5 +441,50 @@ public class CosmosSourceConnectorITest extends KafkaCosmosIntegrationTestSuiteB
                 kafkaCosmosConnectContainer.deleteConnector(connectorName);
             }
         }
+    }
+
+    @Test
+    public void testContainersMetadataWithFeedRanges() {
+        // Get a container to test with
+        String containerId = "testContainer" + UUID.randomUUID().toString();
+        CosmosContainerProperties containerProperties =
+            client.getDatabase(databaseName)
+                .createContainer(containerId, "/id")
+                .block()
+                .getProperties();
+        String containerRid = containerProperties.getResourceId();
+
+        // Create source records
+        List<SourceRecord> sourceRecords = new ArrayList<>();
+        Map<String, Object> sourceOffset = new HashMap<>();
+        sourceOffset.put(ContainersMetadataTopicOffset.CONTAINERS_RESOURCE_IDS_NAME_KEY,
+            String.format("[\"%s\"]", containerRid));
+
+        sourceRecords.add(new SourceRecord(
+            Collections.singletonMap("test", "value"),
+            sourceOffset,
+            "topic",
+            Schema.STRING_SCHEMA,
+            "test-value"
+        ));
+
+        // Test the metadata
+        @SuppressWarnings("unchecked")
+        ContainersMetadataTopicOffset containersMetadataTopicOffset =
+            ContainersMetadataTopicOffset.fromMap((Map<String, Object>) sourceRecords.get(0).sourceOffset());
+
+        assertThat(containersMetadataTopicOffset.getContainerRids().size()).isEqualTo(1);
+        assertThat(containersMetadataTopicOffset.getContainerRids().contains(containerRid)).isTrue();
+
+        // Check feedRanges
+        assertThat(containersMetadataTopicOffset.getFeedRanges())
+            .asList()
+            .isEmpty();
+
+        // Cleanup
+        client.getDatabase(databaseName)
+            .getContainer(containerId)
+            .delete()
+            .block();
     }
 }

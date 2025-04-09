@@ -282,7 +282,7 @@ public class CosmosSourceTaskTest extends KafkaCosmosTestSuiteBase {
         ContainersMetadataTopicPartition containersMetadataTopicPartition =
             new ContainersMetadataTopicPartition(metadataTaskUnit.getDatabaseName(), metadataTaskUnit.getConnectorName());
         ContainersMetadataTopicOffset containersMetadataTopicOffset =
-            new ContainersMetadataTopicOffset(metadataTaskUnit.getContainerRids());
+            new ContainersMetadataTopicOffset(metadataTaskUnit.getContainerRids(), null);
         assertThat(sourceRecords.get(0).sourcePartition()).isEqualTo(ContainersMetadataTopicPartition.toMap(containersMetadataTopicPartition));
         assertThat(sourceRecords.get(0).sourceOffset()).isEqualTo(ContainersMetadataTopicOffset.toMap(containersMetadataTopicOffset));
 

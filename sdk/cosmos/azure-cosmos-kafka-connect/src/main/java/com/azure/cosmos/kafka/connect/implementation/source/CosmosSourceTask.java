@@ -9,10 +9,7 @@ import com.azure.cosmos.implementation.ImplementationBridgeHelpers;
 import com.azure.cosmos.implementation.Utils;
 import com.azure.cosmos.implementation.apachecommons.lang.tuple.Pair;
 import com.azure.cosmos.implementation.guava25.base.Stopwatch;
-import com.azure.cosmos.kafka.connect.implementation.CosmosClientStore;
-import com.azure.cosmos.kafka.connect.implementation.CosmosThroughputControlHelper;
-import com.azure.cosmos.kafka.connect.implementation.KafkaCosmosConstants;
-import com.azure.cosmos.kafka.connect.implementation.KafkaCosmosExceptionsHelper;
+import com.azure.cosmos.kafka.connect.implementation.*;
 import com.azure.cosmos.models.CosmosChangeFeedRequestOptions;
 import com.azure.cosmos.models.FeedRange;
 import com.azure.cosmos.models.FeedResponse;
@@ -27,12 +24,18 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import reactor.core.publisher.Mono;
 
+import java.net.InetAddress;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 import java.util.stream.Collectors;
+
+//import static com.azure.cosmos.kafka.connect.implementation.CosmosClientStore.resolveEndpoint;
 
 public class CosmosSourceTask extends SourceTask {
     private static final Logger LOGGER = LoggerFactory.getLogger(CosmosSourceTask.class);

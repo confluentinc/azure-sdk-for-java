@@ -89,7 +89,7 @@ public class MetadataTaskUnit implements ITaskUnit {
             new ContainersMetadataTopicPartition(this.databaseName, this.connectorName);
 
         ContainersMetadataTopicOffset containersMetadataTopicOffset =
-            new ContainersMetadataTopicOffset(this.containerRids);
+            new ContainersMetadataTopicOffset(this.containerRids, null);
 
         return Pair.of(containersMetadataTopicPartition, containersMetadataTopicOffset);
     }

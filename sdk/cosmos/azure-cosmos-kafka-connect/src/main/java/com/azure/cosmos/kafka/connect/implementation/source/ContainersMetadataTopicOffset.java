@@ -4,13 +4,16 @@
 package com.azure.cosmos.kafka.connect.implementation.source;
 
 import com.azure.cosmos.implementation.Utils;
+import com.azure.cosmos.models.FeedRange;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import static com.azure.cosmos.implementation.guava25.base.Preconditions.checkNotNull;
 
@@ -19,16 +22,38 @@ import static com.azure.cosmos.implementation.guava25.base.Preconditions.checkNo
  */
 public class ContainersMetadataTopicOffset {
     public static final String CONTAINERS_RESOURCE_IDS_NAME_KEY = "containerRids";
+    public static final String CONTAINER_FEED_RANGES_KEY = "feedRanges";
     public static final ObjectMapper OBJECT_MAPPER = Utils.getSimpleObjectMapper();
 
     private final List<String> containerRids;
-    public ContainersMetadataTopicOffset(List<String> containerRids) {
+    /**
+     * The feed ranges associated with the containers.
+     */
+    private final List<FeedRange> feedRanges;
+
+    /**
+     * Creates a new instance of ContainersMetadataTopicOffset.
+     *
+     * @param containerRids The list of container resource IDs
+     * @param feedRanges The list of feed ranges associated with the containers (can be null)
+     */
+    public ContainersMetadataTopicOffset(List<String> containerRids, List<FeedRange> feedRanges) {
         checkNotNull(containerRids, "Argument 'containerRids' can not be null");
         this.containerRids = containerRids;
+        this.feedRanges = feedRanges != null ? feedRanges : Collections.emptyList();
     }
 
     public List<String> getContainerRids() {
         return containerRids;
+    }
+
+    /**
+     * Gets the feed ranges associated with the containers.
+     *
+     * @return The list of feed ranges, or an empty list if none were specified
+     */
+    public List<FeedRange> getFeedRanges() {
+        return feedRanges;
     }
 
     public static Map<String, Object> toMap(ContainersMetadataTopicOffset offset) {
@@ -37,6 +62,15 @@ public class ContainersMetadataTopicOffset {
             map.put(
                 CONTAINERS_RESOURCE_IDS_NAME_KEY,
                 OBJECT_MAPPER.writeValueAsString(offset.getContainerRids()));
+
+            if (offset.getFeedRanges() != null && !offset.getFeedRanges().isEmpty()) {
+                map.put(
+                    CONTAINER_FEED_RANGES_KEY,
+                    OBJECT_MAPPER.writeValueAsString(
+                        offset.getFeedRanges().stream()
+                            .map(FeedRange::toString)
+                            .collect(Collectors.toList())));
+            }
             return map;
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
@@ -51,9 +85,21 @@ public class ContainersMetadataTopicOffset {
 
         try {
             List<String> containerRids =
-                OBJECT_MAPPER
-                    .readValue(offsetMap.get(CONTAINERS_RESOURCE_IDS_NAME_KEY).toString(), new TypeReference<List<String>>() {});
-            return new ContainersMetadataTopicOffset(containerRids);
+                OBJECT_MAPPER.readValue(
+                    offsetMap.get(CONTAINERS_RESOURCE_IDS_NAME_KEY).toString(),
+                    new TypeReference<List<String>>() {});
+
+            List<FeedRange> feedRanges = null;
+            if (offsetMap.containsKey(CONTAINER_FEED_RANGES_KEY)) {
+                feedRanges = OBJECT_MAPPER
+                    .readValue(offsetMap.get(CONTAINER_FEED_RANGES_KEY).toString(),
+                        new TypeReference<List<String>>() {})
+                    .stream()
+                    .map(FeedRange::fromString)
+                    .collect(Collectors.toList());
+            }
+
+            return new ContainersMetadataTopicOffset(containerRids, feedRanges);
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
