@@ -8,6 +8,8 @@ import com.azure.cosmos.models.FeedRange;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -21,6 +23,8 @@ import static com.azure.cosmos.implementation.guava25.base.Preconditions.checkNo
  * Containers metadata topic offset.
  */
 public class ContainersMetadataTopicOffset {
+    private static final Logger logger = LoggerFactory.getLogger(ContainersMetadataTopicOffset.class);
+
     public static final String CONTAINERS_RESOURCE_IDS_NAME_KEY = "containerRids";
     public static final String CONTAINER_FEED_RANGES_KEY = "feedRanges";
     public static final ObjectMapper OBJECT_MAPPER = Utils.getSimpleObjectMapper();
@@ -41,6 +45,11 @@ public class ContainersMetadataTopicOffset {
         checkNotNull(containerRids, "Argument 'containerRids' can not be null");
         this.containerRids = containerRids;
         this.feedRanges = feedRanges != null ? feedRanges : Collections.emptyList();
+
+        // Log when the new functionality is used
+        if (!this.feedRanges.isEmpty()) {
+            logger.info("Created ContainersMetadataTopicOffset with feedRanges: {}", this.feedRanges);
+        }
     }
 
     public List<String> getContainerRids() {
@@ -70,6 +79,7 @@ public class ContainersMetadataTopicOffset {
                         offset.getFeedRanges().stream()
                             .map(FeedRange::toString)
                             .collect(Collectors.toList())));
+                logger.info("Converting to map with feedRanges: {}", offset.getFeedRanges());
             }
             return map;
         } catch (JsonProcessingException e) {
@@ -97,6 +107,7 @@ public class ContainersMetadataTopicOffset {
                     .stream()
                     .map(FeedRange::fromString)
                     .collect(Collectors.toList());
+                logger.info("Parsed from map with feedRanges: {}", feedRanges);
             }
 
             return new ContainersMetadataTopicOffset(containerRids, feedRanges);
