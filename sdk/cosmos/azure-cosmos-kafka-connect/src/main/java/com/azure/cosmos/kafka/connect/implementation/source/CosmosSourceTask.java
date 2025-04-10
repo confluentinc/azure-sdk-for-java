@@ -147,12 +147,18 @@ public class CosmosSourceTask extends SourceTask {
             .field(CONTAINER_FEED_RANGES_KEY, Schema.OPTIONAL_STRING_SCHEMA)
             .build();
 
+        LOGGER.info("Starting executeMetadataTask method");
+
         // Convert containersMetadata to JSON
         String containersMetadataJson = "";
         try {
             Pair<ContainersMetadataTopicPartition, ContainersMetadataTopicOffset> containersMetadata = taskUnit.getContainersMetadata();
+            LOGGER.info("Retrieved containersMetadata for database: {}, connector: {}",
+                containersMetadata.getLeft().getDatabaseName(), containersMetadata.getLeft().getConnectorName());
+
             containersMetadataJson = Utils.getSimpleObjectMapper().writeValueAsString(
                 ContainersMetadataTopicOffset.toMap(containersMetadata.getRight()));
+            LOGGER.info("Converted containersMetadata to JSON");
 
             // Add SourceRecord for containersMetadata
             sourceRecords.add(
@@ -167,6 +173,7 @@ public class CosmosSourceTask extends SourceTask {
                         .put(CONTAINERS_RESOURCE_IDS_NAME_KEY, containersMetadataJson)
                         .put(CONTAINER_FEED_RANGES_KEY, null) // Assuming feedRangesMetadata is not available here
                 ));
+            LOGGER.info("Added SourceRecord for containersMetadata");
         } catch (JsonProcessingException e) {
             LOGGER.error("Error processing containersMetadata JSON", e);
         }
@@ -175,8 +182,12 @@ public class CosmosSourceTask extends SourceTask {
         for (Pair<FeedRangesMetadataTopicPartition, FeedRangesMetadataTopicOffset> feedRangesMetadata : taskUnit.getFeedRangesMetadataList()) {
             String feedRangesMetadataJson = "";
             try {
+                LOGGER.info("Processing feedRangesMetadata for database: {}, container: {}",
+                    feedRangesMetadata.getLeft().getDatabaseName(), feedRangesMetadata.getLeft().getContainerRid());
+
                 feedRangesMetadataJson = Utils.getSimpleObjectMapper().writeValueAsString(
                     FeedRangesMetadataTopicOffset.toMap(feedRangesMetadata.getRight()));
+                LOGGER.info("Converted feedRangesMetadata to JSON");
 
                 // Create a struct with the unified schema
                 Struct unifiedStruct = new Struct(unifiedSchema)
@@ -197,6 +208,7 @@ public class CosmosSourceTask extends SourceTask {
                         ),
                         unifiedSchema,
                         unifiedStruct));
+                LOGGER.info("Added SourceRecord for feedRangesMetadata");
             } catch (JsonProcessingException e) {
                 LOGGER.error("Error processing feedRangesMetadata JSON", e);
             }
