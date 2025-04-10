@@ -17,10 +17,13 @@ import com.azure.cosmos.models.CosmosChangeFeedRequestOptions;
 import com.azure.cosmos.models.FeedRange;
 import com.azure.cosmos.models.FeedResponse;
 import com.azure.cosmos.models.ModelBridgeInternal;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.apache.kafka.connect.data.Schema;
 import org.apache.kafka.connect.data.SchemaAndValue;
+import org.apache.kafka.connect.data.SchemaBuilder;
+import org.apache.kafka.connect.data.Struct;
 import org.apache.kafka.connect.source.SourceRecord;
 import org.apache.kafka.connect.source.SourceTask;
 import org.slf4j.Logger;
@@ -33,6 +36,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 import java.util.stream.Collectors;
+
+import static com.azure.cosmos.kafka.connect.implementation.source.ContainersMetadataTopicOffset.CONTAINERS_RESOURCE_IDS_NAME_KEY;
+import static com.azure.cosmos.kafka.connect.implementation.source.FeedRangesMetadataTopicOffset.CONTAINER_FEED_RANGES_KEY;
 
 public class CosmosSourceTask extends SourceTask {
     private static final Logger LOGGER = LoggerFactory.getLogger(CosmosSourceTask.class);
@@ -134,45 +140,66 @@ public class CosmosSourceTask extends SourceTask {
     private List<SourceRecord> executeMetadataTask(MetadataTaskUnit taskUnit) {
         List<SourceRecord> sourceRecords = new ArrayList<>();
 
-        // add the containers metadata record - it tracks the databaseName -> List[containerRid] mapping
-        Pair<ContainersMetadataTopicPartition, ContainersMetadataTopicOffset> containersMetadata = taskUnit.getContainersMetadata();
+        // Define a unified schema
+        Schema unifiedSchema = SchemaBuilder.struct()
+            .name("UnifiedMetadataSchema")
+            .field(CONTAINERS_RESOURCE_IDS_NAME_KEY, Schema.OPTIONAL_STRING_SCHEMA)
+            .field(CONTAINER_FEED_RANGES_KEY, Schema.OPTIONAL_STRING_SCHEMA)
+            .build();
 
-        // Convert JSON to Kafka Connect struct and JSON schema
-        SchemaAndValue containersMetadataSchemaAndValue = JsonToStruct.recordToSchemaAndValue(
-            Utils.getSimpleObjectMapper().convertValue(
-                ContainersMetadataTopicOffset.toMap(containersMetadata.getRight()),
-                ObjectNode.class));
+        // Convert containersMetadata to JSON
+        String containersMetadataJson = "";
+        try {
+            Pair<ContainersMetadataTopicPartition, ContainersMetadataTopicOffset> containersMetadata = taskUnit.getContainersMetadata();
+            containersMetadataJson = Utils.getSimpleObjectMapper().writeValueAsString(
+                ContainersMetadataTopicOffset.toMap(containersMetadata.getRight()));
 
-        sourceRecords.add(
-            new SourceRecord(
-                ContainersMetadataTopicPartition.toMap(containersMetadata.getLeft()),
-                ContainersMetadataTopicOffset.toMap(containersMetadata.getRight()),
-                taskUnit.getStorageName(),
-                Schema.STRING_SCHEMA,
-                getContainersMetadataItemId(containersMetadata.getLeft().getDatabaseName(), containersMetadata.getLeft().getConnectorName()),
-                containersMetadataSchemaAndValue.schema(),
-                containersMetadataSchemaAndValue.value()));
-
-        // add the container feedRanges metadata record - it tracks the containerRid -> List[FeedRange] mapping
-        for (Pair<FeedRangesMetadataTopicPartition, FeedRangesMetadataTopicOffset> feedRangesMetadata : taskUnit.getFeedRangesMetadataList()) {
-            SchemaAndValue feedRangeMetadataSchemaAndValue = JsonToStruct.recordToSchemaAndValue(
-                Utils.getSimpleObjectMapper().convertValue(
-                    FeedRangesMetadataTopicOffset.toMap(feedRangesMetadata.getRight()),
-                    ObjectNode.class));
-
+            // Add SourceRecord for containersMetadata
             sourceRecords.add(
                 new SourceRecord(
-                    FeedRangesMetadataTopicPartition.toMap(feedRangesMetadata.getLeft()),
-                    FeedRangesMetadataTopicOffset.toMap(feedRangesMetadata.getRight()),
+                    ContainersMetadataTopicPartition.toMap(containersMetadata.getLeft()),
+                    ContainersMetadataTopicOffset.toMap(containersMetadata.getRight()),
                     taskUnit.getStorageName(),
                     Schema.STRING_SCHEMA,
-                    this.getFeedRangesMetadataItemId(
-                        feedRangesMetadata.getLeft().getDatabaseName(),
-                        feedRangesMetadata.getLeft().getContainerRid(),
-                        feedRangesMetadata.getLeft().getConnectorName()
-                    ),
-                    feedRangeMetadataSchemaAndValue.schema(),
-                    feedRangeMetadataSchemaAndValue.value()));
+                    getContainersMetadataItemId(containersMetadata.getLeft().getDatabaseName(), containersMetadata.getLeft().getConnectorName()),
+                    unifiedSchema,
+                    new Struct(unifiedSchema)
+                        .put(CONTAINERS_RESOURCE_IDS_NAME_KEY, containersMetadataJson)
+                        .put(CONTAINER_FEED_RANGES_KEY, null) // Assuming feedRangesMetadata is not available here
+                ));
+        } catch (JsonProcessingException e) {
+            LOGGER.error("Error processing containersMetadata JSON", e);
+        }
+
+        // Iterate over feedRangesMetadata and convert to JSON
+        for (Pair<FeedRangesMetadataTopicPartition, FeedRangesMetadataTopicOffset> feedRangesMetadata : taskUnit.getFeedRangesMetadataList()) {
+            String feedRangesMetadataJson = "";
+            try {
+                feedRangesMetadataJson = Utils.getSimpleObjectMapper().writeValueAsString(
+                    FeedRangesMetadataTopicOffset.toMap(feedRangesMetadata.getRight()));
+
+                // Create a struct with the unified schema
+                Struct unifiedStruct = new Struct(unifiedSchema)
+                    .put(CONTAINERS_RESOURCE_IDS_NAME_KEY, null)
+                    .put(CONTAINER_FEED_RANGES_KEY, feedRangesMetadataJson);
+
+                // Create a SourceRecord with the unified schema
+                sourceRecords.add(
+                    new SourceRecord(
+                        FeedRangesMetadataTopicPartition.toMap(feedRangesMetadata.getLeft()),
+                        FeedRangesMetadataTopicOffset.toMap(feedRangesMetadata.getRight()),
+                        taskUnit.getStorageName(),
+                        Schema.STRING_SCHEMA,
+                        this.getFeedRangesMetadataItemId(
+                            feedRangesMetadata.getLeft().getDatabaseName(),
+                            feedRangesMetadata.getLeft().getContainerRid(),
+                            feedRangesMetadata.getLeft().getConnectorName()
+                        ),
+                        unifiedSchema,
+                        unifiedStruct));
+            } catch (JsonProcessingException e) {
+                LOGGER.error("Error processing feedRangesMetadata JSON", e);
+            }
         }
 
         LOGGER.info("There are {} metadata records being created/updated", sourceRecords.size());
