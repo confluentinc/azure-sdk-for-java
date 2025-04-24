@@ -56,7 +56,7 @@
     <dependency>
       <groupId>com.nimbusds</groupId>
       <artifactId>nimbus-jose-jwt</artifactId>
-      <version>9.37.3</version> <!-- {x-version-update;com.nimbusds:nimbus-jose-jwt;external_dependency} -->
+      <version>9.48</version> <!-- {x-version-update;com.nimbusds:nimbus-jose-jwt;external_dependency} -->
     </dependency>
 
     <!-- Test dependencies -->
@@ -82,7 +82,7 @@
     <dependency>
       <groupId>org.glassfish.tyrus</groupId>
       <artifactId>tyrus-client</artifactId>
-      <version>1.16</version>  <!-- {x-version-update;org.glassfish.tyrus:tyrus-client;external_dependency} -->
+      <version>1.21</version>  <!-- {x-version-update;org.glassfish.tyrus:tyrus-client;external_dependency} -->
       <scope>test</scope>
       <exclusions>
         <exclusion>

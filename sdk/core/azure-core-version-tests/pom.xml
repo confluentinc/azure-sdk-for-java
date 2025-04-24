@@ -95,7 +95,7 @@
     <dependency>
       <groupId>io.projectreactor</groupId>
       <artifactId>reactor-core</artifactId>
-      <version>3.4.41</version> <!-- {x-version-update;io.projectreactor:reactor-core;external_dependency} -->
+      <version>3.7.5</version> <!-- {x-version-update;io.projectreactor:reactor-core;external_dependency} -->
     </dependency>
 
     <!-- Added this dependency to include necessary annotations used by reactor core.
