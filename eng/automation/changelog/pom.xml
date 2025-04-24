@@ -24,7 +24,7 @@
     <dependency>
       <groupId>com.github.siom79.japicmp</groupId>
       <artifactId>japicmp</artifactId>
-      <version>0.15.1</version>
+      <version>0.23.1</version>
       <exclusions>
         <exclusion>
           <groupId>jakarta.xml.bind</groupId>
@@ -77,7 +77,7 @@
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>exec-maven-plugin</artifactId>
-        <version>1.2.1</version>
+        <version>1.6.0</version>
         <executions>
           <execution>
             <goals>
@@ -106,7 +106,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
-        <version>3.5.1</version>
+        <version>3.14.0</version>
         <configuration>
           <compilerArgs>
             <arg>-Xlint:unchecked</arg>

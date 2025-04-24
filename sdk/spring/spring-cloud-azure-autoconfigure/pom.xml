@@ -86,7 +86,7 @@
     <dependency>
       <groupId>org.springframework.kafka</groupId>
       <artifactId>spring-kafka</artifactId>
-      <version>3.3.4</version> <!-- {x-version-update;springboot3_org.springframework.kafka:spring-kafka;external_dependency} -->
+      <version>3.3.5</version> <!-- {x-version-update;springboot3_org.springframework.kafka:spring-kafka;external_dependency} -->
       <optional>true</optional>
     </dependency>
     <dependency>
@@ -100,19 +100,19 @@
     <dependency>
       <groupId>io.lettuce</groupId>
       <artifactId>lettuce-core</artifactId>
-      <version>6.4.2.RELEASE</version> <!-- {x-version-update;springboot3_io.lettuce:lettuce-core;external_dependency} -->
+      <version>6.5.5.RELEASE</version> <!-- {x-version-update;springboot3_io.lettuce:lettuce-core;external_dependency} -->
       <optional>true</optional>
     </dependency>
     <dependency>
       <groupId>org.springframework.data</groupId>
       <artifactId>spring-data-redis</artifactId>
-      <version>3.4.4</version> <!-- {x-version-update;springboot3_org.springframework.data:spring-data-redis;external_dependency} -->
+      <version>3.4.5</version> <!-- {x-version-update;springboot3_org.springframework.data:spring-data-redis;external_dependency} -->
       <optional>true</optional>
     </dependency>
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-tx</artifactId>
-      <version>6.2.5</version> <!-- {x-version-update;springboot3_org.springframework:spring-tx;external_dependency} -->
+      <version>6.2.6</version> <!-- {x-version-update;springboot3_org.springframework:spring-tx;external_dependency} -->
       <optional>true</optional>
     </dependency>
 
@@ -128,7 +128,7 @@
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-jms</artifactId>
-      <version>6.2.5</version> <!-- {x-version-update;springboot3_org.springframework:spring-jms;external_dependency} -->
+      <version>6.2.6</version> <!-- {x-version-update;springboot3_org.springframework:spring-jms;external_dependency} -->
       <optional>true</optional>
     </dependency>
     <dependency>
@@ -305,7 +305,7 @@
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-context-support</artifactId>
-      <version>6.2.5</version> <!-- {x-version-update;springboot3_org.springframework:spring-context-support;external_dependency} -->
+      <version>6.2.6</version> <!-- {x-version-update;springboot3_org.springframework:spring-context-support;external_dependency} -->
       <optional>true</optional>
     </dependency>
 
@@ -326,25 +326,25 @@
     <dependency>
       <groupId>org.springframework.security</groupId>
       <artifactId>spring-security-oauth2-client</artifactId>
-      <version>6.4.4</version> <!-- {x-version-update;springboot3_org.springframework.security:spring-security-oauth2-client;external_dependency} -->
+      <version>6.4.5</version> <!-- {x-version-update;springboot3_org.springframework.security:spring-security-oauth2-client;external_dependency} -->
       <optional>true</optional>
     </dependency>
     <dependency>
       <groupId>org.springframework.security</groupId>
       <artifactId>spring-security-oauth2-resource-server</artifactId>
-      <version>6.4.4</version> <!-- {x-version-update;springboot3_org.springframework.security:spring-security-oauth2-resource-server;external_dependency} -->
+      <version>6.4.5</version> <!-- {x-version-update;springboot3_org.springframework.security:spring-security-oauth2-resource-server;external_dependency} -->
       <optional>true</optional>
     </dependency>
     <dependency>
       <groupId>org.springframework.security</groupId>
       <artifactId>spring-security-oauth2-jose</artifactId>
-      <version>6.4.4</version> <!-- {x-version-update;springboot3_org.springframework.security:spring-security-oauth2-jose;external_dependency} -->
+      <version>6.4.5</version> <!-- {x-version-update;springboot3_org.springframework.security:spring-security-oauth2-jose;external_dependency} -->
       <optional>true</optional>
     </dependency>
     <dependency>
       <groupId>org.springframework.security</groupId>
       <artifactId>spring-security-config</artifactId>
-      <version>6.4.4</version> <!-- {x-version-update;springboot3_org.springframework.security:spring-security-config;external_dependency} -->
+      <version>6.4.5</version> <!-- {x-version-update;springboot3_org.springframework.security:spring-security-config;external_dependency} -->
       <optional>true</optional>
     </dependency>
 
@@ -360,7 +360,7 @@
     <dependency>
       <groupId>jakarta.servlet</groupId>
       <artifactId>jakarta.servlet-api</artifactId>
-      <version>6.0.0</version> <!-- {x-version-update;springboot3_jakarta.servlet:jakarta.servlet-api;external_dependency} -->
+      <version>6.1.0</version> <!-- {x-version-update;springboot3_jakarta.servlet:jakarta.servlet-api;external_dependency} -->
       <optional>true</optional>
     </dependency>
     <dependency>
@@ -373,7 +373,7 @@
     <dependency>
       <groupId>jakarta.validation</groupId>
       <artifactId>jakarta.validation-api</artifactId>
-      <version>3.0.2</version> <!-- {x-version-update;springboot3_jakarta.validation:jakarta.validation-api;external_dependency} -->
+      <version>3.1.1</version> <!-- {x-version-update;springboot3_jakarta.validation:jakarta.validation-api;external_dependency} -->
     </dependency>
 
     <dependency>
@@ -431,7 +431,7 @@
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-core-test</artifactId>
-      <version>6.2.5</version> <!-- {x-version-update;springboot3_org.springframework:spring-core-test;external_dependency} -->
+      <version>6.2.6</version> <!-- {x-version-update;springboot3_org.springframework:spring-core-test;external_dependency} -->
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -445,7 +445,7 @@
     <dependency>
       <groupId>org.mockito</groupId>
       <artifactId>mockito-core</artifactId>
-      <version>5.14.2</version> <!-- {x-version-update;springboot3_org.mockito:mockito-core;external_dependency} -->
+      <version>5.17.0</version> <!-- {x-version-update;springboot3_org.mockito:mockito-core;external_dependency} -->
       <scope>test</scope>
     </dependency>
     <!-- bytebuddy dependencies are required for mockito 4.11.0 to work with Java 21. Mockito 4.11.0 is the last release -->
@@ -453,20 +453,20 @@
     <dependency>
       <groupId>net.bytebuddy</groupId>
       <artifactId>byte-buddy</artifactId>
-      <version>1.15.11</version> <!-- {x-version-update;springboot3_net.bytebuddy:byte-buddy;external_dependency} -->
+      <version>1.17.5</version> <!-- {x-version-update;springboot3_net.bytebuddy:byte-buddy;external_dependency} -->
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>net.bytebuddy</groupId>
       <artifactId>byte-buddy-agent</artifactId>
-      <version>1.15.11</version> <!-- {x-version-update;springboot3_net.bytebuddy:byte-buddy-agent;external_dependency} -->
+      <version>1.17.5</version> <!-- {x-version-update;springboot3_net.bytebuddy:byte-buddy-agent;external_dependency} -->
       <scope>test</scope>
     </dependency>
     <!-- used to test AzureJdbcAutoConfiguration -->
     <dependency>
       <groupId>com.mysql</groupId>
       <artifactId>mysql-connector-j</artifactId>
-      <version>9.1.0</version> <!-- {x-version-update;springboot3_com.mysql:mysql-connector-j;external_dependency} -->
+      <version>9.2.0</version> <!-- {x-version-update;springboot3_com.mysql:mysql-connector-j;external_dependency} -->
       <scope>test</scope>
     </dependency>
 
@@ -480,7 +480,7 @@
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-jdbc</artifactId>
-      <version>6.2.5</version> <!-- {x-version-update;springboot3_org.springframework:spring-jdbc;external_dependency} -->
+      <version>6.2.6</version> <!-- {x-version-update;springboot3_org.springframework:spring-jdbc;external_dependency} -->
       <scope>test</scope>
     </dependency>
 
@@ -491,7 +491,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
-        <version>3.13.0</version> <!-- {x-version-update;springboot3_org.apache.maven.plugins:maven-compiler-plugin;external_dependency} -->
+        <version>3.14.0</version> <!-- {x-version-update;springboot3_org.apache.maven.plugins:maven-compiler-plugin;external_dependency} -->
         <executions>
           <!-- disabled - the executing this after default-compile will generate module-info with major class version 55 (i.e Java 11) -->
           <execution>

@@ -103,7 +103,7 @@
     <dependency>
       <groupId>io.cloudevents</groupId>
       <artifactId>cloudevents-api</artifactId>
-      <version>2.2.0</version> <!-- {x-version-update;io.cloudevents:cloudevents-api;external_dependency} -->
+      <version>2.5.0</version> <!-- {x-version-update;io.cloudevents:cloudevents-api;external_dependency} -->
     </dependency>
 
     <!-- test -->
@@ -116,7 +116,7 @@
     <dependency>
       <groupId>io.cloudevents</groupId>
       <artifactId>cloudevents-core</artifactId>
-      <version>2.2.0</version> <!-- {x-version-update;io.cloudevents:cloudevents-core;external_dependency} -->
+      <version>2.5.0</version> <!-- {x-version-update;io.cloudevents:cloudevents-core;external_dependency} -->
       <scope>test</scope>
     </dependency>
   </dependencies>
