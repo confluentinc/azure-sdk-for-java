@@ -3,6 +3,7 @@
 package io.clientcore.core.implementation.utils;
 
 import io.clientcore.core.instrumentation.logging.ClientLogger;
+import io.clientcore.core.utils.CoreUtils;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -69,14 +70,14 @@ public final class Providers<TProvider, TInstance> {
                         .log("Additional provider found on the classpath");
                 }
             } catch (LinkageError | ServiceConfigurationError error) {
-                LOGGER.atWarning().log("Failed to load a provider instance.", error);
+                LOGGER.atWarning().setThrowable(error).log("Failed to load a provider instance.");
             }
         }
 
         this.defaultProvider = defaultProvider;
         this.defaultProviderName = defaultProviderName;
         this.defaultImplementation = defaultImplementationName;
-        this.noDefaultImplementation = ImplUtils.isNullOrEmpty(defaultImplementation);
+        this.noDefaultImplementation = CoreUtils.isNullOrEmpty(defaultImplementation);
         this.noProviderMessage = noProviderErrorMessage;
     }
 

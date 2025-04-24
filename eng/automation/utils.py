@@ -352,17 +352,13 @@ def set_or_increase_version(
 
     # 1.0.0-beta.1 -> [1,0,0,"-beta.1"]
     current_versions = list(re.findall(version_pattern, current_version)[0])
-    # 1.0.0 -> [(1,0,0,"")]
-    # 1.0.0-beta.1 -> [(1,0,0,"-beta.1")]
-    stable_versions = re.findall(version_pattern, stable_version)
-    # no stable version
-    if len(stable_versions) < 1 or stable_versions[0][-1] != "":
-        if not preview:
-            current_versions[-1] = ""
+    # if not preview, and version is not specified, set current version to be stable version
+    if not preview and not version:
+        current_versions[-1] = ""
         current_version = version_format.format(*current_versions)
         if not stable_version:
             stable_version = current_version
-        logging.info('[VERSION][Not Found] cannot find stable version, current version "{0}"'.format(current_version))
+        logging.info('[VERSION] stable release, auto-set current version to "{0}"'.format(current_version))
 
         write_version(version_file, lines, version_index, project, stable_version, current_version)
     else:
@@ -416,7 +412,7 @@ def get_latest_ga_version(group_id: str, module: str, previous_version: str) -> 
 
     response.raise_for_status()
 
-    ga_version_pattern = r"<a href=\"(\d+\.\d+\.\d+)\/?"
+    ga_version_pattern = r"<a href=\"(\d+\.\d+\.\d+)\/"
     ga_versions = [v.group(1) for v in re.finditer(ga_version_pattern, response.text, re.S)]
     previous_ga_versions = sorted(
         [v for v in ga_versions if compare_version(v, previous_version) < 0],

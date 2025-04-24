@@ -3,6 +3,8 @@
 
 package io.clientcore.core.instrumentation.logging;
 
+import io.clientcore.core.annotations.Metadata;
+import io.clientcore.core.annotations.MetadataProperties;
 import io.clientcore.core.implementation.instrumentation.Slf4jLoggerShim;
 import io.clientcore.core.implementation.instrumentation.DefaultLogger;
 import io.clientcore.core.utils.configuration.Configuration;
@@ -10,7 +12,6 @@ import io.clientcore.core.utils.configuration.Configuration;
 import java.nio.file.InvalidPathException;
 import java.util.Collections;
 import java.util.Map;
-import java.util.Objects;
 
 /**
  * This is a fluent logger helper class that wraps an SLF4J Logger (if available) or a default implementation of the
@@ -28,6 +29,7 @@ import java.util.Objects;
  * Context can be provided in the constructor and populated on every message or added per each log record.</p>
  * @see Configuration
  */
+@Metadata(properties = MetadataProperties.IMMUTABLE)
 public class ClientLogger {
     private final Slf4jLoggerShim logger;
     private final Map<String, Object> globalContext;
@@ -107,9 +109,7 @@ public class ClientLogger {
      * @throws NullPointerException If {@code throwable} is {@code null}.
      */
     public <T extends Throwable> T logThrowableAsWarning(T throwable) {
-        Objects.requireNonNull(throwable, "'throwable' cannot be null.");
-        LoggingEvent.create(logger, LogLevel.WARNING, globalContext).log(throwable.getMessage(), throwable);
-
+        LoggingEvent.create(logger, LogLevel.WARNING, globalContext).setThrowable(throwable).log();
         return throwable;
     }
 
@@ -124,8 +124,7 @@ public class ClientLogger {
      * @throws NullPointerException If {@code throwable} is {@code null}.
      */
     public <T extends Throwable> T logThrowableAsError(T throwable) {
-        Objects.requireNonNull(throwable, "'throwable' cannot be null.");
-        LoggingEvent.create(logger, LogLevel.ERROR, globalContext).log(throwable.getMessage(), throwable);
+        LoggingEvent.create(logger, LogLevel.ERROR, globalContext).setThrowable(throwable).log();
         return throwable;
     }
 
@@ -171,7 +170,8 @@ public class ClientLogger {
      * <pre>
      * logger.atWarning&#40;&#41;
      *     .addKeyValue&#40;&quot;key&quot;, &quot;value&quot;&#41;
-     *     .log&#40;&quot;A structured log message with exception.&quot;, exception&#41;;
+     *     .setThrowable&#40;exception&#41;
+     *     .log&#40;&quot;A structured log message with exception.&quot;&#41;;
      * </pre>
      * <!-- end io.clientcore.core.util.logging.clientlogger.atWarning -->
      *
@@ -235,8 +235,7 @@ public class ClientLogger {
      *
      * <!-- src_embed io.clientcore.core.util.logging.clientlogger.atLevel -->
      * <pre>
-     * ClientLogger.LogLevel level = response.getStatusCode&#40;&#41; == 200
-     *     ? ClientLogger.LogLevel.INFORMATIONAL : ClientLogger.LogLevel.WARNING;
+     * LogLevel level = response.getStatusCode&#40;&#41; == 200 ? LogLevel.INFORMATIONAL : LogLevel.WARNING;
      * logger.atLevel&#40;level&#41;
      *     .addKeyValue&#40;&quot;key&quot;, &quot;value&quot;&#41;
      *     .log&#40;&quot;message&quot;&#41;;
