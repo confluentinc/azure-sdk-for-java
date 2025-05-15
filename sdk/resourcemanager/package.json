@@ -34,7 +34,7 @@
     "pom-parser": "1.2.0",
     "request": "2.88.2",
     "request-promise": "4.2.6",
-    "yaml": "2.1.0",
+    "yaml": "2.2.2",
     "prettier": "2.8.4"
   }
 }
