@@ -18,7 +18,7 @@
   "devDependencies": {
     "colors": "1.1.2",
     "gulp": "^3.9.0",
-    "gulp-exec": "2.1.2",
+    "gulp-exec": "5.0.0",
     "yargs": "3.29.0"
   },
   "dependencies": {
