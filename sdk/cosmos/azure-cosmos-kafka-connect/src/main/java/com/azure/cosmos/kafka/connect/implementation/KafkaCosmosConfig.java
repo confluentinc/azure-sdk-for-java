@@ -48,8 +48,8 @@ public class KafkaCosmosConfig extends AbstractConfig {
     private static final String DEFAULT_ACCOUNT_TENANT_ID = Strings.Emtpy;
 
     private static final String AUTH_TYPE = "azure.cosmos.auth.type";
-    private static final String AUTH_TYPE_DOC = "There are two auth types are supported currently: "
-        + "`MasterKey`(PrimaryReadWriteKeys, SecondReadWriteKeys, PrimaryReadOnlyKeys, SecondReadWriteKeys), `ServicePrincipal`";
+    private static final String AUTH_TYPE_DOC = "Authentication types supported: "
+        + "`MasterKey`(PrimaryReadWriteKeys, SecondReadWriteKeys, PrimaryReadOnlyKeys, SecondReadWriteKeys), `ServicePrincipal`, `Custom`";
     private static final String AUTH_TYPE_DISPLAY = "Cosmos Auth type.";
     private static final String DEFAULT_AUTH_TYPE = CosmosAuthType.MASTER_KEY.getName();
 
@@ -75,6 +75,11 @@ public class KafkaCosmosConfig extends AbstractConfig {
     private static final String AAD_AUTH_ENDPOINT_OVERRIDE_DISPLAY =
         "The Azure Active Directory (AAD) authentication endpoint override. Set this if you are using a cloud environment other than public Azure.";
     private static final String DEFAULT_AAD_AUTH_ENDPOINT_OVERRIDE = Strings.Emtpy;
+
+    private static final String CREDENTIAL_PROVIDER_CLASS = "credential.provider.class";
+    private static final String CREDENTIAL_PROVIDER_CLASS_DOC = "Custom credential provider class name for authentication.";
+    private static final String CREDENTIAL_PROVIDER_CLASS_DISPLAY = "Credential provider class";
+    private static final String DEFAULT_CREDENTIAL_PROVIDER_CLASS = Strings.Emtpy;
 
     private static final String USE_GATEWAY_MODE = "azure.cosmos.mode.gateway";
     private static final String USE_GATEWAY_MODE_DOC = "Flag to indicate whether to use gateway mode. By default it is false, means SDK uses direct mode. https://learn.microsoft.com/azure/cosmos-db/nosql/sdk-connection-modes";
@@ -268,6 +273,10 @@ public class KafkaCosmosConfig extends AbstractConfig {
                 return new CosmosMasterKeyAuthConfig(masterKey);
             case SERVICE_PRINCIPAL:
                 return new CosmosAadAuthConfig(clientId, clientSecret, authEndpointOverride, tenantId, azureEnvironment);
+            case CUSTOM:
+                return new CosmosCustomAuthConfig(
+                    this.getString(CREDENTIAL_PROVIDER_CLASS),
+                    this.originals());
             default:
                 throw new IllegalArgumentException("AuthType " + authType + " is not supported");
         }
@@ -439,6 +448,17 @@ public class KafkaCosmosConfig extends AbstractConfig {
                 accountGroupOrder++,
                 ConfigDef.Width.LONG,
                 AAD_AUTH_ENDPOINT_OVERRIDE_DISPLAY
+            )
+            .define(
+                CREDENTIAL_PROVIDER_CLASS,
+                ConfigDef.Type.STRING,
+                DEFAULT_CREDENTIAL_PROVIDER_CLASS,
+                ConfigDef.Importance.LOW,
+                CREDENTIAL_PROVIDER_CLASS_DOC,
+                accountGroupName,
+                accountGroupOrder++,
+                ConfigDef.Width.LONG,
+                CREDENTIAL_PROVIDER_CLASS_DISPLAY
             )
             .define(
                 APPLICATION_NAME,
