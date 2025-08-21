@@ -10,6 +10,7 @@ import com.azure.cosmos.ThrottlingRetryOptions;
 import com.azure.cosmos.implementation.CosmosClientMetadataCachesSnapshot;
 import com.azure.cosmos.implementation.ImplementationBridgeHelpers;
 import com.azure.cosmos.implementation.apachecommons.lang.StringUtils;
+import com.azure.core.credential.TokenCredential;
 import com.azure.identity.ClientSecretCredential;
 import com.azure.identity.ClientSecretCredentialBuilder;
 
@@ -55,8 +56,12 @@ public class CosmosClientStore {
                 .clientSecret(aadAuthConfig.getClientSecret())
                 .build();
             cosmosClientBuilder.credential(tokenCredential);
+        } else if (accountConfig.getCosmosAuthConfig() instanceof CosmosCustomAuthConfig) {
+            CosmosCustomAuthConfig customAuthConfig = (CosmosCustomAuthConfig) accountConfig.getCosmosAuthConfig();
+            TokenCredential tokenCredential = createCustomTokenCredential(customAuthConfig);
+            cosmosClientBuilder.credential(tokenCredential);
         } else {
-            throw new IllegalArgumentException("Authorization type " + accountConfig.getCosmosAuthConfig().getClass() + "is not supported");
+            throw new IllegalArgumentException("Authorization type " + accountConfig.getCosmosAuthConfig().getClass() + " is not supported");
         }
 
         if (snapshot != null) {
@@ -79,5 +84,33 @@ public class CosmosClientStore {
         }
 
         return userAgentSuffix;
+    }
+
+    private static TokenCredential createCustomTokenCredential(CosmosCustomAuthConfig customAuthConfig) {
+        String providerClassName = customAuthConfig.getCredentialProviderClass();
+
+        if (providerClassName == null || providerClassName.trim().isEmpty()) {
+            throw new IllegalArgumentException("Credential provider class is required for Custom authentication");
+        }
+
+        try {
+            Class<?> providerClass = Class.forName(providerClassName);
+
+            if (!TokenCredential.class.isAssignableFrom(providerClass)) {
+                throw new IllegalArgumentException("Provider class must implement TokenCredential interface: " + providerClassName);
+            }
+
+            Object provider = providerClass.getConstructor().newInstance();
+
+            if (provider instanceof org.apache.kafka.common.Configurable) {
+                ((org.apache.kafka.common.Configurable) provider).configure(customAuthConfig.getConfigMap());
+            }
+
+            return (TokenCredential) provider;
+        } catch (ClassNotFoundException e) {
+            throw new IllegalArgumentException("Credential provider class not found: " + providerClassName, e);
+        } catch (Exception e) {
+            throw new IllegalArgumentException("Failed to create credential provider: " + e.getMessage(), e);
+        }
     }
 }
