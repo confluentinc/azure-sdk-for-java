@@ -63,6 +63,14 @@ public final class AutoUpgradeProfileImpl
         return this.innerModel().autoUpgradeProfileStatus();
     }
 
+    public String targetKubernetesVersion() {
+        return this.innerModel().targetKubernetesVersion();
+    }
+
+    public Boolean longTermSupport() {
+        return this.innerModel().longTermSupport();
+    }
+
     public String resourceGroupName() {
         return resourceGroupName;
     }
@@ -193,6 +201,16 @@ public final class AutoUpgradeProfileImpl
         return this;
     }
 
+    public AutoUpgradeProfileImpl withTargetKubernetesVersion(String targetKubernetesVersion) {
+        this.innerModel().withTargetKubernetesVersion(targetKubernetesVersion);
+        return this;
+    }
+
+    public AutoUpgradeProfileImpl withLongTermSupport(Boolean longTermSupport) {
+        this.innerModel().withLongTermSupport(longTermSupport);
+        return this;
+    }
+
     public AutoUpgradeProfileImpl withIfMatch(String ifMatch) {
         if (isInCreateMode()) {
             this.createIfMatch = ifMatch;
@@ -214,6 +232,6 @@ public final class AutoUpgradeProfileImpl
     }
 
     private boolean isInCreateMode() {
-        return this.innerModel().id() == null;
+        return this.innerModel() == null || this.innerModel().id() == null;
     }
 }

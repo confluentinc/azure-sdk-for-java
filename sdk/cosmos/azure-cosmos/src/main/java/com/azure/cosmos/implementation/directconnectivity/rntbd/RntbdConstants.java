@@ -579,7 +579,9 @@ public final class RntbdConstants {
         EndId((short) 0x0060, RntbdTokenType.Bytes, false),
         FanoutOperationState((short) 0x0061, RntbdTokenType.Byte, false),
         StartEpk((short) 0x0062, RntbdTokenType.Bytes, false),
+        StartEpkHash((short)0x00D2, RntbdTokenType.Bytes, false),
         EndEpk((short) 0x0063, RntbdTokenType.Bytes, false),
+        EndEpkHash((short)0x00D3, RntbdTokenType.Bytes, false),
         ReadFeedKeyType((short) 0x0064, RntbdTokenType.Byte, false),
         ContentSerializationFormat((short) 0x0065, RntbdTokenType.Byte, false),
         AllowTentativeWrites((short) 0x0066, RntbdTokenType.Byte, false),
@@ -596,22 +598,24 @@ public final class RntbdConstants {
         SDKSupportedCapabilities((short) 0x00A2, RntbdTokenType.ULong, false),
         ChangeFeedWireFormatVersion((short) 0x00B2, RntbdTokenType.String, false),
         PriorityLevel((short) 0x00BF, RntbdTokenType.Byte, false),
-        GlobalDatabaseAccountName((short) 0x00CE, RntbdTokenType.String, false);
+        GlobalDatabaseAccountName((short) 0x00CE, RntbdTokenType.String, false),
+        ThroughputBucket((short)0x00DB, RntbdTokenType.Byte, false);
 
         public static final List<RntbdRequestHeader> thinClientHeadersInOrderList = Arrays.asList(
             EffectivePartitionKey,
+            StartEpkHash,
+            EndEpkHash,
             GlobalDatabaseAccountName,
             DatabaseName,
             CollectionName,
             CollectionRid,
-            // ResourceId,
+            ResourceId,
             PayloadPresent,
             DocumentName,
             AuthorizationToken,
             Date);
 
         private static final List<RntbdRequestHeader> thinClientExclusionList = Arrays.asList(
-            RntbdConstants.RntbdRequestHeader.ResourceId,
             RntbdConstants.RntbdRequestHeader.TransportRequestID,
             RntbdRequestHeader.IntendedCollectionRid,
             RntbdConstants.RntbdRequestHeader.ReplicaPath);

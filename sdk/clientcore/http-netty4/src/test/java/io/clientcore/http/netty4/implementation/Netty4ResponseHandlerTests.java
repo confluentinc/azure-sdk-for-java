@@ -4,8 +4,6 @@ package io.clientcore.http.netty4.implementation;
 
 import io.clientcore.core.http.models.HttpMethod;
 import io.clientcore.core.http.models.HttpRequest;
-import io.clientcore.core.http.models.Response;
-import io.clientcore.core.models.binarydata.BinaryData;
 import io.clientcore.http.netty4.mocking.MockChannelHandlerContext;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.Channel;
@@ -18,16 +16,16 @@ import io.netty.handler.codec.http.LastHttpContent;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
 
+import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 
-import static io.clientcore.http.netty4.TestUtils.assertArraysEqual;
 import static io.clientcore.http.netty4.TestUtils.createChannelWithReadHandling;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Tests {@link Netty4ResponseHandler}.
@@ -37,7 +35,7 @@ public class Netty4ResponseHandlerTests {
     @Test
     public void firstReadIsFullHttpResponse() throws Exception {
         HttpRequest request = new HttpRequest();
-        AtomicReference<Response<BinaryData>> responseReference = new AtomicReference<>();
+        AtomicReference<ResponseStateInfo> responseReference = new AtomicReference<>();
         CountDownLatch latch = new CountDownLatch(1);
 
         Netty4ResponseHandler responseHandler
@@ -61,112 +59,95 @@ public class Netty4ResponseHandlerTests {
 
         assertEquals(0, latch.getCount());
 
-        Response<BinaryData> coreResponse = responseReference.get();
-        assertNotNull(coreResponse);
+        ResponseStateInfo info = responseReference.get();
+        assertNotNull(info);
 
-        assertSame(request, coreResponse.getRequest());
-        assertEquals(0, coreResponse.getValue().getLength());
+        assertTrue(info.isChannelConsumptionComplete());
+        assertEquals(0, info.getEagerContent().size());
     }
 
     @Test
-    public void incompleteIgnoredResponseBody() {
-        byte[] ignoredBodyData = new byte[32];
-        ThreadLocalRandom.current().nextBytes(ignoredBodyData);
+    public void incompleteIgnoredResponseBody() throws InterruptedException {
+        CountDownLatch headersLatch = new CountDownLatch(1);
+        Netty4ResponseHandler responseHandler = new Netty4ResponseHandler(new HttpRequest().setMethod(HttpMethod.HEAD),
+            new AtomicReference<>(), new AtomicReference<>(), headersLatch);
 
-        HttpRequest request = new HttpRequest().setMethod(HttpMethod.HEAD);
-        AtomicReference<Response<BinaryData>> responseReference = new AtomicReference<>();
-        CountDownLatch latch = new CountDownLatch(1);
-
-        Netty4ResponseHandler responseHandler
-            = new Netty4ResponseHandler(request, responseReference, new AtomicReference<>(), latch);
+        CountDownLatch bodyLatch = new CountDownLatch(1);
 
         Channel ch = createChannelWithReadHandling((readCount, channel) -> {
-            if (readCount == 0) {
-                Netty4ResponseHandler handler = channel.pipeline().get(Netty4ResponseHandler.class);
-                MockChannelHandlerContext ctx = new MockChannelHandlerContext(channel);
-                try {
-                    handler.channelRead(ctx,
-                        new DefaultHttpResponse(HttpVersion.HTTP_1_1, HttpResponseStatus.OK, new DefaultHttpHeaders()));
-                    handler.channelReadComplete(ctx);
-                } catch (Exception ex) {
-                    ctx.fireExceptionCaught(ex);
+            try {
+                if (readCount == 0) {
+                    responseHandler.channelRead(new MockChannelHandlerContext(channel),
+                        new DefaultHttpResponse(HttpVersion.HTTP_1_1, HttpResponseStatus.OK));
+                    responseHandler.channelReadComplete(new MockChannelHandlerContext(channel));
+                } else {
+                    Netty4EagerConsumeChannelHandler eagerConsumer
+                        = channel.pipeline().get(Netty4EagerConsumeChannelHandler.class);
+                    eagerConsumer.channelRead(new MockChannelHandlerContext(channel),
+                        LastHttpContent.EMPTY_LAST_CONTENT);
+                    eagerConsumer.channelReadComplete(new MockChannelHandlerContext(channel));
                 }
-            } else {
-                Netty4EagerConsumeChannelHandler handler
-                    = channel.pipeline().get(Netty4EagerConsumeChannelHandler.class);
-                MockChannelHandlerContext ctx = new MockChannelHandlerContext(channel);
-                handler.channelRead(ctx, Unpooled.wrappedBuffer(ignoredBodyData));
-                handler.channelRead(ctx, Unpooled.wrappedBuffer(ignoredBodyData));
-                handler.channelRead(ctx, Unpooled.wrappedBuffer(ignoredBodyData));
-                handler.channelRead(ctx, Unpooled.wrappedBuffer(ignoredBodyData));
-                handler.channelRead(ctx, LastHttpContent.EMPTY_LAST_CONTENT);
-                handler.channelReadComplete(ctx);
+            } catch (Exception e) {
+                channel.pipeline().fireExceptionCaught(e);
             }
         });
 
         ch.pipeline().addLast(responseHandler);
+
         ch.read();
+        assertTrue(headersLatch.await(10, TimeUnit.SECONDS));
 
-        assertEquals(0, latch.getCount());
+        ch.pipeline().addLast(new Netty4EagerConsumeChannelHandler(bodyLatch, ignored -> {
+        }, false));
 
-        Response<BinaryData> coreResponse = responseReference.get();
-        assertNotNull(coreResponse);
-
-        assertSame(request, coreResponse.getRequest());
-        assertEquals(0, coreResponse.getValue().getLength());
+        ch.read();
+        assertTrue(bodyLatch.await(10, TimeUnit.SECONDS));
     }
 
     @Test
-    public void bufferedResponseBodyLargerThanInitialRead() {
-        byte[] bodyPieces = new byte[32];
-        ThreadLocalRandom.current().nextBytes(bodyPieces);
-
-        byte[] expectedBody = new byte[bodyPieces.length * 4];
-        System.arraycopy(bodyPieces, 0, expectedBody, 0, bodyPieces.length);
-        System.arraycopy(bodyPieces, 0, expectedBody, bodyPieces.length, bodyPieces.length);
-        System.arraycopy(bodyPieces, 0, expectedBody, bodyPieces.length * 2, bodyPieces.length);
-        System.arraycopy(bodyPieces, 0, expectedBody, bodyPieces.length * 3, bodyPieces.length);
-
-        HttpRequest request = new HttpRequest();
-        AtomicReference<Response<BinaryData>> responseReference = new AtomicReference<>();
-        CountDownLatch latch = new CountDownLatch(1);
+    public void bufferedResponseBodyLargerThanInitialRead() throws InterruptedException {
+        AtomicReference<ResponseStateInfo> responseReference = new AtomicReference<>();
+        CountDownLatch headersLatch = new CountDownLatch(1);
 
         Netty4ResponseHandler responseHandler
-            = new Netty4ResponseHandler(request, responseReference, new AtomicReference<>(), latch);
+            = new Netty4ResponseHandler(new HttpRequest(), responseReference, new AtomicReference<>(), headersLatch);
+
+        CountDownLatch bodyLatch = new CountDownLatch(1);
 
         Channel ch = createChannelWithReadHandling((readCount, channel) -> {
-            if (readCount == 0) {
-                Netty4ResponseHandler handler = channel.pipeline().get(Netty4ResponseHandler.class);
-                MockChannelHandlerContext ctx = new MockChannelHandlerContext(channel);
-                try {
-                    handler.channelRead(ctx,
-                        new DefaultHttpResponse(HttpVersion.HTTP_1_1, HttpResponseStatus.OK, new DefaultHttpHeaders()));
-                    handler.channelReadComplete(ctx);
-                } catch (Exception ex) {
-                    ctx.fireExceptionCaught(ex);
+            try {
+                if (readCount == 0) {
+                    responseHandler.channelRead(new MockChannelHandlerContext(channel),
+                        new DefaultHttpResponse(HttpVersion.HTTP_1_1, HttpResponseStatus.OK));
+                    responseHandler.channelReadComplete(new MockChannelHandlerContext(channel));
+                } else {
+                    Netty4EagerConsumeChannelHandler eagerConsumer
+                        = channel.pipeline().get(Netty4EagerConsumeChannelHandler.class);
+                    eagerConsumer.channelRead(new MockChannelHandlerContext(channel),
+                        LastHttpContent.EMPTY_LAST_CONTENT);
+                    eagerConsumer.channelReadComplete(new MockChannelHandlerContext(channel));
                 }
-            } else {
-                Netty4EagerConsumeChannelHandler handler
-                    = channel.pipeline().get(Netty4EagerConsumeChannelHandler.class);
-                MockChannelHandlerContext ctx = new MockChannelHandlerContext(channel);
-                handler.channelRead(ctx, Unpooled.wrappedBuffer(bodyPieces));
-                handler.channelRead(ctx, Unpooled.wrappedBuffer(bodyPieces));
-                handler.channelRead(ctx, Unpooled.wrappedBuffer(bodyPieces));
-                handler.channelRead(ctx, Unpooled.wrappedBuffer(bodyPieces));
-                handler.channelRead(ctx, LastHttpContent.EMPTY_LAST_CONTENT);
-                handler.channelReadComplete(ctx);
+            } catch (Exception e) {
+                channel.pipeline().fireExceptionCaught(e);
             }
         });
 
         ch.pipeline().addLast(responseHandler);
+
         ch.read();
+        assertTrue(headersLatch.await(10, TimeUnit.SECONDS));
+        ResponseStateInfo info = responseReference.get();
+        assertNotNull(info);
 
-        assertEquals(0, latch.getCount());
+        ch.pipeline().addLast(new Netty4EagerConsumeChannelHandler(bodyLatch, buf -> {
+            try {
+                buf.readBytes(info.getEagerContent(), buf.readableBytes());
+            } catch (IOException ex) {
+                throw new UncheckedIOException(ex);
+            }
+        }, false));
 
-        Response<BinaryData> coreResponse = responseReference.get();
-        assertNotNull(coreResponse);
-
-        assertSame(request, coreResponse.getRequest());
-        assertArraysEqual(expectedBody, coreResponse.getValue().toBytes());
+        ch.read();
+        assertTrue(bodyLatch.await(10, TimeUnit.SECONDS));
     }
 }

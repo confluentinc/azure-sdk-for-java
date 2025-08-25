@@ -27,8 +27,10 @@ import com.azure.core.http.rest.Response;
 import com.azure.core.http.rest.RestProxy;
 import com.azure.core.management.exception.ManagementException;
 import com.azure.core.management.polling.PollResult;
+import com.azure.core.util.BinaryData;
 import com.azure.core.util.Context;
 import com.azure.core.util.FluxUtil;
+import com.azure.core.util.logging.ClientLogger;
 import com.azure.core.util.polling.PollerFlux;
 import com.azure.core.util.polling.SyncPoller;
 import com.azure.resourcemanager.durabletask.fluent.TaskHubsClient;
@@ -67,13 +69,22 @@ public final class TaskHubsClientImpl implements TaskHubsClient {
      * to perform REST calls.
      */
     @Host("{endpoint}")
-    @ServiceInterface(name = "DurableTaskManagemen")
+    @ServiceInterface(name = "DurableTaskManagementClientTaskHubs")
     public interface TaskHubsService {
         @Headers({ "Content-Type: application/json" })
         @Get("/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DurableTask/schedulers/{schedulerName}/taskHubs/{taskHubName}")
         @ExpectedResponses({ 200 })
         @UnexpectedResponseExceptionType(ManagementException.class)
         Mono<Response<TaskHubInner>> get(@HostParam("endpoint") String endpoint,
+            @QueryParam("api-version") String apiVersion, @PathParam("subscriptionId") String subscriptionId,
+            @PathParam("resourceGroupName") String resourceGroupName, @PathParam("schedulerName") String schedulerName,
+            @PathParam("taskHubName") String taskHubName, @HeaderParam("Accept") String accept, Context context);
+
+        @Headers({ "Content-Type: application/json" })
+        @Get("/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DurableTask/schedulers/{schedulerName}/taskHubs/{taskHubName}")
+        @ExpectedResponses({ 200 })
+        @UnexpectedResponseExceptionType(ManagementException.class)
+        Response<TaskHubInner> getSync(@HostParam("endpoint") String endpoint,
             @QueryParam("api-version") String apiVersion, @PathParam("subscriptionId") String subscriptionId,
             @PathParam("resourceGroupName") String resourceGroupName, @PathParam("schedulerName") String schedulerName,
             @PathParam("taskHubName") String taskHubName, @HeaderParam("Accept") String accept, Context context);
@@ -88,14 +99,33 @@ public final class TaskHubsClientImpl implements TaskHubsClient {
             @HeaderParam("Accept") String accept, @BodyParam("application/json") TaskHubInner resource,
             Context context);
 
-        @Headers({ "Content-Type: application/json" })
+        @Put("/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DurableTask/schedulers/{schedulerName}/taskHubs/{taskHubName}")
+        @ExpectedResponses({ 200, 201 })
+        @UnexpectedResponseExceptionType(ManagementException.class)
+        Response<BinaryData> createOrUpdateSync(@HostParam("endpoint") String endpoint,
+            @QueryParam("api-version") String apiVersion, @PathParam("subscriptionId") String subscriptionId,
+            @PathParam("resourceGroupName") String resourceGroupName, @PathParam("schedulerName") String schedulerName,
+            @PathParam("taskHubName") String taskHubName, @HeaderParam("Content-Type") String contentType,
+            @HeaderParam("Accept") String accept, @BodyParam("application/json") TaskHubInner resource,
+            Context context);
+
+        @Headers({ "Accept: application/json;q=0.9", "Content-Type: application/json" })
         @Delete("/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DurableTask/schedulers/{schedulerName}/taskHubs/{taskHubName}")
         @ExpectedResponses({ 202, 204 })
         @UnexpectedResponseExceptionType(ManagementException.class)
         Mono<Response<Flux<ByteBuffer>>> delete(@HostParam("endpoint") String endpoint,
             @QueryParam("api-version") String apiVersion, @PathParam("subscriptionId") String subscriptionId,
             @PathParam("resourceGroupName") String resourceGroupName, @PathParam("schedulerName") String schedulerName,
-            @PathParam("taskHubName") String taskHubName, @HeaderParam("Accept") String accept, Context context);
+            @PathParam("taskHubName") String taskHubName, Context context);
+
+        @Headers({ "Accept: application/json;q=0.9", "Content-Type: application/json" })
+        @Delete("/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DurableTask/schedulers/{schedulerName}/taskHubs/{taskHubName}")
+        @ExpectedResponses({ 202, 204 })
+        @UnexpectedResponseExceptionType(ManagementException.class)
+        Response<BinaryData> deleteSync(@HostParam("endpoint") String endpoint,
+            @QueryParam("api-version") String apiVersion, @PathParam("subscriptionId") String subscriptionId,
+            @PathParam("resourceGroupName") String resourceGroupName, @PathParam("schedulerName") String schedulerName,
+            @PathParam("taskHubName") String taskHubName, Context context);
 
         @Headers({ "Content-Type: application/json" })
         @Get("/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DurableTask/schedulers/{schedulerName}/taskHubs")
@@ -107,10 +137,27 @@ public final class TaskHubsClientImpl implements TaskHubsClient {
             @HeaderParam("Accept") String accept, Context context);
 
         @Headers({ "Content-Type: application/json" })
+        @Get("/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DurableTask/schedulers/{schedulerName}/taskHubs")
+        @ExpectedResponses({ 200 })
+        @UnexpectedResponseExceptionType(ManagementException.class)
+        Response<TaskHubListResult> listBySchedulerSync(@HostParam("endpoint") String endpoint,
+            @QueryParam("api-version") String apiVersion, @PathParam("subscriptionId") String subscriptionId,
+            @PathParam("resourceGroupName") String resourceGroupName, @PathParam("schedulerName") String schedulerName,
+            @HeaderParam("Accept") String accept, Context context);
+
+        @Headers({ "Content-Type: application/json" })
         @Get("{nextLink}")
         @ExpectedResponses({ 200 })
         @UnexpectedResponseExceptionType(ManagementException.class)
         Mono<Response<TaskHubListResult>> listBySchedulerNext(
+            @PathParam(value = "nextLink", encoded = true) String nextLink, @HostParam("endpoint") String endpoint,
+            @HeaderParam("Accept") String accept, Context context);
+
+        @Headers({ "Content-Type: application/json" })
+        @Get("{nextLink}")
+        @ExpectedResponses({ 200 })
+        @UnexpectedResponseExceptionType(ManagementException.class)
+        Response<TaskHubListResult> listBySchedulerNextSync(
             @PathParam(value = "nextLink", encoded = true) String nextLink, @HostParam("endpoint") String endpoint,
             @HeaderParam("Accept") String accept, Context context);
     }
@@ -160,45 +207,6 @@ public final class TaskHubsClientImpl implements TaskHubsClient {
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
      * @param schedulerName The name of the Scheduler.
      * @param taskHubName The name of the TaskHub.
-     * @param context The context to associate with this operation.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return a Task Hub along with {@link Response} on successful completion of {@link Mono}.
-     */
-    @ServiceMethod(returns = ReturnType.SINGLE)
-    private Mono<Response<TaskHubInner>> getWithResponseAsync(String resourceGroupName, String schedulerName,
-        String taskHubName, Context context) {
-        if (this.client.getEndpoint() == null) {
-            return Mono.error(
-                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
-        }
-        if (this.client.getSubscriptionId() == null) {
-            return Mono.error(new IllegalArgumentException(
-                "Parameter this.client.getSubscriptionId() is required and cannot be null."));
-        }
-        if (resourceGroupName == null) {
-            return Mono
-                .error(new IllegalArgumentException("Parameter resourceGroupName is required and cannot be null."));
-        }
-        if (schedulerName == null) {
-            return Mono.error(new IllegalArgumentException("Parameter schedulerName is required and cannot be null."));
-        }
-        if (taskHubName == null) {
-            return Mono.error(new IllegalArgumentException("Parameter taskHubName is required and cannot be null."));
-        }
-        final String accept = "application/json";
-        context = this.client.mergeContext(context);
-        return service.get(this.client.getEndpoint(), this.client.getApiVersion(), this.client.getSubscriptionId(),
-            resourceGroupName, schedulerName, taskHubName, accept, context);
-    }
-
-    /**
-     * Get a Task Hub.
-     * 
-     * @param resourceGroupName The name of the resource group. The name is case insensitive.
-     * @param schedulerName The name of the Scheduler.
-     * @param taskHubName The name of the TaskHub.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
@@ -225,7 +233,31 @@ public final class TaskHubsClientImpl implements TaskHubsClient {
     @ServiceMethod(returns = ReturnType.SINGLE)
     public Response<TaskHubInner> getWithResponse(String resourceGroupName, String schedulerName, String taskHubName,
         Context context) {
-        return getWithResponseAsync(resourceGroupName, schedulerName, taskHubName, context).block();
+        if (this.client.getEndpoint() == null) {
+            throw LOGGER.atError()
+                .log(new IllegalArgumentException(
+                    "Parameter this.client.getEndpoint() is required and cannot be null."));
+        }
+        if (this.client.getSubscriptionId() == null) {
+            throw LOGGER.atError()
+                .log(new IllegalArgumentException(
+                    "Parameter this.client.getSubscriptionId() is required and cannot be null."));
+        }
+        if (resourceGroupName == null) {
+            throw LOGGER.atError()
+                .log(new IllegalArgumentException("Parameter resourceGroupName is required and cannot be null."));
+        }
+        if (schedulerName == null) {
+            throw LOGGER.atError()
+                .log(new IllegalArgumentException("Parameter schedulerName is required and cannot be null."));
+        }
+        if (taskHubName == null) {
+            throw LOGGER.atError()
+                .log(new IllegalArgumentException("Parameter taskHubName is required and cannot be null."));
+        }
+        final String accept = "application/json";
+        return service.getSync(this.client.getEndpoint(), this.client.getApiVersion(), this.client.getSubscriptionId(),
+            resourceGroupName, schedulerName, taskHubName, accept, context);
     }
 
     /**
@@ -299,43 +331,96 @@ public final class TaskHubsClientImpl implements TaskHubsClient {
      * @param schedulerName The name of the Scheduler.
      * @param taskHubName The name of the TaskHub.
      * @param resource Resource create parameters.
-     * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return a Task Hub resource belonging to the scheduler along with {@link Response} on successful completion of
-     * {@link Mono}.
+     * @return a Task Hub resource belonging to the scheduler along with {@link Response}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    private Mono<Response<Flux<ByteBuffer>>> createOrUpdateWithResponseAsync(String resourceGroupName,
-        String schedulerName, String taskHubName, TaskHubInner resource, Context context) {
+    private Response<BinaryData> createOrUpdateWithResponse(String resourceGroupName, String schedulerName,
+        String taskHubName, TaskHubInner resource) {
         if (this.client.getEndpoint() == null) {
-            return Mono.error(
-                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
+            throw LOGGER.atError()
+                .log(new IllegalArgumentException(
+                    "Parameter this.client.getEndpoint() is required and cannot be null."));
         }
         if (this.client.getSubscriptionId() == null) {
-            return Mono.error(new IllegalArgumentException(
-                "Parameter this.client.getSubscriptionId() is required and cannot be null."));
+            throw LOGGER.atError()
+                .log(new IllegalArgumentException(
+                    "Parameter this.client.getSubscriptionId() is required and cannot be null."));
         }
         if (resourceGroupName == null) {
-            return Mono
-                .error(new IllegalArgumentException("Parameter resourceGroupName is required and cannot be null."));
+            throw LOGGER.atError()
+                .log(new IllegalArgumentException("Parameter resourceGroupName is required and cannot be null."));
         }
         if (schedulerName == null) {
-            return Mono.error(new IllegalArgumentException("Parameter schedulerName is required and cannot be null."));
+            throw LOGGER.atError()
+                .log(new IllegalArgumentException("Parameter schedulerName is required and cannot be null."));
         }
         if (taskHubName == null) {
-            return Mono.error(new IllegalArgumentException("Parameter taskHubName is required and cannot be null."));
+            throw LOGGER.atError()
+                .log(new IllegalArgumentException("Parameter taskHubName is required and cannot be null."));
         }
         if (resource == null) {
-            return Mono.error(new IllegalArgumentException("Parameter resource is required and cannot be null."));
+            throw LOGGER.atError()
+                .log(new IllegalArgumentException("Parameter resource is required and cannot be null."));
         } else {
             resource.validate();
         }
         final String contentType = "application/json";
         final String accept = "application/json";
-        context = this.client.mergeContext(context);
-        return service.createOrUpdate(this.client.getEndpoint(), this.client.getApiVersion(),
+        return service.createOrUpdateSync(this.client.getEndpoint(), this.client.getApiVersion(),
+            this.client.getSubscriptionId(), resourceGroupName, schedulerName, taskHubName, contentType, accept,
+            resource, Context.NONE);
+    }
+
+    /**
+     * Create or Update a Task Hub.
+     * 
+     * @param resourceGroupName The name of the resource group. The name is case insensitive.
+     * @param schedulerName The name of the Scheduler.
+     * @param taskHubName The name of the TaskHub.
+     * @param resource Resource create parameters.
+     * @param context The context to associate with this operation.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return a Task Hub resource belonging to the scheduler along with {@link Response}.
+     */
+    @ServiceMethod(returns = ReturnType.SINGLE)
+    private Response<BinaryData> createOrUpdateWithResponse(String resourceGroupName, String schedulerName,
+        String taskHubName, TaskHubInner resource, Context context) {
+        if (this.client.getEndpoint() == null) {
+            throw LOGGER.atError()
+                .log(new IllegalArgumentException(
+                    "Parameter this.client.getEndpoint() is required and cannot be null."));
+        }
+        if (this.client.getSubscriptionId() == null) {
+            throw LOGGER.atError()
+                .log(new IllegalArgumentException(
+                    "Parameter this.client.getSubscriptionId() is required and cannot be null."));
+        }
+        if (resourceGroupName == null) {
+            throw LOGGER.atError()
+                .log(new IllegalArgumentException("Parameter resourceGroupName is required and cannot be null."));
+        }
+        if (schedulerName == null) {
+            throw LOGGER.atError()
+                .log(new IllegalArgumentException("Parameter schedulerName is required and cannot be null."));
+        }
+        if (taskHubName == null) {
+            throw LOGGER.atError()
+                .log(new IllegalArgumentException("Parameter taskHubName is required and cannot be null."));
+        }
+        if (resource == null) {
+            throw LOGGER.atError()
+                .log(new IllegalArgumentException("Parameter resource is required and cannot be null."));
+        } else {
+            resource.validate();
+        }
+        final String contentType = "application/json";
+        final String accept = "application/json";
+        return service.createOrUpdateSync(this.client.getEndpoint(), this.client.getApiVersion(),
             this.client.getSubscriptionId(), resourceGroupName, schedulerName, taskHubName, contentType, accept,
             resource, context);
     }
@@ -368,29 +453,6 @@ public final class TaskHubsClientImpl implements TaskHubsClient {
      * @param schedulerName The name of the Scheduler.
      * @param taskHubName The name of the TaskHub.
      * @param resource Resource create parameters.
-     * @param context The context to associate with this operation.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the {@link PollerFlux} for polling of a Task Hub resource belonging to the scheduler.
-     */
-    @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
-    private PollerFlux<PollResult<TaskHubInner>, TaskHubInner> beginCreateOrUpdateAsync(String resourceGroupName,
-        String schedulerName, String taskHubName, TaskHubInner resource, Context context) {
-        context = this.client.mergeContext(context);
-        Mono<Response<Flux<ByteBuffer>>> mono
-            = createOrUpdateWithResponseAsync(resourceGroupName, schedulerName, taskHubName, resource, context);
-        return this.client.<TaskHubInner, TaskHubInner>getLroResult(mono, this.client.getHttpPipeline(),
-            TaskHubInner.class, TaskHubInner.class, context);
-    }
-
-    /**
-     * Create or Update a Task Hub.
-     * 
-     * @param resourceGroupName The name of the resource group. The name is case insensitive.
-     * @param schedulerName The name of the Scheduler.
-     * @param taskHubName The name of the TaskHub.
-     * @param resource Resource create parameters.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
@@ -399,7 +461,10 @@ public final class TaskHubsClientImpl implements TaskHubsClient {
     @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
     public SyncPoller<PollResult<TaskHubInner>, TaskHubInner> beginCreateOrUpdate(String resourceGroupName,
         String schedulerName, String taskHubName, TaskHubInner resource) {
-        return this.beginCreateOrUpdateAsync(resourceGroupName, schedulerName, taskHubName, resource).getSyncPoller();
+        Response<BinaryData> response
+            = createOrUpdateWithResponse(resourceGroupName, schedulerName, taskHubName, resource);
+        return this.client.<TaskHubInner, TaskHubInner>getLroResult(response, TaskHubInner.class, TaskHubInner.class,
+            Context.NONE);
     }
 
     /**
@@ -418,8 +483,10 @@ public final class TaskHubsClientImpl implements TaskHubsClient {
     @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
     public SyncPoller<PollResult<TaskHubInner>, TaskHubInner> beginCreateOrUpdate(String resourceGroupName,
         String schedulerName, String taskHubName, TaskHubInner resource, Context context) {
-        return this.beginCreateOrUpdateAsync(resourceGroupName, schedulerName, taskHubName, resource, context)
-            .getSyncPoller();
+        Response<BinaryData> response
+            = createOrUpdateWithResponse(resourceGroupName, schedulerName, taskHubName, resource, context);
+        return this.client.<TaskHubInner, TaskHubInner>getLroResult(response, TaskHubInner.class, TaskHubInner.class,
+            context);
     }
 
     /**
@@ -448,26 +515,6 @@ public final class TaskHubsClientImpl implements TaskHubsClient {
      * @param schedulerName The name of the Scheduler.
      * @param taskHubName The name of the TaskHub.
      * @param resource Resource create parameters.
-     * @param context The context to associate with this operation.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return a Task Hub resource belonging to the scheduler on successful completion of {@link Mono}.
-     */
-    @ServiceMethod(returns = ReturnType.SINGLE)
-    private Mono<TaskHubInner> createOrUpdateAsync(String resourceGroupName, String schedulerName, String taskHubName,
-        TaskHubInner resource, Context context) {
-        return beginCreateOrUpdateAsync(resourceGroupName, schedulerName, taskHubName, resource, context).last()
-            .flatMap(this.client::getLroFinalResultOrError);
-    }
-
-    /**
-     * Create or Update a Task Hub.
-     * 
-     * @param resourceGroupName The name of the resource group. The name is case insensitive.
-     * @param schedulerName The name of the Scheduler.
-     * @param taskHubName The name of the TaskHub.
-     * @param resource Resource create parameters.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
@@ -476,7 +523,7 @@ public final class TaskHubsClientImpl implements TaskHubsClient {
     @ServiceMethod(returns = ReturnType.SINGLE)
     public TaskHubInner createOrUpdate(String resourceGroupName, String schedulerName, String taskHubName,
         TaskHubInner resource) {
-        return createOrUpdateAsync(resourceGroupName, schedulerName, taskHubName, resource).block();
+        return beginCreateOrUpdate(resourceGroupName, schedulerName, taskHubName, resource).getFinalResult();
     }
 
     /**
@@ -495,7 +542,7 @@ public final class TaskHubsClientImpl implements TaskHubsClient {
     @ServiceMethod(returns = ReturnType.SINGLE)
     public TaskHubInner createOrUpdate(String resourceGroupName, String schedulerName, String taskHubName,
         TaskHubInner resource, Context context) {
-        return createOrUpdateAsync(resourceGroupName, schedulerName, taskHubName, resource, context).block();
+        return beginCreateOrUpdate(resourceGroupName, schedulerName, taskHubName, resource, context).getFinalResult();
     }
 
     /**
@@ -530,11 +577,50 @@ public final class TaskHubsClientImpl implements TaskHubsClient {
         if (taskHubName == null) {
             return Mono.error(new IllegalArgumentException("Parameter taskHubName is required and cannot be null."));
         }
-        final String accept = "application/json";
         return FluxUtil
             .withContext(context -> service.delete(this.client.getEndpoint(), this.client.getApiVersion(),
-                this.client.getSubscriptionId(), resourceGroupName, schedulerName, taskHubName, accept, context))
+                this.client.getSubscriptionId(), resourceGroupName, schedulerName, taskHubName, context))
             .contextWrite(context -> context.putAll(FluxUtil.toReactorContext(this.client.getContext()).readOnly()));
+    }
+
+    /**
+     * Delete a Task Hub.
+     * 
+     * @param resourceGroupName The name of the resource group. The name is case insensitive.
+     * @param schedulerName The name of the Scheduler.
+     * @param taskHubName The name of the TaskHub.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return the response body along with {@link Response}.
+     */
+    @ServiceMethod(returns = ReturnType.SINGLE)
+    private Response<BinaryData> deleteWithResponse(String resourceGroupName, String schedulerName,
+        String taskHubName) {
+        if (this.client.getEndpoint() == null) {
+            throw LOGGER.atError()
+                .log(new IllegalArgumentException(
+                    "Parameter this.client.getEndpoint() is required and cannot be null."));
+        }
+        if (this.client.getSubscriptionId() == null) {
+            throw LOGGER.atError()
+                .log(new IllegalArgumentException(
+                    "Parameter this.client.getSubscriptionId() is required and cannot be null."));
+        }
+        if (resourceGroupName == null) {
+            throw LOGGER.atError()
+                .log(new IllegalArgumentException("Parameter resourceGroupName is required and cannot be null."));
+        }
+        if (schedulerName == null) {
+            throw LOGGER.atError()
+                .log(new IllegalArgumentException("Parameter schedulerName is required and cannot be null."));
+        }
+        if (taskHubName == null) {
+            throw LOGGER.atError()
+                .log(new IllegalArgumentException("Parameter taskHubName is required and cannot be null."));
+        }
+        return service.deleteSync(this.client.getEndpoint(), this.client.getApiVersion(),
+            this.client.getSubscriptionId(), resourceGroupName, schedulerName, taskHubName, Context.NONE);
     }
 
     /**
@@ -547,33 +633,35 @@ public final class TaskHubsClientImpl implements TaskHubsClient {
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the {@link Response} on successful completion of {@link Mono}.
+     * @return the response body along with {@link Response}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    private Mono<Response<Flux<ByteBuffer>>> deleteWithResponseAsync(String resourceGroupName, String schedulerName,
-        String taskHubName, Context context) {
+    private Response<BinaryData> deleteWithResponse(String resourceGroupName, String schedulerName, String taskHubName,
+        Context context) {
         if (this.client.getEndpoint() == null) {
-            return Mono.error(
-                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
+            throw LOGGER.atError()
+                .log(new IllegalArgumentException(
+                    "Parameter this.client.getEndpoint() is required and cannot be null."));
         }
         if (this.client.getSubscriptionId() == null) {
-            return Mono.error(new IllegalArgumentException(
-                "Parameter this.client.getSubscriptionId() is required and cannot be null."));
+            throw LOGGER.atError()
+                .log(new IllegalArgumentException(
+                    "Parameter this.client.getSubscriptionId() is required and cannot be null."));
         }
         if (resourceGroupName == null) {
-            return Mono
-                .error(new IllegalArgumentException("Parameter resourceGroupName is required and cannot be null."));
+            throw LOGGER.atError()
+                .log(new IllegalArgumentException("Parameter resourceGroupName is required and cannot be null."));
         }
         if (schedulerName == null) {
-            return Mono.error(new IllegalArgumentException("Parameter schedulerName is required and cannot be null."));
+            throw LOGGER.atError()
+                .log(new IllegalArgumentException("Parameter schedulerName is required and cannot be null."));
         }
         if (taskHubName == null) {
-            return Mono.error(new IllegalArgumentException("Parameter taskHubName is required and cannot be null."));
+            throw LOGGER.atError()
+                .log(new IllegalArgumentException("Parameter taskHubName is required and cannot be null."));
         }
-        final String accept = "application/json";
-        context = this.client.mergeContext(context);
-        return service.delete(this.client.getEndpoint(), this.client.getApiVersion(), this.client.getSubscriptionId(),
-            resourceGroupName, schedulerName, taskHubName, accept, context);
+        return service.deleteSync(this.client.getEndpoint(), this.client.getApiVersion(),
+            this.client.getSubscriptionId(), resourceGroupName, schedulerName, taskHubName, context);
     }
 
     /**
@@ -601,28 +689,6 @@ public final class TaskHubsClientImpl implements TaskHubsClient {
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
      * @param schedulerName The name of the Scheduler.
      * @param taskHubName The name of the TaskHub.
-     * @param context The context to associate with this operation.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the {@link PollerFlux} for polling of long-running operation.
-     */
-    @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
-    private PollerFlux<PollResult<Void>, Void> beginDeleteAsync(String resourceGroupName, String schedulerName,
-        String taskHubName, Context context) {
-        context = this.client.mergeContext(context);
-        Mono<Response<Flux<ByteBuffer>>> mono
-            = deleteWithResponseAsync(resourceGroupName, schedulerName, taskHubName, context);
-        return this.client.<Void, Void>getLroResult(mono, this.client.getHttpPipeline(), Void.class, Void.class,
-            context);
-    }
-
-    /**
-     * Delete a Task Hub.
-     * 
-     * @param resourceGroupName The name of the resource group. The name is case insensitive.
-     * @param schedulerName The name of the Scheduler.
-     * @param taskHubName The name of the TaskHub.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
@@ -631,7 +697,8 @@ public final class TaskHubsClientImpl implements TaskHubsClient {
     @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
     public SyncPoller<PollResult<Void>, Void> beginDelete(String resourceGroupName, String schedulerName,
         String taskHubName) {
-        return this.beginDeleteAsync(resourceGroupName, schedulerName, taskHubName).getSyncPoller();
+        Response<BinaryData> response = deleteWithResponse(resourceGroupName, schedulerName, taskHubName);
+        return this.client.<Void, Void>getLroResult(response, Void.class, Void.class, Context.NONE);
     }
 
     /**
@@ -649,7 +716,8 @@ public final class TaskHubsClientImpl implements TaskHubsClient {
     @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
     public SyncPoller<PollResult<Void>, Void> beginDelete(String resourceGroupName, String schedulerName,
         String taskHubName, Context context) {
-        return this.beginDeleteAsync(resourceGroupName, schedulerName, taskHubName, context).getSyncPoller();
+        Response<BinaryData> response = deleteWithResponse(resourceGroupName, schedulerName, taskHubName, context);
+        return this.client.<Void, Void>getLroResult(response, Void.class, Void.class, context);
     }
 
     /**
@@ -675,32 +743,13 @@ public final class TaskHubsClientImpl implements TaskHubsClient {
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
      * @param schedulerName The name of the Scheduler.
      * @param taskHubName The name of the TaskHub.
-     * @param context The context to associate with this operation.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return A {@link Mono} that completes when a successful response is received.
-     */
-    @ServiceMethod(returns = ReturnType.SINGLE)
-    private Mono<Void> deleteAsync(String resourceGroupName, String schedulerName, String taskHubName,
-        Context context) {
-        return beginDeleteAsync(resourceGroupName, schedulerName, taskHubName, context).last()
-            .flatMap(this.client::getLroFinalResultOrError);
-    }
-
-    /**
-     * Delete a Task Hub.
-     * 
-     * @param resourceGroupName The name of the resource group. The name is case insensitive.
-     * @param schedulerName The name of the Scheduler.
-     * @param taskHubName The name of the TaskHub.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
     public void delete(String resourceGroupName, String schedulerName, String taskHubName) {
-        deleteAsync(resourceGroupName, schedulerName, taskHubName).block();
+        beginDelete(resourceGroupName, schedulerName, taskHubName).getFinalResult();
     }
 
     /**
@@ -716,7 +765,7 @@ public final class TaskHubsClientImpl implements TaskHubsClient {
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
     public void delete(String resourceGroupName, String schedulerName, String taskHubName, Context context) {
-        deleteAsync(resourceGroupName, schedulerName, taskHubName, context).block();
+        beginDelete(resourceGroupName, schedulerName, taskHubName, context).getFinalResult();
     }
 
     /**
@@ -762,45 +811,6 @@ public final class TaskHubsClientImpl implements TaskHubsClient {
      * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
      * @param schedulerName The name of the Scheduler.
-     * @param context The context to associate with this operation.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the response of a TaskHub list operation along with {@link PagedResponse} on successful completion of
-     * {@link Mono}.
-     */
-    @ServiceMethod(returns = ReturnType.SINGLE)
-    private Mono<PagedResponse<TaskHubInner>> listBySchedulerSinglePageAsync(String resourceGroupName,
-        String schedulerName, Context context) {
-        if (this.client.getEndpoint() == null) {
-            return Mono.error(
-                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
-        }
-        if (this.client.getSubscriptionId() == null) {
-            return Mono.error(new IllegalArgumentException(
-                "Parameter this.client.getSubscriptionId() is required and cannot be null."));
-        }
-        if (resourceGroupName == null) {
-            return Mono
-                .error(new IllegalArgumentException("Parameter resourceGroupName is required and cannot be null."));
-        }
-        if (schedulerName == null) {
-            return Mono.error(new IllegalArgumentException("Parameter schedulerName is required and cannot be null."));
-        }
-        final String accept = "application/json";
-        context = this.client.mergeContext(context);
-        return service
-            .listByScheduler(this.client.getEndpoint(), this.client.getApiVersion(), this.client.getSubscriptionId(),
-                resourceGroupName, schedulerName, accept, context)
-            .map(res -> new PagedResponseBase<>(res.getRequest(), res.getStatusCode(), res.getHeaders(),
-                res.getValue().value(), res.getValue().nextLink(), null));
-    }
-
-    /**
-     * List Task Hubs.
-     * 
-     * @param resourceGroupName The name of the resource group. The name is case insensitive.
-     * @param schedulerName The name of the Scheduler.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
@@ -817,17 +827,77 @@ public final class TaskHubsClientImpl implements TaskHubsClient {
      * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
      * @param schedulerName The name of the Scheduler.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return the response of a TaskHub list operation along with {@link PagedResponse}.
+     */
+    @ServiceMethod(returns = ReturnType.SINGLE)
+    private PagedResponse<TaskHubInner> listBySchedulerSinglePage(String resourceGroupName, String schedulerName) {
+        if (this.client.getEndpoint() == null) {
+            throw LOGGER.atError()
+                .log(new IllegalArgumentException(
+                    "Parameter this.client.getEndpoint() is required and cannot be null."));
+        }
+        if (this.client.getSubscriptionId() == null) {
+            throw LOGGER.atError()
+                .log(new IllegalArgumentException(
+                    "Parameter this.client.getSubscriptionId() is required and cannot be null."));
+        }
+        if (resourceGroupName == null) {
+            throw LOGGER.atError()
+                .log(new IllegalArgumentException("Parameter resourceGroupName is required and cannot be null."));
+        }
+        if (schedulerName == null) {
+            throw LOGGER.atError()
+                .log(new IllegalArgumentException("Parameter schedulerName is required and cannot be null."));
+        }
+        final String accept = "application/json";
+        Response<TaskHubListResult> res
+            = service.listBySchedulerSync(this.client.getEndpoint(), this.client.getApiVersion(),
+                this.client.getSubscriptionId(), resourceGroupName, schedulerName, accept, Context.NONE);
+        return new PagedResponseBase<>(res.getRequest(), res.getStatusCode(), res.getHeaders(), res.getValue().value(),
+            res.getValue().nextLink(), null);
+    }
+
+    /**
+     * List Task Hubs.
+     * 
+     * @param resourceGroupName The name of the resource group. The name is case insensitive.
+     * @param schedulerName The name of the Scheduler.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the response of a TaskHub list operation as paginated response with {@link PagedFlux}.
+     * @return the response of a TaskHub list operation along with {@link PagedResponse}.
      */
-    @ServiceMethod(returns = ReturnType.COLLECTION)
-    private PagedFlux<TaskHubInner> listBySchedulerAsync(String resourceGroupName, String schedulerName,
+    @ServiceMethod(returns = ReturnType.SINGLE)
+    private PagedResponse<TaskHubInner> listBySchedulerSinglePage(String resourceGroupName, String schedulerName,
         Context context) {
-        return new PagedFlux<>(() -> listBySchedulerSinglePageAsync(resourceGroupName, schedulerName, context),
-            nextLink -> listBySchedulerNextSinglePageAsync(nextLink, context));
+        if (this.client.getEndpoint() == null) {
+            throw LOGGER.atError()
+                .log(new IllegalArgumentException(
+                    "Parameter this.client.getEndpoint() is required and cannot be null."));
+        }
+        if (this.client.getSubscriptionId() == null) {
+            throw LOGGER.atError()
+                .log(new IllegalArgumentException(
+                    "Parameter this.client.getSubscriptionId() is required and cannot be null."));
+        }
+        if (resourceGroupName == null) {
+            throw LOGGER.atError()
+                .log(new IllegalArgumentException("Parameter resourceGroupName is required and cannot be null."));
+        }
+        if (schedulerName == null) {
+            throw LOGGER.atError()
+                .log(new IllegalArgumentException("Parameter schedulerName is required and cannot be null."));
+        }
+        final String accept = "application/json";
+        Response<TaskHubListResult> res
+            = service.listBySchedulerSync(this.client.getEndpoint(), this.client.getApiVersion(),
+                this.client.getSubscriptionId(), resourceGroupName, schedulerName, accept, context);
+        return new PagedResponseBase<>(res.getRequest(), res.getStatusCode(), res.getHeaders(), res.getValue().value(),
+            res.getValue().nextLink(), null);
     }
 
     /**
@@ -842,7 +912,8 @@ public final class TaskHubsClientImpl implements TaskHubsClient {
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
     public PagedIterable<TaskHubInner> listByScheduler(String resourceGroupName, String schedulerName) {
-        return new PagedIterable<>(listBySchedulerAsync(resourceGroupName, schedulerName));
+        return new PagedIterable<>(() -> listBySchedulerSinglePage(resourceGroupName, schedulerName),
+            nextLink -> listBySchedulerNextSinglePage(nextLink));
     }
 
     /**
@@ -859,7 +930,8 @@ public final class TaskHubsClientImpl implements TaskHubsClient {
     @ServiceMethod(returns = ReturnType.COLLECTION)
     public PagedIterable<TaskHubInner> listByScheduler(String resourceGroupName, String schedulerName,
         Context context) {
-        return new PagedIterable<>(listBySchedulerAsync(resourceGroupName, schedulerName, context));
+        return new PagedIterable<>(() -> listBySchedulerSinglePage(resourceGroupName, schedulerName, context),
+            nextLink -> listBySchedulerNextSinglePage(nextLink, context));
     }
 
     /**
@@ -893,26 +965,56 @@ public final class TaskHubsClientImpl implements TaskHubsClient {
      * Get the next page of items.
      * 
      * @param nextLink The URL to get the next list of items.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return the response of a TaskHub list operation along with {@link PagedResponse}.
+     */
+    @ServiceMethod(returns = ReturnType.SINGLE)
+    private PagedResponse<TaskHubInner> listBySchedulerNextSinglePage(String nextLink) {
+        if (nextLink == null) {
+            throw LOGGER.atError()
+                .log(new IllegalArgumentException("Parameter nextLink is required and cannot be null."));
+        }
+        if (this.client.getEndpoint() == null) {
+            throw LOGGER.atError()
+                .log(new IllegalArgumentException(
+                    "Parameter this.client.getEndpoint() is required and cannot be null."));
+        }
+        final String accept = "application/json";
+        Response<TaskHubListResult> res
+            = service.listBySchedulerNextSync(nextLink, this.client.getEndpoint(), accept, Context.NONE);
+        return new PagedResponseBase<>(res.getRequest(), res.getStatusCode(), res.getHeaders(), res.getValue().value(),
+            res.getValue().nextLink(), null);
+    }
+
+    /**
+     * Get the next page of items.
+     * 
+     * @param nextLink The URL to get the next list of items.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the response of a TaskHub list operation along with {@link PagedResponse} on successful completion of
-     * {@link Mono}.
+     * @return the response of a TaskHub list operation along with {@link PagedResponse}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    private Mono<PagedResponse<TaskHubInner>> listBySchedulerNextSinglePageAsync(String nextLink, Context context) {
+    private PagedResponse<TaskHubInner> listBySchedulerNextSinglePage(String nextLink, Context context) {
         if (nextLink == null) {
-            return Mono.error(new IllegalArgumentException("Parameter nextLink is required and cannot be null."));
+            throw LOGGER.atError()
+                .log(new IllegalArgumentException("Parameter nextLink is required and cannot be null."));
         }
         if (this.client.getEndpoint() == null) {
-            return Mono.error(
-                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
+            throw LOGGER.atError()
+                .log(new IllegalArgumentException(
+                    "Parameter this.client.getEndpoint() is required and cannot be null."));
         }
         final String accept = "application/json";
-        context = this.client.mergeContext(context);
-        return service.listBySchedulerNext(nextLink, this.client.getEndpoint(), accept, context)
-            .map(res -> new PagedResponseBase<>(res.getRequest(), res.getStatusCode(), res.getHeaders(),
-                res.getValue().value(), res.getValue().nextLink(), null));
+        Response<TaskHubListResult> res
+            = service.listBySchedulerNextSync(nextLink, this.client.getEndpoint(), accept, context);
+        return new PagedResponseBase<>(res.getRequest(), res.getStatusCode(), res.getHeaders(), res.getValue().value(),
+            res.getValue().nextLink(), null);
     }
+
+    private static final ClientLogger LOGGER = new ClientLogger(TaskHubsClientImpl.class);
 }

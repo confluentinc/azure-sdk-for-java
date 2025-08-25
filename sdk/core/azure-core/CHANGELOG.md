@@ -1,6 +1,6 @@
 # Release History
 
-## 1.56.0-beta.1 (Unreleased)
+## 1.57.0-beta.1 (Unreleased)
 
 ### Features Added
 
@@ -9,6 +9,26 @@
 ### Bugs Fixed
 
 ### Other Changes
+
+## 1.56.0 (2025-08-07)
+
+### Other Changes
+
+#### Dependency Updates
+
+- Upgraded Reactor from `3.4.41` to `3.7.8`. ([#46207](https://github.com/Azure/azure-sdk-for-java/pull/46207))
+
+## 1.55.5 (2025-06-26)
+
+### Other Changes
+
+- Upgraded Jackson Core from `2.18.3` to `2.18.4.1` to resolve multi-release JAR issues with Android projects.
+
+## 1.55.4 (2025-06-05)
+
+### Other Changes
+
+- Updated Jackson dependencies from `2.17.2` to `2.18.3`.
 
 ## 1.55.3 (2025-03-10)
 

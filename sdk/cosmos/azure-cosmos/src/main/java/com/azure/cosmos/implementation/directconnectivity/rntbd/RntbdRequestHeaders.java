@@ -91,7 +91,7 @@ final class RntbdRequestHeaders extends RntbdTokenStream<RntbdRequestHeader> {
         this.addCollectionRemoteStorageSecurityIdentifier(headers);
         this.addConsistencyLevelHeader(headers);
         this.addContentSerializationFormat(headers);
-        this.addContinuationToken(request);
+        this.addContinuationToken(request, headers);
         this.addDateHeader(headers);
         this.addDisableRUPerMinuteUsage(headers);
         this.addEmitVerboseTracesInQuery(headers);
@@ -132,6 +132,7 @@ final class RntbdRequestHeaders extends RntbdTokenStream<RntbdRequestHeader> {
         this.addChangeFeedWireFormatVersion(headers);
         this.addPriorityLevel(headers);
         this.addGlobalDatabaseAccountName(headers);
+        this.addThroughputBucket(headers);
 
         // Normal headers (Strings, Ints, Longs, etc.)
 
@@ -290,6 +291,8 @@ final class RntbdRequestHeaders extends RntbdTokenStream<RntbdRequestHeader> {
     }
 
     private RntbdToken getPriorityLevel() { return this.get(RntbdRequestHeader.PriorityLevel); }
+
+    private RntbdToken getThroughputBucket() { return this.get(RntbdRequestHeader.ThroughputBucket); }
 
     private RntbdToken getGlobalDatabaseAccountName() {
         return this.get(RntbdRequestHeader.GlobalDatabaseAccountName);
@@ -751,8 +754,12 @@ final class RntbdRequestHeaders extends RntbdTokenStream<RntbdRequestHeader> {
         }
     }
 
-    private void addContinuationToken(final RxDocumentServiceRequest request) {
-        final String value = request.getContinuation();
+    private void addContinuationToken(final RxDocumentServiceRequest request, final Map<String, String> headers) {
+        String value = request.getContinuation();
+        if (StringUtils.isEmpty(value)) {
+            value = headers.get(HttpHeaders.CONTINUATION);
+        }
+
         if (StringUtils.isNotEmpty(value)) {
             this.getContinuationToken().setValue(value);
         }
@@ -785,6 +792,16 @@ final class RntbdRequestHeaders extends RntbdTokenStream<RntbdRequestHeader> {
                     .getPriorityLevelAccessor()
                     .getPriorityValue(priorityLevel)
             );
+        }
+    }
+
+    private void addThroughputBucket(final Map<String, String> headers)
+    {
+        final String value = headers.get(HttpHeaders.THROUGHPUT_BUCKET);
+
+        if (StringUtils.isNotEmpty(value)) {
+            final int throughputBucket = Integer.valueOf(value);
+            this.getThroughputBucket().setValue((byte)throughputBucket);
         }
     }
 

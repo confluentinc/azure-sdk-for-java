@@ -10,6 +10,7 @@ import com.azure.core.management.SystemData;
 import com.azure.core.util.Context;
 import com.azure.resourcemanager.netapp.fluent.models.MountTargetProperties;
 import com.azure.resourcemanager.netapp.fluent.models.VolumeInner;
+import com.azure.resourcemanager.netapp.models.AcceptGrowCapacityPoolForShortTermCloneSplit;
 import com.azure.resourcemanager.netapp.models.AuthorizeRequest;
 import com.azure.resourcemanager.netapp.models.AvsDataStore;
 import com.azure.resourcemanager.netapp.models.BreakFileLocksRequest;
@@ -179,6 +180,10 @@ public final class VolumeImpl implements Volume, Volume.Definition, Volume.Updat
         return this.innerModel().dataProtection();
     }
 
+    public AcceptGrowCapacityPoolForShortTermCloneSplit acceptGrowCapacityPoolForShortTermCloneSplit() {
+        return this.innerModel().acceptGrowCapacityPoolForShortTermCloneSplit();
+    }
+
     public Boolean isRestoring() {
         return this.innerModel().isRestoring();
     }
@@ -337,6 +342,10 @@ public final class VolumeImpl implements Volume, Volume.Definition, Volume.Updat
         return this.innerModel().originatingResourceId();
     }
 
+    public Long inheritedSizeInBytes() {
+        return this.innerModel().inheritedSizeInBytes();
+    }
+
     public Region region() {
         return Region.fromName(this.regionName());
     }
@@ -461,6 +470,15 @@ public final class VolumeImpl implements Volume, Volume.Definition, Volume.Updat
 
     public void resetCifsPassword(Context context) {
         serviceManager.volumes().resetCifsPassword(resourceGroupName, accountName, poolName, volumeName, context);
+    }
+
+    public Volume splitCloneFromParent() {
+        return serviceManager.volumes().splitCloneFromParent(resourceGroupName, accountName, poolName, volumeName);
+    }
+
+    public Volume splitCloneFromParent(Context context) {
+        return serviceManager.volumes()
+            .splitCloneFromParent(resourceGroupName, accountName, poolName, volumeName, context);
     }
 
     public void breakFileLocks() {
@@ -704,6 +722,13 @@ public final class VolumeImpl implements Volume, Volume.Definition, Volume.Updat
         return this;
     }
 
+    public VolumeImpl withAcceptGrowCapacityPoolForShortTermCloneSplit(
+        AcceptGrowCapacityPoolForShortTermCloneSplit acceptGrowCapacityPoolForShortTermCloneSplit) {
+        this.innerModel()
+            .withAcceptGrowCapacityPoolForShortTermCloneSplit(acceptGrowCapacityPoolForShortTermCloneSplit);
+        return this;
+    }
+
     public VolumeImpl withSnapshotDirectoryVisible(Boolean snapshotDirectoryVisible) {
         if (isInCreateMode()) {
             this.innerModel().withSnapshotDirectoryVisible(snapshotDirectoryVisible);
@@ -910,6 +935,6 @@ public final class VolumeImpl implements Volume, Volume.Definition, Volume.Updat
     }
 
     private boolean isInCreateMode() {
-        return this.innerModel().id() == null;
+        return this.innerModel() == null || this.innerModel().id() == null;
     }
 }

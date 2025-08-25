@@ -1,5 +1,55 @@
 # Release History
 
+## 2.54.0-beta.2 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
+## 2.54.0-beta.1  (2025-08-05)
+
+### Other Changes
+
+#### Dependency Updates
+
+- Updated `api-version` of `DatabaseOperations` to `2024-11-01-preview`.
+
+## 2.53.1 (2025-08-05)
+
+### Other Changes
+
+#### Dependency Updates
+
+- Updated core dependency from resources.
+
+## 2.53.0 (2025-07-25)
+
+### Other Changes
+
+#### Dependency Updates
+
+- Updated core dependency from resources.
+
+## 2.52.0 (2025-06-27)
+
+### Other Changes
+
+#### Dependency Updates
+
+- Updated core dependency from resources.
+
+## 2.51.0 (2025-05-26)
+
+### Other Changes
+
+#### Dependency Updates
+
+- Updated core dependency from resources.
+
 ## 2.50.0 (2025-04-24)
 
 ### Other Changes

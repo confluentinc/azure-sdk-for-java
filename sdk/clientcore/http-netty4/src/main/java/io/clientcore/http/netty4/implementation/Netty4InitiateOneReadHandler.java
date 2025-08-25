@@ -2,15 +2,19 @@
 // Licensed under the MIT License.
 package io.clientcore.http.netty4.implementation;
 
+import io.clientcore.core.utils.IOExceptionCheckedConsumer;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufHolder;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandler;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.handler.codec.http.LastHttpContent;
+import io.netty.handler.codec.http2.Http2DataFrame;
+import io.netty.util.ReferenceCountUtil;
 
+import java.io.IOException;
+import java.nio.channels.ClosedChannelException;
 import java.util.concurrent.CountDownLatch;
-import java.util.function.Consumer;
 
 /**
  * {@link ChannelInboundHandler} that initiates one read request any time data is needed. Even though it is a single
@@ -18,10 +22,13 @@ import java.util.function.Consumer;
  * this handler need to support multiple channelRead, if this isn't done data may be lost.
  */
 public final class Netty4InitiateOneReadHandler extends ChannelInboundHandlerAdapter {
-    private final CountDownLatch latch;
-    private final Consumer<ByteBuf> byteBufConsumer;
+    private final IOExceptionCheckedConsumer<ByteBuf> byteBufConsumer;
+    private final boolean isHttp2;
+
+    private CountDownLatch latch;
 
     private boolean lastRead;
+    private Throwable exception;
 
     /**
      * Creates a new instance of {@link Netty4InitiateOneReadHandler}.
@@ -32,10 +39,25 @@ public final class Netty4InitiateOneReadHandler extends ChannelInboundHandlerAda
      *
      * @param latch The latch to count down when the channel read completes.
      * @param byteBufConsumer The consumer to process the {@link ByteBuf ByteBufs} as they are read.
+     * @param isHttp2 Flag indicating whether the handler is used for HTTP/2 or not.
      */
-    public Netty4InitiateOneReadHandler(CountDownLatch latch, Consumer<ByteBuf> byteBufConsumer) {
+    public Netty4InitiateOneReadHandler(CountDownLatch latch, IOExceptionCheckedConsumer<ByteBuf> byteBufConsumer,
+        boolean isHttp2) {
         this.latch = latch;
         this.byteBufConsumer = byteBufConsumer;
+        this.isHttp2 = isHttp2;
+    }
+
+    /**
+     * Sets the latch to count down when the channel read completes.
+     *
+     * @param latch The latch to count down when the channel read completes.
+     */
+    void setLatch(CountDownLatch latch) {
+        if (this.latch != null && this.latch.getCount() != 0) {
+            throw new IllegalStateException("Cannot set a new latch while the previous latch hasn't completed.");
+        }
+        this.latch = latch;
     }
 
     @Override
@@ -53,19 +75,32 @@ public final class Netty4InitiateOneReadHandler extends ChannelInboundHandlerAda
         }
 
         if (buf != null && buf.isReadable()) {
-            byteBufConsumer.accept(buf);
+            try {
+                byteBufConsumer.accept(buf);
+            } catch (IOException | RuntimeException ex) {
+                ReferenceCountUtil.release(buf);
+                exceptionCaught(ctx, ex);
+                return;
+            }
         }
 
-        lastRead = msg instanceof LastHttpContent;
+        if (isHttp2) {
+            lastRead = msg instanceof Http2DataFrame && ((Http2DataFrame) msg).isEndStream();
+        } else {
+            lastRead = msg instanceof LastHttpContent;
+        }
+        ctx.fireChannelRead(msg);
     }
 
     @Override
     public void channelReadComplete(ChannelHandlerContext ctx) {
         latch.countDown();
         if (lastRead) {
-            ctx.close();
+            if (ctx.pipeline().get(Netty4InitiateOneReadHandler.class) != null) {
+                ctx.pipeline().remove(this);
+            }
         }
-        ctx.pipeline().remove(this);
+        ctx.fireChannelReadComplete();
     }
 
     boolean isChannelConsumed() {
@@ -74,23 +109,43 @@ public final class Netty4InitiateOneReadHandler extends ChannelInboundHandlerAda
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
+        this.exception = cause;
         latch.countDown();
         ctx.fireExceptionCaught(cause);
-        ctx.pipeline().remove(this);
+    }
+
+    Throwable channelException() {
+        return exception;
     }
 
     // TODO (alzimmer): Are the latch countdowns needed for unregistering and inactivity?
     @Override
     public void channelUnregistered(ChannelHandlerContext ctx) {
-        latch.countDown();
+        signalComplete(ctx);
         ctx.fireChannelUnregistered();
-        ctx.pipeline().remove(this);
     }
 
     @Override
     public void channelInactive(ChannelHandlerContext ctx) {
-        latch.countDown();
+        signalComplete(ctx);
         ctx.fireChannelInactive();
-        ctx.pipeline().remove(this);
     }
+
+    @Override
+    public void handlerAdded(ChannelHandlerContext ctx) {
+        if (!ctx.channel().isActive()) {
+            // In case the read handler is added to a closed channel, we fail loudly by firing
+            // an exception. Simply counting down the latch would cause the caller to receive
+            // an empty/incomplete data stream without any sign of the underlying network error.
+            ctx.fireExceptionCaught(new ClosedChannelException());
+        }
+    }
+
+    private void signalComplete(ChannelHandlerContext ctx) {
+        latch.countDown();
+        if (ctx.pipeline().get(Netty4InitiateOneReadHandler.class) != null) {
+            ctx.pipeline().remove(this);
+        }
+    }
+
 }
