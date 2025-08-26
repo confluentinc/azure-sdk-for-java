@@ -10,6 +10,7 @@ import com.azure.cosmos.ThrottlingRetryOptions;
 import com.azure.cosmos.implementation.CosmosClientMetadataCachesSnapshot;
 import com.azure.cosmos.implementation.ImplementationBridgeHelpers;
 import com.azure.cosmos.implementation.apachecommons.lang.StringUtils;
+import com.azure.core.credential.TokenCredential;
 import com.azure.identity.ClientSecretCredential;
 import com.azure.identity.ClientSecretCredentialBuilder;
 
@@ -68,8 +69,12 @@ public class CosmosClientStore {
                 .clientSecret(aadAuthConfig.getClientSecret())
                 .build();
             cosmosClientBuilder.credential(tokenCredential);
+        } else if (accountConfig.getCosmosAuthConfig() instanceof CosmosCustomAuthConfig) {
+            CosmosCustomAuthConfig customAuthConfig = (CosmosCustomAuthConfig) accountConfig.getCosmosAuthConfig();
+            TokenCredential tokenCredential = createCustomTokenCredential(customAuthConfig);
+            cosmosClientBuilder.credential(tokenCredential);
         } else {
-            throw new IllegalArgumentException("Authorization type " + accountConfig.getCosmosAuthConfig().getClass() + "is not supported");
+            throw new IllegalArgumentException("Authorization type " + accountConfig.getCosmosAuthConfig().getClass() + " is not supported");
         }
 
         if (snapshot != null) {
@@ -92,5 +97,50 @@ public class CosmosClientStore {
         }
 
         return userAgentSuffix;
+    }
+    /**
+     * Dynamically loads and instantiates a custom credential provider for Cosmos DB authentication.
+     * <p>
+     * The credential provider class specified in {@code customAuthConfig} must:
+     * <ul>
+     *   <li>Implement the {@link com.azure.core.credential.TokenCredential} interface.</li>
+     *   <li>Optionally implement {@link org.apache.kafka.common.Configurable} to receive configuration via {@code configure(Map<String, ?>)}.</li>
+     * </ul>
+     * The class is loaded by name using {@link Class#forName(String)}, instantiated using its public no-argument constructor,
+     * and, if it implements {@code Configurable}, configured with the config map from {@code customAuthConfig}.
+     * <p>
+     * @param customAuthConfig The custom authentication configuration containing the credential provider class name and configuration map.
+     * @return An instance of {@link TokenCredential} for authentication.
+     * @throws IllegalArgumentException If the class name is missing, the class does not implement {@code TokenCredential},
+     *                                 the class cannot be found, or instantiation/configuration fails.
+     */
+    private static TokenCredential createCustomTokenCredential(CosmosCustomAuthConfig customAuthConfig) {
+        String providerClassName = customAuthConfig.getCredentialProviderClass();
+
+        if (providerClassName == null || providerClassName.trim().isEmpty()) {
+            throw new IllegalArgumentException("Credential provider class is required for Custom authentication");
+        }
+
+        try {
+            Class<?> providerClass = Class.forName(providerClassName);
+
+            if (!TokenCredential.class.isAssignableFrom(providerClass)) {
+                throw new IllegalArgumentException("Provider class must implement TokenCredential interface: " + providerClassName);
+            }
+
+            Object provider = providerClass.getConstructor().newInstance();
+
+            if (provider instanceof org.apache.kafka.common.Configurable) {
+                ((org.apache.kafka.common.Configurable) provider).configure(customAuthConfig.getConfigMap());
+            }
+
+            return (TokenCredential) provider;
+        } catch (ClassNotFoundException e) {
+            throw new IllegalArgumentException("Credential provider class not found: " + providerClassName, e);
+        } catch (NoSuchMethodException e) {
+            throw new IllegalArgumentException("Credential provider class must have a public no-argument constructor: " + providerClassName, e);
+        } catch (Exception e) {
+            throw new IllegalArgumentException("Failed to create credential provider: " + providerClassName + ". " + e.getMessage(), e);
+        }
     }
 }
