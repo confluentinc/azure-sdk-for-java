@@ -277,9 +277,8 @@ public class KafkaCosmosConfig extends AbstractConfig {
             case SERVICE_PRINCIPAL:
                 return new CosmosAadAuthConfig(clientId, clientSecret, authEndpointOverride, tenantId, azureEnvironment);
             case CUSTOM:
-                return new CosmosCustomAuthConfig(
-                    this.getString(CREDENTIAL_PROVIDER_CLASS),
-                    this.rawConfigs);
+                String providerClassName = this.getString(CREDENTIAL_PROVIDER_CLASS);
+                return new CosmosCustomAuthConfig(providerClassName, this.rawConfigs);
             default:
                 throw new IllegalArgumentException("AuthType " + authType + " is not supported");
         }
@@ -871,26 +870,11 @@ public class KafkaCosmosConfig extends AbstractConfig {
 
                 break;
             case CUSTOM:
-                String credentialProviderClassName = configValueMap.get(providerClassConfig).value().toString();
-                if(!StringUtils.isEmpty(credentialProviderClassName)) {
-                    try {
-                        Class<?> clazz = Class.forName(credentialProviderClassName);
-                        if (!TokenCredential.class.isAssignableFrom(clazz)) {
-                            configValueMap
-                                .get(providerClassConfig)
-                                .addErrorMessage("Custom auth type requires a valid credential provider class "
-                                    + "which implements TokenCredential interface");
-                        }
-                    } catch (ClassNotFoundException e) {
-                        configValueMap
-                            .get(providerClassConfig)
-                            .addErrorMessage("Could not find the credential provider class: " + credentialProviderClassName);
-                    }
-
-                } else {
+                String providerClass = configValueMap.get(providerClassConfig).value().toString();
+                if (StringUtils.isEmpty(providerClass)) {
                     configValueMap
                         .get(providerClassConfig)
-                        .addErrorMessage("Empty Credential provider class provided for CUSTOM auth type");
+                        .addErrorMessage("Credential provider class is required for CUSTOM auth type");
                 }
                 break;
             default:
@@ -1026,4 +1010,6 @@ public class KafkaCosmosConfig extends AbstractConfig {
             return "AzureEnvironment. Only allow " + CosmosAzureEnvironment.values();
         }
     }
+
+
 }

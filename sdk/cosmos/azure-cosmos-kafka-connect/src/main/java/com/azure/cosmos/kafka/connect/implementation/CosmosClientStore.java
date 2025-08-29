@@ -13,6 +13,7 @@ import com.azure.cosmos.implementation.apachecommons.lang.StringUtils;
 import com.azure.core.credential.TokenCredential;
 import com.azure.identity.ClientSecretCredential;
 import com.azure.identity.ClientSecretCredentialBuilder;
+import org.apache.kafka.common.Configurable;
 
 import java.time.Duration;
 
@@ -109,19 +110,16 @@ public class CosmosClientStore {
         }
 
         try {
-            Class<?> providerClass = Class.forName(providerClassName);
+            @SuppressWarnings("unchecked")
+            Class<TokenCredential> providerClass = (Class<TokenCredential>) Class.forName(providerClassName);
 
-            if (!TokenCredential.class.isAssignableFrom(providerClass)) {
-                throw new IllegalArgumentException("Provider class must implement TokenCredential interface: " + providerClassName);
+            TokenCredential provider = providerClass.getConstructor().newInstance();
+
+            if (provider instanceof Configurable) {
+                ((Configurable) provider).configure(customAuthConfig.getConfigMap());
             }
 
-            Object provider = providerClass.getConstructor().newInstance();
-
-            if (provider instanceof org.apache.kafka.common.Configurable) {
-                ((org.apache.kafka.common.Configurable) provider).configure(customAuthConfig.getConfigMap());
-            }
-
-            return (TokenCredential) provider;
+            return provider;
         } catch (ClassNotFoundException e) {
             throw new IllegalArgumentException("Credential provider class not found: " + providerClassName, e);
         } catch (NoSuchMethodException e) {
