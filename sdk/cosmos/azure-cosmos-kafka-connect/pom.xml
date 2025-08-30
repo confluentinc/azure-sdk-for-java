@@ -354,6 +354,11 @@ Licensed under the MIT License.
                       <shadedPattern>${shadingPrefix}.com.azure</shadedPattern>
                       <excludes>
                         <exclude>com.azure.cosmos.kafka.**</exclude>
+                        <!-- Minimum for custom credential providers -->
+                        <exclude>com.azure.core.credential.TokenCredential</exclude>
+                        <exclude>com.azure.core.credential.TokenRequestContext</exclude>
+                        <exclude>com.azure.core.credential.AccessToken</exclude>
+                        <exclude>com.azure.core.util.Context</exclude>
                       </excludes>
                     </relocation>
                     <relocation>
@@ -383,10 +388,6 @@ Licensed under the MIT License.
                     <relocation>
                       <pattern>org.HdrHistogram</pattern>
                       <shadedPattern>${shadingPrefix}.org.HdrHistogram</shadedPattern>
-                    </relocation>
-                    <relocation>
-                      <pattern>reactor</pattern>
-                      <shadedPattern>${shadingPrefix}.reactor</shadedPattern>
                     </relocation>
                     <relocation>
                       <pattern>com.jayway.jsonpath</pattern>
