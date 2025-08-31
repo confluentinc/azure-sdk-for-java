@@ -1010,6 +1010,4 @@ public class KafkaCosmosConfig extends AbstractConfig {
             return "AzureEnvironment. Only allow " + CosmosAzureEnvironment.values();
         }
     }
-
-
 }
