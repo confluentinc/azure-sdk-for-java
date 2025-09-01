@@ -3,6 +3,7 @@
 
 package com.azure.cosmos.kafka.connect.implementation;
 
+import com.azure.core.credential.TokenCredential;
 import com.azure.cosmos.implementation.Strings;
 import com.azure.cosmos.implementation.apachecommons.lang.StringUtils;
 import com.azure.cosmos.kafka.connect.implementation.sink.ItemWriteStrategy;
@@ -48,8 +49,8 @@ public class KafkaCosmosConfig extends AbstractConfig {
     private static final String DEFAULT_ACCOUNT_TENANT_ID = Strings.Emtpy;
 
     private static final String AUTH_TYPE = "azure.cosmos.auth.type";
-    private static final String AUTH_TYPE_DOC = "There are two auth types are supported currently: "
-        + "`MasterKey`(PrimaryReadWriteKeys, SecondReadWriteKeys, PrimaryReadOnlyKeys, SecondReadWriteKeys), `ServicePrincipal`";
+    private static final String AUTH_TYPE_DOC = "Authentication types supported: "
+        + "`MasterKey`(PrimaryReadWriteKeys, SecondReadWriteKeys, PrimaryReadOnlyKeys, SecondReadWriteKeys), `ServicePrincipal`, `Custom`";
     private static final String AUTH_TYPE_DISPLAY = "Cosmos Auth type.";
     private static final String DEFAULT_AUTH_TYPE = CosmosAuthType.MASTER_KEY.getName();
 
@@ -67,6 +68,11 @@ public class KafkaCosmosConfig extends AbstractConfig {
     private static final String AAD_CLIENT_SECRET_DOC = "The client secret/password of the service principal. Required for `ServicePrincipal` authentication.";
     private static final String AAD_CLIENT_SECRET_DISPLAY = "The client secret/password of the service principal.";
     private static final String DEFAULT_AAD_CLIENT_SECRET = Strings.Emtpy;
+
+    private static final String CREDENTIAL_PROVIDER_CLASS = "credential.provider.class";
+    private static final String CREDENTIAL_PROVIDER_CLASS_DOC = "Custom credential provider class name for authentication.";
+    private static final String CREDENTIAL_PROVIDER_CLASS_DISPLAY = "Credential provider class";
+    private static final String DEFAULT_CREDENTIAL_PROVIDER_CLASS = Strings.Emtpy;
 
     private static final String AAD_AUTH_ENDPOINT_OVERRIDE = "azure.cosmos.auth.aad.authEndpointOverride";
     private static final String AAD_AUTH_ENDPOINT_OVERRIDE_DOC = "Overrides the Azure Active Directory (AAD) authentication endpoint. "
@@ -198,9 +204,11 @@ public class KafkaCosmosConfig extends AbstractConfig {
 
     private final CosmosAccountConfig accountConfig;
     private final CosmosThroughputControlConfig throughputControlConfig;
+    private final Map<String, ?> rawConfigs;
 
     public KafkaCosmosConfig(ConfigDef config, Map<String, ?> parsedConfig) {
         super(config, parsedConfig);
+        this.rawConfigs = parsedConfig;
         this.accountConfig = this.parseAccountConfig();
         this.throughputControlConfig = this.parseThroughputControlConfig();
     }
@@ -268,6 +276,9 @@ public class KafkaCosmosConfig extends AbstractConfig {
                 return new CosmosMasterKeyAuthConfig(masterKey);
             case SERVICE_PRINCIPAL:
                 return new CosmosAadAuthConfig(clientId, clientSecret, authEndpointOverride, tenantId, azureEnvironment);
+            case CUSTOM:
+                String providerClassName = this.getString(CREDENTIAL_PROVIDER_CLASS);
+                return new CosmosCustomAuthConfig(providerClassName, this.rawConfigs);
             default:
                 throw new IllegalArgumentException("AuthType " + authType + " is not supported");
         }
@@ -439,6 +450,17 @@ public class KafkaCosmosConfig extends AbstractConfig {
                 accountGroupOrder++,
                 ConfigDef.Width.LONG,
                 AAD_AUTH_ENDPOINT_OVERRIDE_DISPLAY
+            )
+            .define(
+                CREDENTIAL_PROVIDER_CLASS,
+                ConfigDef.Type.STRING,
+                DEFAULT_CREDENTIAL_PROVIDER_CLASS,
+                ConfigDef.Importance.LOW,
+                CREDENTIAL_PROVIDER_CLASS_DOC,
+                accountGroupName,
+                accountGroupOrder++,
+                ConfigDef.Width.LONG,
+                CREDENTIAL_PROVIDER_CLASS_DISPLAY
             )
             .define(
                 APPLICATION_NAME,
@@ -762,7 +784,8 @@ public class KafkaCosmosConfig extends AbstractConfig {
                 THROUGHPUT_CONTROL_ACCOUNT_KEY,
                 THROUGHPUT_CONTROL_AAD_CLIENT_ID,
                 THROUGHPUT_CONTROL_AAD_CLIENT_SECRET,
-                AAD_AUTH_ENDPOINT_OVERRIDE);
+                AAD_AUTH_ENDPOINT_OVERRIDE,
+                CREDENTIAL_PROVIDER_CLASS);
         }
 
         // if throughput control is using aad auth, then only targetThroughput is supported
@@ -788,7 +811,8 @@ public class KafkaCosmosConfig extends AbstractConfig {
             ACCOUNT_KEY,
             AAD_CLIENT_ID,
             AAD_CLIENT_SECRET,
-            AAD_AUTH_ENDPOINT_OVERRIDE);
+            AAD_AUTH_ENDPOINT_OVERRIDE,
+            CREDENTIAL_PROVIDER_CLASS);
     }
 
     public static void validateAccountAuthConfigCore(
@@ -798,7 +822,8 @@ public class KafkaCosmosConfig extends AbstractConfig {
         String accountKeyConfig,
         String clientIdConfig,
         String clientSecretConfig,
-        String authEndpointOverrideConfig) {
+        String authEndpointOverrideConfig,
+        String providerClassConfig) {
 
         CosmosAuthType authType = CosmosAuthType.fromName(configValueMap.get(authTypeConfig).value().toString());
         switch (authType) {
@@ -843,6 +868,14 @@ public class KafkaCosmosConfig extends AbstractConfig {
                     }
                 }
 
+                break;
+            case CUSTOM:
+                String providerClass = configValueMap.get(providerClassConfig).value().toString();
+                if (StringUtils.isEmpty(providerClass)) {
+                    configValueMap
+                        .get(providerClassConfig)
+                        .addErrorMessage("Credential provider class is required for CUSTOM auth type");
+                }
                 break;
             default:
                 throw new IllegalArgumentException("AuthType " + authType + " is not supported");
