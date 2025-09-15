@@ -3,7 +3,6 @@
 
 package com.azure.cosmos.kafka.connect.implementation;
 
-import com.azure.core.credential.TokenCredential;
 import com.azure.cosmos.implementation.Strings;
 import com.azure.cosmos.implementation.apachecommons.lang.StringUtils;
 import com.azure.cosmos.kafka.connect.implementation.sink.ItemWriteStrategy;
@@ -69,9 +68,7 @@ public class KafkaCosmosConfig extends AbstractConfig {
     private static final String AAD_CLIENT_SECRET_DISPLAY = "The client secret/password of the service principal.";
     private static final String DEFAULT_AAD_CLIENT_SECRET = Strings.Emtpy;
 
-    private static final String CREDENTIAL_PROVIDER_CLASS = "credential.provider.class";
-    private static final String CREDENTIAL_PROVIDER_CLASS_DOC = "Custom credential provider class name for authentication.";
-    private static final String CREDENTIAL_PROVIDER_CLASS_DISPLAY = "Credential provider class";
+    private static final String CREDENTIAL_PROVIDER_CLASS = "credentials.provider.class";
     private static final String DEFAULT_CREDENTIAL_PROVIDER_CLASS = Strings.Emtpy;
 
     private static final String AAD_AUTH_ENDPOINT_OVERRIDE = "azure.cosmos.auth.aad.authEndpointOverride";
@@ -451,16 +448,11 @@ public class KafkaCosmosConfig extends AbstractConfig {
                 ConfigDef.Width.LONG,
                 AAD_AUTH_ENDPOINT_OVERRIDE_DISPLAY
             )
-            .define(
+            .defineInternal(
                 CREDENTIAL_PROVIDER_CLASS,
                 ConfigDef.Type.STRING,
                 DEFAULT_CREDENTIAL_PROVIDER_CLASS,
-                ConfigDef.Importance.LOW,
-                CREDENTIAL_PROVIDER_CLASS_DOC,
-                accountGroupName,
-                accountGroupOrder++,
-                ConfigDef.Width.LONG,
-                CREDENTIAL_PROVIDER_CLASS_DISPLAY
+                ConfigDef.Importance.LOW
             )
             .define(
                 APPLICATION_NAME,
