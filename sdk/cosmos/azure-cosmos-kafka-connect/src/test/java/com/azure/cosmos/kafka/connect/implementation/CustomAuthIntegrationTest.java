@@ -47,7 +47,7 @@ public class CustomAuthIntegrationTest extends KafkaCosmosTestSuiteBase {
         sinkConfigMap.put("azure.cosmos.account.endpoint", TestConfigurations.HOST);
         // Use CUSTOM auth type with our test credential provider
         sinkConfigMap.put("azure.cosmos.auth.type", CosmosAuthType.CUSTOM.getName());
-        sinkConfigMap.put("credential.provider.class", TestTokenCredential.class.getName());
+        sinkConfigMap.put("credentials.provider.class", TestTokenCredential.class.getName());
         sinkConfigMap.put("azure.cosmos.sink.database.name", databaseName);
         sinkConfigMap.put("azure.cosmos.sink.containers.topicMap", topicName + "#" + singlePartitionContainerName);
         sinkConfigMap.put("azure.cosmos.sink.bulk.enabled", "true");
@@ -67,7 +67,7 @@ public class CustomAuthIntegrationTest extends KafkaCosmosTestSuiteBase {
 
             List<SinkRecord> sinkRecordList = new ArrayList<>();
             List<TestItem> toBeCreateItems = new ArrayList<>();
-            
+
             // Create test records
             for (int i = 0; i < 5; i++) {
                 TestItem testItem = TestItem.createNewItem();
@@ -80,7 +80,7 @@ public class CustomAuthIntegrationTest extends KafkaCosmosTestSuiteBase {
                     testItem.getId(),
                     new ConnectSchema(Schema.Type.MAP),
                     Utils.getSimpleObjectMapper().convertValue(
-                        Utils.getSimpleObjectMapper().convertValue(testItem, ObjectNode.class), 
+                        Utils.getSimpleObjectMapper().convertValue(testItem, ObjectNode.class),
                         new TypeReference<Map<String, Object>>() {}),
                     0L);
                 sinkRecordList.add(sinkRecord);
@@ -117,7 +117,7 @@ public class CustomAuthIntegrationTest extends KafkaCosmosTestSuiteBase {
         sinkConfigMap.put("azure.cosmos.account.endpoint", TestConfigurations.HOST);
         // Use CUSTOM auth type with configurable test credential provider
         sinkConfigMap.put("azure.cosmos.auth.type", CosmosAuthType.CUSTOM.getName());
-        sinkConfigMap.put("credential.provider.class", ConfigurableTestTokenCredential.class.getName());
+        sinkConfigMap.put("credentials.provider.class", ConfigurableTestTokenCredential.class.getName());
         sinkConfigMap.put("token", "custom-integration-token");
         sinkConfigMap.put("expiryMinutes", "60");
         sinkConfigMap.put("azure.cosmos.sink.database.name", databaseName);
@@ -139,7 +139,7 @@ public class CustomAuthIntegrationTest extends KafkaCosmosTestSuiteBase {
 
             List<SinkRecord> sinkRecordList = new ArrayList<>();
             List<TestItem> toBeCreateItems = new ArrayList<>();
-            
+
             // Create test records
             for (int i = 0; i < 3; i++) {
                 TestItem testItem = TestItem.createNewItem();
@@ -152,7 +152,7 @@ public class CustomAuthIntegrationTest extends KafkaCosmosTestSuiteBase {
                     testItem.getId(),
                     new ConnectSchema(Schema.Type.MAP),
                     Utils.getSimpleObjectMapper().convertValue(
-                        Utils.getSimpleObjectMapper().convertValue(testItem, ObjectNode.class), 
+                        Utils.getSimpleObjectMapper().convertValue(testItem, ObjectNode.class),
                         new TypeReference<Map<String, Object>>() {}),
                     0L);
                 sinkRecordList.add(sinkRecord);
@@ -187,7 +187,7 @@ public class CustomAuthIntegrationTest extends KafkaCosmosTestSuiteBase {
         sourceConfigMap.put("azure.cosmos.account.endpoint", KafkaCosmosTestConfigurations.HOST);
         // Use CUSTOM auth type with our test credential provider
         sourceConfigMap.put("azure.cosmos.auth.type", CosmosAuthType.CUSTOM.getName());
-        sourceConfigMap.put("credential.provider.class", TestTokenCredential.class.getName());
+        sourceConfigMap.put("credentials.provider.class", TestTokenCredential.class.getName());
         sourceConfigMap.put("azure.cosmos.source.database.name", databaseName);
         sourceConfigMap.put("azure.cosmos.source.containers.includedList", Arrays.asList(singlePartitionContainerName).toString());
         sourceConfigMap.put("azure.cosmos.source.task.id", UUID.randomUUID().toString());
@@ -210,11 +210,11 @@ public class CustomAuthIntegrationTest extends KafkaCosmosTestSuiteBase {
     @Test(groups = { "unit" })
     public void sinkConnectorValidatesCustomAuthConfig() {
         CosmosSinkConnector sinkConnector = new CosmosSinkConnector();
-        
+
         Map<String, String> sinkConfigMap = new HashMap<>();
         sinkConfigMap.put("azure.cosmos.account.endpoint", KafkaCosmosTestConfigurations.HOST);
         sinkConfigMap.put("azure.cosmos.auth.type", CosmosAuthType.CUSTOM.getName());
-        sinkConfigMap.put("credential.provider.class", TestTokenCredential.class.getName());
+        sinkConfigMap.put("credentials.provider.class", TestTokenCredential.class.getName());
         sinkConfigMap.put("azure.cosmos.sink.database.name", "testDatabase");
         sinkConfigMap.put("azure.cosmos.sink.containers.topicMap", "topic#container");
         sinkConfigMap.put("customProperty", "customValue");
@@ -223,18 +223,18 @@ public class CustomAuthIntegrationTest extends KafkaCosmosTestSuiteBase {
         Config config = sinkConnector.validate(sinkConfigMap);
         boolean hasErrors = config.configValues().stream()
             .anyMatch(configValue -> !configValue.errorMessages().isEmpty());
-            
+
         assertThat(hasErrors).isFalse();
     }
 
     @Test(groups = { "unit" })
     public void sourceConnectorValidatesCustomAuthConfig() {
         CosmosSourceConnector sourceConnector = new CosmosSourceConnector();
-        
+
         Map<String, String> sourceConfigMap = new HashMap<>();
         sourceConfigMap.put("azure.cosmos.account.endpoint", KafkaCosmosTestConfigurations.HOST);
         sourceConfigMap.put("azure.cosmos.auth.type", CosmosAuthType.CUSTOM.getName());
-        sourceConfigMap.put("credential.provider.class", ConfigurableTestTokenCredential.class.getName());
+        sourceConfigMap.put("credentials.provider.class", ConfigurableTestTokenCredential.class.getName());
         sourceConfigMap.put("azure.cosmos.source.database.name", "testDatabase");
         sourceConfigMap.put("azure.cosmos.source.containers.includedList", Arrays.asList("container1").toString());
         sourceConfigMap.put("token", "custom-token");
@@ -244,7 +244,7 @@ public class CustomAuthIntegrationTest extends KafkaCosmosTestSuiteBase {
         Config config = sourceConnector.validate(sourceConfigMap);
         boolean hasErrors = config.configValues().stream()
             .anyMatch(configValue -> !configValue.errorMessages().isEmpty());
-            
+
         assertThat(hasErrors).isFalse();
     }
 }
