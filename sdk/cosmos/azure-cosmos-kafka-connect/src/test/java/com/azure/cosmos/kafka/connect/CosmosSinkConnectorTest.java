@@ -12,6 +12,8 @@ import com.azure.cosmos.implementation.TestConfigurations;
 import com.azure.cosmos.implementation.caches.AsyncCache;
 import com.azure.cosmos.kafka.connect.implementation.CosmosAadAuthConfig;
 import com.azure.cosmos.kafka.connect.implementation.CosmosAuthType;
+import com.azure.cosmos.kafka.connect.implementation.CosmosCustomAuthConfig;
+import com.azure.cosmos.kafka.connect.implementation.TestTokenCredential;
 import com.azure.cosmos.kafka.connect.implementation.KafkaCosmosUtils;
 import com.azure.cosmos.kafka.connect.implementation.sink.CosmosSinkConfig;
 import com.azure.cosmos.kafka.connect.implementation.sink.CosmosSinkTask;
@@ -412,6 +414,39 @@ public class CosmosSinkConnectorTest extends KafkaCosmosTestSuiteBase {
         return sinkConfigMap;
     }
 
+    @Test(groups = { "unit" })
+    public void sinkConfigWithCustomAuth() {
+        String credentialProviderClass = TestTokenCredential.class.getName();
+
+        Map<String, String> sinkConfigMap = this.getValidSinkConfig();
+        sinkConfigMap.put("azure.cosmos.auth.type", CosmosAuthType.CUSTOM.getName());
+        sinkConfigMap.put("credential.provider.class", credentialProviderClass);
+        sinkConfigMap.put("customProperty", "customValue");
+
+        CosmosSinkConfig sinkConfig = new CosmosSinkConfig(sinkConfigMap);
+        assertThat(sinkConfig.getAccountConfig()).isNotNull();
+        assertThat(sinkConfig.getAccountConfig().getCosmosAuthConfig()).isInstanceOf(CosmosCustomAuthConfig.class);
+        CosmosCustomAuthConfig cosmosCustomAuthConfig = (CosmosCustomAuthConfig) sinkConfig.getAccountConfig()
+                .getCosmosAuthConfig();
+        assertThat(cosmosCustomAuthConfig.getCredentialProviderClass()).isEqualTo(credentialProviderClass);
+        assertThat(cosmosCustomAuthConfig.getConfigMap().get("customProperty")).isEqualTo("customValue");
+    }
+
+    @Test(groups = { "unit" })
+    public void invalidCustomAuthConfigMissingCredentialProviderClass() {
+        CosmosSinkConnector sinkConnector = new CosmosSinkConnector();
+        Map<String, String> sinkConfigMap = this.getValidSinkConfig();
+        sinkConfigMap.put("azure.cosmos.auth.type", CosmosAuthType.CUSTOM.getName());
+        // Missing credential.provider.class
+
+        Config config = sinkConnector.validate(sinkConfigMap);
+        Map<String, List<String>> errorMessages = config.configValues().stream()
+            .collect(Collectors.toMap(ConfigValue::name, ConfigValue::errorMessages));
+        
+        // Should have error for missing credential provider class when using CUSTOM auth
+        assertThat(errorMessages.get("credential.provider.class").size()).isGreaterThan(0);
+    }
+
     public static class SinkConfigs {
         public static final List<KafkaCosmosConfigEntry<?>> ALL_VALID_CONFIGS = Arrays.asList(
             new KafkaCosmosConfigEntry<String>("azure.cosmos.account.endpoint", null, false),
@@ -421,6 +456,7 @@ public class CosmosSinkConnectorTest extends KafkaCosmosTestSuiteBase {
             new KafkaCosmosConfigEntry<String>("azure.cosmos.auth.aad.clientId", Strings.Emtpy, true),
             new KafkaCosmosConfigEntry<String>("azure.cosmos.auth.aad.clientSecret", Strings.Emtpy, true, true),
             new KafkaCosmosConfigEntry<String>("azure.cosmos.auth.aad.authEndpointOverride", Strings.Emtpy, true),
+            new KafkaCosmosConfigEntry<String>("credential.provider.class", Strings.Emtpy, true),
             new KafkaCosmosConfigEntry<Boolean>("azure.cosmos.mode.gateway", false, true),
             new KafkaCosmosConfigEntry<String>("azure.cosmos.preferredRegionList", Strings.Emtpy, true),
             new KafkaCosmosConfigEntry<String>("azure.cosmos.application.name", Strings.Emtpy, true),
