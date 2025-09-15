@@ -5,7 +5,8 @@ package com.azure.cosmos.kafka.connect.implementation;
 
 public enum CosmosAuthType {
     MASTER_KEY("MasterKey"),
-    SERVICE_PRINCIPAL("ServicePrincipal");
+    SERVICE_PRINCIPAL("ServicePrincipal"),
+    CUSTOM("Custom"); // This can be used for a custom class-based credential provider
 
     private final String name;
 
