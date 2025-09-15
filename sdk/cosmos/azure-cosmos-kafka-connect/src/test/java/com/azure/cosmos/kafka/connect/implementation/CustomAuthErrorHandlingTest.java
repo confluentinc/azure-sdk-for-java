@@ -32,7 +32,7 @@ public class CustomAuthErrorHandlingTest extends KafkaCosmosTestSuiteBase {
         Map<String, String> sinkConfigMap = new HashMap<>();
         sinkConfigMap.put("azure.cosmos.account.endpoint", TestConfigurations.HOST);
         sinkConfigMap.put("azure.cosmos.auth.type", CosmosAuthType.CUSTOM.getName());
-        sinkConfigMap.put("credential.provider.class", InvalidTestTokenCredential.class.getName());
+        sinkConfigMap.put("credentials.provider.class", InvalidTestTokenCredential.class.getName());
         sinkConfigMap.put("azure.cosmos.sink.database.name", databaseName);
         sinkConfigMap.put("azure.cosmos.sink.containers.topicMap", topicName + "#" + singlePartitionContainerName);
         sinkConfigMap.put("azure.cosmos.sink.task.id", UUID.randomUUID().toString());
@@ -60,7 +60,7 @@ public class CustomAuthErrorHandlingTest extends KafkaCosmosTestSuiteBase {
         Map<String, String> sinkConfigMap = new HashMap<>();
         sinkConfigMap.put("azure.cosmos.account.endpoint", TestConfigurations.HOST);
         sinkConfigMap.put("azure.cosmos.auth.type", CosmosAuthType.CUSTOM.getName());
-        sinkConfigMap.put("credential.provider.class", "com.nonexistent.FakeTokenCredential");
+        sinkConfigMap.put("credentials.provider.class", "com.nonexistent.FakeTokenCredential");
         sinkConfigMap.put("azure.cosmos.sink.database.name", databaseName);
         sinkConfigMap.put("azure.cosmos.sink.containers.topicMap", topicName + "#" + singlePartitionContainerName);
         sinkConfigMap.put("azure.cosmos.sink.task.id", UUID.randomUUID().toString());
@@ -88,7 +88,7 @@ public class CustomAuthErrorHandlingTest extends KafkaCosmosTestSuiteBase {
         Map<String, String> sinkConfigMap = new HashMap<>();
         sinkConfigMap.put("azure.cosmos.account.endpoint", TestConfigurations.HOST);
         sinkConfigMap.put("azure.cosmos.auth.type", CosmosAuthType.CUSTOM.getName());
-        sinkConfigMap.put("credential.provider.class", NoDefaultConstructorTokenCredential.class.getName());
+        sinkConfigMap.put("credentials.provider.class", NoDefaultConstructorTokenCredential.class.getName());
         sinkConfigMap.put("azure.cosmos.sink.database.name", databaseName);
         sinkConfigMap.put("azure.cosmos.sink.containers.topicMap", topicName + "#" + singlePartitionContainerName);
         sinkConfigMap.put("azure.cosmos.sink.task.id", UUID.randomUUID().toString());
@@ -116,7 +116,7 @@ public class CustomAuthErrorHandlingTest extends KafkaCosmosTestSuiteBase {
         Map<String, String> sinkConfigMap = new HashMap<>();
         sinkConfigMap.put("azure.cosmos.account.endpoint", TestConfigurations.HOST);
         sinkConfigMap.put("azure.cosmos.auth.type", CosmosAuthType.CUSTOM.getName());
-        sinkConfigMap.put("credential.provider.class", ""); // Empty class name
+        sinkConfigMap.put("credentials.provider.class", ""); // Empty class name
         sinkConfigMap.put("azure.cosmos.sink.database.name", databaseName);
         sinkConfigMap.put("azure.cosmos.sink.containers.topicMap", topicName + "#" + singlePartitionContainerName);
         sinkConfigMap.put("azure.cosmos.sink.task.id", UUID.randomUUID().toString());
@@ -141,7 +141,7 @@ public class CustomAuthErrorHandlingTest extends KafkaCosmosTestSuiteBase {
         Map<String, String> sourceConfigMap = new HashMap<>();
         sourceConfigMap.put("azure.cosmos.account.endpoint", TestConfigurations.HOST);
         sourceConfigMap.put("azure.cosmos.auth.type", CosmosAuthType.CUSTOM.getName());
-        sourceConfigMap.put("credential.provider.class", InvalidTestTokenCredential.class.getName());
+        sourceConfigMap.put("credentials.provider.class", InvalidTestTokenCredential.class.getName());
         sourceConfigMap.put("azure.cosmos.source.database.name", databaseName);
         sourceConfigMap.put("azure.cosmos.source.containers.includedList", Arrays.asList(singlePartitionContainerName).toString());
         sourceConfigMap.put("azure.cosmos.source.task.id", UUID.randomUUID().toString());
@@ -164,7 +164,7 @@ public class CustomAuthErrorHandlingTest extends KafkaCosmosTestSuiteBase {
         Map<String, String> sourceConfigMap = new HashMap<>();
         sourceConfigMap.put("azure.cosmos.account.endpoint", TestConfigurations.HOST);
         sourceConfigMap.put("azure.cosmos.auth.type", CosmosAuthType.CUSTOM.getName());
-        sourceConfigMap.put("credential.provider.class", "com.nonexistent.FakeTokenCredential");
+        sourceConfigMap.put("credentials.provider.class", "com.nonexistent.FakeTokenCredential");
         sourceConfigMap.put("azure.cosmos.source.database.name", databaseName);
         sourceConfigMap.put("azure.cosmos.source.containers.includedList", Arrays.asList(singlePartitionContainerName).toString());
         sourceConfigMap.put("azure.cosmos.source.task.id", UUID.randomUUID().toString());
@@ -186,36 +186,36 @@ public class CustomAuthErrorHandlingTest extends KafkaCosmosTestSuiteBase {
     @Test(groups = { "unit" })
     public void connectorValidationFailsForCustomAuthWithoutCredentialProvider() {
         CosmosSinkConnector sinkConnector = new CosmosSinkConnector();
-        
+
         Map<String, String> sinkConfigMap = new HashMap<>();
         sinkConfigMap.put("azure.cosmos.account.endpoint", TestConfigurations.HOST);
         sinkConfigMap.put("azure.cosmos.auth.type", CosmosAuthType.CUSTOM.getName());
-        // Missing credential.provider.class
+        // Missing credentials.provider.class
         sinkConfigMap.put("azure.cosmos.sink.database.name", "testDatabase");
         sinkConfigMap.put("azure.cosmos.sink.containers.topicMap", "topic#container");
 
         Config config = sinkConnector.validate(sinkConfigMap);
         boolean hasErrors = config.configValues().stream()
             .anyMatch(configValue -> !configValue.errorMessages().isEmpty());
-            
+
         assertThat(hasErrors).isTrue();
     }
 
     @Test(groups = { "unit" })
     public void sourceConnectorValidationFailsForCustomAuthWithoutCredentialProvider() {
         CosmosSourceConnector sourceConnector = new CosmosSourceConnector();
-        
+
         Map<String, String> sourceConfigMap = new HashMap<>();
         sourceConfigMap.put("azure.cosmos.account.endpoint", TestConfigurations.HOST);
         sourceConfigMap.put("azure.cosmos.auth.type", CosmosAuthType.CUSTOM.getName());
-        // Missing credential.provider.class
+        // Missing credentials.provider.class
         sourceConfigMap.put("azure.cosmos.source.database.name", "testDatabase");
         sourceConfigMap.put("azure.cosmos.source.containers.includedList", Arrays.asList("container1").toString());
 
         Config config = sourceConnector.validate(sourceConfigMap);
         boolean hasErrors = config.configValues().stream()
             .anyMatch(configValue -> !configValue.errorMessages().isEmpty());
-            
+
         assertThat(hasErrors).isTrue();
     }
 }
