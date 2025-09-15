@@ -48,8 +48,8 @@ public class KafkaCosmosConfig extends AbstractConfig {
     private static final String DEFAULT_ACCOUNT_TENANT_ID = Strings.Emtpy;
 
     private static final String AUTH_TYPE = "azure.cosmos.auth.type";
-    private static final String AUTH_TYPE_DOC = "Authentication types supported: "
-        + "`MasterKey`(PrimaryReadWriteKeys, SecondReadWriteKeys, PrimaryReadOnlyKeys, SecondReadWriteKeys), `ServicePrincipal`, `Custom`";
+    private static final String AUTH_TYPE_DOC = "There are two auth types are supported currently: "
+        + "`MasterKey`(PrimaryReadWriteKeys, SecondReadWriteKeys, PrimaryReadOnlyKeys, SecondReadWriteKeys), `ServicePrincipal`";
     private static final String AUTH_TYPE_DISPLAY = "Cosmos Auth type.";
     private static final String DEFAULT_AUTH_TYPE = CosmosAuthType.MASTER_KEY.getName();
 

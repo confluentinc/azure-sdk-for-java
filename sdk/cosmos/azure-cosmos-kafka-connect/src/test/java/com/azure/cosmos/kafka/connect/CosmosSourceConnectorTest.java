@@ -1027,7 +1027,7 @@ public class CosmosSourceConnectorTest extends KafkaCosmosTestSuiteBase {
 
         Map<String, String> sourceConfigMap = this.getValidSourceConfig();
         sourceConfigMap.put("azure.cosmos.auth.type", CosmosAuthType.CUSTOM.getName());
-        sourceConfigMap.put("credential.provider.class", credentialProviderClass);
+        sourceConfigMap.put("credentials.provider.class", credentialProviderClass);
         sourceConfigMap.put("customProperty", "customValue");
 
         CosmosSourceConfig sourceConfig = new CosmosSourceConfig(sourceConfigMap);
@@ -1044,14 +1044,14 @@ public class CosmosSourceConnectorTest extends KafkaCosmosTestSuiteBase {
         CosmosSourceConnector sourceConnector = new CosmosSourceConnector();
         Map<String, String> sourceConfigMap = this.getValidSourceConfig();
         sourceConfigMap.put("azure.cosmos.auth.type", CosmosAuthType.CUSTOM.getName());
-        // Missing credential.provider.class
+        // Missing credentials.provider.class
 
         Config config = sourceConnector.validate(sourceConfigMap);
         Map<String, List<String>> errorMessages = config.configValues().stream()
             .collect(Collectors.toMap(ConfigValue::name, ConfigValue::errorMessages));
-        
+
         // Should have error for missing credential provider class when using CUSTOM auth
-        assertThat(errorMessages.get("credential.provider.class").size()).isGreaterThan(0);
+        assertThat(errorMessages.get("credentials.provider.class").size()).isGreaterThan(0);
     }
 
     public static class SourceConfigs {
@@ -1063,7 +1063,7 @@ public class CosmosSourceConnectorTest extends KafkaCosmosTestSuiteBase {
             new KafkaCosmosConfigEntry<String>("azure.cosmos.auth.aad.clientId", Strings.Emtpy, true),
             new KafkaCosmosConfigEntry<String>("azure.cosmos.auth.aad.clientSecret", Strings.Emtpy, true, true),
             new KafkaCosmosConfigEntry<String>("azure.cosmos.auth.aad.authEndpointOverride", Strings.Emtpy, true),
-            new KafkaCosmosConfigEntry<String>("credential.provider.class", Strings.Emtpy, true),
+            new KafkaCosmosConfigEntry<String>("credentials.provider.class", Strings.Emtpy, true),
             new KafkaCosmosConfigEntry<Boolean>("azure.cosmos.mode.gateway", false, true),
             new KafkaCosmosConfigEntry<String>("azure.cosmos.preferredRegionList", Strings.Emtpy, true),
             new KafkaCosmosConfigEntry<String>("azure.cosmos.application.name", Strings.Emtpy, true),
