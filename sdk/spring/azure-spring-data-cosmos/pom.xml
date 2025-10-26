@@ -53,7 +53,7 @@
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-core</artifactId>
-      <version>6.2.5</version> <!-- {x-version-update;springboot3_org.springframework:spring-core;external_dependency} -->
+      <version>6.2.11</version> <!-- {x-version-update;springboot3_org.springframework:spring-core;external_dependency} -->
       <exclusions>
         <exclusion>
           <groupId>commons-logging</groupId>
