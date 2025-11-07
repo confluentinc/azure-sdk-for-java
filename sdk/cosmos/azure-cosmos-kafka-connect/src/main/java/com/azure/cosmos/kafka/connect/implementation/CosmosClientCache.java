@@ -30,7 +30,7 @@ import java.util.stream.Collectors;
 import static com.azure.cosmos.implementation.guava25.base.Preconditions.checkNotNull;
 
 /**
- * A thread-safe cache for CosmosDB client instances.
+ * A thread-safe cache for CosmosDB client instances .
  */
 public class CosmosClientCache implements AutoCloseable {
     private static final Logger LOGGER = LoggerFactory.getLogger(CosmosClientCache.class);
