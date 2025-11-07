@@ -24,7 +24,7 @@ public final class NeonDatabasesCreateOrUpdateMockTests {
     @Test
     public void testCreateOrUpdate() throws Exception {
         String responseStr
-            = "{\"properties\":{\"entityId\":\"yuxlvrhprrv\",\"entityName\":\"onleqflvtl\",\"createdAt\":\"bs\",\"provisioningState\":\"Succeeded\",\"attributes\":[{\"name\":\"kuninttlnrjds\",\"value\":\"dbuziciqppoqvg\"},{\"name\":\"newuhwfw\",\"value\":\"nox\"}],\"branchId\":\"xtfnress\",\"ownerName\":\"pg\"},\"id\":\"ncjmgvsnvbtq\",\"name\":\"xfmj\",\"type\":\"mjnhjlu\"}";
+            = "{\"properties\":{\"entityId\":\"cypm\",\"entityName\":\"vspsaneyvae\",\"createdAt\":\"iobnhrfbrjokjwq\",\"provisioningState\":\"Succeeded\",\"attributes\":[{\"name\":\"nilppqcai\",\"value\":\"azwfwlrfdjwlzse\"},{\"name\":\"dtqfdrslzy\",\"value\":\"qxse\"},{\"name\":\"wycuhyt\",\"value\":\"wgetfig\"}],\"branchId\":\"eqjxzizebjrahg\",\"ownerName\":\"tubwggxzsshxli\",\"databaseName\":\"sckwh\",\"lastUpdated\":\"doi\"},\"id\":\"obqzwjalwrso\",\"name\":\"xcacrmvjfmrsuydl\",\"type\":\"prel\"}";
 
         HttpClient httpClient
             = response -> Mono.just(new MockHttpResponse(response, 200, responseStr.getBytes(StandardCharsets.UTF_8)));
@@ -34,18 +34,22 @@ public final class NeonDatabasesCreateOrUpdateMockTests {
                 new AzureProfile("", "", AzureCloud.AZURE_PUBLIC_CLOUD));
 
         NeonDatabase response = manager.neonDatabases()
-            .define("urbormvh")
-            .withExistingBranche("hmgw", "nivrxpfduio", "hgyqvpbfj", "oqzucfzluczdq")
-            .withProperties(new NeonDatabaseProperties().withEntityName("jywzcqyg")
-                .withAttributes(Arrays.asList(new Attributes().withName("r").withValue("pnrehkunsb")))
-                .withBranchId("hhlwtpk")
-                .withOwnerName("geattbzkg"))
+            .define("vkjcim")
+            .withExistingBranche("bio", "gwviqehmdq", "aolid", "dfs")
+            .withProperties(new NeonDatabaseProperties().withEntityName("himmydtdtftmi")
+                .withAttributes(Arrays.asList(new Attributes().withName("prk").withValue("oyimxpggktteag"),
+                    new Attributes().withName("gacnqp").withValue("uytv"),
+                    new Attributes().withName("deylpbyb").withValue("is")))
+                .withBranchId("ifm")
+                .withOwnerName("lpwdjraurf")
+                .withDatabaseName("znurttu"))
             .create();
 
-        Assertions.assertEquals("onleqflvtl", response.properties().entityName());
-        Assertions.assertEquals("kuninttlnrjds", response.properties().attributes().get(0).name());
-        Assertions.assertEquals("dbuziciqppoqvg", response.properties().attributes().get(0).value());
-        Assertions.assertEquals("xtfnress", response.properties().branchId());
-        Assertions.assertEquals("pg", response.properties().ownerName());
+        Assertions.assertEquals("vspsaneyvae", response.properties().entityName());
+        Assertions.assertEquals("nilppqcai", response.properties().attributes().get(0).name());
+        Assertions.assertEquals("azwfwlrfdjwlzse", response.properties().attributes().get(0).value());
+        Assertions.assertEquals("eqjxzizebjrahg", response.properties().branchId());
+        Assertions.assertEquals("tubwggxzsshxli", response.properties().ownerName());
+        Assertions.assertEquals("sckwh", response.properties().databaseName());
     }
 }

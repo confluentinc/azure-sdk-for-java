@@ -18,39 +18,37 @@ import com.azure.resourcemanager.neonpostgres.fluent.models.EndpointInner;
  */
 public interface EndpointsClient {
     /**
-     * Get a Endpoint.
+     * List Endpoint resources by Branch.
      * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
      * @param organizationName Name of the Neon Organizations resource.
      * @param projectName The name of the Project.
      * @param branchName The name of the Branch.
-     * @param endpointName The name of the Endpoint.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return the response of a Endpoint list operation as paginated response with {@link PagedIterable}.
+     */
+    @ServiceMethod(returns = ReturnType.COLLECTION)
+    PagedIterable<EndpointInner> list(String resourceGroupName, String organizationName, String projectName,
+        String branchName);
+
+    /**
+     * List Endpoint resources by Branch.
+     * 
+     * @param resourceGroupName The name of the resource group. The name is case insensitive.
+     * @param organizationName Name of the Neon Organizations resource.
+     * @param projectName The name of the Project.
+     * @param branchName The name of the Branch.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return a Endpoint along with {@link Response}.
+     * @return the response of a Endpoint list operation as paginated response with {@link PagedIterable}.
      */
-    @ServiceMethod(returns = ReturnType.SINGLE)
-    Response<EndpointInner> getWithResponse(String resourceGroupName, String organizationName, String projectName,
-        String branchName, String endpointName, Context context);
-
-    /**
-     * Get a Endpoint.
-     * 
-     * @param resourceGroupName The name of the resource group. The name is case insensitive.
-     * @param organizationName Name of the Neon Organizations resource.
-     * @param projectName The name of the Project.
-     * @param branchName The name of the Branch.
-     * @param endpointName The name of the Endpoint.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return a Endpoint.
-     */
-    @ServiceMethod(returns = ReturnType.SINGLE)
-    EndpointInner get(String resourceGroupName, String organizationName, String projectName, String branchName,
-        String endpointName);
+    @ServiceMethod(returns = ReturnType.COLLECTION)
+    PagedIterable<EndpointInner> list(String resourceGroupName, String organizationName, String projectName,
+        String branchName, Context context);
 
     /**
      * Create a Endpoint.
@@ -128,80 +126,6 @@ public interface EndpointsClient {
         String branchName, String endpointName, EndpointInner resource, Context context);
 
     /**
-     * Update a Endpoint.
-     * 
-     * @param resourceGroupName The name of the resource group. The name is case insensitive.
-     * @param organizationName Name of the Neon Organizations resource.
-     * @param projectName The name of the Project.
-     * @param branchName The name of the Branch.
-     * @param endpointName The name of the Endpoint.
-     * @param properties The resource properties to be updated.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the {@link SyncPoller} for polling of the Neon compute endpoint resource type.
-     */
-    @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
-    SyncPoller<PollResult<EndpointInner>, EndpointInner> beginUpdate(String resourceGroupName, String organizationName,
-        String projectName, String branchName, String endpointName, EndpointInner properties);
-
-    /**
-     * Update a Endpoint.
-     * 
-     * @param resourceGroupName The name of the resource group. The name is case insensitive.
-     * @param organizationName Name of the Neon Organizations resource.
-     * @param projectName The name of the Project.
-     * @param branchName The name of the Branch.
-     * @param endpointName The name of the Endpoint.
-     * @param properties The resource properties to be updated.
-     * @param context The context to associate with this operation.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the {@link SyncPoller} for polling of the Neon compute endpoint resource type.
-     */
-    @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
-    SyncPoller<PollResult<EndpointInner>, EndpointInner> beginUpdate(String resourceGroupName, String organizationName,
-        String projectName, String branchName, String endpointName, EndpointInner properties, Context context);
-
-    /**
-     * Update a Endpoint.
-     * 
-     * @param resourceGroupName The name of the resource group. The name is case insensitive.
-     * @param organizationName Name of the Neon Organizations resource.
-     * @param projectName The name of the Project.
-     * @param branchName The name of the Branch.
-     * @param endpointName The name of the Endpoint.
-     * @param properties The resource properties to be updated.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the Neon compute endpoint resource type.
-     */
-    @ServiceMethod(returns = ReturnType.SINGLE)
-    EndpointInner update(String resourceGroupName, String organizationName, String projectName, String branchName,
-        String endpointName, EndpointInner properties);
-
-    /**
-     * Update a Endpoint.
-     * 
-     * @param resourceGroupName The name of the resource group. The name is case insensitive.
-     * @param organizationName Name of the Neon Organizations resource.
-     * @param projectName The name of the Project.
-     * @param branchName The name of the Branch.
-     * @param endpointName The name of the Endpoint.
-     * @param properties The resource properties to be updated.
-     * @param context The context to associate with this operation.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the Neon compute endpoint resource type.
-     */
-    @ServiceMethod(returns = ReturnType.SINGLE)
-    EndpointInner update(String resourceGroupName, String organizationName, String projectName, String branchName,
-        String endpointName, EndpointInner properties, Context context);
-
-    /**
      * Delete a Endpoint.
      * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
@@ -234,37 +158,4 @@ public interface EndpointsClient {
     @ServiceMethod(returns = ReturnType.SINGLE)
     void delete(String resourceGroupName, String organizationName, String projectName, String branchName,
         String endpointName);
-
-    /**
-     * List Endpoint resources by Branch.
-     * 
-     * @param resourceGroupName The name of the resource group. The name is case insensitive.
-     * @param organizationName Name of the Neon Organizations resource.
-     * @param projectName The name of the Project.
-     * @param branchName The name of the Branch.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the response of a Endpoint list operation as paginated response with {@link PagedIterable}.
-     */
-    @ServiceMethod(returns = ReturnType.COLLECTION)
-    PagedIterable<EndpointInner> list(String resourceGroupName, String organizationName, String projectName,
-        String branchName);
-
-    /**
-     * List Endpoint resources by Branch.
-     * 
-     * @param resourceGroupName The name of the resource group. The name is case insensitive.
-     * @param organizationName Name of the Neon Organizations resource.
-     * @param projectName The name of the Project.
-     * @param branchName The name of the Branch.
-     * @param context The context to associate with this operation.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the response of a Endpoint list operation as paginated response with {@link PagedIterable}.
-     */
-    @ServiceMethod(returns = ReturnType.COLLECTION)
-    PagedIterable<EndpointInner> list(String resourceGroupName, String organizationName, String projectName,
-        String branchName, Context context);
 }

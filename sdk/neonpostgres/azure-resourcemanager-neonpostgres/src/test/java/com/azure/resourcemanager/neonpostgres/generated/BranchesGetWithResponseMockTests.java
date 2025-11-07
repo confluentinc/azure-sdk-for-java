@@ -22,7 +22,7 @@ public final class BranchesGetWithResponseMockTests {
     @Test
     public void testGetWithResponse() throws Exception {
         String responseStr
-            = "{\"properties\":{\"entityId\":\"gzjxxlf\",\"entityName\":\"lzuqloiwyayyzivr\",\"createdAt\":\"tcdqlh\",\"provisioningState\":\"Failed\",\"attributes\":[{\"name\":\"ktj\",\"value\":\"eifibfiplhx\"}],\"projectId\":\"smyc\",\"parentId\":\"wlyeyz\",\"roleName\":\"dsqcmhnxl\",\"databaseName\":\"uwod\",\"roles\":[{\"entityId\":\"bkvnrpbjrmvg\",\"entityName\":\"plehmumk\",\"createdAt\":\"llcz\",\"provisioningState\":\"Canceled\",\"attributes\":[{\"name\":\"hkgqggoxsst\",\"value\":\"ivrakfrryn\"},{\"name\":\"cwmhlymgnukxrk\",\"value\":\"mjpequlr\"}],\"branchId\":\"audgjtfbclakkucd\",\"permissions\":[\"hczbuto\",\"cgjtirjwayhicqq\",\"wvgwkslvli\",\"edvbiabvnsrge\"],\"isSuperUser\":true}],\"databases\":[{\"entityId\":\"dyfhb\",\"entityName\":\"khojqttbspvk\",\"createdAt\":\"laqjsgyzstujrzx\",\"provisioningState\":\"Succeeded\",\"attributes\":[{\"name\":\"d\",\"value\":\"lduyehiiittugyuq\"},{\"name\":\"rldaxurfqa\",\"value\":\"csozjv\"}],\"branchId\":\"zciggbnvtxofwa\",\"ownerName\":\"yxwhoeamo\"},{\"entityId\":\"bdoeysf\",\"entityName\":\"imtwuuhau\",\"createdAt\":\"nkwmnfeub\",\"provisioningState\":\"Failed\",\"attributes\":[{\"name\":\"kwfugiphrrkuu\",\"value\":\"nqd\"}],\"branchId\":\"hz\",\"ownerName\":\"opueo\"}],\"endpoints\":[{\"entityId\":\"wlujopwnibit\",\"entityName\":\"zt\",\"createdAt\":\"qumqvfmwcaddt\",\"provisioningState\":\"Failed\",\"attributes\":[{\"name\":\"gtvgwyu\",\"value\":\"be\"},{\"name\":\"fnzzryizwbxg\",\"value\":\"ebxlayu\"},{\"name\":\"omirhp\",\"value\":\"abenqlamwmg\"}],\"projectId\":\"ayxflnbcpjstbh\",\"branchId\":\"hcucsqsnx\",\"endpointType\":\"read_only\"},{\"entityId\":\"feapdrbzyvbsuadu\",\"entityName\":\"odkaxpfobkzhm\",\"createdAt\":\"dqltdel\",\"provisioningState\":\"Canceled\",\"attributes\":[{\"name\":\"adhfztlray\",\"value\":\"rkgzkyhudbkuw\"},{\"name\":\"zqxlcwe\",\"value\":\"kfecjvxf\"}],\"projectId\":\"ufqizjvppw\",\"branchId\":\"a\",\"endpointType\":\"read_write\"}]},\"id\":\"jmjjxi\",\"name\":\"xpxhnzlslekc\",\"type\":\"tgzkjtyqpd\"}";
+            = "{\"properties\":{\"entityId\":\"mq\",\"entityName\":\"cgaullfstyygjqpu\",\"createdAt\":\"wqgmhmqmiwxz\",\"provisioningState\":\"Failed\",\"attributes\":[{\"name\":\"cqfgu\",\"value\":\"jnbxwbmwdukin\"},{\"name\":\"lxhgdekekzou\",\"value\":\"vewwpzrdwcgldo\"},{\"name\":\"gcandxfhhhtes\",\"value\":\"dqtdnnc\"},{\"name\":\"kpljdshvvfkdxc\",\"value\":\"yijjimhi\"}],\"projectId\":\"rqnjxmvvsduydwnw\",\"parentId\":\"uhhqldrdymnswxie\",\"roleName\":\"wqnghxnimvyuj\",\"databaseName\":\"gunnqgypuqt\",\"roles\":[{\"entityId\":\"uevqmvyumgmm\",\"entityName\":\"bsnznwgsqufm\",\"createdAt\":\"cyoseqcazisvbrqg\",\"provisioningState\":\"Canceled\",\"attributes\":[{\"name\":\"awepkwonrzpgh\",\"value\":\"rdtbgblxbuibrvj\"},{\"name\":\"taflvs\",\"value\":\"fjihvfjcqrttjfuq\"},{\"name\":\"mfjew\",\"value\":\"eqba\"}],\"branchId\":\"ostwy\",\"permissions\":[\"mw\"],\"isSuperUser\":false,\"roleName\":\"gwzz\",\"lastUpdated\":\"dtlcjgpvcqzv\",\"owns\":\"b\"}],\"databases\":[{\"entityId\":\"hlx\",\"entityName\":\"xvmdr\",\"createdAt\":\"n\",\"provisioningState\":\"Canceled\",\"attributes\":[{\"name\":\"zoymd\",\"value\":\"hhplkhww\"},{\"name\":\"katveqmgkcswzeyx\",\"value\":\"yearmhpwb\"},{\"name\":\"kl\",\"value\":\"smfasgtlv\"}],\"branchId\":\"poil\",\"ownerName\":\"ja\",\"databaseName\":\"cez\",\"lastUpdated\":\"ft\"}],\"endpoints\":[{\"entityId\":\"pokjyghztm\",\"entityName\":\"iwtp\",\"createdAt\":\"lcezswwvw\",\"provisioningState\":\"Failed\",\"attributes\":[{\"name\":\"tvbfpfhr\",\"value\":\"ptsyqcjnqswxdo\"},{\"name\":\"umxquk\",\"value\":\"cdio\"}],\"projectId\":\"lqddnhfknebwedd\",\"branchId\":\"yzcwy\",\"endpointType\":\"read_write\",\"endpointId\":\"aqld\",\"computeName\":\"bnwvpaq\",\"status\":\"init\",\"lastActive\":\"bbigcfd\",\"size\":{\"autoscalingLimitMinCu\":34.89409784750727,\"autoscalingLimitMaxCu\":50.83754927535199}}],\"branchId\":\"mjyyr\",\"branch\":\"edwovocytjg\",\"dataSize\":\"ayokrwfmihw\",\"lastActive\":\"dhedbfobdczvoth\",\"computeHours\":\"hjaozvbwfcn\",\"protected\":true,\"isDefault\":true},\"id\":\"lhscmyh\",\"name\":\"hjvszfq\",\"type\":\"okndwpppqwojoevz\"}";
 
         HttpClient httpClient
             = response -> Mono.just(new MockHttpResponse(response, 200, responseStr.getBytes(StandardCharsets.UTF_8)));
@@ -32,33 +32,42 @@ public final class BranchesGetWithResponseMockTests {
                 new AzureProfile("", "", AzureCloud.AZURE_PUBLIC_CLOUD));
 
         Branch response = manager.branches()
-            .getWithResponse("lwk", "fowzkroyr", "urxf", "zqjim", com.azure.core.util.Context.NONE)
+            .getWithResponse("bzmfxlry", "fjxlpiy", "qnpfydrfb", "cnyxbyx", com.azure.core.util.Context.NONE)
             .getValue();
 
-        Assertions.assertEquals("lzuqloiwyayyzivr", response.properties().entityName());
-        Assertions.assertEquals("ktj", response.properties().attributes().get(0).name());
-        Assertions.assertEquals("eifibfiplhx", response.properties().attributes().get(0).value());
-        Assertions.assertEquals("smyc", response.properties().projectId());
-        Assertions.assertEquals("wlyeyz", response.properties().parentId());
-        Assertions.assertEquals("dsqcmhnxl", response.properties().roleName());
-        Assertions.assertEquals("uwod", response.properties().databaseName());
-        Assertions.assertEquals("plehmumk", response.properties().roles().get(0).entityName());
-        Assertions.assertEquals("hkgqggoxsst", response.properties().roles().get(0).attributes().get(0).name());
-        Assertions.assertEquals("ivrakfrryn", response.properties().roles().get(0).attributes().get(0).value());
-        Assertions.assertEquals("audgjtfbclakkucd", response.properties().roles().get(0).branchId());
-        Assertions.assertEquals("hczbuto", response.properties().roles().get(0).permissions().get(0));
-        Assertions.assertTrue(response.properties().roles().get(0).isSuperUser());
-        Assertions.assertEquals("khojqttbspvk", response.properties().databases().get(0).entityName());
-        Assertions.assertEquals("d", response.properties().databases().get(0).attributes().get(0).name());
-        Assertions.assertEquals("lduyehiiittugyuq",
-            response.properties().databases().get(0).attributes().get(0).value());
-        Assertions.assertEquals("zciggbnvtxofwa", response.properties().databases().get(0).branchId());
-        Assertions.assertEquals("yxwhoeamo", response.properties().databases().get(0).ownerName());
-        Assertions.assertEquals("zt", response.properties().endpoints().get(0).entityName());
-        Assertions.assertEquals("gtvgwyu", response.properties().endpoints().get(0).attributes().get(0).name());
-        Assertions.assertEquals("be", response.properties().endpoints().get(0).attributes().get(0).value());
-        Assertions.assertEquals("ayxflnbcpjstbh", response.properties().endpoints().get(0).projectId());
-        Assertions.assertEquals("hcucsqsnx", response.properties().endpoints().get(0).branchId());
-        Assertions.assertEquals(EndpointType.READ_ONLY, response.properties().endpoints().get(0).endpointType());
+        Assertions.assertEquals("cgaullfstyygjqpu", response.properties().entityName());
+        Assertions.assertEquals("cqfgu", response.properties().attributes().get(0).name());
+        Assertions.assertEquals("jnbxwbmwdukin", response.properties().attributes().get(0).value());
+        Assertions.assertEquals("rqnjxmvvsduydwnw", response.properties().projectId());
+        Assertions.assertEquals("uhhqldrdymnswxie", response.properties().parentId());
+        Assertions.assertEquals("wqnghxnimvyuj", response.properties().roleName());
+        Assertions.assertEquals("gunnqgypuqt", response.properties().databaseName());
+        Assertions.assertEquals("bsnznwgsqufm", response.properties().roles().get(0).entityName());
+        Assertions.assertEquals("awepkwonrzpgh", response.properties().roles().get(0).attributes().get(0).name());
+        Assertions.assertEquals("rdtbgblxbuibrvj", response.properties().roles().get(0).attributes().get(0).value());
+        Assertions.assertEquals("ostwy", response.properties().roles().get(0).branchId());
+        Assertions.assertEquals("mw", response.properties().roles().get(0).permissions().get(0));
+        Assertions.assertFalse(response.properties().roles().get(0).isSuperUser());
+        Assertions.assertEquals("gwzz", response.properties().roles().get(0).roleName());
+        Assertions.assertEquals("xvmdr", response.properties().databases().get(0).entityName());
+        Assertions.assertEquals("zoymd", response.properties().databases().get(0).attributes().get(0).name());
+        Assertions.assertEquals("hhplkhww", response.properties().databases().get(0).attributes().get(0).value());
+        Assertions.assertEquals("poil", response.properties().databases().get(0).branchId());
+        Assertions.assertEquals("ja", response.properties().databases().get(0).ownerName());
+        Assertions.assertEquals("cez", response.properties().databases().get(0).databaseName());
+        Assertions.assertEquals("iwtp", response.properties().endpoints().get(0).entityName());
+        Assertions.assertEquals("tvbfpfhr", response.properties().endpoints().get(0).attributes().get(0).name());
+        Assertions.assertEquals("ptsyqcjnqswxdo", response.properties().endpoints().get(0).attributes().get(0).value());
+        Assertions.assertEquals("lqddnhfknebwedd", response.properties().endpoints().get(0).projectId());
+        Assertions.assertEquals("yzcwy", response.properties().endpoints().get(0).branchId());
+        Assertions.assertEquals(EndpointType.READ_WRITE, response.properties().endpoints().get(0).endpointType());
+        Assertions.assertEquals("aqld", response.properties().endpoints().get(0).endpointId());
+        Assertions.assertEquals("bnwvpaq", response.properties().endpoints().get(0).computeName());
+        Assertions.assertEquals(34.89409784750727,
+            response.properties().endpoints().get(0).size().autoscalingLimitMinCu());
+        Assertions.assertEquals(50.83754927535199,
+            response.properties().endpoints().get(0).size().autoscalingLimitMaxCu());
+        Assertions.assertEquals("mjyyr", response.properties().branchId());
+        Assertions.assertEquals("edwovocytjg", response.properties().branch());
     }
 }

@@ -9,7 +9,7 @@ package com.azure.resourcemanager.neonpostgres.generated;
  */
 public final class ComputesListSamples {
     /*
-     * x-ms-original-file: 2025-03-01/Computes_List_MaximumSet_Gen.json
+     * x-ms-original-file: 2025-06-23-preview/Computes_List_MaximumSet_Gen.json
      */
     /**
      * Sample code: Computes_List_MaximumSet.
@@ -17,6 +17,6 @@ public final class ComputesListSamples {
      * @param manager Entry point to NeonPostgresManager.
      */
     public static void computesListMaximumSet(com.azure.resourcemanager.neonpostgres.NeonPostgresManager manager) {
-        manager.computes().list("rgneon", "test-org", "entity-name", "entity-name", com.azure.core.util.Context.NONE);
+        manager.computes().list("rgneon", "myOrganization", "myProject", "feature", com.azure.core.util.Context.NONE);
     }
 }

@@ -95,16 +95,16 @@ public final class NeonRoleImpl implements NeonRole, NeonRole.Definition, NeonRo
     public NeonRole apply() {
         this.innerObject = serviceManager.serviceClient()
             .getNeonRoles()
-            .update(resourceGroupName, organizationName, projectName, branchName, neonRoleName, this.innerModel(),
-                Context.NONE);
+            .createOrUpdate(resourceGroupName, organizationName, projectName, branchName, neonRoleName,
+                this.innerModel(), Context.NONE);
         return this;
     }
 
     public NeonRole apply(Context context) {
         this.innerObject = serviceManager.serviceClient()
             .getNeonRoles()
-            .update(resourceGroupName, organizationName, projectName, branchName, neonRoleName, this.innerModel(),
-                context);
+            .createOrUpdate(resourceGroupName, organizationName, projectName, branchName, neonRoleName,
+                this.innerModel(), context);
         return this;
     }
 
@@ -116,22 +116,6 @@ public final class NeonRoleImpl implements NeonRole, NeonRole.Definition, NeonRo
         this.projectName = ResourceManagerUtils.getValueFromIdByName(innerObject.id(), "projects");
         this.branchName = ResourceManagerUtils.getValueFromIdByName(innerObject.id(), "branches");
         this.neonRoleName = ResourceManagerUtils.getValueFromIdByName(innerObject.id(), "neonRoles");
-    }
-
-    public NeonRole refresh() {
-        this.innerObject = serviceManager.serviceClient()
-            .getNeonRoles()
-            .getWithResponse(resourceGroupName, organizationName, projectName, branchName, neonRoleName, Context.NONE)
-            .getValue();
-        return this;
-    }
-
-    public NeonRole refresh(Context context) {
-        this.innerObject = serviceManager.serviceClient()
-            .getNeonRoles()
-            .getWithResponse(resourceGroupName, organizationName, projectName, branchName, neonRoleName, context)
-            .getValue();
-        return this;
     }
 
     public NeonRoleImpl withProperties(NeonRoleProperties properties) {

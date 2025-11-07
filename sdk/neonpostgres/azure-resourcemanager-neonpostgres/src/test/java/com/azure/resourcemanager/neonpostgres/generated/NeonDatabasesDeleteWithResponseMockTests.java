@@ -28,8 +28,7 @@ public final class NeonDatabasesDeleteWithResponseMockTests {
                 new AzureProfile("", "", AzureCloud.AZURE_PUBLIC_CLOUD));
 
         manager.neonDatabases()
-            .deleteWithResponse("fnisyxgu", "bmtredscnns", "jcyyuvtzrxzhcle", "wwtzqzcloy", "yup",
-                com.azure.core.util.Context.NONE);
+            .deleteWithResponse("efx", "n", "tpcjpt", "ntqrcjqpzj", "npjrrhpgs", com.azure.core.util.Context.NONE);
 
     }
 }

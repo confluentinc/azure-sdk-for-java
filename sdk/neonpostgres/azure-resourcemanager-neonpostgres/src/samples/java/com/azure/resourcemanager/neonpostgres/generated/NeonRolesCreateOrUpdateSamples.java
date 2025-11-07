@@ -13,7 +13,7 @@ import java.util.Arrays;
  */
 public final class NeonRolesCreateOrUpdateSamples {
     /*
-     * x-ms-original-file: 2025-03-01/NeonRoles_CreateOrUpdate_MaximumSet_Gen.json
+     * x-ms-original-file: 2025-06-23-preview/NeonRoles_CreateOrUpdate_MaximumSet_Gen.json
      */
     /**
      * Sample code: NeonRoles_CreateOrUpdate_MaximumSet.
@@ -23,12 +23,12 @@ public final class NeonRolesCreateOrUpdateSamples {
     public static void
         neonRolesCreateOrUpdateMaximumSet(com.azure.resourcemanager.neonpostgres.NeonPostgresManager manager) {
         manager.neonRoles()
-            .define("entity-name")
-            .withExistingBranche("rgneon", "test-org", "entity-name", "entity-name")
-            .withProperties(new NeonRoleProperties().withEntityName("entity-name")
-                .withAttributes(Arrays.asList(new Attributes().withName("trhvzyvaqy").withValue("evpkgsskyavybxwwssm")))
-                .withBranchId("wxbojkmdgaggkfiwqfakdkbyztm")
-                .withPermissions(Arrays.asList("myucqecpjriewzohxvadgkhiudnyx"))
+            .define("read_only_role")
+            .withExistingBranche("rgneon", "myOrganization", "myProject", "feature")
+            .withProperties(new NeonRoleProperties().withEntityName("PostgresReadOnlyRole")
+                .withAttributes(Arrays.asList(new Attributes().withName("on").withValue("qzp")))
+                .withBranchId("tnmwjbftrvfpepgeytoeqsyhyz")
+                .withPermissions(Arrays.asList("cgubrzxkomlxoqdua"))
                 .withIsSuperUser(true))
             .create();
     }

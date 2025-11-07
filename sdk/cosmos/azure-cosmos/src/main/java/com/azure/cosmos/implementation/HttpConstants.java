@@ -101,6 +101,7 @@ public class HttpConstants {
         public static final String INDEXING_DIRECTIVE = "x-ms-indexing-directive";
         public static final String SESSION_TOKEN = "x-ms-session-token";
         public static final String CONSISTENCY_LEVEL = "x-ms-consistency-level";
+        public static final String READ_CONSISTENCY_STRATEGY = "x-ms-cosmos-read-consistency-strategy";
         public static final String X_DATE = "x-ms-date";
         public static final String COLLECTION_PARTITION_INFO = "x-ms-collection-partition-info";
         public static final String COLLECTION_SERVICE_INFO = "x-ms-collection-service-info";
@@ -288,6 +289,11 @@ public class HttpConstants {
         public static final String THINCLIENT_PROXY_RESOURCE_TYPE = "x-ms-thinclient-proxy-resource-type";
         public static final String THINCLIENT_OPT_IN = "x-ms-cosmos-use-thinclient";
         public static final String GLOBAL_DATABASE_ACCOUNT_NAME = "GlobalDatabaseAccountName";
+        public static final String THINCLIENT_START_EPK = "x-ms-thinclient-range-min";
+        public static final String THINCLIENT_END_EPK = "x-ms-thinclient-range-max";
+
+        // Throughput bucket header
+        public static final String THROUGHPUT_BUCKET = "x-ms-cosmos-throughput-bucket";
     }
 
     public static class A_IMHeaderValues {
@@ -401,6 +407,7 @@ public class HttpConstants {
         public static final int PARTITION_KEY_RANGE_GONE = 1002;
         public static final int COMPLETING_SPLIT_OR_MERGE = 1007;
         public static final int COMPLETING_PARTITION_MIGRATION = 1008;
+        public static final int LEASE_NOT_FOUND = 1022;
 
         // 403: Forbidden substatus
         public static final int FORBIDDEN_WRITEFORBIDDEN = 3;
@@ -458,6 +465,7 @@ public class HttpConstants {
         public static final int UNKNOWN_QUORUM_RESULT = 20909;
         public static final int INVALID_RESULT = 20910;
         public static final int CLOSED_CLIENT = 20912;
+        public static final int PPCB_INVALID_STATE = 20913;
 
         //SDK Codes (Server)
         // IMPORTANT - whenever possible use consistency substatus codes that .Net SDK also uses
@@ -471,6 +479,7 @@ public class HttpConstants {
         public static final int SERVER_GENERATED_503 = 21008;
         public static final int NO_VALID_STORE_RESPONSE = 21009;
         public static final int SERVER_GENERATED_408 = 21010;
+        public static final int FAILED_TO_PARSE_SERVER_RESPONSE = 21011;
     }
 
     public static class HeaderValues {

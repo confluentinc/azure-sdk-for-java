@@ -11,7 +11,7 @@ public final class ListConnectionStringsResultInnerTests {
     @org.junit.jupiter.api.Test
     public void testDeserialize() throws Exception {
         ListConnectionStringsResultInner model = BinaryData.fromString(
-            "{\"connectionStrings\":[{\"connectionString\":\"uujitcjc\",\"description\":\"zevndhkrwpdappds\",\"name\":\"kvwrwjfeu\"},{\"connectionString\":\"hutje\",\"description\":\"mrldhu\",\"name\":\"zzd\"},{\"connectionString\":\"qxhocdgeablgphut\",\"description\":\"ndv\",\"name\":\"ozwyiftyhxhuro\"},{\"connectionString\":\"tyxolniwpwc\",\"description\":\"jfkgiawxk\",\"name\":\"ypl\"}]}")
+            "{\"connectionStrings\":[{\"connectionString\":\"qawrlyxwj\",\"description\":\"prbnwbxgjvtbv\",\"name\":\"sszdnru\"},{\"connectionString\":\"guhmuouqfpr\",\"description\":\"wbnguitnwui\",\"name\":\"a\"},{\"connectionString\":\"ufizuckyf\",\"description\":\"rfidfvzwdz\",\"name\":\"tymw\"},{\"connectionString\":\"dkfthwxmnt\",\"description\":\"waopvkmijcmmxd\",\"name\":\"fufsrpymzi\"}]}")
             .toObject(ListConnectionStringsResultInner.class);
     }
 }

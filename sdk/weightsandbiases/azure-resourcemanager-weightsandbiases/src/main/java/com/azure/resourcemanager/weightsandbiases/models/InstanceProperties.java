@@ -5,7 +5,6 @@
 package com.azure.resourcemanager.weightsandbiases.models;
 
 import com.azure.core.annotation.Fluent;
-import com.azure.core.util.logging.ClientLogger;
 import com.azure.json.JsonReader;
 import com.azure.json.JsonSerializable;
 import com.azure.json.JsonToken;
@@ -138,34 +137,6 @@ public final class InstanceProperties implements JsonSerializable<InstanceProper
     }
 
     /**
-     * Validates the instance.
-     * 
-     * @throws IllegalArgumentException thrown if the instance is not valid.
-     */
-    public void validate() {
-        if (marketplace() == null) {
-            throw LOGGER.atError()
-                .log(new IllegalArgumentException("Missing required property marketplace in model InstanceProperties"));
-        } else {
-            marketplace().validate();
-        }
-        if (user() == null) {
-            throw LOGGER.atError()
-                .log(new IllegalArgumentException("Missing required property user in model InstanceProperties"));
-        } else {
-            user().validate();
-        }
-        if (partnerProperties() != null) {
-            partnerProperties().validate();
-        }
-        if (singleSignOnProperties() != null) {
-            singleSignOnProperties().validate();
-        }
-    }
-
-    private static final ClientLogger LOGGER = new ClientLogger(InstanceProperties.class);
-
-    /**
      * {@inheritDoc}
      */
     @Override
@@ -198,11 +169,11 @@ public final class InstanceProperties implements JsonSerializable<InstanceProper
                     deserializedInstanceProperties.marketplace = MarketplaceDetails.fromJson(reader);
                 } else if ("user".equals(fieldName)) {
                     deserializedInstanceProperties.user = UserDetails.fromJson(reader);
+                } else if ("partnerProperties".equals(fieldName)) {
+                    deserializedInstanceProperties.partnerProperties = PartnerProperties.fromJson(reader);
                 } else if ("provisioningState".equals(fieldName)) {
                     deserializedInstanceProperties.provisioningState
                         = ResourceProvisioningState.fromString(reader.getString());
-                } else if ("partnerProperties".equals(fieldName)) {
-                    deserializedInstanceProperties.partnerProperties = PartnerProperties.fromJson(reader);
                 } else if ("singleSignOnProperties".equals(fieldName)) {
                     deserializedInstanceProperties.singleSignOnProperties = SingleSignOnPropertiesV2.fromJson(reader);
                 } else {

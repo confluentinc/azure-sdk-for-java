@@ -11,6 +11,7 @@ import com.azure.core.models.AzureCloud;
 import com.azure.core.test.http.MockHttpResponse;
 import com.azure.resourcemanager.durabletask.DurableTaskManager;
 import com.azure.resourcemanager.durabletask.models.Scheduler;
+import com.azure.resourcemanager.durabletask.models.SchedulerSkuName;
 import java.nio.charset.StandardCharsets;
 import java.time.OffsetDateTime;
 import org.junit.jupiter.api.Assertions;
@@ -21,7 +22,7 @@ public final class SchedulersGetByResourceGroupWithResponseMockTests {
     @Test
     public void testGetByResourceGroupWithResponse() throws Exception {
         String responseStr
-            = "{\"properties\":{\"provisioningState\":\"Provisioning\",\"endpoint\":\"fqawrlyxw\",\"ipAllowlist\":[\"cpr\",\"nwbxgjvtbvpyssz\"],\"sku\":{\"name\":\"nruj\",\"capacity\":1719389036,\"redundancyState\":\"None\"}},\"location\":\"ouqfprwz\",\"tags\":{\"itnwuizgazxufi\":\"g\",\"hr\":\"uckyf\",\"zwdzuh\":\"idf\",\"wxmnteiwao\":\"ymwisdkft\"},\"id\":\"vkmijcmmxdcuf\",\"name\":\"fsrpymzidnse\",\"type\":\"cxtbzsg\"}";
+            = "{\"properties\":{\"provisioningState\":\"Failed\",\"endpoint\":\"jeiachboosfl\",\"ipAllowlist\":[\"osfqpteehzzv\"],\"sku\":{\"name\":\"Dedicated\",\"capacity\":147983860,\"redundancyState\":\"None\"}},\"location\":\"z\",\"tags\":{\"rsoodqxhcrmnoh\":\"vswjdk\",\"kwh\":\"t\",\"gr\":\"soifiyipjxsqw\"},\"id\":\"bznorcjxvsnby\",\"name\":\"qabnmoc\",\"type\":\"cyshurzafbljjgp\"}";
 
         HttpClient httpClient
             = response -> Mono.just(new MockHttpResponse(response, 200, responseStr.getBytes(StandardCharsets.UTF_8)));
@@ -31,13 +32,13 @@ public final class SchedulersGetByResourceGroupWithResponseMockTests {
                 new AzureProfile("", "", AzureCloud.AZURE_PUBLIC_CLOUD));
 
         Scheduler response = manager.schedulers()
-            .getByResourceGroupWithResponse("o", "fhrtxilnerkujysv", com.azure.core.util.Context.NONE)
+            .getByResourceGroupWithResponse("ymzidn", "ezcxtbzsgfyccsne", com.azure.core.util.Context.NONE)
             .getValue();
 
-        Assertions.assertEquals("ouqfprwz", response.location());
-        Assertions.assertEquals("g", response.tags().get("itnwuizgazxufi"));
-        Assertions.assertEquals("cpr", response.properties().ipAllowlist().get(0));
-        Assertions.assertEquals("nruj", response.properties().sku().name());
-        Assertions.assertEquals(1719389036, response.properties().sku().capacity());
+        Assertions.assertEquals("z", response.location());
+        Assertions.assertEquals("vswjdk", response.tags().get("rsoodqxhcrmnoh"));
+        Assertions.assertEquals("osfqpteehzzv", response.properties().ipAllowlist().get(0));
+        Assertions.assertEquals(SchedulerSkuName.DEDICATED, response.properties().sku().name());
+        Assertions.assertEquals(147983860, response.properties().sku().capacity());
     }
 }

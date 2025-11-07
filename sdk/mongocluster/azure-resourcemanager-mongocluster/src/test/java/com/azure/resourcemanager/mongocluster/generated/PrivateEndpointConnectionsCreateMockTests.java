@@ -25,7 +25,7 @@ public final class PrivateEndpointConnectionsCreateMockTests {
     @Test
     public void testCreate() throws Exception {
         String responseStr
-            = "{\"properties\":{\"groupIds\":[\"twrupqsxvnm\"],\"privateEndpoint\":{\"id\":\"kvceoveilovnotyf\"},\"privateLinkServiceConnectionState\":{\"status\":\"Approved\",\"description\":\"jbkcnxdhbttkph\",\"actionsRequired\":\"pnvjtoqnermclf\"},\"provisioningState\":\"Succeeded\"},\"id\":\"oxuscrpabgyepsbj\",\"name\":\"azqugxywpmueefj\",\"type\":\"wfqkquj\"}";
+            = "{\"properties\":{\"groupIds\":[\"nwbmeh\"],\"privateEndpoint\":{\"id\":\"yvjusrtslhsp\"},\"privateLinkServiceConnectionState\":{\"status\":\"Approved\",\"description\":\"maofmxagkv\",\"actionsRequired\":\"elmqk\"},\"provisioningState\":\"Succeeded\"},\"id\":\"vljua\",\"name\":\"aquhcdhm\",\"type\":\"ualaexqpvfadmw\"}";
 
         HttpClient httpClient
             = response -> Mono.just(new MockHttpResponse(response, 200, responseStr.getBytes(StandardCharsets.UTF_8)));
@@ -36,20 +36,18 @@ public final class PrivateEndpointConnectionsCreateMockTests {
 
         PrivateEndpointConnectionResource response
             = manager.privateEndpointConnections()
-                .define("nkjzkdeslpvlop")
-                .withExistingMongoCluster("yuguosvmkfssx", "ukkfplgmgs")
+                .define("tazqugxywpmueefj")
+                .withExistingMongoCluster("plpho", "uscrpabgyepsb")
                 .withProperties(new PrivateEndpointConnectionProperties().withPrivateEndpoint(new PrivateEndpoint())
                     .withPrivateLinkServiceConnectionState(new PrivateLinkServiceConnectionState()
-                        .withStatus(PrivateEndpointServiceConnectionStatus.APPROVED)
-                        .withDescription("txp")
-                        .withActionsRequired("ebtfhvpesap")))
+                        .withStatus(PrivateEndpointServiceConnectionStatus.REJECTED)
+                        .withDescription("dw")
+                        .withActionsRequired("ntxhdzhlrqjbhck")))
                 .create();
 
         Assertions.assertEquals(PrivateEndpointServiceConnectionStatus.APPROVED,
             response.properties().privateLinkServiceConnectionState().status());
-        Assertions.assertEquals("jbkcnxdhbttkph",
-            response.properties().privateLinkServiceConnectionState().description());
-        Assertions.assertEquals("pnvjtoqnermclf",
-            response.properties().privateLinkServiceConnectionState().actionsRequired());
+        Assertions.assertEquals("maofmxagkv", response.properties().privateLinkServiceConnectionState().description());
+        Assertions.assertEquals("elmqk", response.properties().privateLinkServiceConnectionState().actionsRequired());
     }
 }

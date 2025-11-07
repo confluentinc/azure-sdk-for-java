@@ -9,7 +9,7 @@ package com.azure.resourcemanager.neonpostgres.generated;
  */
 public final class ProjectsGetSamples {
     /*
-     * x-ms-original-file: 2025-03-01/Projects_Get_MaximumSet_Gen.json
+     * x-ms-original-file: 2025-06-23-preview/Projects_Get_MaximumSet_Gen.json
      */
     /**
      * Sample code: Projects_Get_MaximumSet.
@@ -17,6 +17,6 @@ public final class ProjectsGetSamples {
      * @param manager Entry point to NeonPostgresManager.
      */
     public static void projectsGetMaximumSet(com.azure.resourcemanager.neonpostgres.NeonPostgresManager manager) {
-        manager.projects().getWithResponse("rgneon", "test-org", "entity-name", com.azure.core.util.Context.NONE);
+        manager.projects().getWithResponse("rgneon", "myOrganization", "myProject", com.azure.core.util.Context.NONE);
     }
 }

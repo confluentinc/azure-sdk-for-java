@@ -13,7 +13,7 @@ import java.util.Arrays;
  */
 public final class NeonDatabasesCreateOrUpdateSamples {
     /*
-     * x-ms-original-file: 2025-03-01/NeonDatabases_CreateOrUpdate_MaximumSet_Gen.json
+     * x-ms-original-file: 2025-06-23-preview/NeonDatabases_CreateOrUpdate_MaximumSet_Gen.json
      */
     /**
      * Sample code: NeonDatabases_CreateOrUpdate_MaximumSet.
@@ -23,12 +23,12 @@ public final class NeonDatabasesCreateOrUpdateSamples {
     public static void
         neonDatabasesCreateOrUpdateMaximumSet(com.azure.resourcemanager.neonpostgres.NeonPostgresManager manager) {
         manager.neonDatabases()
-            .define("entity-name")
-            .withExistingBranche("rgneon", "test-org", "entity-name", "entity-name")
-            .withProperties(new NeonDatabaseProperties().withEntityName("entity-name")
-                .withAttributes(Arrays.asList(new Attributes().withName("trhvzyvaqy").withValue("evpkgsskyavybxwwssm")))
-                .withBranchId("orfdwdmzvfvlnrgussvcvoek")
-                .withOwnerName("odmbeg"))
+            .define("postgres_main_db")
+            .withExistingBranche("rgneon", "myOrganization", "myProject", "feature")
+            .withProperties(new NeonDatabaseProperties().withEntityName("MainDatabase")
+                .withAttributes(Arrays.asList(new Attributes().withName("on").withValue("qzp")))
+                .withBranchId("sllrohrmwkgzre")
+                .withOwnerName("rjpysakvuicrlwvzcbmp"))
             .create();
     }
 }

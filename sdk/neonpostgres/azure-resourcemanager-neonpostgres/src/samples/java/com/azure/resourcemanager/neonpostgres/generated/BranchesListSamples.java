@@ -9,7 +9,7 @@ package com.azure.resourcemanager.neonpostgres.generated;
  */
 public final class BranchesListSamples {
     /*
-     * x-ms-original-file: 2025-03-01/Branches_List_MaximumSet_Gen.json
+     * x-ms-original-file: 2025-06-23-preview/Branches_List_MaximumSet_Gen.json
      */
     /**
      * Sample code: Branches_List_MaximumSet.
@@ -17,6 +17,6 @@ public final class BranchesListSamples {
      * @param manager Entry point to NeonPostgresManager.
      */
     public static void branchesListMaximumSet(com.azure.resourcemanager.neonpostgres.NeonPostgresManager manager) {
-        manager.branches().list("rgneon", "test-org", "entity-name", com.azure.core.util.Context.NONE);
+        manager.branches().list("rgneon", "myOrganization", "myProject", com.azure.core.util.Context.NONE);
     }
 }

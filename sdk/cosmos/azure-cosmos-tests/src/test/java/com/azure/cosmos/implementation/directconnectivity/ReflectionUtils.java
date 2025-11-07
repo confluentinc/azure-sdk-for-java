@@ -10,6 +10,7 @@ import com.azure.cosmos.CosmosClient;
 import com.azure.cosmos.CosmosClientBuilder;
 import com.azure.cosmos.implementation.ApiType;
 import com.azure.cosmos.implementation.AsyncDocumentClient;
+import com.azure.cosmos.implementation.DatabaseAccountManagerInternal;
 import com.azure.cosmos.implementation.ClientSideRequestStatistics;
 import com.azure.cosmos.implementation.Configs;
 import com.azure.cosmos.implementation.ConnectionPolicy;
@@ -40,11 +41,12 @@ import com.azure.cosmos.implementation.http.HttpHeaders;
 import com.azure.cosmos.implementation.http.HttpRequest;
 import com.azure.cosmos.implementation.routing.CollectionRoutingMap;
 import com.azure.cosmos.implementation.routing.LocationCache;
-import com.azure.cosmos.implementation.throughputControl.ThroughputControlTrackingUnit;
-import com.azure.cosmos.implementation.throughputControl.ThroughputRequestThrottler;
-import com.azure.cosmos.implementation.throughputControl.controller.request.GlobalThroughputRequestController;
-import com.azure.cosmos.implementation.throughputControl.controller.request.PkRangesThroughputRequestController;
+import com.azure.cosmos.implementation.throughputControl.sdk.ThroughputControlTrackingUnit;
+import com.azure.cosmos.implementation.throughputControl.sdk.ThroughputRequestThrottler;
+import com.azure.cosmos.implementation.throughputControl.sdk.controller.request.GlobalThroughputRequestController;
+import com.azure.cosmos.implementation.throughputControl.sdk.controller.request.PkRangesThroughputRequestController;
 import com.azure.cosmos.models.CosmosClientTelemetryConfig;
+import com.azure.cosmos.models.FeedResponse;
 import io.netty.handler.ssl.SslContext;
 import org.apache.commons.lang3.reflect.FieldUtils;
 
@@ -231,6 +233,10 @@ public class ReflectionUtils {
         return getStaticField(CpuMemoryMonitor.class, "cpuListeners");
     }
 
+    public static RxStoreModel getThinProxy(RxDocumentClientImpl rxDocumentClient){
+        return get(RxStoreModel.class, rxDocumentClient, "thinProxy");
+    }
+
     public static RxStoreModel getGatewayProxy(RxDocumentClientImpl rxDocumentClient){
         return get(RxStoreModel.class, rxDocumentClient, "gatewayProxy");
     }
@@ -241,6 +247,18 @@ public class ReflectionUtils {
 
     public static GlobalEndpointManager getGlobalEndpointManager(RxDocumentClientImpl rxDocumentClient){
         return get(GlobalEndpointManager.class, rxDocumentClient, "globalEndpointManager");
+    }
+
+    public static DatabaseAccountManagerInternal getGlobalEndpointManagerOwner(GlobalEndpointManager globalEndpointManager) {
+        return get(DatabaseAccountManagerInternal.class, globalEndpointManager, "owner");
+    }
+
+    public static void setGlobalEndpointManagerOwner(GlobalEndpointManager globalEndpointManager, DatabaseAccountManagerInternal newOwner) {
+        set(globalEndpointManager, newOwner, "owner");
+    }
+
+    public static void setThinProxy(RxDocumentClientImpl client, RxStoreModel storeModel) {
+        set(client, storeModel, "thinProxy");
     }
 
     public static void setGatewayProxy(RxDocumentClientImpl client, RxStoreModel storeModel) {
@@ -466,5 +484,19 @@ public class ReflectionUtils {
 
     public static SslContext getSslContextWithCertValidationDisabled(Configs configs) {
         return get(SslContext.class, configs, "sslContextWithCertValidationDisabled");
+    }
+
+    public static void setNoChanges(FeedResponse feedResponse, boolean noChanges) {
+        set(feedResponse, noChanges, "nochanges");
+    }
+
+    public static Class<?> getClassBySimpleName(Class<?>[] classes, String classSimpleName) {
+        for (Class<?> clazz : classes) {
+            if (clazz.getSimpleName().equals(classSimpleName)) {
+                return clazz;
+            }
+        }
+
+        return null;
     }
 }

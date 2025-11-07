@@ -28,7 +28,7 @@ public final class EndpointsDeleteWithResponseMockTests {
                 new AzureProfile("", "", AzureCloud.AZURE_PUBLIC_CLOUD));
 
         manager.endpoints()
-            .deleteWithResponse("l", "n", "detawevxehue", "dxljzvdovbrble", "lprdaqccddcbnygd",
+            .deleteWithResponse("crzhnsbylg", "gbhuqczou", "nbfulv", "xglxoqwbztil", "bzbwbgwzhbhfljey",
                 com.azure.core.util.Context.NONE);
 
     }

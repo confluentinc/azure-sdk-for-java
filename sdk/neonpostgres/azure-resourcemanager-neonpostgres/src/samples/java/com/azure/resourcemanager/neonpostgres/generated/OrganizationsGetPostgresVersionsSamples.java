@@ -11,7 +11,7 @@ import com.azure.resourcemanager.neonpostgres.models.PgVersion;
  */
 public final class OrganizationsGetPostgresVersionsSamples {
     /*
-     * x-ms-original-file: 2025-03-01/Organizations_GetPostgresVersions_MaximumSet_Gen.json
+     * x-ms-original-file: 2025-06-23-preview/Organizations_GetPostgresVersions_MaximumSet_Gen.json
      */
     /**
      * Sample code: Organizations_GetPostgresVersions_MaximumSet.
@@ -21,12 +21,12 @@ public final class OrganizationsGetPostgresVersionsSamples {
     public static void
         organizationsGetPostgresVersionsMaximumSet(com.azure.resourcemanager.neonpostgres.NeonPostgresManager manager) {
         manager.organizations()
-            .getPostgresVersionsWithResponse("rgneon", new PgVersion().withVersion(7),
+            .getPostgresVersionsWithResponse("rgneon", new PgVersion().withVersion(25),
                 com.azure.core.util.Context.NONE);
     }
 
     /*
-     * x-ms-original-file: 2025-03-01/Organizations_GetPostgresVersions_MinimumSet_Gen.json
+     * x-ms-original-file: 2025-06-23-preview/Organizations_GetPostgresVersions_MinimumSet_Gen.json
      */
     /**
      * Sample code: Organizations_GetPostgresVersions_MinimumSet.

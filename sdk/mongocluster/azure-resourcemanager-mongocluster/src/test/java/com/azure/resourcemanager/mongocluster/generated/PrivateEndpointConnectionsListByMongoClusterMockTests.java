@@ -23,7 +23,7 @@ public final class PrivateEndpointConnectionsListByMongoClusterMockTests {
     @Test
     public void testListByMongoCluster() throws Exception {
         String responseStr
-            = "{\"value\":[{\"properties\":{\"groupIds\":[\"ankxmyskpbhenb\"],\"privateEndpoint\":{\"id\":\"xywnytnrsynlqidy\"},\"privateLinkServiceConnectionState\":{\"status\":\"Rejected\",\"description\":\"zfcl\",\"actionsRequired\":\"axdbabph\"},\"provisioningState\":\"Failed\"},\"id\":\"lfktsths\",\"name\":\"cocmnyyaztt\",\"type\":\"twwrqp\"}]}";
+            = "{\"value\":[{\"properties\":{\"groupIds\":[\"hxw\",\"ctyqik\",\"bbovplwzbhvgyugu\",\"svmkfssxquk\"],\"privateEndpoint\":{\"id\":\"l\"},\"privateLinkServiceConnectionState\":{\"status\":\"Rejected\",\"description\":\"xnkjzkdesl\",\"actionsRequired\":\"lopwiyig\"},\"provisioningState\":\"Creating\"},\"id\":\"dwzbaiue\",\"name\":\"baumnyqupedeoj\",\"type\":\"a\"}]}";
 
         HttpClient httpClient
             = response -> Mono.just(new MockHttpResponse(response, 200, responseStr.getBytes(StandardCharsets.UTF_8)));
@@ -33,13 +33,13 @@ public final class PrivateEndpointConnectionsListByMongoClusterMockTests {
                 new AzureProfile("", "", AzureCloud.AZURE_PUBLIC_CLOUD));
 
         PagedIterable<PrivateEndpointConnectionResource> response = manager.privateEndpointConnections()
-            .listByMongoCluster("jrunmpxtt", "bh", com.azure.core.util.Context.NONE);
+            .listByMongoCluster("xytxhpzxbz", "fzab", com.azure.core.util.Context.NONE);
 
         Assertions.assertEquals(PrivateEndpointServiceConnectionStatus.REJECTED,
             response.iterator().next().properties().privateLinkServiceConnectionState().status());
-        Assertions.assertEquals("zfcl",
+        Assertions.assertEquals("xnkjzkdesl",
             response.iterator().next().properties().privateLinkServiceConnectionState().description());
-        Assertions.assertEquals("axdbabph",
+        Assertions.assertEquals("lopwiyig",
             response.iterator().next().properties().privateLinkServiceConnectionState().actionsRequired());
     }
 }

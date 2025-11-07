@@ -3,8 +3,6 @@
 package com.azure.search.documents.indexes;
 
 import com.azure.core.exception.HttpResponseException;
-import com.azure.core.http.rest.PagedFlux;
-import com.azure.core.http.rest.PagedIterable;
 import com.azure.core.http.rest.Response;
 import com.azure.core.test.TestMode;
 import com.azure.core.util.Context;
@@ -27,7 +25,8 @@ import com.azure.search.documents.indexes.models.SynonymMap;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-
+import org.junit.jupiter.api.parallel.Execution;
+import org.junit.jupiter.api.parallel.ExecutionMode;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 import reactor.util.function.Tuple2;
@@ -53,12 +52,14 @@ import static com.azure.search.documents.TestHelpers.assertObjectEquals;
 import static com.azure.search.documents.TestHelpers.verifyHttpResponseError;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@Execution(ExecutionMode.SAME_THREAD)
 public class IndexManagementTests extends SearchTestBase {
     private static SearchIndexClient sharedIndexClient;
     private static SynonymMap sharedSynonymMap;
@@ -76,7 +77,7 @@ public class IndexManagementTests extends SearchTestBase {
             return;
         }
 
-        sharedIndexClient = new SearchIndexClientBuilder().endpoint(ENDPOINT)
+        sharedIndexClient = new SearchIndexClientBuilder().endpoint(SEARCH_ENDPOINT)
             .credential(TestHelpers.getTestTokenCredential())
             .buildClient();
 
@@ -835,19 +836,16 @@ public class IndexManagementTests extends SearchTestBase {
 
     @Test
     public void canCreateAndGetIndexStatsSummarySync() {
-
         List<String> indexNames = new ArrayList<>();
 
-        PagedIterable<IndexStatisticsSummary> statsSummary = client.getIndexStatsSummary();
-        assert (statsSummary.stream().count() == 0);
+        assertFalse(client.getIndexStatsSummary().stream().findAny().isPresent(), "Unexpected index stats summary.");
 
         SearchIndex index = createTestIndex(null);
         indexNames.add(index.getName());
         client.createOrUpdateIndex(index);
         indexesToDelete.add(index.getName());
 
-        statsSummary = client.getIndexStatsSummary();
-        assert (statsSummary.stream().count() == 1);
+        assertEquals(1, client.getIndexStatsSummary().stream().count());
 
         for (int i = 0; i < 4; i++) {
             index = createTestIndex(null);
@@ -856,12 +854,14 @@ public class IndexManagementTests extends SearchTestBase {
             indexesToDelete.add(index.getName());
         }
 
-        statsSummary = client.getIndexStatsSummary();
-        assertEquals(statsSummary.stream().count(), 5);
         List<String> returnedNames
-            = statsSummary.stream().map(IndexStatisticsSummary::getName).collect(Collectors.toList());
+            = client.getIndexStatsSummary().stream().map(IndexStatisticsSummary::getName).collect(Collectors.toList());
+        assertEquals(5, returnedNames.size());
+
         for (String name : indexNames) {
-            assert (returnedNames.contains(name));
+            assertTrue(returnedNames.contains(name),
+                () -> String.format("Stats summary didn't contain expected index '%s'. Found: '%s'", name,
+                    String.join(", ", returnedNames)));
         }
     }
 
@@ -887,20 +887,17 @@ public class IndexManagementTests extends SearchTestBase {
             indexesToDelete.add(index.getName());
         }
 
-        List<String> returnedNames = new ArrayList<String>();
-        PagedFlux<IndexStatisticsSummary> statsSummary = asyncClient.getIndexStatsSummary();
+        StepVerifier.create(asyncClient.getIndexStatsSummary().map(IndexStatisticsSummary::getName).collectList())
+            .assertNext(returnedNames -> {
+                assertEquals(5, returnedNames.size());
 
-        StepVerifier.create(statsSummary)
-            .consumeNextWith(indexStatsSummary -> returnedNames.add(indexStatsSummary.getName()))
-            .consumeNextWith(indexStatsSummary -> returnedNames.add(indexStatsSummary.getName()))
-            .consumeNextWith(indexStatsSummary -> returnedNames.add(indexStatsSummary.getName()))
-            .consumeNextWith(indexStatsSummary -> returnedNames.add(indexStatsSummary.getName()))
-            .consumeNextWith(indexStatsSummary -> returnedNames.add(indexStatsSummary.getName()))
+                for (String name : indexNames) {
+                    assertTrue(returnedNames.contains(name),
+                        () -> String.format("Stats summary didn't contain expected index '%s'. Found: '%s'", name,
+                            String.join(", ", returnedNames)));
+                }
+            })
             .verifyComplete();
-
-        for (String name : indexNames) {
-            assert (returnedNames.contains(name));
-        }
     }
 
     static SearchIndex mutateCorsOptionsInIndex(SearchIndex index) {

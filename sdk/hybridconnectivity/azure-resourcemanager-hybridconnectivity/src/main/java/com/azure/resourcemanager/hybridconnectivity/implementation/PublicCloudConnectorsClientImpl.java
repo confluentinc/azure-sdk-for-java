@@ -29,6 +29,7 @@ import com.azure.core.http.rest.Response;
 import com.azure.core.http.rest.RestProxy;
 import com.azure.core.management.exception.ManagementException;
 import com.azure.core.management.polling.PollResult;
+import com.azure.core.util.BinaryData;
 import com.azure.core.util.Context;
 import com.azure.core.util.FluxUtil;
 import com.azure.core.util.polling.PollerFlux;
@@ -37,6 +38,7 @@ import com.azure.resourcemanager.hybridconnectivity.fluent.PublicCloudConnectors
 import com.azure.resourcemanager.hybridconnectivity.fluent.models.OperationStatusResultInner;
 import com.azure.resourcemanager.hybridconnectivity.fluent.models.PublicCloudConnectorInner;
 import com.azure.resourcemanager.hybridconnectivity.implementation.models.PublicCloudConnectorListResult;
+import com.azure.resourcemanager.hybridconnectivity.models.PublicCloudConnectorUpdate;
 import java.nio.ByteBuffer;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -71,13 +73,23 @@ public final class PublicCloudConnectorsClientImpl implements PublicCloudConnect
      * proxy service to perform REST calls.
      */
     @Host("{endpoint}")
-    @ServiceInterface(name = "HybridConnectivityMg")
+    @ServiceInterface(name = "HybridConnectivityMgmtClientPublicCloudConnectors")
     public interface PublicCloudConnectorsService {
         @Headers({ "Content-Type: application/json" })
         @Get("/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.HybridConnectivity/publicCloudConnectors/{publicCloudConnector}")
         @ExpectedResponses({ 200 })
         @UnexpectedResponseExceptionType(ManagementException.class)
         Mono<Response<PublicCloudConnectorInner>> getByResourceGroup(@HostParam("endpoint") String endpoint,
+            @QueryParam("api-version") String apiVersion, @PathParam("subscriptionId") String subscriptionId,
+            @PathParam("resourceGroupName") String resourceGroupName,
+            @PathParam("publicCloudConnector") String publicCloudConnector, @HeaderParam("Accept") String accept,
+            Context context);
+
+        @Headers({ "Content-Type: application/json" })
+        @Get("/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.HybridConnectivity/publicCloudConnectors/{publicCloudConnector}")
+        @ExpectedResponses({ 200 })
+        @UnexpectedResponseExceptionType(ManagementException.class)
+        Response<PublicCloudConnectorInner> getByResourceGroupSync(@HostParam("endpoint") String endpoint,
             @QueryParam("api-version") String apiVersion, @PathParam("subscriptionId") String subscriptionId,
             @PathParam("resourceGroupName") String resourceGroupName,
             @PathParam("publicCloudConnector") String publicCloudConnector, @HeaderParam("Accept") String accept,
@@ -93,6 +105,16 @@ public final class PublicCloudConnectorsClientImpl implements PublicCloudConnect
             @HeaderParam("Content-Type") String contentType, @HeaderParam("Accept") String accept,
             @BodyParam("application/json") PublicCloudConnectorInner resource, Context context);
 
+        @Put("/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.HybridConnectivity/publicCloudConnectors/{publicCloudConnector}")
+        @ExpectedResponses({ 200, 201 })
+        @UnexpectedResponseExceptionType(ManagementException.class)
+        Response<BinaryData> createOrUpdateSync(@HostParam("endpoint") String endpoint,
+            @QueryParam("api-version") String apiVersion, @PathParam("subscriptionId") String subscriptionId,
+            @PathParam("resourceGroupName") String resourceGroupName,
+            @PathParam("publicCloudConnector") String publicCloudConnector,
+            @HeaderParam("Content-Type") String contentType, @HeaderParam("Accept") String accept,
+            @BodyParam("application/json") PublicCloudConnectorInner resource, Context context);
+
         @Patch("/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.HybridConnectivity/publicCloudConnectors/{publicCloudConnector}")
         @ExpectedResponses({ 200 })
         @UnexpectedResponseExceptionType(ManagementException.class)
@@ -101,23 +123,50 @@ public final class PublicCloudConnectorsClientImpl implements PublicCloudConnect
             @PathParam("resourceGroupName") String resourceGroupName,
             @PathParam("publicCloudConnector") String publicCloudConnector,
             @HeaderParam("Content-Type") String contentType, @HeaderParam("Accept") String accept,
-            @BodyParam("application/json") PublicCloudConnectorInner properties, Context context);
+            @BodyParam("application/json") PublicCloudConnectorUpdate properties, Context context);
 
-        @Headers({ "Content-Type: application/json" })
+        @Patch("/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.HybridConnectivity/publicCloudConnectors/{publicCloudConnector}")
+        @ExpectedResponses({ 200 })
+        @UnexpectedResponseExceptionType(ManagementException.class)
+        Response<PublicCloudConnectorInner> updateSync(@HostParam("endpoint") String endpoint,
+            @QueryParam("api-version") String apiVersion, @PathParam("subscriptionId") String subscriptionId,
+            @PathParam("resourceGroupName") String resourceGroupName,
+            @PathParam("publicCloudConnector") String publicCloudConnector,
+            @HeaderParam("Content-Type") String contentType, @HeaderParam("Accept") String accept,
+            @BodyParam("application/json") PublicCloudConnectorUpdate properties, Context context);
+
+        @Headers({ "Accept: application/json;q=0.9", "Content-Type: application/json" })
         @Delete("/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.HybridConnectivity/publicCloudConnectors/{publicCloudConnector}")
         @ExpectedResponses({ 200, 204 })
         @UnexpectedResponseExceptionType(ManagementException.class)
         Mono<Response<Void>> delete(@HostParam("endpoint") String endpoint,
             @QueryParam("api-version") String apiVersion, @PathParam("subscriptionId") String subscriptionId,
             @PathParam("resourceGroupName") String resourceGroupName,
-            @PathParam("publicCloudConnector") String publicCloudConnector, @HeaderParam("Accept") String accept,
-            Context context);
+            @PathParam("publicCloudConnector") String publicCloudConnector, Context context);
+
+        @Headers({ "Accept: application/json;q=0.9", "Content-Type: application/json" })
+        @Delete("/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.HybridConnectivity/publicCloudConnectors/{publicCloudConnector}")
+        @ExpectedResponses({ 200, 204 })
+        @UnexpectedResponseExceptionType(ManagementException.class)
+        Response<Void> deleteSync(@HostParam("endpoint") String endpoint, @QueryParam("api-version") String apiVersion,
+            @PathParam("subscriptionId") String subscriptionId,
+            @PathParam("resourceGroupName") String resourceGroupName,
+            @PathParam("publicCloudConnector") String publicCloudConnector, Context context);
 
         @Headers({ "Content-Type: application/json" })
         @Get("/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.HybridConnectivity/publicCloudConnectors")
         @ExpectedResponses({ 200 })
         @UnexpectedResponseExceptionType(ManagementException.class)
         Mono<Response<PublicCloudConnectorListResult>> listByResourceGroup(@HostParam("endpoint") String endpoint,
+            @QueryParam("api-version") String apiVersion, @PathParam("subscriptionId") String subscriptionId,
+            @PathParam("resourceGroupName") String resourceGroupName, @HeaderParam("Accept") String accept,
+            Context context);
+
+        @Headers({ "Content-Type: application/json" })
+        @Get("/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.HybridConnectivity/publicCloudConnectors")
+        @ExpectedResponses({ 200 })
+        @UnexpectedResponseExceptionType(ManagementException.class)
+        Response<PublicCloudConnectorListResult> listByResourceGroupSync(@HostParam("endpoint") String endpoint,
             @QueryParam("api-version") String apiVersion, @PathParam("subscriptionId") String subscriptionId,
             @PathParam("resourceGroupName") String resourceGroupName, @HeaderParam("Accept") String accept,
             Context context);
@@ -131,10 +180,28 @@ public final class PublicCloudConnectorsClientImpl implements PublicCloudConnect
             @HeaderParam("Accept") String accept, Context context);
 
         @Headers({ "Content-Type: application/json" })
+        @Get("/subscriptions/{subscriptionId}/providers/Microsoft.HybridConnectivity/publicCloudConnectors")
+        @ExpectedResponses({ 200 })
+        @UnexpectedResponseExceptionType(ManagementException.class)
+        Response<PublicCloudConnectorListResult> listSync(@HostParam("endpoint") String endpoint,
+            @QueryParam("api-version") String apiVersion, @PathParam("subscriptionId") String subscriptionId,
+            @HeaderParam("Accept") String accept, Context context);
+
+        @Headers({ "Content-Type: application/json" })
         @Post("/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.HybridConnectivity/publicCloudConnectors/{publicCloudConnector}/testPermissions")
         @ExpectedResponses({ 200, 202 })
         @UnexpectedResponseExceptionType(ManagementException.class)
         Mono<Response<Flux<ByteBuffer>>> testPermissions(@HostParam("endpoint") String endpoint,
+            @QueryParam("api-version") String apiVersion, @PathParam("subscriptionId") String subscriptionId,
+            @PathParam("resourceGroupName") String resourceGroupName,
+            @PathParam("publicCloudConnector") String publicCloudConnector, @HeaderParam("Accept") String accept,
+            Context context);
+
+        @Headers({ "Content-Type: application/json" })
+        @Post("/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.HybridConnectivity/publicCloudConnectors/{publicCloudConnector}/testPermissions")
+        @ExpectedResponses({ 200, 202 })
+        @UnexpectedResponseExceptionType(ManagementException.class)
+        Response<BinaryData> testPermissionsSync(@HostParam("endpoint") String endpoint,
             @QueryParam("api-version") String apiVersion, @PathParam("subscriptionId") String subscriptionId,
             @PathParam("resourceGroupName") String resourceGroupName,
             @PathParam("publicCloudConnector") String publicCloudConnector, @HeaderParam("Accept") String accept,
@@ -152,7 +219,23 @@ public final class PublicCloudConnectorsClientImpl implements PublicCloudConnect
         @Get("{nextLink}")
         @ExpectedResponses({ 200 })
         @UnexpectedResponseExceptionType(ManagementException.class)
+        Response<PublicCloudConnectorListResult> listByResourceGroupNextSync(
+            @PathParam(value = "nextLink", encoded = true) String nextLink, @HostParam("endpoint") String endpoint,
+            @HeaderParam("Accept") String accept, Context context);
+
+        @Headers({ "Content-Type: application/json" })
+        @Get("{nextLink}")
+        @ExpectedResponses({ 200 })
+        @UnexpectedResponseExceptionType(ManagementException.class)
         Mono<Response<PublicCloudConnectorListResult>> listBySubscriptionNext(
+            @PathParam(value = "nextLink", encoded = true) String nextLink, @HostParam("endpoint") String endpoint,
+            @HeaderParam("Accept") String accept, Context context);
+
+        @Headers({ "Content-Type: application/json" })
+        @Get("{nextLink}")
+        @ExpectedResponses({ 200 })
+        @UnexpectedResponseExceptionType(ManagementException.class)
+        Response<PublicCloudConnectorListResult> listBySubscriptionNextSync(
             @PathParam(value = "nextLink", encoded = true) String nextLink, @HostParam("endpoint") String endpoint,
             @HeaderParam("Accept") String accept, Context context);
     }
@@ -170,63 +253,11 @@ public final class PublicCloudConnectorsClientImpl implements PublicCloudConnect
     @ServiceMethod(returns = ReturnType.SINGLE)
     private Mono<Response<PublicCloudConnectorInner>> getByResourceGroupWithResponseAsync(String resourceGroupName,
         String publicCloudConnector) {
-        if (this.client.getEndpoint() == null) {
-            return Mono.error(
-                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
-        }
-        if (this.client.getSubscriptionId() == null) {
-            return Mono.error(new IllegalArgumentException(
-                "Parameter this.client.getSubscriptionId() is required and cannot be null."));
-        }
-        if (resourceGroupName == null) {
-            return Mono
-                .error(new IllegalArgumentException("Parameter resourceGroupName is required and cannot be null."));
-        }
-        if (publicCloudConnector == null) {
-            return Mono
-                .error(new IllegalArgumentException("Parameter publicCloudConnector is required and cannot be null."));
-        }
         final String accept = "application/json";
         return FluxUtil
             .withContext(context -> service.getByResourceGroup(this.client.getEndpoint(), this.client.getApiVersion(),
                 this.client.getSubscriptionId(), resourceGroupName, publicCloudConnector, accept, context))
             .contextWrite(context -> context.putAll(FluxUtil.toReactorContext(this.client.getContext()).readOnly()));
-    }
-
-    /**
-     * Get a PublicCloudConnector.
-     * 
-     * @param resourceGroupName The name of the resource group. The name is case insensitive.
-     * @param publicCloudConnector Represent public cloud connectors resource.
-     * @param context The context to associate with this operation.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return a PublicCloudConnector along with {@link Response} on successful completion of {@link Mono}.
-     */
-    @ServiceMethod(returns = ReturnType.SINGLE)
-    private Mono<Response<PublicCloudConnectorInner>> getByResourceGroupWithResponseAsync(String resourceGroupName,
-        String publicCloudConnector, Context context) {
-        if (this.client.getEndpoint() == null) {
-            return Mono.error(
-                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
-        }
-        if (this.client.getSubscriptionId() == null) {
-            return Mono.error(new IllegalArgumentException(
-                "Parameter this.client.getSubscriptionId() is required and cannot be null."));
-        }
-        if (resourceGroupName == null) {
-            return Mono
-                .error(new IllegalArgumentException("Parameter resourceGroupName is required and cannot be null."));
-        }
-        if (publicCloudConnector == null) {
-            return Mono
-                .error(new IllegalArgumentException("Parameter publicCloudConnector is required and cannot be null."));
-        }
-        final String accept = "application/json";
-        context = this.client.mergeContext(context);
-        return service.getByResourceGroup(this.client.getEndpoint(), this.client.getApiVersion(),
-            this.client.getSubscriptionId(), resourceGroupName, publicCloudConnector, accept, context);
     }
 
     /**
@@ -260,7 +291,9 @@ public final class PublicCloudConnectorsClientImpl implements PublicCloudConnect
     @ServiceMethod(returns = ReturnType.SINGLE)
     public Response<PublicCloudConnectorInner> getByResourceGroupWithResponse(String resourceGroupName,
         String publicCloudConnector, Context context) {
-        return getByResourceGroupWithResponseAsync(resourceGroupName, publicCloudConnector, context).block();
+        final String accept = "application/json";
+        return service.getByResourceGroupSync(this.client.getEndpoint(), this.client.getApiVersion(),
+            this.client.getSubscriptionId(), resourceGroupName, publicCloudConnector, accept, context);
     }
 
     /**
@@ -292,27 +325,6 @@ public final class PublicCloudConnectorsClientImpl implements PublicCloudConnect
     @ServiceMethod(returns = ReturnType.SINGLE)
     private Mono<Response<Flux<ByteBuffer>>> createOrUpdateWithResponseAsync(String resourceGroupName,
         String publicCloudConnector, PublicCloudConnectorInner resource) {
-        if (this.client.getEndpoint() == null) {
-            return Mono.error(
-                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
-        }
-        if (this.client.getSubscriptionId() == null) {
-            return Mono.error(new IllegalArgumentException(
-                "Parameter this.client.getSubscriptionId() is required and cannot be null."));
-        }
-        if (resourceGroupName == null) {
-            return Mono
-                .error(new IllegalArgumentException("Parameter resourceGroupName is required and cannot be null."));
-        }
-        if (publicCloudConnector == null) {
-            return Mono
-                .error(new IllegalArgumentException("Parameter publicCloudConnector is required and cannot be null."));
-        }
-        if (resource == null) {
-            return Mono.error(new IllegalArgumentException("Parameter resource is required and cannot be null."));
-        } else {
-            resource.validate();
-        }
         final String contentType = "application/json";
         final String accept = "application/json";
         return FluxUtil
@@ -328,40 +340,39 @@ public final class PublicCloudConnectorsClientImpl implements PublicCloudConnect
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
      * @param publicCloudConnector Represent public cloud connectors resource.
      * @param resource Resource create parameters.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return public Cloud Connector along with {@link Response}.
+     */
+    @ServiceMethod(returns = ReturnType.SINGLE)
+    private Response<BinaryData> createOrUpdateWithResponse(String resourceGroupName, String publicCloudConnector,
+        PublicCloudConnectorInner resource) {
+        final String contentType = "application/json";
+        final String accept = "application/json";
+        return service.createOrUpdateSync(this.client.getEndpoint(), this.client.getApiVersion(),
+            this.client.getSubscriptionId(), resourceGroupName, publicCloudConnector, contentType, accept, resource,
+            Context.NONE);
+    }
+
+    /**
+     * Create a PublicCloudConnector.
+     * 
+     * @param resourceGroupName The name of the resource group. The name is case insensitive.
+     * @param publicCloudConnector Represent public cloud connectors resource.
+     * @param resource Resource create parameters.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return public Cloud Connector along with {@link Response} on successful completion of {@link Mono}.
+     * @return public Cloud Connector along with {@link Response}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    private Mono<Response<Flux<ByteBuffer>>> createOrUpdateWithResponseAsync(String resourceGroupName,
-        String publicCloudConnector, PublicCloudConnectorInner resource, Context context) {
-        if (this.client.getEndpoint() == null) {
-            return Mono.error(
-                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
-        }
-        if (this.client.getSubscriptionId() == null) {
-            return Mono.error(new IllegalArgumentException(
-                "Parameter this.client.getSubscriptionId() is required and cannot be null."));
-        }
-        if (resourceGroupName == null) {
-            return Mono
-                .error(new IllegalArgumentException("Parameter resourceGroupName is required and cannot be null."));
-        }
-        if (publicCloudConnector == null) {
-            return Mono
-                .error(new IllegalArgumentException("Parameter publicCloudConnector is required and cannot be null."));
-        }
-        if (resource == null) {
-            return Mono.error(new IllegalArgumentException("Parameter resource is required and cannot be null."));
-        } else {
-            resource.validate();
-        }
+    private Response<BinaryData> createOrUpdateWithResponse(String resourceGroupName, String publicCloudConnector,
+        PublicCloudConnectorInner resource, Context context) {
         final String contentType = "application/json";
         final String accept = "application/json";
-        context = this.client.mergeContext(context);
-        return service.createOrUpdate(this.client.getEndpoint(), this.client.getApiVersion(),
+        return service.createOrUpdateSync(this.client.getEndpoint(), this.client.getApiVersion(),
             this.client.getSubscriptionId(), resourceGroupName, publicCloudConnector, contentType, accept, resource,
             context);
     }
@@ -393,28 +404,6 @@ public final class PublicCloudConnectorsClientImpl implements PublicCloudConnect
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
      * @param publicCloudConnector Represent public cloud connectors resource.
      * @param resource Resource create parameters.
-     * @param context The context to associate with this operation.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the {@link PollerFlux} for polling of public Cloud Connector.
-     */
-    @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
-    private PollerFlux<PollResult<PublicCloudConnectorInner>, PublicCloudConnectorInner> beginCreateOrUpdateAsync(
-        String resourceGroupName, String publicCloudConnector, PublicCloudConnectorInner resource, Context context) {
-        context = this.client.mergeContext(context);
-        Mono<Response<Flux<ByteBuffer>>> mono
-            = createOrUpdateWithResponseAsync(resourceGroupName, publicCloudConnector, resource, context);
-        return this.client.<PublicCloudConnectorInner, PublicCloudConnectorInner>getLroResult(mono,
-            this.client.getHttpPipeline(), PublicCloudConnectorInner.class, PublicCloudConnectorInner.class, context);
-    }
-
-    /**
-     * Create a PublicCloudConnector.
-     * 
-     * @param resourceGroupName The name of the resource group. The name is case insensitive.
-     * @param publicCloudConnector Represent public cloud connectors resource.
-     * @param resource Resource create parameters.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
@@ -423,7 +412,9 @@ public final class PublicCloudConnectorsClientImpl implements PublicCloudConnect
     @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
     public SyncPoller<PollResult<PublicCloudConnectorInner>, PublicCloudConnectorInner>
         beginCreateOrUpdate(String resourceGroupName, String publicCloudConnector, PublicCloudConnectorInner resource) {
-        return this.beginCreateOrUpdateAsync(resourceGroupName, publicCloudConnector, resource).getSyncPoller();
+        Response<BinaryData> response = createOrUpdateWithResponse(resourceGroupName, publicCloudConnector, resource);
+        return this.client.<PublicCloudConnectorInner, PublicCloudConnectorInner>getLroResult(response,
+            PublicCloudConnectorInner.class, PublicCloudConnectorInner.class, Context.NONE);
     }
 
     /**
@@ -441,8 +432,10 @@ public final class PublicCloudConnectorsClientImpl implements PublicCloudConnect
     @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
     public SyncPoller<PollResult<PublicCloudConnectorInner>, PublicCloudConnectorInner> beginCreateOrUpdate(
         String resourceGroupName, String publicCloudConnector, PublicCloudConnectorInner resource, Context context) {
-        return this.beginCreateOrUpdateAsync(resourceGroupName, publicCloudConnector, resource, context)
-            .getSyncPoller();
+        Response<BinaryData> response
+            = createOrUpdateWithResponse(resourceGroupName, publicCloudConnector, resource, context);
+        return this.client.<PublicCloudConnectorInner, PublicCloudConnectorInner>getLroResult(response,
+            PublicCloudConnectorInner.class, PublicCloudConnectorInner.class, context);
     }
 
     /**
@@ -469,25 +462,6 @@ public final class PublicCloudConnectorsClientImpl implements PublicCloudConnect
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
      * @param publicCloudConnector Represent public cloud connectors resource.
      * @param resource Resource create parameters.
-     * @param context The context to associate with this operation.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return public Cloud Connector on successful completion of {@link Mono}.
-     */
-    @ServiceMethod(returns = ReturnType.SINGLE)
-    private Mono<PublicCloudConnectorInner> createOrUpdateAsync(String resourceGroupName, String publicCloudConnector,
-        PublicCloudConnectorInner resource, Context context) {
-        return beginCreateOrUpdateAsync(resourceGroupName, publicCloudConnector, resource, context).last()
-            .flatMap(this.client::getLroFinalResultOrError);
-    }
-
-    /**
-     * Create a PublicCloudConnector.
-     * 
-     * @param resourceGroupName The name of the resource group. The name is case insensitive.
-     * @param publicCloudConnector Represent public cloud connectors resource.
-     * @param resource Resource create parameters.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
@@ -496,7 +470,7 @@ public final class PublicCloudConnectorsClientImpl implements PublicCloudConnect
     @ServiceMethod(returns = ReturnType.SINGLE)
     public PublicCloudConnectorInner createOrUpdate(String resourceGroupName, String publicCloudConnector,
         PublicCloudConnectorInner resource) {
-        return createOrUpdateAsync(resourceGroupName, publicCloudConnector, resource).block();
+        return beginCreateOrUpdate(resourceGroupName, publicCloudConnector, resource).getFinalResult();
     }
 
     /**
@@ -514,7 +488,7 @@ public final class PublicCloudConnectorsClientImpl implements PublicCloudConnect
     @ServiceMethod(returns = ReturnType.SINGLE)
     public PublicCloudConnectorInner createOrUpdate(String resourceGroupName, String publicCloudConnector,
         PublicCloudConnectorInner resource, Context context) {
-        return createOrUpdateAsync(resourceGroupName, publicCloudConnector, resource, context).block();
+        return beginCreateOrUpdate(resourceGroupName, publicCloudConnector, resource, context).getFinalResult();
     }
 
     /**
@@ -530,28 +504,7 @@ public final class PublicCloudConnectorsClientImpl implements PublicCloudConnect
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
     private Mono<Response<PublicCloudConnectorInner>> updateWithResponseAsync(String resourceGroupName,
-        String publicCloudConnector, PublicCloudConnectorInner properties) {
-        if (this.client.getEndpoint() == null) {
-            return Mono.error(
-                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
-        }
-        if (this.client.getSubscriptionId() == null) {
-            return Mono.error(new IllegalArgumentException(
-                "Parameter this.client.getSubscriptionId() is required and cannot be null."));
-        }
-        if (resourceGroupName == null) {
-            return Mono
-                .error(new IllegalArgumentException("Parameter resourceGroupName is required and cannot be null."));
-        }
-        if (publicCloudConnector == null) {
-            return Mono
-                .error(new IllegalArgumentException("Parameter publicCloudConnector is required and cannot be null."));
-        }
-        if (properties == null) {
-            return Mono.error(new IllegalArgumentException("Parameter properties is required and cannot be null."));
-        } else {
-            properties.validate();
-        }
+        String publicCloudConnector, PublicCloudConnectorUpdate properties) {
         final String contentType = "application/json";
         final String accept = "application/json";
         return FluxUtil
@@ -567,49 +520,6 @@ public final class PublicCloudConnectorsClientImpl implements PublicCloudConnect
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
      * @param publicCloudConnector Represent public cloud connectors resource.
      * @param properties The resource properties to be updated.
-     * @param context The context to associate with this operation.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return public Cloud Connector along with {@link Response} on successful completion of {@link Mono}.
-     */
-    @ServiceMethod(returns = ReturnType.SINGLE)
-    private Mono<Response<PublicCloudConnectorInner>> updateWithResponseAsync(String resourceGroupName,
-        String publicCloudConnector, PublicCloudConnectorInner properties, Context context) {
-        if (this.client.getEndpoint() == null) {
-            return Mono.error(
-                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
-        }
-        if (this.client.getSubscriptionId() == null) {
-            return Mono.error(new IllegalArgumentException(
-                "Parameter this.client.getSubscriptionId() is required and cannot be null."));
-        }
-        if (resourceGroupName == null) {
-            return Mono
-                .error(new IllegalArgumentException("Parameter resourceGroupName is required and cannot be null."));
-        }
-        if (publicCloudConnector == null) {
-            return Mono
-                .error(new IllegalArgumentException("Parameter publicCloudConnector is required and cannot be null."));
-        }
-        if (properties == null) {
-            return Mono.error(new IllegalArgumentException("Parameter properties is required and cannot be null."));
-        } else {
-            properties.validate();
-        }
-        final String contentType = "application/json";
-        final String accept = "application/json";
-        context = this.client.mergeContext(context);
-        return service.update(this.client.getEndpoint(), this.client.getApiVersion(), this.client.getSubscriptionId(),
-            resourceGroupName, publicCloudConnector, contentType, accept, properties, context);
-    }
-
-    /**
-     * Update a PublicCloudConnector.
-     * 
-     * @param resourceGroupName The name of the resource group. The name is case insensitive.
-     * @param publicCloudConnector Represent public cloud connectors resource.
-     * @param properties The resource properties to be updated.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
@@ -617,7 +527,7 @@ public final class PublicCloudConnectorsClientImpl implements PublicCloudConnect
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
     private Mono<PublicCloudConnectorInner> updateAsync(String resourceGroupName, String publicCloudConnector,
-        PublicCloudConnectorInner properties) {
+        PublicCloudConnectorUpdate properties) {
         return updateWithResponseAsync(resourceGroupName, publicCloudConnector, properties)
             .flatMap(res -> Mono.justOrEmpty(res.getValue()));
     }
@@ -636,8 +546,12 @@ public final class PublicCloudConnectorsClientImpl implements PublicCloudConnect
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
     public Response<PublicCloudConnectorInner> updateWithResponse(String resourceGroupName, String publicCloudConnector,
-        PublicCloudConnectorInner properties, Context context) {
-        return updateWithResponseAsync(resourceGroupName, publicCloudConnector, properties, context).block();
+        PublicCloudConnectorUpdate properties, Context context) {
+        final String contentType = "application/json";
+        final String accept = "application/json";
+        return service.updateSync(this.client.getEndpoint(), this.client.getApiVersion(),
+            this.client.getSubscriptionId(), resourceGroupName, publicCloudConnector, contentType, accept, properties,
+            context);
     }
 
     /**
@@ -653,7 +567,7 @@ public final class PublicCloudConnectorsClientImpl implements PublicCloudConnect
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
     public PublicCloudConnectorInner update(String resourceGroupName, String publicCloudConnector,
-        PublicCloudConnectorInner properties) {
+        PublicCloudConnectorUpdate properties) {
         return updateWithResponse(resourceGroupName, publicCloudConnector, properties, Context.NONE).getValue();
     }
 
@@ -669,63 +583,10 @@ public final class PublicCloudConnectorsClientImpl implements PublicCloudConnect
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
     private Mono<Response<Void>> deleteWithResponseAsync(String resourceGroupName, String publicCloudConnector) {
-        if (this.client.getEndpoint() == null) {
-            return Mono.error(
-                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
-        }
-        if (this.client.getSubscriptionId() == null) {
-            return Mono.error(new IllegalArgumentException(
-                "Parameter this.client.getSubscriptionId() is required and cannot be null."));
-        }
-        if (resourceGroupName == null) {
-            return Mono
-                .error(new IllegalArgumentException("Parameter resourceGroupName is required and cannot be null."));
-        }
-        if (publicCloudConnector == null) {
-            return Mono
-                .error(new IllegalArgumentException("Parameter publicCloudConnector is required and cannot be null."));
-        }
-        final String accept = "application/json";
         return FluxUtil
             .withContext(context -> service.delete(this.client.getEndpoint(), this.client.getApiVersion(),
-                this.client.getSubscriptionId(), resourceGroupName, publicCloudConnector, accept, context))
+                this.client.getSubscriptionId(), resourceGroupName, publicCloudConnector, context))
             .contextWrite(context -> context.putAll(FluxUtil.toReactorContext(this.client.getContext()).readOnly()));
-    }
-
-    /**
-     * Delete a PublicCloudConnector.
-     * 
-     * @param resourceGroupName The name of the resource group. The name is case insensitive.
-     * @param publicCloudConnector Represent public cloud connectors resource.
-     * @param context The context to associate with this operation.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the {@link Response} on successful completion of {@link Mono}.
-     */
-    @ServiceMethod(returns = ReturnType.SINGLE)
-    private Mono<Response<Void>> deleteWithResponseAsync(String resourceGroupName, String publicCloudConnector,
-        Context context) {
-        if (this.client.getEndpoint() == null) {
-            return Mono.error(
-                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
-        }
-        if (this.client.getSubscriptionId() == null) {
-            return Mono.error(new IllegalArgumentException(
-                "Parameter this.client.getSubscriptionId() is required and cannot be null."));
-        }
-        if (resourceGroupName == null) {
-            return Mono
-                .error(new IllegalArgumentException("Parameter resourceGroupName is required and cannot be null."));
-        }
-        if (publicCloudConnector == null) {
-            return Mono
-                .error(new IllegalArgumentException("Parameter publicCloudConnector is required and cannot be null."));
-        }
-        final String accept = "application/json";
-        context = this.client.mergeContext(context);
-        return service.delete(this.client.getEndpoint(), this.client.getApiVersion(), this.client.getSubscriptionId(),
-            resourceGroupName, publicCloudConnector, accept, context);
     }
 
     /**
@@ -756,7 +617,8 @@ public final class PublicCloudConnectorsClientImpl implements PublicCloudConnect
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
     public Response<Void> deleteWithResponse(String resourceGroupName, String publicCloudConnector, Context context) {
-        return deleteWithResponseAsync(resourceGroupName, publicCloudConnector, context).block();
+        return service.deleteSync(this.client.getEndpoint(), this.client.getApiVersion(),
+            this.client.getSubscriptionId(), resourceGroupName, publicCloudConnector, context);
     }
 
     /**
@@ -786,18 +648,6 @@ public final class PublicCloudConnectorsClientImpl implements PublicCloudConnect
     @ServiceMethod(returns = ReturnType.SINGLE)
     private Mono<PagedResponse<PublicCloudConnectorInner>>
         listByResourceGroupSinglePageAsync(String resourceGroupName) {
-        if (this.client.getEndpoint() == null) {
-            return Mono.error(
-                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
-        }
-        if (this.client.getSubscriptionId() == null) {
-            return Mono.error(new IllegalArgumentException(
-                "Parameter this.client.getSubscriptionId() is required and cannot be null."));
-        }
-        if (resourceGroupName == null) {
-            return Mono
-                .error(new IllegalArgumentException("Parameter resourceGroupName is required and cannot be null."));
-        }
         final String accept = "application/json";
         return FluxUtil
             .withContext(context -> service.listByResourceGroup(this.client.getEndpoint(), this.client.getApiVersion(),
@@ -805,41 +655,6 @@ public final class PublicCloudConnectorsClientImpl implements PublicCloudConnect
             .<PagedResponse<PublicCloudConnectorInner>>map(res -> new PagedResponseBase<>(res.getRequest(),
                 res.getStatusCode(), res.getHeaders(), res.getValue().value(), res.getValue().nextLink(), null))
             .contextWrite(context -> context.putAll(FluxUtil.toReactorContext(this.client.getContext()).readOnly()));
-    }
-
-    /**
-     * List PublicCloudConnector resources by resource group.
-     * 
-     * @param resourceGroupName The name of the resource group. The name is case insensitive.
-     * @param context The context to associate with this operation.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the response of a PublicCloudConnector list operation along with {@link PagedResponse} on successful
-     * completion of {@link Mono}.
-     */
-    @ServiceMethod(returns = ReturnType.SINGLE)
-    private Mono<PagedResponse<PublicCloudConnectorInner>> listByResourceGroupSinglePageAsync(String resourceGroupName,
-        Context context) {
-        if (this.client.getEndpoint() == null) {
-            return Mono.error(
-                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
-        }
-        if (this.client.getSubscriptionId() == null) {
-            return Mono.error(new IllegalArgumentException(
-                "Parameter this.client.getSubscriptionId() is required and cannot be null."));
-        }
-        if (resourceGroupName == null) {
-            return Mono
-                .error(new IllegalArgumentException("Parameter resourceGroupName is required and cannot be null."));
-        }
-        final String accept = "application/json";
-        context = this.client.mergeContext(context);
-        return service
-            .listByResourceGroup(this.client.getEndpoint(), this.client.getApiVersion(),
-                this.client.getSubscriptionId(), resourceGroupName, accept, context)
-            .map(res -> new PagedResponseBase<>(res.getRequest(), res.getStatusCode(), res.getHeaders(),
-                res.getValue().value(), res.getValue().nextLink(), null));
     }
 
     /**
@@ -861,16 +676,38 @@ public final class PublicCloudConnectorsClientImpl implements PublicCloudConnect
      * List PublicCloudConnector resources by resource group.
      * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return the response of a PublicCloudConnector list operation along with {@link PagedResponse}.
+     */
+    @ServiceMethod(returns = ReturnType.SINGLE)
+    private PagedResponse<PublicCloudConnectorInner> listByResourceGroupSinglePage(String resourceGroupName) {
+        final String accept = "application/json";
+        Response<PublicCloudConnectorListResult> res = service.listByResourceGroupSync(this.client.getEndpoint(),
+            this.client.getApiVersion(), this.client.getSubscriptionId(), resourceGroupName, accept, Context.NONE);
+        return new PagedResponseBase<>(res.getRequest(), res.getStatusCode(), res.getHeaders(), res.getValue().value(),
+            res.getValue().nextLink(), null);
+    }
+
+    /**
+     * List PublicCloudConnector resources by resource group.
+     * 
+     * @param resourceGroupName The name of the resource group. The name is case insensitive.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the response of a PublicCloudConnector list operation as paginated response with {@link PagedFlux}.
+     * @return the response of a PublicCloudConnector list operation along with {@link PagedResponse}.
      */
-    @ServiceMethod(returns = ReturnType.COLLECTION)
-    private PagedFlux<PublicCloudConnectorInner> listByResourceGroupAsync(String resourceGroupName, Context context) {
-        return new PagedFlux<>(() -> listByResourceGroupSinglePageAsync(resourceGroupName, context),
-            nextLink -> listByResourceGroupNextSinglePageAsync(nextLink, context));
+    @ServiceMethod(returns = ReturnType.SINGLE)
+    private PagedResponse<PublicCloudConnectorInner> listByResourceGroupSinglePage(String resourceGroupName,
+        Context context) {
+        final String accept = "application/json";
+        Response<PublicCloudConnectorListResult> res = service.listByResourceGroupSync(this.client.getEndpoint(),
+            this.client.getApiVersion(), this.client.getSubscriptionId(), resourceGroupName, accept, context);
+        return new PagedResponseBase<>(res.getRequest(), res.getStatusCode(), res.getHeaders(), res.getValue().value(),
+            res.getValue().nextLink(), null);
     }
 
     /**
@@ -884,7 +721,8 @@ public final class PublicCloudConnectorsClientImpl implements PublicCloudConnect
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
     public PagedIterable<PublicCloudConnectorInner> listByResourceGroup(String resourceGroupName) {
-        return new PagedIterable<>(listByResourceGroupAsync(resourceGroupName));
+        return new PagedIterable<>(() -> listByResourceGroupSinglePage(resourceGroupName),
+            nextLink -> listByResourceGroupNextSinglePage(nextLink));
     }
 
     /**
@@ -899,7 +737,8 @@ public final class PublicCloudConnectorsClientImpl implements PublicCloudConnect
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
     public PagedIterable<PublicCloudConnectorInner> listByResourceGroup(String resourceGroupName, Context context) {
-        return new PagedIterable<>(listByResourceGroupAsync(resourceGroupName, context));
+        return new PagedIterable<>(() -> listByResourceGroupSinglePage(resourceGroupName, context),
+            nextLink -> listByResourceGroupNextSinglePage(nextLink, context));
     }
 
     /**
@@ -912,14 +751,6 @@ public final class PublicCloudConnectorsClientImpl implements PublicCloudConnect
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
     private Mono<PagedResponse<PublicCloudConnectorInner>> listSinglePageAsync() {
-        if (this.client.getEndpoint() == null) {
-            return Mono.error(
-                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
-        }
-        if (this.client.getSubscriptionId() == null) {
-            return Mono.error(new IllegalArgumentException(
-                "Parameter this.client.getSubscriptionId() is required and cannot be null."));
-        }
         final String accept = "application/json";
         return FluxUtil
             .withContext(context -> service.list(this.client.getEndpoint(), this.client.getApiVersion(),
@@ -927,35 +758,6 @@ public final class PublicCloudConnectorsClientImpl implements PublicCloudConnect
             .<PagedResponse<PublicCloudConnectorInner>>map(res -> new PagedResponseBase<>(res.getRequest(),
                 res.getStatusCode(), res.getHeaders(), res.getValue().value(), res.getValue().nextLink(), null))
             .contextWrite(context -> context.putAll(FluxUtil.toReactorContext(this.client.getContext()).readOnly()));
-    }
-
-    /**
-     * List PublicCloudConnector resources by subscription ID.
-     * 
-     * @param context The context to associate with this operation.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the response of a PublicCloudConnector list operation along with {@link PagedResponse} on successful
-     * completion of {@link Mono}.
-     */
-    @ServiceMethod(returns = ReturnType.SINGLE)
-    private Mono<PagedResponse<PublicCloudConnectorInner>> listSinglePageAsync(Context context) {
-        if (this.client.getEndpoint() == null) {
-            return Mono.error(
-                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
-        }
-        if (this.client.getSubscriptionId() == null) {
-            return Mono.error(new IllegalArgumentException(
-                "Parameter this.client.getSubscriptionId() is required and cannot be null."));
-        }
-        final String accept = "application/json";
-        context = this.client.mergeContext(context);
-        return service
-            .list(this.client.getEndpoint(), this.client.getApiVersion(), this.client.getSubscriptionId(), accept,
-                context)
-            .map(res -> new PagedResponseBase<>(res.getRequest(), res.getStatusCode(), res.getHeaders(),
-                res.getValue().value(), res.getValue().nextLink(), null));
     }
 
     /**
@@ -974,16 +776,35 @@ public final class PublicCloudConnectorsClientImpl implements PublicCloudConnect
     /**
      * List PublicCloudConnector resources by subscription ID.
      * 
+     * @throws ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return the response of a PublicCloudConnector list operation along with {@link PagedResponse}.
+     */
+    @ServiceMethod(returns = ReturnType.SINGLE)
+    private PagedResponse<PublicCloudConnectorInner> listSinglePage() {
+        final String accept = "application/json";
+        Response<PublicCloudConnectorListResult> res = service.listSync(this.client.getEndpoint(),
+            this.client.getApiVersion(), this.client.getSubscriptionId(), accept, Context.NONE);
+        return new PagedResponseBase<>(res.getRequest(), res.getStatusCode(), res.getHeaders(), res.getValue().value(),
+            res.getValue().nextLink(), null);
+    }
+
+    /**
+     * List PublicCloudConnector resources by subscription ID.
+     * 
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the response of a PublicCloudConnector list operation as paginated response with {@link PagedFlux}.
+     * @return the response of a PublicCloudConnector list operation along with {@link PagedResponse}.
      */
-    @ServiceMethod(returns = ReturnType.COLLECTION)
-    private PagedFlux<PublicCloudConnectorInner> listAsync(Context context) {
-        return new PagedFlux<>(() -> listSinglePageAsync(context),
-            nextLink -> listBySubscriptionNextSinglePageAsync(nextLink, context));
+    @ServiceMethod(returns = ReturnType.SINGLE)
+    private PagedResponse<PublicCloudConnectorInner> listSinglePage(Context context) {
+        final String accept = "application/json";
+        Response<PublicCloudConnectorListResult> res = service.listSync(this.client.getEndpoint(),
+            this.client.getApiVersion(), this.client.getSubscriptionId(), accept, context);
+        return new PagedResponseBase<>(res.getRequest(), res.getStatusCode(), res.getHeaders(), res.getValue().value(),
+            res.getValue().nextLink(), null);
     }
 
     /**
@@ -995,7 +816,7 @@ public final class PublicCloudConnectorsClientImpl implements PublicCloudConnect
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
     public PagedIterable<PublicCloudConnectorInner> list() {
-        return new PagedIterable<>(listAsync());
+        return new PagedIterable<>(() -> listSinglePage(), nextLink -> listBySubscriptionNextSinglePage(nextLink));
     }
 
     /**
@@ -1009,7 +830,8 @@ public final class PublicCloudConnectorsClientImpl implements PublicCloudConnect
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
     public PagedIterable<PublicCloudConnectorInner> list(Context context) {
-        return new PagedIterable<>(listAsync(context));
+        return new PagedIterable<>(() -> listSinglePage(context),
+            nextLink -> listBySubscriptionNextSinglePage(nextLink, context));
     }
 
     /**
@@ -1025,22 +847,6 @@ public final class PublicCloudConnectorsClientImpl implements PublicCloudConnect
     @ServiceMethod(returns = ReturnType.SINGLE)
     private Mono<Response<Flux<ByteBuffer>>> testPermissionsWithResponseAsync(String resourceGroupName,
         String publicCloudConnector) {
-        if (this.client.getEndpoint() == null) {
-            return Mono.error(
-                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
-        }
-        if (this.client.getSubscriptionId() == null) {
-            return Mono.error(new IllegalArgumentException(
-                "Parameter this.client.getSubscriptionId() is required and cannot be null."));
-        }
-        if (resourceGroupName == null) {
-            return Mono
-                .error(new IllegalArgumentException("Parameter resourceGroupName is required and cannot be null."));
-        }
-        if (publicCloudConnector == null) {
-            return Mono
-                .error(new IllegalArgumentException("Parameter publicCloudConnector is required and cannot be null."));
-        }
         final String accept = "application/json";
         return FluxUtil
             .withContext(context -> service.testPermissions(this.client.getEndpoint(), this.client.getApiVersion(),
@@ -1053,34 +859,34 @@ public final class PublicCloudConnectorsClientImpl implements PublicCloudConnect
      * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
      * @param publicCloudConnector Represent public cloud connectors resource.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return the response body along with {@link Response}.
+     */
+    @ServiceMethod(returns = ReturnType.SINGLE)
+    private Response<BinaryData> testPermissionsWithResponse(String resourceGroupName, String publicCloudConnector) {
+        final String accept = "application/json";
+        return service.testPermissionsSync(this.client.getEndpoint(), this.client.getApiVersion(),
+            this.client.getSubscriptionId(), resourceGroupName, publicCloudConnector, accept, Context.NONE);
+    }
+
+    /**
+     * A long-running resource action.
+     * 
+     * @param resourceGroupName The name of the resource group. The name is case insensitive.
+     * @param publicCloudConnector Represent public cloud connectors resource.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the response body along with {@link Response} on successful completion of {@link Mono}.
+     * @return the response body along with {@link Response}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    private Mono<Response<Flux<ByteBuffer>>> testPermissionsWithResponseAsync(String resourceGroupName,
-        String publicCloudConnector, Context context) {
-        if (this.client.getEndpoint() == null) {
-            return Mono.error(
-                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
-        }
-        if (this.client.getSubscriptionId() == null) {
-            return Mono.error(new IllegalArgumentException(
-                "Parameter this.client.getSubscriptionId() is required and cannot be null."));
-        }
-        if (resourceGroupName == null) {
-            return Mono
-                .error(new IllegalArgumentException("Parameter resourceGroupName is required and cannot be null."));
-        }
-        if (publicCloudConnector == null) {
-            return Mono
-                .error(new IllegalArgumentException("Parameter publicCloudConnector is required and cannot be null."));
-        }
+    private Response<BinaryData> testPermissionsWithResponse(String resourceGroupName, String publicCloudConnector,
+        Context context) {
         final String accept = "application/json";
-        context = this.client.mergeContext(context);
-        return service.testPermissions(this.client.getEndpoint(), this.client.getApiVersion(),
+        return service.testPermissionsSync(this.client.getEndpoint(), this.client.getApiVersion(),
             this.client.getSubscriptionId(), resourceGroupName, publicCloudConnector, accept, context);
     }
 
@@ -1109,27 +915,6 @@ public final class PublicCloudConnectorsClientImpl implements PublicCloudConnect
      * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
      * @param publicCloudConnector Represent public cloud connectors resource.
-     * @param context The context to associate with this operation.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the {@link PollerFlux} for polling of long-running operation.
-     */
-    @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
-    private PollerFlux<PollResult<OperationStatusResultInner>, OperationStatusResultInner>
-        beginTestPermissionsAsync(String resourceGroupName, String publicCloudConnector, Context context) {
-        context = this.client.mergeContext(context);
-        Mono<Response<Flux<ByteBuffer>>> mono
-            = testPermissionsWithResponseAsync(resourceGroupName, publicCloudConnector, context);
-        return this.client.<OperationStatusResultInner, OperationStatusResultInner>getLroResult(mono,
-            this.client.getHttpPipeline(), OperationStatusResultInner.class, OperationStatusResultInner.class, context);
-    }
-
-    /**
-     * A long-running resource action.
-     * 
-     * @param resourceGroupName The name of the resource group. The name is case insensitive.
-     * @param publicCloudConnector Represent public cloud connectors resource.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
@@ -1138,7 +923,9 @@ public final class PublicCloudConnectorsClientImpl implements PublicCloudConnect
     @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
     public SyncPoller<PollResult<OperationStatusResultInner>, OperationStatusResultInner>
         beginTestPermissions(String resourceGroupName, String publicCloudConnector) {
-        return this.beginTestPermissionsAsync(resourceGroupName, publicCloudConnector).getSyncPoller();
+        Response<BinaryData> response = testPermissionsWithResponse(resourceGroupName, publicCloudConnector);
+        return this.client.<OperationStatusResultInner, OperationStatusResultInner>getLroResult(response,
+            OperationStatusResultInner.class, OperationStatusResultInner.class, Context.NONE);
     }
 
     /**
@@ -1155,7 +942,9 @@ public final class PublicCloudConnectorsClientImpl implements PublicCloudConnect
     @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
     public SyncPoller<PollResult<OperationStatusResultInner>, OperationStatusResultInner>
         beginTestPermissions(String resourceGroupName, String publicCloudConnector, Context context) {
-        return this.beginTestPermissionsAsync(resourceGroupName, publicCloudConnector, context).getSyncPoller();
+        Response<BinaryData> response = testPermissionsWithResponse(resourceGroupName, publicCloudConnector, context);
+        return this.client.<OperationStatusResultInner, OperationStatusResultInner>getLroResult(response,
+            OperationStatusResultInner.class, OperationStatusResultInner.class, context);
     }
 
     /**
@@ -1180,24 +969,6 @@ public final class PublicCloudConnectorsClientImpl implements PublicCloudConnect
      * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
      * @param publicCloudConnector Represent public cloud connectors resource.
-     * @param context The context to associate with this operation.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the response body on successful completion of {@link Mono}.
-     */
-    @ServiceMethod(returns = ReturnType.SINGLE)
-    private Mono<OperationStatusResultInner> testPermissionsAsync(String resourceGroupName, String publicCloudConnector,
-        Context context) {
-        return beginTestPermissionsAsync(resourceGroupName, publicCloudConnector, context).last()
-            .flatMap(this.client::getLroFinalResultOrError);
-    }
-
-    /**
-     * A long-running resource action.
-     * 
-     * @param resourceGroupName The name of the resource group. The name is case insensitive.
-     * @param publicCloudConnector Represent public cloud connectors resource.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
@@ -1205,7 +976,7 @@ public final class PublicCloudConnectorsClientImpl implements PublicCloudConnect
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
     public OperationStatusResultInner testPermissions(String resourceGroupName, String publicCloudConnector) {
-        return testPermissionsAsync(resourceGroupName, publicCloudConnector).block();
+        return beginTestPermissions(resourceGroupName, publicCloudConnector).getFinalResult();
     }
 
     /**
@@ -1222,7 +993,7 @@ public final class PublicCloudConnectorsClientImpl implements PublicCloudConnect
     @ServiceMethod(returns = ReturnType.SINGLE)
     public OperationStatusResultInner testPermissions(String resourceGroupName, String publicCloudConnector,
         Context context) {
-        return testPermissionsAsync(resourceGroupName, publicCloudConnector, context).block();
+        return beginTestPermissions(resourceGroupName, publicCloudConnector, context).getFinalResult();
     }
 
     /**
@@ -1237,13 +1008,6 @@ public final class PublicCloudConnectorsClientImpl implements PublicCloudConnect
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
     private Mono<PagedResponse<PublicCloudConnectorInner>> listByResourceGroupNextSinglePageAsync(String nextLink) {
-        if (nextLink == null) {
-            return Mono.error(new IllegalArgumentException("Parameter nextLink is required and cannot be null."));
-        }
-        if (this.client.getEndpoint() == null) {
-            return Mono.error(
-                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
-        }
         final String accept = "application/json";
         return FluxUtil
             .withContext(
@@ -1257,28 +1021,38 @@ public final class PublicCloudConnectorsClientImpl implements PublicCloudConnect
      * Get the next page of items.
      * 
      * @param nextLink The URL to get the next list of items.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return the response of a PublicCloudConnector list operation along with {@link PagedResponse}.
+     */
+    @ServiceMethod(returns = ReturnType.SINGLE)
+    private PagedResponse<PublicCloudConnectorInner> listByResourceGroupNextSinglePage(String nextLink) {
+        final String accept = "application/json";
+        Response<PublicCloudConnectorListResult> res
+            = service.listByResourceGroupNextSync(nextLink, this.client.getEndpoint(), accept, Context.NONE);
+        return new PagedResponseBase<>(res.getRequest(), res.getStatusCode(), res.getHeaders(), res.getValue().value(),
+            res.getValue().nextLink(), null);
+    }
+
+    /**
+     * Get the next page of items.
+     * 
+     * @param nextLink The URL to get the next list of items.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the response of a PublicCloudConnector list operation along with {@link PagedResponse} on successful
-     * completion of {@link Mono}.
+     * @return the response of a PublicCloudConnector list operation along with {@link PagedResponse}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    private Mono<PagedResponse<PublicCloudConnectorInner>> listByResourceGroupNextSinglePageAsync(String nextLink,
+    private PagedResponse<PublicCloudConnectorInner> listByResourceGroupNextSinglePage(String nextLink,
         Context context) {
-        if (nextLink == null) {
-            return Mono.error(new IllegalArgumentException("Parameter nextLink is required and cannot be null."));
-        }
-        if (this.client.getEndpoint() == null) {
-            return Mono.error(
-                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
-        }
         final String accept = "application/json";
-        context = this.client.mergeContext(context);
-        return service.listByResourceGroupNext(nextLink, this.client.getEndpoint(), accept, context)
-            .map(res -> new PagedResponseBase<>(res.getRequest(), res.getStatusCode(), res.getHeaders(),
-                res.getValue().value(), res.getValue().nextLink(), null));
+        Response<PublicCloudConnectorListResult> res
+            = service.listByResourceGroupNextSync(nextLink, this.client.getEndpoint(), accept, context);
+        return new PagedResponseBase<>(res.getRequest(), res.getStatusCode(), res.getHeaders(), res.getValue().value(),
+            res.getValue().nextLink(), null);
     }
 
     /**
@@ -1293,13 +1067,6 @@ public final class PublicCloudConnectorsClientImpl implements PublicCloudConnect
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
     private Mono<PagedResponse<PublicCloudConnectorInner>> listBySubscriptionNextSinglePageAsync(String nextLink) {
-        if (nextLink == null) {
-            return Mono.error(new IllegalArgumentException("Parameter nextLink is required and cannot be null."));
-        }
-        if (this.client.getEndpoint() == null) {
-            return Mono.error(
-                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
-        }
         final String accept = "application/json";
         return FluxUtil
             .withContext(
@@ -1313,27 +1080,37 @@ public final class PublicCloudConnectorsClientImpl implements PublicCloudConnect
      * Get the next page of items.
      * 
      * @param nextLink The URL to get the next list of items.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return the response of a PublicCloudConnector list operation along with {@link PagedResponse}.
+     */
+    @ServiceMethod(returns = ReturnType.SINGLE)
+    private PagedResponse<PublicCloudConnectorInner> listBySubscriptionNextSinglePage(String nextLink) {
+        final String accept = "application/json";
+        Response<PublicCloudConnectorListResult> res
+            = service.listBySubscriptionNextSync(nextLink, this.client.getEndpoint(), accept, Context.NONE);
+        return new PagedResponseBase<>(res.getRequest(), res.getStatusCode(), res.getHeaders(), res.getValue().value(),
+            res.getValue().nextLink(), null);
+    }
+
+    /**
+     * Get the next page of items.
+     * 
+     * @param nextLink The URL to get the next list of items.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the response of a PublicCloudConnector list operation along with {@link PagedResponse} on successful
-     * completion of {@link Mono}.
+     * @return the response of a PublicCloudConnector list operation along with {@link PagedResponse}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    private Mono<PagedResponse<PublicCloudConnectorInner>> listBySubscriptionNextSinglePageAsync(String nextLink,
+    private PagedResponse<PublicCloudConnectorInner> listBySubscriptionNextSinglePage(String nextLink,
         Context context) {
-        if (nextLink == null) {
-            return Mono.error(new IllegalArgumentException("Parameter nextLink is required and cannot be null."));
-        }
-        if (this.client.getEndpoint() == null) {
-            return Mono.error(
-                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
-        }
         final String accept = "application/json";
-        context = this.client.mergeContext(context);
-        return service.listBySubscriptionNext(nextLink, this.client.getEndpoint(), accept, context)
-            .map(res -> new PagedResponseBase<>(res.getRequest(), res.getStatusCode(), res.getHeaders(),
-                res.getValue().value(), res.getValue().nextLink(), null));
+        Response<PublicCloudConnectorListResult> res
+            = service.listBySubscriptionNextSync(nextLink, this.client.getEndpoint(), accept, context);
+        return new PagedResponseBase<>(res.getRequest(), res.getStatusCode(), res.getHeaders(), res.getValue().value(),
+            res.getValue().nextLink(), null);
     }
 }

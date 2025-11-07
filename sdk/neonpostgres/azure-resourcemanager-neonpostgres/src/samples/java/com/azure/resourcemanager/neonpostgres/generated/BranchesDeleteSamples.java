@@ -9,7 +9,7 @@ package com.azure.resourcemanager.neonpostgres.generated;
  */
 public final class BranchesDeleteSamples {
     /*
-     * x-ms-original-file: 2025-03-01/Branches_Delete_MaximumSet_Gen.json
+     * x-ms-original-file: 2025-06-23-preview/Branches_Delete_MaximumSet_Gen.json
      */
     /**
      * Sample code: Branches_Delete_MaximumSet.
@@ -18,6 +18,6 @@ public final class BranchesDeleteSamples {
      */
     public static void branchesDeleteMaximumSet(com.azure.resourcemanager.neonpostgres.NeonPostgresManager manager) {
         manager.branches()
-            .deleteWithResponse("rgneon", "test-org", "entity-name", "entity-name", com.azure.core.util.Context.NONE);
+            .deleteWithResponse("rgneon", "myOrganization", "myProject", "feature", com.azure.core.util.Context.NONE);
     }
 }

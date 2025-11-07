@@ -5,6 +5,7 @@
 package com.azure.analytics.synapse.artifacts.models;
 
 import com.azure.core.annotation.Fluent;
+import com.azure.core.annotation.Generated;
 import com.azure.json.JsonReader;
 import com.azure.json.JsonToken;
 import com.azure.json.JsonWriter;
@@ -21,82 +22,111 @@ public class SnowflakeV2LinkedService extends LinkedService {
     /*
      * Type of linked service.
      */
+    @Generated
     private String type = "SnowflakeV2";
 
     /*
      * The account identifier of your Snowflake account, e.g. xy12345.east-us-2.azure
      */
+    @Generated
     private Object accountIdentifier;
 
     /*
      * The name of the Snowflake user.
      */
+    @Generated
     private Object user;
 
     /*
      * The Azure key vault secret reference of password in connection string.
      */
+    @Generated
     private SecretBase password;
 
     /*
      * The name of the Snowflake database.
      */
+    @Generated
     private Object database;
 
     /*
      * The name of the Snowflake warehouse.
      */
+    @Generated
     private Object warehouse;
 
     /*
      * The type used for authentication. Type: string.
      */
+    @Generated
     private SnowflakeAuthenticationType authenticationType;
 
     /*
      * The client ID of the application registered in Azure Active Directory for AADServicePrincipal authentication.
      */
+    @Generated
     private Object clientId;
 
     /*
      * The Azure key vault secret reference of client secret for AADServicePrincipal authentication.
      */
+    @Generated
     private SecretBase clientSecret;
 
     /*
      * The tenant ID of the application registered in Azure Active Directory for AADServicePrincipal authentication.
      */
+    @Generated
     private Object tenantId;
 
     /*
      * The scope of the application registered in Azure Active Directory for AADServicePrincipal authentication.
      */
+    @Generated
     private Object scope;
 
     /*
-     * The host name of the Snowflake account.
+     * The default access control role to use in the Snowflake session. Type: string (or Expression with resultType
+     * string).
      */
+    @Generated
+    private Object role;
+
+    /*
+     * The host name of the Snowflake account. Type: string (or Expression with resultType string).
+     */
+    @Generated
     private Object host;
+
+    /*
+     * Schema name for connection. Type: string (or Expression with resultType string).
+     */
+    @Generated
+    private Object schema;
 
     /*
      * The Azure key vault secret reference of privateKey for KeyPair auth.
      */
+    @Generated
     private SecretBase privateKey;
 
     /*
      * The Azure key vault secret reference of private key password for KeyPair auth with encrypted private key.
      */
+    @Generated
     private SecretBase privateKeyPassphrase;
 
     /*
      * The encrypted credential used for authentication. Credentials are encrypted using the integration runtime
      * credential manager. Type: string.
      */
+    @Generated
     private String encryptedCredential;
 
     /**
      * Creates an instance of SnowflakeV2LinkedService class.
      */
+    @Generated
     public SnowflakeV2LinkedService() {
     }
 
@@ -105,6 +135,7 @@ public class SnowflakeV2LinkedService extends LinkedService {
      * 
      * @return the type value.
      */
+    @Generated
     @Override
     public String getType() {
         return this.type;
@@ -116,6 +147,7 @@ public class SnowflakeV2LinkedService extends LinkedService {
      * 
      * @return the accountIdentifier value.
      */
+    @Generated
     public Object getAccountIdentifier() {
         return this.accountIdentifier;
     }
@@ -127,6 +159,7 @@ public class SnowflakeV2LinkedService extends LinkedService {
      * @param accountIdentifier the accountIdentifier value to set.
      * @return the SnowflakeV2LinkedService object itself.
      */
+    @Generated
     public SnowflakeV2LinkedService setAccountIdentifier(Object accountIdentifier) {
         this.accountIdentifier = accountIdentifier;
         return this;
@@ -137,6 +170,7 @@ public class SnowflakeV2LinkedService extends LinkedService {
      * 
      * @return the user value.
      */
+    @Generated
     public Object getUser() {
         return this.user;
     }
@@ -147,6 +181,7 @@ public class SnowflakeV2LinkedService extends LinkedService {
      * @param user the user value to set.
      * @return the SnowflakeV2LinkedService object itself.
      */
+    @Generated
     public SnowflakeV2LinkedService setUser(Object user) {
         this.user = user;
         return this;
@@ -157,6 +192,7 @@ public class SnowflakeV2LinkedService extends LinkedService {
      * 
      * @return the password value.
      */
+    @Generated
     public SecretBase getPassword() {
         return this.password;
     }
@@ -167,6 +203,7 @@ public class SnowflakeV2LinkedService extends LinkedService {
      * @param password the password value to set.
      * @return the SnowflakeV2LinkedService object itself.
      */
+    @Generated
     public SnowflakeV2LinkedService setPassword(SecretBase password) {
         this.password = password;
         return this;
@@ -177,6 +214,7 @@ public class SnowflakeV2LinkedService extends LinkedService {
      * 
      * @return the database value.
      */
+    @Generated
     public Object getDatabase() {
         return this.database;
     }
@@ -187,6 +225,7 @@ public class SnowflakeV2LinkedService extends LinkedService {
      * @param database the database value to set.
      * @return the SnowflakeV2LinkedService object itself.
      */
+    @Generated
     public SnowflakeV2LinkedService setDatabase(Object database) {
         this.database = database;
         return this;
@@ -197,6 +236,7 @@ public class SnowflakeV2LinkedService extends LinkedService {
      * 
      * @return the warehouse value.
      */
+    @Generated
     public Object getWarehouse() {
         return this.warehouse;
     }
@@ -207,6 +247,7 @@ public class SnowflakeV2LinkedService extends LinkedService {
      * @param warehouse the warehouse value to set.
      * @return the SnowflakeV2LinkedService object itself.
      */
+    @Generated
     public SnowflakeV2LinkedService setWarehouse(Object warehouse) {
         this.warehouse = warehouse;
         return this;
@@ -217,6 +258,7 @@ public class SnowflakeV2LinkedService extends LinkedService {
      * 
      * @return the authenticationType value.
      */
+    @Generated
     public SnowflakeAuthenticationType getAuthenticationType() {
         return this.authenticationType;
     }
@@ -227,6 +269,7 @@ public class SnowflakeV2LinkedService extends LinkedService {
      * @param authenticationType the authenticationType value to set.
      * @return the SnowflakeV2LinkedService object itself.
      */
+    @Generated
     public SnowflakeV2LinkedService setAuthenticationType(SnowflakeAuthenticationType authenticationType) {
         this.authenticationType = authenticationType;
         return this;
@@ -238,6 +281,7 @@ public class SnowflakeV2LinkedService extends LinkedService {
      * 
      * @return the clientId value.
      */
+    @Generated
     public Object getClientId() {
         return this.clientId;
     }
@@ -249,6 +293,7 @@ public class SnowflakeV2LinkedService extends LinkedService {
      * @param clientId the clientId value to set.
      * @return the SnowflakeV2LinkedService object itself.
      */
+    @Generated
     public SnowflakeV2LinkedService setClientId(Object clientId) {
         this.clientId = clientId;
         return this;
@@ -260,6 +305,7 @@ public class SnowflakeV2LinkedService extends LinkedService {
      * 
      * @return the clientSecret value.
      */
+    @Generated
     public SecretBase getClientSecret() {
         return this.clientSecret;
     }
@@ -271,6 +317,7 @@ public class SnowflakeV2LinkedService extends LinkedService {
      * @param clientSecret the clientSecret value to set.
      * @return the SnowflakeV2LinkedService object itself.
      */
+    @Generated
     public SnowflakeV2LinkedService setClientSecret(SecretBase clientSecret) {
         this.clientSecret = clientSecret;
         return this;
@@ -282,6 +329,7 @@ public class SnowflakeV2LinkedService extends LinkedService {
      * 
      * @return the tenantId value.
      */
+    @Generated
     public Object getTenantId() {
         return this.tenantId;
     }
@@ -293,6 +341,7 @@ public class SnowflakeV2LinkedService extends LinkedService {
      * @param tenantId the tenantId value to set.
      * @return the SnowflakeV2LinkedService object itself.
      */
+    @Generated
     public SnowflakeV2LinkedService setTenantId(Object tenantId) {
         this.tenantId = tenantId;
         return this;
@@ -304,6 +353,7 @@ public class SnowflakeV2LinkedService extends LinkedService {
      * 
      * @return the scope value.
      */
+    @Generated
     public Object getScope() {
         return this.scope;
     }
@@ -315,28 +365,79 @@ public class SnowflakeV2LinkedService extends LinkedService {
      * @param scope the scope value to set.
      * @return the SnowflakeV2LinkedService object itself.
      */
+    @Generated
     public SnowflakeV2LinkedService setScope(Object scope) {
         this.scope = scope;
         return this;
     }
 
     /**
-     * Get the host property: The host name of the Snowflake account.
+     * Get the role property: The default access control role to use in the Snowflake session. Type: string (or
+     * Expression with resultType string).
+     * 
+     * @return the role value.
+     */
+    @Generated
+    public Object getRole() {
+        return this.role;
+    }
+
+    /**
+     * Set the role property: The default access control role to use in the Snowflake session. Type: string (or
+     * Expression with resultType string).
+     * 
+     * @param role the role value to set.
+     * @return the SnowflakeV2LinkedService object itself.
+     */
+    @Generated
+    public SnowflakeV2LinkedService setRole(Object role) {
+        this.role = role;
+        return this;
+    }
+
+    /**
+     * Get the host property: The host name of the Snowflake account. Type: string (or Expression with resultType
+     * string).
      * 
      * @return the host value.
      */
+    @Generated
     public Object getHost() {
         return this.host;
     }
 
     /**
-     * Set the host property: The host name of the Snowflake account.
+     * Set the host property: The host name of the Snowflake account. Type: string (or Expression with resultType
+     * string).
      * 
      * @param host the host value to set.
      * @return the SnowflakeV2LinkedService object itself.
      */
+    @Generated
     public SnowflakeV2LinkedService setHost(Object host) {
         this.host = host;
+        return this;
+    }
+
+    /**
+     * Get the schema property: Schema name for connection. Type: string (or Expression with resultType string).
+     * 
+     * @return the schema value.
+     */
+    @Generated
+    public Object getSchema() {
+        return this.schema;
+    }
+
+    /**
+     * Set the schema property: Schema name for connection. Type: string (or Expression with resultType string).
+     * 
+     * @param schema the schema value to set.
+     * @return the SnowflakeV2LinkedService object itself.
+     */
+    @Generated
+    public SnowflakeV2LinkedService setSchema(Object schema) {
+        this.schema = schema;
         return this;
     }
 
@@ -345,6 +446,7 @@ public class SnowflakeV2LinkedService extends LinkedService {
      * 
      * @return the privateKey value.
      */
+    @Generated
     public SecretBase getPrivateKey() {
         return this.privateKey;
     }
@@ -355,6 +457,7 @@ public class SnowflakeV2LinkedService extends LinkedService {
      * @param privateKey the privateKey value to set.
      * @return the SnowflakeV2LinkedService object itself.
      */
+    @Generated
     public SnowflakeV2LinkedService setPrivateKey(SecretBase privateKey) {
         this.privateKey = privateKey;
         return this;
@@ -366,6 +469,7 @@ public class SnowflakeV2LinkedService extends LinkedService {
      * 
      * @return the privateKeyPassphrase value.
      */
+    @Generated
     public SecretBase getPrivateKeyPassphrase() {
         return this.privateKeyPassphrase;
     }
@@ -377,6 +481,7 @@ public class SnowflakeV2LinkedService extends LinkedService {
      * @param privateKeyPassphrase the privateKeyPassphrase value to set.
      * @return the SnowflakeV2LinkedService object itself.
      */
+    @Generated
     public SnowflakeV2LinkedService setPrivateKeyPassphrase(SecretBase privateKeyPassphrase) {
         this.privateKeyPassphrase = privateKeyPassphrase;
         return this;
@@ -388,6 +493,7 @@ public class SnowflakeV2LinkedService extends LinkedService {
      * 
      * @return the encryptedCredential value.
      */
+    @Generated
     public String getEncryptedCredential() {
         return this.encryptedCredential;
     }
@@ -399,6 +505,7 @@ public class SnowflakeV2LinkedService extends LinkedService {
      * @param encryptedCredential the encryptedCredential value to set.
      * @return the SnowflakeV2LinkedService object itself.
      */
+    @Generated
     public SnowflakeV2LinkedService setEncryptedCredential(String encryptedCredential) {
         this.encryptedCredential = encryptedCredential;
         return this;
@@ -407,6 +514,7 @@ public class SnowflakeV2LinkedService extends LinkedService {
     /**
      * {@inheritDoc}
      */
+    @Generated
     @Override
     public SnowflakeV2LinkedService setVersion(String version) {
         super.setVersion(version);
@@ -416,6 +524,7 @@ public class SnowflakeV2LinkedService extends LinkedService {
     /**
      * {@inheritDoc}
      */
+    @Generated
     @Override
     public SnowflakeV2LinkedService setConnectVia(IntegrationRuntimeReference connectVia) {
         super.setConnectVia(connectVia);
@@ -425,6 +534,7 @@ public class SnowflakeV2LinkedService extends LinkedService {
     /**
      * {@inheritDoc}
      */
+    @Generated
     @Override
     public SnowflakeV2LinkedService setDescription(String description) {
         super.setDescription(description);
@@ -434,6 +544,7 @@ public class SnowflakeV2LinkedService extends LinkedService {
     /**
      * {@inheritDoc}
      */
+    @Generated
     @Override
     public SnowflakeV2LinkedService setParameters(Map<String, ParameterSpecification> parameters) {
         super.setParameters(parameters);
@@ -443,6 +554,7 @@ public class SnowflakeV2LinkedService extends LinkedService {
     /**
      * {@inheritDoc}
      */
+    @Generated
     @Override
     public SnowflakeV2LinkedService setAnnotations(List<Object> annotations) {
         super.setAnnotations(annotations);
@@ -452,6 +564,7 @@ public class SnowflakeV2LinkedService extends LinkedService {
     /**
      * {@inheritDoc}
      */
+    @Generated
     @Override
     public JsonWriter toJson(JsonWriter jsonWriter) throws IOException {
         jsonWriter.writeStartObject();
@@ -471,23 +584,41 @@ public class SnowflakeV2LinkedService extends LinkedService {
             || clientSecret != null
             || tenantId != null
             || scope != null
+            || role != null
             || host != null
+            || schema != null
             || privateKey != null
             || privateKeyPassphrase != null
             || encryptedCredential != null) {
             jsonWriter.writeStartObject("typeProperties");
             jsonWriter.writeUntypedField("accountIdentifier", this.accountIdentifier);
-            jsonWriter.writeUntypedField("user", this.user);
+            if (this.user != null) {
+                jsonWriter.writeUntypedField("user", this.user);
+            }
             jsonWriter.writeJsonField("password", this.password);
             jsonWriter.writeUntypedField("database", this.database);
             jsonWriter.writeUntypedField("warehouse", this.warehouse);
             jsonWriter.writeStringField("authenticationType",
                 this.authenticationType == null ? null : this.authenticationType.toString());
-            jsonWriter.writeUntypedField("clientId", this.clientId);
+            if (this.clientId != null) {
+                jsonWriter.writeUntypedField("clientId", this.clientId);
+            }
             jsonWriter.writeJsonField("clientSecret", this.clientSecret);
-            jsonWriter.writeUntypedField("tenantId", this.tenantId);
-            jsonWriter.writeUntypedField("scope", this.scope);
-            jsonWriter.writeUntypedField("host", this.host);
+            if (this.tenantId != null) {
+                jsonWriter.writeUntypedField("tenantId", this.tenantId);
+            }
+            if (this.scope != null) {
+                jsonWriter.writeUntypedField("scope", this.scope);
+            }
+            if (this.role != null) {
+                jsonWriter.writeUntypedField("role", this.role);
+            }
+            if (this.host != null) {
+                jsonWriter.writeUntypedField("host", this.host);
+            }
+            if (this.schema != null) {
+                jsonWriter.writeUntypedField("schema", this.schema);
+            }
             jsonWriter.writeJsonField("privateKey", this.privateKey);
             jsonWriter.writeJsonField("privateKeyPassphrase", this.privateKeyPassphrase);
             jsonWriter.writeStringField("encryptedCredential", this.encryptedCredential);
@@ -510,6 +641,7 @@ public class SnowflakeV2LinkedService extends LinkedService {
      * @throws IllegalStateException If the deserialized JSON object was missing any required properties.
      * @throws IOException If an error occurs while reading the SnowflakeV2LinkedService.
      */
+    @Generated
     public static SnowflakeV2LinkedService fromJson(JsonReader jsonReader) throws IOException {
         return jsonReader.readObject(reader -> {
             SnowflakeV2LinkedService deserializedSnowflakeV2LinkedService = new SnowflakeV2LinkedService();
@@ -559,8 +691,12 @@ public class SnowflakeV2LinkedService extends LinkedService {
                             deserializedSnowflakeV2LinkedService.tenantId = reader.readUntyped();
                         } else if ("scope".equals(fieldName)) {
                             deserializedSnowflakeV2LinkedService.scope = reader.readUntyped();
+                        } else if ("role".equals(fieldName)) {
+                            deserializedSnowflakeV2LinkedService.role = reader.readUntyped();
                         } else if ("host".equals(fieldName)) {
                             deserializedSnowflakeV2LinkedService.host = reader.readUntyped();
+                        } else if ("schema".equals(fieldName)) {
+                            deserializedSnowflakeV2LinkedService.schema = reader.readUntyped();
                         } else if ("privateKey".equals(fieldName)) {
                             deserializedSnowflakeV2LinkedService.privateKey = SecretBase.fromJson(reader);
                         } else if ("privateKeyPassphrase".equals(fieldName)) {
