@@ -9,7 +9,7 @@ package com.azure.resourcemanager.neonpostgres.generated;
  */
 public final class EndpointsDeleteSamples {
     /*
-     * x-ms-original-file: 2025-03-01/Endpoints_Delete_MaximumSet_Gen.json
+     * x-ms-original-file: 2025-06-23-preview/Endpoints_Delete_MaximumSet_Gen.json
      */
     /**
      * Sample code: Endpoints_Delete_MaximumSet.
@@ -18,7 +18,7 @@ public final class EndpointsDeleteSamples {
      */
     public static void endpointsDeleteMaximumSet(com.azure.resourcemanager.neonpostgres.NeonPostgresManager manager) {
         manager.endpoints()
-            .deleteWithResponse("rgneon", "test-org", "entity-name", "entity-name", "entity-name",
+            .deleteWithResponse("rgneon", "myNeonOrg", "myProject", "main", "myEndpoint",
                 com.azure.core.util.Context.NONE);
     }
 }

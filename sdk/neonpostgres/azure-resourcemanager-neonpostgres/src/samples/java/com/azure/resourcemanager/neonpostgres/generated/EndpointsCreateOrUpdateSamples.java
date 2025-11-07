@@ -5,6 +5,7 @@
 package com.azure.resourcemanager.neonpostgres.generated;
 
 import com.azure.resourcemanager.neonpostgres.models.Attributes;
+import com.azure.resourcemanager.neonpostgres.models.AutoscalingSize;
 import com.azure.resourcemanager.neonpostgres.models.EndpointProperties;
 import com.azure.resourcemanager.neonpostgres.models.EndpointType;
 import java.util.Arrays;
@@ -14,7 +15,7 @@ import java.util.Arrays;
  */
 public final class EndpointsCreateOrUpdateSamples {
     /*
-     * x-ms-original-file: 2025-03-01/Endpoints_CreateOrUpdate_MaximumSet_Gen.json
+     * x-ms-original-file: 2025-06-23-preview/Endpoints_CreateOrUpdate_MaximumSet_Gen.json
      */
     /**
      * Sample code: Endpoints_CreateOrUpdate_MaximumSet.
@@ -24,13 +25,14 @@ public final class EndpointsCreateOrUpdateSamples {
     public static void
         endpointsCreateOrUpdateMaximumSet(com.azure.resourcemanager.neonpostgres.NeonPostgresManager manager) {
         manager.endpoints()
-            .define("entity-name")
-            .withExistingBranche("rgneon", "test-org", "entity-name", "entity-name")
-            .withProperties(new EndpointProperties().withEntityName("entity-name")
-                .withAttributes(Arrays.asList(new Attributes().withName("trhvzyvaqy").withValue("evpkgsskyavybxwwssm")))
-                .withProjectId("rtvdeeflqzlrpfzhjqhcsfbldw")
-                .withBranchId("rzsyrhpfbydxtfkpaa")
-                .withEndpointType(EndpointType.READ_ONLY))
+            .define("primary-endpoint")
+            .withExistingBranche("rgneon", "myOrganization", "myProject", "feature")
+            .withProperties(new EndpointProperties().withEntityName("PrimaryEndpoint")
+                .withAttributes(Arrays.asList(new Attributes().withName("on").withValue("qzp")))
+                .withProjectId("vwwhykqyr")
+                .withBranchId("blclbeuzvywzagbuvdo")
+                .withEndpointType(EndpointType.READ_ONLY)
+                .withSize(new AutoscalingSize().withAutoscalingLimitMinCu(3.0).withAutoscalingLimitMaxCu(14.0)))
             .create();
     }
 }

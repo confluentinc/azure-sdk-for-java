@@ -6,42 +6,20 @@ package com.azure.resourcemanager.neonpostgres.generated;
 
 import com.azure.core.util.BinaryData;
 import com.azure.resourcemanager.neonpostgres.fluent.models.ComputeInner;
-import com.azure.resourcemanager.neonpostgres.models.Attributes;
-import com.azure.resourcemanager.neonpostgres.models.ComputeProperties;
-import java.util.Arrays;
 import org.junit.jupiter.api.Assertions;
 
 public final class ComputeInnerTests {
     @org.junit.jupiter.api.Test
     public void testDeserialize() throws Exception {
         ComputeInner model = BinaryData.fromString(
-            "{\"properties\":{\"entityId\":\"abzoghktdpyczhco\",\"entityName\":\"cnhz\",\"createdAt\":\"ot\",\"provisioningState\":\"Succeeded\",\"attributes\":[{\"name\":\"yjzp\",\"value\":\"wrlohapqinfszpyg\"},{\"name\":\"qdhmrjzralcxpjby\",\"value\":\"psjoqcjenk\"}],\"region\":\"fq\",\"cpuCores\":1155088550,\"memory\":1234749108,\"status\":\"xj\"},\"id\":\"gcm\",\"name\":\"zqjhhhqxuwyvca\",\"type\":\"oyvivbsiz\"}")
+            "{\"properties\":{\"entityId\":\"lbvgwzsf\",\"entityName\":\"edous\",\"createdAt\":\"tjtgravaqogfkb\",\"provisioningState\":\"Canceled\",\"attributes\":[{\"name\":\"lqbtxxwpfhnjzudr\",\"value\":\"pzkg\"},{\"name\":\"eboywhczzqrhm\",\"value\":\"gqbedygi\"},{\"name\":\"rzwnyk\",\"value\":\"id\"}],\"region\":\"hlr\",\"cpuCores\":1371551123,\"memory\":703175180,\"status\":\"fldseacdhz\"},\"id\":\"kbrfgdrwji\",\"name\":\"ewhfjsrwqrxetf\",\"type\":\"cwv\"}")
             .toObject(ComputeInner.class);
-        Assertions.assertEquals("cnhz", model.properties().entityName());
-        Assertions.assertEquals("yjzp", model.properties().attributes().get(0).name());
-        Assertions.assertEquals("wrlohapqinfszpyg", model.properties().attributes().get(0).value());
-        Assertions.assertEquals("fq", model.properties().region());
-        Assertions.assertEquals(1155088550, model.properties().cpuCores());
-        Assertions.assertEquals(1234749108, model.properties().memory());
-        Assertions.assertEquals("xj", model.properties().status());
-    }
-
-    @org.junit.jupiter.api.Test
-    public void testSerialize() throws Exception {
-        ComputeInner model = new ComputeInner().withProperties(new ComputeProperties().withEntityName("cnhz")
-            .withAttributes(Arrays.asList(new Attributes().withName("yjzp").withValue("wrlohapqinfszpyg"),
-                new Attributes().withName("qdhmrjzralcxpjby").withValue("psjoqcjenk")))
-            .withRegion("fq")
-            .withCpuCores(1155088550)
-            .withMemory(1234749108)
-            .withStatus("xj"));
-        model = BinaryData.fromObject(model).toObject(ComputeInner.class);
-        Assertions.assertEquals("cnhz", model.properties().entityName());
-        Assertions.assertEquals("yjzp", model.properties().attributes().get(0).name());
-        Assertions.assertEquals("wrlohapqinfszpyg", model.properties().attributes().get(0).value());
-        Assertions.assertEquals("fq", model.properties().region());
-        Assertions.assertEquals(1155088550, model.properties().cpuCores());
-        Assertions.assertEquals(1234749108, model.properties().memory());
-        Assertions.assertEquals("xj", model.properties().status());
+        Assertions.assertEquals("edous", model.properties().entityName());
+        Assertions.assertEquals("lqbtxxwpfhnjzudr", model.properties().attributes().get(0).name());
+        Assertions.assertEquals("pzkg", model.properties().attributes().get(0).value());
+        Assertions.assertEquals("hlr", model.properties().region());
+        Assertions.assertEquals(1371551123, model.properties().cpuCores());
+        Assertions.assertEquals(703175180, model.properties().memory());
+        Assertions.assertEquals("fldseacdhz", model.properties().status());
     }
 }

@@ -486,7 +486,7 @@ public final class BridgeInternal {
 
     @Warning(value = INTERNAL_USE_ONLY_WARNING)
     public static MetadataDiagnosticsContext getMetaDataDiagnosticContext(CosmosDiagnostics cosmosDiagnostics){
-        if(cosmosDiagnostics == null) {
+        if(cosmosDiagnostics == null || cosmosDiagnostics.clientSideRequestStatistics() == null) {
             return null;
         }
 
@@ -622,5 +622,7 @@ public final class BridgeInternal {
         CosmosContainerProactiveInitConfig.initialize();
         SessionRetryOptions.initialize();
         CosmosItemSerializer.initialize();
+        ReadConsistencyStrategy.initialize();
+        Http2ConnectionConfig.initialize();
     }
 }

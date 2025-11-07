@@ -13,37 +13,35 @@ import com.azure.core.util.Context;
  */
 public interface Endpoints {
     /**
-     * Get a Endpoint.
+     * List Endpoint resources by Branch.
      * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
      * @param organizationName Name of the Neon Organizations resource.
      * @param projectName The name of the Project.
      * @param branchName The name of the Branch.
-     * @param endpointName The name of the Endpoint.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return the response of a Endpoint list operation as paginated response with {@link PagedIterable}.
+     */
+    PagedIterable<Endpoint> list(String resourceGroupName, String organizationName, String projectName,
+        String branchName);
+
+    /**
+     * List Endpoint resources by Branch.
+     * 
+     * @param resourceGroupName The name of the resource group. The name is case insensitive.
+     * @param organizationName Name of the Neon Organizations resource.
+     * @param projectName The name of the Project.
+     * @param branchName The name of the Branch.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return a Endpoint along with {@link Response}.
+     * @return the response of a Endpoint list operation as paginated response with {@link PagedIterable}.
      */
-    Response<Endpoint> getWithResponse(String resourceGroupName, String organizationName, String projectName,
-        String branchName, String endpointName, Context context);
-
-    /**
-     * Get a Endpoint.
-     * 
-     * @param resourceGroupName The name of the resource group. The name is case insensitive.
-     * @param organizationName Name of the Neon Organizations resource.
-     * @param projectName The name of the Project.
-     * @param branchName The name of the Branch.
-     * @param endpointName The name of the Endpoint.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return a Endpoint.
-     */
-    Endpoint get(String resourceGroupName, String organizationName, String projectName, String branchName,
-        String endpointName);
+    PagedIterable<Endpoint> list(String resourceGroupName, String organizationName, String projectName,
+        String branchName, Context context);
 
     /**
      * Delete a Endpoint.
@@ -76,60 +74,6 @@ public interface Endpoints {
      */
     void delete(String resourceGroupName, String organizationName, String projectName, String branchName,
         String endpointName);
-
-    /**
-     * List Endpoint resources by Branch.
-     * 
-     * @param resourceGroupName The name of the resource group. The name is case insensitive.
-     * @param organizationName Name of the Neon Organizations resource.
-     * @param projectName The name of the Project.
-     * @param branchName The name of the Branch.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the response of a Endpoint list operation as paginated response with {@link PagedIterable}.
-     */
-    PagedIterable<Endpoint> list(String resourceGroupName, String organizationName, String projectName,
-        String branchName);
-
-    /**
-     * List Endpoint resources by Branch.
-     * 
-     * @param resourceGroupName The name of the resource group. The name is case insensitive.
-     * @param organizationName Name of the Neon Organizations resource.
-     * @param projectName The name of the Project.
-     * @param branchName The name of the Branch.
-     * @param context The context to associate with this operation.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the response of a Endpoint list operation as paginated response with {@link PagedIterable}.
-     */
-    PagedIterable<Endpoint> list(String resourceGroupName, String organizationName, String projectName,
-        String branchName, Context context);
-
-    /**
-     * Get a Endpoint.
-     * 
-     * @param id the resource ID.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return a Endpoint along with {@link Response}.
-     */
-    Endpoint getById(String id);
-
-    /**
-     * Get a Endpoint.
-     * 
-     * @param id the resource ID.
-     * @param context The context to associate with this operation.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return a Endpoint along with {@link Response}.
-     */
-    Response<Endpoint> getByIdWithResponse(String id, Context context);
 
     /**
      * Delete a Endpoint.

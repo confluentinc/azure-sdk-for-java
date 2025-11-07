@@ -28,7 +28,8 @@ public final class NeonRolesDeleteWithResponseMockTests {
                 new AzureProfile("", "", AzureCloud.AZURE_PUBLIC_CLOUD));
 
         manager.neonRoles()
-            .deleteWithResponse("garp", "ctwrapcz", "ojqyvzes", "pi", "snj", com.azure.core.util.Context.NONE);
+            .deleteWithResponse("kffcnuestbsl", "e", "dnccotelik", "iytehhxtzxqdwbym", "qlngncrdorctysec",
+                com.azure.core.util.Context.NONE);
 
     }
 }

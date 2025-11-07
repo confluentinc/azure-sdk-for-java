@@ -95,16 +95,16 @@ public final class EndpointImpl implements Endpoint, Endpoint.Definition, Endpoi
     public Endpoint apply() {
         this.innerObject = serviceManager.serviceClient()
             .getEndpoints()
-            .update(resourceGroupName, organizationName, projectName, branchName, endpointName, this.innerModel(),
-                Context.NONE);
+            .createOrUpdate(resourceGroupName, organizationName, projectName, branchName, endpointName,
+                this.innerModel(), Context.NONE);
         return this;
     }
 
     public Endpoint apply(Context context) {
         this.innerObject = serviceManager.serviceClient()
             .getEndpoints()
-            .update(resourceGroupName, organizationName, projectName, branchName, endpointName, this.innerModel(),
-                context);
+            .createOrUpdate(resourceGroupName, organizationName, projectName, branchName, endpointName,
+                this.innerModel(), context);
         return this;
     }
 
@@ -116,22 +116,6 @@ public final class EndpointImpl implements Endpoint, Endpoint.Definition, Endpoi
         this.projectName = ResourceManagerUtils.getValueFromIdByName(innerObject.id(), "projects");
         this.branchName = ResourceManagerUtils.getValueFromIdByName(innerObject.id(), "branches");
         this.endpointName = ResourceManagerUtils.getValueFromIdByName(innerObject.id(), "endpoints");
-    }
-
-    public Endpoint refresh() {
-        this.innerObject = serviceManager.serviceClient()
-            .getEndpoints()
-            .getWithResponse(resourceGroupName, organizationName, projectName, branchName, endpointName, Context.NONE)
-            .getValue();
-        return this;
-    }
-
-    public Endpoint refresh(Context context) {
-        this.innerObject = serviceManager.serviceClient()
-            .getEndpoints()
-            .getWithResponse(resourceGroupName, organizationName, projectName, branchName, endpointName, context)
-            .getValue();
-        return this;
     }
 
     public EndpointImpl withProperties(EndpointProperties properties) {

@@ -29,7 +29,8 @@ import com.azure.cosmos.implementation.clienttelemetry.MetricCategory;
 import com.azure.cosmos.implementation.clienttelemetry.TagName;
 import com.azure.cosmos.implementation.directconnectivity.rntbd.RntbdMetrics;
 import com.azure.cosmos.implementation.faultinjection.IFaultInjectorProvider;
-import com.azure.cosmos.implementation.throughputControl.config.ThroughputControlGroupInternal;
+import com.azure.cosmos.implementation.throughputControl.sdk.config.SDKThroughputControlGroupInternal;
+import com.azure.cosmos.implementation.throughputControl.server.config.ServerThroughputControlGroup;
 import com.azure.cosmos.models.CosmosAuthorizationTokenResolver;
 import com.azure.cosmos.models.CosmosClientTelemetryConfig;
 import com.azure.cosmos.models.CosmosContainerIdentity;
@@ -89,6 +90,11 @@ public final class CosmosAsyncClient implements Closeable {
         .CosmosClientTelemetryConfigHelper
         .getCosmosClientTelemetryConfigAccessor();
 
+    private static final ImplementationBridgeHelpers.ReadConsistencyStrategyHelper.ReadConsistencyStrategyAccessor
+        readConsistencyStrategyAccessor = ImplementationBridgeHelpers
+            .ReadConsistencyStrategyHelper
+            .getReadConsistencyStrategyAccessor();
+
     private final static Function<CosmosAsyncContainer, CosmosAsyncContainer> DEFAULT_CONTAINER_FACTORY =
         (originalContainer) -> originalContainer;
 
@@ -96,6 +102,7 @@ public final class CosmosAsyncClient implements Closeable {
     private final String serviceEndpoint;
     private final ConnectionPolicy connectionPolicy;
     private final ConsistencyLevel desiredConsistencyLevel;
+    private final ReadConsistencyStrategy readConsistencyStrategy;
     private final AzureKeyCredential credential;
     private final CosmosClientTelemetryConfig clientTelemetryConfig;
     private final DiagnosticsProvider diagnosticsProvider;
@@ -116,6 +123,7 @@ public final class CosmosAsyncClient implements Closeable {
         String keyOrResourceToken = builder.getKey();
         this.connectionPolicy = builder.getConnectionPolicy();
         this.desiredConsistencyLevel = builder.getConsistencyLevel();
+        this.readConsistencyStrategy = builder.getReadConsistencyStrategy();
         List<CosmosPermissionProperties> permissions = builder.getPermissions();
         CosmosAuthorizationTokenResolver cosmosAuthorizationTokenResolver = builder.getAuthorizationTokenResolver();
         this.credential = builder.getCredential();
@@ -158,6 +166,7 @@ public final class CosmosAsyncClient implements Closeable {
                                        .withMasterKeyOrResourceToken(keyOrResourceToken)
                                        .withConnectionPolicy(this.connectionPolicy)
                                        .withConsistencyLevel(this.desiredConsistencyLevel)
+                                       .withReadConsistencyStrategy(this.readConsistencyStrategy)
                                        .withSessionCapturingOverride(sessionCapturingOverride)
                                        .withConfigs(configs)
                                        .withTokenResolver(cosmosAuthorizationTokenResolver)
@@ -175,6 +184,7 @@ public final class CosmosAsyncClient implements Closeable {
                                        .withContainerProactiveInitConfig(this.proactiveContainerInitConfig)
                                        .withDefaultSerializer(this.defaultCustomSerializer)
                                        .withRegionScopedSessionCapturingEnabled(builder.isRegionScopedSessionCapturingEnabled())
+                                       .withPerPartitionAutomaticFailoverEnabled(builder.isPerPartitionAutomaticFailoverEnabled())
                                        .build();
 
         this.accountConsistencyLevel = this.asyncDocumentClient.getDefaultConsistencyLevelOfAccount();
@@ -563,9 +573,19 @@ public final class CosmosAsyncClient implements Closeable {
      * @param group Throughput control group going to be enabled.
      * @param throughputQueryMono The throughput query mono.
      */
-    void enableThroughputControlGroup(ThroughputControlGroupInternal group, Mono<Integer> throughputQueryMono) {
+    void enableSDKThroughputControlGroup(SDKThroughputControlGroupInternal group, Mono<Integer> throughputQueryMono) {
         checkNotNull(group, "Throughput control group cannot be null");
-        this.asyncDocumentClient.enableThroughputControlGroup(group, throughputQueryMono);
+        this.asyncDocumentClient.enableSDKThroughputControlGroup(group, throughputQueryMono);
+    }
+
+    /***
+     * Enable server throughput control group.
+     *
+     * @param group the server throughput control group.
+     */
+    void enableServerThroughputControlGroup(ServerThroughputControlGroup group) {
+        checkNotNull(group, "Argument 'group' can not be null");
+        this.asyncDocumentClient.enableServerThroughputControlGroup(group);
     }
 
     /***
@@ -739,6 +759,19 @@ public final class CosmosAsyncClient implements Closeable {
         return this.accountConsistencyLevel;
     }
 
+    ReadConsistencyStrategy getEffectiveReadConsistencyStrategy(
+        ResourceType resourceType,
+        OperationType operationType,
+        ReadConsistencyStrategy desiredReadConsistencyStrategyOfOperation) {
+
+        return readConsistencyStrategyAccessor.getEffectiveReadConsistencyStrategy(
+            resourceType,
+            operationType,
+            desiredReadConsistencyStrategyOfOperation,
+            this.readConsistencyStrategy
+        );
+    }
+
     CosmosDiagnosticsThresholds getEffectiveDiagnosticsThresholds(
         CosmosDiagnosticsThresholds operationLevelThresholds) {
 
@@ -879,6 +912,20 @@ public final class CosmosAsyncClient implements Closeable {
                     ConsistencyLevel desiredConsistencyLevelOfOperation) {
 
                     return client.getEffectiveConsistencyLevel(operationType, desiredConsistencyLevelOfOperation);
+                }
+
+                @Override
+                public ReadConsistencyStrategy getEffectiveReadConsistencyStrategy(
+                    CosmosAsyncClient client,
+                    ResourceType resourceType,
+                    OperationType operationType,
+                    ReadConsistencyStrategy desiredReadConsistencyStrategy) {
+
+                    return client
+                        .getEffectiveReadConsistencyStrategy(
+                            resourceType,
+                            operationType,
+                            desiredReadConsistencyStrategy);
                 }
 
                 @Override

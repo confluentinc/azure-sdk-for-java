@@ -6,6 +6,7 @@ import com.azure.cosmos.BridgeInternal;
 import com.azure.cosmos.ConsistencyLevel;
 import com.azure.cosmos.CosmosContainerProactiveInitConfig;
 import com.azure.cosmos.CosmosException;
+import com.azure.cosmos.ReadConsistencyStrategy;
 import com.azure.cosmos.implementation.apachecommons.lang.StringUtils;
 import com.azure.cosmos.implementation.caches.RxClientCollectionCache;
 import com.azure.cosmos.implementation.caches.RxPartitionKeyRangeCache;
@@ -13,6 +14,7 @@ import com.azure.cosmos.implementation.directconnectivity.GatewayServiceConfigur
 import com.azure.cosmos.implementation.directconnectivity.HttpUtils;
 import com.azure.cosmos.implementation.directconnectivity.RequestHelper;
 import com.azure.cosmos.implementation.directconnectivity.StoreResponse;
+import com.azure.cosmos.implementation.directconnectivity.Uri;
 import com.azure.cosmos.implementation.directconnectivity.WebExceptionUtility;
 import com.azure.cosmos.implementation.faultinjection.GatewayServerErrorInjector;
 import com.azure.cosmos.implementation.faultinjection.IFaultInjectorProvider;
@@ -22,8 +24,11 @@ import com.azure.cosmos.implementation.http.HttpRequest;
 import com.azure.cosmos.implementation.http.HttpResponse;
 import com.azure.cosmos.implementation.http.HttpTransportSerializer;
 import com.azure.cosmos.implementation.http.ReactorNettyRequestRecord;
+import com.azure.cosmos.implementation.perPartitionCircuitBreaker.GlobalPartitionEndpointManagerForPerPartitionCircuitBreaker;
+import com.azure.cosmos.implementation.perPartitionCircuitBreaker.LocationSpecificHealthContext;
 import com.azure.cosmos.implementation.routing.PartitionKeyInternal;
 import com.azure.cosmos.implementation.routing.PartitionKeyInternalHelper;
+import com.azure.cosmos.implementation.routing.PartitionKeyRangeIdentity;
 import com.azure.cosmos.implementation.throughputControl.ThroughputControlStore;
 import com.azure.cosmos.models.CosmosContainerIdentity;
 import io.netty.buffer.ByteBuf;
@@ -31,10 +36,12 @@ import io.netty.buffer.ByteBufInputStream;
 import io.netty.buffer.Unpooled;
 import io.netty.handler.codec.http.HttpMethod;
 import io.netty.handler.codec.http.HttpResponseStatus;
+import io.netty.util.ResourceLeakDetector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+import reactor.core.publisher.SignalType;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -57,6 +64,8 @@ import static com.azure.cosmos.implementation.guava25.base.Preconditions.checkNo
  * Used internally to provide functionality to communicate and process response from GATEWAY in the Azure Cosmos DB database service.
  */
 public class RxGatewayStoreModel implements RxStoreModel, HttpTransportSerializer {
+    private static final boolean leakDetectionDebuggingEnabled = ResourceLeakDetector.getLevel().ordinal() >=
+        ResourceLeakDetector.Level.ADVANCED.ordinal();
     private static final boolean HTTP_CONNECTION_WITHOUT_TLS_ALLOWED = Configs.isHttpConnectionWithoutTLSAllowed();
 
     private final DiagnosticsClientContext clientContext;
@@ -90,7 +99,7 @@ public class RxGatewayStoreModel implements RxStoreModel, HttpTransportSerialize
             userAgentContainer = new UserAgentContainer();
         }
 
-        this.defaultHeaders = this.getDefaultHeaders(apiType, userAgentContainer, defaultConsistencyLevel);
+        this.defaultHeaders = this.getDefaultHeaders(apiType, userAgentContainer);
 
         this.defaultConsistencyLevel = defaultConsistencyLevel;
         this.globalEndpointManager = globalEndpointManager;
@@ -113,12 +122,11 @@ public class RxGatewayStoreModel implements RxStoreModel, HttpTransportSerialize
 
     protected Map<String, String> getDefaultHeaders(
         ApiType apiType,
-        UserAgentContainer userAgentContainer,
-        ConsistencyLevel clientDefaultConsistencyLevel) {
+        UserAgentContainer userAgentContainer) {
 
         checkNotNull(userAgentContainer, "Argument 'userAGentContainer' must not be null.");
 
-        Map<String, String> defaultHeaders = new HashMap<>();
+        Map<String, String> defaultHeaders = new HashMap<>(6 * 4 / 3); // load factor is 0.75
         defaultHeaders.put(HttpConstants.HttpHeaders.CACHE_CONTROL,
             "no-cache");
         defaultHeaders.put(HttpConstants.HttpHeaders.VERSION,
@@ -131,16 +139,11 @@ public class RxGatewayStoreModel implements RxStoreModel, HttpTransportSerialize
             defaultHeaders.put(HttpConstants.HttpHeaders.API_TYPE, apiType.toString());
         }
 
-        if (userAgentContainer == null) {
-            userAgentContainer = new UserAgentContainer();
-        }
+        String userAgent = userAgentContainer == null
+            ? UserAgentContainer.BASE_USER_AGENT_STRING
+            : userAgentContainer.getUserAgent();
 
-        defaultHeaders.put(HttpConstants.HttpHeaders.USER_AGENT, userAgentContainer.getUserAgent());
-
-        if (clientDefaultConsistencyLevel != null) {
-            defaultHeaders.put(HttpConstants.HttpHeaders.CONSISTENCY_LEVEL,
-                clientDefaultConsistencyLevel.toString());
-        }
+        defaultHeaders.put(HttpConstants.HttpHeaders.USER_AGENT, userAgent);
 
         return defaultHeaders;
     }
@@ -196,29 +199,40 @@ public class RxGatewayStoreModel implements RxStoreModel, HttpTransportSerialize
 
     @Override
     public StoreResponse unwrapToStoreResponse(
+        String endpoint,
         RxDocumentServiceRequest request,
         int statusCode,
         HttpHeaders headers,
-        ByteBuf content) {
+        ByteBuf retainedContent) {
 
         checkNotNull(headers, "Argument 'headers' must not be null.");
         checkNotNull(
-            content,
-            "Argument 'content' must not be null - use empty ByteBuf when theres is no payload.");
+            retainedContent,
+            "Argument 'retainedContent' must not be null - use empty ByteBuf when theres is no payload.");
 
         // If there is any error in the header response this throws exception
-        validateOrThrow(request, HttpResponseStatus.valueOf(statusCode), headers, content);
+        validateOrThrow(request, HttpResponseStatus.valueOf(statusCode), headers, retainedContent);
 
         int size;
-        if ((size = content.readableBytes()) > 0) {
-            return new StoreResponse(statusCode,
-                HttpUtils.unescape(headers.toMap()),
-                new ByteBufInputStream(content, true),
+        if ((size = retainedContent.readableBytes()) > 0) {
+            if (leakDetectionDebuggingEnabled) {
+                retainedContent.touch(this);
+            }
+
+            return new StoreResponse(
+                endpoint,
+                statusCode,
+                HttpUtils.unescape(headers.toLowerCaseMap()),
+                new ByteBufInputStream(retainedContent, true),
                 size);
+        } else {
+            retainedContent.release();
         }
 
-        return new StoreResponse(statusCode,
-            HttpUtils.unescape(headers.toMap()),
+        return new StoreResponse(
+            endpoint,
+            statusCode,
+            HttpUtils.unescape(headers.toLowerCaseMap()),
             null,
             0);
     }
@@ -262,6 +276,10 @@ public class RxGatewayStoreModel implements RxStoreModel, HttpTransportSerialize
         }
     }
 
+    protected boolean partitionKeyRangeResolutionNeeded(RxDocumentServiceRequest request) {
+        return false;
+    }
+
     /**
      * Given the request it creates an flux which upon subscription issues HTTP call and emits one RxDocumentServiceResponse.
      *
@@ -270,6 +288,19 @@ public class RxGatewayStoreModel implements RxStoreModel, HttpTransportSerialize
      * @return Flux<RxDocumentServiceResponse>
      */
     public Mono<RxDocumentServiceResponse> performRequestInternal(RxDocumentServiceRequest request, URI requestUri) {
+        if (!partitionKeyRangeResolutionNeeded(request)) {
+            return this.performRequestInternalCore(request, requestUri);
+        }
+
+        return this
+            .resolvePartitionKeyRangeByPkRangeId(request)
+            .flatMap((pkRange) -> {
+                request.requestContext.resolvedPartitionKeyRange = pkRange;
+                return this.performRequestInternalCore(request, requestUri);
+            });
+    }
+
+    private Mono<RxDocumentServiceResponse> performRequestInternalCore(RxDocumentServiceRequest request, URI requestUri) {
 
         try {
             HttpRequest httpRequest = request
@@ -374,7 +405,7 @@ public class RxGatewayStoreModel implements RxStoreModel, HttpTransportSerialize
                                                                       RxDocumentServiceRequest request,
                                                                       HttpRequest httpRequest) {
 
-        return httpResponseMono.flatMap(httpResponse -> {
+        return httpResponseMono.publishOn(CosmosSchedulers.TRANSPORT_RESPONSE_BOUNDED_ELASTIC).flatMap(httpResponse -> {
 
             // header key/value pairs
             HttpHeaders httpResponseHeaders = httpResponse.headers();
@@ -382,10 +413,18 @@ public class RxGatewayStoreModel implements RxStoreModel, HttpTransportSerialize
 
             Mono<ByteBuf> contentObservable = httpResponse
                 .body()
-                .switchIfEmpty(Mono.just(Unpooled.EMPTY_BUFFER));
+                .switchIfEmpty(Mono.just(Unpooled.EMPTY_BUFFER))
+                .map(bodyByteBuf -> leakDetectionDebuggingEnabled
+                    ? bodyByteBuf.retain().touch(this)
+                    : bodyByteBuf.retain())
+                .publishOn(CosmosSchedulers.TRANSPORT_RESPONSE_BOUNDED_ELASTIC);
 
             return contentObservable
                 .map(content -> {
+                    if (leakDetectionDebuggingEnabled) {
+                        content.touch(this);
+                    }
+
                     // Capture transport client request timeline
                     ReactorNettyRequestRecord reactorNettyRequestRecord = httpResponse.request().reactorNettyRequestRecord();
                     if (reactorNettyRequestRecord != null) {
@@ -394,7 +433,7 @@ public class RxGatewayStoreModel implements RxStoreModel, HttpTransportSerialize
 
                     StoreResponse rsp = request
                         .getEffectiveHttpTransportSerializer(this)
-                        .unwrapToStoreResponse(request, httpResponseStatus, httpResponseHeaders, content);
+                        .unwrapToStoreResponse(httpRequest.uri().toString(), request, httpResponseStatus, httpResponseHeaders, content);
 
                     if (reactorNettyRequestRecord != null) {
                         rsp.setRequestTimeline(reactorNettyRequestRecord.takeTimelineSnapshot());
@@ -438,18 +477,19 @@ public class RxGatewayStoreModel implements RxStoreModel, HttpTransportSerialize
             Throwable unwrappedException = reactor.core.Exceptions.unwrap(throwable);
             if (!(unwrappedException instanceof Exception)) {
                 // fatal error
-                logger.error("Unexpected failure {}", unwrappedException.getMessage(), unwrappedException);
+                logger.error("Unexpected failure " + unwrappedException.getMessage(), unwrappedException);
                 return Mono.error(unwrappedException);
             }
 
             Exception exception = (Exception) unwrappedException;
             CosmosException dce;
             if (!(exception instanceof CosmosException)) {
-                // wrap in CosmosException
-                logger.warn("Network failure", exception);
-
                 int statusCode = 0;
                 if (WebExceptionUtility.isNetworkFailure(exception)) {
+
+                    // wrap in CosmosException
+                    logger.error("Network failure", exception);
+
                     if (WebExceptionUtility.isReadTimeoutException(exception)) {
                         statusCode = HttpConstants.StatusCodes.REQUEST_TIMEOUT;
                     } else {
@@ -460,6 +500,7 @@ public class RxGatewayStoreModel implements RxStoreModel, HttpTransportSerialize
                 dce = BridgeInternal.createCosmosException(request.requestContext.resourcePhysicalAddress, statusCode, exception);
                 BridgeInternal.setRequestHeaders(dce, request.getHeaders());
             } else {
+                logger.error("Non-network failure", exception);
                 dce = (CosmosException) exception;
             }
 
@@ -470,6 +511,11 @@ public class RxGatewayStoreModel implements RxStoreModel, HttpTransportSerialize
                     BridgeInternal.setSubStatusCode(dce, HttpConstants.SubStatusCodes.GATEWAY_ENDPOINT_UNAVAILABLE);
                 }
             }
+
+            ImplementationBridgeHelpers
+                .CosmosExceptionHelper
+                .getCosmosExceptionAccessor()
+                .setRequestUri(dce, Uri.create(httpRequest.uri().toString()));
 
             if (request.requestContext.cosmosDiagnostics != null) {
                 if (httpRequest.reactorNettyRequestRecord() != null) {
@@ -497,13 +543,61 @@ public class RxGatewayStoreModel implements RxStoreModel, HttpTransportSerialize
             }
 
             return Mono.error(dce);
+        }).doFinally(signalType -> {
+
+            if (signalType != SignalType.CANCEL) {
+                return;
+            }
+
+            if (httpRequest.reactorNettyRequestRecord() != null) {
+
+                OperationCancelledException oce = new  OperationCancelledException("", httpRequest.uri());
+
+                ReactorNettyRequestRecord reactorNettyRequestRecord = httpRequest.reactorNettyRequestRecord();
+
+                RequestTimeline requestTimeline = reactorNettyRequestRecord.takeTimelineSnapshot();
+                long transportRequestId = reactorNettyRequestRecord.getTransportRequestId();
+
+                GatewayRequestTimelineContext gatewayRequestTimelineContext = new GatewayRequestTimelineContext(requestTimeline, transportRequestId);
+
+                request.requestContext.cancelledGatewayRequestTimelineContexts.add(gatewayRequestTimelineContext);
+
+                if (request.requestContext.getCrossRegionAvailabilityContext() != null) {
+
+                    CrossRegionAvailabilityContextForRxDocumentServiceRequest availabilityStrategyContextForReq =
+                        request.requestContext.getCrossRegionAvailabilityContext();
+
+                    if (availabilityStrategyContextForReq.getAvailabilityStrategyContext().isAvailabilityStrategyEnabled() && !availabilityStrategyContextForReq.getAvailabilityStrategyContext().isHedgedRequest()) {
+
+                        BridgeInternal.setRequestTimeline(oce, reactorNettyRequestRecord.takeTimelineSnapshot());
+
+                        ImplementationBridgeHelpers
+                            .CosmosExceptionHelper
+                            .getCosmosExceptionAccessor()
+                            .setFaultInjectionRuleId(
+                                oce,
+                                request.faultInjectionRequestContext
+                                    .getFaultInjectionRuleId(transportRequestId));
+
+                        ImplementationBridgeHelpers
+                            .CosmosExceptionHelper
+                            .getCosmosExceptionAccessor()
+                            .setFaultInjectionEvaluationResults(
+                                oce,
+                                request.faultInjectionRequestContext
+                                    .getFaultInjectionRuleEvaluationResults(transportRequestId));
+
+                        BridgeInternal.recordGatewayResponse(request.requestContext.cosmosDiagnostics, request, oce, globalEndpointManager);
+                    }
+                }
+            }
         });
     }
 
     private void validateOrThrow(RxDocumentServiceRequest request,
                                  HttpResponseStatus status,
                                  HttpHeaders headers,
-                                 ByteBuf bodyAsByteBuf) {
+                                 ByteBuf retainedBodyAsByteBuf) {
 
         int statusCode = status.code();
 
@@ -512,14 +606,19 @@ public class RxGatewayStoreModel implements RxStoreModel, HttpTransportSerialize
                 ? status.reasonPhrase().replace(" ", "")
                 : "";
 
-            String body = bodyAsByteBuf != null ?bodyAsByteBuf.toString(StandardCharsets.UTF_8) : null;
+            String body = retainedBodyAsByteBuf != null
+                ? retainedBodyAsByteBuf.toString(StandardCharsets.UTF_8)
+                : null;
+
+            retainedBodyAsByteBuf.release();
+
             CosmosError cosmosError;
             cosmosError = (StringUtils.isNotEmpty(body)) ? new CosmosError(body) : new CosmosError();
             cosmosError = new CosmosError(statusCodeString,
                 String.format("%s, StatusCode: %s", cosmosError.getMessage(), statusCodeString),
                 cosmosError.getPartitionedQueryExecutionInfo());
 
-            CosmosException dce = BridgeInternal.createCosmosException(request.requestContext.resourcePhysicalAddress, statusCode, cosmosError, headers.toMap());
+            CosmosException dce = BridgeInternal.createCosmosException(request.requestContext.resourcePhysicalAddress, statusCode, cosmosError, headers.toLowerCaseMap());
             BridgeInternal.setRequestHeaders(dce, request.getHeaders());
             throw dce;
         }
@@ -702,6 +801,67 @@ public class RxGatewayStoreModel implements RxStoreModel, HttpTransportSerialize
         return Mono.empty();
     }
 
+    protected Mono<PartitionKeyRange> resolvePartitionKeyRangeByPkRangeId(RxDocumentServiceRequest request) {
+        Objects.requireNonNull(
+            request,
+            "Parameter 'request' is required and cannot be null");
+
+        Objects.requireNonNull(
+            this.partitionKeyRangeCache,
+            "Parameter 'this::partitionKeyRangeCache' is required and cannot be null");
+
+        Objects.requireNonNull(
+            this.collectionCache,
+            "Parameter 'this::collectionCache' is required and cannot be null");
+
+        PartitionKeyRangeIdentity pkRangeId = request.getPartitionKeyRangeIdentity();
+        Objects.requireNonNull(
+            pkRangeId,
+            "Parameter 'request::getPartitionKeyRangeIdentity()' is required and cannot be null");
+
+        MetadataDiagnosticsContext metadataCtx = BridgeInternal
+            .getMetaDataDiagnosticContext(request.requestContext.cosmosDiagnostics);
+
+        if (pkRangeId.getCollectionRid() != null) {
+            return resolvePartitionKeyRangeByPkRangeIdCore(pkRangeId, pkRangeId.getCollectionRid(), metadataCtx);
+        }
+
+        return this.collectionCache.resolveCollectionAsync(
+            metadataCtx,
+            request)
+            .flatMap(collectionHolder -> resolvePartitionKeyRangeByPkRangeIdCore(
+                pkRangeId,
+                collectionHolder.v.getResourceId(),
+                metadataCtx));
+    }
+
+    private Mono<PartitionKeyRange> resolvePartitionKeyRangeByPkRangeIdCore(
+        PartitionKeyRangeIdentity pkRangeId,
+        String effectiveCollectionRid,
+        MetadataDiagnosticsContext metadataCtx) {
+
+        Objects.requireNonNull(pkRangeId, "Parameter 'pkRangeId' is required and cannot be null");
+        Objects.requireNonNull(
+            this.partitionKeyRangeCache,
+            "Parameter 'this::partitionKeyRangeCache' is required and cannot be null");
+
+        return partitionKeyRangeCache
+            .tryLookupAsync(
+                metadataCtx,
+                effectiveCollectionRid,
+               null,
+               null
+            )
+            .flatMap(collectionRoutingMapValueHolder -> {
+
+
+           PartitionKeyRange range =
+               collectionRoutingMapValueHolder.v.getRangeByPartitionKeyRangeId(pkRangeId.getPartitionKeyRangeId());
+
+           return Mono.just(range);
+       });
+    }
+
     private Mono<Void> applySessionToken(RxDocumentServiceRequest request) {
         Map<String, String> headers = request.getHeaders();
         Objects.requireNonNull(headers, "RxDocumentServiceRequest::headers is required and cannot be null");
@@ -714,8 +874,8 @@ public class RxGatewayStoreModel implements RxStoreModel, HttpTransportSerialize
             return Mono.empty();
         }
 
-        boolean sessionConsistency = RequestHelper.getConsistencyLevelToUse(this.gatewayServiceConfigurationReader,
-            request) == ConsistencyLevel.SESSION;
+        boolean sessionConsistency = (RequestHelper.getReadConsistencyStrategyToUse(this.gatewayServiceConfigurationReader,
+            request) == ReadConsistencyStrategy.SESSION);
 
         if (!Strings.isNullOrEmpty(request.getHeaders().get(HttpConstants.HttpHeaders.SESSION_TOKEN))) {
             if (!sessionConsistency ||

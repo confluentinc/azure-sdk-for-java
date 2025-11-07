@@ -146,9 +146,10 @@ public class CosmosClientStoreCustomAuthTest {
      * Helper method to invoke the private createCustomTokenCredential method using reflection
      */
     private TokenCredential invokeCreateCustomTokenCredential(CosmosCustomAuthConfig customAuthConfig) throws Exception {
-        Method method = CosmosClientStore.class.getDeclaredMethod("createCustomTokenCredential", CosmosCustomAuthConfig.class);
+        Method method = CosmosClientCache.class.getDeclaredMethod("createCustomTokenCredential", CosmosCustomAuthConfig.class);
         method.setAccessible(true);
-        return (TokenCredential) method.invoke(null, customAuthConfig);
+        CosmosClientCache cache = CosmosClientCache.getInstance();
+        return (TokenCredential) method.invoke(cache, customAuthConfig);
     }
     
     /**

@@ -8,6 +8,7 @@
       <Class name="io.clientcore.http.netty4.NettyHttpClient" />
       <Class name="io.clientcore.http.netty4.implementation.Netty4ChannelBinaryData" />
       <Class name="io.clientcore.http.netty4.implementation.Netty4HttpProxyHandler" />
+      <Class name="io.clientcore.http.netty4.implementation.Netty4StreamingHttp2Adapter" />
     </Or>
   </Match>
   <Match>
@@ -15,20 +16,31 @@
     <Class name="io.clientcore.http.netty4.implementation.HttpResponseDrainsBufferTests" />
   </Match>
   <Match>
+    <Bug pattern="DP_DO_INSIDE_DO_PRIVILEGED" />
+    <Or>
+      <Class name="io.clientcore.http.netty4.NettyHttpClientBuilderTests" />
+      <Class name="io.clientcore.http.netty4.implementation.Netty4ConnectionPoolTests" />
+    </Or>
+  </Match>
+  <Match>
     <Bug pattern="MS_MUTABLE_ARRAY" />
     <Class name="io.clientcore.http.netty4.implementation.NettyHttpClientLocalTestServer" />
   </Match>
   <Match>
     <Bug pattern="NP_NULL_PARAM_DEREF_ALL_TARGETS_DANGEROUS" />
-    <Class name="io.clientcore.http.netty4.implementation.WrappedHttpHeadersTests" />
+    <Class name="io.clientcore.http.netty4.implementation.WrappedHttp11HeadersTests" />
   </Match>
   <Match>
     <Bug pattern="NP_NULL_PARAM_DEREF_NONVIRTUAL" />
-    <Class name="io.clientcore.http.netty4.implementation.WrappedHttpHeadersTests" />
+    <Class name="io.clientcore.http.netty4.implementation.WrappedHttp11HeadersTests" />
   </Match>
   <Match>
     <Bug pattern="OBL_UNSATISFIED_OBLIGATION_EXCEPTION_EDGE" />
     <Class name="io.clientcore.http.netty4.NettyHttpClientTests" />
+  </Match>
+  <Match>
+    <Bug pattern="OS_OPEN_STREAM" />
+    <Class name="io.clientcore.http.netty4.implementation.Netty4Http11ChannelInputStreamTests" />
   </Match>
   <Match>
     <Bug pattern="OS_OPEN_STREAM_EXCEPTION_PATH" />
@@ -36,7 +48,17 @@
   </Match>
   <Match>
     <Bug pattern="RR_NOT_CHECKED" />
-    <Class name="io.clientcore.http.netty4.implementation.HttpResponseDrainsBufferTests" />
+    <Or>
+      <Class name="io.clientcore.http.netty4.implementation.HttpResponseDrainsBufferTests" />
+      <Class name="io.clientcore.http.netty4.implementation.Netty4Http11ChannelInputStreamTests" />
+    </Or>
+  </Match>
+  <Match>
+    <Bug pattern="RV_RETURN_VALUE_IGNORED_BAD_PRACTICE" />
+    <Or>
+      <Class name="io.clientcore.http.netty4.implementation.Netty4ChannelInputStream" />
+      <Class name="io.clientcore.http.netty4.implementation.Netty4ConnectionPoolTests" />
+    </Or>
   </Match>
   <Match>
     <Bug pattern="SIC_INNER_SHOULD_BE_STATIC_ANON" />

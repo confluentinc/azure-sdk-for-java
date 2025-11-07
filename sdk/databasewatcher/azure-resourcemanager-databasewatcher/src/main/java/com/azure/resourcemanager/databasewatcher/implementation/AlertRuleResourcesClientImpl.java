@@ -63,13 +63,23 @@ public final class AlertRuleResourcesClientImpl implements AlertRuleResourcesCli
      * proxy service to perform REST calls.
      */
     @Host("{endpoint}")
-    @ServiceInterface(name = "DatabaseWatcherManag")
+    @ServiceInterface(name = "DatabaseWatcherManagementClientAlertRuleResources")
     public interface AlertRuleResourcesService {
         @Headers({ "Content-Type: application/json" })
         @Get("/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DatabaseWatcher/watchers/{watcherName}/alertRuleResources/{alertRuleResourceName}")
         @ExpectedResponses({ 200 })
         @UnexpectedResponseExceptionType(ManagementException.class)
         Mono<Response<AlertRuleResourceInner>> get(@HostParam("endpoint") String endpoint,
+            @QueryParam("api-version") String apiVersion, @PathParam("subscriptionId") String subscriptionId,
+            @PathParam("resourceGroupName") String resourceGroupName, @PathParam("watcherName") String watcherName,
+            @PathParam("alertRuleResourceName") String alertRuleResourceName, @HeaderParam("Accept") String accept,
+            Context context);
+
+        @Headers({ "Content-Type: application/json" })
+        @Get("/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DatabaseWatcher/watchers/{watcherName}/alertRuleResources/{alertRuleResourceName}")
+        @ExpectedResponses({ 200 })
+        @UnexpectedResponseExceptionType(ManagementException.class)
+        Response<AlertRuleResourceInner> getSync(@HostParam("endpoint") String endpoint,
             @QueryParam("api-version") String apiVersion, @PathParam("subscriptionId") String subscriptionId,
             @PathParam("resourceGroupName") String resourceGroupName, @PathParam("watcherName") String watcherName,
             @PathParam("alertRuleResourceName") String alertRuleResourceName, @HeaderParam("Accept") String accept,
@@ -85,15 +95,33 @@ public final class AlertRuleResourcesClientImpl implements AlertRuleResourcesCli
             @HeaderParam("Content-Type") String contentType, @HeaderParam("Accept") String accept,
             @BodyParam("application/json") AlertRuleResourceInner resource, Context context);
 
-        @Headers({ "Content-Type: application/json" })
+        @Put("/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DatabaseWatcher/watchers/{watcherName}/alertRuleResources/{alertRuleResourceName}")
+        @ExpectedResponses({ 200, 201 })
+        @UnexpectedResponseExceptionType(ManagementException.class)
+        Response<AlertRuleResourceInner> createOrUpdateSync(@HostParam("endpoint") String endpoint,
+            @QueryParam("api-version") String apiVersion, @PathParam("subscriptionId") String subscriptionId,
+            @PathParam("resourceGroupName") String resourceGroupName, @PathParam("watcherName") String watcherName,
+            @PathParam("alertRuleResourceName") String alertRuleResourceName,
+            @HeaderParam("Content-Type") String contentType, @HeaderParam("Accept") String accept,
+            @BodyParam("application/json") AlertRuleResourceInner resource, Context context);
+
+        @Headers({ "Accept: application/json;q=0.9", "Content-Type: application/json" })
         @Delete("/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DatabaseWatcher/watchers/{watcherName}/alertRuleResources/{alertRuleResourceName}")
         @ExpectedResponses({ 200, 204 })
         @UnexpectedResponseExceptionType(ManagementException.class)
         Mono<Response<Void>> delete(@HostParam("endpoint") String endpoint,
             @QueryParam("api-version") String apiVersion, @PathParam("subscriptionId") String subscriptionId,
             @PathParam("resourceGroupName") String resourceGroupName, @PathParam("watcherName") String watcherName,
-            @PathParam("alertRuleResourceName") String alertRuleResourceName, @HeaderParam("Accept") String accept,
-            Context context);
+            @PathParam("alertRuleResourceName") String alertRuleResourceName, Context context);
+
+        @Headers({ "Accept: application/json;q=0.9", "Content-Type: application/json" })
+        @Delete("/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DatabaseWatcher/watchers/{watcherName}/alertRuleResources/{alertRuleResourceName}")
+        @ExpectedResponses({ 200, 204 })
+        @UnexpectedResponseExceptionType(ManagementException.class)
+        Response<Void> deleteSync(@HostParam("endpoint") String endpoint, @QueryParam("api-version") String apiVersion,
+            @PathParam("subscriptionId") String subscriptionId,
+            @PathParam("resourceGroupName") String resourceGroupName, @PathParam("watcherName") String watcherName,
+            @PathParam("alertRuleResourceName") String alertRuleResourceName, Context context);
 
         @Headers({ "Content-Type: application/json" })
         @Get("/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DatabaseWatcher/watchers/{watcherName}/alertRuleResources")
@@ -105,10 +133,27 @@ public final class AlertRuleResourcesClientImpl implements AlertRuleResourcesCli
             @HeaderParam("Accept") String accept, Context context);
 
         @Headers({ "Content-Type: application/json" })
+        @Get("/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DatabaseWatcher/watchers/{watcherName}/alertRuleResources")
+        @ExpectedResponses({ 200 })
+        @UnexpectedResponseExceptionType(ManagementException.class)
+        Response<AlertRuleResourceListResult> listByParentSync(@HostParam("endpoint") String endpoint,
+            @QueryParam("api-version") String apiVersion, @PathParam("subscriptionId") String subscriptionId,
+            @PathParam("resourceGroupName") String resourceGroupName, @PathParam("watcherName") String watcherName,
+            @HeaderParam("Accept") String accept, Context context);
+
+        @Headers({ "Content-Type: application/json" })
         @Get("{nextLink}")
         @ExpectedResponses({ 200 })
         @UnexpectedResponseExceptionType(ManagementException.class)
         Mono<Response<AlertRuleResourceListResult>> listByParentNext(
+            @PathParam(value = "nextLink", encoded = true) String nextLink, @HostParam("endpoint") String endpoint,
+            @HeaderParam("Accept") String accept, Context context);
+
+        @Headers({ "Content-Type: application/json" })
+        @Get("{nextLink}")
+        @ExpectedResponses({ 200 })
+        @UnexpectedResponseExceptionType(ManagementException.class)
+        Response<AlertRuleResourceListResult> listByParentNextSync(
             @PathParam(value = "nextLink", encoded = true) String nextLink, @HostParam("endpoint") String endpoint,
             @HeaderParam("Accept") String accept, Context context);
     }
@@ -127,69 +172,10 @@ public final class AlertRuleResourcesClientImpl implements AlertRuleResourcesCli
     @ServiceMethod(returns = ReturnType.SINGLE)
     private Mono<Response<AlertRuleResourceInner>> getWithResponseAsync(String resourceGroupName, String watcherName,
         String alertRuleResourceName) {
-        if (this.client.getEndpoint() == null) {
-            return Mono.error(
-                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
-        }
-        if (this.client.getSubscriptionId() == null) {
-            return Mono.error(new IllegalArgumentException(
-                "Parameter this.client.getSubscriptionId() is required and cannot be null."));
-        }
-        if (resourceGroupName == null) {
-            return Mono
-                .error(new IllegalArgumentException("Parameter resourceGroupName is required and cannot be null."));
-        }
-        if (watcherName == null) {
-            return Mono.error(new IllegalArgumentException("Parameter watcherName is required and cannot be null."));
-        }
-        if (alertRuleResourceName == null) {
-            return Mono
-                .error(new IllegalArgumentException("Parameter alertRuleResourceName is required and cannot be null."));
-        }
         final String accept = "application/json";
         return FluxUtil.withContext(context -> service.get(this.client.getEndpoint(), this.client.getApiVersion(),
             this.client.getSubscriptionId(), resourceGroupName, watcherName, alertRuleResourceName, accept, context))
             .contextWrite(context -> context.putAll(FluxUtil.toReactorContext(this.client.getContext()).readOnly()));
-    }
-
-    /**
-     * Get a AlertRuleResource.
-     * 
-     * @param resourceGroupName The name of the resource group. The name is case insensitive.
-     * @param watcherName The database watcher name.
-     * @param alertRuleResourceName The alert rule proxy resource name.
-     * @param context The context to associate with this operation.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return a AlertRuleResource along with {@link Response} on successful completion of {@link Mono}.
-     */
-    @ServiceMethod(returns = ReturnType.SINGLE)
-    private Mono<Response<AlertRuleResourceInner>> getWithResponseAsync(String resourceGroupName, String watcherName,
-        String alertRuleResourceName, Context context) {
-        if (this.client.getEndpoint() == null) {
-            return Mono.error(
-                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
-        }
-        if (this.client.getSubscriptionId() == null) {
-            return Mono.error(new IllegalArgumentException(
-                "Parameter this.client.getSubscriptionId() is required and cannot be null."));
-        }
-        if (resourceGroupName == null) {
-            return Mono
-                .error(new IllegalArgumentException("Parameter resourceGroupName is required and cannot be null."));
-        }
-        if (watcherName == null) {
-            return Mono.error(new IllegalArgumentException("Parameter watcherName is required and cannot be null."));
-        }
-        if (alertRuleResourceName == null) {
-            return Mono
-                .error(new IllegalArgumentException("Parameter alertRuleResourceName is required and cannot be null."));
-        }
-        final String accept = "application/json";
-        context = this.client.mergeContext(context);
-        return service.get(this.client.getEndpoint(), this.client.getApiVersion(), this.client.getSubscriptionId(),
-            resourceGroupName, watcherName, alertRuleResourceName, accept, context);
     }
 
     /**
@@ -225,7 +211,9 @@ public final class AlertRuleResourcesClientImpl implements AlertRuleResourcesCli
     @ServiceMethod(returns = ReturnType.SINGLE)
     public Response<AlertRuleResourceInner> getWithResponse(String resourceGroupName, String watcherName,
         String alertRuleResourceName, Context context) {
-        return getWithResponseAsync(resourceGroupName, watcherName, alertRuleResourceName, context).block();
+        final String accept = "application/json";
+        return service.getSync(this.client.getEndpoint(), this.client.getApiVersion(), this.client.getSubscriptionId(),
+            resourceGroupName, watcherName, alertRuleResourceName, accept, context);
     }
 
     /**
@@ -260,30 +248,6 @@ public final class AlertRuleResourcesClientImpl implements AlertRuleResourcesCli
     @ServiceMethod(returns = ReturnType.SINGLE)
     private Mono<Response<AlertRuleResourceInner>> createOrUpdateWithResponseAsync(String resourceGroupName,
         String watcherName, String alertRuleResourceName, AlertRuleResourceInner resource) {
-        if (this.client.getEndpoint() == null) {
-            return Mono.error(
-                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
-        }
-        if (this.client.getSubscriptionId() == null) {
-            return Mono.error(new IllegalArgumentException(
-                "Parameter this.client.getSubscriptionId() is required and cannot be null."));
-        }
-        if (resourceGroupName == null) {
-            return Mono
-                .error(new IllegalArgumentException("Parameter resourceGroupName is required and cannot be null."));
-        }
-        if (watcherName == null) {
-            return Mono.error(new IllegalArgumentException("Parameter watcherName is required and cannot be null."));
-        }
-        if (alertRuleResourceName == null) {
-            return Mono
-                .error(new IllegalArgumentException("Parameter alertRuleResourceName is required and cannot be null."));
-        }
-        if (resource == null) {
-            return Mono.error(new IllegalArgumentException("Parameter resource is required and cannot be null."));
-        } else {
-            resource.validate();
-        }
         final String contentType = "application/json";
         final String accept = "application/json";
         return FluxUtil
@@ -291,55 +255,6 @@ public final class AlertRuleResourcesClientImpl implements AlertRuleResourcesCli
                 this.client.getSubscriptionId(), resourceGroupName, watcherName, alertRuleResourceName, contentType,
                 accept, resource, context))
             .contextWrite(context -> context.putAll(FluxUtil.toReactorContext(this.client.getContext()).readOnly()));
-    }
-
-    /**
-     * Create a AlertRuleResource.
-     * 
-     * @param resourceGroupName The name of the resource group. The name is case insensitive.
-     * @param watcherName The database watcher name.
-     * @param alertRuleResourceName The alert rule proxy resource name.
-     * @param resource Resource create parameters.
-     * @param context The context to associate with this operation.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return concrete proxy resource types can be created by aliasing this type using a specific property type along
-     * with {@link Response} on successful completion of {@link Mono}.
-     */
-    @ServiceMethod(returns = ReturnType.SINGLE)
-    private Mono<Response<AlertRuleResourceInner>> createOrUpdateWithResponseAsync(String resourceGroupName,
-        String watcherName, String alertRuleResourceName, AlertRuleResourceInner resource, Context context) {
-        if (this.client.getEndpoint() == null) {
-            return Mono.error(
-                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
-        }
-        if (this.client.getSubscriptionId() == null) {
-            return Mono.error(new IllegalArgumentException(
-                "Parameter this.client.getSubscriptionId() is required and cannot be null."));
-        }
-        if (resourceGroupName == null) {
-            return Mono
-                .error(new IllegalArgumentException("Parameter resourceGroupName is required and cannot be null."));
-        }
-        if (watcherName == null) {
-            return Mono.error(new IllegalArgumentException("Parameter watcherName is required and cannot be null."));
-        }
-        if (alertRuleResourceName == null) {
-            return Mono
-                .error(new IllegalArgumentException("Parameter alertRuleResourceName is required and cannot be null."));
-        }
-        if (resource == null) {
-            return Mono.error(new IllegalArgumentException("Parameter resource is required and cannot be null."));
-        } else {
-            resource.validate();
-        }
-        final String contentType = "application/json";
-        final String accept = "application/json";
-        context = this.client.mergeContext(context);
-        return service.createOrUpdate(this.client.getEndpoint(), this.client.getApiVersion(),
-            this.client.getSubscriptionId(), resourceGroupName, watcherName, alertRuleResourceName, contentType, accept,
-            resource, context);
     }
 
     /**
@@ -379,8 +294,11 @@ public final class AlertRuleResourcesClientImpl implements AlertRuleResourcesCli
     @ServiceMethod(returns = ReturnType.SINGLE)
     public Response<AlertRuleResourceInner> createOrUpdateWithResponse(String resourceGroupName, String watcherName,
         String alertRuleResourceName, AlertRuleResourceInner resource, Context context) {
-        return createOrUpdateWithResponseAsync(resourceGroupName, watcherName, alertRuleResourceName, resource, context)
-            .block();
+        final String contentType = "application/json";
+        final String accept = "application/json";
+        return service.createOrUpdateSync(this.client.getEndpoint(), this.client.getApiVersion(),
+            this.client.getSubscriptionId(), resourceGroupName, watcherName, alertRuleResourceName, contentType, accept,
+            resource, context);
     }
 
     /**
@@ -416,69 +334,10 @@ public final class AlertRuleResourcesClientImpl implements AlertRuleResourcesCli
     @ServiceMethod(returns = ReturnType.SINGLE)
     private Mono<Response<Void>> deleteWithResponseAsync(String resourceGroupName, String watcherName,
         String alertRuleResourceName) {
-        if (this.client.getEndpoint() == null) {
-            return Mono.error(
-                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
-        }
-        if (this.client.getSubscriptionId() == null) {
-            return Mono.error(new IllegalArgumentException(
-                "Parameter this.client.getSubscriptionId() is required and cannot be null."));
-        }
-        if (resourceGroupName == null) {
-            return Mono
-                .error(new IllegalArgumentException("Parameter resourceGroupName is required and cannot be null."));
-        }
-        if (watcherName == null) {
-            return Mono.error(new IllegalArgumentException("Parameter watcherName is required and cannot be null."));
-        }
-        if (alertRuleResourceName == null) {
-            return Mono
-                .error(new IllegalArgumentException("Parameter alertRuleResourceName is required and cannot be null."));
-        }
-        final String accept = "application/json";
-        return FluxUtil.withContext(context -> service.delete(this.client.getEndpoint(), this.client.getApiVersion(),
-            this.client.getSubscriptionId(), resourceGroupName, watcherName, alertRuleResourceName, accept, context))
+        return FluxUtil
+            .withContext(context -> service.delete(this.client.getEndpoint(), this.client.getApiVersion(),
+                this.client.getSubscriptionId(), resourceGroupName, watcherName, alertRuleResourceName, context))
             .contextWrite(context -> context.putAll(FluxUtil.toReactorContext(this.client.getContext()).readOnly()));
-    }
-
-    /**
-     * Delete a AlertRuleResource.
-     * 
-     * @param resourceGroupName The name of the resource group. The name is case insensitive.
-     * @param watcherName The database watcher name.
-     * @param alertRuleResourceName The alert rule proxy resource name.
-     * @param context The context to associate with this operation.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the {@link Response} on successful completion of {@link Mono}.
-     */
-    @ServiceMethod(returns = ReturnType.SINGLE)
-    private Mono<Response<Void>> deleteWithResponseAsync(String resourceGroupName, String watcherName,
-        String alertRuleResourceName, Context context) {
-        if (this.client.getEndpoint() == null) {
-            return Mono.error(
-                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
-        }
-        if (this.client.getSubscriptionId() == null) {
-            return Mono.error(new IllegalArgumentException(
-                "Parameter this.client.getSubscriptionId() is required and cannot be null."));
-        }
-        if (resourceGroupName == null) {
-            return Mono
-                .error(new IllegalArgumentException("Parameter resourceGroupName is required and cannot be null."));
-        }
-        if (watcherName == null) {
-            return Mono.error(new IllegalArgumentException("Parameter watcherName is required and cannot be null."));
-        }
-        if (alertRuleResourceName == null) {
-            return Mono
-                .error(new IllegalArgumentException("Parameter alertRuleResourceName is required and cannot be null."));
-        }
-        final String accept = "application/json";
-        context = this.client.mergeContext(context);
-        return service.delete(this.client.getEndpoint(), this.client.getApiVersion(), this.client.getSubscriptionId(),
-            resourceGroupName, watcherName, alertRuleResourceName, accept, context);
     }
 
     /**
@@ -513,7 +372,8 @@ public final class AlertRuleResourcesClientImpl implements AlertRuleResourcesCli
     @ServiceMethod(returns = ReturnType.SINGLE)
     public Response<Void> deleteWithResponse(String resourceGroupName, String watcherName, String alertRuleResourceName,
         Context context) {
-        return deleteWithResponseAsync(resourceGroupName, watcherName, alertRuleResourceName, context).block();
+        return service.deleteSync(this.client.getEndpoint(), this.client.getApiVersion(),
+            this.client.getSubscriptionId(), resourceGroupName, watcherName, alertRuleResourceName, context);
     }
 
     /**
@@ -545,21 +405,6 @@ public final class AlertRuleResourcesClientImpl implements AlertRuleResourcesCli
     @ServiceMethod(returns = ReturnType.SINGLE)
     private Mono<PagedResponse<AlertRuleResourceInner>> listByParentSinglePageAsync(String resourceGroupName,
         String watcherName) {
-        if (this.client.getEndpoint() == null) {
-            return Mono.error(
-                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
-        }
-        if (this.client.getSubscriptionId() == null) {
-            return Mono.error(new IllegalArgumentException(
-                "Parameter this.client.getSubscriptionId() is required and cannot be null."));
-        }
-        if (resourceGroupName == null) {
-            return Mono
-                .error(new IllegalArgumentException("Parameter resourceGroupName is required and cannot be null."));
-        }
-        if (watcherName == null) {
-            return Mono.error(new IllegalArgumentException("Parameter watcherName is required and cannot be null."));
-        }
         final String accept = "application/json";
         return FluxUtil
             .withContext(context -> service.listByParent(this.client.getEndpoint(), this.client.getApiVersion(),
@@ -567,45 +412,6 @@ public final class AlertRuleResourcesClientImpl implements AlertRuleResourcesCli
             .<PagedResponse<AlertRuleResourceInner>>map(res -> new PagedResponseBase<>(res.getRequest(),
                 res.getStatusCode(), res.getHeaders(), res.getValue().value(), res.getValue().nextLink(), null))
             .contextWrite(context -> context.putAll(FluxUtil.toReactorContext(this.client.getContext()).readOnly()));
-    }
-
-    /**
-     * List AlertRuleResource resources by Watcher.
-     * 
-     * @param resourceGroupName The name of the resource group. The name is case insensitive.
-     * @param watcherName The database watcher name.
-     * @param context The context to associate with this operation.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the response of a AlertRuleResource list operation along with {@link PagedResponse} on successful
-     * completion of {@link Mono}.
-     */
-    @ServiceMethod(returns = ReturnType.SINGLE)
-    private Mono<PagedResponse<AlertRuleResourceInner>> listByParentSinglePageAsync(String resourceGroupName,
-        String watcherName, Context context) {
-        if (this.client.getEndpoint() == null) {
-            return Mono.error(
-                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
-        }
-        if (this.client.getSubscriptionId() == null) {
-            return Mono.error(new IllegalArgumentException(
-                "Parameter this.client.getSubscriptionId() is required and cannot be null."));
-        }
-        if (resourceGroupName == null) {
-            return Mono
-                .error(new IllegalArgumentException("Parameter resourceGroupName is required and cannot be null."));
-        }
-        if (watcherName == null) {
-            return Mono.error(new IllegalArgumentException("Parameter watcherName is required and cannot be null."));
-        }
-        final String accept = "application/json";
-        context = this.client.mergeContext(context);
-        return service
-            .listByParent(this.client.getEndpoint(), this.client.getApiVersion(), this.client.getSubscriptionId(),
-                resourceGroupName, watcherName, accept, context)
-            .map(res -> new PagedResponseBase<>(res.getRequest(), res.getStatusCode(), res.getHeaders(),
-                res.getValue().value(), res.getValue().nextLink(), null));
     }
 
     /**
@@ -629,17 +435,41 @@ public final class AlertRuleResourcesClientImpl implements AlertRuleResourcesCli
      * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
      * @param watcherName The database watcher name.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return the response of a AlertRuleResource list operation along with {@link PagedResponse}.
+     */
+    @ServiceMethod(returns = ReturnType.SINGLE)
+    private PagedResponse<AlertRuleResourceInner> listByParentSinglePage(String resourceGroupName, String watcherName) {
+        final String accept = "application/json";
+        Response<AlertRuleResourceListResult> res
+            = service.listByParentSync(this.client.getEndpoint(), this.client.getApiVersion(),
+                this.client.getSubscriptionId(), resourceGroupName, watcherName, accept, Context.NONE);
+        return new PagedResponseBase<>(res.getRequest(), res.getStatusCode(), res.getHeaders(), res.getValue().value(),
+            res.getValue().nextLink(), null);
+    }
+
+    /**
+     * List AlertRuleResource resources by Watcher.
+     * 
+     * @param resourceGroupName The name of the resource group. The name is case insensitive.
+     * @param watcherName The database watcher name.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the response of a AlertRuleResource list operation as paginated response with {@link PagedFlux}.
+     * @return the response of a AlertRuleResource list operation along with {@link PagedResponse}.
      */
-    @ServiceMethod(returns = ReturnType.COLLECTION)
-    private PagedFlux<AlertRuleResourceInner> listByParentAsync(String resourceGroupName, String watcherName,
+    @ServiceMethod(returns = ReturnType.SINGLE)
+    private PagedResponse<AlertRuleResourceInner> listByParentSinglePage(String resourceGroupName, String watcherName,
         Context context) {
-        return new PagedFlux<>(() -> listByParentSinglePageAsync(resourceGroupName, watcherName, context),
-            nextLink -> listByParentNextSinglePageAsync(nextLink, context));
+        final String accept = "application/json";
+        Response<AlertRuleResourceListResult> res
+            = service.listByParentSync(this.client.getEndpoint(), this.client.getApiVersion(),
+                this.client.getSubscriptionId(), resourceGroupName, watcherName, accept, context);
+        return new PagedResponseBase<>(res.getRequest(), res.getStatusCode(), res.getHeaders(), res.getValue().value(),
+            res.getValue().nextLink(), null);
     }
 
     /**
@@ -654,7 +484,8 @@ public final class AlertRuleResourcesClientImpl implements AlertRuleResourcesCli
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
     public PagedIterable<AlertRuleResourceInner> listByParent(String resourceGroupName, String watcherName) {
-        return new PagedIterable<>(listByParentAsync(resourceGroupName, watcherName));
+        return new PagedIterable<>(() -> listByParentSinglePage(resourceGroupName, watcherName),
+            nextLink -> listByParentNextSinglePage(nextLink));
     }
 
     /**
@@ -671,7 +502,8 @@ public final class AlertRuleResourcesClientImpl implements AlertRuleResourcesCli
     @ServiceMethod(returns = ReturnType.COLLECTION)
     public PagedIterable<AlertRuleResourceInner> listByParent(String resourceGroupName, String watcherName,
         Context context) {
-        return new PagedIterable<>(listByParentAsync(resourceGroupName, watcherName, context));
+        return new PagedIterable<>(() -> listByParentSinglePage(resourceGroupName, watcherName, context),
+            nextLink -> listByParentNextSinglePage(nextLink, context));
     }
 
     /**
@@ -686,13 +518,6 @@ public final class AlertRuleResourcesClientImpl implements AlertRuleResourcesCli
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
     private Mono<PagedResponse<AlertRuleResourceInner>> listByParentNextSinglePageAsync(String nextLink) {
-        if (nextLink == null) {
-            return Mono.error(new IllegalArgumentException("Parameter nextLink is required and cannot be null."));
-        }
-        if (this.client.getEndpoint() == null) {
-            return Mono.error(
-                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
-        }
         final String accept = "application/json";
         return FluxUtil
             .withContext(context -> service.listByParentNext(nextLink, this.client.getEndpoint(), accept, context))
@@ -705,27 +530,36 @@ public final class AlertRuleResourcesClientImpl implements AlertRuleResourcesCli
      * Get the next page of items.
      * 
      * @param nextLink The URL to get the next list of items.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return the response of a AlertRuleResource list operation along with {@link PagedResponse}.
+     */
+    @ServiceMethod(returns = ReturnType.SINGLE)
+    private PagedResponse<AlertRuleResourceInner> listByParentNextSinglePage(String nextLink) {
+        final String accept = "application/json";
+        Response<AlertRuleResourceListResult> res
+            = service.listByParentNextSync(nextLink, this.client.getEndpoint(), accept, Context.NONE);
+        return new PagedResponseBase<>(res.getRequest(), res.getStatusCode(), res.getHeaders(), res.getValue().value(),
+            res.getValue().nextLink(), null);
+    }
+
+    /**
+     * Get the next page of items.
+     * 
+     * @param nextLink The URL to get the next list of items.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the response of a AlertRuleResource list operation along with {@link PagedResponse} on successful
-     * completion of {@link Mono}.
+     * @return the response of a AlertRuleResource list operation along with {@link PagedResponse}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    private Mono<PagedResponse<AlertRuleResourceInner>> listByParentNextSinglePageAsync(String nextLink,
-        Context context) {
-        if (nextLink == null) {
-            return Mono.error(new IllegalArgumentException("Parameter nextLink is required and cannot be null."));
-        }
-        if (this.client.getEndpoint() == null) {
-            return Mono.error(
-                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
-        }
+    private PagedResponse<AlertRuleResourceInner> listByParentNextSinglePage(String nextLink, Context context) {
         final String accept = "application/json";
-        context = this.client.mergeContext(context);
-        return service.listByParentNext(nextLink, this.client.getEndpoint(), accept, context)
-            .map(res -> new PagedResponseBase<>(res.getRequest(), res.getStatusCode(), res.getHeaders(),
-                res.getValue().value(), res.getValue().nextLink(), null));
+        Response<AlertRuleResourceListResult> res
+            = service.listByParentNextSync(nextLink, this.client.getEndpoint(), accept, context);
+        return new PagedResponseBase<>(res.getRequest(), res.getStatusCode(), res.getHeaders(), res.getValue().value(),
+            res.getValue().nextLink(), null);
     }
 }

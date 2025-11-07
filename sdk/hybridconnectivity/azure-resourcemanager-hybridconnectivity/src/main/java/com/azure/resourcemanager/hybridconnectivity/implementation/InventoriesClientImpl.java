@@ -60,13 +60,23 @@ public final class InventoriesClientImpl implements InventoriesClient {
      * service to perform REST calls.
      */
     @Host("{endpoint}")
-    @ServiceInterface(name = "HybridConnectivityMg")
+    @ServiceInterface(name = "HybridConnectivityMgmtClientInventories")
     public interface InventoriesService {
         @Headers({ "Content-Type: application/json" })
         @Get("/{resourceUri}/providers/Microsoft.HybridConnectivity/solutionConfigurations/{solutionConfiguration}/inventory/{inventoryId}")
         @ExpectedResponses({ 200 })
         @UnexpectedResponseExceptionType(ManagementException.class)
         Mono<Response<InventoryResourceInner>> get(@HostParam("endpoint") String endpoint,
+            @QueryParam("api-version") String apiVersion,
+            @PathParam(value = "resourceUri", encoded = true) String resourceUri,
+            @PathParam("solutionConfiguration") String solutionConfiguration,
+            @PathParam("inventoryId") String inventoryId, @HeaderParam("Accept") String accept, Context context);
+
+        @Headers({ "Content-Type: application/json" })
+        @Get("/{resourceUri}/providers/Microsoft.HybridConnectivity/solutionConfigurations/{solutionConfiguration}/inventory/{inventoryId}")
+        @ExpectedResponses({ 200 })
+        @UnexpectedResponseExceptionType(ManagementException.class)
+        Response<InventoryResourceInner> getSync(@HostParam("endpoint") String endpoint,
             @QueryParam("api-version") String apiVersion,
             @PathParam(value = "resourceUri", encoded = true) String resourceUri,
             @PathParam("solutionConfiguration") String solutionConfiguration,
@@ -83,10 +93,28 @@ public final class InventoriesClientImpl implements InventoriesClient {
             Context context);
 
         @Headers({ "Content-Type: application/json" })
+        @Get("/{resourceUri}/providers/Microsoft.HybridConnectivity/solutionConfigurations/{solutionConfiguration}/inventory")
+        @ExpectedResponses({ 200 })
+        @UnexpectedResponseExceptionType(ManagementException.class)
+        Response<InventoryResourceListResult> listBySolutionConfigurationSync(@HostParam("endpoint") String endpoint,
+            @QueryParam("api-version") String apiVersion,
+            @PathParam(value = "resourceUri", encoded = true) String resourceUri,
+            @PathParam("solutionConfiguration") String solutionConfiguration, @HeaderParam("Accept") String accept,
+            Context context);
+
+        @Headers({ "Content-Type: application/json" })
         @Get("{nextLink}")
         @ExpectedResponses({ 200 })
         @UnexpectedResponseExceptionType(ManagementException.class)
         Mono<Response<InventoryResourceListResult>> listBySolutionConfigurationNext(
+            @PathParam(value = "nextLink", encoded = true) String nextLink, @HostParam("endpoint") String endpoint,
+            @HeaderParam("Accept") String accept, Context context);
+
+        @Headers({ "Content-Type: application/json" })
+        @Get("{nextLink}")
+        @ExpectedResponses({ 200 })
+        @UnexpectedResponseExceptionType(ManagementException.class)
+        Response<InventoryResourceListResult> listBySolutionConfigurationNextSync(
             @PathParam(value = "nextLink", encoded = true) String nextLink, @HostParam("endpoint") String endpoint,
             @HeaderParam("Accept") String accept, Context context);
     }
@@ -105,60 +133,11 @@ public final class InventoriesClientImpl implements InventoriesClient {
     @ServiceMethod(returns = ReturnType.SINGLE)
     private Mono<Response<InventoryResourceInner>> getWithResponseAsync(String resourceUri,
         String solutionConfiguration, String inventoryId) {
-        if (this.client.getEndpoint() == null) {
-            return Mono.error(
-                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
-        }
-        if (resourceUri == null) {
-            return Mono.error(new IllegalArgumentException("Parameter resourceUri is required and cannot be null."));
-        }
-        if (solutionConfiguration == null) {
-            return Mono
-                .error(new IllegalArgumentException("Parameter solutionConfiguration is required and cannot be null."));
-        }
-        if (inventoryId == null) {
-            return Mono.error(new IllegalArgumentException("Parameter inventoryId is required and cannot be null."));
-        }
         final String accept = "application/json";
         return FluxUtil
             .withContext(context -> service.get(this.client.getEndpoint(), this.client.getApiVersion(), resourceUri,
                 solutionConfiguration, inventoryId, accept, context))
             .contextWrite(context -> context.putAll(FluxUtil.toReactorContext(this.client.getContext()).readOnly()));
-    }
-
-    /**
-     * Get a InventoryResource.
-     * 
-     * @param resourceUri The fully qualified Azure Resource manager identifier of the resource.
-     * @param solutionConfiguration Represent Solution Configuration Resource.
-     * @param inventoryId Inventory resource.
-     * @param context The context to associate with this operation.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return a InventoryResource along with {@link Response} on successful completion of {@link Mono}.
-     */
-    @ServiceMethod(returns = ReturnType.SINGLE)
-    private Mono<Response<InventoryResourceInner>> getWithResponseAsync(String resourceUri,
-        String solutionConfiguration, String inventoryId, Context context) {
-        if (this.client.getEndpoint() == null) {
-            return Mono.error(
-                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
-        }
-        if (resourceUri == null) {
-            return Mono.error(new IllegalArgumentException("Parameter resourceUri is required and cannot be null."));
-        }
-        if (solutionConfiguration == null) {
-            return Mono
-                .error(new IllegalArgumentException("Parameter solutionConfiguration is required and cannot be null."));
-        }
-        if (inventoryId == null) {
-            return Mono.error(new IllegalArgumentException("Parameter inventoryId is required and cannot be null."));
-        }
-        final String accept = "application/json";
-        context = this.client.mergeContext(context);
-        return service.get(this.client.getEndpoint(), this.client.getApiVersion(), resourceUri, solutionConfiguration,
-            inventoryId, accept, context);
     }
 
     /**
@@ -194,7 +173,9 @@ public final class InventoriesClientImpl implements InventoriesClient {
     @ServiceMethod(returns = ReturnType.SINGLE)
     public Response<InventoryResourceInner> getWithResponse(String resourceUri, String solutionConfiguration,
         String inventoryId, Context context) {
-        return getWithResponseAsync(resourceUri, solutionConfiguration, inventoryId, context).block();
+        final String accept = "application/json";
+        return service.getSync(this.client.getEndpoint(), this.client.getApiVersion(), resourceUri,
+            solutionConfiguration, inventoryId, accept, context);
     }
 
     /**
@@ -227,17 +208,6 @@ public final class InventoriesClientImpl implements InventoriesClient {
     @ServiceMethod(returns = ReturnType.SINGLE)
     private Mono<PagedResponse<InventoryResourceInner>> listBySolutionConfigurationSinglePageAsync(String resourceUri,
         String solutionConfiguration) {
-        if (this.client.getEndpoint() == null) {
-            return Mono.error(
-                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
-        }
-        if (resourceUri == null) {
-            return Mono.error(new IllegalArgumentException("Parameter resourceUri is required and cannot be null."));
-        }
-        if (solutionConfiguration == null) {
-            return Mono
-                .error(new IllegalArgumentException("Parameter solutionConfiguration is required and cannot be null."));
-        }
         final String accept = "application/json";
         return FluxUtil
             .withContext(context -> service.listBySolutionConfiguration(this.client.getEndpoint(),
@@ -245,41 +215,6 @@ public final class InventoriesClientImpl implements InventoriesClient {
             .<PagedResponse<InventoryResourceInner>>map(res -> new PagedResponseBase<>(res.getRequest(),
                 res.getStatusCode(), res.getHeaders(), res.getValue().value(), res.getValue().nextLink(), null))
             .contextWrite(context -> context.putAll(FluxUtil.toReactorContext(this.client.getContext()).readOnly()));
-    }
-
-    /**
-     * List InventoryResource resources by SolutionConfiguration.
-     * 
-     * @param resourceUri The fully qualified Azure Resource manager identifier of the resource.
-     * @param solutionConfiguration Represent Solution Configuration Resource.
-     * @param context The context to associate with this operation.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the response of a InventoryResource list operation along with {@link PagedResponse} on successful
-     * completion of {@link Mono}.
-     */
-    @ServiceMethod(returns = ReturnType.SINGLE)
-    private Mono<PagedResponse<InventoryResourceInner>> listBySolutionConfigurationSinglePageAsync(String resourceUri,
-        String solutionConfiguration, Context context) {
-        if (this.client.getEndpoint() == null) {
-            return Mono.error(
-                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
-        }
-        if (resourceUri == null) {
-            return Mono.error(new IllegalArgumentException("Parameter resourceUri is required and cannot be null."));
-        }
-        if (solutionConfiguration == null) {
-            return Mono
-                .error(new IllegalArgumentException("Parameter solutionConfiguration is required and cannot be null."));
-        }
-        final String accept = "application/json";
-        context = this.client.mergeContext(context);
-        return service
-            .listBySolutionConfiguration(this.client.getEndpoint(), this.client.getApiVersion(), resourceUri,
-                solutionConfiguration, accept, context)
-            .map(res -> new PagedResponseBase<>(res.getRequest(), res.getStatusCode(), res.getHeaders(),
-                res.getValue().value(), res.getValue().nextLink(), null));
     }
 
     /**
@@ -304,18 +239,40 @@ public final class InventoriesClientImpl implements InventoriesClient {
      * 
      * @param resourceUri The fully qualified Azure Resource manager identifier of the resource.
      * @param solutionConfiguration Represent Solution Configuration Resource.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return the response of a InventoryResource list operation along with {@link PagedResponse}.
+     */
+    @ServiceMethod(returns = ReturnType.SINGLE)
+    private PagedResponse<InventoryResourceInner> listBySolutionConfigurationSinglePage(String resourceUri,
+        String solutionConfiguration) {
+        final String accept = "application/json";
+        Response<InventoryResourceListResult> res = service.listBySolutionConfigurationSync(this.client.getEndpoint(),
+            this.client.getApiVersion(), resourceUri, solutionConfiguration, accept, Context.NONE);
+        return new PagedResponseBase<>(res.getRequest(), res.getStatusCode(), res.getHeaders(), res.getValue().value(),
+            res.getValue().nextLink(), null);
+    }
+
+    /**
+     * List InventoryResource resources by SolutionConfiguration.
+     * 
+     * @param resourceUri The fully qualified Azure Resource manager identifier of the resource.
+     * @param solutionConfiguration Represent Solution Configuration Resource.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the response of a InventoryResource list operation as paginated response with {@link PagedFlux}.
+     * @return the response of a InventoryResource list operation along with {@link PagedResponse}.
      */
-    @ServiceMethod(returns = ReturnType.COLLECTION)
-    private PagedFlux<InventoryResourceInner> listBySolutionConfigurationAsync(String resourceUri,
+    @ServiceMethod(returns = ReturnType.SINGLE)
+    private PagedResponse<InventoryResourceInner> listBySolutionConfigurationSinglePage(String resourceUri,
         String solutionConfiguration, Context context) {
-        return new PagedFlux<>(
-            () -> listBySolutionConfigurationSinglePageAsync(resourceUri, solutionConfiguration, context),
-            nextLink -> listBySolutionConfigurationNextSinglePageAsync(nextLink, context));
+        final String accept = "application/json";
+        Response<InventoryResourceListResult> res = service.listBySolutionConfigurationSync(this.client.getEndpoint(),
+            this.client.getApiVersion(), resourceUri, solutionConfiguration, accept, context);
+        return new PagedResponseBase<>(res.getRequest(), res.getStatusCode(), res.getHeaders(), res.getValue().value(),
+            res.getValue().nextLink(), null);
     }
 
     /**
@@ -331,7 +288,8 @@ public final class InventoriesClientImpl implements InventoriesClient {
     @ServiceMethod(returns = ReturnType.COLLECTION)
     public PagedIterable<InventoryResourceInner> listBySolutionConfiguration(String resourceUri,
         String solutionConfiguration) {
-        return new PagedIterable<>(listBySolutionConfigurationAsync(resourceUri, solutionConfiguration));
+        return new PagedIterable<>(() -> listBySolutionConfigurationSinglePage(resourceUri, solutionConfiguration),
+            nextLink -> listBySolutionConfigurationNextSinglePage(nextLink));
     }
 
     /**
@@ -348,7 +306,9 @@ public final class InventoriesClientImpl implements InventoriesClient {
     @ServiceMethod(returns = ReturnType.COLLECTION)
     public PagedIterable<InventoryResourceInner> listBySolutionConfiguration(String resourceUri,
         String solutionConfiguration, Context context) {
-        return new PagedIterable<>(listBySolutionConfigurationAsync(resourceUri, solutionConfiguration, context));
+        return new PagedIterable<>(
+            () -> listBySolutionConfigurationSinglePage(resourceUri, solutionConfiguration, context),
+            nextLink -> listBySolutionConfigurationNextSinglePage(nextLink, context));
     }
 
     /**
@@ -364,13 +324,6 @@ public final class InventoriesClientImpl implements InventoriesClient {
     @ServiceMethod(returns = ReturnType.SINGLE)
     private Mono<PagedResponse<InventoryResourceInner>>
         listBySolutionConfigurationNextSinglePageAsync(String nextLink) {
-        if (nextLink == null) {
-            return Mono.error(new IllegalArgumentException("Parameter nextLink is required and cannot be null."));
-        }
-        if (this.client.getEndpoint() == null) {
-            return Mono.error(
-                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
-        }
         final String accept = "application/json";
         return FluxUtil.withContext(
             context -> service.listBySolutionConfigurationNext(nextLink, this.client.getEndpoint(), accept, context))
@@ -383,27 +336,37 @@ public final class InventoriesClientImpl implements InventoriesClient {
      * Get the next page of items.
      * 
      * @param nextLink The URL to get the next list of items.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return the response of a InventoryResource list operation along with {@link PagedResponse}.
+     */
+    @ServiceMethod(returns = ReturnType.SINGLE)
+    private PagedResponse<InventoryResourceInner> listBySolutionConfigurationNextSinglePage(String nextLink) {
+        final String accept = "application/json";
+        Response<InventoryResourceListResult> res
+            = service.listBySolutionConfigurationNextSync(nextLink, this.client.getEndpoint(), accept, Context.NONE);
+        return new PagedResponseBase<>(res.getRequest(), res.getStatusCode(), res.getHeaders(), res.getValue().value(),
+            res.getValue().nextLink(), null);
+    }
+
+    /**
+     * Get the next page of items.
+     * 
+     * @param nextLink The URL to get the next list of items.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the response of a InventoryResource list operation along with {@link PagedResponse} on successful
-     * completion of {@link Mono}.
+     * @return the response of a InventoryResource list operation along with {@link PagedResponse}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    private Mono<PagedResponse<InventoryResourceInner>> listBySolutionConfigurationNextSinglePageAsync(String nextLink,
+    private PagedResponse<InventoryResourceInner> listBySolutionConfigurationNextSinglePage(String nextLink,
         Context context) {
-        if (nextLink == null) {
-            return Mono.error(new IllegalArgumentException("Parameter nextLink is required and cannot be null."));
-        }
-        if (this.client.getEndpoint() == null) {
-            return Mono.error(
-                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
-        }
         final String accept = "application/json";
-        context = this.client.mergeContext(context);
-        return service.listBySolutionConfigurationNext(nextLink, this.client.getEndpoint(), accept, context)
-            .map(res -> new PagedResponseBase<>(res.getRequest(), res.getStatusCode(), res.getHeaders(),
-                res.getValue().value(), res.getValue().nextLink(), null));
+        Response<InventoryResourceListResult> res
+            = service.listBySolutionConfigurationNextSync(nextLink, this.client.getEndpoint(), accept, context);
+        return new PagedResponseBase<>(res.getRequest(), res.getStatusCode(), res.getHeaders(), res.getValue().value(),
+            res.getValue().nextLink(), null);
     }
 }

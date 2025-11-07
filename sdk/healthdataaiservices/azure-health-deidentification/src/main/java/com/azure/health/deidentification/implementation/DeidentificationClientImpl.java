@@ -163,7 +163,7 @@ public final class DeidentificationClientImpl {
      * REST calls.
      */
     @Host("{endpoint}")
-    @ServiceInterface(name = "DeidentificationClie")
+    @ServiceInterface(name = "DeidentificationClient")
     public interface DeidentificationClientService {
         @Get("/jobs/{name}")
         @ExpectedResponses({ 200 })
@@ -275,7 +275,7 @@ public final class DeidentificationClientImpl {
         @UnexpectedResponseExceptionType(HttpResponseException.class)
         Mono<Response<Void>> deleteJob(@HostParam("endpoint") String endpoint,
             @QueryParam("api-version") String apiVersion, @PathParam("name") String jobName,
-            @HeaderParam("Accept") String accept, RequestOptions requestOptions, Context context);
+            RequestOptions requestOptions, Context context);
 
         @Delete("/jobs/{name}")
         @ExpectedResponses({ 204 })
@@ -285,7 +285,7 @@ public final class DeidentificationClientImpl {
         @UnexpectedResponseExceptionType(HttpResponseException.class)
         Response<Void> deleteJobSync(@HostParam("endpoint") String endpoint,
             @QueryParam("api-version") String apiVersion, @PathParam("name") String jobName,
-            @HeaderParam("Accept") String accept, RequestOptions requestOptions, Context context);
+            RequestOptions requestOptions, Context context);
 
         @Post("/deid")
         @ExpectedResponses({ 200 })
@@ -360,7 +360,7 @@ public final class DeidentificationClientImpl {
      * {@code
      * {
      *     name: String (Required)
-     *     operation: String(Redact/Surrogate/Tag) (Optional)
+     *     operation: String(Redact/Surrogate/Tag/SurrogateOnly) (Optional)
      *     sourceLocation (Required): {
      *         location: String (Required)
      *         prefix: String (Required)
@@ -376,6 +376,7 @@ public final class DeidentificationClientImpl {
      *     customizations (Optional): {
      *         redactionFormat: String (Optional)
      *         surrogateLocale: String (Optional)
+     *         inputLocale: String (Optional)
      *     }
      *     status: String(NotStarted/Running/Succeeded/Failed/Canceled) (Required)
      *     error (Optional): {
@@ -431,7 +432,7 @@ public final class DeidentificationClientImpl {
      * {@code
      * {
      *     name: String (Required)
-     *     operation: String(Redact/Surrogate/Tag) (Optional)
+     *     operation: String(Redact/Surrogate/Tag/SurrogateOnly) (Optional)
      *     sourceLocation (Required): {
      *         location: String (Required)
      *         prefix: String (Required)
@@ -447,6 +448,7 @@ public final class DeidentificationClientImpl {
      *     customizations (Optional): {
      *         redactionFormat: String (Optional)
      *         surrogateLocale: String (Optional)
+     *         inputLocale: String (Optional)
      *     }
      *     status: String(NotStarted/Running/Succeeded/Failed/Canceled) (Required)
      *     error (Optional): {
@@ -502,7 +504,7 @@ public final class DeidentificationClientImpl {
      * {@code
      * {
      *     name: String (Required)
-     *     operation: String(Redact/Surrogate/Tag) (Optional)
+     *     operation: String(Redact/Surrogate/Tag/SurrogateOnly) (Optional)
      *     sourceLocation (Required): {
      *         location: String (Required)
      *         prefix: String (Required)
@@ -518,6 +520,7 @@ public final class DeidentificationClientImpl {
      *     customizations (Optional): {
      *         redactionFormat: String (Optional)
      *         surrogateLocale: String (Optional)
+     *         inputLocale: String (Optional)
      *     }
      *     status: String(NotStarted/Running/Succeeded/Failed/Canceled) (Required)
      *     error (Optional): {
@@ -552,7 +555,7 @@ public final class DeidentificationClientImpl {
      * {@code
      * {
      *     name: String (Required)
-     *     operation: String(Redact/Surrogate/Tag) (Optional)
+     *     operation: String(Redact/Surrogate/Tag/SurrogateOnly) (Optional)
      *     sourceLocation (Required): {
      *         location: String (Required)
      *         prefix: String (Required)
@@ -568,6 +571,7 @@ public final class DeidentificationClientImpl {
      *     customizations (Optional): {
      *         redactionFormat: String (Optional)
      *         surrogateLocale: String (Optional)
+     *         inputLocale: String (Optional)
      *     }
      *     status: String(NotStarted/Running/Succeeded/Failed/Canceled) (Required)
      *     error (Optional): {
@@ -625,7 +629,7 @@ public final class DeidentificationClientImpl {
      * {@code
      * {
      *     name: String (Required)
-     *     operation: String(Redact/Surrogate/Tag) (Optional)
+     *     operation: String(Redact/Surrogate/Tag/SurrogateOnly) (Optional)
      *     sourceLocation (Required): {
      *         location: String (Required)
      *         prefix: String (Required)
@@ -641,6 +645,7 @@ public final class DeidentificationClientImpl {
      *     customizations (Optional): {
      *         redactionFormat: String (Optional)
      *         surrogateLocale: String (Optional)
+     *         inputLocale: String (Optional)
      *     }
      *     status: String(NotStarted/Running/Succeeded/Failed/Canceled) (Required)
      *     error (Optional): {
@@ -675,7 +680,7 @@ public final class DeidentificationClientImpl {
      * {@code
      * {
      *     name: String (Required)
-     *     operation: String(Redact/Surrogate/Tag) (Optional)
+     *     operation: String(Redact/Surrogate/Tag/SurrogateOnly) (Optional)
      *     sourceLocation (Required): {
      *         location: String (Required)
      *         prefix: String (Required)
@@ -691,6 +696,7 @@ public final class DeidentificationClientImpl {
      *     customizations (Optional): {
      *         redactionFormat: String (Optional)
      *         surrogateLocale: String (Optional)
+     *         inputLocale: String (Optional)
      *     }
      *     status: String(NotStarted/Running/Succeeded/Failed/Canceled) (Required)
      *     error (Optional): {
@@ -747,7 +753,7 @@ public final class DeidentificationClientImpl {
      * {@code
      * {
      *     name: String (Required)
-     *     operation: String(Redact/Surrogate/Tag) (Optional)
+     *     operation: String(Redact/Surrogate/Tag/SurrogateOnly) (Optional)
      *     sourceLocation (Required): {
      *         location: String (Required)
      *         prefix: String (Required)
@@ -763,6 +769,7 @@ public final class DeidentificationClientImpl {
      *     customizations (Optional): {
      *         redactionFormat: String (Optional)
      *         surrogateLocale: String (Optional)
+     *         inputLocale: String (Optional)
      *     }
      *     status: String(NotStarted/Running/Succeeded/Failed/Canceled) (Required)
      *     error (Optional): {
@@ -797,7 +804,7 @@ public final class DeidentificationClientImpl {
      * {@code
      * {
      *     name: String (Required)
-     *     operation: String(Redact/Surrogate/Tag) (Optional)
+     *     operation: String(Redact/Surrogate/Tag/SurrogateOnly) (Optional)
      *     sourceLocation (Required): {
      *         location: String (Required)
      *         prefix: String (Required)
@@ -813,262 +820,7 @@ public final class DeidentificationClientImpl {
      *     customizations (Optional): {
      *         redactionFormat: String (Optional)
      *         surrogateLocale: String (Optional)
-     *     }
-     *     status: String(NotStarted/Running/Succeeded/Failed/Canceled) (Required)
-     *     error (Optional): {
-     *         code: String (Required)
-     *         message: String (Required)
-     *         target: String (Optional)
-     *         details (Optional): [
-     *             (recursive schema, see above)
-     *         ]
-     *         innererror (Optional): {
-     *             code: String (Optional)
-     *             innererror (Optional): (recursive schema, see innererror above)
-     *         }
-     *     }
-     *     lastUpdatedAt: OffsetDateTime (Required)
-     *     createdAt: OffsetDateTime (Required)
-     *     startedAt: OffsetDateTime (Optional)
-     *     summary (Optional): {
-     *         successful: int (Required)
-     *         failed: int (Required)
-     *         canceled: int (Required)
-     *         total: int (Required)
-     *         bytesProcessed: long (Required)
-     *     }
-     * }
-     * }
-     * </pre>
-     * 
-     * @param jobName The name of a job.
-     * @param resource The resource instance.
-     * @param requestOptions The options to configure the HTTP request before HTTP client sends it.
-     * @throws HttpResponseException thrown if the request is rejected by server.
-     * @throws ClientAuthenticationException thrown if the request is rejected by server on status code 401.
-     * @throws ResourceNotFoundException thrown if the request is rejected by server on status code 404.
-     * @throws ResourceModifiedException thrown if the request is rejected by server on status code 409.
-     * @return the {@link PollerFlux} for polling of a job containing a batch of documents to de-identify.
-     */
-    @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
-    public PollerFlux<BinaryData, BinaryData> beginDeidentifyDocumentsAsync(String jobName, BinaryData resource,
-        RequestOptions requestOptions) {
-        return PollerFlux.create(Duration.ofSeconds(1),
-            () -> this.deidentifyDocumentsWithResponseAsync(jobName, resource, requestOptions),
-            new com.azure.health.deidentification.implementation.OperationLocationPollingStrategy<>(
-                new PollingStrategyOptions(this.getHttpPipeline())
-                    .setEndpoint("{endpoint}".replace("{endpoint}", this.getEndpoint()))
-                    .setContext(requestOptions != null && requestOptions.getContext() != null
-                        ? requestOptions.getContext()
-                        : Context.NONE)
-                    .setServiceVersion(this.getServiceVersion().getVersion())),
-            TypeReference.createInstance(BinaryData.class), TypeReference.createInstance(BinaryData.class));
-    }
-
-    /**
-     * Create a de-identification job.
-     * 
-     * Long-running resource create or replace operation template.
-     * <p><strong>Request Body Schema</strong></p>
-     * 
-     * <pre>
-     * {@code
-     * {
-     *     name: String (Required)
-     *     operation: String(Redact/Surrogate/Tag) (Optional)
-     *     sourceLocation (Required): {
-     *         location: String (Required)
-     *         prefix: String (Required)
-     *         extensions (Optional): [
-     *             String (Optional)
-     *         ]
-     *     }
-     *     targetLocation (Required): {
-     *         location: String (Required)
-     *         prefix: String (Required)
-     *         overwrite: Boolean (Optional)
-     *     }
-     *     customizations (Optional): {
-     *         redactionFormat: String (Optional)
-     *         surrogateLocale: String (Optional)
-     *     }
-     *     status: String(NotStarted/Running/Succeeded/Failed/Canceled) (Required)
-     *     error (Optional): {
-     *         code: String (Required)
-     *         message: String (Required)
-     *         target: String (Optional)
-     *         details (Optional): [
-     *             (recursive schema, see above)
-     *         ]
-     *         innererror (Optional): {
-     *             code: String (Optional)
-     *             innererror (Optional): (recursive schema, see innererror above)
-     *         }
-     *     }
-     *     lastUpdatedAt: OffsetDateTime (Required)
-     *     createdAt: OffsetDateTime (Required)
-     *     startedAt: OffsetDateTime (Optional)
-     *     summary (Optional): {
-     *         successful: int (Required)
-     *         failed: int (Required)
-     *         canceled: int (Required)
-     *         total: int (Required)
-     *         bytesProcessed: long (Required)
-     *     }
-     * }
-     * }
-     * </pre>
-     * 
-     * <p><strong>Response Body Schema</strong></p>
-     * 
-     * <pre>
-     * {@code
-     * {
-     *     name: String (Required)
-     *     operation: String(Redact/Surrogate/Tag) (Optional)
-     *     sourceLocation (Required): {
-     *         location: String (Required)
-     *         prefix: String (Required)
-     *         extensions (Optional): [
-     *             String (Optional)
-     *         ]
-     *     }
-     *     targetLocation (Required): {
-     *         location: String (Required)
-     *         prefix: String (Required)
-     *         overwrite: Boolean (Optional)
-     *     }
-     *     customizations (Optional): {
-     *         redactionFormat: String (Optional)
-     *         surrogateLocale: String (Optional)
-     *     }
-     *     status: String(NotStarted/Running/Succeeded/Failed/Canceled) (Required)
-     *     error (Optional): {
-     *         code: String (Required)
-     *         message: String (Required)
-     *         target: String (Optional)
-     *         details (Optional): [
-     *             (recursive schema, see above)
-     *         ]
-     *         innererror (Optional): {
-     *             code: String (Optional)
-     *             innererror (Optional): (recursive schema, see innererror above)
-     *         }
-     *     }
-     *     lastUpdatedAt: OffsetDateTime (Required)
-     *     createdAt: OffsetDateTime (Required)
-     *     startedAt: OffsetDateTime (Optional)
-     *     summary (Optional): {
-     *         successful: int (Required)
-     *         failed: int (Required)
-     *         canceled: int (Required)
-     *         total: int (Required)
-     *         bytesProcessed: long (Required)
-     *     }
-     * }
-     * }
-     * </pre>
-     * 
-     * @param jobName The name of a job.
-     * @param resource The resource instance.
-     * @param requestOptions The options to configure the HTTP request before HTTP client sends it.
-     * @throws HttpResponseException thrown if the request is rejected by server.
-     * @throws ClientAuthenticationException thrown if the request is rejected by server on status code 401.
-     * @throws ResourceNotFoundException thrown if the request is rejected by server on status code 404.
-     * @throws ResourceModifiedException thrown if the request is rejected by server on status code 409.
-     * @return the {@link SyncPoller} for polling of a job containing a batch of documents to de-identify.
-     */
-    @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
-    public SyncPoller<BinaryData, BinaryData> beginDeidentifyDocuments(String jobName, BinaryData resource,
-        RequestOptions requestOptions) {
-        return SyncPoller.createPoller(Duration.ofSeconds(1),
-            () -> this.deidentifyDocumentsWithResponse(jobName, resource, requestOptions),
-            new com.azure.health.deidentification.implementation.SyncOperationLocationPollingStrategy<>(
-                new PollingStrategyOptions(this.getHttpPipeline())
-                    .setEndpoint("{endpoint}".replace("{endpoint}", this.getEndpoint()))
-                    .setContext(requestOptions != null && requestOptions.getContext() != null
-                        ? requestOptions.getContext()
-                        : Context.NONE)
-                    .setServiceVersion(this.getServiceVersion().getVersion())),
-            TypeReference.createInstance(BinaryData.class), TypeReference.createInstance(BinaryData.class));
-    }
-
-    /**
-     * Create a de-identification job.
-     * 
-     * Long-running resource create or replace operation template.
-     * <p><strong>Request Body Schema</strong></p>
-     * 
-     * <pre>
-     * {@code
-     * {
-     *     name: String (Required)
-     *     operation: String(Redact/Surrogate/Tag) (Optional)
-     *     sourceLocation (Required): {
-     *         location: String (Required)
-     *         prefix: String (Required)
-     *         extensions (Optional): [
-     *             String (Optional)
-     *         ]
-     *     }
-     *     targetLocation (Required): {
-     *         location: String (Required)
-     *         prefix: String (Required)
-     *         overwrite: Boolean (Optional)
-     *     }
-     *     customizations (Optional): {
-     *         redactionFormat: String (Optional)
-     *         surrogateLocale: String (Optional)
-     *     }
-     *     status: String(NotStarted/Running/Succeeded/Failed/Canceled) (Required)
-     *     error (Optional): {
-     *         code: String (Required)
-     *         message: String (Required)
-     *         target: String (Optional)
-     *         details (Optional): [
-     *             (recursive schema, see above)
-     *         ]
-     *         innererror (Optional): {
-     *             code: String (Optional)
-     *             innererror (Optional): (recursive schema, see innererror above)
-     *         }
-     *     }
-     *     lastUpdatedAt: OffsetDateTime (Required)
-     *     createdAt: OffsetDateTime (Required)
-     *     startedAt: OffsetDateTime (Optional)
-     *     summary (Optional): {
-     *         successful: int (Required)
-     *         failed: int (Required)
-     *         canceled: int (Required)
-     *         total: int (Required)
-     *         bytesProcessed: long (Required)
-     *     }
-     * }
-     * }
-     * </pre>
-     * 
-     * <p><strong>Response Body Schema</strong></p>
-     * 
-     * <pre>
-     * {@code
-     * {
-     *     name: String (Required)
-     *     operation: String(Redact/Surrogate/Tag) (Optional)
-     *     sourceLocation (Required): {
-     *         location: String (Required)
-     *         prefix: String (Required)
-     *         extensions (Optional): [
-     *             String (Optional)
-     *         ]
-     *     }
-     *     targetLocation (Required): {
-     *         location: String (Required)
-     *         prefix: String (Required)
-     *         overwrite: Boolean (Optional)
-     *     }
-     *     customizations (Optional): {
-     *         redactionFormat: String (Optional)
-     *         surrogateLocale: String (Optional)
+     *         inputLocale: String (Optional)
      *     }
      *     status: String(NotStarted/Running/Succeeded/Failed/Canceled) (Required)
      *     error (Optional): {
@@ -1132,7 +884,7 @@ public final class DeidentificationClientImpl {
      * {@code
      * {
      *     name: String (Required)
-     *     operation: String(Redact/Surrogate/Tag) (Optional)
+     *     operation: String(Redact/Surrogate/Tag/SurrogateOnly) (Optional)
      *     sourceLocation (Required): {
      *         location: String (Required)
      *         prefix: String (Required)
@@ -1148,6 +900,7 @@ public final class DeidentificationClientImpl {
      *     customizations (Optional): {
      *         redactionFormat: String (Optional)
      *         surrogateLocale: String (Optional)
+     *         inputLocale: String (Optional)
      *     }
      *     status: String(NotStarted/Running/Succeeded/Failed/Canceled) (Required)
      *     error (Optional): {
@@ -1182,7 +935,7 @@ public final class DeidentificationClientImpl {
      * {@code
      * {
      *     name: String (Required)
-     *     operation: String(Redact/Surrogate/Tag) (Optional)
+     *     operation: String(Redact/Surrogate/Tag/SurrogateOnly) (Optional)
      *     sourceLocation (Required): {
      *         location: String (Required)
      *         prefix: String (Required)
@@ -1198,6 +951,7 @@ public final class DeidentificationClientImpl {
      *     customizations (Optional): {
      *         redactionFormat: String (Optional)
      *         surrogateLocale: String (Optional)
+     *         inputLocale: String (Optional)
      *     }
      *     status: String(NotStarted/Running/Succeeded/Failed/Canceled) (Required)
      *     error (Optional): {
@@ -1252,6 +1006,266 @@ public final class DeidentificationClientImpl {
     }
 
     /**
+     * Create a de-identification job.
+     * 
+     * Long-running resource create or replace operation template.
+     * <p><strong>Request Body Schema</strong></p>
+     * 
+     * <pre>
+     * {@code
+     * {
+     *     name: String (Required)
+     *     operation: String(Redact/Surrogate/Tag/SurrogateOnly) (Optional)
+     *     sourceLocation (Required): {
+     *         location: String (Required)
+     *         prefix: String (Required)
+     *         extensions (Optional): [
+     *             String (Optional)
+     *         ]
+     *     }
+     *     targetLocation (Required): {
+     *         location: String (Required)
+     *         prefix: String (Required)
+     *         overwrite: Boolean (Optional)
+     *     }
+     *     customizations (Optional): {
+     *         redactionFormat: String (Optional)
+     *         surrogateLocale: String (Optional)
+     *         inputLocale: String (Optional)
+     *     }
+     *     status: String(NotStarted/Running/Succeeded/Failed/Canceled) (Required)
+     *     error (Optional): {
+     *         code: String (Required)
+     *         message: String (Required)
+     *         target: String (Optional)
+     *         details (Optional): [
+     *             (recursive schema, see above)
+     *         ]
+     *         innererror (Optional): {
+     *             code: String (Optional)
+     *             innererror (Optional): (recursive schema, see innererror above)
+     *         }
+     *     }
+     *     lastUpdatedAt: OffsetDateTime (Required)
+     *     createdAt: OffsetDateTime (Required)
+     *     startedAt: OffsetDateTime (Optional)
+     *     summary (Optional): {
+     *         successful: int (Required)
+     *         failed: int (Required)
+     *         canceled: int (Required)
+     *         total: int (Required)
+     *         bytesProcessed: long (Required)
+     *     }
+     * }
+     * }
+     * </pre>
+     * 
+     * <p><strong>Response Body Schema</strong></p>
+     * 
+     * <pre>
+     * {@code
+     * {
+     *     name: String (Required)
+     *     operation: String(Redact/Surrogate/Tag/SurrogateOnly) (Optional)
+     *     sourceLocation (Required): {
+     *         location: String (Required)
+     *         prefix: String (Required)
+     *         extensions (Optional): [
+     *             String (Optional)
+     *         ]
+     *     }
+     *     targetLocation (Required): {
+     *         location: String (Required)
+     *         prefix: String (Required)
+     *         overwrite: Boolean (Optional)
+     *     }
+     *     customizations (Optional): {
+     *         redactionFormat: String (Optional)
+     *         surrogateLocale: String (Optional)
+     *         inputLocale: String (Optional)
+     *     }
+     *     status: String(NotStarted/Running/Succeeded/Failed/Canceled) (Required)
+     *     error (Optional): {
+     *         code: String (Required)
+     *         message: String (Required)
+     *         target: String (Optional)
+     *         details (Optional): [
+     *             (recursive schema, see above)
+     *         ]
+     *         innererror (Optional): {
+     *             code: String (Optional)
+     *             innererror (Optional): (recursive schema, see innererror above)
+     *         }
+     *     }
+     *     lastUpdatedAt: OffsetDateTime (Required)
+     *     createdAt: OffsetDateTime (Required)
+     *     startedAt: OffsetDateTime (Optional)
+     *     summary (Optional): {
+     *         successful: int (Required)
+     *         failed: int (Required)
+     *         canceled: int (Required)
+     *         total: int (Required)
+     *         bytesProcessed: long (Required)
+     *     }
+     * }
+     * }
+     * </pre>
+     * 
+     * @param jobName The name of a job.
+     * @param resource The resource instance.
+     * @param requestOptions The options to configure the HTTP request before HTTP client sends it.
+     * @throws HttpResponseException thrown if the request is rejected by server.
+     * @throws ClientAuthenticationException thrown if the request is rejected by server on status code 401.
+     * @throws ResourceNotFoundException thrown if the request is rejected by server on status code 404.
+     * @throws ResourceModifiedException thrown if the request is rejected by server on status code 409.
+     * @return the {@link PollerFlux} for polling of a job containing a batch of documents to de-identify.
+     */
+    @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
+    public PollerFlux<BinaryData, BinaryData> beginDeidentifyDocumentsAsync(String jobName, BinaryData resource,
+        RequestOptions requestOptions) {
+        return PollerFlux.create(Duration.ofSeconds(1),
+            () -> this.deidentifyDocumentsWithResponseAsync(jobName, resource, requestOptions),
+            new com.azure.health.deidentification.implementation.OperationLocationPollingStrategy<>(
+                new PollingStrategyOptions(this.getHttpPipeline())
+                    .setEndpoint("{endpoint}".replace("{endpoint}", this.getEndpoint()))
+                    .setContext(requestOptions != null && requestOptions.getContext() != null
+                        ? requestOptions.getContext()
+                        : Context.NONE)
+                    .setServiceVersion(this.getServiceVersion().getVersion())),
+            TypeReference.createInstance(BinaryData.class), TypeReference.createInstance(BinaryData.class));
+    }
+
+    /**
+     * Create a de-identification job.
+     * 
+     * Long-running resource create or replace operation template.
+     * <p><strong>Request Body Schema</strong></p>
+     * 
+     * <pre>
+     * {@code
+     * {
+     *     name: String (Required)
+     *     operation: String(Redact/Surrogate/Tag/SurrogateOnly) (Optional)
+     *     sourceLocation (Required): {
+     *         location: String (Required)
+     *         prefix: String (Required)
+     *         extensions (Optional): [
+     *             String (Optional)
+     *         ]
+     *     }
+     *     targetLocation (Required): {
+     *         location: String (Required)
+     *         prefix: String (Required)
+     *         overwrite: Boolean (Optional)
+     *     }
+     *     customizations (Optional): {
+     *         redactionFormat: String (Optional)
+     *         surrogateLocale: String (Optional)
+     *         inputLocale: String (Optional)
+     *     }
+     *     status: String(NotStarted/Running/Succeeded/Failed/Canceled) (Required)
+     *     error (Optional): {
+     *         code: String (Required)
+     *         message: String (Required)
+     *         target: String (Optional)
+     *         details (Optional): [
+     *             (recursive schema, see above)
+     *         ]
+     *         innererror (Optional): {
+     *             code: String (Optional)
+     *             innererror (Optional): (recursive schema, see innererror above)
+     *         }
+     *     }
+     *     lastUpdatedAt: OffsetDateTime (Required)
+     *     createdAt: OffsetDateTime (Required)
+     *     startedAt: OffsetDateTime (Optional)
+     *     summary (Optional): {
+     *         successful: int (Required)
+     *         failed: int (Required)
+     *         canceled: int (Required)
+     *         total: int (Required)
+     *         bytesProcessed: long (Required)
+     *     }
+     * }
+     * }
+     * </pre>
+     * 
+     * <p><strong>Response Body Schema</strong></p>
+     * 
+     * <pre>
+     * {@code
+     * {
+     *     name: String (Required)
+     *     operation: String(Redact/Surrogate/Tag/SurrogateOnly) (Optional)
+     *     sourceLocation (Required): {
+     *         location: String (Required)
+     *         prefix: String (Required)
+     *         extensions (Optional): [
+     *             String (Optional)
+     *         ]
+     *     }
+     *     targetLocation (Required): {
+     *         location: String (Required)
+     *         prefix: String (Required)
+     *         overwrite: Boolean (Optional)
+     *     }
+     *     customizations (Optional): {
+     *         redactionFormat: String (Optional)
+     *         surrogateLocale: String (Optional)
+     *         inputLocale: String (Optional)
+     *     }
+     *     status: String(NotStarted/Running/Succeeded/Failed/Canceled) (Required)
+     *     error (Optional): {
+     *         code: String (Required)
+     *         message: String (Required)
+     *         target: String (Optional)
+     *         details (Optional): [
+     *             (recursive schema, see above)
+     *         ]
+     *         innererror (Optional): {
+     *             code: String (Optional)
+     *             innererror (Optional): (recursive schema, see innererror above)
+     *         }
+     *     }
+     *     lastUpdatedAt: OffsetDateTime (Required)
+     *     createdAt: OffsetDateTime (Required)
+     *     startedAt: OffsetDateTime (Optional)
+     *     summary (Optional): {
+     *         successful: int (Required)
+     *         failed: int (Required)
+     *         canceled: int (Required)
+     *         total: int (Required)
+     *         bytesProcessed: long (Required)
+     *     }
+     * }
+     * }
+     * </pre>
+     * 
+     * @param jobName The name of a job.
+     * @param resource The resource instance.
+     * @param requestOptions The options to configure the HTTP request before HTTP client sends it.
+     * @throws HttpResponseException thrown if the request is rejected by server.
+     * @throws ClientAuthenticationException thrown if the request is rejected by server on status code 401.
+     * @throws ResourceNotFoundException thrown if the request is rejected by server on status code 404.
+     * @throws ResourceModifiedException thrown if the request is rejected by server on status code 409.
+     * @return the {@link SyncPoller} for polling of a job containing a batch of documents to de-identify.
+     */
+    @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
+    public SyncPoller<BinaryData, BinaryData> beginDeidentifyDocuments(String jobName, BinaryData resource,
+        RequestOptions requestOptions) {
+        return SyncPoller.createPoller(Duration.ofSeconds(1),
+            () -> this.deidentifyDocumentsWithResponse(jobName, resource, requestOptions),
+            new com.azure.health.deidentification.implementation.SyncOperationLocationPollingStrategy<>(
+                new PollingStrategyOptions(this.getHttpPipeline())
+                    .setEndpoint("{endpoint}".replace("{endpoint}", this.getEndpoint()))
+                    .setContext(requestOptions != null && requestOptions.getContext() != null
+                        ? requestOptions.getContext()
+                        : Context.NONE)
+                    .setServiceVersion(this.getServiceVersion().getVersion())),
+            TypeReference.createInstance(BinaryData.class), TypeReference.createInstance(BinaryData.class));
+    }
+
+    /**
      * List de-identification jobs.
      * 
      * Resource list operation template.
@@ -1269,7 +1283,7 @@ public final class DeidentificationClientImpl {
      * {@code
      * {
      *     name: String (Required)
-     *     operation: String(Redact/Surrogate/Tag) (Optional)
+     *     operation: String(Redact/Surrogate/Tag/SurrogateOnly) (Optional)
      *     sourceLocation (Required): {
      *         location: String (Required)
      *         prefix: String (Required)
@@ -1285,6 +1299,7 @@ public final class DeidentificationClientImpl {
      *     customizations (Optional): {
      *         redactionFormat: String (Optional)
      *         surrogateLocale: String (Optional)
+     *         inputLocale: String (Optional)
      *     }
      *     status: String(NotStarted/Running/Succeeded/Failed/Canceled) (Required)
      *     error (Optional): {
@@ -1349,7 +1364,7 @@ public final class DeidentificationClientImpl {
      * {@code
      * {
      *     name: String (Required)
-     *     operation: String(Redact/Surrogate/Tag) (Optional)
+     *     operation: String(Redact/Surrogate/Tag/SurrogateOnly) (Optional)
      *     sourceLocation (Required): {
      *         location: String (Required)
      *         prefix: String (Required)
@@ -1365,6 +1380,7 @@ public final class DeidentificationClientImpl {
      *     customizations (Optional): {
      *         redactionFormat: String (Optional)
      *         surrogateLocale: String (Optional)
+     *         inputLocale: String (Optional)
      *     }
      *     status: String(NotStarted/Running/Succeeded/Failed/Canceled) (Required)
      *     error (Optional): {
@@ -1447,7 +1463,7 @@ public final class DeidentificationClientImpl {
      * {@code
      * {
      *     name: String (Required)
-     *     operation: String(Redact/Surrogate/Tag) (Optional)
+     *     operation: String(Redact/Surrogate/Tag/SurrogateOnly) (Optional)
      *     sourceLocation (Required): {
      *         location: String (Required)
      *         prefix: String (Required)
@@ -1463,6 +1479,7 @@ public final class DeidentificationClientImpl {
      *     customizations (Optional): {
      *         redactionFormat: String (Optional)
      *         surrogateLocale: String (Optional)
+     *         inputLocale: String (Optional)
      *     }
      *     status: String(NotStarted/Running/Succeeded/Failed/Canceled) (Required)
      *     error (Optional): {
@@ -1525,7 +1542,7 @@ public final class DeidentificationClientImpl {
      * {@code
      * {
      *     name: String (Required)
-     *     operation: String(Redact/Surrogate/Tag) (Optional)
+     *     operation: String(Redact/Surrogate/Tag/SurrogateOnly) (Optional)
      *     sourceLocation (Required): {
      *         location: String (Required)
      *         prefix: String (Required)
@@ -1541,6 +1558,7 @@ public final class DeidentificationClientImpl {
      *     customizations (Optional): {
      *         redactionFormat: String (Optional)
      *         surrogateLocale: String (Optional)
+     *         inputLocale: String (Optional)
      *     }
      *     status: String(NotStarted/Running/Succeeded/Failed/Canceled) (Required)
      *     error (Optional): {
@@ -1892,7 +1910,7 @@ public final class DeidentificationClientImpl {
      * {@code
      * {
      *     name: String (Required)
-     *     operation: String(Redact/Surrogate/Tag) (Optional)
+     *     operation: String(Redact/Surrogate/Tag/SurrogateOnly) (Optional)
      *     sourceLocation (Required): {
      *         location: String (Required)
      *         prefix: String (Required)
@@ -1908,6 +1926,7 @@ public final class DeidentificationClientImpl {
      *     customizations (Optional): {
      *         redactionFormat: String (Optional)
      *         surrogateLocale: String (Optional)
+     *         inputLocale: String (Optional)
      *     }
      *     status: String(NotStarted/Running/Succeeded/Failed/Canceled) (Required)
      *     error (Optional): {
@@ -1967,7 +1986,7 @@ public final class DeidentificationClientImpl {
      * {@code
      * {
      *     name: String (Required)
-     *     operation: String(Redact/Surrogate/Tag) (Optional)
+     *     operation: String(Redact/Surrogate/Tag/SurrogateOnly) (Optional)
      *     sourceLocation (Required): {
      *         location: String (Required)
      *         prefix: String (Required)
@@ -1983,6 +2002,7 @@ public final class DeidentificationClientImpl {
      *     customizations (Optional): {
      *         redactionFormat: String (Optional)
      *         surrogateLocale: String (Optional)
+     *         inputLocale: String (Optional)
      *     }
      *     status: String(NotStarted/Running/Succeeded/Failed/Canceled) (Required)
      *     error (Optional): {
@@ -2041,9 +2061,8 @@ public final class DeidentificationClientImpl {
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
     public Mono<Response<Void>> deleteJobWithResponseAsync(String jobName, RequestOptions requestOptions) {
-        final String accept = "application/json";
         return FluxUtil.withContext(context -> service.deleteJob(this.getEndpoint(),
-            this.getServiceVersion().getVersion(), jobName, accept, requestOptions, context));
+            this.getServiceVersion().getVersion(), jobName, requestOptions, context));
     }
 
     /**
@@ -2061,9 +2080,8 @@ public final class DeidentificationClientImpl {
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
     public Response<Void> deleteJobWithResponse(String jobName, RequestOptions requestOptions) {
-        final String accept = "application/json";
-        return service.deleteJobSync(this.getEndpoint(), this.getServiceVersion().getVersion(), jobName, accept,
-            requestOptions, Context.NONE);
+        return service.deleteJobSync(this.getEndpoint(), this.getServiceVersion().getVersion(), jobName, requestOptions,
+            Context.NONE);
     }
 
     /**
@@ -2076,10 +2094,22 @@ public final class DeidentificationClientImpl {
      * {@code
      * {
      *     inputText: String (Required)
-     *     operation: String(Redact/Surrogate/Tag) (Optional)
+     *     operation: String(Redact/Surrogate/Tag/SurrogateOnly) (Optional)
+     *     taggedEntities (Optional): {
+     *         encoding: String(Utf8/Utf16/CodePoint) (Required)
+     *         entities (Required): [
+     *              (Required){
+     *                 category: String(Unknown/Account/Age/BioID/City/CountryOrRegion/Date/Device/Doctor/Email/Fax/HealthPlan/Hospital/IDNum/IPAddress/License/LocationOther/MedicalRecord/Organization/Patient/Phone/Profession/SocialSecurity/State/Street/Url/Username/Vehicle/Zip) (Required)
+     *                 offset: int (Required)
+     *                 length: int (Required)
+     *                 text: String (Optional)
+     *             }
+     *         ]
+     *     }
      *     customizations (Optional): {
      *         redactionFormat: String (Optional)
      *         surrogateLocale: String (Optional)
+     *         inputLocale: String (Optional)
      *     }
      * }
      * }
@@ -2137,10 +2167,22 @@ public final class DeidentificationClientImpl {
      * {@code
      * {
      *     inputText: String (Required)
-     *     operation: String(Redact/Surrogate/Tag) (Optional)
+     *     operation: String(Redact/Surrogate/Tag/SurrogateOnly) (Optional)
+     *     taggedEntities (Optional): {
+     *         encoding: String(Utf8/Utf16/CodePoint) (Required)
+     *         entities (Required): [
+     *              (Required){
+     *                 category: String(Unknown/Account/Age/BioID/City/CountryOrRegion/Date/Device/Doctor/Email/Fax/HealthPlan/Hospital/IDNum/IPAddress/License/LocationOther/MedicalRecord/Organization/Patient/Phone/Profession/SocialSecurity/State/Street/Url/Username/Vehicle/Zip) (Required)
+     *                 offset: int (Required)
+     *                 length: int (Required)
+     *                 text: String (Optional)
+     *             }
+     *         ]
+     *     }
      *     customizations (Optional): {
      *         redactionFormat: String (Optional)
      *         surrogateLocale: String (Optional)
+     *         inputLocale: String (Optional)
      *     }
      * }
      * }
@@ -2197,7 +2239,7 @@ public final class DeidentificationClientImpl {
      * {@code
      * {
      *     name: String (Required)
-     *     operation: String(Redact/Surrogate/Tag) (Optional)
+     *     operation: String(Redact/Surrogate/Tag/SurrogateOnly) (Optional)
      *     sourceLocation (Required): {
      *         location: String (Required)
      *         prefix: String (Required)
@@ -2213,6 +2255,7 @@ public final class DeidentificationClientImpl {
      *     customizations (Optional): {
      *         redactionFormat: String (Optional)
      *         surrogateLocale: String (Optional)
+     *         inputLocale: String (Optional)
      *     }
      *     status: String(NotStarted/Running/Succeeded/Failed/Canceled) (Required)
      *     error (Optional): {
@@ -2270,7 +2313,7 @@ public final class DeidentificationClientImpl {
      * {@code
      * {
      *     name: String (Required)
-     *     operation: String(Redact/Surrogate/Tag) (Optional)
+     *     operation: String(Redact/Surrogate/Tag/SurrogateOnly) (Optional)
      *     sourceLocation (Required): {
      *         location: String (Required)
      *         prefix: String (Required)
@@ -2286,6 +2329,7 @@ public final class DeidentificationClientImpl {
      *     customizations (Optional): {
      *         redactionFormat: String (Optional)
      *         surrogateLocale: String (Optional)
+     *         inputLocale: String (Optional)
      *     }
      *     status: String(NotStarted/Running/Succeeded/Failed/Canceled) (Required)
      *     error (Optional): {

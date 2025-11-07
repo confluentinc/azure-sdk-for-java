@@ -29,6 +29,7 @@ import com.azure.core.http.rest.Response;
 import com.azure.core.http.rest.RestProxy;
 import com.azure.core.management.exception.ManagementException;
 import com.azure.core.management.polling.PollResult;
+import com.azure.core.util.BinaryData;
 import com.azure.core.util.Context;
 import com.azure.core.util.FluxUtil;
 import com.azure.core.util.polling.PollerFlux;
@@ -37,6 +38,7 @@ import com.azure.resourcemanager.hybridconnectivity.fluent.SolutionConfiguration
 import com.azure.resourcemanager.hybridconnectivity.fluent.models.OperationStatusResultInner;
 import com.azure.resourcemanager.hybridconnectivity.fluent.models.SolutionConfigurationInner;
 import com.azure.resourcemanager.hybridconnectivity.implementation.models.SolutionConfigurationListResult;
+import com.azure.resourcemanager.hybridconnectivity.models.SolutionConfigurationUpdate;
 import java.nio.ByteBuffer;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -71,13 +73,23 @@ public final class SolutionConfigurationsClientImpl implements SolutionConfigura
      * proxy service to perform REST calls.
      */
     @Host("{endpoint}")
-    @ServiceInterface(name = "HybridConnectivityMg")
+    @ServiceInterface(name = "HybridConnectivityMgmtClientSolutionConfigurations")
     public interface SolutionConfigurationsService {
         @Headers({ "Content-Type: application/json" })
         @Get("/{resourceUri}/providers/Microsoft.HybridConnectivity/solutionConfigurations/{solutionConfiguration}")
         @ExpectedResponses({ 200 })
         @UnexpectedResponseExceptionType(ManagementException.class)
         Mono<Response<SolutionConfigurationInner>> get(@HostParam("endpoint") String endpoint,
+            @QueryParam("api-version") String apiVersion,
+            @PathParam(value = "resourceUri", encoded = true) String resourceUri,
+            @PathParam("solutionConfiguration") String solutionConfiguration, @HeaderParam("Accept") String accept,
+            Context context);
+
+        @Headers({ "Content-Type: application/json" })
+        @Get("/{resourceUri}/providers/Microsoft.HybridConnectivity/solutionConfigurations/{solutionConfiguration}")
+        @ExpectedResponses({ 200 })
+        @UnexpectedResponseExceptionType(ManagementException.class)
+        Response<SolutionConfigurationInner> getSync(@HostParam("endpoint") String endpoint,
             @QueryParam("api-version") String apiVersion,
             @PathParam(value = "resourceUri", encoded = true) String resourceUri,
             @PathParam("solutionConfiguration") String solutionConfiguration, @HeaderParam("Accept") String accept,
@@ -93,6 +105,16 @@ public final class SolutionConfigurationsClientImpl implements SolutionConfigura
             @HeaderParam("Content-Type") String contentType, @HeaderParam("Accept") String accept,
             @BodyParam("application/json") SolutionConfigurationInner resource, Context context);
 
+        @Put("/{resourceUri}/providers/Microsoft.HybridConnectivity/solutionConfigurations/{solutionConfiguration}")
+        @ExpectedResponses({ 200, 201 })
+        @UnexpectedResponseExceptionType(ManagementException.class)
+        Response<SolutionConfigurationInner> createOrUpdateSync(@HostParam("endpoint") String endpoint,
+            @QueryParam("api-version") String apiVersion,
+            @PathParam(value = "resourceUri", encoded = true) String resourceUri,
+            @PathParam("solutionConfiguration") String solutionConfiguration,
+            @HeaderParam("Content-Type") String contentType, @HeaderParam("Accept") String accept,
+            @BodyParam("application/json") SolutionConfigurationInner resource, Context context);
+
         @Patch("/{resourceUri}/providers/Microsoft.HybridConnectivity/solutionConfigurations/{solutionConfiguration}")
         @ExpectedResponses({ 200 })
         @UnexpectedResponseExceptionType(ManagementException.class)
@@ -101,23 +123,49 @@ public final class SolutionConfigurationsClientImpl implements SolutionConfigura
             @PathParam(value = "resourceUri", encoded = true) String resourceUri,
             @PathParam("solutionConfiguration") String solutionConfiguration,
             @HeaderParam("Content-Type") String contentType, @HeaderParam("Accept") String accept,
-            @BodyParam("application/json") SolutionConfigurationInner properties, Context context);
+            @BodyParam("application/json") SolutionConfigurationUpdate properties, Context context);
 
-        @Headers({ "Content-Type: application/json" })
+        @Patch("/{resourceUri}/providers/Microsoft.HybridConnectivity/solutionConfigurations/{solutionConfiguration}")
+        @ExpectedResponses({ 200 })
+        @UnexpectedResponseExceptionType(ManagementException.class)
+        Response<SolutionConfigurationInner> updateSync(@HostParam("endpoint") String endpoint,
+            @QueryParam("api-version") String apiVersion,
+            @PathParam(value = "resourceUri", encoded = true) String resourceUri,
+            @PathParam("solutionConfiguration") String solutionConfiguration,
+            @HeaderParam("Content-Type") String contentType, @HeaderParam("Accept") String accept,
+            @BodyParam("application/json") SolutionConfigurationUpdate properties, Context context);
+
+        @Headers({ "Accept: application/json;q=0.9", "Content-Type: application/json" })
         @Delete("/{resourceUri}/providers/Microsoft.HybridConnectivity/solutionConfigurations/{solutionConfiguration}")
         @ExpectedResponses({ 200, 204 })
         @UnexpectedResponseExceptionType(ManagementException.class)
         Mono<Response<Void>> delete(@HostParam("endpoint") String endpoint,
             @QueryParam("api-version") String apiVersion,
             @PathParam(value = "resourceUri", encoded = true) String resourceUri,
-            @PathParam("solutionConfiguration") String solutionConfiguration, @HeaderParam("Accept") String accept,
-            Context context);
+            @PathParam("solutionConfiguration") String solutionConfiguration, Context context);
+
+        @Headers({ "Accept: application/json;q=0.9", "Content-Type: application/json" })
+        @Delete("/{resourceUri}/providers/Microsoft.HybridConnectivity/solutionConfigurations/{solutionConfiguration}")
+        @ExpectedResponses({ 200, 204 })
+        @UnexpectedResponseExceptionType(ManagementException.class)
+        Response<Void> deleteSync(@HostParam("endpoint") String endpoint, @QueryParam("api-version") String apiVersion,
+            @PathParam(value = "resourceUri", encoded = true) String resourceUri,
+            @PathParam("solutionConfiguration") String solutionConfiguration, Context context);
 
         @Headers({ "Content-Type: application/json" })
         @Get("/{resourceUri}/providers/Microsoft.HybridConnectivity/solutionConfigurations")
         @ExpectedResponses({ 200 })
         @UnexpectedResponseExceptionType(ManagementException.class)
         Mono<Response<SolutionConfigurationListResult>> list(@HostParam("endpoint") String endpoint,
+            @QueryParam("api-version") String apiVersion,
+            @PathParam(value = "resourceUri", encoded = true) String resourceUri, @HeaderParam("Accept") String accept,
+            Context context);
+
+        @Headers({ "Content-Type: application/json" })
+        @Get("/{resourceUri}/providers/Microsoft.HybridConnectivity/solutionConfigurations")
+        @ExpectedResponses({ 200 })
+        @UnexpectedResponseExceptionType(ManagementException.class)
+        Response<SolutionConfigurationListResult> listSync(@HostParam("endpoint") String endpoint,
             @QueryParam("api-version") String apiVersion,
             @PathParam(value = "resourceUri", encoded = true) String resourceUri, @HeaderParam("Accept") String accept,
             Context context);
@@ -133,10 +181,28 @@ public final class SolutionConfigurationsClientImpl implements SolutionConfigura
             Context context);
 
         @Headers({ "Content-Type: application/json" })
+        @Post("/{resourceUri}/providers/Microsoft.HybridConnectivity/solutionConfigurations/{solutionConfiguration}/syncNow")
+        @ExpectedResponses({ 200, 202 })
+        @UnexpectedResponseExceptionType(ManagementException.class)
+        Response<BinaryData> syncNowSync(@HostParam("endpoint") String endpoint,
+            @QueryParam("api-version") String apiVersion,
+            @PathParam(value = "resourceUri", encoded = true) String resourceUri,
+            @PathParam("solutionConfiguration") String solutionConfiguration, @HeaderParam("Accept") String accept,
+            Context context);
+
+        @Headers({ "Content-Type: application/json" })
         @Get("{nextLink}")
         @ExpectedResponses({ 200 })
         @UnexpectedResponseExceptionType(ManagementException.class)
         Mono<Response<SolutionConfigurationListResult>> listNext(
+            @PathParam(value = "nextLink", encoded = true) String nextLink, @HostParam("endpoint") String endpoint,
+            @HeaderParam("Accept") String accept, Context context);
+
+        @Headers({ "Content-Type: application/json" })
+        @Get("{nextLink}")
+        @ExpectedResponses({ 200 })
+        @UnexpectedResponseExceptionType(ManagementException.class)
+        Response<SolutionConfigurationListResult> listNextSync(
             @PathParam(value = "nextLink", encoded = true) String nextLink, @HostParam("endpoint") String endpoint,
             @HeaderParam("Accept") String accept, Context context);
     }
@@ -154,53 +220,11 @@ public final class SolutionConfigurationsClientImpl implements SolutionConfigura
     @ServiceMethod(returns = ReturnType.SINGLE)
     private Mono<Response<SolutionConfigurationInner>> getWithResponseAsync(String resourceUri,
         String solutionConfiguration) {
-        if (this.client.getEndpoint() == null) {
-            return Mono.error(
-                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
-        }
-        if (resourceUri == null) {
-            return Mono.error(new IllegalArgumentException("Parameter resourceUri is required and cannot be null."));
-        }
-        if (solutionConfiguration == null) {
-            return Mono
-                .error(new IllegalArgumentException("Parameter solutionConfiguration is required and cannot be null."));
-        }
         final String accept = "application/json";
         return FluxUtil
             .withContext(context -> service.get(this.client.getEndpoint(), this.client.getApiVersion(), resourceUri,
                 solutionConfiguration, accept, context))
             .contextWrite(context -> context.putAll(FluxUtil.toReactorContext(this.client.getContext()).readOnly()));
-    }
-
-    /**
-     * Get a SolutionConfiguration.
-     * 
-     * @param resourceUri The fully qualified Azure Resource manager identifier of the resource.
-     * @param solutionConfiguration Represent Solution Configuration Resource.
-     * @param context The context to associate with this operation.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return a SolutionConfiguration along with {@link Response} on successful completion of {@link Mono}.
-     */
-    @ServiceMethod(returns = ReturnType.SINGLE)
-    private Mono<Response<SolutionConfigurationInner>> getWithResponseAsync(String resourceUri,
-        String solutionConfiguration, Context context) {
-        if (this.client.getEndpoint() == null) {
-            return Mono.error(
-                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
-        }
-        if (resourceUri == null) {
-            return Mono.error(new IllegalArgumentException("Parameter resourceUri is required and cannot be null."));
-        }
-        if (solutionConfiguration == null) {
-            return Mono
-                .error(new IllegalArgumentException("Parameter solutionConfiguration is required and cannot be null."));
-        }
-        final String accept = "application/json";
-        context = this.client.mergeContext(context);
-        return service.get(this.client.getEndpoint(), this.client.getApiVersion(), resourceUri, solutionConfiguration,
-            accept, context);
     }
 
     /**
@@ -233,7 +257,9 @@ public final class SolutionConfigurationsClientImpl implements SolutionConfigura
     @ServiceMethod(returns = ReturnType.SINGLE)
     public Response<SolutionConfigurationInner> getWithResponse(String resourceUri, String solutionConfiguration,
         Context context) {
-        return getWithResponseAsync(resourceUri, solutionConfiguration, context).block();
+        final String accept = "application/json";
+        return service.getSync(this.client.getEndpoint(), this.client.getApiVersion(), resourceUri,
+            solutionConfiguration, accept, context);
     }
 
     /**
@@ -265,66 +291,12 @@ public final class SolutionConfigurationsClientImpl implements SolutionConfigura
     @ServiceMethod(returns = ReturnType.SINGLE)
     private Mono<Response<SolutionConfigurationInner>> createOrUpdateWithResponseAsync(String resourceUri,
         String solutionConfiguration, SolutionConfigurationInner resource) {
-        if (this.client.getEndpoint() == null) {
-            return Mono.error(
-                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
-        }
-        if (resourceUri == null) {
-            return Mono.error(new IllegalArgumentException("Parameter resourceUri is required and cannot be null."));
-        }
-        if (solutionConfiguration == null) {
-            return Mono
-                .error(new IllegalArgumentException("Parameter solutionConfiguration is required and cannot be null."));
-        }
-        if (resource == null) {
-            return Mono.error(new IllegalArgumentException("Parameter resource is required and cannot be null."));
-        } else {
-            resource.validate();
-        }
         final String contentType = "application/json";
         final String accept = "application/json";
         return FluxUtil
             .withContext(context -> service.createOrUpdate(this.client.getEndpoint(), this.client.getApiVersion(),
                 resourceUri, solutionConfiguration, contentType, accept, resource, context))
             .contextWrite(context -> context.putAll(FluxUtil.toReactorContext(this.client.getContext()).readOnly()));
-    }
-
-    /**
-     * Create a SolutionConfiguration.
-     * 
-     * @param resourceUri The fully qualified Azure Resource manager identifier of the resource.
-     * @param solutionConfiguration Represent Solution Configuration Resource.
-     * @param resource Resource create parameters.
-     * @param context The context to associate with this operation.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return solution Configuration along with {@link Response} on successful completion of {@link Mono}.
-     */
-    @ServiceMethod(returns = ReturnType.SINGLE)
-    private Mono<Response<SolutionConfigurationInner>> createOrUpdateWithResponseAsync(String resourceUri,
-        String solutionConfiguration, SolutionConfigurationInner resource, Context context) {
-        if (this.client.getEndpoint() == null) {
-            return Mono.error(
-                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
-        }
-        if (resourceUri == null) {
-            return Mono.error(new IllegalArgumentException("Parameter resourceUri is required and cannot be null."));
-        }
-        if (solutionConfiguration == null) {
-            return Mono
-                .error(new IllegalArgumentException("Parameter solutionConfiguration is required and cannot be null."));
-        }
-        if (resource == null) {
-            return Mono.error(new IllegalArgumentException("Parameter resource is required and cannot be null."));
-        } else {
-            resource.validate();
-        }
-        final String contentType = "application/json";
-        final String accept = "application/json";
-        context = this.client.mergeContext(context);
-        return service.createOrUpdate(this.client.getEndpoint(), this.client.getApiVersion(), resourceUri,
-            solutionConfiguration, contentType, accept, resource, context);
     }
 
     /**
@@ -360,7 +332,10 @@ public final class SolutionConfigurationsClientImpl implements SolutionConfigura
     @ServiceMethod(returns = ReturnType.SINGLE)
     public Response<SolutionConfigurationInner> createOrUpdateWithResponse(String resourceUri,
         String solutionConfiguration, SolutionConfigurationInner resource, Context context) {
-        return createOrUpdateWithResponseAsync(resourceUri, solutionConfiguration, resource, context).block();
+        final String contentType = "application/json";
+        final String accept = "application/json";
+        return service.createOrUpdateSync(this.client.getEndpoint(), this.client.getApiVersion(), resourceUri,
+            solutionConfiguration, contentType, accept, resource, context);
     }
 
     /**
@@ -393,67 +368,13 @@ public final class SolutionConfigurationsClientImpl implements SolutionConfigura
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
     private Mono<Response<SolutionConfigurationInner>> updateWithResponseAsync(String resourceUri,
-        String solutionConfiguration, SolutionConfigurationInner properties) {
-        if (this.client.getEndpoint() == null) {
-            return Mono.error(
-                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
-        }
-        if (resourceUri == null) {
-            return Mono.error(new IllegalArgumentException("Parameter resourceUri is required and cannot be null."));
-        }
-        if (solutionConfiguration == null) {
-            return Mono
-                .error(new IllegalArgumentException("Parameter solutionConfiguration is required and cannot be null."));
-        }
-        if (properties == null) {
-            return Mono.error(new IllegalArgumentException("Parameter properties is required and cannot be null."));
-        } else {
-            properties.validate();
-        }
+        String solutionConfiguration, SolutionConfigurationUpdate properties) {
         final String contentType = "application/json";
         final String accept = "application/json";
         return FluxUtil
             .withContext(context -> service.update(this.client.getEndpoint(), this.client.getApiVersion(), resourceUri,
                 solutionConfiguration, contentType, accept, properties, context))
             .contextWrite(context -> context.putAll(FluxUtil.toReactorContext(this.client.getContext()).readOnly()));
-    }
-
-    /**
-     * Update a SolutionConfiguration.
-     * 
-     * @param resourceUri The fully qualified Azure Resource manager identifier of the resource.
-     * @param solutionConfiguration Represent Solution Configuration Resource.
-     * @param properties The resource properties to be updated.
-     * @param context The context to associate with this operation.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return solution Configuration along with {@link Response} on successful completion of {@link Mono}.
-     */
-    @ServiceMethod(returns = ReturnType.SINGLE)
-    private Mono<Response<SolutionConfigurationInner>> updateWithResponseAsync(String resourceUri,
-        String solutionConfiguration, SolutionConfigurationInner properties, Context context) {
-        if (this.client.getEndpoint() == null) {
-            return Mono.error(
-                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
-        }
-        if (resourceUri == null) {
-            return Mono.error(new IllegalArgumentException("Parameter resourceUri is required and cannot be null."));
-        }
-        if (solutionConfiguration == null) {
-            return Mono
-                .error(new IllegalArgumentException("Parameter solutionConfiguration is required and cannot be null."));
-        }
-        if (properties == null) {
-            return Mono.error(new IllegalArgumentException("Parameter properties is required and cannot be null."));
-        } else {
-            properties.validate();
-        }
-        final String contentType = "application/json";
-        final String accept = "application/json";
-        context = this.client.mergeContext(context);
-        return service.update(this.client.getEndpoint(), this.client.getApiVersion(), resourceUri,
-            solutionConfiguration, contentType, accept, properties, context);
     }
 
     /**
@@ -469,7 +390,7 @@ public final class SolutionConfigurationsClientImpl implements SolutionConfigura
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
     private Mono<SolutionConfigurationInner> updateAsync(String resourceUri, String solutionConfiguration,
-        SolutionConfigurationInner properties) {
+        SolutionConfigurationUpdate properties) {
         return updateWithResponseAsync(resourceUri, solutionConfiguration, properties)
             .flatMap(res -> Mono.justOrEmpty(res.getValue()));
     }
@@ -488,8 +409,11 @@ public final class SolutionConfigurationsClientImpl implements SolutionConfigura
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
     public Response<SolutionConfigurationInner> updateWithResponse(String resourceUri, String solutionConfiguration,
-        SolutionConfigurationInner properties, Context context) {
-        return updateWithResponseAsync(resourceUri, solutionConfiguration, properties, context).block();
+        SolutionConfigurationUpdate properties, Context context) {
+        final String contentType = "application/json";
+        final String accept = "application/json";
+        return service.updateSync(this.client.getEndpoint(), this.client.getApiVersion(), resourceUri,
+            solutionConfiguration, contentType, accept, properties, context);
     }
 
     /**
@@ -505,7 +429,7 @@ public final class SolutionConfigurationsClientImpl implements SolutionConfigura
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
     public SolutionConfigurationInner update(String resourceUri, String solutionConfiguration,
-        SolutionConfigurationInner properties) {
+        SolutionConfigurationUpdate properties) {
         return updateWithResponse(resourceUri, solutionConfiguration, properties, Context.NONE).getValue();
     }
 
@@ -521,53 +445,10 @@ public final class SolutionConfigurationsClientImpl implements SolutionConfigura
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
     private Mono<Response<Void>> deleteWithResponseAsync(String resourceUri, String solutionConfiguration) {
-        if (this.client.getEndpoint() == null) {
-            return Mono.error(
-                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
-        }
-        if (resourceUri == null) {
-            return Mono.error(new IllegalArgumentException("Parameter resourceUri is required and cannot be null."));
-        }
-        if (solutionConfiguration == null) {
-            return Mono
-                .error(new IllegalArgumentException("Parameter solutionConfiguration is required and cannot be null."));
-        }
-        final String accept = "application/json";
         return FluxUtil
             .withContext(context -> service.delete(this.client.getEndpoint(), this.client.getApiVersion(), resourceUri,
-                solutionConfiguration, accept, context))
+                solutionConfiguration, context))
             .contextWrite(context -> context.putAll(FluxUtil.toReactorContext(this.client.getContext()).readOnly()));
-    }
-
-    /**
-     * Delete a SolutionConfiguration.
-     * 
-     * @param resourceUri The fully qualified Azure Resource manager identifier of the resource.
-     * @param solutionConfiguration Represent Solution Configuration Resource.
-     * @param context The context to associate with this operation.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the {@link Response} on successful completion of {@link Mono}.
-     */
-    @ServiceMethod(returns = ReturnType.SINGLE)
-    private Mono<Response<Void>> deleteWithResponseAsync(String resourceUri, String solutionConfiguration,
-        Context context) {
-        if (this.client.getEndpoint() == null) {
-            return Mono.error(
-                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
-        }
-        if (resourceUri == null) {
-            return Mono.error(new IllegalArgumentException("Parameter resourceUri is required and cannot be null."));
-        }
-        if (solutionConfiguration == null) {
-            return Mono
-                .error(new IllegalArgumentException("Parameter solutionConfiguration is required and cannot be null."));
-        }
-        final String accept = "application/json";
-        context = this.client.mergeContext(context);
-        return service.delete(this.client.getEndpoint(), this.client.getApiVersion(), resourceUri,
-            solutionConfiguration, accept, context);
     }
 
     /**
@@ -598,7 +479,8 @@ public final class SolutionConfigurationsClientImpl implements SolutionConfigura
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
     public Response<Void> deleteWithResponse(String resourceUri, String solutionConfiguration, Context context) {
-        return deleteWithResponseAsync(resourceUri, solutionConfiguration, context).block();
+        return service.deleteSync(this.client.getEndpoint(), this.client.getApiVersion(), resourceUri,
+            solutionConfiguration, context);
     }
 
     /**
@@ -627,13 +509,6 @@ public final class SolutionConfigurationsClientImpl implements SolutionConfigura
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
     private Mono<PagedResponse<SolutionConfigurationInner>> listSinglePageAsync(String resourceUri) {
-        if (this.client.getEndpoint() == null) {
-            return Mono.error(
-                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
-        }
-        if (resourceUri == null) {
-            return Mono.error(new IllegalArgumentException("Parameter resourceUri is required and cannot be null."));
-        }
         final String accept = "application/json";
         return FluxUtil
             .withContext(context -> service.list(this.client.getEndpoint(), this.client.getApiVersion(), resourceUri,
@@ -641,33 +516,6 @@ public final class SolutionConfigurationsClientImpl implements SolutionConfigura
             .<PagedResponse<SolutionConfigurationInner>>map(res -> new PagedResponseBase<>(res.getRequest(),
                 res.getStatusCode(), res.getHeaders(), res.getValue().value(), res.getValue().nextLink(), null))
             .contextWrite(context -> context.putAll(FluxUtil.toReactorContext(this.client.getContext()).readOnly()));
-    }
-
-    /**
-     * List SolutionConfiguration resources by parent.
-     * 
-     * @param resourceUri The fully qualified Azure Resource manager identifier of the resource.
-     * @param context The context to associate with this operation.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the response of a SolutionConfiguration list operation along with {@link PagedResponse} on successful
-     * completion of {@link Mono}.
-     */
-    @ServiceMethod(returns = ReturnType.SINGLE)
-    private Mono<PagedResponse<SolutionConfigurationInner>> listSinglePageAsync(String resourceUri, Context context) {
-        if (this.client.getEndpoint() == null) {
-            return Mono.error(
-                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
-        }
-        if (resourceUri == null) {
-            return Mono.error(new IllegalArgumentException("Parameter resourceUri is required and cannot be null."));
-        }
-        final String accept = "application/json";
-        context = this.client.mergeContext(context);
-        return service.list(this.client.getEndpoint(), this.client.getApiVersion(), resourceUri, accept, context)
-            .map(res -> new PagedResponseBase<>(res.getRequest(), res.getStatusCode(), res.getHeaders(),
-                res.getValue().value(), res.getValue().nextLink(), null));
     }
 
     /**
@@ -688,16 +536,37 @@ public final class SolutionConfigurationsClientImpl implements SolutionConfigura
      * List SolutionConfiguration resources by parent.
      * 
      * @param resourceUri The fully qualified Azure Resource manager identifier of the resource.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return the response of a SolutionConfiguration list operation along with {@link PagedResponse}.
+     */
+    @ServiceMethod(returns = ReturnType.SINGLE)
+    private PagedResponse<SolutionConfigurationInner> listSinglePage(String resourceUri) {
+        final String accept = "application/json";
+        Response<SolutionConfigurationListResult> res = service.listSync(this.client.getEndpoint(),
+            this.client.getApiVersion(), resourceUri, accept, Context.NONE);
+        return new PagedResponseBase<>(res.getRequest(), res.getStatusCode(), res.getHeaders(), res.getValue().value(),
+            res.getValue().nextLink(), null);
+    }
+
+    /**
+     * List SolutionConfiguration resources by parent.
+     * 
+     * @param resourceUri The fully qualified Azure Resource manager identifier of the resource.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the response of a SolutionConfiguration list operation as paginated response with {@link PagedFlux}.
+     * @return the response of a SolutionConfiguration list operation along with {@link PagedResponse}.
      */
-    @ServiceMethod(returns = ReturnType.COLLECTION)
-    private PagedFlux<SolutionConfigurationInner> listAsync(String resourceUri, Context context) {
-        return new PagedFlux<>(() -> listSinglePageAsync(resourceUri, context),
-            nextLink -> listNextSinglePageAsync(nextLink, context));
+    @ServiceMethod(returns = ReturnType.SINGLE)
+    private PagedResponse<SolutionConfigurationInner> listSinglePage(String resourceUri, Context context) {
+        final String accept = "application/json";
+        Response<SolutionConfigurationListResult> res
+            = service.listSync(this.client.getEndpoint(), this.client.getApiVersion(), resourceUri, accept, context);
+        return new PagedResponseBase<>(res.getRequest(), res.getStatusCode(), res.getHeaders(), res.getValue().value(),
+            res.getValue().nextLink(), null);
     }
 
     /**
@@ -711,7 +580,7 @@ public final class SolutionConfigurationsClientImpl implements SolutionConfigura
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
     public PagedIterable<SolutionConfigurationInner> list(String resourceUri) {
-        return new PagedIterable<>(listAsync(resourceUri));
+        return new PagedIterable<>(() -> listSinglePage(resourceUri), nextLink -> listNextSinglePage(nextLink));
     }
 
     /**
@@ -726,7 +595,8 @@ public final class SolutionConfigurationsClientImpl implements SolutionConfigura
      */
     @ServiceMethod(returns = ReturnType.COLLECTION)
     public PagedIterable<SolutionConfigurationInner> list(String resourceUri, Context context) {
-        return new PagedIterable<>(listAsync(resourceUri, context));
+        return new PagedIterable<>(() -> listSinglePage(resourceUri, context),
+            nextLink -> listNextSinglePage(nextLink, context));
     }
 
     /**
@@ -742,17 +612,6 @@ public final class SolutionConfigurationsClientImpl implements SolutionConfigura
     @ServiceMethod(returns = ReturnType.SINGLE)
     private Mono<Response<Flux<ByteBuffer>>> syncNowWithResponseAsync(String resourceUri,
         String solutionConfiguration) {
-        if (this.client.getEndpoint() == null) {
-            return Mono.error(
-                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
-        }
-        if (resourceUri == null) {
-            return Mono.error(new IllegalArgumentException("Parameter resourceUri is required and cannot be null."));
-        }
-        if (solutionConfiguration == null) {
-            return Mono
-                .error(new IllegalArgumentException("Parameter solutionConfiguration is required and cannot be null."));
-        }
         final String accept = "application/json";
         return FluxUtil
             .withContext(context -> service.syncNow(this.client.getEndpoint(), this.client.getApiVersion(), resourceUri,
@@ -765,29 +624,34 @@ public final class SolutionConfigurationsClientImpl implements SolutionConfigura
      * 
      * @param resourceUri The fully qualified Azure Resource manager identifier of the resource.
      * @param solutionConfiguration Represent Solution Configuration Resource.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return the response body along with {@link Response}.
+     */
+    @ServiceMethod(returns = ReturnType.SINGLE)
+    private Response<BinaryData> syncNowWithResponse(String resourceUri, String solutionConfiguration) {
+        final String accept = "application/json";
+        return service.syncNowSync(this.client.getEndpoint(), this.client.getApiVersion(), resourceUri,
+            solutionConfiguration, accept, Context.NONE);
+    }
+
+    /**
+     * Trigger immediate sync with source cloud.
+     * 
+     * @param resourceUri The fully qualified Azure Resource manager identifier of the resource.
+     * @param solutionConfiguration Represent Solution Configuration Resource.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the response body along with {@link Response} on successful completion of {@link Mono}.
+     * @return the response body along with {@link Response}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    private Mono<Response<Flux<ByteBuffer>>> syncNowWithResponseAsync(String resourceUri, String solutionConfiguration,
+    private Response<BinaryData> syncNowWithResponse(String resourceUri, String solutionConfiguration,
         Context context) {
-        if (this.client.getEndpoint() == null) {
-            return Mono.error(
-                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
-        }
-        if (resourceUri == null) {
-            return Mono.error(new IllegalArgumentException("Parameter resourceUri is required and cannot be null."));
-        }
-        if (solutionConfiguration == null) {
-            return Mono
-                .error(new IllegalArgumentException("Parameter solutionConfiguration is required and cannot be null."));
-        }
         final String accept = "application/json";
-        context = this.client.mergeContext(context);
-        return service.syncNow(this.client.getEndpoint(), this.client.getApiVersion(), resourceUri,
+        return service.syncNowSync(this.client.getEndpoint(), this.client.getApiVersion(), resourceUri,
             solutionConfiguration, accept, context);
     }
 
@@ -815,26 +679,6 @@ public final class SolutionConfigurationsClientImpl implements SolutionConfigura
      * 
      * @param resourceUri The fully qualified Azure Resource manager identifier of the resource.
      * @param solutionConfiguration Represent Solution Configuration Resource.
-     * @param context The context to associate with this operation.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the {@link PollerFlux} for polling of long-running operation.
-     */
-    @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
-    private PollerFlux<PollResult<OperationStatusResultInner>, OperationStatusResultInner>
-        beginSyncNowAsync(String resourceUri, String solutionConfiguration, Context context) {
-        context = this.client.mergeContext(context);
-        Mono<Response<Flux<ByteBuffer>>> mono = syncNowWithResponseAsync(resourceUri, solutionConfiguration, context);
-        return this.client.<OperationStatusResultInner, OperationStatusResultInner>getLroResult(mono,
-            this.client.getHttpPipeline(), OperationStatusResultInner.class, OperationStatusResultInner.class, context);
-    }
-
-    /**
-     * Trigger immediate sync with source cloud.
-     * 
-     * @param resourceUri The fully qualified Azure Resource manager identifier of the resource.
-     * @param solutionConfiguration Represent Solution Configuration Resource.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
@@ -843,7 +687,9 @@ public final class SolutionConfigurationsClientImpl implements SolutionConfigura
     @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
     public SyncPoller<PollResult<OperationStatusResultInner>, OperationStatusResultInner>
         beginSyncNow(String resourceUri, String solutionConfiguration) {
-        return this.beginSyncNowAsync(resourceUri, solutionConfiguration).getSyncPoller();
+        Response<BinaryData> response = syncNowWithResponse(resourceUri, solutionConfiguration);
+        return this.client.<OperationStatusResultInner, OperationStatusResultInner>getLroResult(response,
+            OperationStatusResultInner.class, OperationStatusResultInner.class, Context.NONE);
     }
 
     /**
@@ -860,7 +706,9 @@ public final class SolutionConfigurationsClientImpl implements SolutionConfigura
     @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
     public SyncPoller<PollResult<OperationStatusResultInner>, OperationStatusResultInner>
         beginSyncNow(String resourceUri, String solutionConfiguration, Context context) {
-        return this.beginSyncNowAsync(resourceUri, solutionConfiguration, context).getSyncPoller();
+        Response<BinaryData> response = syncNowWithResponse(resourceUri, solutionConfiguration, context);
+        return this.client.<OperationStatusResultInner, OperationStatusResultInner>getLroResult(response,
+            OperationStatusResultInner.class, OperationStatusResultInner.class, context);
     }
 
     /**
@@ -884,24 +732,6 @@ public final class SolutionConfigurationsClientImpl implements SolutionConfigura
      * 
      * @param resourceUri The fully qualified Azure Resource manager identifier of the resource.
      * @param solutionConfiguration Represent Solution Configuration Resource.
-     * @param context The context to associate with this operation.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the response body on successful completion of {@link Mono}.
-     */
-    @ServiceMethod(returns = ReturnType.SINGLE)
-    private Mono<OperationStatusResultInner> syncNowAsync(String resourceUri, String solutionConfiguration,
-        Context context) {
-        return beginSyncNowAsync(resourceUri, solutionConfiguration, context).last()
-            .flatMap(this.client::getLroFinalResultOrError);
-    }
-
-    /**
-     * Trigger immediate sync with source cloud.
-     * 
-     * @param resourceUri The fully qualified Azure Resource manager identifier of the resource.
-     * @param solutionConfiguration Represent Solution Configuration Resource.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
@@ -909,7 +739,7 @@ public final class SolutionConfigurationsClientImpl implements SolutionConfigura
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
     public OperationStatusResultInner syncNow(String resourceUri, String solutionConfiguration) {
-        return syncNowAsync(resourceUri, solutionConfiguration).block();
+        return beginSyncNow(resourceUri, solutionConfiguration).getFinalResult();
     }
 
     /**
@@ -925,7 +755,7 @@ public final class SolutionConfigurationsClientImpl implements SolutionConfigura
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
     public OperationStatusResultInner syncNow(String resourceUri, String solutionConfiguration, Context context) {
-        return syncNowAsync(resourceUri, solutionConfiguration, context).block();
+        return beginSyncNow(resourceUri, solutionConfiguration, context).getFinalResult();
     }
 
     /**
@@ -940,13 +770,6 @@ public final class SolutionConfigurationsClientImpl implements SolutionConfigura
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
     private Mono<PagedResponse<SolutionConfigurationInner>> listNextSinglePageAsync(String nextLink) {
-        if (nextLink == null) {
-            return Mono.error(new IllegalArgumentException("Parameter nextLink is required and cannot be null."));
-        }
-        if (this.client.getEndpoint() == null) {
-            return Mono.error(
-                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
-        }
         final String accept = "application/json";
         return FluxUtil.withContext(context -> service.listNext(nextLink, this.client.getEndpoint(), accept, context))
             .<PagedResponse<SolutionConfigurationInner>>map(res -> new PagedResponseBase<>(res.getRequest(),
@@ -958,26 +781,36 @@ public final class SolutionConfigurationsClientImpl implements SolutionConfigura
      * Get the next page of items.
      * 
      * @param nextLink The URL to get the next list of items.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return the response of a SolutionConfiguration list operation along with {@link PagedResponse}.
+     */
+    @ServiceMethod(returns = ReturnType.SINGLE)
+    private PagedResponse<SolutionConfigurationInner> listNextSinglePage(String nextLink) {
+        final String accept = "application/json";
+        Response<SolutionConfigurationListResult> res
+            = service.listNextSync(nextLink, this.client.getEndpoint(), accept, Context.NONE);
+        return new PagedResponseBase<>(res.getRequest(), res.getStatusCode(), res.getHeaders(), res.getValue().value(),
+            res.getValue().nextLink(), null);
+    }
+
+    /**
+     * Get the next page of items.
+     * 
+     * @param nextLink The URL to get the next list of items.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the response of a SolutionConfiguration list operation along with {@link PagedResponse} on successful
-     * completion of {@link Mono}.
+     * @return the response of a SolutionConfiguration list operation along with {@link PagedResponse}.
      */
     @ServiceMethod(returns = ReturnType.SINGLE)
-    private Mono<PagedResponse<SolutionConfigurationInner>> listNextSinglePageAsync(String nextLink, Context context) {
-        if (nextLink == null) {
-            return Mono.error(new IllegalArgumentException("Parameter nextLink is required and cannot be null."));
-        }
-        if (this.client.getEndpoint() == null) {
-            return Mono.error(
-                new IllegalArgumentException("Parameter this.client.getEndpoint() is required and cannot be null."));
-        }
+    private PagedResponse<SolutionConfigurationInner> listNextSinglePage(String nextLink, Context context) {
         final String accept = "application/json";
-        context = this.client.mergeContext(context);
-        return service.listNext(nextLink, this.client.getEndpoint(), accept, context)
-            .map(res -> new PagedResponseBase<>(res.getRequest(), res.getStatusCode(), res.getHeaders(),
-                res.getValue().value(), res.getValue().nextLink(), null));
+        Response<SolutionConfigurationListResult> res
+            = service.listNextSync(nextLink, this.client.getEndpoint(), accept, context);
+        return new PagedResponseBase<>(res.getRequest(), res.getStatusCode(), res.getHeaders(), res.getValue().value(),
+            res.getValue().nextLink(), null);
     }
 }

@@ -12,6 +12,8 @@ import com.azure.core.management.polling.PollResult;
 import com.azure.core.util.Context;
 import com.azure.core.util.polling.SyncPoller;
 import com.azure.resourcemanager.neonpostgres.fluent.models.BranchInner;
+import com.azure.resourcemanager.neonpostgres.fluent.models.PreflightCheckResultInner;
+import com.azure.resourcemanager.neonpostgres.models.PreflightCheckParameters;
 
 /**
  * An instance of this class provides access to all the operations defined in BranchesClient.
@@ -120,76 +122,6 @@ public interface BranchesClient {
         BranchInner resource, Context context);
 
     /**
-     * Update a Branch.
-     * 
-     * @param resourceGroupName The name of the resource group. The name is case insensitive.
-     * @param organizationName Name of the Neon Organizations resource.
-     * @param projectName The name of the Project.
-     * @param branchName The name of the Branch.
-     * @param properties The resource properties to be updated.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the {@link SyncPoller} for polling of the Branch resource type.
-     */
-    @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
-    SyncPoller<PollResult<BranchInner>, BranchInner> beginUpdate(String resourceGroupName, String organizationName,
-        String projectName, String branchName, BranchInner properties);
-
-    /**
-     * Update a Branch.
-     * 
-     * @param resourceGroupName The name of the resource group. The name is case insensitive.
-     * @param organizationName Name of the Neon Organizations resource.
-     * @param projectName The name of the Project.
-     * @param branchName The name of the Branch.
-     * @param properties The resource properties to be updated.
-     * @param context The context to associate with this operation.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the {@link SyncPoller} for polling of the Branch resource type.
-     */
-    @ServiceMethod(returns = ReturnType.LONG_RUNNING_OPERATION)
-    SyncPoller<PollResult<BranchInner>, BranchInner> beginUpdate(String resourceGroupName, String organizationName,
-        String projectName, String branchName, BranchInner properties, Context context);
-
-    /**
-     * Update a Branch.
-     * 
-     * @param resourceGroupName The name of the resource group. The name is case insensitive.
-     * @param organizationName Name of the Neon Organizations resource.
-     * @param projectName The name of the Project.
-     * @param branchName The name of the Branch.
-     * @param properties The resource properties to be updated.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the Branch resource type.
-     */
-    @ServiceMethod(returns = ReturnType.SINGLE)
-    BranchInner update(String resourceGroupName, String organizationName, String projectName, String branchName,
-        BranchInner properties);
-
-    /**
-     * Update a Branch.
-     * 
-     * @param resourceGroupName The name of the resource group. The name is case insensitive.
-     * @param organizationName Name of the Neon Organizations resource.
-     * @param projectName The name of the Project.
-     * @param branchName The name of the Branch.
-     * @param properties The resource properties to be updated.
-     * @param context The context to associate with this operation.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the Branch resource type.
-     */
-    @ServiceMethod(returns = ReturnType.SINGLE)
-    BranchInner update(String resourceGroupName, String organizationName, String projectName, String branchName,
-        BranchInner properties, Context context);
-
-    /**
      * Delete a Branch.
      * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
@@ -249,4 +181,39 @@ public interface BranchesClient {
     @ServiceMethod(returns = ReturnType.COLLECTION)
     PagedIterable<BranchInner> list(String resourceGroupName, String organizationName, String projectName,
         Context context);
+
+    /**
+     * Action to validate preflight checks.
+     * 
+     * @param resourceGroupName The name of the resource group. The name is case insensitive.
+     * @param organizationName Name of the Neon Organizations resource.
+     * @param projectName The name of the Project.
+     * @param branchName The name of the Branch.
+     * @param parameters Parameters for preflight checks.
+     * @param context The context to associate with this operation.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return result of the pre-deletion validation operation along with {@link Response}.
+     */
+    @ServiceMethod(returns = ReturnType.SINGLE)
+    Response<PreflightCheckResultInner> preflightWithResponse(String resourceGroupName, String organizationName,
+        String projectName, String branchName, PreflightCheckParameters parameters, Context context);
+
+    /**
+     * Action to validate preflight checks.
+     * 
+     * @param resourceGroupName The name of the resource group. The name is case insensitive.
+     * @param organizationName Name of the Neon Organizations resource.
+     * @param projectName The name of the Project.
+     * @param branchName The name of the Branch.
+     * @param parameters Parameters for preflight checks.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return result of the pre-deletion validation operation.
+     */
+    @ServiceMethod(returns = ReturnType.SINGLE)
+    PreflightCheckResultInner preflight(String resourceGroupName, String organizationName, String projectName,
+        String branchName, PreflightCheckParameters parameters);
 }

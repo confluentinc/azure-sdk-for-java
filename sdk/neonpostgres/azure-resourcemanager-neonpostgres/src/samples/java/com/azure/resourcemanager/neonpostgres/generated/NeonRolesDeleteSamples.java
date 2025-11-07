@@ -9,7 +9,7 @@ package com.azure.resourcemanager.neonpostgres.generated;
  */
 public final class NeonRolesDeleteSamples {
     /*
-     * x-ms-original-file: 2025-03-01/NeonRoles_Delete_MaximumSet_Gen.json
+     * x-ms-original-file: 2025-06-23-preview/NeonRoles_Delete_MaximumSet_Gen.json
      */
     /**
      * Sample code: NeonRoles_Delete_MaximumSet.
@@ -18,7 +18,7 @@ public final class NeonRolesDeleteSamples {
      */
     public static void neonRolesDeleteMaximumSet(com.azure.resourcemanager.neonpostgres.NeonPostgresManager manager) {
         manager.neonRoles()
-            .deleteWithResponse("rgneon", "test-org", "entity-name", "entity-name", "entity-name",
+            .deleteWithResponse("rgneon", "myOrganization", "myProject", "feature", "read_only_role",
                 com.azure.core.util.Context.NONE);
     }
 }

@@ -11,6 +11,7 @@ import com.azure.core.models.AzureCloud;
 import com.azure.core.test.http.MockHttpResponse;
 import com.azure.resourcemanager.neonpostgres.NeonPostgresManager;
 import com.azure.resourcemanager.neonpostgres.models.Attributes;
+import com.azure.resourcemanager.neonpostgres.models.AutoscalingSize;
 import com.azure.resourcemanager.neonpostgres.models.Endpoint;
 import com.azure.resourcemanager.neonpostgres.models.EndpointProperties;
 import com.azure.resourcemanager.neonpostgres.models.EndpointType;
@@ -25,7 +26,7 @@ public final class EndpointsCreateOrUpdateMockTests {
     @Test
     public void testCreateOrUpdate() throws Exception {
         String responseStr
-            = "{\"properties\":{\"entityId\":\"yioqe\",\"entityName\":\"w\",\"createdAt\":\"szzgyk\",\"provisioningState\":\"Succeeded\",\"attributes\":[{\"name\":\"anvmwdv\",\"value\":\"jqcrbk\"},{\"name\":\"mpnbnfgyweoj\",\"value\":\"epgcmahiwf\"},{\"name\":\"yawkch\",\"value\":\"apitskshfyftt\"},{\"name\":\"bjepzwhj\",\"value\":\"nfd\"}],\"projectId\":\"ggcj\",\"branchId\":\"hblivwehsudym\",\"endpointType\":\"read_write\"},\"id\":\"dosmbn\",\"name\":\"kqlgxzduv\",\"type\":\"dmxexatmdmnrsenx\"}";
+            = "{\"properties\":{\"entityId\":\"smg\",\"entityName\":\"icttr\",\"createdAt\":\"vvjmxokxx\",\"provisioningState\":\"Succeeded\",\"attributes\":[{\"name\":\"jrzvlc\",\"value\":\"vqxdemklphx\"},{\"name\":\"wwlojkbgnf\",\"value\":\"rzjv\"},{\"name\":\"sunhaevlah\",\"value\":\"czywywuahwc\"}],\"projectId\":\"ewcnnaaxqjfdajr\",\"branchId\":\"imomggewdqbxex\",\"endpointType\":\"read_only\",\"endpointId\":\"vussuqks\",\"computeName\":\"sfx\",\"status\":\"init\",\"lastActive\":\"byeywpmohnrtli\",\"size\":{\"autoscalingLimitMinCu\":62.421153310128105,\"autoscalingLimitMaxCu\":18.390865453610573}},\"id\":\"kqrfbgynzfwvzdt\",\"name\":\"qj\",\"type\":\"yqxuhgka\"}";
 
         HttpClient httpClient
             = response -> Mono.just(new MockHttpResponse(response, 200, responseStr.getBytes(StandardCharsets.UTF_8)));
@@ -35,21 +36,30 @@ public final class EndpointsCreateOrUpdateMockTests {
                 new AzureProfile("", "", AzureCloud.AZURE_PUBLIC_CLOUD));
 
         Endpoint response = manager.endpoints()
-            .define("ecwzvcmbpwdluda")
-            .withExistingBranche("ccpumddhgajkr", "yddt", "fcudvafnbfbqv", "nqnxhgkordwzej")
-            .withProperties(new EndpointProperties().withEntityName("zldzchubagwnl")
-                .withAttributes(Arrays.asList(new Attributes().withName("rbzakpjtcqr").withValue("qpojpsucmximc"),
-                    new Attributes().withName("qxynqj").withValue("satkyvscb")))
-                .withProjectId("gcru")
-                .withBranchId("hirc")
-                .withEndpointType(EndpointType.READ_ONLY))
+            .define("wtgntimznupb")
+            .withExistingBranche("dpiov", "lhrwyakzuafapwx", "vdeatjiobnirg", "extqd")
+            .withProperties(new EndpointProperties().withEntityName("sqvhe")
+                .withAttributes(Arrays.asList(new Attributes().withName("dhdgdiwmlgstm").withValue("etqjisjm"),
+                    new Attributes().withName("lzcaqfkakhgkrvt").withValue("ycvytv"),
+                    new Attributes().withName("ejqaw").withValue("usqpfzxkczbd")))
+                .withProjectId("bb")
+                .withBranchId("hjbozvoo")
+                .withEndpointType(EndpointType.READ_ONLY)
+                .withEndpointId("nh")
+                .withComputeName("cyuzlybqscibv")
+                .withSize(new AutoscalingSize().withAutoscalingLimitMinCu(87.848671509364)
+                    .withAutoscalingLimitMaxCu(77.62741655539035)))
             .create();
 
-        Assertions.assertEquals("w", response.properties().entityName());
-        Assertions.assertEquals("anvmwdv", response.properties().attributes().get(0).name());
-        Assertions.assertEquals("jqcrbk", response.properties().attributes().get(0).value());
-        Assertions.assertEquals("ggcj", response.properties().projectId());
-        Assertions.assertEquals("hblivwehsudym", response.properties().branchId());
-        Assertions.assertEquals(EndpointType.READ_WRITE, response.properties().endpointType());
+        Assertions.assertEquals("icttr", response.properties().entityName());
+        Assertions.assertEquals("jrzvlc", response.properties().attributes().get(0).name());
+        Assertions.assertEquals("vqxdemklphx", response.properties().attributes().get(0).value());
+        Assertions.assertEquals("ewcnnaaxqjfdajr", response.properties().projectId());
+        Assertions.assertEquals("imomggewdqbxex", response.properties().branchId());
+        Assertions.assertEquals(EndpointType.READ_ONLY, response.properties().endpointType());
+        Assertions.assertEquals("vussuqks", response.properties().endpointId());
+        Assertions.assertEquals("sfx", response.properties().computeName());
+        Assertions.assertEquals(62.421153310128105, response.properties().size().autoscalingLimitMinCu());
+        Assertions.assertEquals(18.390865453610573, response.properties().size().autoscalingLimitMaxCu());
     }
 }

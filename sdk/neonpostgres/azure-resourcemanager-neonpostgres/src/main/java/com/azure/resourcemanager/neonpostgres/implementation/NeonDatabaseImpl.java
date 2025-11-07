@@ -95,16 +95,16 @@ public final class NeonDatabaseImpl implements NeonDatabase, NeonDatabase.Defini
     public NeonDatabase apply() {
         this.innerObject = serviceManager.serviceClient()
             .getNeonDatabases()
-            .update(resourceGroupName, organizationName, projectName, branchName, neonDatabaseName, this.innerModel(),
-                Context.NONE);
+            .createOrUpdate(resourceGroupName, organizationName, projectName, branchName, neonDatabaseName,
+                this.innerModel(), Context.NONE);
         return this;
     }
 
     public NeonDatabase apply(Context context) {
         this.innerObject = serviceManager.serviceClient()
             .getNeonDatabases()
-            .update(resourceGroupName, organizationName, projectName, branchName, neonDatabaseName, this.innerModel(),
-                context);
+            .createOrUpdate(resourceGroupName, organizationName, projectName, branchName, neonDatabaseName,
+                this.innerModel(), context);
         return this;
     }
 
@@ -117,23 +117,6 @@ public final class NeonDatabaseImpl implements NeonDatabase, NeonDatabase.Defini
         this.projectName = ResourceManagerUtils.getValueFromIdByName(innerObject.id(), "projects");
         this.branchName = ResourceManagerUtils.getValueFromIdByName(innerObject.id(), "branches");
         this.neonDatabaseName = ResourceManagerUtils.getValueFromIdByName(innerObject.id(), "neonDatabases");
-    }
-
-    public NeonDatabase refresh() {
-        this.innerObject = serviceManager.serviceClient()
-            .getNeonDatabases()
-            .getWithResponse(resourceGroupName, organizationName, projectName, branchName, neonDatabaseName,
-                Context.NONE)
-            .getValue();
-        return this;
-    }
-
-    public NeonDatabase refresh(Context context) {
-        this.innerObject = serviceManager.serviceClient()
-            .getNeonDatabases()
-            .getWithResponse(resourceGroupName, organizationName, projectName, branchName, neonDatabaseName, context)
-            .getValue();
-        return this;
     }
 
     public NeonDatabaseImpl withProperties(NeonDatabaseProperties properties) {

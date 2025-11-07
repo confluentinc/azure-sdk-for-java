@@ -334,7 +334,7 @@ public final class NeonPostgresManager {
     }
 
     /**
-     * Gets the resource collection API of Computes. It manages Compute.
+     * Gets the resource collection API of Computes.
      * 
      * @return Resource collection API of Computes.
      */

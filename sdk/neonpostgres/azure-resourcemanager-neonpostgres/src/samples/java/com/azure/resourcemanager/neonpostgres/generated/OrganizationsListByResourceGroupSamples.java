@@ -9,7 +9,7 @@ package com.azure.resourcemanager.neonpostgres.generated;
  */
 public final class OrganizationsListByResourceGroupSamples {
     /*
-     * x-ms-original-file: 2025-03-01/Organizations_ListByResourceGroup_MaximumSet_Gen.json
+     * x-ms-original-file: 2025-06-23-preview/Organizations_ListByResourceGroup_MaximumSet_Gen.json
      */
     /**
      * Sample code: Organizations_ListByResourceGroup_MaximumSet.

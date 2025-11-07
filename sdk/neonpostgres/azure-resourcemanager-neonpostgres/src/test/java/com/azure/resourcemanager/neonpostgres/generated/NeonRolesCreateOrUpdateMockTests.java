@@ -24,7 +24,7 @@ public final class NeonRolesCreateOrUpdateMockTests {
     @Test
     public void testCreateOrUpdate() throws Exception {
         String responseStr
-            = "{\"properties\":{\"entityId\":\"jkmqenhaidzrpv\",\"entityName\":\"lo\",\"createdAt\":\"vslvivqsuvwten\",\"provisioningState\":\"Succeeded\",\"attributes\":[{\"name\":\"pkhc\",\"value\":\"oa\"}],\"branchId\":\"ukuicjuftekioo\",\"permissions\":[\"ue\",\"fhvpxjhxzubfj\",\"abbwzgvzu\",\"ixcdckixs\"],\"isSuperUser\":true},\"id\":\"gavkmv\",\"name\":\"xzerej\",\"type\":\"kpzjbyetjxryopt\"}";
+            = "{\"properties\":{\"entityId\":\"nsbqoitwhmuc\",\"entityName\":\"uhcxy\",\"createdAt\":\"hyklelyqdvpqf\",\"provisioningState\":\"Succeeded\",\"attributes\":[{\"name\":\"udusdmtxqlefnohe\",\"value\":\"wvfopkyllrey\"},{\"name\":\"nj\",\"value\":\"w\"},{\"name\":\"msfwtwrsvevcneq\",\"value\":\"wxhqhgkh\"},{\"name\":\"bzvulqevvjncpmy\",\"value\":\"t\"}],\"branchId\":\"dmvghcmi\",\"permissions\":[\"wkfefbcyjr\",\"alqeebudfyim\"],\"isSuperUser\":true,\"roleName\":\"zktomsgo\",\"lastUpdated\":\"lqwbywaazba\",\"owns\":\"ekfz\"},\"id\":\"n\",\"name\":\"bfb\",\"type\":\"t\"}";
 
         HttpClient httpClient
             = response -> Mono.just(new MockHttpResponse(response, 200, responseStr.getBytes(StandardCharsets.UTF_8)));
@@ -34,23 +34,23 @@ public final class NeonRolesCreateOrUpdateMockTests {
                 new AzureProfile("", "", AzureCloud.AZURE_PUBLIC_CLOUD));
 
         NeonRole response = manager.neonRoles()
-            .define("tgvpatr")
-            .withExistingBranche("olefcjisepkdbxo", "fb", "ampqocl", "nnmxynlsuqbwzstr")
-            .withProperties(new NeonRoleProperties().withEntityName("icruo")
-                .withAttributes(Arrays.asList(new Attributes().withName("pqsdoc").withValue("p"),
-                    new Attributes().withName("pujzfl").withValue("cdsgxceluji"),
-                    new Attributes().withName("wlluunxhfwlfxz").withValue("wu"),
-                    new Attributes().withName("eupcknecexkgrv").withValue("psjdmng")))
-                .withBranchId("tqpdzfyxcnwawoxc")
-                .withPermissions(Arrays.asList("ejqfbi", "opfjx", "wdrpa", "q"))
-                .withIsSuperUser(false))
+            .define("upqtzckj")
+            .withExistingBranche("ekh", "dbyhqtzcvim", "wckozvlf", "mtrtsv")
+            .withProperties(new NeonRoleProperties().withEntityName("cqzahgtvbgdob")
+                .withAttributes(Arrays.asList(new Attributes().withName("qbmxqf").withValue("vznjqswshesgcsqo"),
+                    new Attributes().withName("ecxlng").withValue("ufpiz")))
+                .withBranchId("mfxzspf")
+                .withPermissions(Arrays.asList("la", "ipplxgt", "um", "ty"))
+                .withIsSuperUser(true)
+                .withRoleName("rznlaxo"))
             .create();
 
-        Assertions.assertEquals("lo", response.properties().entityName());
-        Assertions.assertEquals("pkhc", response.properties().attributes().get(0).name());
-        Assertions.assertEquals("oa", response.properties().attributes().get(0).value());
-        Assertions.assertEquals("ukuicjuftekioo", response.properties().branchId());
-        Assertions.assertEquals("ue", response.properties().permissions().get(0));
+        Assertions.assertEquals("uhcxy", response.properties().entityName());
+        Assertions.assertEquals("udusdmtxqlefnohe", response.properties().attributes().get(0).name());
+        Assertions.assertEquals("wvfopkyllrey", response.properties().attributes().get(0).value());
+        Assertions.assertEquals("dmvghcmi", response.properties().branchId());
+        Assertions.assertEquals("wkfefbcyjr", response.properties().permissions().get(0));
         Assertions.assertTrue(response.properties().isSuperUser());
+        Assertions.assertEquals("zktomsgo", response.properties().roleName());
     }
 }

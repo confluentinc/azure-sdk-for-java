@@ -11,7 +11,7 @@ import com.azure.resourcemanager.neonpostgres.fluent.models.ConnectionUriPropert
  */
 public final class ProjectsGetConnectionUriSamples {
     /*
-     * x-ms-original-file: 2025-03-01/Projects_GetConnectionUri_MaximumSet_Gen.json
+     * x-ms-original-file: 2025-06-23-preview/Projects_GetConnectionUri_MaximumSet_Gen.json
      */
     /**
      * Sample code: Projects_GetConnectionUri_MaximumSet.
@@ -21,12 +21,12 @@ public final class ProjectsGetConnectionUriSamples {
     public static void
         projectsGetConnectionUriMaximumSet(com.azure.resourcemanager.neonpostgres.NeonPostgresManager manager) {
         manager.projects()
-            .getConnectionUriWithResponse("rgneon", "test-org", "entity-name",
-                new ConnectionUriPropertiesInner().withProjectId("riuifmoqtorrcffgksvfcobia")
-                    .withBranchId("iimmlbqv")
-                    .withDatabaseName("xc")
-                    .withRoleName("xhmcvsgtp")
-                    .withEndpointId("jcpdvsyjcn")
+            .getConnectionUriWithResponse("rgneon", "myOrganization", "myProject",
+                new ConnectionUriPropertiesInner().withProjectId("project-123")
+                    .withBranchId("branch-123")
+                    .withDatabaseName("application")
+                    .withRoleName("admin")
+                    .withEndpointId("endpoint-123")
                     .withIsPooled(true),
                 com.azure.core.util.Context.NONE);
     }

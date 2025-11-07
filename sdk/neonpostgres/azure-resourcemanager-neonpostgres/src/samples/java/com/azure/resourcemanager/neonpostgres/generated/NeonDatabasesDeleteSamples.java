@@ -9,7 +9,7 @@ package com.azure.resourcemanager.neonpostgres.generated;
  */
 public final class NeonDatabasesDeleteSamples {
     /*
-     * x-ms-original-file: 2025-03-01/NeonDatabases_Delete_MaximumSet_Gen.json
+     * x-ms-original-file: 2025-06-23-preview/NeonDatabases_Delete_MaximumSet_Gen.json
      */
     /**
      * Sample code: NeonDatabases_Delete_MaximumSet.
@@ -19,7 +19,7 @@ public final class NeonDatabasesDeleteSamples {
     public static void
         neonDatabasesDeleteMaximumSet(com.azure.resourcemanager.neonpostgres.NeonPostgresManager manager) {
         manager.neonDatabases()
-            .deleteWithResponse("rgneon", "test-org", "entity-name", "entity-name", "entity-name",
+            .deleteWithResponse("rgneon", "myOrganization", "myProject", "feature", "postgres_main_db",
                 com.azure.core.util.Context.NONE);
     }
 }

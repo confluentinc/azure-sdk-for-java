@@ -85,11 +85,13 @@ public class RxDocumentServiceRequest implements Cloneable {
     public volatile Map<String, Object> properties;
     public String throughputControlGroupName;
     public volatile boolean intendedCollectionRidPassedIntoSDK = false;
+    public volatile boolean isBarrierRequest = false;
     private volatile Duration responseTimeout;
 
     private volatile boolean nonIdempotentWriteRetriesEnabled = false;
 
     private volatile boolean hasFeedRangeFilteringBeenApplied = false;
+    public boolean isPerPartitionAutomaticFailoverEnabledAndWriteRequest;
 
     private final AtomicReference<HttpTransportSerializer> httpTransportSerializer = new AtomicReference<>(null);
 
@@ -181,7 +183,7 @@ public class RxDocumentServiceRequest implements Cloneable {
         this.resourceType = resourceType;
         this.contentAsByteArray = toByteArray(byteBuffer);
         this.headers = headers != null ? headers : new HashMap<>();
-        this.activityId = UUID.randomUUID();
+        this.activityId = UUIDs.nonBlockingRandomUUID();
         this.isFeed = false;
         this.isNameBased = isNameBased;
         if (!isNameBased) {
@@ -215,7 +217,7 @@ public class RxDocumentServiceRequest implements Cloneable {
         this.resourceType = resourceType;
         this.requestContext.sessionToken = null;
         this.headers = headers != null ? headers : new HashMap<>();
-        this.activityId = UUID.randomUUID();
+        this.activityId = UUIDs.nonBlockingRandomUUID();
         this.isFeed = false;
 
         if (StringUtils.isNotEmpty(path)) {
@@ -953,6 +955,11 @@ public class RxDocumentServiceRequest implements Cloneable {
         return this.headers.containsKey(HttpConstants.HttpHeaders.A_IM);
     }
 
+    public boolean isAllVersionsAndDeletesChangeFeedMode() {
+        String aImHeader = this.headers.get(HttpConstants.HttpHeaders.A_IM);
+        return this.headers.containsKey(HttpConstants.HttpHeaders.A_IM) && HttpConstants.A_IMHeaderValues.FULL_FIDELITY_FEED.equals(aImHeader);
+    }
+
     public boolean isWritingToMaster() {
         return operationType.isWriteOperation() && resourceType.isMasterResource();
     }
@@ -1054,6 +1061,7 @@ public class RxDocumentServiceRequest implements Cloneable {
         rxDocumentServiceRequest.isFeed = this.isFeed;
         rxDocumentServiceRequest.resourceId = this.resourceId;
         rxDocumentServiceRequest.hasFeedRangeFilteringBeenApplied = this.hasFeedRangeFilteringBeenApplied;
+        rxDocumentServiceRequest.isPerPartitionAutomaticFailoverEnabledAndWriteRequest = this.isPerPartitionAutomaticFailoverEnabledAndWriteRequest;
         return rxDocumentServiceRequest;
     }
 
@@ -1082,8 +1090,10 @@ public class RxDocumentServiceRequest implements Cloneable {
         } else if (options instanceof RequestOptions) {
             return ((RequestOptions) options).getProperties();
         } else if (options instanceof CosmosQueryRequestOptions) {
-            return ModelBridgeInternal.getPropertiesFromQueryRequestOptions(
-                (CosmosQueryRequestOptions) options);
+            return ImplementationBridgeHelpers
+                .CosmosQueryRequestOptionsHelper
+                .getCosmosQueryRequestOptionsAccessor()
+                .getProperties((CosmosQueryRequestOptions) options);
         } else if (options instanceof CosmosChangeFeedRequestOptions) {
             return ModelBridgeInternal.getPropertiesFromChangeFeedRequestOptions(
                 (CosmosChangeFeedRequestOptions) options);
@@ -1169,6 +1179,12 @@ public class RxDocumentServiceRequest implements Cloneable {
         }
     }
 
+    public void setThroughputBucket(Integer throughputBucket) {
+        if (throughputBucket != null) {
+            this.headers.put(HttpConstants.HttpHeaders.THROUGHPUT_BUCKET, throughputBucket.toString());
+        }
+    }
+
     public Duration getResponseTimeout() {
         return responseTimeout;
     }
@@ -1185,11 +1201,16 @@ public class RxDocumentServiceRequest implements Cloneable {
         this.effectivePartitionKey = effectivePartitionKey;
     }
 
-    public void setThinclientHeaders(String operationType, String resourceType, String globalDatabaseAccountName, String resourceId) {
-        this.headers.put(HttpConstants.HttpHeaders.THINCLIENT_PROXY_OPERATION_TYPE, operationType);
-        this.headers.put(HttpConstants.HttpHeaders.THINCLIENT_PROXY_RESOURCE_TYPE, resourceType);
+    public void setThinclientHeaders(OperationType operationType, ResourceType resourceType, String globalDatabaseAccountName, String resourceId) {
+        this.headers.put(HttpConstants.HttpHeaders.THINCLIENT_PROXY_OPERATION_TYPE, operationType.name());
+        this.headers.put(HttpConstants.HttpHeaders.THINCLIENT_PROXY_RESOURCE_TYPE, resourceType.name());
         this.headers.put(HttpConstants.HttpHeaders.GLOBAL_DATABASE_ACCOUNT_NAME, globalDatabaseAccountName);
         this.headers.put(WFConstants.BackendHeaders.COLLECTION_RID, resourceId);
+
+        if (operationType == OperationType.Query) {
+            this.headers.put(HttpConstants.HttpHeaders.THINCLIENT_START_EPK, "true");
+            this.headers.put(HttpConstants.HttpHeaders.THINCLIENT_END_EPK, "true");
+        }
     }
 
     public RxDocumentServiceRequest setHttpTransportSerializer(HttpTransportSerializer transportSerializer) {

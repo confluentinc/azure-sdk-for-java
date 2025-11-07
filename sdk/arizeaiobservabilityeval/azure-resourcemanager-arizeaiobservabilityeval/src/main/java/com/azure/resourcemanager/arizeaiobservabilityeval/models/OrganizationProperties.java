@@ -5,7 +5,6 @@
 package com.azure.resourcemanager.arizeaiobservabilityeval.models;
 
 import com.azure.core.annotation.Fluent;
-import com.azure.core.util.logging.ClientLogger;
 import com.azure.json.JsonReader;
 import com.azure.json.JsonSerializable;
 import com.azure.json.JsonToken;
@@ -138,35 +137,6 @@ public final class OrganizationProperties implements JsonSerializable<Organizati
     }
 
     /**
-     * Validates the instance.
-     * 
-     * @throws IllegalArgumentException thrown if the instance is not valid.
-     */
-    public void validate() {
-        if (marketplace() == null) {
-            throw LOGGER.atError()
-                .log(new IllegalArgumentException(
-                    "Missing required property marketplace in model OrganizationProperties"));
-        } else {
-            marketplace().validate();
-        }
-        if (user() == null) {
-            throw LOGGER.atError()
-                .log(new IllegalArgumentException("Missing required property user in model OrganizationProperties"));
-        } else {
-            user().validate();
-        }
-        if (partnerProperties() != null) {
-            partnerProperties().validate();
-        }
-        if (singleSignOnProperties() != null) {
-            singleSignOnProperties().validate();
-        }
-    }
-
-    private static final ClientLogger LOGGER = new ClientLogger(OrganizationProperties.class);
-
-    /**
      * {@inheritDoc}
      */
     @Override
@@ -199,11 +169,11 @@ public final class OrganizationProperties implements JsonSerializable<Organizati
                     deserializedOrganizationProperties.marketplace = MarketplaceDetails.fromJson(reader);
                 } else if ("user".equals(fieldName)) {
                     deserializedOrganizationProperties.user = UserDetails.fromJson(reader);
+                } else if ("partnerProperties".equals(fieldName)) {
+                    deserializedOrganizationProperties.partnerProperties = PartnerProperties.fromJson(reader);
                 } else if ("provisioningState".equals(fieldName)) {
                     deserializedOrganizationProperties.provisioningState
                         = ResourceProvisioningState.fromString(reader.getString());
-                } else if ("partnerProperties".equals(fieldName)) {
-                    deserializedOrganizationProperties.partnerProperties = PartnerProperties.fromJson(reader);
                 } else if ("singleSignOnProperties".equals(fieldName)) {
                     deserializedOrganizationProperties.singleSignOnProperties
                         = SingleSignOnPropertiesV2.fromJson(reader);

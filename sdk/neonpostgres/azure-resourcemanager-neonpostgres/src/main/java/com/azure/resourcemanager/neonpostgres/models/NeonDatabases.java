@@ -13,37 +13,35 @@ import com.azure.core.util.Context;
  */
 public interface NeonDatabases {
     /**
-     * Get a NeonDatabase.
+     * List NeonDatabase resources by Branch.
      * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
      * @param organizationName Name of the Neon Organizations resource.
      * @param projectName The name of the Project.
      * @param branchName The name of the Branch.
-     * @param neonDatabaseName The name of the NeonDatabase.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return the response of a NeonDatabase list operation as paginated response with {@link PagedIterable}.
+     */
+    PagedIterable<NeonDatabase> list(String resourceGroupName, String organizationName, String projectName,
+        String branchName);
+
+    /**
+     * List NeonDatabase resources by Branch.
+     * 
+     * @param resourceGroupName The name of the resource group. The name is case insensitive.
+     * @param organizationName Name of the Neon Organizations resource.
+     * @param projectName The name of the Project.
+     * @param branchName The name of the Branch.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return a NeonDatabase along with {@link Response}.
+     * @return the response of a NeonDatabase list operation as paginated response with {@link PagedIterable}.
      */
-    Response<NeonDatabase> getWithResponse(String resourceGroupName, String organizationName, String projectName,
-        String branchName, String neonDatabaseName, Context context);
-
-    /**
-     * Get a NeonDatabase.
-     * 
-     * @param resourceGroupName The name of the resource group. The name is case insensitive.
-     * @param organizationName Name of the Neon Organizations resource.
-     * @param projectName The name of the Project.
-     * @param branchName The name of the Branch.
-     * @param neonDatabaseName The name of the NeonDatabase.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return a NeonDatabase.
-     */
-    NeonDatabase get(String resourceGroupName, String organizationName, String projectName, String branchName,
-        String neonDatabaseName);
+    PagedIterable<NeonDatabase> list(String resourceGroupName, String organizationName, String projectName,
+        String branchName, Context context);
 
     /**
      * Delete a NeonDatabase.
@@ -76,60 +74,6 @@ public interface NeonDatabases {
      */
     void delete(String resourceGroupName, String organizationName, String projectName, String branchName,
         String neonDatabaseName);
-
-    /**
-     * List NeonDatabase resources by Branch.
-     * 
-     * @param resourceGroupName The name of the resource group. The name is case insensitive.
-     * @param organizationName Name of the Neon Organizations resource.
-     * @param projectName The name of the Project.
-     * @param branchName The name of the Branch.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the response of a NeonDatabase list operation as paginated response with {@link PagedIterable}.
-     */
-    PagedIterable<NeonDatabase> list(String resourceGroupName, String organizationName, String projectName,
-        String branchName);
-
-    /**
-     * List NeonDatabase resources by Branch.
-     * 
-     * @param resourceGroupName The name of the resource group. The name is case insensitive.
-     * @param organizationName Name of the Neon Organizations resource.
-     * @param projectName The name of the Project.
-     * @param branchName The name of the Branch.
-     * @param context The context to associate with this operation.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the response of a NeonDatabase list operation as paginated response with {@link PagedIterable}.
-     */
-    PagedIterable<NeonDatabase> list(String resourceGroupName, String organizationName, String projectName,
-        String branchName, Context context);
-
-    /**
-     * Get a NeonDatabase.
-     * 
-     * @param id the resource ID.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return a NeonDatabase along with {@link Response}.
-     */
-    NeonDatabase getById(String id);
-
-    /**
-     * Get a NeonDatabase.
-     * 
-     * @param id the resource ID.
-     * @param context The context to associate with this operation.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return a NeonDatabase along with {@link Response}.
-     */
-    Response<NeonDatabase> getByIdWithResponse(String id, Context context);
 
     /**
      * Delete a NeonDatabase.

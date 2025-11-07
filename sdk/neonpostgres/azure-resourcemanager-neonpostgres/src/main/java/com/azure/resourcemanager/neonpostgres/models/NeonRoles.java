@@ -13,37 +13,35 @@ import com.azure.core.util.Context;
  */
 public interface NeonRoles {
     /**
-     * Get a NeonRole.
+     * List NeonRole resources by Branch.
      * 
      * @param resourceGroupName The name of the resource group. The name is case insensitive.
      * @param organizationName Name of the Neon Organizations resource.
      * @param projectName The name of the Project.
      * @param branchName The name of the Branch.
-     * @param neonRoleName The name of the NeonRole.
+     * @throws IllegalArgumentException thrown if parameters fail the validation.
+     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
+     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
+     * @return the response of a NeonRole list operation as paginated response with {@link PagedIterable}.
+     */
+    PagedIterable<NeonRole> list(String resourceGroupName, String organizationName, String projectName,
+        String branchName);
+
+    /**
+     * List NeonRole resources by Branch.
+     * 
+     * @param resourceGroupName The name of the resource group. The name is case insensitive.
+     * @param organizationName Name of the Neon Organizations resource.
+     * @param projectName The name of the Project.
+     * @param branchName The name of the Branch.
      * @param context The context to associate with this operation.
      * @throws IllegalArgumentException thrown if parameters fail the validation.
      * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
      * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return a NeonRole along with {@link Response}.
+     * @return the response of a NeonRole list operation as paginated response with {@link PagedIterable}.
      */
-    Response<NeonRole> getWithResponse(String resourceGroupName, String organizationName, String projectName,
-        String branchName, String neonRoleName, Context context);
-
-    /**
-     * Get a NeonRole.
-     * 
-     * @param resourceGroupName The name of the resource group. The name is case insensitive.
-     * @param organizationName Name of the Neon Organizations resource.
-     * @param projectName The name of the Project.
-     * @param branchName The name of the Branch.
-     * @param neonRoleName The name of the NeonRole.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return a NeonRole.
-     */
-    NeonRole get(String resourceGroupName, String organizationName, String projectName, String branchName,
-        String neonRoleName);
+    PagedIterable<NeonRole> list(String resourceGroupName, String organizationName, String projectName,
+        String branchName, Context context);
 
     /**
      * Delete a NeonRole.
@@ -76,60 +74,6 @@ public interface NeonRoles {
      */
     void delete(String resourceGroupName, String organizationName, String projectName, String branchName,
         String neonRoleName);
-
-    /**
-     * List NeonRole resources by Branch.
-     * 
-     * @param resourceGroupName The name of the resource group. The name is case insensitive.
-     * @param organizationName Name of the Neon Organizations resource.
-     * @param projectName The name of the Project.
-     * @param branchName The name of the Branch.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the response of a NeonRole list operation as paginated response with {@link PagedIterable}.
-     */
-    PagedIterable<NeonRole> list(String resourceGroupName, String organizationName, String projectName,
-        String branchName);
-
-    /**
-     * List NeonRole resources by Branch.
-     * 
-     * @param resourceGroupName The name of the resource group. The name is case insensitive.
-     * @param organizationName Name of the Neon Organizations resource.
-     * @param projectName The name of the Project.
-     * @param branchName The name of the Branch.
-     * @param context The context to associate with this operation.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return the response of a NeonRole list operation as paginated response with {@link PagedIterable}.
-     */
-    PagedIterable<NeonRole> list(String resourceGroupName, String organizationName, String projectName,
-        String branchName, Context context);
-
-    /**
-     * Get a NeonRole.
-     * 
-     * @param id the resource ID.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return a NeonRole along with {@link Response}.
-     */
-    NeonRole getById(String id);
-
-    /**
-     * Get a NeonRole.
-     * 
-     * @param id the resource ID.
-     * @param context The context to associate with this operation.
-     * @throws IllegalArgumentException thrown if parameters fail the validation.
-     * @throws com.azure.core.management.exception.ManagementException thrown if the request is rejected by server.
-     * @throws RuntimeException all other wrapped checked exceptions if the request fails to be sent.
-     * @return a NeonRole along with {@link Response}.
-     */
-    Response<NeonRole> getByIdWithResponse(String id, Context context);
 
     /**
      * Delete a NeonRole.
