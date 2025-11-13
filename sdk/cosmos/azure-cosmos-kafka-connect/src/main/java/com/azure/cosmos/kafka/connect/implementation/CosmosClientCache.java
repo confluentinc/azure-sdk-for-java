@@ -3,6 +3,7 @@
 
 package com.azure.cosmos.kafka.connect.implementation;
 
+import com.azure.core.credential.TokenCredential;
 import com.azure.cosmos.CosmosAsyncClient;
 import com.azure.cosmos.CosmosClientBuilder;
 import com.azure.cosmos.GatewayConnectionConfig;
@@ -12,6 +13,7 @@ import com.azure.cosmos.implementation.ImplementationBridgeHelpers;
 import com.azure.cosmos.implementation.apachecommons.lang.StringUtils;
 import com.azure.identity.ClientSecretCredential;
 import com.azure.identity.ClientSecretCredentialBuilder;
+import org.apache.kafka.common.Configurable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -151,6 +153,10 @@ public class CosmosClientCache implements AutoCloseable {
                 .clientSecret(aadAuthConfig.getClientSecret())
                 .build();
             cosmosClientBuilder.credential(tokenCredential);
+        } else if (accountConfig.getCosmosAuthConfig() instanceof CosmosCustomAuthConfig) {
+            CosmosCustomAuthConfig customAuthConfig = (CosmosCustomAuthConfig) accountConfig.getCosmosAuthConfig();
+            TokenCredential tokenCredential = createCustomTokenCredential(customAuthConfig);
+            cosmosClientBuilder.credential(tokenCredential);
         } else {
             throw new IllegalArgumentException("Authorization type " + accountConfig.getCosmosAuthConfig().getClass() + " is not supported");
         }
@@ -252,6 +258,55 @@ public class CosmosClientCache implements AutoCloseable {
             LOGGER.info("Moving unused client to cleanup queue after being idle for more than {} minutes",
                 UNUSED_CLIENT_TTL_IN_MS / (60 * 1000));
             toBeCleanedMap.put(cacheClientConfig, metadata);
+        }
+    }
+
+    /**
+     * Dynamically loads and instantiates a custom credential provider for Cosmos DB authentication.
+     * <p>
+     * The credential provider class specified in {@code customAuthConfig} must:
+     * <ul>
+     *   <li>Implement the {@link com.azure.core.credential.TokenCredential} interface.</li>
+     *   <li>Optionally implement {@link org.apache.kafka.common.Configurable} to receive configuration via {@code configure(Map<String, ?>)}.</li>
+     * </ul>
+     * The class is loaded by name using {@link Class#forName(String)}, instantiated using its public no-argument constructor,
+     * and, if it implements {@code Configurable}, configured with the config map from {@code customAuthConfig}.
+     * <p>
+     * @param customAuthConfig The custom authentication configuration containing the credential provider class name and configuration map.
+     * @return An instance of {@link TokenCredential} for authentication.
+     * @throws IllegalArgumentException If the class name is missing, the class does not implement {@code TokenCredential},
+     *                                 the class cannot be found, or instantiation/configuration fails.
+     */
+    private TokenCredential createCustomTokenCredential(CosmosCustomAuthConfig customAuthConfig) {
+        String providerClassName = customAuthConfig.getCredentialProviderClass();
+
+        if (providerClassName == null || providerClassName.trim().isEmpty()) {
+            throw new IllegalArgumentException("Credential provider class is required for Custom authentication");
+        }
+
+        try {
+            @SuppressWarnings("unchecked")
+            Class<TokenCredential> providerClass = (Class<TokenCredential>) Class.forName(providerClassName);
+
+            TokenCredential provider = providerClass.getConstructor().newInstance();
+
+            if (provider instanceof Configurable) {
+                ((Configurable) provider).configure(customAuthConfig.getConfigMap());
+            }
+
+            return provider;
+        } catch (ClassNotFoundException e) {
+            throw new IllegalArgumentException("Credential provider class not found: " + providerClassName, e);
+        } catch (NoSuchMethodException e) {
+            throw new IllegalArgumentException("Credential provider class must have a public no-argument constructor: " + providerClassName, e);
+        } catch (ClassCastException e) {
+            throw new IllegalArgumentException(
+                "Credential provider class " + providerClassName + " cannot be cast to TokenCredential. " +
+                "This can happen if: 1) The class doesn't implement TokenCredential interface, or " +
+                "2) The class implements TokenCredential but from a different classloader (shaded dependencies). " +
+                "Error: " + e.getMessage(), e);
+        } catch (Exception e) {
+            throw new IllegalArgumentException("Failed to create credential provider: " + providerClassName + ". " + e.getMessage(), e);
         }
     }
 
