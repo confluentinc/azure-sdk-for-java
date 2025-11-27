@@ -6,12 +6,15 @@ package com.azure.cosmos.kafka.connect.implementation;
 import com.azure.cosmos.implementation.TestConfigurations;
 import com.azure.cosmos.kafka.connect.CosmosSinkConnector;
 import com.azure.cosmos.kafka.connect.CosmosSourceConnector;
+import com.azure.cosmos.kafka.connect.InMemoryStorageReader;
 import com.azure.cosmos.kafka.connect.KafkaCosmosReflectionUtils;
 import com.azure.cosmos.kafka.connect.KafkaCosmosTestSuiteBase;
 import com.azure.cosmos.kafka.connect.implementation.sink.CosmosSinkTask;
 import com.azure.cosmos.kafka.connect.implementation.source.CosmosSourceTask;
 import org.apache.kafka.common.config.Config;
 import org.apache.kafka.connect.sink.SinkTaskContext;
+import org.apache.kafka.connect.source.SourceTaskContext;
+import org.apache.kafka.connect.storage.OffsetStorageReader;
 import org.mockito.Mockito;
 import org.testng.annotations.Test;
 
@@ -148,6 +151,7 @@ public class CustomAuthErrorHandlingTest extends KafkaCosmosTestSuiteBase {
         sourceConfigMap.put("azure.cosmos.source.task.feedRangeTaskUnits", "[]"); // Empty but valid JSON array
 
         CosmosSourceTask sourceTask = new CosmosSourceTask();
+        sourceTask.initialize(new TestSourceTaskContext(sourceConfigMap));
 
         // Should throw IllegalArgumentException when trying to start with invalid credential provider
         try {
@@ -171,6 +175,7 @@ public class CustomAuthErrorHandlingTest extends KafkaCosmosTestSuiteBase {
         sourceConfigMap.put("azure.cosmos.source.task.feedRangeTaskUnits", "[]"); // Empty but valid JSON array
 
         CosmosSourceTask sourceTask = new CosmosSourceTask();
+        sourceTask.initialize(new TestSourceTaskContext(sourceConfigMap));
 
         // Should throw IllegalArgumentException when trying to start with non-existent credential provider
         try {
@@ -217,5 +222,25 @@ public class CustomAuthErrorHandlingTest extends KafkaCosmosTestSuiteBase {
             .anyMatch(configValue -> !configValue.errorMessages().isEmpty());
 
         assertThat(hasErrors).isTrue();
+    }
+
+    private static class TestSourceTaskContext implements SourceTaskContext {
+        private final Map<String, String> map;
+        private final OffsetStorageReader offsetStorageReader;
+
+        public TestSourceTaskContext(Map<String, String> map) {
+            this.map = map;
+            this.offsetStorageReader = new InMemoryStorageReader();
+        }
+
+        @Override
+        public Map<String, String> configs() {
+            return this.map;
+        }
+
+        @Override
+        public OffsetStorageReader offsetStorageReader() {
+            return this.offsetStorageReader;
+        }
     }
 }
