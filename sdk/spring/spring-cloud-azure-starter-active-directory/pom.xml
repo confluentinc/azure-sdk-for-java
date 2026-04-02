@@ -94,7 +94,7 @@
     <dependency>
       <groupId>org.springframework.security</groupId>
       <artifactId>spring-security-web</artifactId>
-      <version>6.4.4</version> <!-- {x-version-update;springboot3_org.springframework.security:spring-security-web;external_dependency} -->
+      <version>6.5.0</version> <!-- {x-version-update;springboot3_org.springframework.security:spring-security-web;external_dependency} -->
     </dependency>
     <dependency>
       <groupId>org.springframework.security</groupId>
