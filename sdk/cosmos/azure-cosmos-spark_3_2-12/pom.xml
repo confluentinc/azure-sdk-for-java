@@ -166,7 +166,7 @@
     <dependency>
       <groupId>org.scalamock</groupId>
       <artifactId>scalamock_2.12</artifactId>
-      <version>5.0.0</version> <!-- {x-version-update;cosmos_org.scalamock:scalamock_2.12;external_dependency} -->
+      <version>7.5.5</version> <!-- {x-version-update;cosmos_org.scalamock:scalamock_2.12;external_dependency} -->
       <scope>test</scope>
     </dependency>
     <dependency>
