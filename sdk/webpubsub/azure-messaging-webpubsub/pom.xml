@@ -82,7 +82,7 @@
     <dependency>
       <groupId>org.glassfish.tyrus</groupId>
       <artifactId>tyrus-client</artifactId>
-      <version>1.16</version>  <!-- {x-version-update;org.glassfish.tyrus:tyrus-client;external_dependency} -->
+      <version>2.2.2</version>  <!-- {x-version-update;org.glassfish.tyrus:tyrus-client;external_dependency} -->
       <scope>test</scope>
       <exclusions>
         <exclusion>
