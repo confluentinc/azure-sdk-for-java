@@ -131,7 +131,7 @@
     <dependency>
       <groupId>io.opentelemetry</groupId>
       <artifactId>opentelemetry-api</artifactId>
-      <version>1.49.0</version> <!-- {x-version-update;io.opentelemetry:opentelemetry-api;external_dependency} -->
+      <version>1.62.0</version> <!-- {x-version-update;io.opentelemetry:opentelemetry-api;external_dependency} -->
       <scope>test</scope>
     </dependency>
 
