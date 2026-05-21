@@ -12,14 +12,14 @@
     <properties>
         <maven.compiler.target>${javaVersion}</maven.compiler.target>
         <maven.compiler.source>${javaVersion}</maven.compiler.source>
-        <bom.version>1.0.2</bom.version>
-        <graalvm.version>21.2.0</graalvm.version>
-        <buildtool.version>1.0.0-beta.1</buildtool.version>
+        <bom.version>1.3.6</bom.version>
+        <graalvm.version>21.3.18</graalvm.version>
+        <buildtool.version>1.0.0</buildtool.version>
 #if( ${junitVersion} == '4')
         <junit4.version>4.13.2</junit4.version>
 #end
 #if( ${junitVersion} == '5')
-        <junit5.version>5.7.2</junit5.version>
+        <junit5.version>5.14.4</junit5.version>
 #end
     </properties>
 
@@ -92,7 +92,7 @@
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>exec-maven-plugin</artifactId>
-                <version>3.0.0</version>
+                <version>3.6.3</version>
                 <configuration>
                     <mainClass>${package}.App</mainClass>
                 </configuration>
