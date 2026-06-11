@@ -146,7 +146,7 @@ currently released version and a lower version is resolved. -->
     <dependency>
       <groupId>io.netty</groupId>
       <artifactId>netty-handler</artifactId>
-      <version>4.1.119.Final</version> <!-- {x-version-update;springboot3_io.netty:netty-handler;external_dependency} -->
+      <version>4.1.135.Final</version> <!-- {x-version-update;springboot3_io.netty:netty-handler;external_dependency} -->
     </dependency>
     <dependency>
       <groupId>io.netty</groupId>
