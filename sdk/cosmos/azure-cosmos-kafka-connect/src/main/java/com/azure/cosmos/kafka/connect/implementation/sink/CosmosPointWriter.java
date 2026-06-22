@@ -196,7 +196,7 @@ public class CosmosPointWriter extends CosmosWriterBase {
         Mono.just(this)
             .flatMap(data -> {
                 if (sinkOperation.getRetryCount() > 0) {
-                    LOGGER.debug("Retry for sinkRecord {}", sinkOperation.getSinkRecord().key());
+                    LOGGER.debug("Retry for sinkRecord {}", getRecordContext(sinkOperation.getSinkRecord()));
                 }
                 return execution.apply(sinkOperation);
             })
@@ -222,7 +222,7 @@ public class CosmosPointWriter extends CosmosWriterBase {
                     if (this.writeConfig.getToleranceOnErrorLevel() == ToleranceOnErrorLevel.ALL) {
                         LOGGER.warn(
                             "Could not upload record {} to CosmosDB after exhausting all retries, but ToleranceOnErrorLevel is all, will only log the error message. ",
-                            sinkOperation.getSinkRecord().key(),
+                            getRecordContext(sinkOperation.getSinkRecord()),
                             sinkOperation.getException());
                         return Mono.empty();
                     } else {

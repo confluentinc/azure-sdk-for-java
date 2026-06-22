@@ -82,6 +82,11 @@ public abstract class CosmosWriterBase implements IWriter {
         return KafkaCosmosExceptionsHelper.isTransientFailure(exception);
     }
 
+    // Identifies a record for diagnostics by topic-partition-offset, never by key/value (which may be customer PII - INC-11697).
+    protected static String getRecordContext(SinkRecord sinkRecord) {
+        return String.format("%s-%d@%d", sinkRecord.topic(), sinkRecord.kafkaPartition(), sinkRecord.kafkaOffset());
+    }
+
     protected void sendToDlqIfConfigured(SinkOperation sinkOperationContext) {
         if (this.errantRecordReporter != null) {
             errantRecordReporter.report(sinkOperationContext.getSinkRecord(), sinkOperationContext.getException());
