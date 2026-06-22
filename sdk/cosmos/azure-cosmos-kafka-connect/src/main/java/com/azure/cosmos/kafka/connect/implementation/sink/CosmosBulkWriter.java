@@ -111,7 +111,7 @@ public class CosmosBulkWriter extends CosmosWriterBase {
                                 LOGGER.warn(
                                     "Could not upload record {} to CosmosDB after exhausting all retries, "
                                         + "but ToleranceOnErrorLevel is all, will only log the error message. ",
-                                    sinkOperation.getSinkRecord().key(),
+                                    getRecordContext(sinkOperation.getSinkRecord()),
                                     sinkOperation.getException());
                                 return Mono.empty();
                             } else {

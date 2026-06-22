@@ -33,14 +33,15 @@ public class SinkRecordTransformer {
     public List<SinkRecord> transform(String containerName, List<SinkRecord> sinkRecords) {
         List<SinkRecord> toBeWrittenRecordList = new ArrayList<>();
         for (SinkRecord record : sinkRecords) {
-            if (record.key() != null) {
-                MDC.put(String.format("CosmosDbSink-%s", containerName), record.key().toString());
-            }
+            // Stamp a non-sensitive record identifier (topic-partition-offset) into the logging
+            // context for correlation - never the record key/value, which may be customer PII (INC-11697).
+            MDC.put(
+                String.format("CosmosDbSink-%s", containerName),
+                String.format("%s-%d@%d", record.topic(), record.kafkaPartition(), record.kafkaOffset()));
 
             LOGGER.trace(
-                "Key Schema [{}], Key [{}], Value type [{}], Value schema [{}]",
+                "Key Schema [{}], Value type [{}], Value schema [{}]",
                 record.keySchema(),
-                record.key(),
                 record.value() == null ? null : record.value().getClass().getName(),
                 record.value() == null ? null : record.valueSchema());
 
