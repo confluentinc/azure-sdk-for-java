@@ -104,7 +104,15 @@ public class CosmosSinkTask extends SinkTask {
                                         .getOrDefault(record.topic(), StringUtils.EMPTY)));
 
         if (recordsByContainer.containsKey(StringUtils.EMPTY)) {
-            throw new IllegalStateException("There is no container defined for topics " + recordsByContainer.get(StringUtils.EMPTY));
+            // Only include the offending topic names in the message. Interpolating the SinkRecord list
+            // would call SinkRecord.toString(), leaking record keys/values (customer payloads) into ERROR logs.
+            List<String> topicsWithoutContainer =
+                recordsByContainer.get(StringUtils.EMPTY)
+                    .stream()
+                    .map(SinkRecord::topic)
+                    .distinct()
+                    .collect(Collectors.toList());
+            throw new IllegalStateException("There is no container defined for topics " + topicsWithoutContainer);
         }
 
         for (Map.Entry<String, List<SinkRecord>> entry : recordsByContainer.entrySet()) {
