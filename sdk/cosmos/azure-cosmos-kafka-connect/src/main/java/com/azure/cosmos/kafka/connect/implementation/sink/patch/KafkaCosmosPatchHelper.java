@@ -119,7 +119,7 @@ public class KafkaCosmosPatchHelper {
             // As of today, we start with more restrict rules: throw exception if there is no operations being included in the patch operation
             // But in the future, if it is a common scenario that we will reach here,
             // we can consider to relax the rules by adding another config to allow this behavior in patch configs
-            // Identify the record by topic-partition-offset, not itemId (which is record-derived/PII - INC-11697).
+            // Use topic-partition-offset to identify the record; the Cosmos itemId is record-derived and may contain PII.
             throw new IllegalStateException(
                 "There is no operations included in the patch operation for record "
                     + sinkRecord.topic() + "-" + sinkRecord.kafkaPartition() + "@" + sinkRecord.kafkaOffset());
