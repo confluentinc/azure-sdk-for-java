@@ -119,7 +119,10 @@ public class KafkaCosmosPatchHelper {
             // As of today, we start with more restrict rules: throw exception if there is no operations being included in the patch operation
             // But in the future, if it is a common scenario that we will reach here,
             // we can consider to relax the rules by adding another config to allow this behavior in patch configs
-            throw new IllegalStateException("There is no operations included in the patch operation for itemId: " + itemId);
+            // Identify the record by topic-partition-offset, not itemId (which is record-derived/PII - INC-11697).
+            throw new IllegalStateException(
+                "There is no operations included in the patch operation for record "
+                    + sinkRecord.topic() + "-" + sinkRecord.kafkaPartition() + "@" + sinkRecord.kafkaOffset());
         }
 
         return cosmosPatchOperations;
@@ -199,12 +202,12 @@ public class KafkaCosmosPatchHelper {
                     cosmosPatchOperations.increment(mappingPath, ((BigIntegerNode) pathValue).longValue());
                 }
 
-                throw new IllegalArgumentException("BigInteger " + jsonNode.bigIntegerValue() + " is too large, can not be converted to long");
+                throw new IllegalArgumentException("BigInteger value at path " + mappingPath + " is too large, can not be converted to long");
             } else if (pathValue instanceof DecimalNode) {
                 if (((DecimalNode) pathValue).canConvertToLong()) {
                     cosmosPatchOperations.increment(mappingPath, ((DecimalNode) pathValue).longValue());
                 }
-                throw new IllegalArgumentException("Decimal " + jsonNode.decimalValue() + " is too large, can not be converted to long");
+                throw new IllegalArgumentException("Decimal value at path " + mappingPath + " is too large, can not be converted to long");
             } else {
                 throw new IllegalArgumentException("Increment operation is not supported for type " + pathValue.getClass());
             }
