@@ -33,10 +33,11 @@ class ProvidedInStrategy extends AbstractIdStrategy {
             Object object = JsonPath.parse(value).read(config.jsonPath());
             return sanitizeId(Values.convertToString(null, object));
         } catch (Exception e) {
-            // Do not attach the cause: the JsonPath exception message echoes the record body (customer PII - INC-11697).
-            // Keep the exception type for diagnostics, drop the body-bearing cause.
+            // Do not attach the cause: the JsonPath exception message can echo the record body (customer PII).
             throw new ConnectException(
-                "Could not evaluate JsonPath " + config.jsonPath() + " (" + e.getClass().getName() + ")");
+                "Could not evaluate JsonPath " + config.jsonPath()
+                    + " for record " + record.topic() + "-" + record.kafkaPartition() + "@" + record.kafkaOffset()
+                    + " (" + e.getClass().getName() + ")");
         }
     }
 
