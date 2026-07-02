@@ -79,7 +79,7 @@ Licensed under the MIT License.
     <dependency>
       <groupId>org.apache.kafka</groupId>
       <artifactId>connect-api</artifactId>
-      <version>3.6.0</version> <!-- {x-version-update;cosmos_org.apache.kafka:connect-api;external_dependency} -->
+      <version>4.3.1</version> <!-- {x-version-update;cosmos_org.apache.kafka:connect-api;external_dependency} -->
       <scope>provided</scope>
     </dependency>
 
@@ -142,7 +142,7 @@ Licensed under the MIT License.
     <dependency>
       <groupId>org.apache.kafka</groupId>
       <artifactId>connect-runtime</artifactId>
-      <version>3.6.0</version> <!-- {x-version-update;cosmos_org.apache.kafka:connect-runtime;external_dependency} -->
+      <version>4.3.1</version> <!-- {x-version-update;cosmos_org.apache.kafka:connect-runtime;external_dependency} -->
       <scope>test</scope>
       <exclusions>
         <exclusion>
