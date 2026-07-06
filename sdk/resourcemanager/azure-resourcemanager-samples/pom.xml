@@ -129,7 +129,7 @@
     <dependency>
       <groupId>io.fabric8</groupId>
       <artifactId>kubernetes-client</artifactId>
-      <version>6.12.1</version> <!-- {x-version-update;io.fabric8:kubernetes-client;external_dependency} -->
+      <version>7.8.0</version> <!-- {x-version-update;io.fabric8:kubernetes-client;external_dependency} -->
     </dependency>
     <dependency>
       <groupId>com.microsoft.sqlserver</groupId>
