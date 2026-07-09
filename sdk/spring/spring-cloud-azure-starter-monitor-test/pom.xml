@@ -7,7 +7,7 @@
   <parent>
     <groupId>org.springframework.boot</groupId>
     <artifactId>spring-boot-starter-parent</artifactId>
-    <version>3.4.4</version> <!-- {x-version-update;springboot3_org.springframework.boot:spring-boot-starter-parent;external_dependency} -->
+    <version>3.5.16</version> <!-- {x-version-update;springboot3_org.springframework.boot:spring-boot-starter-parent;external_dependency} -->
     <relativePath/> <!--By default Maven assumes the parent pom is in the parent folder. This line avoids a Maven warning.
      In Maven, a profile can only be shared with inheritance and a pom can only have one parent.
      spring-boot-starter-parent contains a native-test profile gathering the configuration allowing to execute a Spring native test.-->
@@ -31,7 +31,7 @@
       <dependency>
         <groupId>io.opentelemetry</groupId>
         <artifactId>opentelemetry-bom</artifactId>
-        <version>1.49.0</version> <!-- {x-version-update;io.opentelemetry:opentelemetry-bom;external_dependency} -->
+        <version>1.63.0</version> <!-- {x-version-update;io.opentelemetry:opentelemetry-bom;external_dependency} -->
         <type>pom</type>
         <scope>runtime</scope>
       </dependency>
@@ -42,35 +42,35 @@
     <dependency>
       <groupId>com.azure.spring</groupId>
       <artifactId>spring-cloud-azure-starter-monitor</artifactId>
-      <version>5.23.0-beta.1</version> <!-- {x-version-update;com.azure.spring:spring-cloud-azure-starter-monitor;current} -->
+      <version>5.25.0</version> <!-- {x-version-update;com.azure.spring:spring-cloud-azure-starter-monitor;current} -->
     </dependency>
 
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-web</artifactId>
-      <version>3.4.4</version> <!-- {x-version-update;springboot3_org.springframework.boot:spring-boot-starter-web;external_dependency} -->
+      <version>3.5.15</version> <!-- {x-version-update;springboot3_org.springframework.boot:spring-boot-starter-web;external_dependency} -->
     </dependency>
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-data-jdbc</artifactId>
-      <version>3.4.4</version><!-- {x-version-update;springboot3_org.springframework.boot:spring-boot-starter-data-jdbc;external_dependency} -->
+      <version>3.5.16</version><!-- {x-version-update;springboot3_org.springframework.boot:spring-boot-starter-data-jdbc;external_dependency} -->
     </dependency>
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-test</artifactId>
-      <version>3.4.4</version> <!-- {x-version-update;springboot3_org.springframework.boot:spring-boot-starter-test;external_dependency} -->
+      <version>3.5.16</version> <!-- {x-version-update;springboot3_org.springframework.boot:spring-boot-starter-test;external_dependency} -->
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>com.azure</groupId>
       <artifactId>azure-core-test</artifactId>
-      <version>1.27.0-beta.8</version> <!-- {x-version-update;com.azure:azure-core-test;dependency} -->
+      <version>1.27.0-beta.16</version> <!-- {x-version-update;com.azure:azure-core-test;dependency} -->
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>com.h2database</groupId>
       <artifactId>h2</artifactId>
-      <version>2.2.220</version> <!-- {x-version-update;com.h2database:h2;external_dependency} -->
+      <version>2.4.240</version> <!-- {x-version-update;com.h2database:h2;external_dependency} -->
     </dependency>
   </dependencies>
 
@@ -88,12 +88,12 @@
       <plugin>
         <groupId>com.github.spotbugs</groupId>
         <artifactId>spotbugs-maven-plugin</artifactId>
-        <version>4.8.3.1</version> <!-- {x-version-update;com.github.spotbugs:spotbugs-maven-plugin;external_dependency} -->
+        <version>4.10.2.0</version> <!-- {x-version-update;com.github.spotbugs:spotbugs-maven-plugin;external_dependency} -->
       </plugin>
       <plugin>
         <groupId>com.diffplug.spotless</groupId>
         <artifactId>spotless-maven-plugin</artifactId>
-        <version>2.30.0</version> <!-- {x-version-update;com.diffplug.spotless:spotless-maven-plugin;external_dependency} -->
+        <version>2.46.1</version> <!-- {x-version-update;com.diffplug.spotless:spotless-maven-plugin;external_dependency} -->
         <configuration>
           <skip>true</skip>
         </configuration>
@@ -133,7 +133,7 @@
       <plugin>
         <groupId>org.jacoco</groupId>
         <artifactId>jacoco-maven-plugin</artifactId>
-        <version>0.8.12</version> <!-- {x-version-update;org.jacoco:jacoco-maven-plugin;external_dependency} -->
+        <version>0.8.15</version> <!-- {x-version-update;org.jacoco:jacoco-maven-plugin;external_dependency} -->
         <configuration>
           <skip>true</skip>
         </configuration>
@@ -153,7 +153,7 @@
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-compiler-plugin</artifactId>
-            <version>3.13.0</version> <!-- {x-version-update;org.apache.maven.plugins:maven-compiler-plugin;external_dependency} -->
+            <version>3.15.0</version> <!-- {x-version-update;org.apache.maven.plugins:maven-compiler-plugin;external_dependency} -->
             <configuration>
               <skipMain>true</skipMain>
               <skip>true</skip>
@@ -162,7 +162,7 @@
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-surefire-plugin</artifactId>
-            <version>3.5.2</version> <!-- {x-version-update;org.apache.maven.plugins:maven-surefire-plugin;external_dependency} -->
+            <version>3.5.6</version> <!-- {x-version-update;org.apache.maven.plugins:maven-surefire-plugin;external_dependency} -->
             <configuration>
               <skip>true</skip>
             </configuration>
@@ -170,7 +170,7 @@
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-javadoc-plugin</artifactId>
-            <version>3.10.1</version> <!-- {x-version-update;org.apache.maven.plugins:maven-javadoc-plugin;external_dependency} -->
+            <version>3.12.0</version> <!-- {x-version-update;org.apache.maven.plugins:maven-javadoc-plugin;external_dependency} -->
             <configuration>
               <skip>true</skip>
             </configuration>
@@ -178,7 +178,7 @@
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-jar-plugin</artifactId>
-            <version>3.4.2</version> <!-- {x-version-update;org.apache.maven.plugins:maven-jar-plugin;external_dependency} -->
+            <version>3.5.0</version> <!-- {x-version-update;org.apache.maven.plugins:maven-jar-plugin;external_dependency} -->
             <configuration>
               <skip>true</skip>
             </configuration>

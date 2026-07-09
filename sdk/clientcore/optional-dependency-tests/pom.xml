@@ -56,51 +56,51 @@
     <dependency>
       <groupId>io.clientcore</groupId>
       <artifactId>core</artifactId>
-      <version>1.0.0-beta.9</version> <!-- {x-version-update;io.clientcore:core;current} -->
+      <version>1.0.0-beta.11</version> <!-- {x-version-update;io.clientcore:core;current} -->
     </dependency>
 
     <!-- Test dependencies -->
     <dependency>
       <groupId>io.clientcore</groupId>
       <artifactId>core</artifactId>
-      <version>1.0.0-beta.9</version> <!-- {x-version-update;io.clientcore:core;current} -->
+      <version>1.0.0-beta.11</version> <!-- {x-version-update;io.clientcore:core;current} -->
       <type>test-jar</type>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-simple</artifactId>
-      <version>2.0.16</version> <!-- {x-version-update;clientcore_dep_tests_org.slf4j:slf4j-simple;external_dependency} -->
+      <version>2.0.18</version> <!-- {x-version-update;clientcore_dep_tests_org.slf4j:slf4j-simple;external_dependency} -->
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>io.opentelemetry</groupId>
       <artifactId>opentelemetry-sdk</artifactId>
-      <version>1.49.0</version> <!-- {x-version-update;io.opentelemetry:opentelemetry-sdk;external_dependency} -->
+      <version>1.63.0</version> <!-- {x-version-update;io.opentelemetry:opentelemetry-sdk;external_dependency} -->
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>io.opentelemetry</groupId>
       <artifactId>opentelemetry-sdk-testing</artifactId>
-      <version>1.49.0</version> <!-- {x-version-update;io.opentelemetry:opentelemetry-sdk-testing;external_dependency} -->
+      <version>1.63.0</version> <!-- {x-version-update;io.opentelemetry:opentelemetry-sdk-testing;external_dependency} -->
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>io.opentelemetry</groupId>
       <artifactId>opentelemetry-sdk-extension-autoconfigure</artifactId>
-      <version>1.49.0</version> <!-- {x-version-update;io.opentelemetry:opentelemetry-sdk-extension-autoconfigure;external_dependency} -->
+      <version>1.63.0</version> <!-- {x-version-update;io.opentelemetry:opentelemetry-sdk-extension-autoconfigure;external_dependency} -->
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter-engine</artifactId>
-      <version>5.11.2</version> <!-- {x-version-update;org.junit.jupiter:junit-jupiter-engine;external_dependency} -->
+      <version>5.14.4</version> <!-- {x-version-update;org.junit.jupiter:junit-jupiter-engine;external_dependency} -->
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter-params</artifactId>
-      <version>5.11.2</version> <!-- {x-version-update;org.junit.jupiter:junit-jupiter-params;external_dependency} -->
+      <version>5.14.4</version> <!-- {x-version-update;org.junit.jupiter:junit-jupiter-params;external_dependency} -->
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -134,7 +134,7 @@
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-compiler-plugin</artifactId>
-            <version>3.13.0</version> <!-- {x-version-update;org.apache.maven.plugins:maven-compiler-plugin;external_dependency} -->
+            <version>3.15.0</version> <!-- {x-version-update;org.apache.maven.plugins:maven-compiler-plugin;external_dependency} -->
             <configuration>
               <!-- Add the JMH annotation processor to the classpath. -->
               <annotationProcessorPaths>
