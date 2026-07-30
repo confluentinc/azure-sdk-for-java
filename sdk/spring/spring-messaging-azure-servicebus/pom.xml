@@ -58,7 +58,7 @@
     <dependency>
       <groupId>org.springframework.retry</groupId>
       <artifactId>spring-retry</artifactId>
-      <version>2.0.11</version> <!-- {x-version-update;springboot3_org.springframework.retry:spring-retry;external_dependency} -->
+      <version>2.0.13</version> <!-- {x-version-update;springboot3_org.springframework.retry:spring-retry;external_dependency} -->
       <optional>true</optional>
     </dependency>
     <dependency>
