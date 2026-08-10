@@ -134,7 +134,7 @@ Licensed under the MIT License.
     <dependency>
       <groupId>io.micrometer</groupId>
       <artifactId>micrometer-core</artifactId>
-      <version>1.9.17</version> <!-- {x-version-update;io.micrometer:micrometer-core;external_dependency} -->
+      <version>1.10.0</version> <!-- {x-version-update;io.micrometer:micrometer-core;external_dependency} -->
     </dependency>
   </dependencies>
 
