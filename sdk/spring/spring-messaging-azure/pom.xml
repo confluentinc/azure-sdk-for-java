@@ -75,7 +75,7 @@
     <dependency>
       <groupId>io.micrometer</groupId>
       <artifactId>micrometer-core</artifactId>
-      <version>1.14.5</version> <!-- {x-version-update;springboot3_io.micrometer:micrometer-core;external_dependency} -->
+      <version>1.15.0</version> <!-- {x-version-update;springboot3_io.micrometer:micrometer-core;external_dependency} -->
       <optional>true</optional>
     </dependency>
     <!-- Added this dependency to include necessary annotations used by reactor core.
