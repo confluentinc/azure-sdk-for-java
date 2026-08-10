@@ -13,7 +13,7 @@
         <maven.compiler.target>${javaVersion}</maven.compiler.target>
         <maven.compiler.source>${javaVersion}</maven.compiler.source>
         <bom.version>1.0.2</bom.version>
-        <graalvm.version>21.2.0</graalvm.version>
+        <graalvm.version>25.2.4</graalvm.version>
         <buildtool.version>1.0.0-beta.1</buildtool.version>
 #if( ${junitVersion} == '4')
         <junit4.version>4.13.2</junit4.version>
