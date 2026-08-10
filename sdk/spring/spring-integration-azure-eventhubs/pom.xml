@@ -41,7 +41,7 @@
     <dependency>
       <groupId>com.azure.spring</groupId>
       <artifactId>spring-integration-azure-core</artifactId>
-      <version>5.23.0-beta.1</version> <!-- {x-version-update;com.azure.spring:spring-integration-azure-core;current} -->
+      <version>7.4.0</version> <!-- {x-version-update;com.azure.spring:spring-integration-azure-core;current} -->
     </dependency>
     <dependency>
       <groupId>com.azure.spring</groupId>
@@ -180,7 +180,7 @@
         <dependency>
           <groupId>com.azure.spring</groupId>
           <artifactId>spring-integration-azure-core</artifactId>
-          <version>5.23.0-beta.1</version> <!-- {x-version-update;com.azure.spring:spring-integration-azure-core;current} -->
+          <version>7.4.0</version> <!-- {x-version-update;com.azure.spring:spring-integration-azure-core;current} -->
           <type>test-jar</type>
           <scope>test</scope>
         </dependency>
