@@ -46,7 +46,7 @@
     <dependency>
       <groupId>com.azure.spring</groupId>
       <artifactId>spring-messaging-azure-servicebus</artifactId>
-      <version>5.23.0-beta.1</version> <!-- {x-version-update;com.azure.spring:spring-messaging-azure-servicebus;current} -->
+      <version>7.4.0</version> <!-- {x-version-update;com.azure.spring:spring-messaging-azure-servicebus;current} -->
     </dependency>
     <!-- Added this dependency to include necessary annotations used by reactor core.
       Without this dependency, javadoc throws a warning as it cannot find enum When.MAYBE
@@ -186,7 +186,7 @@
         <dependency>
           <groupId>com.azure.spring</groupId>
           <artifactId>spring-messaging-azure-servicebus</artifactId>
-          <version>5.23.0-beta.1</version> <!-- {x-version-update;com.azure.spring:spring-messaging-azure-servicebus;current} -->
+          <version>7.4.0</version> <!-- {x-version-update;com.azure.spring:spring-messaging-azure-servicebus;current} -->
           <type>test-jar</type>
           <scope>test</scope>
         </dependency>
