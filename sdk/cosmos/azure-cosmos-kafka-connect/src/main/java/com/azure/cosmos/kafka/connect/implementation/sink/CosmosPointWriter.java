@@ -221,9 +221,11 @@ public class CosmosPointWriter extends CosmosWriterBase {
 
                     if (this.writeConfig.getToleranceOnErrorLevel() == ToleranceOnErrorLevel.ALL) {
                         LOGGER.warn(
-                            "Could not upload record {} to CosmosDB after exhausting all retries, but ToleranceOnErrorLevel is all, will only log the error message. ",
+                            "Could not upload record {} to CosmosDB after exhausting all retries, but ToleranceOnErrorLevel is all, will only log the error message. {}",
                             getRecordContext(sinkOperation.getSinkRecord()),
-                            sinkOperation.getException());
+                            // Never log the raw exception: CosmosException.toString() renders
+                            // resourceAddress (.../docs/{id}) with a record-derived id (customer data).
+                            KafkaCosmosExceptionsHelper.getSafeExceptionDiagnostics(sinkOperation.getException()));
                         return Mono.empty();
                     } else {
                         return Mono.error(sinkOperation.getException());
