@@ -101,4 +101,34 @@ public class KafkaCosmosExceptionsHelper {
             && cosmosException.getStatusCode() == HttpConstants.StatusCodes.BADREQUEST
             && cosmosException.getSubStatusCode() == HttpConstants.SubStatusCodes.UNKNOWN;
     }
+
+    /**
+     * Returns non-sensitive diagnostics for a failed operation, safe to log.
+     *
+     * <p>A {@link CosmosException}'s {@code toString()} renders {@code resourceAddress}
+     * (e.g. {@code dbs/{db}/colls/{coll}/docs/{id}}), whose {@code {id}} is a record-derived document
+     * id (customer data) for id-targeted writes. Passing the raw exception to a logger emits that
+     * {@code toString()} in the stack-trace header, so callers must log this string instead of the
+     * exception itself. Only the status code, sub-status code and (server-generated) activity id are
+     * surfaced for a CosmosException; {@code getMessage()} is used for other throwables (it does not
+     * carry resourceAddress).
+     */
+    public static String getSafeExceptionDiagnostics(Throwable throwable) {
+        if (throwable == null) {
+            return "null";
+        }
+
+        for (Throwable current = Exceptions.unwrap(throwable); current != null; current = current.getCause()) {
+            if (current instanceof CosmosException) {
+                CosmosException cosmosException = (CosmosException) current;
+                return String.format(
+                    "CosmosException statusCode: %d, subStatusCode: %d, activityId: %s",
+                    cosmosException.getStatusCode(),
+                    cosmosException.getSubStatusCode(),
+                    cosmosException.getActivityId());
+            }
+        }
+
+        return throwable.getClass().getName() + ": " + throwable.getMessage();
+    }
 }

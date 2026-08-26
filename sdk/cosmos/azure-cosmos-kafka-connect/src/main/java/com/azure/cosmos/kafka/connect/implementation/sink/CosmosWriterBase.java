@@ -49,7 +49,9 @@ public abstract class CosmosWriterBase implements IWriter {
         try {
             writeCore(container, sinkOperations);
         } catch (Exception e) {
-            LOGGER.error("Write failed. ", e);
+            // Never log the raw exception: a CosmosException's toString() renders resourceAddress
+            // (dbs/{db}/colls/{coll}/docs/{id}), where {id} is a record-derived document id (customer data).
+            LOGGER.error("Write failed. {}", KafkaCosmosExceptionsHelper.getSafeExceptionDiagnostics(e));
             throw new CosmosWriteException(e.getMessage());
         }
     }
