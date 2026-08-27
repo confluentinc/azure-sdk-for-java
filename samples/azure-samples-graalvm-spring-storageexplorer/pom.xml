@@ -138,7 +138,7 @@
           <plugin>
             <groupId>org.graalvm.buildtools</groupId>
             <artifactId>native-maven-plugin</artifactId>
-            <version>0.9.19</version>
+            <version>1.1.10</version>
             <configuration>
               <mainClass>com.azure.samples.graalvm.spring.storageexplorer.SpringNativeApplication</mainClass>
               <imageName>storageexplorer</imageName>
