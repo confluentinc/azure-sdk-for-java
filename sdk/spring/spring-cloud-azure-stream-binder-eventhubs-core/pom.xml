@@ -47,7 +47,7 @@
           <artifactId>spring-integration-core</artifactId>
         </exclusion>
       </exclusions>
-      <version>4.2.1</version> <!-- {x-version-update;springboot3_org.springframework.cloud:spring-cloud-stream;external_dependency} -->
+      <version>5.0.3</version> <!-- {x-version-update;springboot3_org.springframework.cloud:spring-cloud-stream;external_dependency} -->
     </dependency>
 
     <dependency>
