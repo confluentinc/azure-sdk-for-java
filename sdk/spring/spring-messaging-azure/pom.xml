@@ -46,7 +46,7 @@
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-messaging</artifactId>
-      <version>6.2.5</version> <!-- {x-version-update;springboot3_org.springframework:spring-messaging;external_dependency} -->
+      <version>7.0.9</version> <!-- {x-version-update;springboot3_org.springframework:spring-messaging;external_dependency} -->
     </dependency>
     <dependency>
       <groupId>org.springframework</groupId>
