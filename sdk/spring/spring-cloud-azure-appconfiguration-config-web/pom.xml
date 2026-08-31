@@ -37,7 +37,7 @@
     <dependency>
       <groupId>org.springframework.cloud</groupId>
       <artifactId>spring-cloud-bus</artifactId>
-      <version>4.2.1</version> <!-- {x-version-update;springboot3_org.springframework.cloud:spring-cloud-bus;external_dependency} -->
+      <version>5.0.2</version> <!-- {x-version-update;springboot3_org.springframework.cloud:spring-cloud-bus;external_dependency} -->
       <optional>true</optional>
     </dependency>
     <dependency>
