@@ -128,7 +128,7 @@
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-jms</artifactId>
-      <version>6.2.5</version> <!-- {x-version-update;springboot3_org.springframework:spring-jms;external_dependency} -->
+      <version>7.0.9</version> <!-- {x-version-update;springboot3_org.springframework:spring-jms;external_dependency} -->
       <optional>true</optional>
     </dependency>
     <dependency>
