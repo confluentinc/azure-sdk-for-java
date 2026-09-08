@@ -89,6 +89,56 @@ public class SinkWriterSensitiveLoggingTest {
         assertThat(rendered).doesNotContain(canaryResourceAddress);
     }
 
+    @Test(groups = { "unit" })
+    public void writeFailureWithNonCosmosExceptionKeepsStackTrace() {
+        // A non-Cosmos throwable has no resourceAddress to leak, so it should be logged in full
+        // (with its stack trace attached) rather than reduced to a sanitized string.
+        IllegalStateException nonCosmos = new IllegalStateException("connection reset by peer");
+
+        CosmosWriterBase writer = new CosmosWriterBase(null) {
+            @Override
+            void writeCore(CosmosAsyncContainer container, List<SinkOperation> sinkOperations) {
+                throw nonCosmos;
+            }
+        };
+
+        CosmosAsyncContainer container = Mockito.mock(CosmosAsyncContainer.class);
+        Mockito.when(container.getId()).thenReturn("test-container");
+        SinkRecord sinkRecord = new SinkRecord("test-topic", 0, null, "k", null, "v", 42);
+
+        Logger coreLogger = (Logger) LogManager.getLogger(CosmosWriterBase.class);
+        CapturingAppender appender = new CapturingAppender();
+        appender.start();
+        Level previousLevel = coreLogger.getLevel();
+        coreLogger.addAppender(appender);
+        Configurator.setLevel(CosmosWriterBase.class.getName(), Level.ERROR);
+
+        try {
+            writer.write(container, Collections.singletonList(sinkRecord));
+            fail("write() should rethrow as CosmosWriteException");
+        } catch (CosmosWriteException expected) {
+            // expected: write() logs then rethrows
+        } finally {
+            coreLogger.removeAppender(appender);
+            appender.stop();
+            Configurator.setLevel(CosmosWriterBase.class.getName(), previousLevel);
+        }
+
+        LogEvent errorEvent = null;
+        for (LogEvent event : appender.getEvents()) {
+            if (event.getLevel() == Level.ERROR
+                && event.getMessage().getFormattedMessage().startsWith("Write failed.")) {
+                errorEvent = event;
+                break;
+            }
+        }
+
+        assertThat(errorEvent).as("expected a 'Write failed.' ERROR log").isNotNull();
+        // The non-Cosmos throwable is attached so the layout renders its stack trace for diagnostics.
+        assertThat(errorEvent.getThrown()).as("non-Cosmos throwable should be logged with its stack")
+            .isInstanceOf(IllegalStateException.class);
+    }
+
     /** A CosmosException whose real toString() renders {@code resourceAddress}, exactly as the SDK does. */
     private static final class CanaryCosmosException extends CosmosException {
         CanaryCosmosException(String resourceAddress, int statusCode) {

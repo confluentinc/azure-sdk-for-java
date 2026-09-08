@@ -49,9 +49,15 @@ public abstract class CosmosWriterBase implements IWriter {
         try {
             writeCore(container, sinkOperations);
         } catch (Exception e) {
-            // Never log the raw exception: a CosmosException's toString() renders resourceAddress
-            // (dbs/{db}/colls/{coll}/docs/{id}), where {id} is a record-derived document id (customer data).
-            LOGGER.error("Write failed. {}", KafkaCosmosExceptionsHelper.getSafeExceptionDiagnostics(e));
+            // A CosmosException's toString() renders resourceAddress (dbs/{db}/colls/{coll}/docs/{id}),
+            // where {id} is a record-derived document id (customer data), so it must never be logged
+            // raw. A non-Cosmos throwable has no resourceAddress, so log it in full (with stack) for
+            // diagnostics; only sanitize when a CosmosException is present.
+            if (KafkaCosmosExceptionsHelper.hasCosmosException(e)) {
+                LOGGER.error("Write failed. {}", KafkaCosmosExceptionsHelper.getSafeExceptionDiagnostics(e));
+            } else {
+                LOGGER.error("Write failed.", e);
+            }
             throw new CosmosWriteException(e.getMessage());
         }
     }

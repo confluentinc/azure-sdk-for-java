@@ -108,13 +108,24 @@ public class CosmosBulkWriter extends CosmosWriterBase {
                             // operation failed after exhausting all retries
                             this.completeSinkOperationWithFailure(sinkOperation, exception, onTaskCompleteCheck);
                             if (this.writeConfig.getToleranceOnErrorLevel() == ToleranceOnErrorLevel.ALL) {
-                                LOGGER.warn(
-                                    "Could not upload record {} to CosmosDB after exhausting all retries, "
-                                        + "but ToleranceOnErrorLevel is all, will only log the error message. {}",
-                                    getRecordContext(sinkOperation.getSinkRecord()),
-                                    // Never log the raw exception: CosmosException.toString() renders
-                                    // resourceAddress (.../docs/{id}) with a record-derived id (customer data).
-                                    KafkaCosmosExceptionsHelper.getSafeExceptionDiagnostics(sinkOperation.getException()));
+                                // A CosmosException.toString() renders resourceAddress (.../docs/{id})
+                                // with a record-derived id (customer data), so it must never be logged
+                                // raw. A non-Cosmos throwable has no resourceAddress, so log it in full
+                                // (with stack); only sanitize when a CosmosException is present.
+                                Throwable failure = sinkOperation.getException();
+                                if (KafkaCosmosExceptionsHelper.hasCosmosException(failure)) {
+                                    LOGGER.warn(
+                                        "Could not upload record {} to CosmosDB after exhausting all retries, "
+                                            + "but ToleranceOnErrorLevel is all, will only log the error message. {}",
+                                        getRecordContext(sinkOperation.getSinkRecord()),
+                                        KafkaCosmosExceptionsHelper.getSafeExceptionDiagnostics(failure));
+                                } else {
+                                    LOGGER.warn(
+                                        "Could not upload record {} to CosmosDB after exhausting all retries, "
+                                            + "but ToleranceOnErrorLevel is all, will only log the error message.",
+                                        getRecordContext(sinkOperation.getSinkRecord()),
+                                        failure);
+                                }
                                 return Mono.empty();
                             } else {
                                 return Mono.error(exception);

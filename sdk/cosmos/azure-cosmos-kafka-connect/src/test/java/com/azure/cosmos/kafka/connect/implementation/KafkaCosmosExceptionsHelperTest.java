@@ -40,6 +40,24 @@ public class KafkaCosmosExceptionsHelperTest {
         assertThat(diagnostics).contains("bad map");
     }
 
+    @Test(groups = { "unit" })
+    public void hasCosmosExceptionDetectsDirectAndWrappedCosmosException() {
+        CosmosException cosmosException = new CanaryCosmosException("dbs/db/colls/coll/docs/id", 429);
+
+        assertThat(KafkaCosmosExceptionsHelper.hasCosmosException(cosmosException)).isTrue();
+        // Wrapped in a cause chain, the CosmosException must still be detected.
+        assertThat(KafkaCosmosExceptionsHelper.hasCosmosException(
+            new RuntimeException("wrapper", cosmosException))).isTrue();
+    }
+
+    @Test(groups = { "unit" })
+    public void hasCosmosExceptionIsFalseForNonCosmosAndNull() {
+        // A non-Cosmos throwable has no resourceAddress to leak, so it is safe to log with its stack.
+        assertThat(KafkaCosmosExceptionsHelper.hasCosmosException(new IllegalArgumentException("bad map")))
+            .isFalse();
+        assertThat(KafkaCosmosExceptionsHelper.hasCosmosException(null)).isFalse();
+    }
+
     private static final class CanaryCosmosException extends CosmosException {
         CanaryCosmosException(String resourceAddress, int statusCode) {
             super(resourceAddress, statusCode, null, null);
