@@ -306,7 +306,13 @@ public class CosmosClientCache implements AutoCloseable {
                 "2) The class implements TokenCredential but from a different classloader (shaded dependencies). " +
                 "Error: " + e.getMessage(), e);
         } catch (Exception e) {
-            throw new IllegalArgumentException("Failed to create credential provider: " + providerClassName + ". " + e.getMessage(), e);
+            // Do not surface the custom credential provider's exception message or cause: the provider
+            // receives the auth config map and its error text is outside this connector's control (it may
+            // echo a secret). The connector/task-start path logs this throwable at WARN, so drop the
+            // value-bearing cause too and surface only the provider class and the failing exception type.
+            throw new IllegalArgumentException(
+                "Failed to create credential provider: " + providerClassName
+                    + ". Failure type: " + e.getClass().getName());
         }
     }
 

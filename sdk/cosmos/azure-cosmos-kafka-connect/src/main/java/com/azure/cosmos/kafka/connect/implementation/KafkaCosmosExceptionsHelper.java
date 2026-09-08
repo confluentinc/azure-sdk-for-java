@@ -101,4 +101,61 @@ public class KafkaCosmosExceptionsHelper {
             && cosmosException.getStatusCode() == HttpConstants.StatusCodes.BADREQUEST
             && cosmosException.getSubStatusCode() == HttpConstants.SubStatusCodes.UNKNOWN;
     }
+
+    /**
+     * Returns true if a {@link CosmosException} is present anywhere in the throwable's (unwrapped)
+     * cause chain.
+     *
+     * <p>Only a CosmosException carries the sensitive {@code resourceAddress}. When this returns
+     * {@code false} the throwable has nothing sensitive to leak, so callers should log it in full
+     * (with its stack trace) for diagnostics; when it returns {@code true} callers must log
+     * {@link #getSafeExceptionDiagnostics(Throwable)} instead of the exception itself.
+     */
+    public static boolean hasCosmosException(Throwable throwable) {
+        if (throwable == null) {
+            return false;
+        }
+
+        for (Throwable current = Exceptions.unwrap(throwable); current != null; current = current.getCause()) {
+            if (current instanceof CosmosException) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Returns non-sensitive diagnostics for a failed operation, safe to log.
+     *
+     * <p>A {@link CosmosException}'s {@code toString()} renders {@code resourceAddress}
+     * (e.g. {@code dbs/{db}/colls/{coll}/docs/{id}}), whose {@code {id}} is a record-derived document
+     * id (customer data) for id-targeted writes. Passing the raw exception to a logger emits that
+     * {@code toString()} in the stack-trace header, so callers must log this string instead of the
+     * exception itself. Only the status code, sub-status code and (server-generated) activity id are
+     * surfaced for a CosmosException; {@code getMessage()} is used for other throwables (it does not
+     * carry resourceAddress).
+     *
+     * <p>For a throwable that contains no CosmosException (see {@link #hasCosmosException(Throwable)})
+     * there is nothing sensitive to redact, so prefer logging the raw throwable with its stack trace
+     * rather than this string.
+     */
+    public static String getSafeExceptionDiagnostics(Throwable throwable) {
+        if (throwable == null) {
+            return "null";
+        }
+
+        for (Throwable current = Exceptions.unwrap(throwable); current != null; current = current.getCause()) {
+            if (current instanceof CosmosException) {
+                CosmosException cosmosException = (CosmosException) current;
+                return String.format(
+                    "CosmosException statusCode: %d, subStatusCode: %d, activityId: %s",
+                    cosmosException.getStatusCode(),
+                    cosmosException.getSubStatusCode(),
+                    cosmosException.getActivityId());
+            }
+        }
+
+        return throwable.getClass().getName() + ": " + throwable.getMessage();
+    }
 }
