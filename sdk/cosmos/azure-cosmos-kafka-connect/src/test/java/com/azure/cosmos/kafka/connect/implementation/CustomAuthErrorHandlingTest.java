@@ -140,6 +140,39 @@ public class CustomAuthErrorHandlingTest extends KafkaCosmosTestSuiteBase {
     }
 
     @Test(groups = { "unit" })
+    public void sinkTaskDoesNotLeakCredentialProviderExceptionMessage() {
+        String topicName = singlePartitionContainerName;
+
+        Map<String, String> sinkConfigMap = new HashMap<>();
+        sinkConfigMap.put("azure.cosmos.account.endpoint", TestConfigurations.HOST);
+        sinkConfigMap.put("azure.cosmos.auth.type", CosmosAuthType.CUSTOM.getName());
+        sinkConfigMap.put("credentials.provider.class", ThrowingConfigurableTokenCredential.class.getName());
+        sinkConfigMap.put("azure.cosmos.sink.database.name", databaseName);
+        sinkConfigMap.put("azure.cosmos.sink.containers.topicMap", topicName + "#" + singlePartitionContainerName);
+        sinkConfigMap.put("azure.cosmos.sink.task.id", UUID.randomUUID().toString());
+
+        CosmosSinkTask sinkTask = new CosmosSinkTask();
+        SinkTaskContext sinkTaskContext = Mockito.mock(SinkTaskContext.class);
+        Mockito.when(sinkTaskContext.errantRecordReporter()).thenReturn(null);
+        KafkaCosmosReflectionUtils.setSinkTaskContext(sinkTask, sinkTaskContext);
+
+        // The provider's configure() throws with a canary; the connector must not surface that message or
+        // carry the provider exception as a cause (connector/task-start logs the whole throwable at WARN).
+        try {
+            sinkTask.start(sinkConfigMap);
+            // Should not reach here
+            assertThat(false).isTrue();
+        } catch (IllegalArgumentException exception) {
+            assertThat(exception.getMessage()).startsWith("Failed to create credential provider:");
+            assertThat(exception.getCause()).isNull();
+            for (Throwable current = exception; current != null; current = current.getCause()) {
+                String message = current.getMessage() == null ? "" : current.getMessage();
+                assertThat(message).doesNotContain(ThrowingConfigurableTokenCredential.FAILURE_MESSAGE);
+            }
+        }
+    }
+
+    @Test(groups = { "unit" })
     public void sourceTaskFailsWithInvalidCredentialProviderClass() {
         Map<String, String> sourceConfigMap = new HashMap<>();
         sourceConfigMap.put("azure.cosmos.account.endpoint", TestConfigurations.HOST);
