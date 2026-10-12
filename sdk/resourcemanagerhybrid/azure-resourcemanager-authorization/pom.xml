@@ -58,7 +58,7 @@
     <dependency>
       <groupId>com.azure.resourcemanager</groupId>
       <artifactId>azure-resourcemanager-resources</artifactId>
-      <version>1.0.0-hybrid</version>
+      <version>2.54.3</version>
     </dependency>
     <dependency>
       <groupId>org.slf4j</groupId>
